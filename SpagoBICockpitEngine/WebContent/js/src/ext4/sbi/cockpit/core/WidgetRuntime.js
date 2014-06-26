@@ -95,6 +95,8 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
      */
     , storeId: null
     
+    , aggregations: null
+    
     /**
      * @property {String} wtype
      * The wtype of the widget extension as registered in {@link Sbi.cockpit.core.WidgetExtensionPointManager}
@@ -157,9 +159,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 			Sbi.warn("[WidgetRuntime.reload]: store [" + this.getStoreId() + "] not yet defiend in store manager");
 			return;
 		}
-		this.getStore().removeAll();
-		Sbi.storeManager.loadStore(this.getStoreId(), params, baseParams);
-		Sbi.trace("[WidgetRuntime.reload]: IN");
+		store.removeAll();
+		Sbi.storeManager.loadStore(store, params, baseParams);
+		Sbi.trace("[WidgetRuntime.reload]: OUT");
 	}
 	
    
@@ -243,11 +245,16 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * Initialize the store
 	 */
 	, boundStore: function() {
-		Sbi.trace("[WidgetRuntime.boundStore]: IN");		
-		this.getStore().on('metachange', this.onStoreMetaChange, this);
-		this.getStore().on('load', this.onStoreLoad, this);
-		this.getStore().on('datachanged', this.onDataChanged, this);
-		// exceptions are centralized managed by the store manager
+		Sbi.trace("[WidgetRuntime.boundStore]: IN");	
+		var store = this.getStore();
+		if(Sbi.isValorized(store)) {
+			store.on('metachange', this.onStoreMetaChange, this);
+			store.on('load', this.onStoreLoad, this);
+			store.on('datachanged', this.onDataChanged, this);
+			// exceptions are centralized managed by the store manager
+		} else {
+			alert("[WidgetRuntime.boundStore]: Impossible to find bounded store");
+		}
 
 		Sbi.trace("[WidgetRuntime.boundStore]: OUT");
 	}
@@ -256,9 +263,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		Sbi.trace("[WidgetRuntime.unboundStore]: IN");	
 		var store = this.getStore();
 		if(Sbi.isValorized(store)) {
-			this.getStore().un('metachange', this.onStoreMetaChange, this);
-			this.getStore().un('load', this.onStoreLoad, this);
-			this.getStore().un('datachanged', this.onDataChanged, this);	
+			store.un('metachange', this.onStoreMetaChange, this);
+			store.un('load', this.onStoreLoad, this);
+			store.un('datachanged', this.onDataChanged, this);	
 		} else {
 			Sbi.debug("Widget is not bound to any store or it is bound to a store that has already been removed from store manager");
 		}
@@ -291,10 +298,6 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		
 	}
 	
-	
-	
-	
-	
     /**
      * @method
      * 
@@ -303,10 +306,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
      * @return {String} the dataset's label
      */
     , getStoreId: function() {
-    	return this.storeId;
-    	
+    	return this.storeId; 	
     }
-	
+    
 	/**
 	 * @method
 	 * 
@@ -320,16 +322,27 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	, getStore: function(forceCreation) {
 		var store;
 		
+		Sbi.warn("[WidgetRuntime.getStore]: IN");
+		
 		if(Sbi.isNotValorized(this.getStoreId())) {
-			Sbi.warn("[Widget.getStore]: The widget have no store associated (i.e storeId in not valorized)");
+			Sbi.warn("[WidgetRuntime.getStore]: The widget have no store associated (i.e storeId in not valorized)");
 			return null;
 		}
 		
-		if(Sbi.storeManager.containsStore(this.getStoreId()) === false && forceCreation === true) {
-			Sbi.warn("[Widget.getStore]: store [" + this.getStoreId() + "] will be added to store manager");
-			Sbi.storeManager.addStore({storeId: this.getStoreId()});
+		Sbi.warn("[WidgetRuntime.getStore]: aggregation defined on this widget are equals to [" + this.aggregations + "]");
+		
+		if(Sbi.storeManager.containsStore(this.getStoreId(), this.aggregations) === false && forceCreation === true) {
+			alert("[WidgetRuntime.getStore]: store [" + this.getStoreId() + "][" + this.aggregations + "] will be added to store manager");
+			Sbi.warn("[WidgetRuntime.getStore]: store [" + this.getStoreId() + "] will be added to store manager");
+			var storeConfig = {storeId: this.getStoreId()};
+			if(aggregations !== null) {
+				storeConfig.aggregations = this.aggregations;
+			}
+			Sbi.storeManager.addStore(storeConfig);
 		}
-		store = Sbi.storeManager.getStore( this.getStoreId() );
+		store = Sbi.storeManager.getStore( this.getStoreId(), this.aggregations );
+		
+		Sbi.warn("[WidgetRuntime.getStore]: OUT");
 		
 		return store;
 	}

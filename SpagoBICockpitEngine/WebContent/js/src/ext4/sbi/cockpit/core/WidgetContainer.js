@@ -367,20 +367,28 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	this.widgetEditorWizard.hide();
     }
 
-    , applyWidgetEditorWizardState: function() {    	
+    , applyWidgetEditorWizardState: function() {
     	Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: IN");
-    	var component = this.widgetEditorWizard.getWizardTargetComponent();     	
+    	var component = this.widgetEditorWizard.getWizardTargetComponent(); 
 		var wizardState = this.widgetEditorWizard.getWizardState();
 		
 		wizardState.storeId = wizardState.selectedDatasetLabel;
 		
 		if (wizardState.storeId != null){
-			if(Sbi.storeManager.containsStore(wizardState.storeId) === false) {
-				Sbi.storeManager.addStore({storeId: wizardState.storeId});
-				Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: selected store [" + wizardState.storeId + "] succesfully added to store manager");
+			var storeConf = {storeId: wizardState.storeId};
+			if(wizardState.wconf.series && wizardState.wconf.category) {
+				var aggregations = {
+					measures: wizardState.wconf.series,
+					categories: [wizardState.wconf.category]
+				};
+				storeConf.aggregations = aggregations;
+				Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: add store [" + wizardState.storeId + "] with aggregations");
 			} else {
-				Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: selected store [" + wizardState.storeId + "] already registered into store manager");
+				Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: add store [" + wizardState.storeId + "] without aggregations");
 			}
+			// the method addStore add the store only if it is not contained yet in the manager
+			Sbi.storeManager.addStore(storeConf);
+			Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: selected store [" + wizardState.storeId + "] succesfully added to store manager");
 		} else {
 			Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: no store selected");
 		}
@@ -390,7 +398,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		delete wizardState.unselectedDatasetLabel;
 		  
 		component.setWidgetConfiguration( wizardState );
-		var widget = component.getWidget();		
+		var widget = component.getWidget();
 		this.getWidgetManager().register(widget);
 		
 		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: the list of widget registered in widget manager is equal to [" + this.getWidgetManager().getWidgetCount() + "]");

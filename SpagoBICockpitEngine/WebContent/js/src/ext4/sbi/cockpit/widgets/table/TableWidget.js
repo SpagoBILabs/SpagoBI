@@ -61,7 +61,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 	Sbi.cockpit.widgets.table.TableWidget.superclass.constructor.call(this, c);
 	
 	this.on("afterRender", function(){
-		Sbi.storeManager.loadStore(this.storeId);
+		this.reload();
 		Sbi.trace("[TableWidget.onRender]: store loaded");
 	}, this);
 

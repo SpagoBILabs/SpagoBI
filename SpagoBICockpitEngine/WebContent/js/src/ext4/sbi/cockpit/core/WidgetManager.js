@@ -179,17 +179,28 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * Returns a list of widgets that are feed by the specified store.
 	 * 
 	 * @param {String} storeId The id of the store.
+	 * @param {String} aggregations It's optional. If valorized the retuned widgets are the ones defined on the store at the 
+	 * specified aggregation level
 	 * 
 	 * @return {Sbi.cockpit.core.WidgetRuntime[]} The list of widgets.
 	 */
-	, getWidgetsByStore: function(storeId){
+	, getWidgetsByStore: function(storeId, aggregations){
 		Sbi.trace("[WidgetManager.getWidgetsByStore]: IN");
 		
-		var toReturn = new Ext.util.MixedCollection();		
-		if (Sbi.isValorized(storeId)){			
+		if(!Ext.isString(storeId)) {
+			alert("[WidgetManager.getWidgetsByStore]: inpunt parameter [storeId] must be of type String");
+		}
+		
+		if(Sbi.isValorized(aggregations)) {
+			alert("[WidgetManager.getWidgetsByStore]: is unable to manager properly aggregation parameters");
+			// TODO implement it!
+		}
+		
+		var toReturn = new Ext.util.MixedCollection();
+		if (Sbi.isValorized(storeId)){
 			for(var i=0; i < this.widgets.getCount(); i++){
 				var w = this.widgets.item(i);
-				if (Sbi.isValorized(w.getStoreId()) && w.getStoreId() == storeId  ){
+				if (Sbi.isValorized(w.getStoreId()) && w.getStoreId() == storeId){
 					toReturn.add(w);
 				}
 			}
@@ -213,8 +224,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * @return {boolean} true if the store is used at least by one widget managed by this manager,
 	 * false otherwise.
 	 */
-	, isStoreUsed: function(storeId) {
-		var widgets = this.getWidgetsByStore(storeId);
+	, isStoreUsed: function(storeId, aggregations) {
+		var widgets = this.getWidgetsByStore(storeId, aggregations);
 		return Sbi.isValorized(widgets)  && widgets.getCount() > 0;
 	}
 	
@@ -230,7 +241,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * @returns current #selections
 	 * 
 	 */
-	, getSelections: function() {		
+	, getSelections: function() {
 		return this.selections;
 	}
 	
@@ -241,7 +252,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * 
 	 */
 	, setSelections: function(selections) {
-		this.selections = selections;		
+		this.selections = selections;
 	}
 	
 	/**
@@ -398,21 +409,50 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		Sbi.trace("[WidgetManager.getSelectionsOnField]: IN");
 		
 		var selectedValues = {};
-		var widgets = this.getWidgetsByStore(store);
+		var widgets = this.getWidgetsByStore(store.storeId);
 		
+		Sbi.trace("[WidgetManager.getSelectionsOnField]: There are [" + widgets.getCount() + "] widget(s) associated to store [" + store.storeId+ "]");
 		for(var i = 0; i < widgets.getCount(); i++) {
-			var widget = widgets.get(i);			
+			var widget = widgets.get(i);
 			var values = this.getFieldSelectedValues(widget.getId(), fieldHeader);
-			
 			for(var j = 0; j < values.length; j++) {
 				selectedValues[values[j]] = values[j];
 				Sbi.trace("[SelectionsPanel.getSelectionsOnField]: Added value [" + values[j] + "] to selection on field [" + fieldHeader + "]");
 			} 
 		}
 		
-		Sbi.trace("[SelectionsPanel.getSelectionsOnField]: OUT");
+		Sbi.trace("[WidgetManager.getSelectionsOnField]: OUT");
 		
 		return selectedValues;
+	}
+	
+	// -- selections by store ----
+	, getSelectionsByStore: function(store) {
+		Sbi.trace("[WidgetManager.getSelectionsByStore]: IN");
+		var selectedValues = {};
+		var fields = Sbi.storeManager.getStoreFields(store);
+		Sbi.trace("[WidgetManager.getSelectionsByStore]: store has [" + fields.length + "] fields");
+		for(var i = 0; i < fields.length; i++) {
+			var values = this.getStoreFieldSelectedValues(store, fields[i].header);
+			var fieldSelectedValues = [];
+			for(var value in values) { fieldSelectedValues.push(value); }
+			Sbi.trace("[WidgetManager.getSelectionsByStore]: selected value for field [" + fields[i].header + "] are [" + Sbi.toSource(fieldSelectedValues)+ "]");
+			selectedValues[fields[i].header] = fieldSelectedValues;
+		}
+		Sbi.trace("[WidgetManager.getSelectionsByStore]: OUT");
+		return selectedValues;
+	}
+	
+	, getSelectionsByStores: function() {
+		var selections =  {};
+		Sbi.trace("[WidgetManager.getSelectionsByStores]: IN");
+		var stores = Sbi.storeManager.getStores();
+		Sbi.trace("[WidgetManager.getSelectionsByStores]: Number of stores is equal to [" + stores.length + "]");
+		for(var i = 0; i < stores.length; i++) {
+			selections[stores[i].storeId] = this.getSelectionsByStore(stores[i]);
+		}
+		Sbi.trace("[WidgetManager.getSelectionsByStores]: OUT");
+		return selections;
 	}
 	
 	// -- selections by associations ----
@@ -426,19 +466,20 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * 	}
 	 */
 	, getSelectionsByAssociations: function() {
+		
+		Sbi.trace("[SelectionsPanel.getSelectionsByAssociations]: IN");
+		
 		var selectionsByAssociations = {};
 		
 		var selections = this.getSelections();
 		
 		var associations = Sbi.storeManager.getAssociationConfigurations();
-		
 		for(var i = 0; i <  associations.length; i++){
 			var selectedValues = {};
 			var fields = associations[i].fields;
-			
 			for(var j = 0; j <  fields.length; j++){
 				var field = fields[j];
-				var values = this.getStoreFieldSelectedValues(field.store, field.column);				
+				var values = this.getStoreFieldSelectedValues(field.store, field.column);
 				Ext.apply(selectedValues, values);
 			}
 			var results = [];
@@ -446,6 +487,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	
 			selectionsByAssociations[associations[i].id] = results;
 		}
+		
+		Sbi.trace("[SelectionsPanel.getSelectionsByAssociations]: OUT");
 		
 		return selectionsByAssociations;
 	}
@@ -472,8 +515,11 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	//alert("onSelection: " + Sbi.toSource(associationGroup));
     	
     	if(Sbi.isValorized(associationGroup)) {
-    		var selections = this.getSelectionsByAssociations();    		
-        	Sbi.storeManager.loadStores( associationGroup,  selections);
+    		var selections = this.getSelectionsByAssociations();
+        	Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
+    	} else {
+    		var selections = this.getSelectionsByStores();
+    		Sbi.storeManager.loadStoresByAggregations( widget.getStore().storeId,  selections);
     	}
     	
     	this.fireEvent('selectionChange');

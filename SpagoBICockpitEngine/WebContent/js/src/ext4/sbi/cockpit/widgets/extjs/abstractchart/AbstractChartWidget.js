@@ -494,19 +494,21 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, Sbi.cock
 	
 	, onStoreMetaChange: function(store, meta) {
 		Sbi.trace("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: IN");
-	
+		alert("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: IN");
+		
 		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreMetaChange.call(this, store, meta);	
 	
-		var fieldMeta = {};
+		var fieldsMeta = {};
 		
 		for(var i = 0; i < meta.fields.length; i++) {
 			var f = meta.fields[i];
 			if(Ext.isString(f)) continue;
 			f.header = f.header || f.name;
-			fieldMeta[f.header] = f;
+			fieldsMeta[f.header] = f;
 		}
-		store.fieldMeta = fieldMeta;
+		store.fieldsMeta = fieldsMeta;
 		
+		alert("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: OUT");
 		Sbi.trace("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: OUT");
 	}
 	
