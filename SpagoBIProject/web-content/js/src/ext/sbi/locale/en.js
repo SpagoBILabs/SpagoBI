@@ -60,9 +60,9 @@ Sbi.locale.ln['sbi.generic.map'] = 'Map';
 Sbi.locale.ln['sbi.generic.maps'] = 'Maps';
 Sbi.locale.ln['sbi.generic.all'] = 'All';
 Sbi.locale.ln['sbi.generic.showmetadata'] = 'Show Metadata';
-Sbi.locale.ln['sbi.generic.document.add.adhocGeoReport'] = 'Geo Report';
+Sbi.locale.ln['sbi.generic.document.add.adhocGeoReport'] = 'Geo-referenced analysis ';
 Sbi.locale.ln['sbi.generic.document.add.adhocCockpit'] = 'Cockpit';
-Sbi.locale.ln['sbi.generic.document.add.traditional SpagoBI'] = 'Other';
+Sbi.locale.ln['sbi.generic.document.add.traditional SpagoBI'] = 'Generic document';
 
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Name';

@@ -57,9 +57,9 @@ Sbi.locale.ln['sbi.generic.map'] = 'Mappa';
 Sbi.locale.ln['sbi.generic.maps'] = 'Mappe';
 Sbi.locale.ln['sbi.generic.all'] = 'Tutte';
 Sbi.locale.ln['sbi.generic.showmetadata'] = 'Visualizza Metadati';
-Sbi.locale.ln['sbi.generic.document.add.adhocGeoReport'] = 'Geo Report';
+Sbi.locale.ln['sbi.generic.document.add.adhocGeoReport'] = 'Analisi geo-referenziata';
 Sbi.locale.ln['sbi.generic.document.add.adhocCockpit'] = 'Cruscotto';
-Sbi.locale.ln['sbi.generic.document.add.traditional SpagoBI'] = 'Altro';
+Sbi.locale.ln['sbi.generic.document.add.traditional SpagoBI'] = 'Documento generico';
 
 Sbi.locale.ln['sbi.kpi.trend.title'] = 'Andamento valori del Kpi ';
 Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'Dati non trovati! Selezionare un nodo specifico per visualizzare lo storico. ';
