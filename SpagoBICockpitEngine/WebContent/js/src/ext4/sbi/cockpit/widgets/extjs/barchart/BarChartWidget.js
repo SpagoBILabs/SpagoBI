@@ -17,6 +17,11 @@ Sbi.cockpit.widgets.extjs.barchart.BarChartWidget = function(config) {
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 	
+	this.aggregations = {
+		measures: this.wconf.series,
+		categories: this.wconf.categories
+	};
+	
 	Sbi.cockpit.widgets.extjs.barchart.BarChartWidget.superclass.constructor.call(this, c);
 	
 	this.boundStore();
@@ -26,11 +31,11 @@ Sbi.cockpit.widgets.extjs.barchart.BarChartWidget = function(config) {
 	categories.push(this.wconf.category);
 	if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
 	
-	
-	this.reload({
-		measures: Ext.JSON.encode(this.wconf.series),
-		categories: Ext.JSON.encode(categories)
-	});
+	this.reload();
+//	this.reload({
+//		measures: Ext.JSON.encode(this.wconf.series),
+//		categories: Ext.JSON.encode(categories)
+//	});
 	
 //	this.loadChartData({
 //		'rows':[this.wconf.category]
@@ -109,7 +114,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 		var seriesFields = [];
 		for(var i = 0; i < this.wconf.series.length; i++) {
 			var id = this.wconf.series[i].id;
-			seriesFields.push(s.fieldMeta[id].name);
+			seriesFields.push(s.fieldsMeta[id].name);
 		}
 		
 		var categories = [];
@@ -119,7 +124,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 		var categoriesFields = [];
 		for(var i = 0; i < categories.length; i++) {
 			var id = categories[i].id;
-			categoriesFields.push(s.fieldMeta[id].name);
+			categoriesFields.push(s.fieldsMeta[id].name);
 		}
 		
 		this.series = {
