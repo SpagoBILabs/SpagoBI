@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: SpagoBIXxxSpagoEngine.war
 Implementation-Title: SpagoBIXxxSpagoEngine
-Implementation-Version: 2.5.0 
+Implementation-Version: 5.0.0
 
