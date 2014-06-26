@@ -26,6 +26,7 @@ import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
@@ -206,63 +207,38 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataStore(@PathParam("label") String label
-			, @QueryParam("parameters")	@DefaultValue("{}") String parameters
-			, @QueryParam("measures") 	@DefaultValue("[]") String measures
-			, @QueryParam("categories") @DefaultValue("[]") String categories
-			, @QueryParam("offset") 	@DefaultValue("-1") int offset
-			, @QueryParam("fetchSize") 	@DefaultValue("-1") int fetchSize
-			, @QueryParam("maxResults") @DefaultValue("-1") int maxResults) {
+	public String getDataStore(
+			@PathParam("label") String label
+			, @QueryParam("parameters")		String parameters
+			, @QueryParam("selections") 	String selections 		// the filter to apply to the joined dataset
+			, @QueryParam("aggregations")	String aggregations 	// the aggregation to apply to the joined dataset
+	) {
 		
 		logger.debug("IN");
 		
 		try {
+			List<ProjectionCriteria> projectionCriteria = new ArrayList<ProjectionCriteria>();
+			List<GroupCriteria> groupCriteria = new ArrayList<GroupCriteria>();
+			if(aggregations != null) {
+				JSONObject aggregationsObject = new JSONObject(aggregations);
+				JSONArray categoriesObject = aggregationsObject.getJSONArray("categories");
+				JSONArray measuresObject = aggregationsObject.getJSONArray("measures");
+				
+				projectionCriteria = getProjectionCriteria(label, categoriesObject, measuresObject);
+				groupCriteria = getGroupCriteria(label, categoriesObject);
+			}
 			
-			// series: [{"id":"unit_sales","alias":"unit_sales","funct":"SUM","iconCls":"measure","nature":"measure","seriename":"unit_sales","color":"#4572A7","showcomma":true,"precision":2,"suffix":""},{"id":"store_cost","alias":"store_cost","funct":"SUM","iconCls":"measure","nature":"measure","seriename":"store_cost","color":"#DB843D","showcomma":true,"precision":2,"suffix":""}]
-			JSONArray measuresObject = new JSONArray(measures);
-			// categories: [{"alias":"promotion_id","id":"promotion_id","funct":null,"iconCls":"attribute","nature":"attribute","values":"[]","options":{}}]
-			JSONArray categoriesObject = new JSONArray(categories);
-			
-			// TODO maybe
-//			JSONArray categoriesObject = new JSONArray(categories);
-//			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>();
-			
-			List<ProjectionCriteria> projectionCriterias = projectionCriterias = getProjectionCriteria(label, categoriesObject, measuresObject);
-			List<GroupCriteria> groupCriterias = groupCriterias = getGroupCriteria(label, categoriesObject);
-			
-//			List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
-//			for(int i = 0; i < categoriesObject.length(); i++) {
-//				JSONObject  categoryObject = categoriesObject.getJSONObject(i);
-//				String columnName = categoryObject.getString("id");
-//				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,null,columnName);
-//				projectionCriterias.add(aProjectionCriteria);
-//			}
-//			for(int i = 0; i < measuresObject.length(); i++) {
-//				JSONObject  measureObject = measuresObject.getJSONObject(i);
-//				String columnName = measureObject.getString("id");
-//				IAggregationFunction function = AggregationFunctions.get( measureObject.getString("funct") );
-//				if (function != AggregationFunctions.NONE_FUNCTION) {
-//					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,function.getName(),columnName);
-//					projectionCriterias.add(aProjectionCriteria);
-//				} else {
-//					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,null,columnName);
-//					projectionCriterias.add(aProjectionCriteria);
-//				}
-//			}
-//			
-//			List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>();
-//			for(int i = 0; i < categoriesObject.length(); i++) {
-//				JSONObject  categoryObject = categoriesObject.getJSONObject(i);
-//				String columnName = categoryObject.getString("id");
-//				GroupCriteria groupCriteria = new GroupCriteria(columnName,null);
-//				groupCriterias.add(groupCriteria);
-//			}
-			
+			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>();
+			if(selections != null) {
+				JSONObject selectionsObject = new JSONObject(selections); 
+				filterCriteria = getFilterCriteria(label, selectionsObject);
+			}
+		
 			IDataStore dataStore = null;
-			if(groupCriterias.size() == 0 && projectionCriterias.size() == 0) {
+			if(groupCriteria.size() == 0 && projectionCriteria.size() == 0 && filterCriteria.size() == 0) {
 				dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters));
 			} else {
-				dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters), groupCriterias, null, projectionCriterias);
+				dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters), groupCriteria, filterCriteria, projectionCriteria);
 			}
 			
 			long recNo = dataStore.getRecordsCount();
@@ -282,43 +258,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		} finally {			
 			logger.debug("OUT");
 		}	
-	}
-	
-	private List<ProjectionCriteria> getProjectionCriteria(String dataset, JSONArray categoriesObject, JSONArray measuresObject) throws JSONException  {
-		List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
-		for(int i = 0; i < categoriesObject.length(); i++) {
-			JSONObject  categoryObject = categoriesObject.getJSONObject(i);
-			String columnName = categoryObject.getString("id");
-			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,null,columnName);
-			projectionCriterias.add(aProjectionCriteria);
-		}
-		for(int i = 0; i < measuresObject.length(); i++) {
-			JSONObject  measureObject = measuresObject.getJSONObject(i);
-			String columnName = measureObject.getString("id");
-			IAggregationFunction function = AggregationFunctions.get( measureObject.getString("funct") );
-			if (function != AggregationFunctions.NONE_FUNCTION) {
-				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,function.getName(),columnName);
-				projectionCriterias.add(aProjectionCriteria);
-			} else {
-				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,null,columnName);
-				projectionCriterias.add(aProjectionCriteria);
-			}
-		}
-		return projectionCriterias;
-	}
-	
-	
-	private List<GroupCriteria> getGroupCriteria(String dataset, JSONArray categoriesObject) throws JSONException {
-		List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>();
-		
-		for(int i = 0; i < categoriesObject.length(); i++) {
-			JSONObject  categoryObject = categoriesObject.getJSONObject(i);
-			String columnName = categoryObject.getString("id");
-			GroupCriteria groupCriteria = new GroupCriteria(dataset, columnName,null);
-			groupCriterias.add(groupCriteria);
-		}
-		
-		return groupCriterias;
 	}
 	
 	@GET
@@ -418,16 +357,74 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				List<String> dsList = new ArrayList(datasetsObject);
 				results.put(dsList.get(0), gridDataFeed);	
 			}
-			
-			
-			
-			
+						
 			return results.toString();	
 		} catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {			
 			logger.debug("OUT");
 		}	
+	}
+	
+	private List<ProjectionCriteria> getProjectionCriteria(String dataset, JSONArray categoriesObject, JSONArray measuresObject) throws JSONException  {
+		List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
+		for(int i = 0; i < categoriesObject.length(); i++) {
+			JSONObject  categoryObject = categoriesObject.getJSONObject(i);
+			String columnName = categoryObject.getString("id");
+			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,null,columnName);
+			projectionCriterias.add(aProjectionCriteria);
+		}
+		for(int i = 0; i < measuresObject.length(); i++) {
+			JSONObject  measureObject = measuresObject.getJSONObject(i);
+			String columnName = measureObject.getString("id");
+			IAggregationFunction function = AggregationFunctions.get( measureObject.getString("funct") );
+			if (function != AggregationFunctions.NONE_FUNCTION) {
+				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,function.getName(),columnName);
+				projectionCriterias.add(aProjectionCriteria);
+			} else {
+				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,null,columnName);
+				projectionCriterias.add(aProjectionCriteria);
+			}
+		}
+		return projectionCriterias;
+	}
+	
+	
+	private List<GroupCriteria> getGroupCriteria(String dataset, JSONArray categoriesObject) throws JSONException {
+		List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>();
+		
+		for(int i = 0; i < categoriesObject.length(); i++) {
+			JSONObject  categoryObject = categoriesObject.getJSONObject(i);
+			String columnName = categoryObject.getString("id");
+			GroupCriteria groupCriteria = new GroupCriteria(dataset, columnName,null);
+			groupCriterias.add(groupCriteria);
+		}
+		
+		return groupCriterias;
+	}
+	
+	private List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject) throws JSONException {
+		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
+		
+		JSONObject  datasetSelectionObject = selectionsObject.getJSONObject(dataset);
+		Iterator<String> it = datasetSelectionObject.keys();
+		while(it.hasNext()) {
+			String datasetColumn = it.next();
+			
+			JSONArray values = datasetSelectionObject.getJSONArray(datasetColumn);
+			if(values.length() == 0) continue;
+			List<String> valuesList = new ArrayList<String>(); 
+			for(int i = 0; i < values.length(); i++) {
+				valuesList.add(values.getString(i));
+			}
+			
+			Operand leftOperand = new Operand(dataset, datasetColumn);
+			Operand rightOperand = new Operand(valuesList);
+			FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
+			filterCriterias.add(filterCriteria);
+		}
+		
+		return filterCriterias;
 	}
 	
 	
