@@ -38,6 +38,7 @@ public class LDAPConnector {
     final public static String USER_ID_ATTRIBUTE_NAME = "USER_ID_ATTRIBUTE_NAME";
     final public static String USER_NAME_ATTRIBUTE_NAME = "USER_NAME_ATTRIBUTE_NAME";
     final public static String USER_MEMBEROF_ATTRIBUTE_NAME = "USER_MEMBEROF_ATTRIBUTE_NAME";
+    final public static String SUPER_ADMIN_ATTRIBUTE_NAME = "SUPER_ADMIN_ATTRIBUTE_NAME";
     final public static String USER_ATTRIBUTE = "USER_ATTRIBUTE";// attributes list
     
     // group

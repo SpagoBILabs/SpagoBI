@@ -70,6 +70,7 @@ public class LdapUserProfileFactoryImpl implements ISecurityServiceSupplier {
 		userProfile.setUniqueIdentifier(username);
 		userProfile.setUserId(username);
 		userProfile.setUserName(username);
+		userProfile.setIsSuperadmin(false);
 	
 		LDAPConnector ldapConnector = LdapConnectorFactory.createLDAPConnector();
 		List ldapRoles = null;
@@ -108,6 +109,18 @@ public class LdapUserProfileFactoryImpl implements ISecurityServiceSupplier {
 			logger.debug("User name is [" + userName + "]");
 			if (!StringUtilities.isEmpty(userName)) {
 				userProfile.setUserName(userName);
+			}
+		}
+		
+		String superAdminAttributeKey = LdapConnectorFactory
+				.getAttribute(LDAPConnector.SUPER_ADMIN_ATTRIBUTE_NAME);
+		if (!StringUtilities.isEmpty(superAdminAttributeKey)) {
+			String superAdmin = (String) userAttributes
+					.get(superAdminAttributeKey);
+			logger.debug("Super admin is [" + superAdmin + "]");
+			if (!StringUtilities.isEmpty(superAdmin)
+					&& superAdmin.equalsIgnoreCase("true")) {
+				userProfile.setIsSuperadmin(true);
 			}
 		}
 		
