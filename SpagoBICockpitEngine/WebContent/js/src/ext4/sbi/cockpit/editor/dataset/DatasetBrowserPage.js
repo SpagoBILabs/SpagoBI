@@ -26,6 +26,7 @@ Sbi.cockpit.editor.dataset.DatasetBrowserPage = function(config) {
 		, layout: "fit"
 		, frame: false
 		, border: false
+		, autoscrollY: "hidden"
 	};
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.dataset.DatasetBrowserPage', defaultSettings);
 	var c = Ext.apply(settings, config || {});
