@@ -3,4 +3,4 @@ Class-Path: SpagoBIQbeCore.jar
 
 Name: sbi.qbecore-4.1.0.jar
 Implementation-Title: SpagoBIQbeCore
-Implementation-Version: 4.1.0
+Implementation-Version: 5.0.0
