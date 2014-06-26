@@ -4,12 +4,12 @@ Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competenc
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
  
-  
- 
- <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
     
-<%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
+<%@page import="it.eng.spagobi.commons.SingletonConfig"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 
 <iframe id='invalidSessionJasper'
                  name='invalidSessionJasper'
