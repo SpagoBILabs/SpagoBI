@@ -187,14 +187,15 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     , addWidget: function(widget, layoutConf) {	
 
 		Sbi.trace("[WidgetContainer.addWidget]: IN");
-    	
+
 		if(Sbi.isNotValorized(widget)) {
 			Sbi.trace("[WidgetContainer.addWidget]: [widget] parameter is not defined. An empty component will be added to the container.");
 		} else {
 			widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(widget);
+			
 	    	if(Sbi.isValorized(widget)) {
 	    		this.getWidgetManager().register(widget);
-					    		
+	    		
 	    		if(Sbi.isValorized(layoutConf)) {
 	        		Sbi.trace("[WidgetContainer.addWidget]: Input parameter [layoutConf] is valorized");
 	        		widget.setLayoutConfiguration(layoutConf);
@@ -717,11 +718,13 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 	}
     
     , onWidgetClone: function (component){
-    	var widget = component.getWidget();
-		var cloneConf = widget.getConfiguration();
-		
-		cloneConf.wlayout.region.x += 5;
-		cloneConf.wlayout.region.y += 5;
+    	var widget = component.getWidget();		
+    	var newConf = {};
+    	
+    	var cloneConf = Ext.Object.merge(newConf, widget.getConfiguration());
+				 
+		cloneConf.wlayout.region.x = (Ext.Number.from(cloneConf.wlayout.region.x,0) + 0.05).toFixed(2);
+		cloneConf.wlayout.region.y = (Ext.Number.from(cloneConf.wlayout.region.y,0) + 0.05).toFixed(2);
 			
 		this.addWidget(cloneConf);
     }
