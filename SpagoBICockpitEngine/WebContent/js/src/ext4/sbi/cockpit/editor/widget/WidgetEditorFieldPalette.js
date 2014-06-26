@@ -21,7 +21,7 @@ Sbi.cockpit.editor.widget.WidgetEditorFieldPalette = function(config) {
 		, displayRefreshButton : false
 		, border: true
 		, bodyStyle:'padding:3px'
-      	, layout: 'fit'
+      	, layout: 'fit'      	
 	};
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.widget.WidgetEditorFieldPalette', defaultSettings);
 	
@@ -229,7 +229,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 			id: 'field-grid',
 	        store: this.store,
 	        hideHeaders: true,
-	        //, autoScroll: true
+	        autoScroll: false,
         	overflowY: 'auto',
             overflowX: 'hidden',
             viewConfig: {

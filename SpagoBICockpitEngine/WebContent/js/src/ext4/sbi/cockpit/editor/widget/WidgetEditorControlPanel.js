@@ -39,7 +39,8 @@ Ext.ns("Sbi.cockpit.editor.widget");
 Sbi.cockpit.editor.widget.WidgetEditorControlPanel = function(config) { 
 
 	var defaultSettings = {
-		border: false
+		border: false,
+		width: 275
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.widget.WidgetEditorControlPanel', defaultSettings);
@@ -61,10 +62,10 @@ Sbi.cockpit.editor.widget.WidgetEditorControlPanel = function(config) {
 	
 	c = {
         layout: {
-        	type:'accordion'
-        },
-//        items:[ this.designerPalettePanel, this.fieldsPalettePanel, this.stylePalettePanel]
+        	type:'accordion'        	
+        },       
         items:[ this.designerPalettePanel, this.fieldsPalettePanel]
+//        items:[ this.designerPalettePanel, this.fieldsPalettePanel, this.stylePalettePanel]
 	};
 	
 	Sbi.cockpit.editor.widget.WidgetEditorControlPanel.superclass.constructor.call(this, c);
@@ -89,6 +90,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorControlPanel, Ext.Panel, {
 			region : 'center',
 			split: true,
 			height : 120,
+			width: 270,
 			dataset: this.dataset,
 			services : this.services
 		});
