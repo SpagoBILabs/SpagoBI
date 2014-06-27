@@ -363,6 +363,11 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		this.widgetContainer.addWidget();
 	}
 	
+	, onClearSelections: function() {
+		var widgetManager = this.widgetContainer.getWidgetManager();
+		widgetManager.clearSelections();
+	}
+	
 	, onShowSelectionsWindow: function(){
 		var config = {};
 		config.widgetManager = this.widgetContainer.getWidgetManager();
@@ -520,6 +525,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		var tbItems = ['->'];
 		
 		tbItems.push({
+        	text: LN('sbi.cockpit.mainpanel.btn.clearselections')
+        	, handler: this.onClearSelections
+        	, scope: this
+        });
+		
+		tbItems.push({
         	text: LN('sbi.cockpit.mainpanel.btn.selections')
         	, handler: this.onShowSelectionsWindow
         	, scope: this
@@ -528,7 +539,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		if (Sbi.isValorized(Sbi.config.isTechnicalUser) && 
 				Sbi.config.isTechnicalUser == 'true'){
 			tbItems.push({
-	        	text: LN('sbi.cockpit.mainpanel.btn.filters')
+	        	text: LN('sbi.cockpit.mainpanel.btn.parameters')
 	        	, handler: this.onShowFilterEditorWizard
 	        	, scope: this
 	        });
@@ -548,20 +559,20 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		
 		tbItems.push(	new Ext.Button({
 			id: 'save'
-     		   , iconCls: 'icon-save' 
-				   , tooltip: 'Save'
-				   , scope: this
-				   , handler:  this.onShowSaveDocumentWindow
-				   , hidden: this.isDocumentNotSaved()
+     		, iconCls: 'icon-save' 
+			, tooltip: 'Save'
+			, scope: this
+			, handler:  this.onShowSaveDocumentWindow
+			, hidden: this.isDocumentNotSaved()
 		 }));
 		
 		tbItems.push( new Ext.Button({
-		 		id: 'saveAs'
-	 			   	   , iconCls: 'icon-saveas' 
-	 				   , tooltip: 'Save As'
-	 				   , scope: this
-	 				   , handler:  this.onShowSaveDocumentAsWindow
-	 		 }));
+		 	id: 'saveAs'
+	 		, iconCls: 'icon-saveas' 
+	 		, tooltip: 'Save As'
+	 		, scope: this
+	 		, handler:  this.onShowSaveDocumentAsWindow
+	 	}));
 		
 		tbItems.push(new Ext.Button({
 		 		id: 'debug'

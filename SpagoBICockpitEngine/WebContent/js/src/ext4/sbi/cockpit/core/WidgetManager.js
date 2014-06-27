@@ -134,11 +134,10 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * @param {Sbi.cockpit.core.WidgetRuntime/String} The widget or its id.
 	 */
 	, getWidget: function(w) {
-		if(Ext.isString(w)) {
-			return this.widgets.getKey(w);
-		} else {
-			return this.widgets.get(w);
-		}	
+		if(!Ext.isString(w)) {
+			w = this.widgets.getKey(w);
+		} 
+		return this.widgets.get(w);
 	}
 	
 	/**
@@ -265,7 +264,15 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * 
 	 */
 	, clearSelections: function() {
+		Sbi.trace("[WidgetManager.clearSelections]: IN");
+		
+		Sbi.trace("[WidgetManager.clearSelections]: selections is equal to [" + Sbi.toSource(this.selections) + "]");
+		
 		this.selections = {};
+		this.fireEvent('selectionChange');
+		
+		Sbi.storeManager.loadAllStores();
+		Sbi.trace("[WidgetManager.clearSelections]: OUT");
 	}
 	
 	/**
@@ -520,7 +527,6 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     , onSelection: function(widget, selections){
     	Sbi.trace("[WidgetManager.onSelection]: IN");
     
-    	//alert("onSelection [" + widget.getId() + "]: " + Sbi.toSource(selections));
     	this.setWidgetSelections(widget.getId(), selections);
     	
     	var associationGroup = Sbi.storeManager.getAssociationGroupByStore( widget.getStore() );
@@ -547,6 +553,9 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	
     , init: function() {
     	this.widgets = new Ext.util.MixedCollection();
+    	this.widgets.getKey = function(o){
+	        return o.getId();
+	    };
     	this.selections = {};
     	this.widgets.on('add', this.onWidgetAdd, this);
     	this.widgets.on('remove', this.onWidgetRemove, this);
