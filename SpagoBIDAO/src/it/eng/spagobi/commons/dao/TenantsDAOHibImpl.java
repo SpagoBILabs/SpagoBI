@@ -24,11 +24,13 @@ import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.security.Password;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.scheduler.bo.CronExpression;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.BufferedReader;
@@ -64,6 +66,9 @@ import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
 public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsDAO {
 
     static private Logger logger = Logger.getLogger(TenantsDAOHibImpl.class);
+    
+    public static final String ADMIN_USER_ID_SUFFIX = "_admin";
+    public static final String ADMIN_USER_NAME_SUFFIX = " ADMIN";
     
 	public SbiTenant loadTenantByName(String name) throws EMFUserError {
 		logger.debug("IN");
@@ -214,8 +219,6 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			
 			aTenant.setId(idTenant);
 			
-			createUser(aTenant, aSession);
-			
 			SbiCommonInfo sbiCommoInfo = new SbiCommonInfo();
 			sbiCommoInfo.setOrganization(aTenant.getName());
 			
@@ -313,81 +316,110 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		}
 	}	
 	
-	private void createUser(SbiTenant aTenant, Session aSession) throws HibernateException {
+	public SbiUser initializeAdminUser(SbiTenant aTenant) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		SbiUser toReturn = null;
 		
-		logger.debug("createUser IN");
-			
+		Assert.assertNotNull(aTenant, "Tenant in input is null");
+		
 		try {
-				
-			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
-			String userId = aTenant.getName().toLowerCase()+"_admin";
+			aSession = getSession();
+			tx = aSession.beginTransaction();
 			
+			String userId = getAdminUserId(aTenant);
+			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
 			SbiUser existingUser = userDAO.loadSbiUserByUserId(userId);
-
-		    if (existingUser == null) {
+		    if (existingUser != null) {
+				logger.error("Cannot initialize admin user for tenant " + aTenant.getName() + ": user [" + userId + "] already existing");
+				throw new SpagoBIRuntimeException("Cannot initialize admin user for tenant " + aTenant.getName() + ": user [" + userId + "] already existing");
+		    }
 		    	
-		    	createRole(aTenant.getName(), aSession);
-			    logger.debug("Storing user [" + userId + "] into database ");
-			    SbiUser tenantAdmin = new SbiUser();
-			    tenantAdmin.setUserId(userId);
-			    tenantAdmin.setFullName(aTenant.getName()+" ADMIN");
-			    String pwd = Password.encriptPassword(userId);
-			    tenantAdmin.setPassword(pwd);
-			    tenantAdmin.setIsSuperadmin(false);
-			    tenantAdmin.getCommonInfo().setOrganization(aTenant.getName());
-			    Integer newId = userDAO.saveSbiUser(tenantAdmin);
-			    setRole(aTenant.getName(), newId, aSession);
-			    logger.debug("User [" + userId + "] sucesfully stored into database with id [" + newId + "]");
-			}			  
-		} catch(Throwable t) {
-			logger.error("An unexpected error occurred while creating user", t);
-			throw new HibernateException(t);
+		    Role adminRole = createAdminRoleForTenant(aTenant.getName());
+		    logger.debug("Storing user [" + userId + "] into database ...");
+		    SbiUser tenantAdmin = new SbiUser();
+		    tenantAdmin.setUserId(userId);
+		    tenantAdmin.setFullName(aTenant.getName() + ADMIN_USER_NAME_SUFFIX);
+		    String pwd = Password.encriptPassword(userId);
+		    tenantAdmin.setPassword(pwd);
+		    tenantAdmin.setIsSuperadmin(false);
+		    tenantAdmin.getCommonInfo().setOrganization(aTenant.getName());
+		    Integer newId = userDAO.saveSbiUser(tenantAdmin);
+		    setRole(adminRole, newId);
+		    logger.debug("User [" + userId + "] sucesfully stored into database with id [" + newId + "]");
+		    toReturn = userDAO.loadSbiUserById(newId);
+		} catch (Exception e) {
+			logger.error("Error while trying to initialize admin for tenant " + aTenant.getName() + ": " + e.getMessage(), e);
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIRuntimeException("Error while trying to initialize admin for tenant " + aTenant.getName(), e);
 		} finally {
-			logger.debug("createUser OUT");
+			if (aSession != null && aSession.isOpen()) {
+				aSession.close();
+			}
+			logger.debug("OUT");
 		}
+		
+		return toReturn;
 	}
 	
-	private void createRole(String tenant, Session aSession) throws HibernateException{
-		
+	private String getAdminUserId(SbiTenant aTenant) {
+		Assert.assertNotNull(aTenant, "Tenant in input is null");
+		logger.debug("IN: tenant = [" + aTenant.getName() + "]");
+		String userId = aTenant.getName().toLowerCase() + ADMIN_USER_ID_SUFFIX;
+		logger.debug("OUT: user id = [" + userId + "]");
+		return userId;
+	}
+
+	private Role createAdminRoleForTenant(String tenant) {
+		logger.debug("IN: tenant is " + tenant);
 		Role aRole = new Role();
 		try {
 			RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
-			String roleDes = "/"+tenant.toLowerCase()+"/admin";
-			aRole.setName(roleDes);
-			aRole.setDescription(roleDes);
+			roleDAO.setTenant(tenant);
+			String roleName = "/" + tenant.toLowerCase() + "/admin";
+			logger.debug("Role name is [" + roleName + "]");
+			Role existingRole = roleDAO.loadByName(roleName);
+			if (existingRole != null) {
+				logger.debug("Role [" + roleName + "] already exists");
+				return existingRole;
+			}
+			aRole.setName(roleName);
+			aRole.setDescription(roleName);
 			aRole.setOrganization(tenant);
 			Domain domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("ROLE_TYPE", "ADMIN");	
 			aRole.setRoleTypeCD("ADMIN");
 			aRole.setRoleTypeID(domain.getValueId());
-			roleDAO.insertRoleWithSession(aRole, aSession);
-		} catch(Throwable t) {
-			logger.error("An unexpected error occurred while setting user role", t);
-			throw new HibernateException(t);
+			roleDAO.insertRole(aRole);
+			Role toReturn = roleDAO.loadByName(roleName);
+			return toReturn;
+		} catch (Exception e) {
+			logger.error("An unexpected error occurred while creating admin role for tenant " + tenant, e);
+			throw new SpagoBIRuntimeException("An unexpected error occurred while creating admin role for tenant " + tenant, e);
 		} finally {
-			logger.debug("setRole OUT");
+			logger.debug("OUT");
 		}
 	}
 	
-	private void setRole(String tenant, int userIdInt, Session aSession) throws HibernateException {
+	private void setRole(Role role, int userIdInt) {
+		logger.debug("IN");
 		SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
 		SbiExtUserRolesId id = new SbiExtUserRolesId();
-
 		try {
+			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
+	    	Integer extRoleId = role.getId();
+	    	id.setExtRoleId(extRoleId); // role Id
+	    	id.setId(userIdInt);        //user Id
+	    	sbiExtUserRole.setId(id);
+	    	userDAO.updateSbiUserRoles(sbiExtUserRole);
 			RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();	
-			SbiExtRoles role = roleDAO.loadByNameInSession("/"+tenant.toLowerCase()+"/admin", aSession);
-			id.setExtRoleId(role.getExtRoleId());//role Id
-			id.setId(userIdInt);//user ID
-			sbiExtUserRole.setId(id);
-			SbiCommonInfo commonInfo = new SbiCommonInfo();
-			commonInfo.setOrganization(tenant);
-			sbiExtUserRole.setCommonInfo(commonInfo);
-			aSession.saveOrUpdate(sbiExtUserRole);
-
-		} catch(Throwable t) {
-			logger.error("An unexpected error occurred while setting user role", t);
-			throw new HibernateException(t);
+			userDAO.updateSbiUserRoles(sbiExtUserRole);
+		} catch (Exception e) {
+			logger.error("An unexpected error occurred while associating role [" + role.getName() + "] to user with id " + userIdInt, e);
+			throw new SpagoBIRuntimeException("An unexpected error occurred while associating role [" + role.getName() + "] to user with id " + userIdInt, e);
 		} finally {
-			logger.debug("setRole OUT");
+			logger.debug("OUT");
 		}
 	}
 
