@@ -178,7 +178,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 						record.MULTITENANT_ID = respoceJSON.MULTITENANT_ID;
 					}
 					if(respoceJSON.SAVE_TYPE && respoceJSON.SAVE_TYPE == 'INSERT'){
-						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.multitenant.saved') + record.MULTITENANT_NAME+'_admin');
+						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.multitenant.saved') + respoceJSON.NEW_USER);
 					}else{
 						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'));
 					}

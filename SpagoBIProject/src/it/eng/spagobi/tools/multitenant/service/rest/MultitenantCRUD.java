@@ -21,6 +21,7 @@ import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.rest.interceptors.RestExceptionMapper;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tenant.TenantManager;
@@ -244,6 +245,7 @@ public class MultitenantCRUD {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 			String saveType = "INSERT";
+			SbiUser newAdminUser = null;
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 				 
 			ITenantsDAO dao = DAOFactory.getTenantsDAO();
@@ -265,6 +267,8 @@ public class MultitenantCRUD {
 				SbiTenant tmp = dao.loadTenantByName(tenantNew.getName());
 				tenantNew.setId(tmp.getId());
 				
+				newAdminUser = dao.initializeAdminUser(tenantNew);
+				
 			} else {				
 				//update ds
 				try{
@@ -275,8 +279,13 @@ public class MultitenantCRUD {
 				}
 				
 			}  
-
-			return ("{MULTITENANT_ID:"+tenantNew.getId()+" , SAVE_TYPE: '"+saveType+"'}");
+			JSONObject o = new JSONObject();
+			o.put("MULTITENANT_ID", tenantNew.getId());
+			o.put("SAVE_TYPE", saveType);
+			if (newAdminUser != null) {
+				o.put("NEW_USER", newAdminUser.getUserId());
+			}
+			return o.toString();
 			
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
