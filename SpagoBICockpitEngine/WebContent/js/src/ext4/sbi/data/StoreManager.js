@@ -992,9 +992,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 */
 	, loadStoresByAssociations: function(associationGroup, selections) {
 		
-		Sbi.trace("[StoreManager.loadStoresByAssociations]: IN");
-		
-		alert("loadStoresByAssociations");
+		Sbi.trace("[StoreManager.loadStoresByAssociations]: IN");		
 		
 		var storesAggregations = [];
 		var stores = this.getStoresInAssociationGroup(associationGroup);
