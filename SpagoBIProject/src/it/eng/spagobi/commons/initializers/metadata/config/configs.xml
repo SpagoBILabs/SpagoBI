@@ -122,14 +122,14 @@
 
 
 <CONFIG label="MAIL.PROFILES.scheduler.smtphost" name="Scheduler Smtp Host" description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.scheduler.smtpport" name="Scheduler Smtp Port" description="" isActive="true" valueCheck="110" valueType="STRING" category="MAIL"/>
+<CONFIG label="MAIL.PROFILES.scheduler.smtpport" name="Scheduler Smtp Port" description="" isActive="true" valueCheck="465" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.scheduler.from" name="Scheduler From" description="" isActive="true" valueCheck="spagobi@spagobidomain.com" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.scheduler.user" name="Scheduler User" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.scheduler.password" name="Scheduler Password" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.scheduler.useSSL" name="Use SSL Connection" description="" isActive="true" valueCheck="false" valueType="STRING" category="MAIL"/>
 
 <CONFIG label="MAIL.PROFILES.user.smtphost" name="Scheduler Smtp Host" description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.user.smtpport" name="Scheduler Smtp Port" description="" isActive="true" valueCheck="110" valueType="STRING" category="MAIL"/>
+<CONFIG label="MAIL.PROFILES.user.smtpport" name="Scheduler Smtp Port" description="" isActive="true" valueCheck="465" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.user.from" name="Scheduler From" description="" isActive="true" valueCheck="spagobi@spagobidomain.com" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.user.user" name="Scheduler User" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.user.password" name="Scheduler Password" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
@@ -137,7 +137,7 @@
 
 
 <CONFIG label="MAIL.PROFILES.kpi_alarm.smtphost" name="Scheduler Smtp Host" description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.kpi_alarm.smtpport" name="Scheduler Smtp Port" description="" isActive="true" valueCheck="110" valueType="STRING" category="MAIL"/>
+<CONFIG label="MAIL.PROFILES.kpi_alarm.smtpport" name="Scheduler Smtp Port" description="" isActive="true" valueCheck="465" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.kpi_alarm.from" name="Scheduler From" description="" isActive="true" valueCheck="spagobi@spagobidomain.com" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.kpi_alarm.user" name="Scheduler User" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.kpi_alarm.password" name="Scheduler Password" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
