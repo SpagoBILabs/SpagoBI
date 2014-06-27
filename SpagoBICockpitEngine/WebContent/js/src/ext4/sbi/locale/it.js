@@ -191,7 +191,8 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'] = 'conteggio
 
 
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.selections'] = 'Selezioni';
-Sbi.locale.ln['sbi.cockpit.mainpanel.btn.filters'] = 'Filtri';
+Sbi.locale.ln['sbi.cockpit.mainpanel.btn.clearselections'] = 'Cancella selezioni';
+Sbi.locale.ln['sbi.cockpit.mainpanel.btn.parameters'] = 'Parametri';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.associations'] = 'Associazioni';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.addWidget'] = 'Aggiungi Widget';
 

@@ -350,14 +350,24 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return null;
 	}
 	
+	/**
+	 * @method
+	 * 
+	 * Returns the stores belonging to this association group. The association group refers the stores by id. This method
+	 * return all the stores (at all aggregation level) for each id referentiated in association group.
+	 * 
+	 * @param {Object} associationGroup The association group
+	 */
 	, getStoresInAssociationGroup: function(associationGroup) {
-		
+		Sbi.trace("[StoreManager.getStoresInAssociationGroup]: IN");
 		var stores = [];
+		Sbi.trace("[StoreManager.getStoresInAssociationGroup]: There are [" + associationGroup.datasets.length + "] dataset(s) in the input association group");
 		for(var i = 0; i < associationGroup.datasets.length; i++) {
 			var storeId = associationGroup.datasets[i];
-			stores.push(this.getStore(storeId));
+			Ext.Array.push(stores, this.getStoresById(storeId));
 		}
-	
+		Sbi.trace("[StoreManager.getStoresInAssociationGroup]: There are [" + stores.length + "] store(s) related to the input association group ");
+		Sbi.trace("[StoreManager.getStoresInAssociationGroup]: OUT");
 		return stores;
 	}
 
@@ -566,7 +576,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			return false;
 		}
 		
-		Sbi.trace("[StoreManager.removeStore]: typeof store: " + (typeof store));
 		if(Ext.isString(store)) {
 			Sbi.error("[StoreManager.removeStore]: Input parameter [store] must be of type Ext.data.Store");
 		} 
@@ -604,11 +613,11 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		Sbi.trace("[StoreManager.containsStore]: IN");
 		
 		if(Ext.isString(storeId) == false) {
-			Sbi.error("[StoreManager.getStore]: parameter storeId must be a string!!!");
+			Sbi.error("[StoreManager.getStore]: parameter storeId must be a string");
 			return;
 		}
 		Sbi.trace("[StoreManager.containsStore]: store id is equal to [" + storeId +"]");
-		Sbi.trace("[StoreManager.containsStore]: store aggregations is equal to [" + aggregations +"]");
+		Sbi.trace("[StoreManager.containsStore]: store aggregations is equal to [" + Sbi.toSource(aggregations,true) +"]");
 		
 		var store = this.getStore(storeId, aggregations);
 		Sbi.trace("[StoreManager.containsStore]: store is equal to [" + store +"]");
@@ -627,8 +636,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	, getStoreId: function(store) {
 		var storeId = null;
 		
-		Sbi.trace("[StoreManager.getStoreId]: typeof store: " + (typeof store));
-		
 		if(Ext.isString(store)) {
 			storeId = store;
 		} else {
@@ -638,12 +645,30 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return storeId;
 	}
 	
+	, getStoreIds: function() {
+		var ids = [];
+		this.stores.each(function(registeredStore, index, length) {
+			ids.push(registeredStore.id);
+		}, this);
+		return ids;
+	}
+	
 	/**
 	 * @methods
 	 * 
-	 * Returns all the stores managed by this store manager
-	 * 
-	 *  @return {Ext.data.Store[]} The stores list
+	 * @returns {Integer} the number of stores managed by this store manager
+	 */
+	, getStoresCount: function() {
+		return getStores().length;
+	}
+	
+	, getStoresCountById: function(storeId) {
+		return getStoresById(storeId).length;
+	}
+	
+	/**
+	 * @methods
+	 *  @return {Ext.data.Store[]} all the stores managed by this store manager
 	 */
 	, getStores: function() {
 		var stores = [];
@@ -654,10 +679,39 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return stores;
 	}
 	
-	, getStoresCount: function() {
-		return getStores().length;
+	/**
+	 * @methods
+	 *  @return {Ext.data.Store[]} all the stores managed by this store manager with the specified id
+	 */
+	, getStoresById: function(storeId) {
+		Sbi.trace("[StoreManager.getStoresById]: IN");
+		
+		var stores = [];
+		if(Ext.isString(storeId) == false) {
+			var stores = [];
+			Sbi.error("[StoreManager.getStoresById]: parameter storeId must be a string");
+			return;
+		}
+		Sbi.trace("[StoreManager.getStoresById]: store id is equal to [" + storeId +"]");
+		
+		var registeredStore = this.stores.get(storeId);
+		if(Sbi.isValorized(registeredStore)) {
+			Ext.Array.push(stores, registeredStore.aggregatedVersions);
+		} else {
+			Sbi.warn("[StoreManager.getStoresById]: There is no store associated to id [" + storeId + "]");
+		}
+		Sbi.trace("[StoreManager.getStoresById]: Found [" + stores.length + "] stores associated to id [" + storeId + "]");
+		
+		Sbi.trace("[StoreManager.getStoresById]: OUT");
+		
+		return stores;
 	}
 	
+	/**
+	 * @method
+	 * 
+	 * @returns {Ext.data.Store} the store with the specified id and aggregation level
+	 */
 	, getStore: function(storeId, aggregations) {
 		var store = null;
 		
@@ -668,7 +722,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			return;
 		}
 		Sbi.trace("[StoreManager.getStore]: store id is equal to [" + storeId +"]");
-		Sbi.trace("[StoreManager.getStore]: store aggregations is equal to [" + aggregations +"]");
+		Sbi.trace("[StoreManager.getStore]: store aggregations is equal to [" + Sbi.toSource(aggregations, true) + "]");
 	
 		var registeredStore = this.stores.get(storeId);
 		aggregations = aggregations ||  null;
@@ -678,7 +732,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 				
 				var aggregationOnRegisteredStore = this.getAggregationOnStore(registeredStore.aggregatedVersions[i]);
 				Sbi.trace("[StoreManager.getStore]: registered store [" + i + "] for id [" + storeId+ "] have the following aggregationd defined: [" 
-						+ aggregationOnRegisteredStore +"]");
+						+ Sbi.toSource(aggregationOnRegisteredStore) +"]");
 				
 				if( this.isSameAggregationLevel(aggregations, aggregationOnRegisteredStore) ) {
 					Sbi.trace("[StoreManager.getStore]: there is already a store for id [" + storeId +"]");
@@ -784,19 +838,84 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	}
 	
 	, isSameAggregationLevel: function(agg1, agg2) {
+		Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregation1 is equal to [" + Sbi.toSource(agg1) + "]");
+		Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregation2 is equal to [" + Sbi.toSource(agg2) + "]");
+		
 		if(Sbi.isNotValorized(agg1) && Sbi.isNotValorized(agg2)) {
 			Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are the same (both empty)");
 			return true;
-		} else if(Sbi.isValorized(agg1) && Sbi.isValorized(agg2)) {
-			Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are the same (both valorized)");
-			return true;
+		} else if( (Sbi.isValorized(agg1) && Sbi.isNotValorized(agg2)) || (Sbi.isNotValorized(agg1) && Sbi.isValorized(agg2))) {
+			Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (one of the two is not valorized)");
+			return false;
+		} else {
+			if( (Sbi.isValorized(agg1.measures) && Sbi.isNotValorized(agg2.measures)) 
+					|| (Sbi.isNotValorized(agg1.measures) && Sbi.isValorized(agg2.measures))) {
+				Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (one of the two have no measures)");
+				return false;
+			}
+			if(agg1.measures.length != agg2.measures.length) {
+				Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (the number od mesures is different)");
+				return false;
+			}
+			for(var i = 0; i < agg1.measures.length; i++) {
+				if(agg1.measures[i].id != agg2.measures[i].id
+				|| agg1.measures[i].alias != agg2.measures[i].alias
+				|| agg1.measures[i].funct != agg2.measures[i].funct
+				|| agg1.measures[i].nature != agg2.measures[i].nature) {
+					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (measures are not equals)");
+					return false;
+				}
+			}
+			
+			if( (Sbi.isValorized(agg1.categories) && Sbi.isNotValorized(agg2.categories)) 
+					|| (Sbi.isNotValorized(agg1.categories) && Sbi.isValorized(agg2.categories))) {
+				Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (one of the two have no categories)");
+				return false;
+			}
+			if(agg1.categories.length != agg2.categories.length) {
+				Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (the number of categories is different)");
+				return false;
+			}
+			for(var i = 0; i < agg1.categories.length; i++) {
+				
+				Sbi.trace("[StoreManager.isSameAggregationLevel]: comapring category[" + i + "].1: " + Sbi.toSource(agg1.categories[i]));
+				Sbi.trace("[StoreManager.isSameAggregationLevel]: comapring category[" + i + "].2: " + Sbi.toSource(agg2.categories[i]));
+				if(agg1.categories[i].id != agg2.categories[i].id) {
+					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
+							"[id] is different [" + agg1.categories[i].id + ", " + agg2.categories[i].id + "])");
+					return false;
+				}
+				if(agg1.categories[i].alias != agg2.categories[i].alias) {
+					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
+							"[alias] is different [" + agg1.categories[i].alias + ", " + agg2.categories[i].alias + "])");
+					return false;
+				}
+//				if(agg1.categories[i].funct != agg2.categories[i].funct) {
+//					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
+//							"[funct] is different [" + agg1.categories[i].funct + ", " + agg2.categories[i].funct + "])");
+//					return false;
+//				}
+				if(agg1.categories[i].nature != agg2.categories[i].nature) {
+					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
+							"[nature] is different [" + agg1.categories[i].nature + ", " + agg2.categories[i].nature + "])");
+					return false;
+				}
+			}
 		}
-		return false;
+		
+		Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are the same");
+		
+		return true;
 	}
 	
 	
 
-	
+	, loadAllStores: function(){
+		var stores = this.getStores();
+		for(var i = 0; i < stores.length; i++) {
+			this.loadStore(stores[i]);
+		}
+	}
 	/**
 	 * @method
 	 * 
@@ -875,33 +994,31 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		Sbi.trace("[StoreManager.loadStoresByAssociations]: IN");
 		
-		// TODO implement the above logic in one shot:
-		// call a service that reload the joined dataset filtering it properly
-		// take the result an split in in subdatasets
-		// pass the new data to the store in order to reload them
+		alert("loadStoresByAssociations");
 		
-		
-		// TODO test che a seguito di un filtro associativo arrivi al servizio la variabile aggregations
-		
-		var aggregations = {};
+		var storesAggregations = [];
 		var stores = this.getStoresInAssociationGroup(associationGroup);
+		
+		Sbi.trace("[StoreManager.loadStoresByAssociations]: store in assocition group are [" + stores.length + "]");
+		
 		var storesNotAggregated = [];
 		var storesAggregated = [];
 		for(var i = 0; i < stores.length; i++) {
 			var store = stores[i];
-			var extraParams = store.getProxy().extraParams;
-			if(extraParams && extraParams.categories) {
-				aggregations[this.getStoreId(store)] = {
-					categories: Ext.JSON.decode(extraParams.categories) ,
-					measures: Ext.JSON.decode(extraParams.measures)
-				};
+			if(this.isStoreAggregated(store)) {
+				storesAggregations.push(this.getAggregationOnStore(store));
 				storesAggregated.push(this.getStoreId(store));
 			} else {
 				storesNotAggregated.push(this.getStoreId(store));
 			}
-			
 		}
+		
+		Sbi.trace("[StoreManager.loadStoresByAssociations]: not agrregated stores are [" + storesAggregated.length + "]");
+		Sbi.trace("[StoreManager.loadStoresByAssociations]: agrregated stores are [" + storesNotAggregated.length + "]");
+		
+		
 
+		Sbi.trace("[StoreManager.loadStoresByAssociations]: Loading joined dataset used by [" + Sbi.toSource(storesNotAggregated) + "] not aggregated store(s)");
 		Ext.Ajax.request({
 		    url: Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'),
 		    method: 'GET',
@@ -915,16 +1032,19 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			scope: this
 		});
 		
-		for(a in aggregations) {
-			aggregations[a].dataset = a;
+		for(var i = 0; i < storesAggregated.length; i++) {
+			var storeId = storesAggregated[i];
+			Sbi.trace("[StoreManager.loadStoresByAssociations]: Loading joined dataset used by aggregated dataset [" + storeId + "] not aggregated store(s)");
+			var storeAggregations = storesAggregations[i];
+			storeAggregations.dataset = storeId;
 			Ext.Ajax.request({
 			    url: Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'),
 			    method: 'GET',
 			    params: {
 			    	associationGroup:  Ext.JSON.encode(associationGroup)
 			        , selections: Ext.JSON.encode(selections)
-			        , datasets: Ext.JSON.encode([a])
-			        , aggregations: Ext.JSON.encode(aggregations[a])
+			        , datasets: Ext.JSON.encode([storeId])
+			        , aggregations: Ext.JSON.encode(storeAggregations)
 			    },
 			    success : this.onAssociationGroupReloaded,
 				failure: Sbi.exception.ExceptionHandler.handleFailure,
@@ -933,14 +1053,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 		
 		Sbi.trace("[StoreManager.loadStoresByAssociations]: OUT");
-	}
-	
-	, getStoreIds: function() {
-		var ids = [];
-		this.stores.each(function(store, index, length) {
-			ids.push(store.storeId);
-		}, this);
-		return ids;
 	}
 	
 	/*
@@ -1366,7 +1478,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 					Sbi.exception.ExceptionHandler.handleFailure(response);
 				} else {
 					//alert("Response of [/api/1.0/associations/]:" + r);
-					this.associationGroups = Ext.util.JSON.decode(r);								
+					this.associationGroups = Ext.JSON.decode(r);								
 				}
 			} else {
 				Sbi.exception.ExceptionHandler.showErrorMessage('Server response body is empty', 'Service Error');
@@ -1377,18 +1489,32 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	}
     
     , onAssociationGroupReloaded: function(response, options) {
+    	Sbi.trace("[StoreManager.onAssociationGroupReloaded]: IN");
+    	
+    	Sbi.trace("[StoreManager.onAssociationGroupReloaded]: Options object contains the following properties: " + Sbi.toSource(options.params, true));
+    	Sbi.trace("[StoreManager.onAssociationGroupReloaded]: Options object is equal to [" + Sbi.toSource(options.params, true) + "]");
+    	
+    	
 		if(response !== undefined && response.statusText=="OK") {
     		var r = response.responseText || response.responseXML;
 			if(Sbi.isValorized(r)) {
 				if(r.indexOf("error.mesage.description")>=0){
 					Sbi.exception.ExceptionHandler.handleFailure(response);
 				} else {
-					
-					var stores =  Ext.util.JSON.decode(r);
+					var stores =  Ext.JSON.decode(r);
+					var aggregations = undefined;
+					if(options.params && options.params.aggregations) {
+						aggregations = Ext.JSON.decode(options.params.aggregations);
+					}
 					for(var s in stores) {
 						var data = stores[s];
-						var store = this.getStore(s);
-						store.loadData(data);
+						var store = this.getStore(s, aggregations);
+						if(store) {
+				    		store.loadData(data);
+				    		Sbi.error("[StoreManager.onAssociationGroupReloaded]: Data sucesfully loaded into store [" + s + "] at aggregation level [" + aggregations + "]");
+				    	} else {
+				    		Sbi.error("[StoreManager.onAssociationGroupReloaded]: Impossible to load data into store [" + s + "] at aggregation level [" + aggregations + "]");
+				    	}	
 					}
 				}
 			} else {
@@ -1397,6 +1523,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		} else {
 			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
 		}
+		
+		Sbi.trace("[StoreManager.onAssociationGroupReloaded]: OUT");
 	}
     
     , onStoreLoadException: function(proxy, response, operation, eOpts) {    	
@@ -1443,11 +1571,13 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	
     	var recordsNumber = store.getTotalCount();
 		
-		if (recordsNumber == 1){
-			store.status = "error";
-			
+    	store.status = "ready";
+    	
+		if (recordsNumber == 1){			
 			var rawData = store.getAt(0).raw;
 			if (Sbi.isValorized(rawData) && Sbi.isValorized(rawData.errors)) {
+				store.status = "error";
+				
 				var msg = "Impossible to load dataset [" + this.getStoreId(store) + "] due to the following service errors: <p><ul>";
 				for(var i = 0; i < rawData.errors.length; i++) {
 					msg += "<li>" + rawData.errors[i].message + ";";
@@ -1463,9 +1593,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 				});
 			}
 				
-		} else {
-			store.status = "ready";
-		}
+		} 
 		
 		if(recordsNumber == 0) {
 			Ext.Msg.show({
