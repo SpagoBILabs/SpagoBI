@@ -346,7 +346,6 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		}else{
 			valid = valid && (v.CONNECTION_URL!=null && v.CONNECTION_URL!=undefined &&  v.CONNECTION_URL!="");
 			valid = valid && (v.USER!=null && v.USER!=undefined &&  v.USER!="");
-			valid = valid && (v.PASSWORD!=null && v.PASSWORD!=undefined &&  v.PASSWORD!="");
 			valid = valid && (v.DRIVER!=null && v.DRIVER!=undefined &&  v.DRIVER!="");
 		}
 		return valid;
