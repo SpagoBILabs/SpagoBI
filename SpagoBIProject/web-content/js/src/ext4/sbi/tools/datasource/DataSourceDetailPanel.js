@@ -218,7 +218,6 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			name: "PASSWORD",
 			inputType: 'password',
 			fieldLabel: LN('sbi.datasource.type.jdbc.password'),
-			allowBlank: false,
 			hidden: true
 			
 		});
