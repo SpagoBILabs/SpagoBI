@@ -16,13 +16,15 @@ Sbi.cockpit.widgets.selection.SelectionWidget = function(config) {
 	
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.selection.SelectionWidget', defaultSettings);
 	var c = Ext.apply(settings, config || {});
-		
 	Ext.apply(this, c);
-		
-	Sbi.cockpit.widgets.selection.SelectionWidget.superclass.constructor.call(this, c);		
 	
 	this.init();
+				
+	Sbi.cockpit.widgets.selection.SelectionWidget.superclass.constructor.call(this, c);			
 	
+	this.on('beforerender', this.onBeforeRender, this);	
+//	this..on('afterlayout', this.onAfterLayout, this);
+		
 	Sbi.trace("[SelectionWidget.constructor]: OUT");
 };
 
@@ -32,11 +34,11 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
 	// PROPERTIES
 	// =================================================================================================================
 	
-	selectionsPanel: null    	
-	
-	, selectionContent: null
+	selectionsPanel: null    		
 	
 	, widgetManager: null	
+	
+	, gridHeader: null
 	
     // =================================================================================================================
 	// METHODS
@@ -50,6 +52,14 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
+	
+	, onCancelSingle: function(grid, rowIndex, colIndex) {
+		this.widgetManager.clearSingleSelection(grid, rowIndex, colIndex);
+	}
+
+	, onClearSelections: function(){		
+		this.widgetManager.clearSelections();
+	}
 
 	, onSelectionChange: function() {			
 		this.selectionsPanel.refreshStore();
@@ -60,13 +70,13 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
 		
 		Sbi.cockpit.widgets.selection.SelectionWidget.superclass.onRender.call(this, ct, position);							
 				
-		this.add(this.selectionContent);
+		this.add(this.selectionsPanel);
 		this.doLayout();
-								
+		
 		Sbi.trace("[SelectionWidget.onRender]: OUT");
 	}
 	
-	, onBeforeRender: function() {
+	, onBeforeRender: function() {	
 		Sbi.trace("[SelectionWidget.onBeforeRender][" + this.getId() + "]: IN");
 		
 		var config = {};
@@ -76,12 +86,12 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
 		config.widgetManager = this.widgetManager;			
 		
 		this.selectionsPanel = new Sbi.cockpit.core.SelectionsPanel({
-			widgetManager: config.widgetManager
-		});
-		
-		this.selectionContent.add(this.selectionsPanel);   
+			widgetManager: config.widgetManager,			
+			gridHeader: this.gridHeader
+		});				 
 		
 		this.widgetManager.on('selectionChange',this.onSelectionChange,this);
+		this.selectionsPanel.on('cancelSingle', this.onCancelSingle, this);
 				
 		Sbi.trace("[SelectionWidget.onBeforeRender][" + this.getId() + "]: OUT");
 	}
@@ -90,18 +100,25 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
 	// init methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, init: function() {		
-		Sbi.trace("[SelectionWidget.init]: IN");			
+		Sbi.trace("[SelectionWidget.init]: IN");						
 		
-		this.selectionContent = new Ext.Panel({
-			layout: 'fit'
-			, width: '100%'
-			, height: '100%'			
-		});
-		
-		this.selectionContent.on('beforerender', this.onBeforeRender, this);			
+		this.gridHeader = 
+		{
+            xtype: 'header',
+            titlePosition: 0,		            
+            items: [	                
+                {
+                    xtype: 'button',
+                    text: LN('sbi.selection.selectionpanel.btn.clearselections'),
+                    tooltip: LN('sbi.selection.selectionpanel.btn.clearselections'),		                    
+                    handler: this.onClearSelections,
+                    scope: this
+                }
+            ]
+		};					
 										
 		Sbi.trace("[SelectionWidget.init]: OUT");
-	}	
+	}		
 });
 
 Sbi.registerWidget('selection', {

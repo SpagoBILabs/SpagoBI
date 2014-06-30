@@ -6,3 +6,14 @@
 
 Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
+
+//===================================================================
+//SELECTION DESIGNER
+//===================================================================
+Sbi.locale.ln['sbi.selection.selectiondefinitionpanel.title'] = 'Definizione Widget di Selezione';
+Sbi.locale.ln['sbi.selection.selectiondefinitionpanel.nodefrequired'] = 'Non sono richieste ulteriori configurazioni. Procedere con la conferma della scelta.';
+
+//===================================================================
+//SELECTION RUNTIME
+//===================================================================
+Sbi.locale.ln['sbi.selection.selectionpanel.btn.clearselections'] = 'Cancella selezioni';
