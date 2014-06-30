@@ -546,13 +546,14 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, handler:  this.onShowSelectionsWindow					
 		 }));
 		
-		if (Sbi.isValorized(Sbi.config.isTechnicalUser) && 
-				Sbi.config.isTechnicalUser == 'true'){
-			tbItems.push({
-	        	text: LN('sbi.cockpit.mainpanel.btn.parameters')
-	        	, handler: this.onShowFilterEditorWizard
-	        	, scope: this
-	        });
+		if (Sbi.isValorized(Sbi.config.isTechnicalUser) && Sbi.config.isTechnicalUser == 'true'){
+			tbItems.push(  new Ext.Button({
+				id: 'paramters'
+	     		, iconCls: 'icon_parameters' 
+				, tooltip: LN('sbi.cockpit.mainpanel.btn.parameters')
+				, scope: this
+				, handler:  this.onShowFilterEditorWizard					
+			 }));				
 		}
 		
 		tbItems.push(  new Ext.Button({
