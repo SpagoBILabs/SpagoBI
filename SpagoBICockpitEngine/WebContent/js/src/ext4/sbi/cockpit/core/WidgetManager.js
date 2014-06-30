@@ -289,6 +289,13 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	Sbi.trace("[WidgetManager.addSelections]: OUT");
     }
 	
+    , clearSingleSelection: function(grid, rowIndex, colIndex){
+    	Sbi.trace("[WidgetManager.clearSingleSelection]: IN");
+    	
+    	grid.getStore().removeAt(rowIndex);
+    	
+    	Sbi.trace("[WidgetManager.clearSingleSelection]: OUT");
+    }
     // -- widget selections ----
     
     /**
