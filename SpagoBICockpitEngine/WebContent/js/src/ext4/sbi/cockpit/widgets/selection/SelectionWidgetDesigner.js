@@ -37,7 +37,7 @@ Ext.ns("Sbi.cockpit.widgets.selection");
 Sbi.cockpit.widgets.selection.SelectionWidgetDesigner = function(config) { 
 
 	var defaultSettings = {
-		name: 'selectionWidgetDesigner'
+		name: 'selectionWidgetDesigner'		
 	};		
 		
 	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.selection && Sbi.settings.cockpit.widgets.selection.selectionWidgetDesigner) {
@@ -47,7 +47,13 @@ Sbi.cockpit.widgets.selection.SelectionWidgetDesigner = function(config) {
 	
 	Ext.apply(this, c); 
 	
-//	this.init();	
+	this.init();
+	
+	c = {
+		items: [this.selectionPanel]
+		,title: LN('sbi.selection.selectiondefinitionpanel.title')
+		,border: false
+	};	
 	
 	Sbi.cockpit.widgets.selection.SelectionWidgetDesigner.superclass.constructor.call(this, c);
 		
@@ -55,7 +61,16 @@ Sbi.cockpit.widgets.selection.SelectionWidgetDesigner = function(config) {
 
 Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidgetDesigner, Sbi.cockpit.core.WidgetDesigner, {
 
-	getDesignerState: function() {
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
+	
+	selectionPanel: null
+	
+	//-----------------------------------------------------------------------------------------------------------------
+	//public methods
+	//-----------------------------------------------------------------------------------------------------------------
+	, getDesignerState: function() {
 		Sbi.trace("[SelectionWidgetDesigner.getDesignerState]: IN");
 		Sbi.trace("[SelectionWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.selection.SelectionWidgetDesigner.superclass.getDesignerState);
 		
@@ -71,6 +86,18 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidgetDesigner, Sbi.cockpit.co
 		Sbi.cockpit.widgets.selection.SelectionWidgetDesigner.superclass.setDesignerState(this, state);					
 		
 		Sbi.trace("[SelectionWidgetDesigner.setDesignerState]: OUT");
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // init methods
+    // -----------------------------------------------------------------------------------------------------------------		
+	, init: function() {
+		this.selectionPanel = new Ext.Panel({			
+			baseCls:'x-plain'
+			, padding: '5 0 0 5'
+			, layout:'fit'
+			, html: LN('sbi.selection.selectiondefinitionpanel.nodefrequired')
+		});
 	}
 
 });
