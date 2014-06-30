@@ -8,7 +8,7 @@
 Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 	extend: 'Ext.Panel'
 	, layout:'fit'
-
+	, border: false	
 	, config:{
 		  closable: false
 		, modal: true
@@ -16,6 +16,7 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 		, store: null
 		, widgetManager: null
 		, showByAssociation: true
+		, gridHeader: null
 	}
 
 	, constructor : function(config) {
@@ -101,20 +102,23 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 		this.store.loadData(data);
 		
 		Sbi.trace("[SelectionsPanel.refreshStore]: OUT");
-		}
+	}
 
 	
 	, initStoreDataByAssociation: function() {
 		Sbi.trace("[SelectionsPanel.initStoreDataByAssociation]: IN");
 		
 		var initialData = [];
-		var selections = this.widgetManager.getSelectionsByAssociations();
 		
-		for(var association in selections) {
-			var el = [association, selections[association].join()];
-			initialData.push(el);
-		}		
-		
+		if (this.widgetManager){
+			var selections = this.widgetManager.getSelectionsByAssociations();
+			
+			for(var association in selections) {
+				var el = [association, selections[association].join()];
+				initialData.push(el);
+			}
+		}
+						
 		Sbi.trace("[SelectionsPanel.initStoreDataByAssociation]: OUT");
 		
 		return initialData;
@@ -125,17 +129,19 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 		
 		var initialData = [];
 		
-		var selections = this.widgetManager.getSelections() || [];
-		
-		for (widget in selections){
-			var values = [];
-			for (field in selections[widget]){						
-				if (!Ext.isFunction(selections[widget])){	
-					values = this.getFieldValues(selections[widget][field].values);
-					var el = [widget,  field, values];
-					initialData.push(el);
-				}
-			}  
+		if (this.widgetManager){
+			var selections = this.widgetManager.getSelections() || [];
+			
+			for (widget in selections){
+				var values = [];
+				for (field in selections[widget]){						
+					if (!Ext.isFunction(selections[widget])){	
+						values = this.getFieldValues(selections[widget][field].values);
+						var el = [widget,  field, values];
+						initialData.push(el);
+					}
+				}  
+			}
 		}
 		
 		Sbi.trace("[SelectionsPanel.initStoreDataByWidget]: OUT");
@@ -187,13 +193,28 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
             	, flex: 1
 	    	});
 	    	
+	    	columns.push({
+	            xtype: 'actioncolumn',
+	            width: 30,
+	            items: [{
+	            	iconCls: 'selectionDel',
+	                tooltip: 'Delete',
+	                handler: function (grid, rowIndex, colIndex) {
+	                	this.onCancelSingle(grid, rowIndex, colIndex);	                	
+	                },
+	                scope: this
+	                
+	            }]
+	        });
+	    	
 	        this.grid = Ext.create('Ext.grid.Panel', Ext.apply(c || {}, {
 		        store: this.store,
 		        features: features,
 		        columns: columns,	        
 		        viewConfig: {
 		        	stripeRows: true
-		        }
+		        },
+		        header: Sbi.isValorized(this.gridHeader) ? this.gridHeader : false
 		    }));
 	    }    
 	
@@ -203,6 +224,10 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 	
 	, onCancel: function(){
 		this.fireEvent("cancel", this);
+	}
+	
+	, onCancelSingle: function(grid, rowIndex, colIndex) {
+		this.fireEvent("cancelSingle",grid, rowIndex, colIndex);
 	}
 	
 	, getFieldValues: function(values){
