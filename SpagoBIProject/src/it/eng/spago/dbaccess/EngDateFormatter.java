@@ -60,7 +60,7 @@ public class EngDateFormatter {
                 messageFormatStringBuffer.append("{" + position + "}");
                 position++;
             }
-            else if (token.startsWith("h")) {
+            else if (token.startsWith("h") || token.startsWith("H")) {
                 //HOUR
                 _hourPositionInMessageFormat = position;
                 _hourNumberOfDigit = token.length();
