@@ -48,7 +48,7 @@
 <CONFIG label="SPAGOBI.DATE-FORMAT-FR_FR.extJsFormat" name="EXTJS RF DATE FORMAT" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING" category="DATE-FORMAT"/>
 <CONFIG label="SPAGOBI.DATE-FORMAT-ES_ES.format" name="ES DATE FORMAT" description="Date format used while displaying dates according to user current locale.Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY." isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING" category="DATE-FORMAT"/>
 <CONFIG label="SPAGOBI.DATE-FORMAT-ES_ES.extJsFormat" name="EXTJS ES DATE FORMAT" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.TIMESTAMP-FORMAT.format" name="TIMESTAMP FORMAT" description="TimeStamp Format of SpagoBI DB" isActive="true" valueCheck="dd/MM/yyyy hh:mm:ss" valueType="STRING" category="DATE-FORMAT"/>
+<CONFIG label="SPAGOBI.TIMESTAMP-FORMAT.format" name="TIMESTAMP FORMAT" description="TimeStamp Format of SpagoBI DB" isActive="true" valueCheck="dd/MM/yyyy HH:mm:ss" valueType="STRING" category="DATE-FORMAT"/>
 <CONFIG label="SPAGOBI.TIMESTAMP-FORMAT.extJsFormat" name="EXTJS TIMESTAMP FORMAT" description="TimeStamp Format of SpagoBI DB" isActive="true" valueCheck="d/m/Y H:i:s" valueType="STRING" category="DATE-FORMAT"/>
 
 <CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.jndiDatasource" name="jndiDatasource" description="jndiDatasource" isActive="true" valueCheck="java:comp/env/jdbc/foodmart" valueType="STRING" category="ORGANIZATIONAL-UNIT"/>
@@ -77,16 +77,17 @@
 <CONFIG label="SPAGOBI_SSO.PASS" name="PASS String" description="Some proxy element use this string to do some security check" isActive="true" valueCheck="PASS" valueType="STRING" category="SECURITY"/>
 <CONFIG label="SPAGOBI_SSO.SECURITY_LOGOUT_URL" name="SECURITY LOGOUT URL" description="" isActive="true" valueCheck="https://athos.engilab.ewebpd.eng.it:1447/cas/logout" valueType="STRING" category="SECURITY"/>
 <CONFIG label="SPAGOBI_SSO.INTEGRATION_CLASS_JNDI" name="SSO INTEGRATION CLASS JNDI" description="SSO INTEGRATION CLASS JNDI" isActive="true" valueCheck="java://comp/env/spagobi_sso_class" valueType="STRING" category="SECURITY"/>
+
     <!--  TimeStamp Format of SpagoBI DB-->          
     <!--  PostgresSQL: Uncomment the row below and edit the file to provide Db timestamp info  -->
-    <!--  yyyy-MM-dd hh:mm:ss -->
+    <!--  yyyy-MM-dd HH:mm:ss -->
     <!--  MySQL: (Default) -->
-    <!--  yyyy-MM-dd hh:mm:ss -->
+    <!--  yyyy-MM-dd HH:mm:ss -->
     <!--  Oracle: Uncomment the row below and edit the file to provide Db timestamp  info -->
-    <!--  dd-MMM-yy hh:mm:ss-->
+    <!--  dd-MMM-yy HH:mm:ss-->
     <!--  Hsqldb: Uncomment the row below and edit the file to provide Db timestamp  info -->
-    <!--  yyyy-MM-dd hh:mm:ss --> 
-<CONFIG label="SPAGOBI.DB-TIMESTAMP-FORMAT.format" name="DB TIMESTAMP FORMAT" description="DB TIMESTAMP FORMAT" isActive="true" valueCheck="yyyy-MM-dd hh:mm:ss" valueType="STRING" category="DATE-FORMAT"/>
+    <!--  yyyy-MM-dd HH:mm:ss --> 
+<CONFIG label="SPAGOBI.DB-TIMESTAMP-FORMAT.format" name="DB TIMESTAMP FORMAT" description="DB TIMESTAMP FORMAT" isActive="true" valueCheck="yyyy-MM-dd HH:mm:ss" valueType="STRING" category="DATE-FORMAT"/>
 <CONFIG label="SPAGOBI.DB_LOG.value" name="DB LOG" description="DB LOG" isActive="true" valueCheck="false" valueType="STRING" category="DATE-FORMAT"/>
 
 <!-- for each themes you have to define 3 properties: view_name,ext_theme,name-->
