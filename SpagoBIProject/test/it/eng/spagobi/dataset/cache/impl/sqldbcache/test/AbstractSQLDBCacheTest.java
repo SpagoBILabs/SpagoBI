@@ -496,7 +496,9 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		dataStore.appendRecord(record);
 		
 		//persist the datastore as a table on db
+		String dialect = dataSourceWriting.getHibDialectClass();
 		PersistedTableManager persistedTableManager = new PersistedTableManager();
+		persistedTableManager.setDialect(dialect);
 		Random ran = new Random();
 		int x = ran.nextInt(100);
 		String tableName = "SbiTest"+x;

@@ -74,6 +74,15 @@ public class TestDataSourceFactory {
     						TestConstants.SQLSERVER_DRIVER, TestConstants.SQLSERVER_DIALECT_CLASS ,TestConstants.SQLSERVER_DIALECT_NAME, true, false );
 	        	}
 	        	break;
+	        case HSQLDB:
+	        	if (isWritingDatasource){
+		        	dataSource = createDataSource(TestConstants.HSQLDB_LABEL_WRITING, TestConstants.HSQLDB_URL_WRITING, TestConstants.HSQLDB_USER_WRITING, TestConstants.HSQLDB_PWD_WRITING,
+		        						TestConstants.HSQLDB_DRIVER, TestConstants.HSQLDB_DIALECT_CLASS ,TestConstants.HSQLDB_DIALECT_NAME, false, true );
+	        	} else {
+		        	dataSource = createDataSource(TestConstants.HSQLDB_LABEL_READING, TestConstants.HSQLDB_URL_READING, TestConstants.HSQLDB_USER_READING, TestConstants.HSQLDB_PWD_READING,
+    						TestConstants.HSQLDB_DRIVER, TestConstants.HSQLDB_DIALECT_CLASS ,TestConstants.HSQLDB_DIALECT_NAME, true, false );
+	        	}
+	        	break;
 		}
 		
 		return dataSource;

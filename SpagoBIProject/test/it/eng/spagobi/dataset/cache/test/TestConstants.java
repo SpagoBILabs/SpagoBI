@@ -40,18 +40,19 @@ public class TestConstants {
 	public static String CACHE_CONFIG_TABLE_PREFIX = "sbicache";
 	public static BigDecimal CACHE_CONFIG_CACHE_DIMENSION = BigDecimal.valueOf(104857600); //in bytes
 	public static int CACHE_CONFIG_PERCENTAGE_TO_CLEAN = 50;
-	
-	public static String CACHE_CONFIG_SCHEMA_NAME = "spagobi_cache";//"spagobi_testw";
-	//public static String CACHE_CONFIG_SCHEMA_NAME = "public"; //for Postgres
+	public static String CACHE_CONFIG_SCHEMA_NAME = "spagobi_testw";
+	//public static String CACHE_CONFIG_SCHEMA_NAME = "public"; //for Postgres and HSQLDB
 	//public static String CACHE_CONFIG_SCHEMA_NAME = "dbo"; //for SqlServer
 
+
 	
-	public enum DatabaseType { MYSQL, POSTGRES, ORACLE, SQLSERVER };
+	public enum DatabaseType { MYSQL, POSTGRES, ORACLE, SQLSERVER, HSQLDB };
 	
 	public static boolean enableTestsOnMySql = true;
 	public static boolean enableTestsOnPostgres = false;
 	public static boolean enableTestsOnOracle = false;
 	public static boolean enableTestsOnSQLServer = false;
+	public static boolean enableTestsOnHSQLDB = false;
 
 
 
@@ -65,28 +66,18 @@ public class TestConstants {
 	//-------------
 	// FOR WRITING
 	//-------------
-//	public static String MYSQL_LABEL_WRITING = "datasetTest_mysql_write";
-//	public static String MYSQL_URL_WRITING = "jdbc:mysql://172.27.1.83:3306/spagobi_testw";
-//	public static String MYSQL_USER_WRITING = "spagobi";
-//	public static String MYSQL_PWD_WRITING = "bispago";
-	
 	public static String MYSQL_LABEL_WRITING = "datasetTest_mysql_write";
-	public static String MYSQL_URL_WRITING = "jdbc:mysql://localhost:3306/spagobi_cache";
-	public static String MYSQL_USER_WRITING = "root";
-	public static String MYSQL_PWD_WRITING = "mysql";	
+	public static String MYSQL_URL_WRITING = "jdbc:mysql://172.27.1.83:3306/spagobi_testw";
+	public static String MYSQL_USER_WRITING = "spagobi";
+	public static String MYSQL_PWD_WRITING = "bispago";
 	
 	//-------------
 	// FOR READING
 	//-------------
-//	public static String MYSQL_LABEL_READING = "datasetTest_mysql_read";
-//	public static String MYSQL_URL_READING = "jdbc:mysql://172.27.1.83:3306/spagobi_testr";
-//	public static String MYSQL_USER_READING = "spagobi";
-//	public static String MYSQL_PWD_READING = "bispago";
-	
-	public static String MYSQL_LABEL_READING = "datasetTest_mysql_write";
-	public static String MYSQL_URL_READING = "jdbc:mysql://localhost:3306/foodmart";
-	public static String MYSQL_USER_READING = "root";
-	public static String MYSQL_PWD_READING = "mysql";
+	public static String MYSQL_LABEL_READING = "datasetTest_mysql_read";
+	public static String MYSQL_URL_READING = "jdbc:mysql://172.27.1.83:3306/spagobi_testr";
+	public static String MYSQL_USER_READING = "spagobi";
+	public static String MYSQL_PWD_READING = "bispago";
 	
 	// =======================================================
 	// POSTGRES
@@ -156,4 +147,28 @@ public class TestConstants {
 	public static String SQLSERVER_URL_READING = "jdbc:sqlserver://172.27.1.80:1433;databaseName=testSpagoBI;schema=spagobi_testr";
 	public static String SQLSERVER_USER_READING = "spagobi";
 	public static String SQLSERVER_PWD_READING = "bispago";
+	
+	// =======================================================
+	// HSQLDB (locale)
+	// =======================================================
+	public static String HSQLDB_DRIVER = "org.hsqldb.jdbcDriver";
+	public static String HSQLDB_DIALECT_CLASS = "org.hibernate.dialect.HSQLDialect";
+	public static String HSQLDB_DIALECT_NAME = "sbidomains.nm.hsql";
+
+	//-------------
+	// FOR WRITING
+	//-------------
+	public static String HSQLDB_LABEL_WRITING = "datasetTest_hsqldb_write";
+	public static String HSQLDB_URL_WRITING = "jdbc:hsqldb:hsql://localhost:9001/foodmart"; 
+	public static String HSQLDB_USER_WRITING = "sa";
+	public static String HSQLDB_PWD_WRITING = "";
+	
+	//-------------
+	// FOR READING
+	//-------------
+	public static String HSQLDB_LABEL_READING = "datasetTest_hsqldb_read";
+	public static String HSQLDB_URL_READING = "jdbc:hsqldb:hsql://localhost:9001/foodmart";
+	public static String HSQLDB_USER_READING = "sa";
+	public static String HSQLDB_PWD_READING = "";
+	
 }
