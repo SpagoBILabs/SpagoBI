@@ -73,19 +73,6 @@ Sbi.locale.ln['sbi.qbe.datastorepanel.button.tt.exportto'] = 'Export to';
 Sbi.locale.ln['sbi.qbe.savedatasetwindow.title'] = "Fill in the dataset details and click on Save";
 
 //===================================================================
-//COCKPIT WIDGETS: BarChartWidgetDesigner
-//===================================================================
-Sbi.locale.ln['sbi.cockpit.widgets.table.barChartWidgetDesigner.title'] = 'Bar Chart Designer';
-Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.title'] = 'Orientation';
-Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.vertical'] = 'vertical';
-Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.horizontal'] = 'horizontal';
-Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.side-by-side'] = 'Side-by-side';
-Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.stacked'] = 'Stacked';
-Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.percent-stacked'] = 'Percent stacked';
-Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.title'] = 'Show values';
-Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title'] = 'Show legend';
-
-//===================================================================
 //Sbi.worksheet.designer.ChartSeriesPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.title'] = 'Series';
