@@ -62,7 +62,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette, Ext.Panel, {
 		    store: Ext.data.StoreManager.lookup('widgetDesignerStore'),
 		    columns: [
 		        {
-		        	width: 270
+		        	width: 255
 		        	, dataIndex: 'name'
 		        	, hideable: false
 		        	, hidden: false	
