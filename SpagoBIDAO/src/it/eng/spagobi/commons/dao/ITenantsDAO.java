@@ -9,6 +9,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationEngine;
 import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.profiling.bean.SbiUser;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 
-public interface ITenantsDAO extends ISpagoBIDao{
+public interface ITenantsDAO extends ISpagoBIDao {
 
 	public List<SbiTenant> loadAllTenants();
 	
@@ -33,5 +34,7 @@ public interface ITenantsDAO extends ISpagoBIDao{
 	public void modifyTenant(SbiTenant aTenant) throws EMFUserError, Exception;
 	
 	public void deleteTenant(SbiTenant aTenant)throws EMFUserError;
+	
+	public SbiUser initializeAdminUser(SbiTenant aTenant);
 	
 }
