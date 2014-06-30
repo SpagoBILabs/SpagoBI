@@ -24,6 +24,8 @@ Ext.define('Sbi.cockpit.core.SelectionsWindow', {
 	 *  Container of the selections panel
 	 */
 	, selectionsPanel: null
+	
+	, widgetManager: null
 
 	, constructor : function(config) {
 		Sbi.trace("[SelectionsWindow.constructor]: IN");
@@ -62,10 +64,14 @@ Ext.define('Sbi.cockpit.core.SelectionsWindow', {
 
 	, init: function(c){
 		Sbi.trace("[SelectionsWindow.init]: IN");		
+		
+		this.widgetManager = c.widgetManager;
+		
 		this.selectionsPanel = Ext.create('Sbi.cockpit.core.SelectionsPanel', {
 			widgetManager: c.widgetManager
 		});
 		this.selectionsPanel.on('cancel', this.onCancel, this);
+		this.selectionsPanel.on('cancelSingle', this.onCancelSingle, this);
 		
 		Sbi.trace("[SelectionsWindow.init]: OUT");
 	}
@@ -89,4 +95,9 @@ Ext.define('Sbi.cockpit.core.SelectionsWindow', {
 	, onCancel: function(){
 		this.fireEvent("cancel", this);
 	}
+	
+	, onCancelSingle: function(grid, rowIndex, colIndex) {		
+		this.widgetManager.clearSingleSelection(grid, rowIndex, colIndex);
+	}
+	
 });
