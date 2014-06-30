@@ -23,6 +23,7 @@ package it.eng.spagobi.dataset.cache.impl.sqldbcache.test.postgres;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.AbstractSQLDBCacheMetadatTest;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.AbstractSQLDBCacheTest;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.dataset.cache.test.TestDataSourceFactory;
@@ -31,9 +32,9 @@ import it.eng.spagobi.dataset.cache.test.TestDataSourceFactory;
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class PostgresSQLDBCacheTest extends AbstractSQLDBCacheTest {
+public class PostgresSQLDBCacheMetadataTest extends AbstractSQLDBCacheMetadatTest {
 	
-	static private Logger logger = Logger.getLogger(PostgresSQLDBCacheTest.class);
+	static private Logger logger = Logger.getLogger(PostgresSQLDBCacheMetadataTest.class);
 
 	//Create Datasources specific for this test
 	@Override
@@ -42,28 +43,8 @@ public class PostgresSQLDBCacheTest extends AbstractSQLDBCacheTest {
 		dataSourceWriting = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.POSTGRES, true);
 	}
 	
-	//Generic tests imported from parent class
-	public void testCacheInit(){
-		super.testCacheInit();
+	//Generic tests imported from parent class	
+	public void testGetRequiredMemory(){
+		super.testGetRequiredMemory();
 	}
-	
-	public void testCachePutJDBCDataSet(){
-		super.testCachePutJDBCDataSet();
-	}
-	
-	public void testCachePutFileDataSet(){
-		super.testCachePutFileDataSet();
-	}
-	
-	public void testCachePutQbeDataSet(){		
-		super.testCachePutQbeDataSet();
-	}
-	
-	public void testCachePutFlatDataSet(){		
-		super.testCachePutFlatDataSet();	
-	}
-	
-	public void testCachePutScriptDataSet(){		
-		super.testCachePutScriptDataSet();	
-	}	
 }
