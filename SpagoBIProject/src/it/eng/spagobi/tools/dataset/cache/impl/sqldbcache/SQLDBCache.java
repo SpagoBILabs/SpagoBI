@@ -52,6 +52,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -761,7 +762,9 @@ public class SQLDBCache implements ICache {
 		dataStore.appendRecord(record);
 		
 		//persist the datastore as a table on db
+		String dialect = dataSource.getHibDialectClass();
 		PersistedTableManager persistedTableManager = new PersistedTableManager();
+		persistedTableManager.setDialect(dialect);
 		Random ran = new Random();
 		int x = ran.nextInt(100);
 		String tableName = "SbiTest"+x;

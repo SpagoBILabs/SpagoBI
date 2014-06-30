@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.dataset.cache.test;
 
 
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.hsqldb.HsqldbSQLDBCacheTest;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.mysql.MySqlSQLDBCacheTest;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.oracle.OracleSQLDBCacheTest;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.postgres.PostgresSQLDBCacheTest;
@@ -48,6 +49,9 @@ public class SQLDBCacheTestSuite extends TestCase {
 		}
 		if(TestConstants.enableTestsOnSQLServer){
 			suite.addTestSuite(SQLServerSQLDBCacheTest.class);
+		}
+		if(TestConstants.enableTestsOnHSQLDB){
+			suite.addTestSuite(HsqldbSQLDBCacheTest.class);
 		}
 		return suite;
 	}
