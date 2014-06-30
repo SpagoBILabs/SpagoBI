@@ -7,5 +7,16 @@
 Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
-
+//===================================================================
+//COCKPIT WIDGETS: BarChartWidgetDesigner
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.widgets.table.barChartWidgetDesigner.title'] = 'Bar Chart Designer';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.title'] = 'Orientamento';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.vertical'] = 'verticale';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.horizontal'] = 'orizontale';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.side-by-side'] = 'Affiancato';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.stacked'] = 'Sovrapposto';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.percent-stacked'] = 'Sovrapposto Percentuale';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.title'] = 'Mostra valori';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title'] = 'Mostra legenda';
 
