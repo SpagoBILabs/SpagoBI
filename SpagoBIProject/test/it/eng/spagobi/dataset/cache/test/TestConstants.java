@@ -34,13 +34,14 @@ public class TestConstants {
 	public static String workspaceFolder = "."; //"C:/Users/cortella/workspaceJEE";
 
 	public static String RESOURCE_PATH = workspaceFolder + "/test/resources/";
-	public static String WEBCONTENT_PATH = workspaceFolder + "/WebContent";
-	public static String AF_CONFIG_FILE = workspaceFolder + "/WEB-INF/conf/master.xml";
+	public static String WEBCONTENT_PATH = workspaceFolder + "/test/resources/spago/";
+	public static String AF_CONFIG_FILE = workspaceFolder + "/master.xml";
 	
 	public static String CACHE_CONFIG_TABLE_PREFIX = "sbicache";
 	public static BigDecimal CACHE_CONFIG_CACHE_DIMENSION = BigDecimal.valueOf(104857600); //in bytes
 	public static int CACHE_CONFIG_PERCENTAGE_TO_CLEAN = 50;
-	public static String CACHE_CONFIG_SCHEMA_NAME = "spagobi_testw";
+	
+	public static String CACHE_CONFIG_SCHEMA_NAME = "spagobi_cache";//"spagobi_testw";
 	//public static String CACHE_CONFIG_SCHEMA_NAME = "public"; //for Postgres
 	//public static String CACHE_CONFIG_SCHEMA_NAME = "dbo"; //for SqlServer
 
@@ -64,18 +65,28 @@ public class TestConstants {
 	//-------------
 	// FOR WRITING
 	//-------------
+//	public static String MYSQL_LABEL_WRITING = "datasetTest_mysql_write";
+//	public static String MYSQL_URL_WRITING = "jdbc:mysql://172.27.1.83:3306/spagobi_testw";
+//	public static String MYSQL_USER_WRITING = "spagobi";
+//	public static String MYSQL_PWD_WRITING = "bispago";
+	
 	public static String MYSQL_LABEL_WRITING = "datasetTest_mysql_write";
-	public static String MYSQL_URL_WRITING = "jdbc:mysql://172.27.1.83:3306/spagobi_testw";
-	public static String MYSQL_USER_WRITING = "spagobi";
-	public static String MYSQL_PWD_WRITING = "bispago";
+	public static String MYSQL_URL_WRITING = "jdbc:mysql://localhost:3306/spagobi_cache";
+	public static String MYSQL_USER_WRITING = "root";
+	public static String MYSQL_PWD_WRITING = "mysql";	
 	
 	//-------------
 	// FOR READING
 	//-------------
-	public static String MYSQL_LABEL_READING = "datasetTest_mysql_read";
-	public static String MYSQL_URL_READING = "jdbc:mysql://172.27.1.83:3306/spagobi_testr";
-	public static String MYSQL_USER_READING = "spagobi";
-	public static String MYSQL_PWD_READING = "bispago";
+//	public static String MYSQL_LABEL_READING = "datasetTest_mysql_read";
+//	public static String MYSQL_URL_READING = "jdbc:mysql://172.27.1.83:3306/spagobi_testr";
+//	public static String MYSQL_USER_READING = "spagobi";
+//	public static String MYSQL_PWD_READING = "bispago";
+	
+	public static String MYSQL_LABEL_READING = "datasetTest_mysql_write";
+	public static String MYSQL_URL_READING = "jdbc:mysql://localhost:3306/foodmart";
+	public static String MYSQL_USER_READING = "root";
+	public static String MYSQL_PWD_READING = "mysql";
 	
 	// =======================================================
 	// POSTGRES

@@ -19,10 +19,11 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.dataset.cache.impl.sqldbcache.test.postgres;
+package it.eng.spagobi.dataset.cache.impl.sqldbcache.test.mysql;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.AbstractSQLDBCacheMetadatTest;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.AbstractSQLDBCacheTest;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.dataset.cache.test.TestDataSourceFactory;
@@ -31,39 +32,19 @@ import it.eng.spagobi.dataset.cache.test.TestDataSourceFactory;
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class PostgresSQLDBCacheTest extends AbstractSQLDBCacheTest {
+public class MySqlSQLDBCacheMetadataTest extends AbstractSQLDBCacheMetadatTest {
 	
-	static private Logger logger = Logger.getLogger(PostgresSQLDBCacheTest.class);
+	static private Logger logger = Logger.getLogger(MySqlSQLDBCacheMetadataTest.class);
 
 	//Create Datasources specific for this test
 	@Override
 	public void createDataSources(){
-		dataSourceReading = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.POSTGRES, false);
-		dataSourceWriting = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.POSTGRES, true);
+		dataSourceReading = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.MYSQL, false);
+		dataSourceWriting = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.MYSQL, true);
 	}
 	
-	//Generic tests imported from parent class
-	public void testCacheInit(){
-		super.testCacheInit();
+	//Generic tests imported from parent class	
+	public void testGetRequiredMemory(){
+		super.testGetRequiredMemory();
 	}
-	
-	public void testCachePutJDBCDataSet(){
-		super.testCachePutJDBCDataSet();
-	}
-	
-	public void testCachePutFileDataSet(){
-		super.testCachePutFileDataSet();
-	}
-	
-	public void testCachePutQbeDataSet(){		
-		super.testCachePutQbeDataSet();
-	}
-	
-	public void testCachePutFlatDataSet(){		
-		super.testCachePutFlatDataSet();	
-	}
-	
-	public void testCachePutScriptDataSet(){		
-		super.testCachePutScriptDataSet();	
-	}	
 }
