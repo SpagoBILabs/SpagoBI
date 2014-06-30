@@ -44,18 +44,18 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 
 		this.on(
 				'beforerender' , 
-				function (thePanel, attribute) { 
+				function (thePanel, attribute) { 					
 					var state = {};			
 					state.type = thePanel.type;
 					state.orientation = thePanel.orientation;
 					state.showvalues = thePanel.showvalues;
-					state.showlegend = thePanel.showpercentage;
+					state.showlegend = thePanel.showlegend;
 					state.category = thePanel.category;
 					state.groupingVariable = thePanel.groupingVariable;
 					state.series = thePanel.series;
 					state.wtype = 'barchart';
 					this.setDesignerState(state);
-				}, 
+				}, 				
 				this
 			);
 		this.on('afterLayout', this.addToolTips, this);
