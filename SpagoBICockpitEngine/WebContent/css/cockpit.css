@@ -152,11 +152,11 @@
 	}
 	
 	.icon-save {
-		background-image: url('../img/save16.png') !important;
+		background-image: url('../img/ico_save.png') !important;
 	}
 
 	.icon-saveas {
-		background-image: url('../img/save-as16.png') !important;
+		background-image: url('../img/ico_save_as.png') !important;
 	}
 	
 	.icon-delete {
@@ -186,6 +186,9 @@
 		background-image: url('../img/ico_selection.png') !important;
 	}
 	
+	.icon_parameters{
+		background-image: url('../img/ico_parameters.png') !important;
+	}
 	
 	.uploadImgIcon {
 	 	background-image:url('../img/browser_globe_upload.png') !important;
