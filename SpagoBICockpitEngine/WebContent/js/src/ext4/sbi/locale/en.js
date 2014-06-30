@@ -125,7 +125,8 @@ Sbi.locale.ln['sbi.savewin.saveWarning']  = 'Insert the name before save documen
 //===================================================================
 //COCKPIT
 //===================================================================
-Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorcustonconfpanel.emptymsg'] = 'Drag & drop here a widget from the palette';
+
+Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorcustomconfpanel.emptymsg'] = 'Drag & drop here a widget from the palette';
 Sbi.locale.ln['sbi.cockpit.core.WidgetDesigner.title'] = 'Flat table designer';
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 'Visible fields';
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Drag & drop here attribute as the series\' that you want view in the table';
