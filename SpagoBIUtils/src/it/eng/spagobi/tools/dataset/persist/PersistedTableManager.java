@@ -222,6 +222,7 @@ public class PersistedTableManager {
 		
 		String insertQuery = "insert into " + getTableName();	
 		String values = " values ";
+		//createQuery used only for HSQL at this time
 		String createQuery = "create table " + getTableName() + " (";
 		
 		insertQuery += " (";
@@ -229,7 +230,9 @@ public class PersistedTableManager {
 		String separator = "";
 		
 		if(this.isRowCountColumIncluded()) {
+			IDataBase dataBase = DataBase.getDataBase(datasource);
 			insertQuery += separator + AbstractJDBCDataset.encapsulateColumnName(getRowCountColumnName(), datasource);
+			createQuery += separator + AbstractJDBCDataset.encapsulateColumnName(getRowCountColumnName(), datasource) + dataBase.getDataBaseType(Long.class);
 			values += separator + "?";
 			separator = ","; 
 		}
@@ -241,12 +244,11 @@ public class PersistedTableManager {
 			
 			insertQuery += separator + escapedColumnName;
 			values += separator + "?";
-			
 			createQuery +=  separator + escapedColumnName + getDBFieldType(datasource, fieldMeta);
-			
 			separator = ","; 
 		}
 		values += ") ";
+		createQuery += ") ";
 		insertQuery += ") ";
 		
 		String totalQuery = insertQuery + values;

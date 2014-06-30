@@ -67,6 +67,9 @@ public abstract class AbstractDataBase implements IDataBase {
 				IField field = record.getFieldAt(i);
 				if (field.getValue() instanceof Long){
 					size = BigDecimal.valueOf((Long)field.getValue());
+				} else if (field.getValue() instanceof Integer) {
+					Integer num = (Integer)field.getValue();
+					size = new BigDecimal(num);
 				} else {
 					size = (BigDecimal)field.getValue();
 				}

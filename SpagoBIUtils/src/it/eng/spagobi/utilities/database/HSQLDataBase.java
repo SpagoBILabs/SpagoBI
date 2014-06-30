@@ -72,6 +72,8 @@ public class HSQLDataBase extends AbstractDataBase {
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
 	 */
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		return null;
+		//TODO: temporary work-around
+		String query = "SELECT 0 FROM INFORMATION_SCHEMA.SYSTEM_USERS";
+		return query;
 	}
 }
