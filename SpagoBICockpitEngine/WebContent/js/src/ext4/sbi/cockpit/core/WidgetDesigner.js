@@ -56,8 +56,8 @@ Sbi.cockpit.core.WidgetDesigner = function(config) {
 	Sbi.trace("[WidgetDesigner.constructor]: OUT");
 	
 	var defaultSettings = {
-		title: LN('sbi.cockpit.core.WidgetDesigner.title')
-		, layout: 'fit'
+//		title: LN('sbi.cockpit.core.WidgetDesigner.title'),
+		layout: 'fit'
 	};
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.core.WidgetDesigner', defaultSettings);
 		
