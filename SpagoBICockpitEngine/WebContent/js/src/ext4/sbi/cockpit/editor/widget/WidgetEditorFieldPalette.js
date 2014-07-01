@@ -229,9 +229,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 			id: 'field-grid',
 	        store: this.store,
 	        hideHeaders: true,
-	        autoScroll: false,
-        	overflowY: 'auto',
-            overflowX: 'hidden',
+	        autoScroll: false,        	
             viewConfig: {
 				plugins: {
 					ptype: 'gridviewdragdrop',
