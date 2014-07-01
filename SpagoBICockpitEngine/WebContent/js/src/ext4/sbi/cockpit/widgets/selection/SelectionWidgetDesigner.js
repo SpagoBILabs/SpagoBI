@@ -32,6 +32,7 @@
  * 
  * Authors - Alberto Alagna
  */
+
 Ext.ns("Sbi.cockpit.widgets.selection");
 
 Sbi.cockpit.widgets.selection.SelectionWidgetDesigner = function(config) { 

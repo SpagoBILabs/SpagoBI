@@ -10,8 +10,8 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 	
 		var defaultSettings = {
 			name: 'barChartWidgetDesigner'
-			//,title: LN('sbi.cockpit.widgets.table.barChartWidgetDesigner.title'),
-			//,border: false
+			,title: LN('sbi.cockpit.widgets.barchart.barChartWidgetDesigner.title')
+			,border: false
 		};
 			
 		if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.barchart && Sbi.settings.cockpit.widgets.barchart.barChartWidgetDesigner) {
@@ -31,9 +31,7 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 		this.init();
 		
 		c = {
-				items: [this.form]
-				,title: LN('sbi.cockpit.widgets.table.barChartWidgetDesigner.title')
-				, border: false
+				items: [this.form]								
 			};
 			
 		Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner.superclass.constructor.call(this, c);

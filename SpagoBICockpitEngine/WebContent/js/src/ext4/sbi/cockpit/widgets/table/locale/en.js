@@ -8,6 +8,11 @@ Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
 //===================================================================
+//COCKPIT WIDGETS: TableWidgetDesigner
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.widgets.table.tableWidgetDesigner.title'] = "Flat Table Designer";
+
+//===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
 Ext.Msg.buttonText.yes = 'Yes'; 
