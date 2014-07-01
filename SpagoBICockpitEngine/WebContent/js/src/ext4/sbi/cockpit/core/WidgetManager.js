@@ -531,16 +531,20 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	//widget.setParentContainer(null);
     }
 
-    , onSelection: function(widget, selections){
+    , onSelection: function(widget, selectionsOnWidget){
     	Sbi.trace("[WidgetManager.onSelection]: IN");
     
-    	this.setWidgetSelections(widget.getId(), selections);
+    	this.setWidgetSelections(widget.getId(), selectionsOnWidget);
     	
     	var associationGroup = Sbi.storeManager.getAssociationGroupByStore( widget.getStore() );
-    	//alert("onSelection: " + Sbi.toSource(associationGroup));
     	
     	if(Sbi.isValorized(associationGroup)) {
     		var selections = this.getSelectionsByAssociations();
+    		for(var field in selectionsOnWidget) {
+    			if(!selections[field]) {
+    				selections[widget.getStore().storeId  + "." + field] = selectionsOnWidget[field].values;
+    			}
+    		}
         	Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
     	} else {
     		var selections = this.getSelectionsByStores();
