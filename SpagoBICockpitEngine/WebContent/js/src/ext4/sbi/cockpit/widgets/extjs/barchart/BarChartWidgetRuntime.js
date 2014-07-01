@@ -6,14 +6,14 @@
  
 Ext.ns("Sbi.cockpit.widgets.extjs.barchart");
 
-Sbi.cockpit.widgets.extjs.barchart.BarChartWidget = function(config) {	
-	Sbi.trace("[BarChartWidget.constructor]: IN");
+Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime = function(config) {	
+	Sbi.trace("[BarChartWidgetRuntime.constructor]: IN");
 	
 	var defaultSettings = {
 			
 	};
 	
-	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.extjs.barchart.BarChartWidget', defaultSettings);
+	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 	
@@ -26,13 +26,13 @@ Sbi.cockpit.widgets.extjs.barchart.BarChartWidget = function(config) {
 		categories: categories
 	};
 	
-	Sbi.cockpit.widgets.extjs.barchart.BarChartWidget.superclass.constructor.call(this, c);
+	Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime.superclass.constructor.call(this, c);
 	
 	this.boundStore();
 	this.reload();
 	this.addEvents('selection');
 	
-	Sbi.trace("[BarChartWidget.constructor]: OUT");
+	Sbi.trace("[BarChartWidgetRuntime.constructor]: OUT");
 
 };
 
@@ -40,7 +40,7 @@ Sbi.cockpit.widgets.extjs.barchart.BarChartWidget = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, {
+Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, {
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
@@ -113,20 +113,6 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 		return this.getOrientation() === 'horizontal';
 	}
 	
-	, getBackground: function() {
-		var background = {
-		    gradient: {
-			    id: 'backgroundGradient',
-			    angle: 45,
-			    stops: {
-				    0: {color: '#ffffff'},
-				    100: {color: '#eaf1f8'}
-				}
-			}
-		};
-		return background;
-	}
-	
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -146,19 +132,19 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 	}
   
     , refresh:  function() {  
-    	Sbi.trace("[BarChartWidget.refresh]: IN");
+    	Sbi.trace("[BarChartWidgetRuntime.refresh]: IN");
     	
-    	Sbi.cockpit.widgets.extjs.barchart.BarChartWidget.superclass.refresh.call(this);	
+    	Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime.superclass.refresh.call(this);	
     	
     	this.redraw();
 		
-    	Sbi.trace("[BarChartWidget.refresh]: OUT");
+    	Sbi.trace("[BarChartWidgetRuntime.refresh]: OUT");
 	}
     
 	, redraw: function () {
-		Sbi.trace("[BarChartWidget.redraw]: IN");
+		Sbi.trace("[BarChartWidgetRuntime.redraw]: IN");
 		
-		Sbi.cockpit.widgets.extjs.barchart.BarChartWidget.superclass.redraw.call(this);	
+		Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime.superclass.redraw.call(this);	
 
 		var seriresConfig = this.getSeriesConfig();
 		var categoriesConfig =  this.getCategoriesConfig();
@@ -201,7 +187,21 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 		
 		this.setContentPanel(this.chartPanel);
         
-		Sbi.trace("[BarChartWidget.redraw]: OUT");
+		Sbi.trace("[BarChartWidgetRuntime.redraw]: OUT");
+	}
+		
+	, getBackground: function() {
+		var background = {
+		    gradient: {
+			    id: 'backgroundGradient',
+			    angle: 45,
+			    stops: {
+				    0: {color: '#ffffff'},
+				    100: {color: '#eaf1f8'}
+				}
+			}
+		};
+		return background;
 	}
 	
 	, getAxes: function( categoriesConfig, seriesConfig ) {
@@ -238,7 +238,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 	
 	, getSeries: function( categoriesConfig, seriesConfig ) {
 		
-		Sbi.trace("[BarChartWidget.getSeries]: IN");
+		Sbi.trace("[BarChartWidgetRuntime.getSeries]: IN");
 		
 		var series = [{
 			type: this.getChartType(), 
@@ -260,7 +260,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
     	    }
         }];
 		
-		Sbi.trace("[BarChartWidget.getSeries]: OUT");
+		Sbi.trace("[BarChartWidgetRuntime.getSeries]: OUT");
 		
 		return series;
 	}
@@ -309,55 +309,55 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 	
 	, getFieldHeaderByName: function(fieldName) {
 		var fieldMeta = this.getFieldMetaByName(fieldName);
-		Sbi.trace("[BarChartWidget.getFieldHeaderByName]: " + Sbi.toSource(fieldMeta));
+		Sbi.trace("[BarChartWidgetRuntime.getFieldHeaderByName]: " + Sbi.toSource(fieldMeta));
 		return fieldMeta!=null?fieldMeta.header: null;
 	}
 	
 	, getItemMeta: function(item) {
 		var itemMeta = {};
 		
-		Sbi.trace("[BarChartWidget.getItemMeta]: IN " + Sbi.toSource(item, true));
+		Sbi.trace("[BarChartWidgetRuntime.getItemMeta]: IN " + Sbi.toSource(item, true));
 		
 		// selected categories: names, headers & values
 		itemMeta.categoryFieldNames = item.series.xField;
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected categories names are equal to [" + itemMeta.categoryFieldNames +"]");
+		Sbi.trace("[BarChartWidgetRuntime.getItemMeta]: selected categories names are equal to [" + itemMeta.categoryFieldNames +"]");
 		
 		itemMeta.categoryFieldHeaders = [];
 		for(var i = 0; i < itemMeta.categoryFieldNames.length; i++) {
 			itemMeta.categoryFieldHeaders[i] = this.getFieldHeaderByName( itemMeta.categoryFieldNames[i] );
 		}
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected categories headers are equal to [" + itemMeta.categoryFieldHeaders +"]");
+		Sbi.trace("[BarChartWidgetRuntime.getItemMeta]: selected categories headers are equal to [" + itemMeta.categoryFieldHeaders +"]");
 		
 		itemMeta.categoryValues = [];
 		for(var i = 0; i < itemMeta.categoryFieldNames.length; i++) {
 			itemMeta.categoryValues.push( item.storeItem.data[itemMeta.categoryFieldNames[i]] );	
 		}
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected categories values are equal to [" + itemMeta.categoryValues +"]");
+		Sbi.trace("[BarChartWidgetRuntime.getItemMeta]: selected categories values are equal to [" + itemMeta.categoryValues +"]");
 	
 		// selected series: name, header & value
 		itemMeta.seriesFieldName = item.yField;
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected series name is equal to [" + itemMeta.seriesFieldName +"]");
+		Sbi.trace("[BarChartWidgetRuntime.getItemMeta]: selected series name is equal to [" + itemMeta.seriesFieldName +"]");
 		
 		itemMeta.seriesFieldHeader = this.getFieldHeaderByName(itemMeta.seriesFieldName);
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected series header is equal to [" + itemMeta.seriesFieldHeader +"]");
+		Sbi.trace("[BarChartWidgetRuntime.getItemMeta]: selected series header is equal to [" + itemMeta.seriesFieldHeader +"]");
 		
 		itemMeta.seriesFieldValue = item.storeItem.data[itemMeta.seriesFieldName];	 
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected series value is equal to [" + itemMeta.seriesFieldValue +"]");
+		Sbi.trace("[BarChartWidgetRuntime.getItemMeta]: selected series value is equal to [" + itemMeta.seriesFieldValue +"]");
  
     	
-		Sbi.trace("[BarChartWidget.getItemMeta]: OUT");
+		Sbi.trace("[BarChartWidgetRuntime.getItemMeta]: OUT");
 		
 		return itemMeta;
 	}
 	
 	, onItemMouseDown: function(item) {
-		Sbi.trace("[BarChartWidget.onItemMouseDown]: IN");
+		Sbi.trace("[BarChartWidgetRuntime.onItemMouseDown]: IN");
 		var itemMeta = this.getItemMeta(item);
 	    var selections = {};
 		selections[itemMeta.categoryFieldHeaders[0]] = {values: []};
 	    Ext.Array.include(selections[itemMeta.categoryFieldHeaders].values, itemMeta.categoryValues[0]);
 	    this.fireEvent('selection', this, selections);
-	    Sbi.trace("[BarChartWidget.onItemMouseDown]: OUT");
+	    Sbi.trace("[BarChartWidgetRuntime.onItemMouseDown]: OUT");
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -366,7 +366,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 
 	, getTooltip : function(storeItem, item){
 		
-		Sbi.trace("[BarChartWidget.getTooltip]: IN");
+		Sbi.trace("[BarChartWidgetRuntime.getTooltip]: IN");
 		
 		var tooltip;
 		
@@ -426,7 +426,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 		}
 		tooltip += valueObj.value;
 		
-		Sbi.trace("[BarChartWidget.getTooltip]: OUT");
+		Sbi.trace("[BarChartWidgetRuntime.getTooltip]: OUT");
 		
 		return tooltip;
 	}
@@ -538,20 +538,20 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, onRender: function(ct, position) {	
-		Sbi.trace("[BarChartWidget.onRender]: IN");
+		Sbi.trace("[BarChartWidgetRuntime.onRender]: IN");
 		
 		this.msg = 'Sono un widget di tipo BarChart';
 		
-		Sbi.cockpit.widgets.extjs.barchart.BarChartWidget.superclass.onRender.call(this, ct, position);	
+		Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime.superclass.onRender.call(this, ct, position);	
 		
-		Sbi.trace("[BarChartWidget.onRender]: OUT");
+		Sbi.trace("[BarChartWidgetRuntime.onRender]: OUT");
 	}
 });
 
 Sbi.registerWidget('barchart-ext', {
 	name: 'NEW Bar Chart'
 	, icon: 'js/src/ext4/sbi/cockpit/widgets/extjs/barchart/barchart_64x64_ico.png'
-	, runtimeClass: 'Sbi.cockpit.widgets.extjs.barchart.BarChartWidget'
+	, runtimeClass: 'Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime'
 	, designerClass: 'Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner'
 	//, designerClass: 'Ext.Panel'
 });
