@@ -173,16 +173,13 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 			validation = 'color:#ff0000; text-decoration:line-through;';
 			 
 		}
-
-		var thePanel = new Ext.Panel({
-   			html: '<div style="cursor: pointer;'+validation+'">' + this.category.alias + '</div>'   			
-   		});			
+	
 		
-		thePanel.on('render', function(panel) {
-			panel.getEl().on('dblclick', function() {
-		     	this.fireEvent("attributeDblClick", this, this.category);
-			}, this);
-		}, this);
+//		thePanel.on('render', function(panel) {
+//			panel.getEl().on('dblclick', function() {
+//		     	this.fireEvent("attributeDblClick", this, this.category);
+//			}, this);
+//		}, this);
 		
 	
 		var item = new Ext.Panel({
@@ -191,8 +188,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
             }
 			, style:'padding:5px 5px 5px 5px'
        		, items: [
-       		  thePanel
-       		  , new Ext.Button({
+       		  new Ext.Button({
        		    template: new Ext.Template(
        		         '<div class="smallBtn">',
        		             '<div class="delete-icon"></div>',
@@ -200,13 +196,19 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
        		         '</div>')
        		     , buttonSelector: '.delete-icon'
        		  	 , iconCls: 'delete-icon-tab'
-       		     , text: '&nbsp;&nbsp;&nbsp;&nbsp;'
+       		     , text: this.category.alias
        		     , handler: this.removeCategory
        		     , scope: this
        		})]
 		});
+		
+		item.on('dblclick', function() {
+		     	this.fireEvent("attributeDblClick", this, this.category);
+			}, this);
+		
 		return item;
 	}
+	
 	, validate: function (validFields) {
 		var invalidFields ='';
 		if (this.category != null){
