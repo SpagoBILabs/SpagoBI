@@ -10,14 +10,14 @@
  */
 Ext.ns("Sbi.cockpit.widgets.extjs.abstractchart");
 
-Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget = function(config) {	
-	Sbi.trace("[AbstractChartWidget.constructor]: IN");
+Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime = function(config) {	
+	Sbi.trace("[AbstractChartWidgetRuntime.constructor]: IN");
 	
 	var defaultSettings = {
 		layout: 'fit'	
 	};
 
-	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget', defaultSettings);
+	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 
@@ -25,12 +25,12 @@ Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget = function(config) {
 	
 	this.items = this.chart || this.msgPanel;
 	
-	Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget.superclass.constructor.call(this, c);
+	Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime.superclass.constructor.call(this, c);
 
-	Sbi.trace("[AbstractChartWidget.constructor]: OUT");
+	Sbi.trace("[AbstractChartWidgetRuntime.constructor]: OUT");
 };
 
-Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, Sbi.cockpit.core.WidgetRuntime, {
+Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, Sbi.cockpit.core.WidgetRuntime, {
 	
 	// =================================================================================================================
 	// PROPERTIES
@@ -50,11 +50,6 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, Sbi.cock
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-	
-	, boundStore: function() {
-		Sbi.cockpit.widgets.table.TableWidget.superclass.boundStore.call(this);
-	}
-
 	, setContentPanel: function(panel) {
 		this.items.each( function(item) {
 			this.items.remove(item);
@@ -221,7 +216,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, Sbi.cock
 	}
 	
 	, onStoreLoad: function() {
-		Sbi.trace("[AbstractChartWidget.onStoreLoad][" + this.getId() + "]: IN");
+		Sbi.trace("[AbstractChartWidgetRuntime.onStoreLoad][" + this.getId() + "]: IN");
 		if(this.getStore().status === "error") {
 			return;
 		}
@@ -231,7 +226,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, Sbi.cock
     	} else {
     		this.on('afterrender', function(){this.redraw();}, this);
     	}
-		Sbi.trace("[AbstractChartWidget.onStoreLoad][" + this.getId() + "]: OUT");
+		Sbi.trace("[AbstractChartWidgetRuntime.onStoreLoad][" + this.getId() + "]: OUT");
 	}
 	
 	//------------------------------------------------------------------------------------------------------------------

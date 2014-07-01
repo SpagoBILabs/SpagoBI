@@ -40,7 +40,7 @@ Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, {
+Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, {
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================

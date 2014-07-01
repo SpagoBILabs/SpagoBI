@@ -10,291 +10,200 @@
  */
 Ext.ns("Sbi.cockpit.widgets.extjs.abstractchart");
 
-Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget = function(config) {	
-	Sbi.trace("[AbstractChartWidget.constructor]: IN");
-	
+Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetRuntime = function(config) {	
+	Sbi.trace("[AbstractCartesianChartWidgetRuntime.constructor]: IN");
 	var defaultSettings = {
-		layout: 'fit'	
+			
 	};
-
-	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget', defaultSettings);
+	
+	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetRuntime', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
-
-	this.init();
 	
-	this.items = this.chart || this.msgPanel;
+	var categories = [];
+	categories.push(this.wconf.category);
+	if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
 	
-	Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget.superclass.constructor.call(this, c);
-
-	Sbi.trace("[AbstractChartWidget.constructor]: OUT");
+	this.aggregations = {
+		measures: this.wconf.series,
+		categories: categories
+	};
+	
+	Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetRuntime.superclass.constructor.call(this, c);
+	
+	this.boundStore();
+	this.reload();
+	this.addEvents('selection');
+	
+	Sbi.trace("[AbstractCartesianChartWidgetRuntime.constructor]: OUT");
 };
 
-Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, Sbi.cockpit.core.WidgetRuntime, {
+Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetRuntime, Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, {
 	
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
-	
-	/**
-	 * It's the content panel used when the chart is not yet available. By default it's empty. If the config property
-	 * msg is passed in then show the msg text. As soon as the chart became available it is removed and destroyed.
-	 */
-	msgPanel: null
+	// no props for the moment
+
 	
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
 	
-    // -----------------------------------------------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
+	getSeriesConfig: function() {
+	    	
+		var store = this.getStore();
+	    	
+	    var seriesFields = [];
+		var seriesTitles = [];
+		for(var i = 0; i < this.wconf.series.length; i++) {
+			var id = this.wconf.series[i].id;
+			seriesFields.push(store.fieldsMeta[id].name);
+			seriesTitles.push(id);
+		}
+			
+		var series = {
+			fields: seriesFields,
+			titles: seriesTitles,
+			position: this.isHorizontallyOriented()? 'bottom' : 'left'
+		};
+			
+		return series;
+	}
+	    
+	, getCategoriesConfig: function() {
+	    	
+	    	var store = this.getStore();
+	    	
+	    	var categories = [];
+			categories.push(this.wconf.category);
+			if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
+			
+			var categoriesFields = [];
+			var categoriesTitles = [];
+			for(var i = 0; i < categories.length; i++) {
+				var id = categories[i].id;
+				categoriesFields.push(store.fieldsMeta[id].name);
+				categoriesTitles.push(id);
+			}
+			
+			var categories = {
+				fields: categoriesFields,
+				titles: categoriesTitles, 
+				position: this.isHorizontallyOriented()? 'left': 'bottom'
+			};
+			
+			return categories;
+	}
 	
-	, boundStore: function() {
-		Sbi.cockpit.widgets.table.TableWidget.superclass.boundStore.call(this);
+	, getOrientation: function() {
+		return this.wconf? this.wconf.orientation: null;
 	}
 
-	, setContentPanel: function(panel) {
-		this.items.each( function(item) {
-			this.items.remove(item);
-	        item.destroy();           
-	    }, this);  
-		this.msgContent = null;
-        this.add(panel);
-        this.doLayout();
+	, isVerticallyOriented: function() {
+		return this.getOrientation() === 'vertical';
 	}
 	
-	, isLegendVisible: function() {
-		var showlegend;
-		if (this.wconf.showlegend !== undefined){
-			showlegend = this.wconf.showlegend;
-		} else {
-			showlegend = true;
-		}
-		return showlegend;
-	}
-
-	//------------------------------------------------------------------------------------------------------------------
-	// utility methods
-	// -----------------------------------------------------------------------------------------------------------------
-	, init: function() {
-		this.initMsgPanel();
-		this.initChartThemes();
+	, isHorizontallyOriented: function() {
+		return this.getOrientation() === 'horizontal';
 	}
 	
-	, initMsgPanel: function() {
-		this.msgPanel = new Ext.Panel({
-			border: false
-			, bodyBorder: false
-			, hideBorders: true
-			, frame: false
-			, html: this.msg || ''
-		});
-	}
-	
-	, initChartThemes: function() {
-		Ext.define('Ext.chart.theme.CustomBlue', {
-	        extend: 'Ext.chart.theme.Base',
-	        
-	        constructor: function(config) {
-	            var titleLabel = {
-	                font: 'bold 18px Arial'
-	            }, axisLabel = {
-	                fill: 'rgb(8,69,148)',
-	                font: '12px Arial',
-	                spacing: 2,
-	                padding: 5
-	            };
-	            
-	            this.callParent([Ext.apply({
-	               axis: {
-	                   stroke: '#084594'
-	               },
-	               axisLabelLeft: axisLabel,
-	               axisLabelBottom: axisLabel,
-	               axisTitleLeft: titleLabel,
-	               axisTitleBottom: titleLabel
-	           }, config)]);
-	        }
-	    });
-	}
-	
-	//------------------------------------------------------------------------------------------------------------------
-	// utility methods
-	// -----------------------------------------------------------------------------------------------------------------
-	, getColors : function () {
-		var colors = [];
-		if (this.wconf !== undefined && this.wconf.groupingVariable != null) {
-			colors = Sbi.widgets.Colors.defaultColors;
-		} else {
-			if (this.wconf !== undefined && this.wconf.series !== undefined && this.wconf.series.length > 0) {
-				var i = 0;
-				for (; i < this.wconf.series.length; i++) {
-					colors.push(this.wconf.series[i].color);
+	, getBackground: function() {
+		var background = {
+		    gradient: {
+			    id: 'backgroundGradient',
+			    angle: 45,
+			    stops: {
+				    0: {color: '#ffffff'},
+				    100: {color: '#eaf1f8'}
 				}
 			}
-		}
-		return colors;
+		};
+		return background;
 	}
 	
-	, getMeasureScaleFactor: function (theMeasureName){
-		var i=0;
-		var scaleFactor={value:1, text:''};
-		var optionDefinition = null;
-		if ( this.fieldsOptions != null) {
-			for (; i < this.fieldsOptions.length; i++) {
-				if (this.fieldsOptions[i].alias === theMeasureName) {
-					optionDefinition = this.fieldsOptions[i];
-					break;
-				}
-			}
-			if(optionDefinition!=null){
-				legendSuffix = optionDefinition.options.measureScaleFactor;
-				if(legendSuffix != undefined && legendSuffix != null && legendSuffix!='NONE'){
-					scaleFactor.text = LN('sbi.worksheet.runtime.options.scalefactor.'+legendSuffix);
-					switch (legendSuffix)
-					{
-					case 'K':
-						scaleFactor.value=1000;
-						break;
-					case 'M':
-						scaleFactor.value=1000000;
-						break;
-					case 'G':
-						scaleFactor.value=1000000000;
-						break;
-					default:
-						scaleFactor.value=1;
-					}
-				}
-			}
-		}
-		return scaleFactor;
-	}
-	
-	, formatTextWithMeasureScaleFactor : function(text, measureName) {
-		var legendSuffix;
-		legendSuffix = (this.getMeasureScaleFactor(measureName)).text;
+	, getTooltip : function(storeItem, item){
 		
-		if (legendSuffix != '' ) {
-			return text + ' ' + legendSuffix;
-		}
-		return text;
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: IN");
+		
+		var tooltip;
+		
+		var itemMeta = this.getItemMeta(item);
+		tooltip =  itemMeta.seriesFieldHeader + ': ' + itemMeta.seriesFieldValue 
+					+ " <p> " + itemMeta.categoryFieldHeaders;
+		
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: IN");
+		
+		return tooltip;
 	}
 	
-	, formatLegendWithScale : function(theSerieName) {
-		var serie = this.getRuntimeSerie(theSerieName);
-		var toReturn = this.formatTextWithMeasureScaleFactor(serie.name, serie.measure);
-		return toReturn;
+	, getSeriesTips: function(series) {
+		var thisPanel = this;
+		
+		var tips =  {
+			trackMouse: true,
+           	minWidth: 140,
+           	maxWidth: 300,
+           	width: 'auto',
+           	minHeight: 28,
+           	renderer: function(storeItem, item) {
+           		var tooltipContent = thisPanel.getTooltip(storeItem, item);
+           		this.setTitle(tooltipContent);
+            }
+        };
+		
+		return tips;
 	}
 	
-    , format: function(value, type, format, scaleFactor) {
-    	if(value==null){
-    		return value;
+	, getSeriesLabel: function(seriesConfig) {
+		var label = {
+            display: 'insideEnd',
+            field: seriesConfig.titles.length == 1? seriesConfig.titles[0]: undefined,
+            renderer: Ext.util.Format.numberRenderer('0'),
+            orientation: 'horizontal',
+            color: '#333',
+            'text-anchor': 'middle'
+		};
+		return label;
+	}
+
+	// -----------------------------------------------------------------------------------------------------------------
+    // private methods
+	// -----------------------------------------------------------------------------------------------------------------
+	, getFieldMetaByName: function(fieldName) {
+		var store = this.getStore();
+		var fieldsMeta = store.fieldsMeta;
+    	for(var h in fieldsMeta) {
+    		var fieldMeta = fieldsMeta[h];
+    		if(fieldMeta.name == fieldName) {
+    			return fieldMeta;
+    		}
     	}
-		try {
-			var valueObj = value;
-			if (type == 'int') {
-				valueObj = (parseInt(value))/scaleFactor;
-			} else if (type == 'float') {
-				valueObj = (parseFloat(value))/scaleFactor;
-			} else if (type == 'date') {
-				valueObj = Date.parseDate(value, format);
-			} else if (type == 'timestamp') {
-				valueObj = Date.parseDate(value, format);
-			}
-			return valueObj;
-		} catch (err) {
-			return value;
-		}
-	}	
-	
-	
-	, isEmpty : function () {		
-		var measures = undefined;
-		
-		if (Sbi.isValorized(this.dataContainerObject.columns))
-			measures = this.dataContainerObject.columns.node_childs;
-		
-		return measures === undefined;
+    	return null;
 	}
 	
-	, onStoreLoad: function() {
-		Sbi.trace("[AbstractChartWidget.onStoreLoad][" + this.getId() + "]: IN");
-		if(this.getStore().status === "error") {
-			return;
-		}
-		
-		if(this.rendered){
-    		this.redraw();
-    	} else {
-    		this.on('afterrender', function(){this.redraw();}, this);
-    	}
-		Sbi.trace("[AbstractChartWidget.onStoreLoad][" + this.getId() + "]: OUT");
+	, getFieldHeaderByName: function(fieldName) {
+		var fieldMeta = this.getFieldMetaByName(fieldName);
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getFieldHeaderByName]: " + Sbi.toSource(fieldMeta));
+		return fieldMeta!=null?fieldMeta.header: null;
 	}
 	
-	//------------------------------------------------------------------------------------------------------------------
-	// test methods
+	// -----------------------------------------------------------------------------------------------------------------
+    // utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-	, getSampleStore: function() {
-		var store = Ext.create('Ext.data.JsonStore', {
-	        fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9', 'data9'],
-	        data: this.generateData()
-	    });
-		return store;
+	, onItemMouseDown: function(item) {
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.onItemMouseDown]: IN");
+		var itemMeta = this.getItemMeta(item);
+	    var selections = {};
+		selections[itemMeta.categoryFieldHeaders[0]] = {values: []};
+	    Ext.Array.include(selections[itemMeta.categoryFieldHeaders].values, itemMeta.categoryValues[0]);
+	    this.fireEvent('selection', this, selections);
+	    Sbi.trace("[AbstractCartesianChartWidgetRuntime.onItemMouseDown]: OUT");
 	}
 	
-	, generateData: function(n, floor){
-        var data = [],
-            p = (Math.random() *  11) + 1,
-            i;
-            
-        floor = (!floor && floor !== 0)? 20 : floor;
-        
-        for (i = 0; i < (n || 12); i++) {
-            data.push({
-                name: Ext.Date.monthNames[i % 12],
-                data1: Math.floor(Math.max((Math.random() * 100), floor)),
-                data2: Math.floor(Math.max((Math.random() * 100), floor)),
-                data3: Math.floor(Math.max((Math.random() * 100), floor)),
-                data4: Math.floor(Math.max((Math.random() * 100), floor)),
-                data5: Math.floor(Math.max((Math.random() * 100), floor)),
-                data6: Math.floor(Math.max((Math.random() * 100), floor)),
-                data7: Math.floor(Math.max((Math.random() * 100), floor)),
-                data8: Math.floor(Math.max((Math.random() * 100), floor)),
-                data9: Math.floor(Math.max((Math.random() * 100), floor))
-            });
-        }
-        
-        //alert('data: ' + Sbi.toSource(data));
-        
-        return data;
-    }
-    
-    , generateDataNegative: function(n, floor){
-        var data = [],
-            p = (Math.random() *  11) + 1,
-            i;
-            
-        floor = (!floor && floor !== 0)? 20 : floor;
-            
-        for (i = 0; i < (n || 12); i++) {
-            data.push({
-                name: Ext.Date.monthNames[i % 12],
-                data1: Math.floor(((Math.random() - 0.5) * 100), floor),
-                data2: Math.floor(((Math.random() - 0.5) * 100), floor),
-                data3: Math.floor(((Math.random() - 0.5) * 100), floor),
-                data4: Math.floor(((Math.random() - 0.5) * 100), floor),
-                data5: Math.floor(((Math.random() - 0.5) * 100), floor),
-                data6: Math.floor(((Math.random() - 0.5) * 100), floor),
-                data7: Math.floor(((Math.random() - 0.5) * 100), floor),
-                data8: Math.floor(((Math.random() - 0.5) * 100), floor),
-                data9: Math.floor(((Math.random() - 0.5) * 100), floor)
-            });
-        }
-        return data;
-    }
-
 });
