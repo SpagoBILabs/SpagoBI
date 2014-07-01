@@ -29,11 +29,11 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 	
 	c = Ext.apply(c, {
 			layout: 'border',
-			autoScroll: true,
+			autoScroll: false,
 			items: [
 		        {
 		        	region: 'west',
-		        	width: 275,
+		        	width: 280,
 		        	collapseMode:'mini',
 		        	autoScroll: false,
 		        	split: true,

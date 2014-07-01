@@ -90,7 +90,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorControlPanel, Ext.Panel, {
 			region : 'center',
 			split: true,
 			height : 120,
-			width: 270,
+			width: 275,
 			dataset: this.dataset,
 			services : this.services
 		});
