@@ -16,7 +16,7 @@ Sbi.widgets.DatasetsBrowserPanel = function(config) {
 	Sbi.trace("[DatasetsBrowserPanel.constructor]: IN");
 	
 	var defaultSettings = {		
-		autoScroll: true
+		autoScroll: false
 	  , layout: "border"
 	  , frame: false
 	  , border: false
