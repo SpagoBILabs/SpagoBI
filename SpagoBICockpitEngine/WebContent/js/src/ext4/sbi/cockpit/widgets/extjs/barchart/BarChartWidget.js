@@ -17,20 +17,7 @@ Sbi.cockpit.widgets.extjs.barchart.BarChartWidget = function(config) {
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 	
-	var categories = [];
-	categories.push(this.wconf.category);
-	if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
-	
-	this.aggregations = {
-		measures: this.wconf.series,
-		categories: categories
-	};
-	
 	Sbi.cockpit.widgets.extjs.barchart.BarChartWidget.superclass.constructor.call(this, c);
-	
-	this.boundStore();
-	this.reload();
-	this.addEvents('selection');
 	
 	Sbi.trace("[BarChartWidget.constructor]: OUT");
 
@@ -40,92 +27,12 @@ Sbi.cockpit.widgets.extjs.barchart.BarChartWidget = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, {
+Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetRuntime, {
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
 	
-	// no props for the moment
-
 	
-    // =================================================================================================================
-	// METHODS
-	// =================================================================================================================
-	
-	// -----------------------------------------------------------------------------------------------------------------
-	// cartesian chart shared methods
-	// -----------------------------------------------------------------------------------------------------------------  
-	getSeriesConfig: function() {
-	    	
-		var store = this.getStore();
-	    	
-	    var seriesFields = [];
-		var seriesTitles = [];
-		for(var i = 0; i < this.wconf.series.length; i++) {
-			var id = this.wconf.series[i].id;
-			seriesFields.push(store.fieldsMeta[id].name);
-			seriesTitles.push(id);
-		}
-			
-		var series = {
-			fields: seriesFields,
-			titles: seriesTitles,
-			position: this.isHorizontallyOriented()? 'bottom' : 'left'
-		};
-			
-		return series;
-	}
-	    
-	, getCategoriesConfig: function() {
-	    	
-	    	var store = this.getStore();
-	    	
-	    	var categories = [];
-			categories.push(this.wconf.category);
-			if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
-			
-			var categoriesFields = [];
-			var categoriesTitles = [];
-			for(var i = 0; i < categories.length; i++) {
-				var id = categories[i].id;
-				categoriesFields.push(store.fieldsMeta[id].name);
-				categoriesTitles.push(id);
-			}
-			
-			var categories = {
-				fields: categoriesFields,
-				titles: categoriesTitles, 
-				position: this.isHorizontallyOriented()? 'left': 'bottom'
-			};
-			
-			return categories;
-	}
-	
-	, getOrientation: function() {
-		return this.wconf? this.wconf.orientation: null;
-	}
-
-	, isVerticallyOriented: function() {
-		return this.getOrientation() === 'vertical';
-	}
-	
-	, isHorizontallyOriented: function() {
-		return this.getOrientation() === 'horizontal';
-	}
-	
-	, getBackground: function() {
-		var background = {
-		    gradient: {
-			    id: 'backgroundGradient',
-			    angle: 45,
-			    stops: {
-				    0: {color: '#ffffff'},
-				    100: {color: '#eaf1f8'}
-				}
-			}
-		};
-		return background;
-	}
 	
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
@@ -133,7 +40,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 
 	
 	
-	, getChartType: function() {
+	getChartType: function() {
 		return this.isHorizontallyOriented()? 'bar': 'column';
 	}
 	
@@ -283,190 +190,48 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 		return tips;
 	}
 	
-	, getSeriesLabel: function(seriesConfig) {
-		var label = {
-            display: 'insideEnd',
-            field: seriesConfig.titles.length == 1? seriesConfig.titles[0]: undefined,
-            renderer: Ext.util.Format.numberRenderer('0'),
-            orientation: 'horizontal',
-            color: '#333',
-            'text-anchor': 'middle'
-		};
-		return label;
-	}
-	
-	, getFieldMetaByName: function(fieldName) {
-		var store = this.getStore();
-		var fieldsMeta = store.fieldsMeta;
-    	for(var h in fieldsMeta) {
-    		var fieldMeta = fieldsMeta[h];
-    		if(fieldMeta.name == fieldName) {
-    			return fieldMeta;
-    		}
-    	}
-    	return null;
-	}
-	
-	, getFieldHeaderByName: function(fieldName) {
-		var fieldMeta = this.getFieldMetaByName(fieldName);
-		Sbi.trace("[BarChartWidget.getFieldHeaderByName]: " + Sbi.toSource(fieldMeta));
-		return fieldMeta!=null?fieldMeta.header: null;
-	}
-	
 	, getItemMeta: function(item) {
 		var itemMeta = {};
 		
-		Sbi.trace("[BarChartWidget.getItemMeta]: IN " + Sbi.toSource(item, true));
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: IN " + Sbi.toSource(item, true));
 		
 		// selected categories: names, headers & values
 		itemMeta.categoryFieldNames = item.series.xField;
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected categories names are equal to [" + itemMeta.categoryFieldNames +"]");
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected categories names are equal to [" + itemMeta.categoryFieldNames +"]");
 		
 		itemMeta.categoryFieldHeaders = [];
 		for(var i = 0; i < itemMeta.categoryFieldNames.length; i++) {
 			itemMeta.categoryFieldHeaders[i] = this.getFieldHeaderByName( itemMeta.categoryFieldNames[i] );
 		}
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected categories headers are equal to [" + itemMeta.categoryFieldHeaders +"]");
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected categories headers are equal to [" + itemMeta.categoryFieldHeaders +"]");
 		
 		itemMeta.categoryValues = [];
 		for(var i = 0; i < itemMeta.categoryFieldNames.length; i++) {
 			itemMeta.categoryValues.push( item.storeItem.data[itemMeta.categoryFieldNames[i]] );	
 		}
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected categories values are equal to [" + itemMeta.categoryValues +"]");
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected categories values are equal to [" + itemMeta.categoryValues +"]");
 	
 		// selected series: name, header & value
 		itemMeta.seriesFieldName = item.yField;
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected series name is equal to [" + itemMeta.seriesFieldName +"]");
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected series name is equal to [" + itemMeta.seriesFieldName +"]");
 		
 		itemMeta.seriesFieldHeader = this.getFieldHeaderByName(itemMeta.seriesFieldName);
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected series header is equal to [" + itemMeta.seriesFieldHeader +"]");
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected series header is equal to [" + itemMeta.seriesFieldHeader +"]");
 		
 		itemMeta.seriesFieldValue = item.storeItem.data[itemMeta.seriesFieldName];	 
-		Sbi.trace("[BarChartWidget.getItemMeta]: selected series value is equal to [" + itemMeta.seriesFieldValue +"]");
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected series value is equal to [" + itemMeta.seriesFieldValue +"]");
  
     	
-		Sbi.trace("[BarChartWidget.getItemMeta]: OUT");
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: OUT");
 		
 		return itemMeta;
 	}
 	
-	, onItemMouseDown: function(item) {
-		Sbi.trace("[BarChartWidget.onItemMouseDown]: IN");
-		var itemMeta = this.getItemMeta(item);
-	    var selections = {};
-		selections[itemMeta.categoryFieldHeaders[0]] = {values: []};
-	    Ext.Array.include(selections[itemMeta.categoryFieldHeaders].values, itemMeta.categoryValues[0]);
-	    this.fireEvent('selection', this, selections);
-	    Sbi.trace("[BarChartWidget.onItemMouseDown]: OUT");
-	}
 	
-	// -----------------------------------------------------------------------------------------------------------------
-    // private methods
-	// -----------------------------------------------------------------------------------------------------------------
-
-	, getTooltip : function(storeItem, item){
-		
-		Sbi.trace("[BarChartWidget.getTooltip]: IN");
-		
-		var tooltip;
-		
-		if (this.wconf.groupingVariable != null) { // first level contains groupingVariable, second level contains series
-			
-		} else {
-			var itemMeta = this.getItemMeta(item);
-			tooltip =  itemMeta.seriesFieldHeader + ': ' + itemMeta.seriesFieldValue 
-						+ " <p> " + itemMeta.categoryFieldHeaders;
-		}
-		
-		return tooltip;
-        
-		
-		var chartType = this.wconf.designer;
-		var allRuntimeSeries = this.getRuntimeSeries();
-		var allDesignSeries = this.wconf.series;
-		var type = this.wconf.type;
-		var colors = this.getColors();
-		var series;
-		
-		var storeObject = this.getJsonStore(percent);
-		
-		var selectedSerieName = item.yField;
-		
-		var selectedSerie;
-		
-		if(this.isHorizontallyOriented()){
-			series = this.getChartSeries(storeObject.serieNames, colors, true);
-			for (var i =0; i<series.length;i++){
-				if (series[i].xField == selectedSerieName){
-					selectedSerie = series[i];
-					break;
-				}
-			}
-
-		}else{
-			series = this.getChartSeries(storeObject.serieNames, colors);
-			
-			for (var i =0; i<series.length;i++){
-				if (series[i].yField == selectedSerieName){
-					selectedSerie = series[i];
-					break;
-				}
-			}
-		}
-
-		
-		var valueObj = this.getFormattedValue(null, storeItem, selectedSerie, chartType, allRuntimeSeries, allDesignSeries, type, this.isHorizontallyOriented());
-		
-		if (valueObj.measureName !== valueObj.serieName) {
-			tooltip = valueObj.serieName + '<br/>' + storeItem.data.categories + '<br/>';
-			// in case the serie name is different from the measure name, put also the measure name
-			//tooltip += this.formatTextWithMeasureScaleFactor(valueObj.measureName, valueObj.measureName) + ' : ';
-		} else {
-			tooltip =  storeItem.data.categories + '<br/>' + selectedSerie.displayName + ' : ' ;
-		}
-		tooltip += valueObj.value;
-		
-		Sbi.trace("[BarChartWidget.getTooltip]: OUT");
-		
-		return tooltip;
-	}
 	
-	/**
-	 * @method
-	 * 
-	 * ???
-	 */
-	, getRuntimeSeries : function () {
-		var toReturn = [];
-		// rows (of dataContainerObject) can contain 2 level, it depends if a groupingVariable was defined or not
-		if (this.wconf.groupingVariable != null) { // first level contains groupingVariable, second level contains series
-			
-//			var groupingAttributeValues = this.dataContainerObject.rows.node_childs;
-//			for(var i = 0; i < groupingAttributeValues.length; i++) {
-//				var measureNodes = groupingAttributeValues[i].node_childs;
-//				for(var j = 0; j < measureNodes.length; j++) {
-//					toReturn.push({
-//						name : groupingAttributeValues[i].node_description + 
-//								( measureNodes.length > 1 ? ' [' + measureNodes[j].node_description + ']' : '' )
-//						, measure : measureNodes[j].node_description
-//					});
-//				}
-//			}
-			
-			alert("getRuntimeSeries method is unable to manage groupingVariable");
-			
-		} else { // no grouping variable: series are just first level nodes
-			
-			var measureNodes = this.dataContainerObject.rows.node_childs;
-			for(var i = 0; i < measureNodes.length; i++) {
-				toReturn.push({
-					name : measureNodes[i].node_description
-					, measure : measureNodes[i].node_description
-				});
-			}
-		}
-		return toReturn;
-	}
+	
+	
+	
 	
 	//used for tooltip	
 	, getFormattedValue: function (chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type){
