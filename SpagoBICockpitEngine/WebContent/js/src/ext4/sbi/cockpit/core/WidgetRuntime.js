@@ -172,9 +172,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	, redraw:  function() {  
 		Sbi.trace("[WidgetRuntime.redraw]: IN");
 		Sbi.trace("[WidgetRuntime.redraw]: OUT");
-	}
-	
-	
+	}	
 
 	/**
 	 * @method
@@ -194,18 +192,28 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	, setConfiguration: function(config, refresh) {
 		Sbi.trace("[WidgetRuntime.setConfiguration]: IN");
 		
+		var needRefresh = this.isRefreshable(config);
+		
 		this.setStoreId(config.storeId, false);
 		this.setWType(config.wtype, false);
 		this.setCustomConfiguration(config.wconf, false);
     	this.setStyleConfiguration(config.wstyle, false);    	
     	this.setLayoutConfiguration(config.wlayout);
-    	this.setGenericConfiguration(config.wgeneric,false);    	
+    	this.setGenericConfiguration(config.wgeneric);    	
     	
-    	if(refresh !== false) {
-			this.refresh();
-		} else {
-			Sbi.trace("[WidgetRuntime.setConfiguration]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
-		}
+    	if (Sbi.isValorized(refresh)){
+    		if(refresh !== false) {    		
+    			this.refresh();
+    		} else {
+    			Sbi.trace("[WidgetRuntime.setConfiguration]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
+    		}
+    	} else {    		
+    		if(needRefresh) {    		
+    			this.refresh();
+    		} else {    			
+    			Sbi.trace("[WidgetRuntime.setConfiguration]: No change found in configuration, so widget won't be refreshed");
+    		}
+    	}    	
 		
 		Sbi.trace("[WidgetRuntime.setConfiguration]: OUT");
 	}
@@ -412,18 +420,12 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @param {Object} wgeneric The generic configuration of the widget.
 	 * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
 	 */
-	, setGenericConfiguration: function(wgeneric, refresh) {			
+	, setGenericConfiguration: function(wgeneric) {			
 		if(Sbi.isValorized(wgeneric)) {
 			this.wgeneric = wgeneric;
 			Sbi.trace("[WidgetRuntime.setGenericConfiguration]: wgeneric set to [" + Sbi.toSource(wgeneric) + "]");
 						
-			this.getParentComponent().refreshTitle();
-			
-			if(refresh !== false) {
-				this.refresh();
-			} else {
-				Sbi.trace("[WidgetRuntime.setGenericConfiguration]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
-			}
+			this.getParentComponent().refreshTitle();					
 		} else {
 			Sbi.trace("[WidgetRuntime.setGenericConfiguration]: Input parameter [wgeneric] is not valorized so the property [wgeneric] will be left unchanged");
 		}
@@ -792,8 +794,27 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 */
 	, resize: function() {
 		Sbi.trace("[WidgetRuntime.resize]: Ext.window.Window.resize method overriden has been called");
-	}
+	}	
 	
+	/**
+	 * @method
+	 * 
+	 * Evalute configuration change (wconf).
+	 * If no change is found return false
+	 */
+	, isRefreshable: function(config) {
+		Sbi.trace("[WidgetRuntime.isRefreshable]: IN");
+		
+		var wconfNew = Ext.JSON.encodeValue(config.wconf);
+		
+		var currentConf = this.getConfiguration();
+		
+		if (wconfNew == Ext.JSON.encodeValue(currentConf.wconf)) return false;
+		
+		return true;
+		
+		Sbi.trace("[WidgetRuntime.isRefreshable]: OUT");
+	}
 	
 	// =================================================================================================================
 	// EVENTS
