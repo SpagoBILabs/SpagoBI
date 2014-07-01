@@ -10,7 +10,7 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 //===================================================================
 //SELECTION DESIGNER
 //===================================================================
-Sbi.locale.ln['sbi.crosstab.selectiondefinitionpanel.title'] = 'Selection Widget Definition';
+Sbi.locale.ln['sbi.selection.selectiondefinitionpanel.title'] = 'Selection Widget Designer';
 Sbi.locale.ln['sbi.selection.selectiondefinitionpanel.nodefrequired'] = 'Any configuration is required. Proceed submitting your choice.';
 
 //===================================================================

@@ -15,7 +15,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		title: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.title')
 		, border: false
 		, chartLib: 'highcharts'
-			, ddGroup: null
+		, ddGroup: null
 	}	
 
 	, form: null

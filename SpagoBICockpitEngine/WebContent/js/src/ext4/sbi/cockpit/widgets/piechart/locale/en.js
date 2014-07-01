@@ -52,7 +52,7 @@ Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'Session has expired. Try re-execu
 //===================================================================
 //PIECHART WIDGET PANEL
 //===================================================================
-Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.title'] = 'Pie chart designer';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.title'] = 'Pie Chart Designer';
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showvalues.title'] = 'Show values';
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showlegend.title'] = 'Show legend';
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showpercentage.title'] = 'Show percentage value';

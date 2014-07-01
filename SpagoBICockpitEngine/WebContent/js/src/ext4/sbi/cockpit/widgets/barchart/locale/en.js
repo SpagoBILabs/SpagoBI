@@ -10,7 +10,7 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 //===================================================================
 //COCKPIT WIDGETS: BarChartWidgetDesigner
 //===================================================================
-Sbi.locale.ln['sbi.cockpit.widgets.table.barChartWidgetDesigner.title'] = 'Bar Chart Designer';
+Sbi.locale.ln['sbi.cockpit.widgets.barchart.barChartWidgetDesigner.title'] = 'Bar Chart Designer';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.title'] = 'Orientation';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.vertical'] = 'vertical';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.horizontal'] = 'horizontal';

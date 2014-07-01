@@ -54,7 +54,7 @@ Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'La sessione di lavoro è scaduta.
 //===================================================================
 //PIECHART WIDGET PANEL
 //===================================================================
-Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.title'] = 'Definizione pie chart';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.title'] = 'Definizione Pie Chart';
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showvalues.title'] = 'Visualizza valori';
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showlegend.title'] = 'Visualizza legenda';
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showpercentage.title'] = 'Visualizza valori percentuali';
