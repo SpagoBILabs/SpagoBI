@@ -148,7 +148,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     
     , refresh:  function() {  
 		Sbi.trace("[WidgetRuntime.refresh]: IN");
-		this.reload({start: 0, limit: this.pageSize}, {});
+		this.reload();
 		Sbi.trace("[WidgetRuntime.refresh]: OUT");
 	}
 

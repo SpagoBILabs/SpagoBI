@@ -284,6 +284,9 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 				});
 			}
 		}
+		
+		Sbi.trace("[AbstractChartWidget.getRuntimeSeries]: runtime series is equa to [" + Sbi.toSource(toReturn) + "]");
+		
 		return toReturn;
 	}
 	
