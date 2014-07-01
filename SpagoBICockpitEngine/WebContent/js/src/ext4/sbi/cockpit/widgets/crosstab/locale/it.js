@@ -15,8 +15,7 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 //===================================================================
 //CROSSTAB DESIGNER
 //===================================================================
-Sbi.locale.ln['sbi.crosstab.crosstabdesignerpanel.title'] = 'Crosstab designer';
-Sbi.locale.ln['sbi.crosstab.crosstabdefinitionpanel.title'] = 'Definizione della Crosstab';
+Sbi.locale.ln['sbi.crosstab.crosstabdefinitionpanel.title'] = 'Definizione Crosstab';
 Sbi.locale.ln['sbi.crosstab.crosstabdefinitionpanel.tools.preview'] = 'Mostra anteprima della Crosstab';
 Sbi.locale.ln['sbi.crosstab.crosstabdefinitionpanel.rows'] = 'Righe';
 Sbi.locale.ln['sbi.crosstab.crosstabdefinitionpanel.columns'] = 'Colonne';
