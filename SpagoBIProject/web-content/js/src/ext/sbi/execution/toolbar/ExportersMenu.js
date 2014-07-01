@@ -195,7 +195,7 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 		},
 		'DOCUMENT_COMPOSITE': {
 			// 'PDF' : this.exportCompositeDocumentTo
-			'PDF' : function() { this.exportCompositeDocumentTo(); }
+			'PDF' : function() { this.exportCompositeDocumentTo('PDF'); }
 		},
 		'DATAMART': {
 			 'PDF'    : function() { this.exportQbeTo('PDF'); }
@@ -660,9 +660,9 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * 
 	 * @TODO terrible code. refactor when possible!
 	 */
-	, exportCompositeDocumentTo: function () {
+	, exportCompositeDocumentTo: function (format) {
 
-		var urlExporter = this.getExportationUrl(null, 'DOCUMENT_COMPOSITE');	
+		var urlExporter = this.getExportationUrl(format, 'DOCUMENT_COMPOSITE');	
 		
 		window.open(urlExporter,'exportWindow','resizable=1,height=750,width=1000');
 		
