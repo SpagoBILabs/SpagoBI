@@ -114,6 +114,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 	, getLegendConfiguration: function() {
 		var legendConf = {};
 		legendConf.position = (Sbi.isValorized(this.wconf.legendPosition))? this.wconf.legendPosition:'bottom';
+		return legendConf;
 	}
 	
 	, getBackground: function() {
@@ -181,17 +182,9 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, getColors : function () {
-		var colors = [];
-		if (this.wconf !== undefined && this.wconf.groupingVariable != null) {
-			colors = Sbi.widgets.Colors.defaultColors;
-		} else {
-			if (this.wconf !== undefined && this.wconf.series !== undefined && this.wconf.series.length > 0) {
-				var i = 0;
-				for (; i < this.wconf.series.length; i++) {
-					colors.push(this.wconf.series[i].color);
-				}
-			}
-		}
+		Sbi.trace("[AbstractChartWidgetRuntime.init]: IN");
+		var colors = Sbi.widgets.Colors.defaultColors;
+		Sbi.trace("[AbstractChartWidgetRuntime.init]: IN");
 		return colors;
 	}
 	

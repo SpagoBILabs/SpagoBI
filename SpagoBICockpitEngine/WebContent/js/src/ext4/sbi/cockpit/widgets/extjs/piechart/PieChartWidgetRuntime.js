@@ -102,8 +102,8 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		var series = [{
 			type: this.getChartType(), 
 			field: seriesConfig.fields[0],
-			//title: seriesConfig.titles[0],	
 			showInLegend: this.isLegendVisible(),
+			colorSet: this.getColors(),
 			segment: {margin:20},
 	        smooth: true,
 	        tips: this.getSeriesTips(seriesConfig),
@@ -124,8 +124,6 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		Sbi.trace("[PieChartWidgetRuntime.getTooltip]: IN");
 		
 		var tooltip;
-		
-		tooltip = "pippo";
 		
 		var itemMeta = this.getItemMeta(item);
 		tooltip =  itemMeta.seriesFieldHeader + ': ' + itemMeta.seriesFieldValue 
@@ -187,7 +185,21 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		
 		return label;
 	}
-
+	
+	, getColors : function () {
+		Sbi.trace("[PieChartWidgetRuntime.getColors]: IN");
+		var colors;
+		if (this.wconf !== undefined && this.wconf.colors) {
+			Sbi.trace("[PieChartWidgetRuntime.getColors]: Using custom colors");
+			colors = this.wconf.colors;
+		} else {
+			Sbi.trace("[PieChartWidgetRuntime.getColors]: Using default colors");
+			colors = Sbi.widgets.Colors.defaultColors;
+		}
+		Sbi.trace("[PieChartWidgetRuntime.getColors]: Colors used for series [" + colors + "]");
+		Sbi.trace("[PieChartWidgetRuntime.getColors]: OUT");
+		return colors;
+	}
 	
 	/**
 	 * @deprectaed
@@ -295,6 +307,7 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		var series = this.getSeries( categoriesConfig, seriresConfig );
 		
 		var store = this.getStore();
+		store.sort(categoriesConfig.fields[0], 'ASC');
 		
 		this.chartPanel =  Ext.create('Ext.chart.Chart', {
             store: store,
@@ -473,10 +486,6 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime.superclass.onRender.call(this, ct, position);	
 		
 		Sbi.trace("[PieChartWidgetRuntime.onRender]: OUT");
-	}
-	
-	, getColors : function () {
-		return this.wconf.colors;
 	}
 	
 	/*
