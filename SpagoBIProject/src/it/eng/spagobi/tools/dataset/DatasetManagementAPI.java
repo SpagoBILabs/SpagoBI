@@ -385,12 +385,20 @@ public class DatasetManagementAPI {
 				if(values.length() == 0) continue;
 				List<String> valuesList = new ArrayList<String>(); 
 				for(int i = 0; i < values.length(); i++) {
-					valuesList.add(values.getString(i));
+					valuesList.add(values.get(i).toString());
 				}
 				
+				String datasetColumn = null;
+				String datasetLabel = null;
 				Association association = associationGroup.getAssociation(associationName);
-				String datasetColumn = association.getFields().get(0).getFieldName();
-				String datasetLabel = association.getFields().get(0).getDataSetLabel();
+				if(association != null) {
+					datasetColumn = association.getFields().get(0).getFieldName();
+					datasetLabel = association.getFields().get(0).getDataSetLabel();
+				} else {
+					datasetColumn = associationName.split("\\.")[1];
+					datasetLabel =  associationName.split("\\.")[0];
+				}
+				
 				
 				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
 				Operand rightOperand = new Operand(valuesList);
@@ -446,12 +454,19 @@ public class DatasetManagementAPI {
 				if(values.length() == 0) continue;
 				List<String> valuesList = new ArrayList<String>(); 
 				for(int i = 0; i < values.length(); i++) {
-					valuesList.add(values.getString(i));
+					valuesList.add(values.get(i).toString());
 				}
 				
+				String datasetColumn = null;
+				String datasetLabel = null;
 				Association association = associationGroup.getAssociation(associationName);
-				String datasetColumn = association.getFields().get(0).getFieldName();
-				String datasetLabel = association.getFields().get(0).getDataSetLabel();
+				if(association != null) {
+					datasetColumn = association.getFields().get(0).getFieldName();
+					datasetLabel = association.getFields().get(0).getDataSetLabel();
+				} else {
+					datasetColumn = associationName.split("\\.")[1];
+					datasetLabel =  associationName.split("\\.")[0];
+				}
 				
 				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
 				Operand rightOperand = new Operand(valuesList);
