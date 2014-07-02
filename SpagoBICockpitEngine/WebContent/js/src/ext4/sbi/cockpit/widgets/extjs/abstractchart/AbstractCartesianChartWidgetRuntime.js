@@ -19,21 +19,8 @@ Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetRuntime = fu
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetRuntime', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
-	
-	var categories = [];
-	categories.push(this.wconf.category);
-	if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
-	
-	this.aggregations = {
-		measures: this.wconf.series,
-		categories: categories
-	};
-	
+		
 	Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetRuntime.superclass.constructor.call(this, c);
-	
-	this.boundStore();
-	this.reload();
-	this.addEvents('selection');
 	
 	Sbi.trace("[AbstractCartesianChartWidgetRuntime.constructor]: OUT");
 };
@@ -112,20 +99,6 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 		return this.getOrientation() === 'horizontal';
 	}
 	
-	, getBackground: function() {
-		var background = {
-		    gradient: {
-			    id: 'backgroundGradient',
-			    angle: 45,
-			    stops: {
-				    0: {color: '#ffffff'},
-				    100: {color: '#eaf1f8'}
-				}
-			}
-		};
-		return background;
-	}
-	
 	, getTooltip : function(storeItem, item){
 		
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: IN");
@@ -141,24 +114,6 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 		return tooltip;
 	}
 	
-	, getSeriesTips: function(series) {
-		var thisPanel = this;
-		
-		var tips =  {
-			trackMouse: true,
-           	minWidth: 140,
-           	maxWidth: 300,
-           	width: 'auto',
-           	minHeight: 28,
-           	renderer: function(storeItem, item) {
-           		var tooltipContent = thisPanel.getTooltip(storeItem, item);
-           		this.setTitle(tooltipContent);
-            }
-        };
-		
-		return tips;
-	}
-	
 	, getSeriesLabel: function(seriesConfig) {
 		var label = {
             display: 'insideEnd',
@@ -170,40 +125,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 		};
 		return label;
 	}
-
-	// -----------------------------------------------------------------------------------------------------------------
-    // private methods
-	// -----------------------------------------------------------------------------------------------------------------
-	, getFieldMetaByName: function(fieldName) {
-		var store = this.getStore();
-		var fieldsMeta = store.fieldsMeta;
-    	for(var h in fieldsMeta) {
-    		var fieldMeta = fieldsMeta[h];
-    		if(fieldMeta.name == fieldName) {
-    			return fieldMeta;
-    		}
-    	}
-    	return null;
-	}
 	
-	, getFieldHeaderByName: function(fieldName) {
-		var fieldMeta = this.getFieldMetaByName(fieldName);
-		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getFieldHeaderByName]: " + Sbi.toSource(fieldMeta));
-		return fieldMeta!=null?fieldMeta.header: null;
-	}
 	
-	// -----------------------------------------------------------------------------------------------------------------
-    // utility methods
-	// -----------------------------------------------------------------------------------------------------------------
-	
-	, onItemMouseDown: function(item) {
-		Sbi.trace("[AbstractCartesianChartWidgetRuntime.onItemMouseDown]: IN");
-		var itemMeta = this.getItemMeta(item);
-	    var selections = {};
-		selections[itemMeta.categoryFieldHeaders[0]] = {values: []};
-	    Ext.Array.include(selections[itemMeta.categoryFieldHeaders].values, itemMeta.categoryValues[0]);
-	    this.fireEvent('selection', this, selections);
-	    Sbi.trace("[AbstractCartesianChartWidgetRuntime.onItemMouseDown]: OUT");
-	}
 	
 });
