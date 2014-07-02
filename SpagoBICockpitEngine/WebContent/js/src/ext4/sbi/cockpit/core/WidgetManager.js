@@ -114,8 +114,9 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 			this.widgets.remove(w);
 			Sbi.info("[WidgetManager.unregister]: widget [" + this.widgets.getKey(w) + "] succesfully unregistered. " +
 					"Now there are [" + this.widgets.getCount()+ "] registered widget(s)");
+			
 			if( this.isStoreUsed(storeId) == false) {
-				Sbi.storeManager.removeStore(storeId, true );
+				Sbi.storeManager.removeStore(w.getStore(), true );
 				Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] succesfully removed");
 			} else {
 				Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] not removed because there are other widgets using it");;
@@ -224,11 +225,13 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * @return {boolean} true if the store is used at least by one widget managed by this manager,
 	 * false otherwise.
 	 */
-	, isStoreUsed: function(storeId, aggregations) {
+	, isStoreUsed: function(storeId, aggregations) { 
 		Sbi.trace("[WidgetManager.isStoreUsed]: IN");
 		var widgets = this.getWidgetsByStore(storeId, aggregations);
+		var isUsed = (Sbi.isValorized(widgets)  && widgets.getCount() > 0);
+		Sbi.trace("[WidgetManager.isStoreUsed]: Store [" + storeId + "] is used [" + isUsed+ "]");
 		Sbi.trace("[WidgetManager.isStoreUsed]: OUT");
-		return Sbi.isValorized(widgets)  && widgets.getCount() > 0;
+		return ;
 	}
 	
 
