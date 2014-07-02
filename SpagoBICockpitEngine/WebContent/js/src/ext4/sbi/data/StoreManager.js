@@ -339,7 +339,18 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			scope: this
 		});
 	}
-	
+	, getAssociationGroupByAssociationId: function(associationId) {
+		for(var i = 0; i < this.associationGroups.length; i++) {
+			var associationGroup = this.associationGroups[i];
+			for(var j = 0; j < associationGroup.associations.length; j++) {
+				if(associationGroup.associations[j].id == associationId) {
+					return associationGroup;
+				}
+			}
+			
+		}
+		return null;
+	}
 	, getAssociationGroupByStore: function(store) {
 		for(var i = 0; i < this.associationGroups.length; i++) {
 			var associationGroup = this.associationGroups[i];
@@ -617,7 +628,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			return;
 		}
 		Sbi.trace("[StoreManager.containsStore]: store id is equal to [" + storeId +"]");
-		Sbi.trace("[StoreManager.containsStore]: store aggregations is equal to [" + Sbi.toSource(aggregations,true) +"]");
+		//Sbi.trace("[StoreManager.containsStore]: store aggregations is equal to [" + Sbi.toSource(aggregations,true) +"]");
 		
 		var store = this.getStore(storeId, aggregations);
 		Sbi.trace("[StoreManager.containsStore]: store is equal to [" + store +"]");
@@ -722,7 +733,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			return;
 		}
 		Sbi.trace("[StoreManager.getStore]: store id is equal to [" + storeId +"]");
-		Sbi.trace("[StoreManager.getStore]: store aggregations is equal to [" + Sbi.toSource(aggregations, true) + "]");
+		//Sbi.trace("[StoreManager.getStore]: store aggregations is equal to [" + Sbi.toSource(aggregations, true) + "]");
 	
 		var registeredStore = this.stores.get(storeId);
 		aggregations = aggregations ||  null;
@@ -731,8 +742,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			for(var i = 0; i < registeredStore.aggregatedVersions.length; i++) {
 				
 				var aggregationOnRegisteredStore = this.getAggregationOnStore(registeredStore.aggregatedVersions[i]);
-				Sbi.trace("[StoreManager.getStore]: registered store [" + i + "] for id [" + storeId+ "] have the following aggregationd defined: [" 
-						+ Sbi.toSource(aggregationOnRegisteredStore) +"]");
+//				Sbi.trace("[StoreManager.getStore]: registered store [" + i + "] for id [" + storeId+ "] have the following aggregationd defined: [" 
+//						+ Sbi.toSource(aggregationOnRegisteredStore) +"]");
 				
 				if( this.isSameAggregationLevel(aggregations, aggregationOnRegisteredStore) ) {
 					Sbi.trace("[StoreManager.getStore]: there is already a store for id [" + storeId +"]");
@@ -838,8 +849,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	}
 	
 	, isSameAggregationLevel: function(agg1, agg2) {
-		Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregation1 is equal to [" + Sbi.toSource(agg1) + "]");
-		Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregation2 is equal to [" + Sbi.toSource(agg2) + "]");
+		//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregation1 is equal to [" + Sbi.toSource(agg1) + "]");
+		//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregation2 is equal to [" + Sbi.toSource(agg2) + "]");
 		
 		if(Sbi.isNotValorized(agg1) && Sbi.isNotValorized(agg2)) {
 			Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are the same (both empty)");
@@ -1011,12 +1022,12 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			}
 		}
 		
-		Sbi.trace("[StoreManager.loadStoresByAssociations]: not agrregated stores are [" + storesAggregated.length + "]");
-		Sbi.trace("[StoreManager.loadStoresByAssociations]: agrregated stores are [" + storesNotAggregated.length + "]");
-		
+		Sbi.trace("[StoreManager.loadStoresByAssociations]: not agrregated stores are [" + storesNotAggregated.length + "][" + storesNotAggregated+ "]");
+		Sbi.trace("[StoreManager.loadStoresByAssociations]: agrregated stores are [" + storesAggregated.length + "][" + storesAggregated + "]");
 		
 
-		Sbi.trace("[StoreManager.loadStoresByAssociations]: Loading joined dataset used by [" + Sbi.toSource(storesNotAggregated) + "] not aggregated store(s)");
+		Sbi.trace("[StoreManager.loadStoresByAssociations]: Loading joined dataset used by [" + Sbi.toSource(storesNotAggregated) + "] " +
+				"not aggregated store(s)");
 		Ext.Ajax.request({
 		    url: Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'),
 		    method: 'GET',
@@ -1032,7 +1043,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		for(var i = 0; i < storesAggregated.length; i++) {
 			var storeId = storesAggregated[i];
-			Sbi.trace("[StoreManager.loadStoresByAssociations]: Loading joined dataset used by aggregated dataset [" + storeId + "] not aggregated store(s)");
+			Sbi.trace("[StoreManager.loadStoresByAssociations]: Loading joined dataset used by aggregated store [" + storeId + "]");
 			var storeAggregations = storesAggregations[i];
 			storeAggregations.dataset = storeId;
 			Ext.Ajax.request({
@@ -1500,18 +1511,38 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 					Sbi.exception.ExceptionHandler.handleFailure(response);
 				} else {
 					var stores =  Ext.JSON.decode(r);
+					if(stores.errors && stores.errors.length > 0) {
+						var msg = "Impossible to load dataset(s) " + options.params.datasets + " due to the following service errors: <p><ul>";
+						for(var i = 0; i < stores.errors.length; i++) {
+							msg += "<li>" + stores.errors[i].message + ";";
+						}
+						msg += "</ul>";
+						
+						Ext.Msg.show({
+							   title: "Service error",
+							   msg: msg,
+							   buttons: Ext.Msg.OK,
+							   icon: Ext.MessageBox.ERROR,
+							   modal: false
+						});
+						return;
+					}
+					
+					
 					var aggregations = undefined;
 					if(options.params && options.params.aggregations) {
 						aggregations = Ext.JSON.decode(options.params.aggregations);
 					}
 					for(var s in stores) {
+						Sbi.trace("[StoreManager.onAssociationGroupReloaded]: Reloaded store [" + s + "]");
 						var data = stores[s];
 						var store = this.getStore(s, aggregations);
 						if(store) {
 				    		store.loadData(data);
-				    		Sbi.error("[StoreManager.onAssociationGroupReloaded]: Data sucesfully loaded into store [" + s + "] at aggregation level [" + aggregations + "]");
+				    		Sbi.trace("[StoreManager.onAssociationGroupReloaded]: Data sucesfully loaded into store [" + s + "] at aggregation level [" + aggregations + "]");
 				    	} else {
-				    		Sbi.error("[StoreManager.onAssociationGroupReloaded]: Impossible to load data into store [" + s + "] at aggregation level [" + aggregations + "]");
+				    		Sbi.error("[StoreManager.onAssociationGroupReloaded]: Impossible to load data into store [" + s + "] " +
+				    				"at aggregation level [" + Sbi.toSource(aggregations) + "]");
 				    	}	
 					}
 				}

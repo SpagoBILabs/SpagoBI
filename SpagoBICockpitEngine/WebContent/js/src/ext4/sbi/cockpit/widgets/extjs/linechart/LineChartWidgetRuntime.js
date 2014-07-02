@@ -143,7 +143,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 				type: this.getChartType(), 
 				fill: this.isAreaFilled(),
 				stacked: this.isStacked(),
-				title: seriesConfig.titles,
+				title: seriesConfig.titles[i],
 	            highlight: {
 	            	size: 7,
 	                radius: 7
@@ -214,7 +214,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	, onRender: function(ct, position) {	
 		Sbi.trace("[LineChartWidgetRuntime.onRender]: IN");
 		
-		this.msg = 'Sono un widget di tipo BarChart';
+		this.msg = 'Sono un widget di tipo LineChart';
 		
 		Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.onRender.call(this, ct, position);	
 		

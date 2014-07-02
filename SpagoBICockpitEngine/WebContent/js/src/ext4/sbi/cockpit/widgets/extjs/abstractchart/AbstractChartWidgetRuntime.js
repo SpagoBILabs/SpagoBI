@@ -14,7 +14,8 @@ Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime = function(co
 	Sbi.trace("[AbstractChartWidgetRuntime.constructor]: IN");
 	
 	var defaultSettings = {
-		layout: 'fit'	
+		layout: 'fit', 	
+		fieldsSelectionEnabled: true
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime', defaultSettings);

@@ -199,7 +199,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		var toReturn = new Ext.util.MixedCollection();
 		if (Sbi.isValorized(storeId)){
 			for(var i=0; i < this.widgets.getCount(); i++){
-				var w = this.widgets.item(i);
+				var w = this.widgets.get(i);
 				if (Sbi.isValorized(w.getStoreId()) && w.getStoreId() == storeId){
 					toReturn.add(w);
 				}
@@ -269,9 +269,10 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		Sbi.trace("[WidgetManager.clearSelections]: selections is equal to [" + Sbi.toSource(this.selections) + "]");
 		
 		this.selections = {};
-		this.fireEvent('selectionChange');
 		
+		this.fireEvent('selectionChange');
 		Sbi.storeManager.loadAllStores();
+		
 		Sbi.trace("[WidgetManager.clearSelections]: OUT");
 	}
 	
@@ -288,14 +289,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	}
     	Sbi.trace("[WidgetManager.addSelections]: OUT");
     }
-	
-    , clearSingleSelection: function(grid, rowIndex, colIndex){
-    	Sbi.trace("[WidgetManager.clearSingleSelection]: IN");
-    	
-    	grid.getStore().removeAt(rowIndex);
-    	
-    	Sbi.trace("[WidgetManager.clearSingleSelection]: OUT");
-    }
+    
     // -- widget selections ----
     
     /**
@@ -388,6 +382,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     , clearFieldSelections: function(widgetId, fieldHeader) {
     	this.selections[widgetId] = this.selections[widgetId] || {};
     	this.selections[widgetId][fieldHeader] = {values: []};
+    	this.onSelection(this.getWidget(widgetId), this.selections[widgetId]);
     }
     
     , addFieldSelections: function(widgetId, fieldHeader, valuesToAdd) {
@@ -450,6 +445,22 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		Sbi.trace("[WidgetManager.getSelectionsOnField]: OUT");
 		
 		return selectedValues;
+	}
+	
+	// -- selection by association ----
+	, clearAssociationSelections: function(associationName) {
+		var association = Sbi.storeManager.getAssociation(associationName);
+		for(var i = 0; i < association.fields.length; i++) {
+			var storeId = association.fields[i].store;
+			var fieldHeader = association.fields[i].column;
+			var widgets = this.getWidgetsByStore(storeId);
+			for(var j = 0; j < widgets.getCount(); j++) {
+				var widgetId = widgets.get(j).getId();
+				this.selections[widgetId] = this.selections[widgetId] || {};
+		    	this.selections[widgetId][fieldHeader] = {values: []};
+			}
+		}
+		this.onDeselectionOnAssociation(association.id);
 	}
 	
 	// -- selections by store ----
@@ -531,9 +542,19 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	//widget.setParentContainer(null);
     }
 
+    , onDeselectionOnAssociation: function(associationId){
+    	var associationGroup = Sbi.storeManager.getAssociationGroupByAssociationId( associationId );
+    	if(Sbi.isValorized(associationGroup)) {
+    		var selections = this.getSelectionsByAssociations();
+        	Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
+        	this.fireEvent('selectionChange');
+    	} else {
+    		alert("WidgetManager.onDeselectionOnAssociation: ERROR");
+    	}
+    }
     , onSelection: function(widget, selectionsOnWidget){
     	Sbi.trace("[WidgetManager.onSelection]: IN");
-    
+
     	this.setWidgetSelections(widget.getId(), selectionsOnWidget);
     	
     	var associationGroup = Sbi.storeManager.getAssociationGroupByStore( widget.getStore() );
