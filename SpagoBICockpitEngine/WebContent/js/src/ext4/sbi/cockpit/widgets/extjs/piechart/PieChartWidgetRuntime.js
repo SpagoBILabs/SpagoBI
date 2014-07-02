@@ -54,7 +54,7 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 	    var seriesFields = [];
 		var seriesTitles = [];
 		for(var i = 0; i < this.wconf.series.length; i++) {
-			var id = this.wconf.series[i].id;
+			var id = this.wconf.series[i].alias;
 			seriesFields.push(store.fieldsMeta[id].name);
 			seriesTitles.push(id);
 		}
@@ -78,7 +78,7 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		var categoriesFields = [];
 		var categoriesTitles = [];
 		for(var i = 0; i < categories.length; i++) {
-			var id = categories[i].id;
+			var id = categories[i].alias;
 			categoriesFields.push(store.fieldsMeta[id].name);
 			categoriesTitles.push(id);
 		}
