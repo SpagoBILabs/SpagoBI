@@ -91,7 +91,6 @@ Ext.define('Sbi.service.RestService', {
 			}
 		}
 		
-		
 		//add the request parameters
 		if(withRequestParams){
 			var first = true;
@@ -117,7 +116,7 @@ Ext.define('Sbi.service.RestService', {
 		return Ext.apply(this.params, this.baseParams );
 	},
 
-	callService:function(scope, successCallBack, failureCallBack, keepState){
+	callService:function(scope, successCallBack, failureCallBack, keepState, keepStateIfFails){
 
 		var mySuccessCallBack= successCallBack;
 		var myFailureCallBack= failureCallBack;
@@ -146,7 +145,7 @@ Ext.define('Sbi.service.RestService', {
 					if(thisPanel.async){
 						thisPanel.fireEvent('executedAsync',!withError,response, keepState);
 					}else if(withError){
-						Sbi.olap.eventManager.fireEvent('serviceExecutedWithError', response);
+						Sbi.olap.eventManager.fireEvent('serviceExecutedWithError', response, keepStateIfFails);
 						Sbi.exception.ExceptionHandler.handleFailure(response);
 					}else{
 						Sbi.olap.eventManager.fireEvent('serviceExecuted', response, keepState);
@@ -162,7 +161,7 @@ Ext.define('Sbi.service.RestService', {
 		if(!myFailureCallBack && scope){
 			if(!this.async){
 				myFailureCallBack = function (response, options) {
-					Sbi.olap.eventManager.fireEvent('serviceExecutedWithError', response);
+					Sbi.olap.eventManager.fireEvent('serviceExecutedWithError', response, keepStateIfFails);
 					Sbi.exception.ExceptionHandler.handleFailure(response, options);
 				};
 			}else{

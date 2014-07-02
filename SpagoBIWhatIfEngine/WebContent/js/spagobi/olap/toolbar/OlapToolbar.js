@@ -383,6 +383,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			//update the cookie
 			Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
 
+		}else{
+			this.modelConfig.actualVersion = modelConfig.actualVersion;
 		}
 
 		// if scenario is not what if do not draw some buttons
