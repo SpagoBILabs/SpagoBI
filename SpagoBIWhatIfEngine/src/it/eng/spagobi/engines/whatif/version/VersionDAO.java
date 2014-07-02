@@ -124,7 +124,7 @@ public class VersionDAO {
 		for (Iterator<String> iterator = descriptor.getColumnNames(editCubeTableName, instance.getDataSource()).iterator(); iterator.hasNext();) {
 			String s = (String) iterator.next();
 
-			if(s.equals(getVersionColumnName())){
+			if(s.equalsIgnoreCase(getVersionColumnName())){
 				columnsListString+=" "+s+" ";
 				columnsListStringVersionWritten+=" "+(newVersion)+" ";
 
