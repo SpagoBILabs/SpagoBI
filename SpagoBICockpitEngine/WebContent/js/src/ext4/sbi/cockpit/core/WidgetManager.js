@@ -449,6 +449,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	
 	// -- selection by association ----
 	, clearAssociationSelections: function(associationName) {
+		Sbi.trace("[WidgetManager.clearAssociationSelections]: IN");
 		var association = Sbi.storeManager.getAssociation(associationName);
 		for(var i = 0; i < association.fields.length; i++) {
 			var storeId = association.fields[i].store;
@@ -460,7 +461,16 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		    	this.selections[widgetId][fieldHeader] = {values: []};
 			}
 		}
-		this.onDeselectionOnAssociation(association.id);
+		//this.onDeselectionOnAssociation();
+		
+		var associationGroup = Sbi.storeManager.getAssociationGroupByAssociationId( association.id );
+    	if(Sbi.isValorized(associationGroup)) {
+    		this.applySelectionsOnAssociationGroup( associationGroup );
+        	this.fireEvent('selectionChange');
+    	} else {
+    		alert("WidgetManager.clearAssociationSelections: Impossible to find association group that contains association [" + association.id + "]");
+    	}
+    	Sbi.trace("[WidgetManager.clearAssociationSelections]: IN");
 	}
 	
 	// -- selections by store ----
@@ -521,8 +531,10 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 			}
 			var results = [];
 			for(var value in selectedValues) { results.push(value); }
-	
-			selectionsByAssociations[associations[i].id] = results;
+			
+			if(results.length > 0) {
+				selectionsByAssociations[associations[i].id] = results;
+			}			
 		}
 		
 		Sbi.trace("[SelectionsPanel.getSelectionsByAssociations]: OUT");
@@ -543,15 +555,56 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     }
 
     , onDeselectionOnAssociation: function(associationId){
+    	Sbi.trace("[WidgetManager.onDeselectionOnAssociation]: IN");
     	var associationGroup = Sbi.storeManager.getAssociationGroupByAssociationId( associationId );
     	if(Sbi.isValorized(associationGroup)) {
-    		var selections = this.getSelectionsByAssociations();
-        	Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
+//    		var selections = this.getSelectionsByAssociations();
+//        	Sbi.storeManager.loadStoresByAssociations(associationGroup,  selections);
+    		this.applySelectionsOnAssociationGroup(associationId);
         	this.fireEvent('selectionChange');
     	} else {
     		alert("WidgetManager.onDeselectionOnAssociation: ERROR");
     	}
+    	Sbi.trace("[WidgetManager.onDeselectionOnAssociation]: OUT");
     }
+    
+    , applySelectionsOnAssociationGroup: function(associationGroup) {
+    	Sbi.trace("[WidgetManager.applySelectionsOnAssociationGroup]: IN");
+    	
+    	if(Sbi.isNotValorized(associationGroup)) {
+    		Sbi.warn("[WidgetManager.applySelectionsOnAssociationGroup]: Input parameter [associationGroup] is undefined");
+    		return;
+    	}
+    	var selections = this.getSelectionsByAssociations();
+    	
+    	for(var widgetId in this.selections)  {
+    		var selectionsOnWidget = this.selections[widgetId];
+    		var widget = this.getWidget(widgetId);
+			Sbi.trace("[WidgetManager.applySelectionsOnAssociationGroup]: widget [" + widgetId +"] allow selection on field [" + widget.fieldsSelectionEnabled+ "]");
+			if(widget && widget.fieldsSelectionEnabled === true) {
+				for(var fieldHeader in selectionsOnWidget) {
+	    			if(Sbi.isNotValorized(selections[fieldHeader]) && selectionsOnWidget[fieldHeader].values && selectionsOnWidget[fieldHeader].values.length > 0){
+	    				selections[widget.getStore().storeId  + "." + fieldHeader] = selectionsOnWidget[fieldHeader].values;
+	    			}
+	    		}
+			}
+			
+    	}
+    	
+    	//alert("[WidgetManager.applySelectionsOnAssociationGroup]: " + Sbi.toSource(selections));
+    	
+    	
+    	Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
+    	Sbi.trace("[WidgetManager.applySelectionsOnAssociationGroup]: OUT");
+    }
+    
+    , applySelectionsOnAggregation: function(store) {
+    	Sbi.trace("[WidgetManager.applySelectionsOnAggregation]: IN");
+    	var selections = this.getSelectionsByStores();
+		Sbi.storeManager.loadStoresByAggregations( store.storeId,  selections);
+    	Sbi.trace("[WidgetManager.applySelectionsOnAggregation]: OUT");
+    }
+    
     , onSelection: function(widget, selectionsOnWidget){
     	Sbi.trace("[WidgetManager.onSelection]: IN");
 
@@ -560,16 +613,18 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	var associationGroup = Sbi.storeManager.getAssociationGroupByStore( widget.getStore() );
     	
     	if(Sbi.isValorized(associationGroup)) {
-    		var selections = this.getSelectionsByAssociations();
-    		for(var field in selectionsOnWidget) {
-    			if(!selections[field]) {
-    				selections[widget.getStore().storeId  + "." + field] = selectionsOnWidget[field].values;
-    			}
-    		}
-        	Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
+    		this.applySelectionsOnAssociationGroup(associationGroup);
+//    		var selections = this.getSelectionsByAssociations();
+//    		for(var field in selectionsOnWidget) {
+//    			if(!selections[field]) {
+//    				selections[widget.getStore().storeId  + "." + field] = selectionsOnWidget[field].values;
+//    			}
+//    		}
+//        	Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
     	} else {
-    		var selections = this.getSelectionsByStores();
-    		Sbi.storeManager.loadStoresByAggregations( widget.getStore().storeId,  selections);
+    		this.applySelectionsOnAggregation(widget.getStore());
+//    		var selections = this.getSelectionsByStores();
+//    		Sbi.storeManager.loadStoresByAggregations( widget.getStore().storeId,  selections);
     	}
     	
     	this.fireEvent('selectionChange');
