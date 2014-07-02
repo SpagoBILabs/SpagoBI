@@ -119,7 +119,7 @@ Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'There must be a
 Sbi.locale.ln['sbi.olap.writeback.persist.error'] = 'Error saving the modifications';
 Sbi.locale.ln['sbi.olap.writeback.edit.no.zero'] =  'It\'s not possible to edit this cell!! The current propagation algorithm preserves the weight between siblings cells; when editing a blank or zero-value cell, this constraint will be broken on children cells. In the next release we\'ll provide more propagation algorithms.';
 Sbi.locale.ln['sbi.olap.writeback.edit.no.locked'] =  'It\'s not possible to edit a model if you have not set a lock on it.';
-
+Sbi.locale.ln['sbi.olap.writeback.edit.lock.export.output'] =  'It\'s not possible to edit a model while an export process is executing.';
 
 //===================================================================
 //LOCK

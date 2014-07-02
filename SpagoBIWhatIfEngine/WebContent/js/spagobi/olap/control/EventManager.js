@@ -42,6 +42,12 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 *  the last edited formula. To restore the formula
 	 */
 	lastEditedCell: null,
+	
+	/**
+	 * @property {String} lockTypeEdit
+	 * A flag that block the editing of a cel. The String is the type of the lock
+	 */
+	lockTypeEdit: null,
 
 	constructor : function(config) {
 		this.olapPanel = config.olapPanel;
@@ -96,7 +102,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.loadingMask.hide();
 		
 		if(!keepState){
-			this.lastEditedCell = null;
+			this.cleanLastEditedFormula();
 		}
 	},
 	hideLoadingMask: function(){
@@ -269,7 +275,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 			return;
 		}
 
-		if(this.olapPanel && this.olapPanel.modelConfig && this.isMeasureEditable(measureName)){
+		if(this.olapPanel && this.olapPanel.modelConfig && this.isMeasureEditable(measureName) && !this.lockTypeEdit){
 			var cell = Ext.get(id);
 			
 			//check if the user is editing the same cell twice. If so we present again the last formula
@@ -313,6 +319,10 @@ Ext.define('Sbi.olap.control.EventManager', {
 			});
 
 			editor.startEdit(cell.el, unformattedValue);
+		}
+		
+		if(this.lockTypeEdit){
+			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.writeback.edit.lock.'+this.lockTypeEdit));
 		}
 	},
 	
@@ -406,12 +416,23 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.updateAfterMDXExecution(response.responseText, keepState);
 
 	}
-	, serviceExecutedWithError: function (response){
+	, serviceExecutedWithError: function (response, keepStateIfFails){
 		this.loadingMask.hide();
-
+		if(!keepStateIfFails){
+			this.cleanLastEditedFormula();
+		}
 	}
 
+	, setLockTypeEdit: function (value){
+		this.lockTypeEdit = value;
 
+	}
+	
+	, cleanLastEditedFormula: function(){
+		this.lastEditedFormula = null;
+		this.lastEditedCell = null;
+	}
+	
 
 });
 

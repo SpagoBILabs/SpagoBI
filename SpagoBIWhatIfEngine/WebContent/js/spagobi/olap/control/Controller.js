@@ -150,7 +150,7 @@ Ext.define('Sbi.olap.control.Controller', {
 			jsonData: { "expression" : expression }
 		});
 		
-		service.callService(this, null, null, true);
+		service.callService(this, null, null, false, true);
 	}
 	
 	,
@@ -266,14 +266,17 @@ Ext.define('Sbi.olap.control.Controller', {
 			}else{
 				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.olap.toolbar.exportoutput.error'));
 			}
+			this.eventManager.setLockTypeEdit(null);
 		}, this);
 		
 
+		
 		if(params.exportType=="csv"){
 			var exportationUrl = service.getRestUrlWithParameters(true);
 			window.open(exportationUrl,'exportOutput','resizable=1,height=550,width=700');//.document.write(['<html><head></head><body>'+LN('sbi.olap.toolbar.exportoutput.csv.window')+'</body></html>']);
 		}else{
 			service.callService(this);
+			this.eventManager.setLockTypeEdit("export.output");
 		}
 		
 		
