@@ -22,11 +22,33 @@ Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime = function(co
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 
-	this.init();
+	var categories = [];
+	categories.push(this.wconf.category);
+	if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
 	
+	this.aggregations = {
+		measures: this.wconf.series,
+		categories: categories
+	};
+	Sbi.trace("[AbstractChartWidgetRuntime.constructor]: aggregations properties set to [" + Sbi.toSource(this.aggregations)+ "]");
+	
+	this.init();
 	this.items = this.chart || this.msgPanel;
 	
 	Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime.superclass.constructor.call(this, c);
+	
+	var bounded = this.boundStore();
+	if(bounded) {
+		Sbi.trace("[AbstractChartWidgetRuntime.constructor]: store [" + this.getStoreId() + "] succesfully bounded to widget [" + this.getWidgetName() + "]");
+	} else {
+		Sbi.error("[AbstractChartWidgetRuntime.constructor]: store [" + this.getStoreId() + "] not bounded to widget [" + this.getWidgetName() + "]");
+	}
+
+	
+	this.reload();
+	Sbi.trace("[AbstractChartWidgetRuntime.constructor]: Reloading store [" + this.getStoreId() + "] ...");
+	
+	this.addEvents('selection');
 
 	Sbi.trace("[AbstractChartWidgetRuntime.constructor]: OUT");
 };
@@ -70,13 +92,52 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 		}
 		return showlegend;
 	}
+	
+	, getSeriesTips: function(series) {
+		var thisPanel = this;
+		
+		var tips =  {
+			trackMouse: true,
+           	minWidth: 140,
+           	maxWidth: 300,
+           	width: 'auto',
+           	minHeight: 28,
+           	renderer: function(storeItem, item) {
+           		var tooltipContent = thisPanel.getTooltip(storeItem, item);
+           		this.setTitle(tooltipContent);
+            }
+        };
+		
+		return tips;
+	}
+	
+	, getLegendConfiguration: function() {
+		var legendConf = {};
+		legendConf.position = (Sbi.isValorized(this.wconf.legendPosition))? this.wconf.legendPosition:'bottom';
+	}
+	
+	, getBackground: function() {
+		var background = {
+		    gradient: {
+			    id: 'backgroundGradient',
+			    angle: 45,
+			    stops: {
+				    0: {color: '#ffffff'},
+				    100: {color: '#eaf1f8'}
+				}
+			}
+		};
+		return background;
+	}
 
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, init: function() {
+		Sbi.trace("[AbstractChartWidgetRuntime.init]: IN");
 		this.initMsgPanel();
 		this.initChartThemes();
+		Sbi.trace("[AbstractChartWidgetRuntime.init]: OUT");
 	}
 	
 	, initMsgPanel: function() {
@@ -228,6 +289,41 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
     		this.on('afterrender', function(){this.redraw();}, this);
     	}
 		Sbi.trace("[AbstractChartWidgetRuntime.onStoreLoad][" + this.getId() + "]: OUT");
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // private methods
+	// -----------------------------------------------------------------------------------------------------------------
+	, getFieldMetaByName: function(fieldName) {
+		var store = this.getStore();
+		var fieldsMeta = store.fieldsMeta;
+    	for(var h in fieldsMeta) {
+    		var fieldMeta = fieldsMeta[h];
+    		if(fieldMeta.name == fieldName) {
+    			return fieldMeta;
+    		}
+    	}
+    	return null;
+	}
+	
+	, getFieldHeaderByName: function(fieldName) {
+		var fieldMeta = this.getFieldMetaByName(fieldName);
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getFieldHeaderByName]: " + Sbi.toSource(fieldMeta));
+		return fieldMeta!=null?fieldMeta.header: null;
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // utility methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, onItemMouseDown: function(item) {
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.onItemMouseDown]: IN");
+		var itemMeta = this.getItemMeta(item);
+	    var selections = {};
+		selections[itemMeta.categoryFieldHeaders[0]] = {values: []};
+	    Ext.Array.include(selections[itemMeta.categoryFieldHeaders].values, itemMeta.categoryValues[0]);
+	    this.fireEvent('selection', this, selections);
+	    Sbi.trace("[AbstractCartesianChartWidgetRuntime.onItemMouseDown]: OUT");
 	}
 	
 	//------------------------------------------------------------------------------------------------------------------

@@ -92,6 +92,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- NEW Abstract Chart widget -->
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/abstractchart/AbstractChartWidgetRuntime.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/abstractchart/AbstractCartesianChartWidgetRuntime.js'/></script>
+
 <!-- NEW Line Chart widget -->
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/LineChartWidgetRuntime.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/locale/<%=locale.getLanguage()%>.js'/></script>
@@ -99,6 +100,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- NEW Bar Chart widget -->
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/BarChartWidgetRuntime.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/locale/<%=locale.getLanguage()%>.js'/></script>
+
 
 <!-- Chart widget -->
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/chart/AbstractChartWidget.js'/></script>
@@ -108,6 +110,11 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/chart/ColorField.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/chart/SeriesPalette.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/chart/DefaultChartDimensionRetrieverStrategy.js'/></script>
+
+<!-- NEW Pie Chart widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/PieChartWidgetRuntime.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/locale/<%=locale.getLanguage()%>.js'/></script>
+
 
 <!-- Bar Chart widget -->
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/barchart/BarChartWidget.js'/></script>
