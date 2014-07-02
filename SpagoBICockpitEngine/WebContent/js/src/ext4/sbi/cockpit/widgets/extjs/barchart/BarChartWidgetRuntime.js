@@ -550,7 +550,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 
 Sbi.registerWidget('barchart-ext', {
 	name: 'NEW Bar Chart'
-	, icon: 'js/src/ext4/sbi/cockpit/widgets/extjs/barchart/barchart_64x64_ico.png'
+	, icon: 'js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime'
 	, designerClass: 'Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner'
 	//, designerClass: 'Ext.Panel'
