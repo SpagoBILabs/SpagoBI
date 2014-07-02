@@ -48,7 +48,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 	    var seriesFields = [];
 		var seriesTitles = [];
 		for(var i = 0; i < this.wconf.series.length; i++) {
-			var id = this.wconf.series[i].id;
+			var id = this.wconf.series[i].alias;
 			seriesFields.push(store.fieldsMeta[id].name);
 			seriesTitles.push(id);
 		}
@@ -73,7 +73,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 			var categoriesFields = [];
 			var categoriesTitles = [];
 			for(var i = 0; i < categories.length; i++) {
-				var id = categories[i].id;
+				var id = categories[i].alias;
 				categoriesFields.push(store.fieldsMeta[id].name);
 				categoriesTitles.push(id);
 			}
