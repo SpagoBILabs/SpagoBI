@@ -82,18 +82,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.wsdl.Output;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 
 public class DocumentsServiceImpl extends AbstractSDKService implements DocumentsService {
@@ -1118,6 +1125,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		
 		try {
 			// check first if model is in service catalogue, otherwise return null
+			
 			IMetaModelsDAO metaModelsDAO = DAOFactory.getMetaModelsDAO();			
 			Content content = metaModelsDAO.loadActiveMetaModelContentByName(folderName);
 			if(content == null){
@@ -1125,10 +1133,20 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				return null;
 			}
 			
-			FileInputStream isDatamartFile = downloadSingleFile(folderName, fileName);
-			//defines a content to return
-			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(isDatamartFile);
-
+			// search for model file into datamart.jar
+			byte[] templateContent = getModelFileFromJar(content);
+			
+			// model file has to be taken inside datamart.jar, if not found means model could be old, than is taken from resources
+			
+			if(templateContent == null){
+				logger.debug("Model file not found inside datamart.jar, take it from resources");
+				FileInputStream isDatamartFile = downloadSingleFile(folderName, fileName);
+				templateContent = SpagoBIUtilities.getByteArrayFromInputStream(isDatamartFile);
+			}
+			else{
+				logger.debug("Model file found inside datamart.jar");
+			}
+			
 			toReturn = new SDKTemplate();
 			toReturn.setFileName(fileName);
 			SDKObjectsConverter objConverter = new SDKObjectsConverter();
@@ -1145,6 +1163,69 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			logger.debug("OUT");
 		}
 		return toReturn;
+	}
+	
+	/** search for model file inside content parameter and return byte array
+	 * 
+	 * @param content
+	 * @param toReturn
+	 */
+	
+	private byte[] getModelFileFromJar(Content content){
+		logger.debug("IN");
+
+		// read jar
+		byte[] contentBytes = content.getContent();
+
+		JarFile jar = null;
+		FileOutputStream output = null;
+		java.io.InputStream is = null;
+
+		try {
+			UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+			UUID uuidObj = uuidGen.generateTimeBasedUUID();
+			String idCas = uuidObj.toString().replaceAll("-", "");
+			logger.debug("create temp file for jar");
+			String path = System.getProperty("java.io.tmpdir") +  System.getProperty("file.separator") + idCas+".jar"; 
+			logger.debug("temp file for jar "+path);
+			File filee = new File(path);
+			output = new FileOutputStream(filee);
+			IOUtils.write(contentBytes, output);
+
+			jar = new JarFile(filee);
+			logger.debug("jar file created ");
+
+			Enumeration enumEntries = jar.entries();
+			while (enumEntries.hasMoreElements()) {
+		    JarEntry fileEntry = (java.util.jar.JarEntry) enumEntries.nextElement();
+			logger.debug("jar content "+fileEntry.getName());
+		    
+		    if(fileEntry.getName().endsWith("sbimodel")){
+		    	logger.debug("found model file "+fileEntry.getName());
+			    is = jar.getInputStream(fileEntry);
+			    byte[] byteContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
+			    return byteContent;
+			    
+		    }
+		    
+		}
+		} catch (IOException e1) {
+			logger.error("the model file could not be takend by datamart.jar due to error, it will be taken from resources ", e1);		
+			return null;
+		}
+		finally{
+			try {
+
+				if( jar != null) jar.close();
+				if( output != null) output.close();
+				if( is != null) is.close();
+			} catch (IOException e) {
+				logger.error("error in closing streams");			
+				}
+			logger.debug("OUT");						
+		}
+		logger.debug("the model file could not be takend by datamart.jar, probably datamart.jar is old, it will be taken from resources");
+		return null;
 	}
 	
 	
@@ -1164,7 +1245,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			String[] filenames = new String[]{fileDatamartName, fileModelName};
 			String fileZipName  = folderName + ".zip";
 			//String path = getResourcePath()  + System.getProperty("file.separator") + fileZipName;
-			String path = System.getProperty("java.io.tmpdir") +  System.getProperty("file.separator") + fileZipName;;
+			String path = System.getProperty("java.io.tmpdir") +  System.getProperty("file.separator") + fileZipName;
 
 			// Create the ZIP file
 			file = new File(path);
