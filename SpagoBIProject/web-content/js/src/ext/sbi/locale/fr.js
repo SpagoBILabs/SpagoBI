@@ -12,6 +12,11 @@ Sbi.locale.ln['sbi.general.yes']='Oui';
 Sbi.locale.ln['sbi.general.No']='Non';
 Sbi.locale.ln['sbi.general.close']='Fermer';
 Sbi.locale.ln['sbi.general.ok'] = 'OK';
+Sbi.locale.ln['sbi.general.cancel'] = 'Annuler';
+Sbi.locale.ln['sbi.general.continue'] = 'Continuer';
+Sbi.locale.ln['sbi.general.sessionexpired.title'] = 'La session a expiré!';
+Sbi.locale.ln['sbi.general.sessionexpired.message'] = 'La session a expiré, s\'il vous plait se connecter à nouveau';
+
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node']='Noeud G\u00e9n\u00e9rique';
 Sbi.locale.ln['sbidomains.ds.Generic_root']='Racine G\u00e9n\u00e9rique';
@@ -46,6 +51,11 @@ Sbi.locale.ln['sbi.generic.document'] = 'Document';
 Sbi.locale.ln['sbi.generic.map'] = 'Carte';
 Sbi.locale.ln['sbi.generic.maps'] = 'Cartes';
 Sbi.locale.ln['sbi.generic.all'] = 'Tous';
+Sbi.locale.ln['sbi.generic.showmetadata'] = 'Show Metadata';
+Sbi.locale.ln['sbi.generic.document.add.adhocGeoReport'] = 'Geo Report';
+Sbi.locale.ln['sbi.generic.document.add.adhocCockpit'] = 'Cockpit';
+Sbi.locale.ln['sbi.generic.document.add.traditional SpagoBI'] = 'Other';
+
 Sbi.locale.ln['sbi.generic.run'] = 'Ex\u00e9cuter';
 Sbi.locale.ln['sbi.generic.upload'] = 'Charger';
 Sbi.locale.ln['sbi.generic.download'] = 'T\u00e9l\u00e9charger';
@@ -70,6 +80,8 @@ Sbi.locale.ln['sbi.generic.creationdate'] = 'Date de cr\u00e9ation';
 Sbi.locale.ln['sbi.generic.kpi']='Kpi';
 Sbi.locale.ln['sbi.generic.nodetype']='Type de Noeud';
 Sbi.locale.ln['sbi.generic.nodedescr']='Description Noeud';
+Sbi.locale.ln['sbi.generic.id'] = 'Identifier';
+
 //search filters
 Sbi.locale.ln['sbi.generic.search.title'] = 'Recherche';
 Sbi.locale.ln['sbi.generic.search.msg'] = 'Entrer le texte \u00e0 rechercher';
@@ -315,10 +327,25 @@ Sbi.locale.ln['sbi.browser.document.searchDocuments']  = 'Recherche de documents
 Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Recherche par mots cl\u00e9s ...';
 Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Document/s deleted succesfully';
 Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Document cloned succesfully';
-Sbi.locale.ln['sbi.execution.saveDocument']='Remplir le formulaire, s\u00e9lectionner un ou plusieurs dossiers, et Enregistrer';
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Remplir la Forme et Enregistrer votre document';        
+Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Avant de partager le document sélectionner au moins un dossier ou une community où le déposer'; 
+
+Sbi.locale.ln['sbi.browser.document.share.win.title']  = 'Partager Document';
+Sbi.locale.ln['sbi.browser.document.share.win.titleDetail']  = 'Sélectionner les dossiers ou les community où partager le document';
+Sbi.locale.ln['sbi.browser.document.share.win.btn']  = 'Partager';
+Sbi.locale.ln['sbi.browser.document.share.win.tooltip']  = 'Cliquer pour partager un document';
+Sbi.locale.ln['sbi.browser.document.unshare.success']  = 'Ne plus partager un document déposé correctement!';
+Sbi.locale.ln['sbi.generic.confirmUnshare'] = 'Confirmer de ne plus partager le document?';
+Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Avant de partager le document sélectionner au moins un dossier où le deposer';
+Sbi.locale.ln['sbi.generic.confirmShare']  = 'Confirmer de partager le document?';
+Sbi.locale.ln['sbi.browser.document.share.success']  = 'Partager le document déposer correctement';
+
 
 Sbi.locale.ln['sbi.browser.defaultRole.title']='selectiones une default r\u00f4le';
 Sbi.locale.ln['sbi.document.saveWarning']='Avant d\'enregistrer votre document, veuillez remplir les champs Nom et Libell\u00e9 et v\u00e9rifier qu\'il y a au moins un dossier o\u00f9 le placer !';
+Sbi.locale.ln['sbi.document.saveWarning2']  = 'Avant d\'enregistrer le document remplir le Nom du document';
+
+
 Sbi.locale.ln['sbi.browser.defaultRole.role']='R\u00f4le: ';
 Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']='Aucun d\u00e9fault r\u00f4le';
 Sbi.locale.ln['sbi.browser.defaultRole.save']='Enregistrer';
@@ -355,6 +382,10 @@ Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserM
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']  = 'Remplir la fiche ci-dessous, puis appuyer sur le bouton d\'ex\u00e9cution pour voir les resultats';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']  = 'Riemplir la fiche ci-dessous et appouyer sur le bouton de mise \u00e0 jour pour re-ex\u00e9cuter le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Appuyer sur le bouton de mise \u00e0 jour pour re-ex\u00e9cuter le document';
+
+Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.message'] = 'Exécuter';
+Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.tooltip'] = 'Remplir la forme suivante et cliquer ici pour exécuter le document';
+
 
 Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.title']  = 'Ins\u00e9rer les valeurs ou copier une partie d\'un document xls';
 Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.ok']  = 'Ok';
@@ -395,6 +426,11 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas']='Enregistrer sous...
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.view']='Voir Document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit']='Editer';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.breadcrumbback'] = 'Retour au document pr\u00e9cedent';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'La sélection des Paramètres a été changé;  Vourriez-vous exécuter le document de la sélection précédente ou de celle courrente?';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.usecurrentselection'] = 'Utiliser le courrent';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.usepreviousselection'] = 'Utiliser le précédent';
+
+
 Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'Le nombre de documents ouverts a atteint le maximum. Fermez la pr\u00e9c\u00e9dente ex\u00e8cution et r\u00e8-ex\u00e9cuter le rapport';
 
 Sbi.locale.ln['sbi.execution.viewpoints.title']='Param\u00e8tres Enregistr\u00e9s';
@@ -515,13 +551,17 @@ Sbi.locale.ln['sbi.roles.edit'] = 'Editer';
 Sbi.locale.ln['sbi.roles.worksheet'] = 'Worksheet';
 Sbi.locale.ln['sbi.roles.businessModels'] = 'Business Models';
 Sbi.locale.ln['sbi.roles.businessModels.categories'] = 'Cat\u00e9gories Business Models';
-Sbi.locale.ln['sbi.roles.finalUserCan'] = 'Voix du menu utilisateur:';
+Sbi.locale.ln['sbi.roles.finalUserCan'] = 'Objects pour le menu de l\'utilisateur';
 Sbi.locale.ln['sbi.roles.seeDocumentBrowser'] = 'Voir la liste des documents';
 Sbi.locale.ln['sbi.roles.seeMyData'] = 'Voir \'Mes Donn\u00e9es\'';
 Sbi.locale.ln['sbi.roles.seeFavourites'] = 'Voir les favoris';
 Sbi.locale.ln['sbi.roles.seeSubscriptions'] = 'Voir les souscriptions';
 Sbi.locale.ln['sbi.roles.seeToDoList'] = 'Voir la liste To Do';
 Sbi.locale.ln['sbi.roles.createDocument'] = 'Cr\u00e9er les documents';
+Sbi.locale.ln['sbi.roles.allKpiComment'] = 'Tous les commentaires sur les kpi';
+Sbi.locale.ln['sbi.roles.myKpiComment'] = 'Commentaires privés sur les kpi';
+Sbi.locale.ln['sbi.roles.kpiComment'] = 'Commmentaires sur les Kpi ';
+Sbi.locale.ln['sbi.roles.delete'] = 'Effacer';
 
 Sbi.locale.ln['sbi.users.fullName']='Nom Complet';
 Sbi.locale.ln['sbi.users.userId']='Identifiant Utilisateur';
@@ -762,7 +802,7 @@ Sbi.locale.ln['sbi.ds.failedToUpload']= 'Impossible de t\u00e9l\u00e9charger ';
 Sbi.locale.ln['sbi.ds.skip.checks']='Ecraser';
 Sbi.locale.ln['sbi.ds.changedon']='Modifi\u00e9 ';
 Sbi.locale.ln['sbi.ds.metadata.msgKO']='Erreurs dans la validation. ';
-Sbi.locale.ln['sbi.ds.metadata.msgOK']='Aucun erreur dans la validation.';
+Sbi.locale.ln['sbi.ds.metadata.msgKO']='La validation a trouvé des erreurs. Pour voir plus détails passer la souris sur les cellules rouges. ';
 Sbi.locale.ln['sbi.ds.metadata.addProperty']='Ajouter une propri\u00e9t\u00e9';
 Sbi.locale.ln['sbi.ds.metadata.deleteProperty']='Supprimer une propri\u00e9t\u00e9';
 Sbi.locale.ln['sbi.ds.metadata.clear']='Nettoyer';
@@ -772,6 +812,17 @@ Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Attribut';
 Sbi.locale.ln['sbi.ds.metadata.column.value']='Valeur';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Metadonn\u00e9e du dataset';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title2']='Type de metadonn\u00e9es';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.column']='Colonne Hiérarchie';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.level']='Niveau Hiérarchie';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.clear']='Nettoyer';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.expert']='Mode Expert';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.simple']='Mode Simple';
+
+Sbi.locale.ln['sbi.multitenant.delete.title']= 'Effacer Tenants?';
+Sbi.locale.ln['sbi.multitenant.delete.msg']= 'Etes-vous sûr vous voulez effacer le Tenant et toutes ses données?';
+
+Sbi.locale.ln['multitenant.error.association'] = 'Impossible de modifier l\'association. Vérifiez les dépendances de';
+
 
 Sbi.locale.ln['sbi.datasource.label']= 'Libell\u00e9';
 Sbi.locale.ln['sbi.datasource.description']= 'Description';
@@ -797,6 +848,20 @@ Sbi.locale.ln['sbi.datasource.validation.error']= 'Erreurs de validation. Contro
 Sbi.locale.ln['sbi.datasource.test.failed']= 'Erreur dans les test de la source de donn\u00e9es';
 Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ' : source de donn\u00e9es d\u00e9j\u00e0 pr\u00e9sente avec fonction d\'\u00e9criture par defaut. Remplacer avec la nouvelle?';
 
+Sbi.locale.ln['sbi.datasource.delete.forbidden']= 'Vous ne pouvez pas effacer la Source des données!';
+
+
+//Multitenant
+Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant enregistré correctement';
+Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant effacé correctement';
+Sbi.locale.ln['sbi.multitenant.validation.error']= 'Il y a des erreur(s) dans la configuration du tenant. Contrôler les champs soulignés.';
+Sbi.locale.ln["error.mesage.name.multitenant.cannot.be.null"]= "Le nom du Tenant ne peut pas être vide";
+Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Impossible effacer le tenant parce qu\'il est en train d\'être utilisé";
+Sbi.locale.ln["error.mesage.multitenant.saving.duplicated"]="Impossible enregistrer le Tenant parce qu\'il y en a un autre avec le même nom";
+Sbi.locale.ln['sbi.multitenant.theme']= 'Thème';
+Sbi.locale.ln['sbi.multitenant.id'] = 'Identifier';
+
+
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
@@ -818,6 +883,43 @@ Sbi.locale.ln['sbi.scheduler.alert'] = 'Attention! Ins\u00e9rer une nouvelle dat
 //MESSAGE FOR QBE DATASET BUILDER
 //===================================================================
 Sbi.locale.ln['sbi.tools.dataset.qbedatasetbuilder.title']='Concepteur jeux de donn\u00e9es Qbe';
+//===================================================================
+//MESSAGE FOR SCHEDULER
+//===================================================================
+Sbi.locale.ln['sbi.scheduler.alert'] = 'Attention! Entrer une nouvelle date-heure de départ après l’actuel pour éviter un rééchelonnement.';
+Sbi.locale.ln['sbi.scheduler.overview'] = 'Aperçu d\'activité ';
+Sbi.locale.ln['sbi.scheduler.documents'] = 'Documents';
+Sbi.locale.ln['sbi.scheduler.name'] = 'Nom';
+Sbi.locale.ln['sbi.scheduler.parameters'] = 'Paramèters';
+Sbi.locale.ln['sbi.scheduler.schedulations'] = 'Schedulations';
+Sbi.locale.ln['sbi.scheduler.type'] = 'Type';
+Sbi.locale.ln['sbi.scheduler.startdate'] = 'Date de début';
+Sbi.locale.ln['sbi.scheduler.starttime'] = 'Heure de début';
+Sbi.locale.ln['sbi.scheduler.enddate'] = 'Date de fin’';
+Sbi.locale.ln['sbi.scheduler.endtime'] = 'Heure de fin';
+Sbi.locale.ln['sbi.scheduler.addschedulation'] = 'Ajouter Schedulation';
+Sbi.locale.ln['sbi.scheduler.schedulationtype'] = 'Type Schedulation';
+Sbi.locale.ln['sbi.scheduler.schedulation.detail'] = 'Détail Schedulation';
+Sbi.locale.ln['sbi.scheduler.schedulation.delete'] = 'Effacer Schedulation';
+Sbi.locale.ln['sbi.scheduler.activity.detailactivity'] = 'Détail d’activité';
+Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Liste Schedulations';
+Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Activité Effacée';
+Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Schedulation Effacée';
+Sbi.locale.ln['sbi.scheduler.schedulation.execute'] = 'Exécuter maintenant';
+Sbi.locale.ln['sbi.scheduler.schedulation.executed'] = 'Schedulation exécutée';
+Sbi.locale.ln['sbi.scheduler.schedulation.pause'] = 'Arrêter la schedulation';
+Sbi.locale.ln['sbi.scheduler.schedulation.resume'] = 'Résumer schedulation';
+Sbi.locale.ln['sbi.schedulation.pauseConfirm'] = 'Vourriez-vous arrêter la schedulation?';
+Sbi.locale.ln['sbi.scheduler.schedulation.paused'] = 'Schedulation arrêté';
+Sbi.locale.ln['sbi.schedulation.resumeConfirm'] = 'Vourriez-vous résumer la schedulation?';
+Sbi.locale.ln['sbi.scheduler.schedulation.resumed'] = 'Schedulation résumée';
+Sbi.locale.ln['sbi.scheduler.schedulation.info'] = ' Informations Schedulation';
+Sbi.locale.ln['sbi.scheduler.schedulation.mailto'] = 'Mail à';
+Sbi.locale.ln['sbi.scheduler.schedulation.attachedzip'] = 'Nom zip Attaché';
+Sbi.locale.ln['sbi.scheduler.schedulation.mailsubject'] = 'Sujet Mail';
+Sbi.locale.ln['sbi.scheduler.schedulation.containedfilename'] = 'Nom du ficher inséré ';
+Sbi.locale.ln['sbi.scheduler.schedulation.mailtext'] = 'Text Mail';
+
 
 //===================================================================
 //DATASET - CHOOSE DATAMART
@@ -912,6 +1014,7 @@ Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = '
 //OFFICE DOCUMENTS - ZOOM 
 Sbi.locale.ln['Sbi.office.zoomIn'] = 'Augmente les dimensions';
 Sbi.locale.ln['Sbi.office.zoomOut'] = 'D\u00e9cr\u00e9mente les dimensions';
+Sbi.locale.ln['sbi.kpi.nokpi']= 'Aucun KPI associé';
 
 Sbi.locale.ln['sbi.kpi.accordionmenu.desciption']= 'Description';
 Sbi.locale.ln['sbi.kpi.accordionmenu.linkeddoc']=  'Document li\u00e9';
@@ -1087,6 +1190,27 @@ Sbi.locale.ln['sbi.mydata.shareddataset'] = 'Data Set Partag\u00e9s';
 Sbi.locale.ln['sbi.mydata.alldataset'] = 'Tous les Data Set';
 Sbi.locale.ln['sbi.mydata.sharedataset'] = 'Partager Data Set';
 Sbi.locale.ln['sbi.mydata.unsharedataset'] = 'Rendre le  Data Set priv\u00e9';
+Sbi.locale.ln['sbi.myanalysis.wizard.wizardname'] = "Mes Analyses Wizard";
+Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisselection'] = "Sélectionner Type de Mes Analyses";
+Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisdetail'] = "Définir les détails";
+Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "Sélection des données";
+Sbi.locale.ln['sbi.myanalysis.delete.everywhere']= 'Effacer tout';
+Sbi.locale.ln['sbi.myanalysis.delete.personalfolder']= 'Effacer seulement mon dossier personnel';
+Sbi.locale.ln['sbi.myanalysis.delete.cancel']= 'Annuler';
+Sbi.locale.ln['sbi.myanalysis.noEngines']= 'Après l’installation, il n\'y a pas de drivers necéssaires pour continuer . S\'il vous plaît, contactez l\'Administrateur du système.';
+Sbi.locale.ln['sbi.myanalysis.analysis'] = "Analyses";
+Sbi.locale.ln['sbi.myanalysis.report'] = "Report";
+Sbi.locale.ln['sbi.myanalysis.cockpit'] = "Cockpit";
+Sbi.locale.ln['sbi.myanalysis.map'] = "Map";
+Sbi.locale.ln['sbi.myanalysis.all'] = "All";
+Sbi.locale.ln['sbi.myanalysis.sharedocument'] = "Partager le Document";
+Sbi.locale.ln['sbi.myanalysis.unsharedocument'] = "Ne plus partger le Document";
+
+//===================================================================
+//Sbi.execution.SaveDocumentWindow
+//===================================================================
+Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'Le document a été enregistré correctement, il est disponible dans la section "Mes Analyses" ';
+
 
 if(Ext.DatePicker){
 	Ext.override(Ext.DatePicker, {
