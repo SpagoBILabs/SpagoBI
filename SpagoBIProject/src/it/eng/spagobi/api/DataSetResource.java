@@ -370,13 +370,13 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
 		for(int i = 0; i < categoriesObject.length(); i++) {
 			JSONObject  categoryObject = categoriesObject.getJSONObject(i);
-			String columnName = categoryObject.getString("id");
+			String columnName = categoryObject.getString("alias");
 			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,null,columnName);
 			projectionCriterias.add(aProjectionCriteria);
 		}
 		for(int i = 0; i < measuresObject.length(); i++) {
 			JSONObject  measureObject = measuresObject.getJSONObject(i);
-			String columnName = measureObject.getString("id");
+			String columnName = measureObject.getString("alias");
 			IAggregationFunction function = AggregationFunctions.get( measureObject.getString("funct") );
 			if (function != AggregationFunctions.NONE_FUNCTION) {
 				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,function.getName(),columnName);
@@ -395,7 +395,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		
 		for(int i = 0; i < categoriesObject.length(); i++) {
 			JSONObject  categoryObject = categoriesObject.getJSONObject(i);
-			String columnName = categoryObject.getString("id");
+			String columnName = categoryObject.getString("alias");
 			GroupCriteria groupCriteria = new GroupCriteria(dataset, columnName,null);
 			groupCriterias.add(groupCriteria);
 		}
