@@ -44,3 +44,13 @@ Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'Votre session a expir\u00E9. Essa
 //===================================================================
 //PIECHART WIDGET PANEL
 //===================================================================
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.title'] = 'Pie chart designer';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showvalues.title'] = 'Montrer les valeurs';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showlegend.title'] = 'Afficher la légende';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showpercentage.title'] = 'Montrer les valeurs en pourcentage';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.categorypalette.title'] = 'Palette des couleurs des catégories';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.title'] = 'Position de la légende';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.bottom'] = 'Bas';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.top'] = 'Haut';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.left'] = 'Gauche';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right'] = 'Droite';
