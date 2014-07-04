@@ -654,7 +654,11 @@ public class PersistedTableManager {
 			statement = "SELECT TABLE_NAME "+
 						"FROM INFORMATION_SCHEMA.TABLES " +
 						"WHERE TABLE_NAME LIKE '" + prefix.toLowerCase()+ "%'";
-		}  
+		} else if (dialect.contains(DIALECT_HSQL) || dialect.contains(DIALECT_HSQL_PRED)){
+			statement = "SELECT TABLE_NAME "+
+			"FROM INFORMATION_SCHEMA.SYSTEM_TABLES  " +
+			"WHERE TABLE_TYPE = 'TABLE' AND TABLE_NAME LIKE '" + prefix.toUpperCase()+ "%'";			
+		}
 		
 		if ((statement != null) && (!statement.isEmpty())){
 			IDataStore dataStore = datasource.executeStatement(statement,0,0);
