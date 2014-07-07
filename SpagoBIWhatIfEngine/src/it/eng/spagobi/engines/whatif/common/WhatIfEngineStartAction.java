@@ -255,7 +255,7 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 			if (StringUtils.isNotEmpty(language) && StringUtils.isNotEmpty(country)) {
 				toReturn = new Locale(language, country);
 			} else {
-				logger.error("Language and country not specified in request. Considering default locale that is "
+				logger.warn("Language and country not specified in request. Considering default locale that is "
 						+ DEFAULT_LOCALE.toString());
 				toReturn = DEFAULT_LOCALE;
 			}
