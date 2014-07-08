@@ -11,6 +11,7 @@ Sbi.cockpit.widgets.crosstab.CrossTabWidget = function(config) {
 	
 	var defaultSettings = {	
 	};
+	
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.crosstab.CrossTabWidget', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	
@@ -38,6 +39,9 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	
 	crosstabDefinition: null
 	, requestParameters: null // contains the parameters to be sent to the server on the crosstab load invocation
+	, crosstab: null
+	, calculatedFields: null
+	, loadMask: null
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
@@ -47,11 +51,13 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-	, load: function(crosstabDefinition, filters) {			
-		var crosstabDefinitionEncoded = Ext.encode(Sbi.toSource(crosstabDefinition));				
-//		var crosstabDefinitionEncoded = Ext.util.JSON.encode(crosstabDefinition);		
+	, load: function(crosstabDefinition, filters) {								
+		var crosstabDefinitionEncoded = Ext.JSON.encode(crosstabDefinition);
+		var datasetLabelEncoded = this.getStoreId();
+		
 		this.requestParameters = {
-			crosstabDefinition: crosstabDefinitionEncoded			
+			crosstabDefinition: crosstabDefinitionEncoded,	
+			datasetLabel: datasetLabelEncoded
 		};
 		if(filters!=undefined && filters!=null){
 			this.requestParameters.FILTERS = Ext.util.JSON.encode(filters);
@@ -60,13 +66,13 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 		this.loadCrosstabAjaxRequest.defer(100, this,[crosstabDefinitionEncoded]);		
 	}
 
-	, loadCrosstabAjaxRequest: function(crosstabDefinitionEncoded){				
-//		alert("JSON ENCODED: " + crosstabDefinitionEncoded);
+	, loadCrosstabAjaxRequest: function(crosstabDefinition){		
+		
 		Ext.Ajax.request({
 			url: Sbi.config.serviceReg.getServiceUrl('getCrosstab', {				
 			}),
 			method: 'GET',
-	        params: crosstabDefinitionEncoded,
+			params: this.requestParameters,
 	        success : function(response, opts) {		        	
 	        	this.refreshCrossTab(response.responseText);
 	        },
@@ -78,35 +84,19 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 		});		
 	}
 	
-	, refreshCrossTab: function(serviceResponseText){
-
-//		var crosstab = Ext.util.JSON.decode( serviceResponseText );
+	, refreshCrossTab: function(serviceResponseText) {		
+//		this.removeAll(true);
 		
-		alert("refreshCrossTab: " + serviceResponseText);
-	}
-	
-	, onRender: function(ct, position) {	
-		Sbi.trace("[DummyWidget.onRender]: IN");
-		Sbi.cockpit.widgets.dummy.DummyWidget.superclass.onRender.call(this, ct, position);	
-		
-		this.dummyContent = new Ext.Panel({
-			border: false
-			, bodyBorder: false
-			, hideBorders: true
-			, frame: false
-			, html: this.msg || 'Sono un widget qualunque'
+//		this.crosstab = new Sbi.cockpit.widgets.crosstab.HTMLCrossTab({
+//			htmlData : "asd"
+//		});
+		this.crosstab = new Sbi.cockpit.widgets.crosstab.HTMLCrossTab({
+			htmlData : serviceResponseText 
+			, bodyCssClass : 'crosstab'
 		});
-		
-		this.items.each( function(item) {
-			this.items.remove(item);
-	        item.destroy();           
-	    }, this);   
-		
-		if(this.chart !== null) {
-			this.add(this.dummyContent);
-			this.doLayout();
-		}	
-		Sbi.trace("[DummyWidget.onRender]: OUT");
+		this.add(this.crosstab);
+		this.hideMask();
+		this.doLayout();
 	}
 	
 	, getCrosstabDefinition: function() {		
@@ -118,14 +108,30 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 		crosstabDef.measures = this.wconf.measures;				
 		
 		return crosstabDef;
+	}		
+	
+	, hideMask: function() {
+    	if (this.loadMask != null) {
+    		this.loadMask.hide();
+    	}
+    	this.fireEvent('contentloaded');
 	}
+	
+    , showMask : function(){
+    	if(!this.hideLoadingMask){
+	    	if (this.loadMask == null) {
+	    		this.loadMask = new Ext.LoadMask('CrosstabPreviewPanel', {msg: "Loading.."});
+	    	}
+	    	this.loadMask.show();
+    	}
+    }
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
     // -----------------------------------------------------------------------------------------------------------------
 	, init: function() {		
 		this.crosstabDefinition = this.getCrosstabDefinition();
-
+		
 		this.load(this.crosstabDefinition,null);
 	}
 });

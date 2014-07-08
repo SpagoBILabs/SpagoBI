@@ -73,9 +73,9 @@ Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner = function(config) {
 
 Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core.WidgetDesigner, {
 		
-	// -----------------------------------------------------------------------------------------------------------------
-    // init methods
-    // -----------------------------------------------------------------------------------------------------------------
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
 
 	crosstabTemplate: {}
 	, isStatic: false
@@ -307,7 +307,15 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 		         , this.rowsContainerPanel
 		         , this.measuresContainerPanel
 		      ]
-		});
-			
+		});					
+	}
+	
+	, onAfterLayout: function() {
+		Sbi.trace("[TableWidget.onAfterLayout][" + this.getId() + "]: IN");
+		var selections = this.getWidgetManager().getWidgetSelections(this.getId());
+		
+		// TODO: reselect rows in a selective way
+		this.fireSelectionEvent = true;
+		Sbi.trace("[TableWidget.onAfterLayout][" + this.getId() + "]: OUT");
 	}
 });
