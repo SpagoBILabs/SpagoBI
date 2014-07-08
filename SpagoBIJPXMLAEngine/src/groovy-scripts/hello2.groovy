@@ -1,2 +1,0 @@
-
-output = input["Store Name"]
