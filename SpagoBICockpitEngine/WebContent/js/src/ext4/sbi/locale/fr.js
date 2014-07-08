@@ -80,19 +80,3 @@ Sbi.locale.formats = {
 //=====================================================================================================
 
 Sbi.locale.ln['sbi.generic.example'] = 'example';
-
-
-Sbi.locale.ln['sbi.generic.label'] = 'Titre';
-Sbi.locale.ln['sbi.generic.name'] = 'Nom';
-Sbi.locale.ln['sbi.generic.descr'] = 'Déscription';
-Sbi.locale.ln['sbi.generic.scope'] = 'Sujet';
-Sbi.locale.ln['sbi.generic.scope.private'] = 'Privé';
-Sbi.locale.ln['sbi.generic.scope.public'] = 'Public';
-Sbi.locale.ln['sbi.generic.actions.save'] = 'Sauver';
-
-Sbi.locale.ln['sbi.generic.wait'] = "Attendre...";
-Sbi.locale.ln['sbi.generic.error'] = "Erreur générique";
-Sbi.locale.ln['sbi.generic.success'] = "Succès";
-Sbi.locale.ln['sbi.generic.operationSucceded'] = "Opération réussie";
-Sbi.locale.ln['sbi.generic.query.SQL'] = "Requête SQL";
-Sbi.locale.ln['sbi.generic.query.JPQL'] = "Requête JPLQ";
