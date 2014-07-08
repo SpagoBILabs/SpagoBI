@@ -182,8 +182,12 @@
 		background-image: url('../img/ico_associations.png') !important;
 	}
 	
-	.icon_selection {
-		background-image: url('../img/ico_selection.png') !important;
+	.icon_add_selection {
+		background-image: url('../img/ico_add_selection.png') !important;
+	}
+	
+	.icon_delete_selection {
+		background-image: url('../img/ico_delete_selection.png') !important;
 	}
 	
 	.icon_parameters{
