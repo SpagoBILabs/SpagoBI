@@ -3,9 +3,9 @@ package it.eng.spagobi.engine.cockpit.api.crosstable;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
-import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engine.cockpit.api.AbstractCockpitEngineResource;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -19,6 +19,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -39,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -67,17 +67,20 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	
 	// INPUT PARAMETERS
 	private static final String CROSSTAB_DEFINITION = QbeEngineStaticVariables.CROSSTAB_DEFINITION;
+	private static final String DATASET_LABEL = QbeEngineStaticVariables.DATASET_LABEL;
 	
 	public static final String OUTPUT_TYPE = "OUTPUT_TYPE";
 	public enum OutputType {JSON, HTML};
 	
+	private String temporaryTableName;
+	
 	@GET
 	@Path("/")	
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getCrosstab(@QueryParam("crosstabDefinition") String crosstabDefinition){
+	public String getCrosstab(@QueryParam("crosstabDefinition") String crosstabDefinition, @QueryParam("datasetLabel") String datasetLabel){
 		logger.debug("IN");
 		try {
-			return createCrossTable(crosstabDefinition);
+			return createCrossTable(crosstabDefinition,datasetLabel);
 		} catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {			
@@ -85,7 +88,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		}	
 	}
 	
-	private String createCrossTable(String jsonData)  {				
+	private String createCrossTable(String jsonData,String datasetLabel)  {				
 		
 		CrossTab crossTab;
 		IDataStore valuesDataStore = null;
@@ -101,23 +104,14 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		try {				
 			
 			totalTimeMonitor = MonitorFactory.start("WorksheetEngine.loadCrosstabAction.totalTime");
-			
-			JSONObject data = new JSONObject(jsonData);
-			
-			// start reading input parameters
-			
-			JSONObject crosstabDefinitionJSON = data.getJSONObject(CROSSTAB_DEFINITION);	
-			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
-			
-//			String sheetName = this.getAttributeAsString(SHEET);
-//			logger.debug("Parameter [" + SHEET + "] is equals to [" + sheetName + "]");
+//			jsonData = "{\"config\":{\"measureson\":\"columns\",\"type\":\"pivot\",\"maxcellnumber\":2000},\"rows\":[{\"id\":\"Comune\",\"alias\":\"Comune\",\"iconCls\":\"attribute\",\"nature\":\"attribute\",\"values\":\"[]\"}],\"columns\":[{\"id\":\"Maschi Totale\",\"alias\":\"Maschi Totale\",\"iconCls\":\"attribute\",\"nature\":\"attribute\",\"values\":\"[]\"}],\"measures\":[{\"id\":\"Femmine corsi a tempo pieno\",\"alias\":\"Femmine corsi a tempo pieno\",\"iconCls\":\"measure\",\"nature\":\"measure\",\"funct\":\"SUM\"}]}";
+			JSONObject crosstabDefinitionJSON = new JSONObject(jsonData);			
+					
+			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");			
+			logger.debug("Parameter [datasetLabel] is equals to [" + datasetLabel + "]");							
 						
-			JSONObject optionalFilters = data.getJSONObject(QbeEngineStaticVariables.FILTERS);
-			logger.debug("Parameter [" + QbeEngineStaticVariables.FILTERS + "] is equals to [" + optionalFilters + "]");
-			// end reading input parameters				
-			
-			String datasetLabel = data.getString("DATASET_LABEL");
-			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(datasetLabel);
+			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+			IDataSet dataset = dataSetDao.loadDataSetByLabel(datasetLabel);
 			
 			// persist dataset into temporary table	
 			IDataSetTableDescriptor descriptor = this.persistDataSet(dataset);
@@ -125,30 +119,37 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			// build SQL query against temporary table
 			List<WhereField> whereFields = new ArrayList<WhereField>();			
 
-			List<WhereField> temp = getOptionalFilters(optionalFilters);
-			whereFields.addAll(temp);
-
+//			List<WhereField> temp = getOptionalFilters(optionalFilters);
+//			whereFields.addAll(temp);
+			
 			// deserialize crosstab definition
-			crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
+			CrosstabJSONDeserializer crosstabJSONDeserializer =(CrosstabJSONDeserializer) CrosstabDeserializerFactory.getInstance().getDeserializer("application/json");			
+			
+			crosstabDefinition = crosstabJSONDeserializer.deserialize(crosstabDefinitionJSON);
 						
 			String worksheetQuery = null;
 			IDataSource dsForTheTemporaryTable = descriptor.getDataSource();
 			
 			worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, dsForTheTemporaryTable);
+			
 			// execute SQL query against temporary table
 			logger.debug("Executing query on temporary table : " + worksheetQuery);
 			valuesDataStore = this.executeWorksheetQuery(worksheetQuery, null, null, dataset);
+			
 			LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", valuesDataStore);
 			Assert.assertNotNull(valuesDataStore, "Datastore obatined is null!!");
+			
 			/* since the datastore, at this point, is a JDBC datastore, 
 			* it does not contain information about measures/attributes, fields' name and alias...
 			* therefore we adjust its metadata
 			*/
 			this.adjustMetadata((DataStore) valuesDataStore, dataset, descriptor);
 			LogMF.debug(logger, "Adjusted metadata: {0}", valuesDataStore.getMetaData());
+			
 			logger.debug("Decoding dataset ...");
 			this.applyOptions(valuesDataStore);
 			dataset.decode(valuesDataStore);
+			
 			LogMF.debug(logger, "Dataset decoded: {0}", valuesDataStore);					
 			
 			// serialize crosstab
@@ -271,8 +272,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	 * @param tableName the temporary table name
 	 * @return the sql statement to query the temporary table 
 	 */
-	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition,
-			IDataSetTableDescriptor descriptor, List<WhereField> filters, IDataSource dataSource) {
+	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition,IDataSetTableDescriptor descriptor, List<WhereField> filters, IDataSource dataSource) {
 		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, descriptor, filters, dataSource);
 	}
 	
@@ -281,8 +281,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		IDataStore dataStore = null;		
 
 		if (dataset.isFlatDataset() || dataset.isPersisted()) {
-			dataStore = useDataSetStrategy(worksheetQuery, dataset, start,
-					limit);
+			dataStore = useDataSetStrategy(worksheetQuery, dataset, start, limit);
 		} else {
 			logger.debug("Using temporary table strategy....");
 			dataStore = useTemporaryTableStrategy(worksheetQuery, start, limit);
@@ -345,24 +344,30 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	}
 	
 	private String getTemporaryTableName() {
-//		logger.debug("IN");
-//		String temporaryTableNameRoot = (String) this.getEnv().get(SpagoBIConstants.TEMPORARY_TABLE_ROOT_NAME);
-//		logger.debug("Temporary table name root specified on the environment : [" + temporaryTableNameRoot + "]");
-//		// if temporaryTableNameRadix is not specified on the environment, create a new name using the user profile
-//		if (temporaryTableNameRoot == null) {
-//			logger.debug("Temporary table name root not specified on the environment, creating a new one using user identifier ...");
-//			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
-//			temporaryTableNameRoot = userProfile.getUserId().toString();
-//		}
-//		logger.debug("Temporary table root name : [" + temporaryTableNameRoot + "]");
-//		String temporaryTableNameComplete = TemporaryTableManager.getTableName(temporaryTableNameRoot);
-//		logger.debug("Temporary table name : [" + temporaryTableNameComplete + "]. Putting it into the environment");
-//		this.getEnv().put(SpagoBIConstants.TEMPORARY_TABLE_NAME, temporaryTableNameComplete);
-//		logger.debug("OUT : temporaryTableName = [" + temporaryTableNameComplete + "]");
-//		this.temporaryTableName = temporaryTableNameComplete;
+		logger.debug("IN");
+		String temporaryTableNameRoot = (String) this.getEnv().get(SpagoBIConstants.TEMPORARY_TABLE_ROOT_NAME);
+		logger.debug("Temporary table name root specified on the environment : [" + temporaryTableNameRoot + "]");
 		
-		return "TEMPORARY_TABLE";
+		// if temporaryTableNameRadix is not specified on the environment, create a new name using the user profile
+		if (temporaryTableNameRoot == null) {
+			logger.debug("Temporary table name root not specified on the environment, creating a new one using user identifier ...");
+			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			temporaryTableNameRoot = userProfile.getUserId().toString();
+		}
+		
+		logger.debug("Temporary table root name : [" + temporaryTableNameRoot + "]");
+		
+		String temporaryTableNameComplete = TemporaryTableManager.getTableName(temporaryTableNameRoot);
+		logger.debug("Temporary table name : [" + temporaryTableNameComplete + "]. Putting it into the environment");
+		
+		this.getEnv().put(SpagoBIConstants.TEMPORARY_TABLE_NAME, temporaryTableNameComplete);
+		logger.debug("OUT : temporaryTableName = [" + temporaryTableNameComplete + "]");
+		
+		this.temporaryTableName = temporaryTableNameComplete;
+		
+		return this.temporaryTableName;
 	}
+	
 
 	private IDataSetTableDescriptor persistDataSetWithTemporaryTable(IDataSet dataset, String tableName){
 		// get temporary table name
@@ -616,5 +621,5 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 				}
 			}
 		}
-	}
+	}	
 }
