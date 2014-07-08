@@ -1,9 +1,0 @@
-#Tue Aug 10 14:18:06 CEST 2010
-DELEGATES_PREFERENCE=delegateValidatorList
-USER_BUILD_PREFERENCE=enabledBuildValidatorListorg.eclipse.jst.j2ee.internal.classpathdep.ClasspathDependencyValidator;org.eclipse.jst.j2ee.internal.web.validation.UIWarValidator;
-USER_MANUAL_PREFERENCE=enabledManualValidatorListorg.eclipse.jst.j2ee.internal.classpathdep.ClasspathDependencyValidator;org.eclipse.jst.j2ee.internal.web.validation.UIWarValidator;
-USER_PREFERENCE=overrideGlobalPreferencesfalse
-eclipse.preferences.version=1
-override=false
-suspend=false
-vf.version=3

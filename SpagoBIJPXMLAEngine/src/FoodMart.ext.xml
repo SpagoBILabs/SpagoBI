@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<extension title="Scriptable Drill Through Table" maxResults="300" scriptRootUrl="/groovy-scripts">
-	<script title="Hello World!" position="3" file="hello.groovy"/>
-	<script title="Hello World 2nd!" position="5" file="hello2.groovy"/>
-</extension>
