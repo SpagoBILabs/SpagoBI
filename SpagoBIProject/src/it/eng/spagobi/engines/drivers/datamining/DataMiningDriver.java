@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package it.eng.spagobi.engines.drivers.weka;
+package it.eng.spagobi.engines.drivers.datamining;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -26,12 +26,12 @@ import org.apache.log4j.Logger;
 
 
 /**
- * Driver Implementation (IEngineDriver Interface) for Weka Engine. 
+ * Driver Implementation (IEngineDriver Interface) for DataMining Engine. 
  */
-public class WekaDriver extends AbstractDriver implements IEngineDriver {
+public class DataMiningDriver extends AbstractDriver implements IEngineDriver {
 
 	
-    static private Logger logger = Logger.getLogger(WekaDriver.class);
+    static private Logger logger = Logger.getLogger(DataMiningDriver.class);
 	
 	/**
 	 * Returns a map of parameters which will be send in the request to the

@@ -2671,3 +2671,7 @@ ALTER TABLE SBI_OBJECTS ADD COLUMN PARAMETERS_REGION VARCHAR(20) NULL DEFAULT 'e
 insert into SBI_CONFIG(ID,LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALUE_TYPE_ID, USER_IN, TIME_IN, SBI_VERSION_IN, ORGANIZATION, CATEGORY) values
 ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_CONFIG'),'SPAGOBI.DOCUMENTS.PARAMETERS_REGION_DEFAULT', 'Parameters Region Default', 'Where parameters form is shown (north or east) by default', '1', 'right', '30',
  'biadmin', '2014-06-24 15:06:24', '4.2', 'SPAGOBI', 'GENERIC_CONFIGURATION')
+
+-- 09/07/2014 Davide: changed SpagoBIWekaEngine to SpagoBIDataMiningEngine
+UPDATE SBI_ENGINES SET LABEL = 'SpagoBIDataMiningEngine', NAME = 'Data-Mining Engine', DESCR = 'Data-Mining Engine', MAIN_URL = '/SpagoBIDataMiningEngine/WekaServlet', DRIVER_NM = 'it.eng.spagobi.engines.drivers.datamining.DataMiningDriver' WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.weka.WekaDriver';
+COMMIT;

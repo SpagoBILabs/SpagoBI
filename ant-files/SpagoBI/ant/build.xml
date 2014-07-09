@@ -203,14 +203,14 @@
 		<unzip src="../../../SpagoBITalendEngine/dist/SpagoBITalendEngine.war" dest="${tomcat.home}/webapps/SpagoBITalendEngine" />
 	</target>
 
-	<target name="create.SpagoBIWekaEngine.war" depends="create.sbi.utils.jar">
-		<ant dir="../SpagoBIWekaEngine/ant" />
+	<target name="create.SpagoBIDataMiningEngine.war" depends="create.sbi.utils.jar">
+		<ant dir="../SpagoBIDataMiningEngine/ant" />
 	</target>
-	<target name="deploy.SpagoBIWekaEngine.war" depends="create.sbi.utils.jar,create.SpagoBIWekaEngine.war">
-		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIWekaEngine" />
-		<delete dir="${tomcat.home}/webapps/SpagoBIWekaEngine" />
-		<mkdir dir="${tomcat.home}/webapps/SpagoBIWekaEngine" />
-		<unzip src="../../../SpagoBIWekaEngine/dist/SpagoBIWekaEngine.war" dest="${tomcat.home}/webapps/SpagoBIWekaEngine" />
+	<target name="deploy.SpagoBIDataMiningEngine.war" depends="create.sbi.utils.jar,create.SpagoBIDataMiningEngine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIDataMiningEngine" />
+		<delete dir="${tomcat.home}/webapps/SpagoBIDataMiningEngine" />
+		<mkdir dir="${tomcat.home}/webapps/SpagoBIDataMiningEngine" />
+		<unzip src="../../../SpagoBIDataMiningEngine/dist/SpagoBIDataMiningEngine.war" dest="${tomcat.home}/webapps/SpagoBIDataMiningEngine" />
 	</target>
 
 	<target name="create.SpagoBIAccessibilityEngine.war" depends="create.sbi.utils.jar">
@@ -333,8 +333,8 @@
 		<copy file="../../../SpagoBITalendEngine/dist/SpagoBITalendEngine.war" 
         todir="../../../dist" overwrite="true" />
 
-		<antcall target="create.SpagoBIWekaEngine.war" />
-		<copy file="../../../SpagoBIWekaEngine/dist/SpagoBIWekaEngine.war" 
+		<antcall target="create.SpagoBIDataMiningEngine.war" />
+		<copy file="../../../SpagoBIDataMiningEngine/dist/SpagoBIDataMiningEngine.war" 
         todir="../../../dist" overwrite="true" />
 
 		<antcall target="create.SpagoBIJasperReportEngine.war" />
@@ -398,7 +398,7 @@
 		<antcall target="deploy.SpagoBIJPivotEngine.war" />
 		<antcall target="deploy.SpagoBIQbeEngine.war" />
 		<antcall target="deploy.SpagoBITalendEngine.war" />
-		<antcall target="deploy.SpagoBIWekaEngine.war" />
+		<antcall target="deploy.SpagoBIDataMiningEngine.war" />
 		<antcall target="deploy.SpagoBIAccessibilityEngine.war" />
 		<antcall target="deploy.SpagoBICommonJEngine.war" />
 		<antcall target="deploy.SpagoBIConsoleEngine.war" />
@@ -454,8 +454,8 @@
 		<delete dir="../../../SpagoBIUtils/dist"/>
 		<delete dir="../../../SpagoBIUtilsJSON/ant-build"/>
 		<delete dir="../../../SpagoBIUtilsJSON/dist"/>
-		<delete dir="../../../SpagoBIWekaEngine/ant-build"/>
-		<delete dir="../../../SpagoBIWekaEngine/dist"/>
+		<delete dir="../../../SpagoBIDataMiningEngine/ant-build"/>
+		<delete dir="../../../SpagoBIDataMiningEngine/dist"/>
 		<delete dir="../../../SpagoBIAccessibilityEngine/ant-build"/>
 		<delete dir="../../../SpagoBIAccessibilityEngine/dist"/>
 		<delete dir="../../../SpagoBICommonJEngine/ant-build"/>
@@ -509,7 +509,7 @@
 		<ant dir="../SpagoBIDAO/ant" target="javadoc"/>
 		<ant dir="../SpagoBIUtils/ant" target="javadoc"/>
 		<ant dir="../SpagoBIUtilsJSON/ant" target="javadoc"/>
-		<ant dir="../SpagoBIWekaEngine/ant" target="javadoc"/>
+		<ant dir="../SpagoBIDataMiningEngine/ant" target="javadoc"/>
 		<ant dir="../SpagoBIXmlSecurityProvider/ant" target="javadoc"/>
 		<ant dir="../SpagoBILiferaySecurityProvider/ant" target="javadoc"/>
 		<ant dir="../SpagoBILdapSecurityProvider/ant" target="javadoc"/>
@@ -534,7 +534,7 @@
 		<ant dir="../SpagoBIJPivotEngine/ant" target="package"/>
 		<ant dir="../SpagoBIQbeEngine/ant" target="package"/>
 		<ant dir="../SpagoBITalendEngine/ant" target="package"/>
-		<ant dir="../SpagoBIWekaEngine/ant" target="package"/>
+		<ant dir="../SpagoBIDataMiningEngine/ant" target="package"/>
 		<ant dir="../SpagoBIDatabaseScripts" target="package"/>
 		<ant dir="../SpagoBIAccessibilityEngine/ant" target="package"/>
 		<ant dir="../SpagoBICommonJEngine/ant" target="package"/>
