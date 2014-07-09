@@ -20,8 +20,8 @@ import it.eng.spagobi.engines.weka.configurators.FilterConfigurator;
  */
 public class Test {
 	
-	//static private String pathStr = "C:\\Documents and Settings\\gioia\\Documenti\\Codice\\Java\\SpagoBIBranch\\SpagoBIWekaEngine\\JavaSource";
-	static private String pathStr = "D:\\Documenti\\Andrea\\Codice\\Java\\SpagoBIBranch\\SpagoBIWekaEngine\\JavaSource";
+	//static private String pathStr = "C:\\Documents and Settings\\gioia\\Documenti\\Codice\\Java\\SpagoBIBranch\\SpagoBIDataMiningEngine\\JavaSource";
+	static private String pathStr = "D:\\Documenti\\Andrea\\Codice\\Java\\SpagoBIBranch\\SpagoBIDataMiningEngine\\JavaSource";
 	static private File path = new File(pathStr);
 	private static transient Logger logger = Logger.getLogger(FilterConfigurator.class);
 	
