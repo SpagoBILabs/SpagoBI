@@ -500,7 +500,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 									// recalculate metadata
 									logger.debug("Recalculating dataset's metadata: executing the dataset...");
 									HashMap parametersMap = new HashMap();
-									parametersMap = getDataSetParametersAsMap();
+									parametersMap = getDataSetParametersAsMap(true);
 									
 									IEngUserProfile profile = getUserProfile();
 									ds.setPersisted(false);
@@ -817,7 +817,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 		HashMap<String, String> parametersMap = new HashMap<String, String>();
 		if(parsJSON!=null){
-			parametersMap = getDataSetParametersAsMap();
+			parametersMap = getDataSetParametersAsMap(false);
 		}
 		IEngUserProfile profile = getUserProfile();
 		
@@ -1244,7 +1244,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return parametersString;
 	}
 	
-	private HashMap<String, String> getDataSetParametersAsMap() {
+	private HashMap<String, String> getDataSetParametersAsMap(boolean forSave) {
 		HashMap<String, String> parametersMap = null;
 		
 		try {
@@ -1277,7 +1277,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					value = getMultiValue(tempVal, type);
 				}
 				else{
-					value = getSingleValue(tempVal, type);
+					value = getSingleValue(tempVal, type, forSave);
 				}
 	
 				logger.debug("name: " + name + " / value: " + value);
@@ -1291,7 +1291,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 
-	private String getSingleValue(String value, String type){
+	private String getSingleValue(String value, String type, boolean forSave){
 		String toReturn = "";
 		value = value.trim();
 		if(type.equalsIgnoreCase(STRING_TYPE)){
@@ -1306,6 +1306,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}
 			else{
 				toReturn = value;
+			}
+			if(toReturn==null || toReturn.length()==0){
+				toReturn = "0";
 			}
 		}
 		else if(type.equalsIgnoreCase(GENERIC_TYPE)){
@@ -1328,9 +1331,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		for(int j=0; j< tempArrayValues.length; j++){
 			String tempValue = tempArrayValues[j];
 			if(j==0){
-				toReturn = getSingleValue(tempValue, type);
+				toReturn = getSingleValue(tempValue, type, false);
 			}else{
-				toReturn = toReturn+","+getSingleValue(tempValue, type);	
+				toReturn = toReturn+","+getSingleValue(tempValue, type, false);	
 			}
 		}
 
@@ -1495,7 +1498,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(dsId);
 			if (dataset.getParameters() != null){
 				HashMap<String, String> parametersMap = new HashMap<String, String>();
-				parametersMap = getDataSetParametersAsMap();
+				parametersMap = getDataSetParametersAsMap(false);
 				dataSetJSON = getDatasetTestResultList(dataset, parametersMap, profile);
 			}
 		}

@@ -6,7 +6,6 @@
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -123,7 +122,12 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				logger.debug("Calculation of result set total number is enabled");
 				try {
 					// try to calculate the query total result number using inline view
-					resultNumber = getResultNumber(connection);
+					if(dialect.contains("hbase") || dialect.contains("hive")){
+						resultNumber = getResultNumber(resultSet);					
+					}else{
+						resultNumber = getResultNumber(connection);
+					}
+					
 					logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
 					// ok, no need to ask the datareader to calculate the query total result number
 					dataReader.setCalculateResultNumberEnabled(false);
@@ -191,6 +195,21 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		logger.debug("OUT : returning " + resultNumber);
 		return resultNumber;
 	}
+	
+	protected int getResultNumber(ResultSet resultSet) throws Exception{
+		logger.debug("IN");
+
+
+		int rowcount = 0;
+		if (resultSet.last()) {
+		  rowcount = resultSet.getRow();
+		  resultSet.beforeFirst(); // not rs.first() because the rs.next() below will move on, missing the first element
+		}
+
+		return rowcount;
+	}
+	
+	
 
 	public IDataSource getDataSource() {
 		return dataSource;
