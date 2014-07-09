@@ -52,14 +52,12 @@ Ext.define('app.views.ChartExecutionPanel',{
 					'tap': function(series, item, event) { 
 						var crossParams = new Array();
 						var targetDoc;
-						if(resp.config && resp.config.drill){
+						if(resp.config && resp.config.drill && (resp.config.drill.params || resp.config.drill.targetDoc)){
 							if(resp.config.drill.params){
-								crossParams = resp.config.drill.params;
+								crossParams.push(resp.config.drill.params);
 							}
 							targetDoc = this.setTargetDocument(resp);	
-							if(targetDoc){
-								this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
-							}
+							this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
 						}
 					}
 			};
@@ -68,17 +66,15 @@ Ext.define('app.views.ChartExecutionPanel',{
 					scope: this,
 					'itemtap': function(series, item, event) { 
 
-						if(resp.config && resp.config.drill){
+						if(resp.config && resp.config.drill && (resp.config.drill.params || resp.config.drill.targetDoc)){
 							var crossParams = new Array();
 							if(resp.config.drill.params){
-								crossParams = resp.config.drill.params;
+								crossParams.push(resp.config.drill.params);
 							}
 							this.setCrossNavigation(resp, item, crossParams);
 							var targetDoc;
 							targetDoc = this.setTargetDocument(resp);	
-							if(targetDoc){
-								this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
-							}
+							this.fireEvent('execCrossNavigation', this, crossParams, targetDoc);
 						}
 					}
 			};
@@ -266,13 +262,18 @@ Ext.define('app.views.ChartExecutionPanel',{
 								var serieField = item.field;//selected serie
 
 
-								if(type == 'SERIE_NAME'){
+								if(type == 'SERIE_NAME' || type == 'serie_name'){
 									crossParams.push({name : name, value : serieField});
-								}else if(type == 'SERIE'){
+								}else if(type == 'SERIE' || type == 'serie'){
 									crossParams.push({name : name, value : storeItem.data[serieField]});
-								}else if(type == 'CATEGORY'){
+								}else if(type == 'CATEGORY' || type == 'category'){
 									if (charttype == 'pie' || charttype == 'pie3d'){
-										crossParams.push({name : name, value : storeItem.data[serieField]});
+										var labelField = item.series.getLabelField();
+										if(labelField){
+											crossParams.push({name : name, value : storeItem.data[labelField]});
+										}else{
+											crossParams.push({name : name, value : storeItem.data[serieField]});
+										}
 									}else{
 										if(categoryField){
 											var cat = (storeItem.data)[categoryField];
