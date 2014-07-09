@@ -169,6 +169,8 @@ Ext.define('app.controllers.MobileController',{
 		var func = function(answer) {
 	        if (answer === "yes") {
 	        	 window.location.href = Sbi.env.contextPath+"/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
+            	 localStorage.removeItem('app.views.launched');
+            	 localStorage.removeItem('app.views.browser');
 //	        	Ext.Ajax.request({
 //                     url : Sbi.env.invalidateSessionURL
 //                     , method : 'POST'
