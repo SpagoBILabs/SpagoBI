@@ -20,6 +20,5 @@ UPDATE SBI_ARTIFACTS SET MODEL_LOCKED = false WHERE MODEL_LOCKED IS NULL;
 
 ALTER TABLE SBI_OBJECTS ADD COLUMN PARAMETERS_REGION VARCHAR(20) NULL;
 
+UPDATE SBI_ENGINES SET LABEL = 'SpagoBIDataMiningEngine', NAME = 'Data-Mining Engine', DESCR = 'Data-Mining Engine', MAIN_URL = '/SpagoBIDataMiningEngine/WekaServlet', DRIVER_NM = 'it.eng.spagobi.engines.drivers.datamining.DataMiningDriver' WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.weka.WekaDriver';\p\g
 COMMIT;\p\g
-
-

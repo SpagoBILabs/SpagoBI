@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="SpagoBIWekaEngine" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app id="SpagoBIDataMiningEngine" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     
-	<display-name>SpagoBIWekaEngine</display-name>
+	<display-name>SpagoBIDataMiningEngine</display-name>
 	<description>
-		Spago BI - Weka Engine
+		Spago BI - Data-Mining Engine
 	</description>
 	
 	
@@ -42,7 +42,7 @@
 	  </init-param> 
 	  <init-param>
 			<param-name>proxyCallbackUrl</param-name>
-			<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBIWekaEngine/proxyCallback</param-value>
+			<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBIDataMiningEngine/proxyCallback</param-value>
 	  </init-param>  
 	</filter>
 

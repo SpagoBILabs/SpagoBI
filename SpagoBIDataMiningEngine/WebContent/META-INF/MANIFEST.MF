@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 
-Name: SpagoBIWekaEngine.war
-Implementation-Title: SpagoBIWekaEngine
+Name: SpagoBIDataMiningEngine.war
+Implementation-Title: SpagoBIDataMiningEngine
 Implementation-Version:  5.0.0 (Included Weka: 3.6.1)
 

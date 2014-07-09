@@ -1,7 +1,7 @@
 <jboss-web>
     <class-loading java2ClassLoadingCompliance="false">
     <loader-repository>
-        dot.com:loader=SpagoBIWekaEngine
+        dot.com:loader=SpagoBIDataMiningEngine
         <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
     </loader-repository>
  </class-loading>
