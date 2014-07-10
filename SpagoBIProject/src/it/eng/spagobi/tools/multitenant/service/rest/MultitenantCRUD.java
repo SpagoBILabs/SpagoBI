@@ -6,9 +6,12 @@
 
 package it.eng.spagobi.tools.multitenant.service.rest;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.functionalitytree.init.TreeInitializer;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
@@ -266,8 +269,14 @@ public class MultitenantCRUD {
 							
 				SbiTenant tmp = dao.loadTenantByName(tenantNew.getName());
 				tenantNew.setId(tmp.getId());
-				
+
+				// add admin user 
 				newAdminUser = dao.initializeAdminUser(tenantNew);
+				
+				// initialize folders tree structure
+				TreeInitializer initializer = new TreeInitializer();
+				SourceBean config = (SourceBean) ConfigSingleton.getInstance().getAttribute("TREE_INITIALIZATION");
+				initializer.initialize(tenantNew, config);
 				
 			} else {				
 				//update ds
