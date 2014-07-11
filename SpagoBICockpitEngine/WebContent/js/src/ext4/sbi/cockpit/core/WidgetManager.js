@@ -107,7 +107,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
      * @param {Sbi.cockpit.core.WidgetRuntime} The widget.
      */  
 	, unregister: function(w) {
-		Sbi.trace("[WidgetManager.unregister]: IN");
+		Sbi.trace("[WidgetManager.unregister]: IN");		
 		if(this.widgets.contains(w)) {
 			var storeId = w.getStoreId();
 			w.unboundStore();
@@ -527,8 +527,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	//widget.setParentContainer(this);
     }
     
-    , onWidgetRemove: function(widget, key) {
-    	//widget.setParentContainer(null);
+    , onWidgetRemove: function(widget, key) {    	
+    	widget.setParentContainer(null);
     }
 
     , onSelection: function(widget, selectionsOnWidget){
