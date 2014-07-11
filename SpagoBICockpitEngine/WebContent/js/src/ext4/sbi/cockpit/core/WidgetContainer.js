@@ -358,7 +358,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	//this.widgetEditorWizard.setTitle("Widget [" + widget.id + "] editor");
     	this.widgetEditorWizard.getDatasetBrowserPage().setUsedDatasets(Sbi.storeManager.getStoreIds());
     	this.widgetEditorWizard.setWizardTargetComponent(component); // TODO verify if it is possible only to set widgetState
-    	
+    	    	   
     	this.widgetEditorWizard.show();
     	
     	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: OUT");
@@ -454,7 +454,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 			}
 		}
 		
-		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: the list of stores registered in store manager is equal to [" + Sbi.storeManager.getStoreIds().join(";") + "]");
+		Sbi.trace("[WidgetContainer.applyStoreUnselection]: the list of stores registered in store manager is equal to [" + Sbi.storeManager.getStoreIds().join(";") + "]");
 		
 		Sbi.trace("[WidgetContainer.applyStoreUnselection]: OUT");
     }
@@ -676,7 +676,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 
     }
     
-    , onComponentClose: function(component) {
+    , onComponentClose: function(component) {    	
     	Sbi.trace("[WidgetContainer.onComponentClose]: IN");
     	if(component.isNotEmpty()) {
     		var widget = component.getWidget();
