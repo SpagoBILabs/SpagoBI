@@ -105,6 +105,15 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 		Sbi.trace("[WidgetEditorGenericConfPanel.setFormState]: OUT");			
 	}
 	
+	, resetFormState: function() {
+		Sbi.trace("[WidgetEditorGenericConfPanel.resetFormState]: IN");
+				
+		this.fields[0].reset();
+		this.fields[1].reset();
+		
+		Sbi.trace("[WidgetEditorGenericConfPanel.resetFormState]: OUT");			
+	}
+	
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
