@@ -56,7 +56,7 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 
 	Sbi.cockpit.editor.widget.WidgetEditor.superclass.constructor.call(this, c);	 		
 	
-	this.on('render', function () {
+	this.on('render', function () {		
 		if (!this.engineAlreadyInitialized) {
 			this.initializeEngineInstance({
 				onSuccessHandler : function(response, options) {
@@ -68,6 +68,7 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 			this.fireEvent('afterworksheetinitialized', this);
 		}
 	}, this, { single : true } );
+		
 	
 	Sbi.trace("[WidgetEditor.constructor]: OUT");
 	
@@ -89,6 +90,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 	
 	, worksheetTemplate: {}  // the initial worksheet template; to be passed as a property of the constructor's input object!!!
 	, engineAlreadyInitialized : null
+	, mainPanel: null
 
 	// =================================================================================================================
 	// METHODS
@@ -137,8 +139,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 	}
 	
 	, initSheetsContainerPanel: function(config) {
-		this.mainPanel = new Sbi.cockpit.editor.widget.WidgetEditorMainPanel();
-		
+		this.mainPanel = new Sbi.cockpit.editor.widget.WidgetEditorMainPanel();		
 		
 //		this.mainPanel = new Sbi.worksheet.designer.SheetsContainerPanel(Ext.apply(this.mainPanelCfg  || {}, {
 //			sheets : this.worksheetTemplate.sheets || []  ,
