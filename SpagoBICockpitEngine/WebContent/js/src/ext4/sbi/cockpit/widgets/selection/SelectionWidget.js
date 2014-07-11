@@ -123,7 +123,7 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
 
 Sbi.registerWidget('selection', {
 	name: 'Selection'
-	, icon: 'js/src/ext/sbi/cockpit/widgets/dummy/dummy_64x64_ico.png'
+	, icon: 'js/src/ext4/sbi/cockpit/widgets/selection/img/ico_panel_assoc.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.selection.SelectionWidget'
 	, designerClass: 'Sbi.cockpit.widgets.selection.SelectionWidgetDesigner'	
 });
