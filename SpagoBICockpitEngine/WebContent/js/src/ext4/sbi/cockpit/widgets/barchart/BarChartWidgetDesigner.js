@@ -314,7 +314,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 //		var state = {};
 		var state = Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner.superclass.getDesignerState(this);
 		state.designer = 'Bar Chart';
-		state.wtype = 'barchart';
+		state.wtype = 'barchart';		
 		state.type = this.typeRadioGroup.getValue().type;
 		state.orientation = this.orientationCombo.getValue();
 		state.showvalues = this.showValuesCheck.getValue();
@@ -327,10 +327,10 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		return state;
 	}
 	
-	, setDesignerState: function(state) {
+	, setDesignerState: function(state) {		
 		Sbi.trace("[BarChartWidgetDesigner.setDesignerState]: IN");
-		Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner.superclass.setDesignerState(this, state);
-		if (state.type) this.typeRadioGroup.setValue(state.type);
+		Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner.superclass.setDesignerState(this, state);	
+		if (state.type) this.typeRadioGroup.setValue({type: state.type});		
 		if (state.orientation) this.orientationCombo.setValue(state.orientation);
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
