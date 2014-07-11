@@ -142,14 +142,6 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
     
-    , getWidgetId: function() {
-    	return this.getId();
-    }
-
-	, getWidgetName: function() {
-		return this.getGenericConfiguration().title || this.getWidgetId();
-	}
-    
     /**
      * Equivalent to reload. TODO delete it!
      */
@@ -262,21 +254,17 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 */
 	, boundStore: function() {
 		Sbi.trace("[WidgetRuntime.boundStore]: IN");	
-		var bounded = false;
 		var store = this.getStore();
 		if(Sbi.isValorized(store)) {
 			store.on('metachange', this.onStoreMetaChange, this);
 			store.on('load', this.onStoreLoad, this);
 			store.on('datachanged', this.onDataChanged, this);
 			// exceptions are centralized managed by the store manager
-			bounded = true;
 		} else {
 			alert("[WidgetRuntime.boundStore]: Impossible to find bounded store");
-			bounded = false;
 		}
 
 		Sbi.trace("[WidgetRuntime.boundStore]: OUT");
-		return bounded;
 	}
 	
 	, unboundStore: function() {
@@ -654,6 +642,12 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		Sbi.trace("[WidgetRuntime.getParentContainer]: OUT");
     	
 		return container;	
+	}
+    
+    , setParentContainer: function(container) {	      	
+    	Sbi.trace("[WidgetContainerComponent.setParentContainer]: IN");
+		this.parentContainer = container;	
+		Sbi.trace("[WidgetContainerComponent.setParentContainer]: OUT");
 	}
     
     /**
