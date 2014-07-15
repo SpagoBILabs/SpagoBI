@@ -40,7 +40,7 @@ Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, {
+Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, {
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
@@ -62,7 +62,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 	    var seriesFields = [];
 		var seriesTitles = [];
 		for(var i = 0; i < this.wconf.series.length; i++) {
-			var id = this.wconf.series[i].id;
+			var id = this.wconf.series[i].alias;
 			seriesFields.push(store.fieldsMeta[id].name);
 			seriesTitles.push(id);
 		}
@@ -87,7 +87,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 			var categoriesFields = [];
 			var categoriesTitles = [];
 			for(var i = 0; i < categories.length; i++) {
-				var id = categories[i].id;
+				var id = categories[i].alias;
 				categoriesFields.push(store.fieldsMeta[id].name);
 				categoriesTitles.push(id);
 			}
@@ -385,7 +385,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		var allRuntimeSeries = this.getRuntimeSeries();
 		var allDesignSeries = this.wconf.series;
 		var type = this.wconf.type;
-		var colors = this.getColors();		
+		var colors = this.getColors();
 		var series;
 		
 		var storeObject = this.getJsonStore(percent);
@@ -549,8 +549,8 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 });
 
 Sbi.registerWidget('barchart-ext', {
-	name: 'NEW Bar Chart'
-	, icon: 'js/src/ext4/sbi/cockpit/widgets/extjs/barchart/barchart_64x64_ico.png'
+	name: 'Bar Chart (NEW)'
+	, icon: 'js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime'
 	, designerClass: 'Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner'
 	//, designerClass: 'Ext.Panel'

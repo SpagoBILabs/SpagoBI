@@ -237,11 +237,3 @@ Sbi.locale.ln['sbi.cockpit.core.selections.list.columnField'] = 'Selection field
 Sbi.locale.ln['sbi.cockpit.core.selections.list.columnValues'] = 'Values';
 Sbi.locale.ln['sbi.cockpit.core.selections.list.items'] = 'Items';
 
-//WINDOW TOOLBAR
-Sbi.locale.ln['sbi.cockpit.window.toolbar.editor'] = 'Editor';
-Sbi.locale.ln['sbi.cockpit.window.toolbar.configuration'] = 'Configuration';
-Sbi.locale.ln['sbi.cockpit.window.toolbar.refresh'] = 'Refresh';
-Sbi.locale.ln['sbi.cockpit.window.toolbar.clone'] = 'Clone';
-Sbi.locale.ln['sbi.cockpit.window.toolbar.maximize'] = 'Maximize';
-Sbi.locale.ln['sbi.cockpit.window.toolbar.minimize'] = 'Minimize';
-Sbi.locale.ln['sbi.cockpit.window.toolbar.close'] = 'Close';

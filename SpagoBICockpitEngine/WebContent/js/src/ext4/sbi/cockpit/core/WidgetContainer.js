@@ -358,7 +358,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	//this.widgetEditorWizard.setTitle("Widget [" + widget.id + "] editor");
     	this.widgetEditorWizard.getDatasetBrowserPage().setUsedDatasets(Sbi.storeManager.getStoreIds());
     	this.widgetEditorWizard.setWizardTargetComponent(component); // TODO verify if it is possible only to set widgetState
-    	    	   
+    	
     	this.widgetEditorWizard.show();
     	
     	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: OUT");
@@ -371,19 +371,6 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     , applyWidgetEditorWizardState: function() {
     	Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: IN");
     	var component = this.widgetEditorWizard.getWizardTargetComponent(); 
-    	
-    	var wtype = "";
-    	
-    	/* 
-    	 * If I am changing type of widget or modifying existing one,
-    	 * I store the type for further compare
-    	 */ 
-    	var existingWidget = component.getWidget();
-    	
-    	if (existingWidget){
-    		wtype = existingWidget.wtype;    	  
-    	}
-    	
 		var wizardState = this.widgetEditorWizard.getWizardState();
 		
 		wizardState.storeId = wizardState.selectedDatasetLabel;
@@ -409,30 +396,11 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		
 		var unselectedDatasetLabel = wizardState.unselectedDatasetLabel;
 		delete wizardState.selectedDatasetLabel;
-		delete wizardState.unselectedDatasetLabel;						
-		
-		/*
-		 * I compare the type to know if I was creating a new one, changing type or just modifying parameters
-		 */
-		if ((wtype == wizardState.wtype) || (!existingWidget)){
-			component.setWidgetConfiguration(wizardState);
-			
-			var widget = component.getWidget();
-			
-			this.getWidgetManager().register(widget);
-		} else {			
-			/*
-			 * If i was changing type of widget i have to 
-			 * remove the old one and create a new one
-			 */
-			var widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(wizardState);
-			
-			component.setWidget(widget);
-			
-			this.removeWidget(existingWidget);		
-			
-			this.addWidget(wizardState);						
-		}			
+		delete wizardState.unselectedDatasetLabel;
+		  
+		component.setWidgetConfiguration( wizardState );
+		var widget = component.getWidget();
+		this.getWidgetManager().register(widget);
 		
 		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: the list of widget registered in widget manager is equal to [" + this.getWidgetManager().getWidgetCount() + "]");
 		
@@ -454,7 +422,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 			}
 		}
 		
-		Sbi.trace("[WidgetContainer.applyStoreUnselection]: the list of stores registered in store manager is equal to [" + Sbi.storeManager.getStoreIds().join(";") + "]");
+		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: the list of stores registered in store manager is equal to [" + Sbi.storeManager.getStoreIds().join(";") + "]");
 		
 		Sbi.trace("[WidgetContainer.applyStoreUnselection]: OUT");
     }
@@ -676,7 +644,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 
     }
     
-    , onComponentClose: function(component) {    	
+    , onComponentClose: function(component) {
     	Sbi.trace("[WidgetContainer.onComponentClose]: IN");
     	if(component.isNotEmpty()) {
     		var widget = component.getWidget();

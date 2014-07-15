@@ -24,7 +24,7 @@ Sbi.cockpit.editor.widget.WidgetEditorMainPanel = function(config) {
 	    items: [this.genericConfPanel,this.customConfPanel]
 	};
 	
-	Sbi.cockpit.editor.widget.WidgetEditorMainPanel.superclass.constructor.call(this, c);		
+	Sbi.cockpit.editor.widget.WidgetEditorMainPanel.superclass.constructor.call(this, c);
 	
 };
 
@@ -69,4 +69,28 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.tab.Panel, {
 		this.customConfPanel.removeDesigner();
 	}
 		
+	// -----------------------------------------------------------------------------------------------------------------
+    // private methods
+	// -----------------------------------------------------------------------------------------------------------------
+
+	// =================================================================================================================
+	// EVENTS
+	// =================================================================================================================
+	
+	//this.addEvents(
+	/**
+     * @event eventone
+     * Fired when ...
+     * @param {Sbi.xxx.Xxxx} this
+     * @param {Ext.Toolbar} ...
+     */
+	//'eventone'
+	/**
+     * @event eventtwo
+     * Fired before ...
+     * @param {Sbi.xxx.Xxxx} this
+     * @param {Object} ...
+     */
+	//'eventtwo'
+	//);	
 });

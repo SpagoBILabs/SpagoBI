@@ -142,7 +142,6 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.GridPan
 	      , {name: 'iconCls', type: 'string'}
 	      , {name: 'nature', type: 'string'}
 	])
-	, defaultAggregationFunction : "SUM"
 
 	, init: function() {
 		this.initStore();
@@ -241,9 +240,9 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.GridPan
 		});
 	}
 
-	, onFieldDrop: function(ddSource) {		
+	, onFieldDrop: function(ddSource) {
 		if (ddSource.id === "field-grid-body") {
-			this.notifyDropFromQueryFieldsPanel(ddSource);			
+			this.notifyDropFromMeasuresContainerPanel(ddSource);			
 		}
 		
 //		if (ddSource.grid){
@@ -269,11 +268,9 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.GridPan
 		
 	}
 	
-	, notifyDropFromQueryFieldsPanel: function(ddSource) {		
-		var rows = ddSource.dragData.records;
-		
-		var i = 0;
-		for (; i < rows.length; i++) {
+	, notifyDropFromQueryFieldsPanel: function(ddSource) {
+		var rows = ddSource.dragData.selections;
+		for (var i = 0; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the field is an attribute show a warning
 			if (aRow.data.nature === 'attribute' || aRow.data.nature === 'segment_attribute') {
@@ -295,8 +292,6 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.GridPan
 				});
 				return;
 			}
-			
-			
 			if(this.defaultAggregationFunction){
 				var measure = Ext.apply({}, aRow.data) ;
 				measure.funct = this.defaultAggregationFunction;

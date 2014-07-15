@@ -10,7 +10,8 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 //===================================================================
 //COCKPIT WIDGETS: LineChartWidgetDesigner
 //===================================================================
-Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.title'] = 'Designer Line Chart';
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.title'] = "Designer Line Chart";
+
 Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.side-by-side'] = 'Side-by-side';
 Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.stacked'] = 'Stacked';
 Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.percent-stacked'] = 'Percent stacked';

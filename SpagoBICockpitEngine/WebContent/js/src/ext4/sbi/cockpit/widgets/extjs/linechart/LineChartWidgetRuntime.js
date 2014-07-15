@@ -16,20 +16,7 @@ Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime = function(config) {
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 	
-	var categories = [];
-	categories.push(this.wconf.category);
-	if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
-	
-	this.aggregations = {
-		measures: this.wconf.series,
-		categories: categories
-	};
-	
 	Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.constructor.call(this, c);
-	
-	this.boundStore();
-	this.reload();
-	this.addEvents('selection');
 	
 	Sbi.trace("[LineChartWidgetRuntime.constructor]: OUT");
 
@@ -39,7 +26,7 @@ Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, {
+Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetRuntime, {
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
@@ -51,112 +38,6 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	// METHODS
 	// =================================================================================================================
 	
-	// -----------------------------------------------------------------------------------------------------------------
-	// cartesian chart shared methods
-	// -----------------------------------------------------------------------------------------------------------------  
-	getSeriesConfig: function() {
-	    	
-		var store = this.getStore();
-	    	
-	    var seriesFields = [];
-		var seriesTitles = [];
-		for(var i = 0; i < this.wconf.series.length; i++) {
-			var id = this.wconf.series[i].id;
-			seriesFields.push(store.fieldsMeta[id].name);
-			seriesTitles.push(id);
-		}
-			
-		var series = {
-			fields: seriesFields,
-			titles: seriesTitles,
-			position: this.isHorizontallyOriented()? 'bottom' : 'left'
-		};
-			
-		return series;
-	}
-	    
-	, getCategoriesConfig: function() {
-	    	
-	    	var store = this.getStore();
-	    	
-	    	var categories = [];
-			categories.push(this.wconf.category);
-			if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
-			
-			var categoriesFields = [];
-			var categoriesTitles = [];
-			for(var i = 0; i < categories.length; i++) {
-				var id = categories[i].id;
-				categoriesFields.push(store.fieldsMeta[id].name);
-				categoriesTitles.push(id);
-			}
-			
-			var categories = {
-				fields: categoriesFields,
-				titles: categoriesTitles, 
-				position: this.isHorizontallyOriented()? 'left': 'bottom'
-			};
-			
-			return categories;
-	}
-	
-	, getOrientation: function() {
-		return this.wconf? this.wconf.orientation: null;
-	}
-
-	, isVerticallyOriented: function() {
-		return this.getOrientation() === 'vertical';
-	}
-	
-	, isHorizontallyOriented: function() {
-		return this.getOrientation() === 'horizontal';
-	}
-		
-	, getSeriesLabel: function(seriesConfig) {
-		var label = {
-            display: 'insideEnd',
-            field: seriesConfig.titles.length == 1? seriesConfig.titles[0]: undefined,
-            renderer: Ext.util.Format.numberRenderer('0'),
-            orientation: 'horizontal',
-            color: '#333',
-            'text-anchor': 'middle'
-		};
-		return label;
-	}
-	
-	, getSeriesTips: function(series) {
-		var thisPanel = this;
-		
-		var tips =  {
-			trackMouse: true,
-           	minWidth: 140,
-           	maxWidth: 300,
-           	width: 'auto',
-           	minHeight: 28,
-           	renderer: function(storeItem, item) {
-           		//var tooltipContent = thisPanel.getTooltip(storeItem, item);
-           		//this.setTitle(tooltipContent);
-           		this.setTitle("Tooltip");
-            }
-        };
-		
-		return tips;
-	}
-	
-	, getBackground: function() {
-		var background = {
-		    gradient: {
-			    id: 'backgroundGradient',
-			    angle: 45,
-			    stops: {
-				    0: {color: '#ffffff'},
-				    100: {color: '#eaf1f8'}
-				}
-			}
-		};
-		return background;
-	}
-	
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
@@ -165,7 +46,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-	, getChartType: function() {
+	getChartType: function() {
 		return 'line'; 
 	}
 	
@@ -262,7 +143,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 				type: this.getChartType(), 
 				fill: this.isAreaFilled(),
 				stacked: this.isStacked(),
-				title: seriesConfig.titles,
+				title: seriesConfig.titles[i],
 	            highlight: {
 	            	size: 7,
 	                radius: 7
@@ -279,458 +160,66 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	    	    }
 	        });
 		}
-		/*
-		var series = [{
-			type: this.getChartType(), 
-//			fill: this.isAreaFilled(),
-//			stacked: this.isStacked(),
-			title: seriesConfig.titles,
-            highlight: {
-            	size: 7,
-                radius: 7
-            },
-            axis: seriesConfig.position,  
-            smooth: true,
-//            tips: this.getSeriesTips(seriesConfig),
-//            label: this.getSeriesLabel(seriesConfig),
-            xField: categoriesConfig.fields[0],
-            yField: seriesConfig.fields[0],
-            listeners: {
-    	    	itemmousedown: this.onItemMouseDown,
-    	    	scope: this
-    	    }
-        }];
-		*/
+
 		
 		Sbi.trace("[LineChartWidgetRuntime.getSeries]: OUT");
 		
 		return series;
 	}
 	
-	, onItemMouseDown: function(item) {
-		Sbi.trace("[LineChartWidgetRuntime.onItemMouseDown]: IN");
-		alert("[LineChartWidgetRuntime.onItemMouseDown]: CLICK");
-	    Sbi.trace("[LineChartWidgetRuntime.onItemMouseDown]: OUT");
+	, getItemMeta: function(item) {
+		var itemMeta = {};
+		
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: IN " + Sbi.toSource(item, true));
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: IN " + Sbi.toSource(item.series, true));
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: IN yField: " + item.series.yField);
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: IN xField: " + item.series.xField);
+		
+		// selected categories: names, headers & values
+		var categoriesConfig = this.getCategoriesConfig();
+		itemMeta.categoryFieldNames = [categoriesConfig.fields[0]];
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected categories names are equal to [" + itemMeta.categoryFieldNames +"]");
+		
+		itemMeta.categoryFieldHeaders = [];
+		for(var i = 0; i < itemMeta.categoryFieldNames.length; i++) {
+			itemMeta.categoryFieldHeaders[i] = this.getFieldHeaderByName( itemMeta.categoryFieldNames[i] );
+		}
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected categories headers are equal to [" + itemMeta.categoryFieldHeaders +"]");
+		
+		itemMeta.categoryValues = [];
+		for(var i = 0; i < itemMeta.categoryFieldNames.length; i++) {
+			itemMeta.categoryValues.push( item.storeItem.data[itemMeta.categoryFieldNames[i]] );	
+		}
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected categories values are equal to [" + itemMeta.categoryValues +"]");
+	
+		// selected series: name, header & value
+		itemMeta.seriesFieldName = item.series.yField;
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected series name is equal to [" + itemMeta.seriesFieldName +"]");
+		
+		itemMeta.seriesFieldHeader = this.getFieldHeaderByName(itemMeta.seriesFieldName);
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected series header is equal to [" + itemMeta.seriesFieldHeader +"]");
+		
+		itemMeta.seriesFieldValue = item.storeItem.data[itemMeta.seriesFieldName];	 
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected series value is equal to [" + itemMeta.seriesFieldValue +"]");
+ 
+    	
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: OUT");
+		
+		return itemMeta;
 	}
 
-
-	
-	
-	
-	, redrawOld: function() {
-		Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.redraw.call(this);
-		
-		var retriever = new Sbi.cockpit.widgets.chart.DefaultChartDimensionRetrieverStrategy();
-		var size = retriever.getChartDimension(this);
-		this.update(' <div id="' + this.chartDivId + '" style="width: ' + size.width + '; height: ' + size.height + ';"></div>');
-		var percent = ((this.chartConfig.type).indexOf('percent')>=0);
-		var storeObject = this.getJsonStore(percent);
-		var colors = this.getColors();
-		var extraStyle ={};
-
-		var items = {
-				store: storeObject.store,
-				extraStyle: extraStyle,
-				style: 'height: 85%;',
-				hiddenseries: new Array(),
-				horizontal: this.chartConfig.orientation === 'horizontal'				
-		};
-
-		//set the height if ie
-		if(Ext.isIE){
-			items.height = this.ieChartHeight;
-		}
-
-		if(this.chartConfig.orientation === 'horizontal'){
-			items.yField = 'categories';
-			items.series = this.getChartSeries(storeObject.serieNames, colors, true);
-
-		}else{
-			items.xField = 'categories';
-			items.series = this.getChartSeries(storeObject.serieNames, colors);
-		}
-
-		this.addChartConf(items);
-
-
-		items.region = 'center';
-
-		var lineChartPanel = this.getChart(this.chartConfig.orientation === 'horizontal', items, colors, percent);
-	}
-	// -----------------------------------------------------------------------------------------------------------------
-    // private methods
-	// -----------------------------------------------------------------------------------------------------------------
-	
-	//----- Ext 4 Implementation related functions ------------------------------------------
-	, getChart : function(horizontal, items, colors, percent){
-		
-		var chartDataStore = items.store;
-		
-		var chartType = 'line'; 
-		var isStacked = false;
-
-		//Chart Type is 'side-by-side-linechart'		
-		
-		//Create Axes Configuration
-		var chartAxes = this.createAxes(horizontal, items, percent);
-		//Create Series Configuration
-		var chartSeries = this.createSeries(horizontal, items, chartType, isStacked);
-		
-		//Legend visibility
-		var showlegend;
-		if (this.chartConfig.showlegend !== undefined){
-			showlegend = this.chartConfig.showlegend;
-		} else {
-			showlegend = true;
-		}
-		
-		//Create theme for using custom defined colors
-		Ext.define('Ext.chart.theme.CustomTheme', {
-		    extend: 'Ext.chart.theme.Base',
-
-		    constructor: function(config) {
-		        this.callParent([Ext.apply({
-		            colors: colors
-		        }, config)]);
-		    }
-		});
-		
-	    var chart = Ext.create("Ext.chart.Chart", {
-	        width: '100%',
-	    	height: '100%',
-	    	theme: 'CustomTheme',
-	        hidden: false,
-	        title: "My Chart",
-	        renderTo: this.chartDivId,
-	        layout: "fit",
-	        style: "background:#fff",
-	        animate: true,
-	        store: chartDataStore,
-	        shadow: true,
-	        legend: showlegend,
-	        axes: chartAxes,
-	        series: chartSeries	        
-
-	    });
-
-	    return chart;
-	}
-	
-
-	/*
-	 * Create the Series object configuration
-	 */
-	, createSeries : function(horizontal,items, chartType, isStacked){		
-		var thisPanel = this;
-		var axisPosition;
-		var series = [];
-		
-		if (horizontal){
-			//bar chart
-			axisPosition = 'bottom';
-		} else {
-			//column chart
-			axisPosition = 'left';
-		}
-		
-		var seriesNames = [];
-		var displayNames = [];
-				
-		//Extract technical series names and corresponding name to display
-		for (var i=0; i< items.series.length; i++){
-			
-			var name;
-			if (horizontal){
-				name = items.series[i].xField;
-			} else {
-				name = items.series[i].yField;
-			}
-			//seriesNames.push(name);
-			var displayName = items.series[i].displayName;
-			//displayNames.push(displayName);
-		
-		
-			var areaFill = this.chartConfig.colorarea;
-			
-			//Costruct the series object(s)
-			var aSerie = {			
-					fill: areaFill,
-	                type: chartType,
-	                highlight: {
-	                    size: 7,
-	                    radius: 7
-	                },
-	                axis: axisPosition,
-	                smooth: true,
-	                stacked: isStacked,
-	                xField: "categories",
-	                yField: name,	                
-	                title: displayName,
-	    	        tips: {
-		            	  trackMouse: true,
-		            	  minWidth: 140,
-		            	  maxWidth: 300,
-		            	  width: 'auto',
-		            	  minHeight: 28,
-		            	  renderer: function(storeItem, item) {
-		            		   //this.setTitle(String(item.value[0])+" : "+String(item.value[1]));	            		  
-		            		   var tooltipContent = thisPanel.getTooltip(storeItem, item);
-		            		   this.setTitle(tooltipContent);
-		            	  }
-	    	        },
-	    	        listeners: {
-			  			itemmousedown:function(obj) {
-			  				var categoryField ;
-			  				var valueField ;
-			  				categoryField = obj.storeItem.data[obj.series.xField];
-			  				valueField = obj.storeItem.data[obj.series.xField];	  				
-		  		    		var selections = {};
-			  				var values =  [];
-			  				selections[displayNames] = {};
-		  		    		selections[displayNames].values = values; //manage multi-selection!
-		  		    		Ext.Array.include(selections[displayNames].values, valueField);
-		  		    		thisPanel.fireEvent('selection', thisPanel, selections);
-			  			}
-				}
-	                
-	         };
-			
-			series.push(aSerie);
-		}
-		
-		return series;
-	}
-	/*
-	 * Create the Axes object configuration
-	 */
-	, createAxes : function(horizontal,items,percent){
-		var axes;	
-		var positionNumeric;
-		var positionCategory;
-
-		if (horizontal){
-			//bar chart
-			positionNumeric = 'bottom';
-			positionCategory = 'left';
-		} else {
-			//column chart
-			positionNumeric = 'left';
-			positionCategory = 'bottom';
-		}
-		
-		var seriesNames = [];
-		
-		for (var i=0; i< items.series.length; i++){
-			var name;
-			if (horizontal){
-				name = items.series[i].xField;
-			} else {
-				name = items.series[i].yField;
-			}
-			seriesNames.push(name);
-		}
-
-		
-		axes = [{
-			type: "Numeric",
-			minimum: 0,
-			position: positionNumeric,
-			fields: seriesNames,
-//			title: "Series",
-			minorTickSteps: 1,
-			grid: true
-		}, {
-			type: "Category",
-			position: positionCategory,
-			fields: ["categories"]
-//			title: "Category"
-		}];
-		
-		//For the percent type chart set the axes scale maximum to 100
-		if (percent){
-			axes[0].maximum = 100;
-		}
-		
-		return axes;
-	}
-	
-	, getTooltip : function(record, item){	
-				
-		var chartType = this.chartConfig.designer;
-		var allRuntimeSeries = this.getRuntimeSeries();
-		var allDesignSeries = this.chartConfig.series;
-		var type = this.chartConfig.type;
-		var horizontal = this.chartConfig.orientation === 'horizontal';
-		var colors = this.getColors();
-		var series = item.series;
-		
-		var percent = ((this.chartConfig.type).indexOf('percent')>=0);
-		alert("getTooltip");
-		var storeObject = this.getJsonStore(percent);
-		
-		var selectedSerieName = series.yField;
-		
-		var selectedSerie;
-		
-		if(horizontal){
-			series = this.getChartSeries(storeObject.serieNames, colors, true);
-			for (var i =0; i<series.length;i++){
-				if (series[i].xField == selectedSerieName){
-					selectedSerie = series[i];
-					break;
-				}
-			}
-
-		}else{
-			series = this.getChartSeries(storeObject.serieNames, colors);			
-			for (var i =0; i<series.length;i++){
-				if (series[i].yField == selectedSerieName){
-					selectedSerie = series[i];					
-					break;
-				}
-			}
-		}
-
-		
-		var valueObj = this.getFormattedValue(null, record, selectedSerie, chartType, allRuntimeSeries, allDesignSeries, type, horizontal);
-		
-		var tooltip = '';
-		
-		if (valueObj.measureName !== valueObj.serieName) {
-			tooltip = valueObj.serieName + '<br/>' + record.data.categories + '<br/>';
-			// in case the serie name is different from the measure name, put also the measure name
-			//tooltip += this.formatTextWithMeasureScaleFactor(valueObj.measureName, valueObj.measureName) + ' : ';
-		} else {
-			tooltip =  record.data.categories + '<br/>' + selectedSerie.displayName + ' : ' ;
-		}
-		tooltip += valueObj.value;
-		
-		return tooltip;
-
-	}
-	
-	
-	///---------------------------------------------------------------------
-	
-	
-	, getChartSeries: function(serieNames, colors, horizontal){
-		var seriesForChart = new Array();
-		for(var i=0; i<serieNames.length; i++){
-			var serie = {	
-	                style: {}
-			};
-			
-//			if(this.chartConfig.type == 'percent-stacked-barchart'){
-//				serie.displayName =  (serieNames[i]);//if percent doesn't matter the scale 
-//			}else{
-				//serie.displayName =  this.formatLegendWithScale(serieNames[i]); //Commented by MC
-//			}
-			serie.displayName =  serieNames[i];
-			
-			if(horizontal){
-				serie.xField = 'series'+i;
-			}else{
-				serie.yField = 'series'+i;
-			}
-			
-			if(colors!=null){
-				serie.style.color= colors[i];
-			}
-			
-			seriesForChart.push(serie);
-		}		
-		return seriesForChart;
-	}
-
-	//used for tooltip	
-	, getFormattedValue: function (chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type, horizontal){
-		var theSerieName  = series.displayName;
-		var value ;
-		var serieName;  // the serie name without eventual scale factor
-		var measureName;  // the measure related to the serie
-		var serieDefinition;  // the design-time serie definition (the measure with precision, color, ....)
-		/*
-		if(type != 'percent-stacked-barchart'){
-			if(horizontal){
-				value =  record.data[series.xField];
-			}else{
-				value = record.data[series.yField];
-			}
-		}else{
-			//value = Ext.util.Format.number(record.data[series.xField], '0.00');
-			if(horizontal){
-				value = record.data['seriesflatvalue'+series.xField.substring(series.xField.length-1)];		        
-			}else{
-				value = record.data['seriesflatvalue'+series.yField.substring(series.yField.length-1)];
-			}
-		}
-		*/
-		
-		value = record.data[series.yField];
-		
-		// find the measure's name
-		var i = 0;
-		for (; i < allRuntimeSeries.length; i++) {
-			//substring to remove the scale factor
-			if (allRuntimeSeries[i].name === theSerieName.substring(0, allRuntimeSeries[i].name.length)) {
-				serieName = allRuntimeSeries[i].name;
-				measureName = allRuntimeSeries[i].measure;
-				break;
-			}
-		}
-		
-		i = 0;
-		// find the serie's (design-time) definition
-		for (; i < allDesignSeries.length; i++) {
-			if (allDesignSeries[i].id === measureName) {
-				serieDefinition = allDesignSeries[i];
-				break;
-			}
-		}
-
-		// format the value according to serie configuration
-		value = Sbi.commons.Format.number(value, {
-    		decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
-    		decimalPrecision: serieDefinition.precision,
-    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats['float'].groupingSeparator : '',
-    		groupingSize: 3,
-    		currencySymbol: '',
-    		nullValue: ''
-		});
-			
-		// add suffix
-		if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
-			value = value + ' ' + serieDefinition.suffix;
-		}
-
-		var toReturn = {};
-		toReturn.value = value;
-		toReturn.serieName = serieName;
-		toReturn.measureName = measureName;
-		return toReturn;
-	}
-	
-	
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, onRender: function(ct, position) {	
 		Sbi.trace("[LineChartWidgetRuntime.onRender]: IN");
 		
-		this.msg = 'Sono un widget di tipo BarChart';
+		this.msg = 'Sono un widget di tipo LineChart';
 		
 		Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.onRender.call(this, ct, position);	
 		
 		Sbi.trace("[LineChartWidgetRuntime.onRender]: OUT");
 	}
-	
-	, getByteArraysForExport: function(){
-		var byteArrays = new Array();
-		for(var i=0; i<this.charts; i++){
-			byteArrays.push((this.charts[i]).exportPNG());
-		}	
-	}
-
 });
 
 

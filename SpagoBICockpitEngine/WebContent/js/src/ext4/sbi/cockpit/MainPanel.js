@@ -531,23 +531,16 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	
 		var tbItems = ['->'];
 		
-//		tbItems.push({
-//        	text: LN('sbi.cockpit.mainpanel.btn.clearselections')
-//        	, handler: this.onClearSelections
-//        	, scope: this
-//        });
+		tbItems.push({
+        	text: LN('sbi.cockpit.mainpanel.btn.clearselections')
+        	, handler: this.onClearSelections
+        	, scope: this
+        });
+		
 		
 		tbItems.push(  new Ext.Button({
-			id: 'delSelection'
-     		, iconCls: 'icon_delete_selection' 
-			, tooltip: LN('sbi.cockpit.mainpanel.btn.clearselections')
-			, scope: this
-			, handler:  this.onClearSelections					
-		 }));		
-		
-		tbItems.push(  new Ext.Button({
-			id: 'addSelection'
-     		, iconCls: 'icon_add_selection' 
+			id: 'selection'
+     		, iconCls: 'icon_selection' 
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.selections')
 			, scope: this
 			, handler:  this.onShowSelectionsWindow					
@@ -603,14 +596,14 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 		, scope: this
 	 		, handler:  this.onShowSaveDocumentAsWindow
 	 	}));
-		
+		/*
 		tbItems.push(new Ext.Button({
 		 		id: 'debug'
 			 	   	   , text: 'Debug'
 			 	       , scope: this
 			 		   , handler:  this.onDebug
 			 	 }));
-
+		 */
 		this.tbar = new Ext.Toolbar({
 		    items: tbItems,
 		    height: 30
