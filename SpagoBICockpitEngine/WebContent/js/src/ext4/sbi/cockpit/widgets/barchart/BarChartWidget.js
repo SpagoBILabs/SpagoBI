@@ -68,7 +68,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		var storeObject = this.getJsonStore(percent);
 		var colors = this.getColors();
 		var extraStyle ={};
-		
+
 		var items = {
 				store: storeObject.store,
 				extraStyle: extraStyle,

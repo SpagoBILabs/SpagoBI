@@ -295,24 +295,21 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	, init: function() {					
 		this.tools =  [{
 			type:'gear',
-			tooltip: LN('sbi.cockpit.window.toolbar.editor'),
     		handler: this.onShowWidgetEditor,
     		scope: this
-    	}, 
-//    	{
-//    		type:'help',
-//    		tooltip: LN('sbi.cockpit.window.toolbar.configuration'),
-//            handler: this.onShowWidgetConfiguration,
-//    		scope: this
-//      }, 
-    	{
-        	type:'refresh',
-        	tooltip: LN('sbi.cockpit.window.toolbar.refresh'),
-        	handler: this.onWidgetRefresh,
+    	}, {
+    		type:'help',
+            handler: this.onShowWidgetConfiguration,
     		scope: this
         }, {
-        	type:'plus',
-        	tooltip: LN('sbi.cockpit.window.toolbar.clone'),
+        	type:'refresh',
+        	handler: this.onWidgetRefresh,
+//     	   	handler: function(){
+//     	   		Ext.Msg.alert('Message', 'The REFRESH tool was clicked.');
+//     	    },
+    		scope: this
+        }, {
+        	type:'clone',
         	handler: this.onWidgetClone,
         	scope:this
         }];			
