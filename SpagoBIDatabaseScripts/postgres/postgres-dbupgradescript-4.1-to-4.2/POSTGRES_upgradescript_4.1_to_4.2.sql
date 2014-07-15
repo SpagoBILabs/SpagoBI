@@ -1,7 +1,7 @@
 ALTER TABLE SBI_ORGANIZATIONS ADD COLUMN THEME VARCHAR(100) NULL DEFAULT 'SPAGOBI.THEMES.THEME.default';
 ALTER TABLE SBI_USER ADD COLUMN IS_SUPERADMIN BOOLEAN DEFAULT FALSE;
 
-UPDATE SBI_USER us SET us.IS_SUPERADMIN = TRUE WHERE us.ID IN(
+UPDATE SBI_USER us SET IS_SUPERADMIN = TRUE WHERE us.ID IN(
 	SELECT ur.ID FROM SBI_EXT_USER_ROLES ur WHERE ur.EXT_ROLE_ID IN( 
 		SELECT role.EXT_ROLE_ID FROM SBI_EXT_ROLES role WHERE role.ROLE_TYPE_CD = 'ADMIN'
 	)
@@ -59,15 +59,14 @@ INSERT INTO sbi_organization_datasource (DATASOURCE_ID, ORGANIZATION_ID, CREATIO
   FROM sbi_engines eng, sbi_organizations org WHERE eng.organization = org.name;
 COMMIT;
 
-UPDATE SBI_OBJECTS r JOIN (
-SELECT B.ENGINE_ID AS OK, A.ENGINE_ID AS KO
-FROM
-(SELECT ENGINE_ID, LABEL, ORGANIZATION FROM SBI_ENGINES WHERE ORGANIZATION !='SPAGOBI') A,
-(SELECT ENGINE_ID, LABEL, ORGANIZATION FROM SBI_ENGINES WHERE ORGANIZATION ='SPAGOBI') B
+UPDATE SBI_OBJECTS r
+SET ENGINE_ID = t.OK
+FROM ( select * from
+(SELECT ENGINE_ID as KO, LABEL, ORGANIZATION FROM SBI_ENGINES WHERE ORGANIZATION !='SPAGOBI') A,
+(SELECT ENGINE_ID as OK, LABEL, ORGANIZATION FROM SBI_ENGINES WHERE ORGANIZATION ='SPAGOBI') B
 WHERE A.LABEL=B.LABEL
-) t ON (r.ENGINE_ID = t.KO)
-SET r.ENGINE_ID = t.OK
-WHERE r.ENGINE_ID = t.KO;
+) as t
+WHERE  r.ENGINE_ID = t.KO;
 
 DELETE FROM SBI_EXPORTERS where engine_id IN (SELECT ENGINE_ID FROM SBI_ENGINES WHERE ORGANIZATION !='SPAGOBI');
 COMMIT;
@@ -96,172 +95,172 @@ values('SBI_AUTHORIZATIONS', 1);
 COMMIT;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE) 
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SAVE_SUBOBJECTS', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 commit;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SEE_SUBOBJECTS', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 commit;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SEE_VIEWPOINTS', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 commit;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SEE_SNAPSHOTS', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 commit;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SEE_NOTES', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SEND_MAIL', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SAVE_INTO_FOLDER', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SAVE_REMEMBER_ME', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SEE_METADATA', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SAVE_METADATA', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'BUILD_QBE_QUERY', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'DO_MASSIVE_EXPORT', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'EDIT_WORKSHEET', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'MANAGE_USERS', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SEE_DOCUMENT_BROWSER', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SEE_FAVOURITES', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SEE_SUBSCRIPTIONS', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SEE_MY_DATA', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'SEE_TODO_LIST', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
 
 
 INSERT INTO SBI_AUTHORIZATIONS
-(ID, NAME, CREATION_DATE, USER_IN, TIME_IN, LAST_CHANGE_DATE)
+(ID, NAME, USER_IN, TIME_IN) 
 values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
 'CREATE_DOCUMENTS', 
-CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP, current_timestamp) ;
+'server', current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
 
@@ -416,7 +415,7 @@ COMMIT;
 INSERT INTO SBI_ENGINES
 (ENGINE_ID,ENCRYPT,NAME,DESCR,MAIN_URL,SECN_URL,OBJ_UPL_DIR,OBJ_USE_DIR,DRIVER_NM,LABEL,ENGINE_TYPE,CLASS_NM,BIOBJ_TYPE,USE_DATASET,USE_DATASOURCE,USER_IN,USER_UP,USER_DE,TIME_IN,
 TIME_UP,TIME_DE,SBI_VERSION_IN,SBI_VERSION_UP,SBI_VERSION_DE,META_VERSION,ORGANIZATION)
-VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_ENGINES'), 0, 'Cockpit Engine', 'Cockpit Engine', '/SpagoBICockpitEngine/CockpitEngineStartAction', NULL, NULL, NULL, 'it.eng.spagobi.engines.drivers.cockpit.CockpitDriver', 'SpagoBICockpitEngine', (SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'ENGINE_TYPE' AND VALUE_CD = 'EXT'), '',(SELECT VALUE_ID FROM spagobi.SBI_DOMAINS WHERE DOMAIN_CD = 'BIOBJ_TYPE' AND VALUE_CD = 'DOCUMENT_COMPOSITE'), false, false, 'database', 'biadmin', NULL, '2014-01-09 00:00:00', '2014-01-09 00:00:00', NULL, '4.1', '4.1', NULL, NULL, 'SPAGOBI');
+VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_ENGINES'), 0, 'Cockpit Engine', 'Cockpit Engine', '/SpagoBICockpitEngine/CockpitEngineStartAction', NULL, NULL, NULL, 'it.eng.spagobi.engines.drivers.cockpit.CockpitDriver', 'SpagoBICockpitEngine', (SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'ENGINE_TYPE' AND VALUE_CD = 'EXT'), '',(SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'BIOBJ_TYPE' AND VALUE_CD = 'DOCUMENT_COMPOSITE'), false, false, 'database', 'biadmin', NULL, '2014-01-09 00:00:00', '2014-01-09 00:00:00', NULL, '4.1', '4.1', NULL, NULL, 'SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ENGINES';
 commit;
 INSERT INTO SBI_ORGANIZATION_ENGINE (ENGINE_ID, ORGANIZATION_ID, CREATION_DATE, LAST_CHANGE_DATE, USER_IN, TIME_IN, SBI_VERSION_IN)
@@ -427,11 +426,11 @@ commit;
 update SBI_ENGINES SET DRIVER_NM = 'it.eng.spagobi.engines.drivers.xmla.XMLADriver' where label = 'XMLAEngine';
 commit;
 
-ALTER TABLE SBI_AUDIT ALTER COLUMN DOC_LABEL varchar(200);
-ALTER TABLE SBI_AUDIT ALTER COLUMN DOC_NAME varchar(200);
-ALTER TABLE SBI_OBJECTS DROP FOREIGN KEY FK_SBI_OBJECTS_5 ;
-ALTER TABLE SBI_OBJECTS DROP FOREIGN KEY FK_SBI_OBJECTS_6;
-ALTER TABLE SBI_OBJECTS DROP FOREIGN KEY FK_SBIDATA_SOURCE;
+ALTER TABLE SBI_AUDIT ALTER COLUMN DOC_LABEL SET DATA TYPE varchar(200);
+ALTER TABLE SBI_AUDIT ALTER COLUMN DOC_NAME SET DATA TYPE varchar(200);
+ALTER TABLE SBI_OBJECTS DROP CONSTRAINT FK_SBI_OBJECTS_5 ;
+ALTER TABLE SBI_OBJECTS DROP CONSTRAINT FK_SBI_OBJECTS_6;
+ALTER TABLE SBI_OBJECTS DROP CONSTRAINT FK_SBIDATA_SOURCE;
 
 CREATE TABLE SBI_TRIGGER_PAUSED (
 	   ID 					INTEGER  NOT NULL ,
