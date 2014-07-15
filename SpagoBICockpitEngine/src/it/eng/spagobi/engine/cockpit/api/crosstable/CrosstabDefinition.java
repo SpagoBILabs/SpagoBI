@@ -48,7 +48,7 @@ public class CrosstabDefinition {
 	private boolean isStatic = true;
 	
 	public CrosstabDefinition() {
-//		cellLimit = new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) ;
+		cellLimit = new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) ;
 	}
 	
 	public int getCellLimit() {
