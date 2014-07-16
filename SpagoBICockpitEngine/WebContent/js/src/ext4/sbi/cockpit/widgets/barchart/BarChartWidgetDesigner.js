@@ -330,7 +330,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 	, setDesignerState: function(state) {
 		Sbi.trace("[BarChartWidgetDesigner.setDesignerState]: IN");
 		Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner.superclass.setDesignerState(this, state);
-		if (state.type) this.typeRadioGroup.setValue(state.type);
+		if (state.type) this.typeRadioGroup.setValue({type: state.type});
 		if (state.orientation) this.orientationCombo.setValue(state.orientation);
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
