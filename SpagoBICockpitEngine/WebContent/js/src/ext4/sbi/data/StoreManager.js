@@ -589,6 +589,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		if(Ext.isString(store)) {
 			Sbi.error("[StoreManager.removeStore]: Input parameter [store] must be of type Ext.data.Store");
+			return false; 
 		} 
 		
 		var storeId = this.getStoreId(store);
