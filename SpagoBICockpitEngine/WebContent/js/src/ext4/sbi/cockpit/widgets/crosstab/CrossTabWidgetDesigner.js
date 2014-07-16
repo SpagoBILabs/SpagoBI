@@ -310,4 +310,13 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 		});
 			
 	}
+	
+	, onAfterLayout: function() {
+		Sbi.trace("[CrossTabWidgetDesigner.onAfterLayout][" + this.getId() + "]: IN");
+		var selections = this.getWidgetManager().getWidgetSelections(this.getId());
+		
+		// TODO: reselect rows in a selective way
+		this.fireSelectionEvent = true;
+		Sbi.trace("[CrossTabWidgetDesigner.onAfterLayout][" + this.getId() + "]: OUT");
+	}
 });

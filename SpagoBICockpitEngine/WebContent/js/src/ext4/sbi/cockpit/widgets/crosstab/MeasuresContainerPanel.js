@@ -242,7 +242,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.GridPan
 
 	, onFieldDrop: function(ddSource) {
 		if (ddSource.id === "field-grid-body") {
-			this.notifyDropFromMeasuresContainerPanel(ddSource);			
+			this.notifyDropFromQueryFieldsPanel(ddSource);			
 		}
 		
 //		if (ddSource.grid){
@@ -269,7 +269,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.GridPan
 	}
 	
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
-		var rows = ddSource.dragData.selections;
+		var rows = ddSource.dragData.records;
 		for (var i = 0; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the field is an attribute show a warning
