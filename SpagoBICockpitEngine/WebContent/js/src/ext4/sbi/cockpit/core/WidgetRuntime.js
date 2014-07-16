@@ -655,6 +655,14 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     	
 		return container;	
 	}
+
+    , setParentContainer: function(container) {                       		
+        Sbi.trace("[WidgetContainerComponent.setParentContainer]: IN"); 			
+        
+        this.parentContainer = container;         			
+        
+        Sbi.trace("[WidgetContainerComponent.setParentContainer]: OUT"); 			
+    } 
     
     /**
 	 * @method
