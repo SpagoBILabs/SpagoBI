@@ -8,7 +8,7 @@
 Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 	extend: 'Ext.Panel'
 	, layout:'fit'
-	, border: true	
+	, border: false	
 	, config: {
 		  gridConfig: {}
 		, grid: null
@@ -31,6 +31,7 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 		
 		Sbi.trace("[SelectionsPanel.constructor]: OUT");
 	}
+	
 	
 	, initComponent: function() {
   
@@ -264,6 +265,10 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 	, onSelectionChange: function() {			
 		this.refreshStore();
 	}	
+	
+	, onCancelSingle: function(grid, rowIndex, colIndex) {
+		this.fireEvent("cancelSingle",grid, rowIndex, colIndex);
+	}
 	
 	, onPerformUnselect: function(grid, rowIndex, colIndex) {
 		var record = this.grid.getStore().getAt(rowIndex);
