@@ -371,6 +371,19 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     , applyWidgetEditorWizardState: function() {
     	Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: IN");
     	var component = this.widgetEditorWizard.getWizardTargetComponent(); 
+    	
+    	var wtype = ""; 			
+         			
+        /* 			
+         * If I am changing type of widget or modifying existing one, 			
+         * I store the type for further compare 			
+         */ 			
+        var existingWidget = component.getWidget(); 			
+         			
+        if (existingWidget){ 			
+                wtype = existingWidget.wtype;               			
+        } 
+    	
 		var wizardState = this.widgetEditorWizard.getWizardState();
 		
 		wizardState.storeId = wizardState.selectedDatasetLabel;
@@ -398,9 +411,28 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		delete wizardState.selectedDatasetLabel;
 		delete wizardState.unselectedDatasetLabel;
 		  
-		component.setWidgetConfiguration( wizardState );
-		var widget = component.getWidget();
-		this.getWidgetManager().register(widget);
+		 /* 			
+         * I compare the type to know if I was creating a new one, changing type or just modifying parameters 			
+         */ 			
+        if ((wtype == wizardState.wtype) || (!existingWidget)){ 			
+                component.setWidgetConfiguration(wizardState);		
+                 			
+                var widget = component.getWidget();	
+                 			
+                this.getWidgetManager().register(widget);		
+        } else {                         			
+                /* 			
+                 * If i was changing type of widget i have to 			
+                 * remove the old one and create a new one 			
+                 */ 			
+                var widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(wizardState); 			
+                 			
+                component.setWidget(widget); 			
+                 			
+                this.removeWidget(existingWidget);                 			
+                 			
+                this.addWidget(wizardState);                                                 			
+        }         
 		
 		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: the list of widget registered in widget manager is equal to [" + this.getWidgetManager().getWidgetCount() + "]");
 		
