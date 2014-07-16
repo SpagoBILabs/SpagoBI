@@ -182,6 +182,14 @@
 		background-image: url('../img/ico_associations.png') !important;
 	}
 	
+	.icon_add_selection {
+		background-image: url('../img/ico_add_selection.png') !important;
+	}
+	
+	.icon_delete_selection { 
+		background-image: url('../img/ico_delete_selection.png') !important; 
+	}
+	
 	.icon_selection {
 		background-image: url('../img/ico_selection.png') !important;
 	}
@@ -395,5 +403,339 @@
 		background-image:url(../img/attribute.gif) !important;
 	}
 	
+************************************************************************************************* 	
+* Cross Tab			
+************************************************************************************************* 			
+.crosstab-table-headers{ 			
+        cursor: pointer !important; 			
+        border:1px solid; 			
+        border-left-color:#EEEEEE;         			
+        border-right-color:#D0D0D0; 			
+        border-top-color:#EEEEEE;         			
+        border-bottom-color:#D0D0D0;         			
+        text-align: center; 			
+        background-image:url("../img/crosstab/headerbackground.gif"); 			
+        font:12px tahoma,arial,verdana,sans-serif; 			
+        color : #3783E8; 			
+} 			
+ 			
+/* 			
+.crosstab-header-static { 			
+    border:1px solid; 			
+    border-left-color:#EEEEEE;   			
+    border-right-color:#D0D0D0; 			
+    border-top-color:#EEEEEE;   			
+    border-bottom-color:#D0D0D0;     			
+    text-align: center; 			
+    font:12px arial,tahoma,helvetica,sans-serif; 			
+    color : #3783E8; 			
+} 			
+ 			
+.crosstab-header-member { 			
+    background-image:url("../img/crosstab/headerbackground.gif"); 			
+} 			
+ 			
+.crosstab-header-level { 			
+    background-image:url("../img/crosstab/headerbackgroundtitle.gif"); 			
+} 			
+*/ 			
+/*white-space: nowrap; width: 100%; overflow: hidden; text-overflow: ellipsis; are needed css properties to obtain ellipsis, for example: "Alcoholic Bev..."*/ 			
+/* 			
+.crosstab-header-text-static { 			
+        white-space: nowrap; 			
+        width: 100%; 			
+        overflow: hidden; 			
+        text-overflow: ellipsis; 			
+        height: 1.5em; 			
+} 			
+*/ 			
+                         			
+.crosstab-table-cells-data{ 			
+        border:1px solid; 			
+        border-left-color:#EEEEEE;         			
+        border-right-color:#D0D0D0; 			
+        border-top-color:#EEEEEE;         			
+        border-bottom-color:#D0D0D0;         			
+        text-align: center; 			
+        font: normal 11px tahoma,arial,helvetica,sans-serif; 			
+        background-color: transparent; 			
+} 			
+ 			
+.crosstab-table-cells-CF{ 			
+        border:1px solid; 			
+        border-left-color:#EEEEEE;         			
+        border-right-color:#D0D0D0; 			
+        border-top-color:#EEEEEE;         			
+        border-bottom-color:#D0D0D0;         			
+        text-align: center; 			
+        font: normal 11px tahoma,arial,helvetica,sans-serif; 			
+        background-color: #F1F1F1; 			
+} 			
+ 			
+.crosstab-table-cells-partialsum{ 			
+        border:1px solid; 			
+        border-left-color:#EEEEEE;         			
+        border-right-color:#D0D0D0; 			
+        border-top-color:#EEEEEE;         			
+        border-bottom-color:#D0D0D0;         			
+        text-align: center; 			
+        font: normal 11px tahoma,arial,helvetica,sans-serif; 			
+        background-color: #E1E1E1; 			
+} 			
+ 			
+.crosstab-table-cells-highlight{ 			
+        background-color: #FEFFBF !important; 			
+} 			
+ 			
+.crosstab-table-cells-totals{ 			
+        border:1px solid; 			
+        border-left-color:#EEEEEE;         			
+        border-right-color:#D0D0D0; 			
+        border-top-color:#EEEEEE;         			
+        border-bottom-color:#D0D0D0;         			
+        text-align: center; 			
+        font: bold 11px tahoma,arial,helvetica,sans-serif; 			
+        background-color: #D1D1D1; 			
+} 			
+ 			
+.crosstab-table-cells-supertotals{ 			
+        border:1px solid; 			
+        border-left-color:#EEEEEE;         			
+        border-right-color:#D0D0D0; 			
+        border-top-color:#EEEEEE;         			
+        border-bottom-color:#D0D0D0;         			
+        text-align: center; 			
+        font: bold 11px tahoma,arial,helvetica,sans-serif; 			
+        background-color: #B1B1B1; 			
+} 			
+                                 			
+.crosstab-tablebackground{ 			
+        border:1px solid; 			
+        border-color: #99BBE8;         			
+        border-top-style: none; 			
+        border-left-style: none; 			
+} 			
+ 			
+.crosstab-column-header-panel-container{ 			
+        border:1px solid; 			
+        border-color: #99BBE8;         			
+        border-bottom-style: none; 			
+        border-left-style: none; 			
+} 			
+ 			
+.crosstab-row-header-panel-container{ 			
+        border:1px solid; 			
+        border-color: #99BBE8;         			
+        border-right-style: none; 			
+        border-top-style: none; 			
+} 			
+                                 			
+.crosstab-table-empty-top-left-panel-leftmostcell{ 			
+        border:1px solid; 			
+        border-color: #99BBE8;         			
+        border-right-style: none; 			
+        border-bottom-style: none; 			
+} 			
+ 			
+.crosstab-table-empty-top-left-panel-bottomcells{ 			
+        border:1px solid; 			
+        border-color: #99BBE8;         			
+        border-right-style: none; 			
+        border-left-style: none; 			
+        border-bottom-style: none; 			
+} 			
+ 			
+.crosstab-table-empty-top-left-panel-table-left{ 			
+        border:1px solid; 			
+        border-color: #99BBE8;         			
+        border-left-style: none; 			
+        border-top-style: none; 			
+} 			
+ 			
+.crosstab-table-empty-top-right-panel{ 			
+        border:1px solid; 			
+        border-color: #99BBE8;         			
+        border-right-style: none; 			
+        border-top-style: none; 			
+} 			
+ 			
+.crosstab-table-empty-bottom-left-panel{ 			
+        border:1px solid; 			
+        border-color: #99BBE8;         			
+        border-left-style: none; 			
+        border-top-style: none; 			
+        border-bottom-style: none; 			
+} 			
+ 			
+.crosstab-table-empty-bottom-right-panel{ 			
+        border:1px solid; 			
+        border-color: #99BBE8;         			
+        border-right-style: none; 			
+        border-bottom-style: none; 			
+} 			
+ 			
+.crosstab-table-data-panel{ 			
+        border:1px solid !important; 			
+        border-color: #99BBE8 !important; 			
+        border-top-style: none !important; 			
+        border-left-style: none !important; 			
+} 			
+ 			
+.crosstab-row-sum-panel-container{ 			
+        border:1px solid; 			
+        border-color: #99BBE8;         			
+        border-left-style: none; 			
+        border-top-style: none; 			
+} 			
+ 			
+.crosstab-column-sum-panel-container{ 			
+        border:1px solid; 			
+        border-color: #99BBE8;         			
+        border-top-style: none; 			
+        border-left-style: none; 			
+} 			
+ 			
+.crosstab-borderd{ 			
+        border:1px solid; 			
+        border-color: #8F8F8F;         			
+} 			
+ 			
+.crosstab-no-border{ 			
+        border-style: none !important;         			
+} 			
+ 			
+.crosstab-none-bottom-border-panel{ 			
+        border-bottom-style: none !important; 			
+} 			
+ 			
+.crosstab-none-right-border-panel{ 			
+        border-right-style: none !important; 			
+} 			
+ 			
+.crosstab-none-top-border-panel{ 			
+        border-top-style: none !important; 			
+} 			
+ 			
+.crosstab-none-left-border-panel{ 			
+        border-left-style: none !important; 			
+} 			
+ 			
+.crosstab table { 			
+        border-spacing: 0px; 			
+        border-collapse: collapse; 			
+} 			
+
+.crosstab td { 			
+        padding-top:5px; 			
+        padding-bottom:5px; 			
+        padding-left:10px; 			
+} 			
+ 			
+.crosstab td.empty { 			
+        border:0px solid; 			
+    background-color: transparent; 			
+} 			
+ 			
+.crosstab td.member { 			
+    border:1px solid; 			
+    border-left-color:#EEEEEE;   			
+    border-right-color:#D0D0D0; 			
+    border-top-color:#EEEEEE;   			
+    border-bottom-color:#D0D0D0;     			
+    text-align: center; 			
+     			
+    background: #f2f2f2; /* for non-css3 browsers */ 			
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f2f2', endColorstr='#e6e6e6'); /* for IE */ 			
+        background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#e6e6e6)); /* for webkit browsers */ 			
+        background: -moz-linear-gradient(top,  #f2f2f2,  #e6e6e6); /* for firefox 3.6+ */ 			
+     			
+    /*background-image:url("../img/crosstab/headerbackground.gif");*/ 			
+    /*background-size:100%;*/ 			
+    /*background-repeat:repeat-x;*/ 			
+    font:11px tahoma,arial,verdana,sans-serif; 			
+    color: #3783E8; 			
+    padding-right:10px; 			
+} 			
+ 			
+.crosstab td.level { 			
+    border:1px solid; 			
+    border-left-color:#EEEEEE;   			
+    border-right-color:#D0D0D0; 			
+    border-top-color:#EEEEEE;   			
+    border-bottom-color:#D0D0D0;     			
+    text-align: center; 			
+     			
+    background: #ebf3fd; /* for non-css3 browsers */ 			
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ebf3fd', endColorstr='#d9e8fb'); /* for IE */ 			
+    background: -webkit-gradient(linear, left top, left bottom, from(#ebf3fd), to(#d9e8fb)); /* for webkit browsers */ 			
+    background: -moz-linear-gradient(top,  #ebf3fd,  #d9e8fb); /* for firefox 3.6+ */ 			
+     			
+    /*background-image:url("../img/crosstab/headerbackgroundtitle.gif");*/ 			
+    /*background-size:contain;*/ 			
+    /*background-repeat:repeat-x;*/ 			
+    font:11px tahoma,arial,verdana,sans-serif; 			
+    color: #3783E8; 			
+    padding-right:10px; 			
+} 			
+ 			
+.crosstab td.data { 			
+    border:1px solid; 			
+    border-left-color:#EEEEEE;   			
+    border-right-color:#D0D0D0; 			
+    border-top-color:#EEEEEE;   			
+    border-bottom-color:#D0D0D0;     			
+    text-align: right; 			
+    background-color: transparent; 			
+    font:11px tahoma,arial,verdana,sans-serif; 			
+    padding-right:0px; 			
+} 			
+ 			
+.crosstab td.na { 			
+    border:1px solid; 			
+    border-left-color:#EEEEEE;   			
+    border-right-color:#D0D0D0; 			
+    border-top-color:#EEEEEE;   			
+    border-bottom-color:#D0D0D0;     			
+    text-align: center; 			
+    background-color: transparent; 			
+    font:11px tahoma,arial,verdana,sans-serif; 			
+    padding-right:0px; 			
+} 			
+ 			
+.crosstab td.cf { 			
+    border:1px solid; 			
+    border-left-color:#EEEEEE;   			
+    border-right-color:#D0D0D0; 			
+    border-top-color:#EEEEEE;   			
+    border-bottom-color:#D0D0D0;     			
+    text-align: right; 			
+    font:11px tahoma,arial,verdana,sans-serif; 			
+    background-color: #F1F1F1; 			
+    padding-right:0px; 			
+} 			
+ 			
+.crosstab td.partialsum { 			
+    border:1px solid; 			
+    border-left-color:#EEEEEE;   			
+    border-right-color:#D0D0D0; 			
+    border-top-color:#EEEEEE;   			
+    border-bottom-color:#D0D0D0;     			
+    text-align: right; 			
+    font:11px tahoma,arial,verdana,sans-serif; 			
+    background-color: #E1E1E1; 			
+    padding-right:0px; 			
+} 			
+ 			
+.crosstab td.totals{ 			
+    border:1px solid; 			
+    border-left-color:#EEEEEE;   			
+    border-right-color:#D0D0D0; 			
+    border-top-color:#EEEEEE;   			
+    border-bottom-color:#D0D0D0;     			
+    text-align: right; 			
+    font:bold 11px tahoma,arial,verdana,sans-serif; 			
+    background-color: #D1D1D1; 			
+    padding-right:0px; 			
+} 
 	
 } /* END MEDIA SCREEN*/		
