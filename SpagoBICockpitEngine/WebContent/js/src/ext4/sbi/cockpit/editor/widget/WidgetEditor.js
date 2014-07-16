@@ -89,7 +89,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 	
 	, worksheetTemplate: {}  // the initial worksheet template; to be passed as a property of the constructor's input object!!!
 	, engineAlreadyInitialized : null
-
+	, mainPanel: null
+	
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
