@@ -512,7 +512,7 @@ public class SQLDBCache implements ICache {
 					names.add(alias);
 					sqlBuilder.column(tableAlias + "." + column + " as " + alias);
 				}
-				lastIndex += dataSet.getMetadata().getFieldCount() + 1;
+				lastIndex += dataSet.getMetadata().getFieldCount() + 1;  // +1 since we added a surrogated key
 				columnBreakIndexes.add(lastIndex);
 				columnNames.put(dataSet.getLabel(), names);
 			}

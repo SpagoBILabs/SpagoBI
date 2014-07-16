@@ -493,8 +493,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			int breakIndexNo = 0;
 			int breakIndex =  breakIndexes.get(breakIndexNo);
 			JSONObject record = datasetRecord[0];
-			for(int j = 1, colNo = 1; j < props.length(); j++, colNo++) {
+			for(int j = 2, colNo = 1; j < props.length(); j++, colNo++) {
 				String p = props.getString(j);
+				
+				record.put("column_" + colNo, originalRecord.getString(p));
 				
 				if(j == breakIndex+2) { // breakIndex is the last element of the previous dataset. breakIndex + 1 is the first one of the new dataset.
 					// we shift everything by one doing a + 2 instead just a +1 because the first column of the joisned dataset contains the sbicache_row_id
@@ -506,7 +508,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 					colNo = 1;
 				} 
 				
-				record.put("column_" + colNo, originalRecord.getString(p));
 			}
 			
 			return datasetRecord;
