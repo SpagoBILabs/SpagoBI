@@ -58,21 +58,22 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 	getSeriesConfig: function() {
 	    	
 		var store = this.getStore();
-	    	
+	    				
 	    var seriesFields = [];
-		var seriesTitles = [];
-		for(var i = 0; i < this.wconf.series.length; i++) {
+		var seriesTitles = [];		
+		
+		for(var i = 0; i < this.wconf.series.length; i++) {			
 			var id = this.wconf.series[i].id;
 			seriesFields.push(store.fieldsMeta[id].name);
-			seriesTitles.push(id);
+			seriesTitles.push(id);			
 		}
 			
 		var series = {
 			fields: seriesFields,
 			titles: seriesTitles,
-			position: this.isHorizontallyOriented()? 'bottom' : 'left'
-		};
-			
+			position: this.isHorizontallyOriented()? 'bottom' : 'left',				
+		};				
+		
 		return series;
 	}
 	    
@@ -167,10 +168,22 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 		var series = this.getSeries( categoriesConfig, seriresConfig );
 		
 		var store = this.getStore();
-			
+		
+		var colors = this.getColors();
+		
+		Ext.define('Ext.chart.theme.ColumnTheme', {
+	        extend: 'Ext.chart.theme.Base',
+	        constructor: function(config) {
+	            this.callParent([Ext.apply({ 
+	               
+	                colors: colors
+
+	            }, config)]);
+	        }
+	    });
 		
 		if(this.isPercentStacked()) {
-			var data = [];
+			var data = [];			
 			if(categoriesConfig.fields.length == 1) {
 				var fields = [];
 				for(var h in store.fieldsMeta) {
@@ -189,12 +202,12 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 		store.sort(categoriesConfig.fields[0], 'ASC');
 		
 		this.chartPanel =  Ext.create('Ext.chart.Chart', {
+			theme:'ColumnTheme',
             store: store,
             axes: axes,
             series: series,
             shadow: true,
-            animate: true,
-            theme: 'CustomBlue',
+            animate: true,            
             background: this.getBackground(),
 	        legend: this.isLegendVisible()
         });
@@ -216,7 +229,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 		    }
 			, title: seriesConfig.titles.length == 1? seriesConfig.titles[0]: undefined
 		   	, grid: true
-		    , minimum: 0
+		    , minimum: 0		   
 		};
 		
 		//For the percent type chart set the axes scale maximum to 100
@@ -237,10 +250,10 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 	}
 	
 	, getSeries: function( categoriesConfig, seriesConfig ) {
-		
+				
 		Sbi.trace("[BarChartWidget.getSeries]: IN");
-		
-		var series = [{
+				
+		var series = [{			
 			type: this.getChartType(), 
 			stacked: this.isStacked(),
 			title: seriesConfig.titles,
@@ -257,7 +270,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
             listeners: {
     	    	itemmousedown: this.onItemMouseDown,
     	    	scope: this
-    	    }
+    	    }           
         }];
 		
 		Sbi.trace("[BarChartWidget.getSeries]: OUT");

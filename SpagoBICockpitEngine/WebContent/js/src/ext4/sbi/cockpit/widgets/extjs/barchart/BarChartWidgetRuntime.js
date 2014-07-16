@@ -62,6 +62,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 	    var seriesFields = [];
 		var seriesTitles = [];
 		for(var i = 0; i < this.wconf.series.length; i++) {
+//			var id = this.wconf.series[i].id;
 			var id = this.wconf.series[i].alias;
 			seriesFields.push(store.fieldsMeta[id].name);
 			seriesTitles.push(id);
@@ -87,6 +88,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 			var categoriesFields = [];
 			var categoriesTitles = [];
 			for(var i = 0; i < categories.length; i++) {
+//				var id = categories[i].id;
 				var id = categories[i].alias;
 				categoriesFields.push(store.fieldsMeta[id].name);
 				categoriesTitles.push(id);
@@ -154,7 +156,8 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		
 		var store = this.getStore();
 			
-		
+		var colors = this.getColors();
+
 		if(this.isPercentStacked()) {
 			var data = [];
 			if(categoriesConfig.fields.length == 1) {
@@ -174,13 +177,24 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		}
 		store.sort(categoriesConfig.fields[0], 'ASC');
 		
+		//Create theme for using custom defined colors
+		Ext.define('Ext.chart.theme.CustomTheme', {
+		    extend: 'Ext.chart.theme.Base',
+
+		    constructor: function(config) {
+		        this.callParent([Ext.apply({
+		            colors: colors
+		        }, config)]);
+		    }
+		});
+		
 		this.chartPanel =  Ext.create('Ext.chart.Chart', {
             store: store,
             axes: axes,
             series: series,
             shadow: true,
             animate: true,
-            theme: 'CustomBlue',
+            theme: 'CustomTheme',
             background: this.getBackground(),
 	        legend: this.isLegendVisible()
         });
