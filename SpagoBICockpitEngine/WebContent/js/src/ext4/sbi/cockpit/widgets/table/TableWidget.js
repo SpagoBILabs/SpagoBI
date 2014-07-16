@@ -158,6 +158,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				
 		for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {			
 			for(var i = 0; i < meta.fields.length; i++) {
+//				if(meta.fields[i].header === this.wconf.visibleselectfields[j].id) {
 				if(meta.fields[i].header === this.wconf.visibleselectfields[j].alias) {
 					this.applyRendererOnField(meta.fields[i]);
 					this.applySortableOnField(meta.fields[i]);					
