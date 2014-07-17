@@ -310,12 +310,15 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				}
 				Column column = registryConf.getColumnConfiguration(attributeName);
 				
-				if (column.getSubEntity() != null) {
-					logger.debug("Column [" + attributeName + "] is a foreign key");
-					manageForeignKey(targetEntity, column, obj, attributeName, aRecord, entityManager);
-				} else {
-					logger.debug("Column [" + attributeName + "] is a normal column");
-					manageProperty(targetEntity, obj, attributeName, aRecord);
+				// if column is info column do not update
+				if(!column.isInfoColumn()){
+					if (column.getSubEntity() != null) {
+						logger.debug("Column [" + attributeName + "] is a foreign key");
+						manageForeignKey(targetEntity, column, obj, attributeName, aRecord, entityManager);
+					} else {
+						logger.debug("Column [" + attributeName + "] is a normal column");
+						manageProperty(targetEntity, obj, attributeName, aRecord);
+					}
 				}
 			}
 
