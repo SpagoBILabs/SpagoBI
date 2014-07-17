@@ -244,6 +244,9 @@ public class RegistryConfiguration {
 		private String summaryFunction = null;
 
 		private String title = null;
+		
+		// this is the entity (table::column) on which to order in case of referring to other table
+		private String orderBy = null;
 
 		
 		private boolean isVisible = true;
@@ -401,6 +404,14 @@ public class RegistryConfiguration {
 
 		public boolean isMeasure(){
 			return (type != null && type.equalsIgnoreCase(COLUMN_TYPE_MEASURE));
+		}
+
+		public String getOrderBy() {
+			return orderBy;
+		}
+
+		public void setOrderBy(String orderBy) {
+			this.orderBy = orderBy;
 		}
 
 		
