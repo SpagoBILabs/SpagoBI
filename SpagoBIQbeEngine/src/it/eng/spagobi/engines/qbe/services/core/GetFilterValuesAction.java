@@ -118,8 +118,11 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 			queryRootEntity = getAttributeAsBoolean(QUERY_ROOT_ENTITY);
 			logger.debug("Parameter [" + QUERY_ROOT_ENTITY + "] is equals to [" + queryRootEntity + "]");
 			
+			// if order entity is different select entity cannot apply distinct filter
+			boolean setDistinctClause = orderEntity.equalsIgnoreCase(entityId) ? true : false;
+			
 			if(queryType.equalsIgnoreCase("standard")) {
-				query = buildQuery(entityId, orderEntity, orderType, queryRootEntity);
+				query = buildQuery(entityId, orderEntity, orderType, queryRootEntity, setDistinctClause);
 			} else {
 				QbeEngineInstance engineInstance = this.getEngineInstance();
 				QueryCatalogue queryCatalogue = engineInstance.getQueryCatalogue();
@@ -199,7 +202,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 	}
 
 
-	private Query buildQuery(String entityId, String orderEntity, String orderType, boolean queryRootEntity) 
+	private Query buildQuery(String entityId, String orderEntity, String orderType, boolean queryRootEntity, boolean setDistinctClause) 
 	throws JSONException {
 		
 		
@@ -254,7 +257,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 		}
 		Query query = new Query();
 		query.addSelectFiled(entityId, "NONE", "Valori", true, true, false, (orderEntity != null && !orderEntity.trim().equals("")) ? null : orderType, entityPattern);
-		query.setDistinctClauseEnabled(true);
+		query.setDistinctClauseEnabled(setDistinctClause);
 		if (orderEntity != null && !orderEntity.equals("")) {
 			query.addSelectFiled(orderEntity, "NONE", "Ordinamento", false, false, false, orderType, orderEntityPattern);
 		}
