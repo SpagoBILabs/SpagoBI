@@ -1186,11 +1186,22 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		} else {
 			entityId = temp + ':' + field;
 		}
+		
+		var orderBy = entityId;
+		if(column.orderBy != null && column.orderBy != undefined){
+			if (column.subEntity) {
+				orderBy = temp + "::" + column.subEntity + "(" + column.foreignKey + ")" + ":" + column.orderBy;				
+					}
+			else{
+				 entityId = temp + ':' + column.orderBy;
+			}
+		}
+		
 
 		var baseParams = {
 			'QUERY_TYPE': 'standard', 
 			'ENTITY_ID': entityId, 
-			'ORDER_ENTITY': entityId, 
+			'ORDER_ENTITY': orderBy, 
 			'ORDER_TYPE': 'asc', 
 			'QUERY_ROOT_ENTITY': true
 		};

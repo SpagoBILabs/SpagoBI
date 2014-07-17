@@ -50,6 +50,7 @@ public class RegistryConfigurationJSONSerializer {
 	public static String SUMMARY_FUNCTION = "summaryFunction";
 	public static String SUMMARY_COLOR = "summaryColor";
 	public static String TYPE = "type";
+	public static String ORDER_BY = "orderBy";
 	
 	public static String PAGINATION = "pagination";
 
@@ -114,6 +115,7 @@ public class RegistryConfigurationJSONSerializer {
 			String color = column.getColor();
 			String editorType = column.getEditorType();
 			String summaryFunction = column.getSummaryFunction();
+			String orderBy = column.getOrderBy();
 
 			columnJSON.put(FIELD, field);
 			if (subentity != null) {
@@ -127,6 +129,7 @@ public class RegistryConfigurationJSONSerializer {
 			columnJSON.put(COLOR, color);
 			columnJSON.put(TYPE, type);
 			columnJSON.put(SUMMARY_FUNCTION, summaryFunction);
+			columnJSON.put(ORDER_BY, orderBy);
 			
 
 			String mandatoryCol = column.getMandatoryColumn();

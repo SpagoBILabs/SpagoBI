@@ -56,6 +56,7 @@ public class RegistryConfigurationXMLParser {
 	public static String ATTRIBUTE_COLOR = "color";
 	public static String ATTRIBUTE_SUMMARY_FUNCTION = "summaryFunction";
 	public static String ATTRIBUTE_TYPE = "type";
+	public static String ATTRIBUTE_ORDER_BY = "orderBy";
 	
 	public static String ATTRIBUTE_FOREIGNKEY = "foreignKey";
 	public static String ATTRIBUTE_MANDATORY_COLUMN = "mandatoryColumn";
@@ -214,6 +215,8 @@ public class RegistryConfigurationXMLParser {
 
 				String summaryFunction = aColumn.getAttribute(ATTRIBUTE_SUMMARY_FUNCTION) != null ? (String)aColumn.getAttribute(ATTRIBUTE_SUMMARY_FUNCTION) : null;
 
+				String orderBy = aColumn.getAttribute(ATTRIBUTE_ORDER_BY) != null ? (String)aColumn.getAttribute(ATTRIBUTE_ORDER_BY) : null;
+
 				String type = aColumn.getAttribute(ATTRIBUTE_TYPE) != null ? (String)aColumn.getAttribute(ATTRIBUTE_TYPE) : null;
 				if(type != null && (type.equalsIgnoreCase(RegistryConfiguration.Column.COLUMN_TYPE_MERGE) || type.equalsIgnoreCase(RegistryConfiguration.Column.COLUMN_TYPE_MEASURE))){
 					if(type.equalsIgnoreCase("merge")){
@@ -257,6 +260,7 @@ public class RegistryConfigurationXMLParser {
 				column.setColor(color);
 				column.setSummaryFunction(summaryFunction);
 				column.setType(type);
+				column.setOrderBy(orderBy);
 				
 				String mandatoryColumn = (String) aColumn.getAttribute(ATTRIBUTE_MANDATORY_COLUMN);
 				if(mandatoryColumn != null){
