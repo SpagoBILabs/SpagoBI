@@ -33,6 +33,8 @@ public class RegistryConfiguration {
 	
 
 	
+
+	
 	public boolean isPagination() {
 		return pagination;
 	}
@@ -248,6 +250,8 @@ public class RegistryConfiguration {
 		// this is the entity (table::column) on which to order in case of referring to other table
 		private String orderBy = null;
 
+		// a column that in update must not be considered, for example because it is a collumn referred from another tablethat is not its natural key
+		private boolean infoColumn = false;
 		
 		private boolean isVisible = true;
 		//mandatory depending on another column value
@@ -414,6 +418,13 @@ public class RegistryConfiguration {
 			this.orderBy = orderBy;
 		}
 
+		public boolean isInfoColumn() {
+			return infoColumn;
+		}
+
+		public void setInfoColumn(boolean infoColumn) {
+			this.infoColumn = infoColumn;
+		}
 		
 	}
 	
