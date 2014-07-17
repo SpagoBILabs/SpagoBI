@@ -51,7 +51,9 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-	, load: function(crosstabDefinition, filters) {								
+	, load: function(crosstabDefinition, filters) {	
+		Sbi.trace("[CrossTabWidget.load]: IN");
+		
 		var crosstabDefinitionEncoded = Ext.JSON.encode(crosstabDefinition);
 		var datasetLabelEncoded = this.getStoreId();
 		
@@ -64,6 +66,8 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 		}
 		
 		this.loadCrosstabAjaxRequest.defer(100, this,[crosstabDefinitionEncoded]);		
+		
+		Sbi.trace("[CrossTabWidget.load]: OUT");
 	}
 
 	, loadCrosstabAjaxRequest: function(crosstabDefinition){		
