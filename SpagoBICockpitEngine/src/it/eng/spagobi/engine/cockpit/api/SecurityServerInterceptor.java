@@ -116,7 +116,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			boolean authorized = false;
 			try {
 				authorized = profile.isAbleToExecuteService(serviceUrl);
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				logger.debug("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["+serviceUrl+"]",e);
 				throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["+serviceUrl+"]",e);
 			}
@@ -130,14 +130,14 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			}else{
 				logger.debug("The user ["+profile.getUserName()+"] is enabled to execute the service ["+serviceUrl+"]");
 			}
-		} catch(Throwable t) {
-			if(t instanceof CockpitEngineRuntimeException) {
+		} catch(Exception e) {
+			if(e instanceof CockpitEngineRuntimeException) {
 				// ok it's a known exception
 			} else {
-				new CockpitEngineRuntimeException("An unexpected error occured while preprocessing service request", t);
+				new CockpitEngineRuntimeException("An unexpected error occured while preprocessing service request", e);
 			}
-			String msg = t.getMessage();
-			if(t.getCause() != null && t.getCause().getMessage() != null) msg += ": " + t.getCause().getMessage();
+			String msg = e.getMessage();
+			if(e.getCause() != null && e.getCause().getMessage() != null) msg += ": " + e.getCause().getMessage();
 			response = new ServerResponse(msg, 400, new Headers<Object>());
 		} finally {
 			logger.trace("OUT");
@@ -162,8 +162,8 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			if(spagoBIUserProfile != null) {
 				profile = (UserProfile) UserUtilities.getUserProfile(user);
 			}
-		} catch(Throwable t) {
-			throw new RuntimeException("An unexpected error occured while authenticating user", t);
+		} catch(Exception e) {
+			throw new RuntimeException("An unexpected error occured while authenticating user", e);
 		} finally {
 			logger.trace("OUT");
 		}

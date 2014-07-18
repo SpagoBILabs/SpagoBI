@@ -35,9 +35,9 @@ public class MeasureJSONDeserializer implements IDeserializer {
 				logger.debug("Deserializing string [" + (String)o + "]");
 				try {
 					measureJSON = new JSONObject( (String)o );
-				} catch(Throwable t) {
+				} catch(Exception e) {
 					logger.debug("Object to be deserialized must be string encoding a JSON object");
-					throw new SerializationException("An error occurred while deserializing query: " + (String)o, t);
+					throw new SerializationException("An error occurred while deserializing query: " + (String)o, e);
 				}
 			} else if(o instanceof JSONObject) {
 				measureJSON = (JSONObject)o;

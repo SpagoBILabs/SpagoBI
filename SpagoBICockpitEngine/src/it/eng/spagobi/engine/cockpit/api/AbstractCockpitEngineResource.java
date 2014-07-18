@@ -49,8 +49,8 @@ public class AbstractCockpitEngineResource extends AbstractRestService {
 				userProfile = (UserProfile) UserUtilities.getUserProfile(userId);
 				ioManager.setUserProfile(userProfile);
 			}			
-		} catch (Throwable t) {
-			throw new CockpitEngineRuntimeException("An unexpected error occured while inizializing ioManager", t);
+		} catch (Exception e) {
+			throw new CockpitEngineRuntimeException("An unexpected error occured while inizializing ioManager", e);
 		}
 		
 		return ioManager;

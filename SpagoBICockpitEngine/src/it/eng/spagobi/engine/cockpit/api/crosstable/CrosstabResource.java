@@ -81,8 +81,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		logger.debug("IN");
 		try {
 			return createCrossTable(crosstabDefinition,datasetLabel);
-		} catch(Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} catch(Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		} finally {			
 			logger.debug("OUT");
 		}	
@@ -167,9 +167,10 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			
 			htmlCode = crossTab.getHTMLCrossTab(this.getLocale());//									
 									
-		} catch(Throwable t) {
+		} catch(Exception e) {
+			logger.error("Error while creating cross table", e);
 			errorHitsMonitor = MonitorFactory.start("WorksheetEngine.errorHits");
-			errorHitsMonitor.stop();			
+			errorHitsMonitor.stop();
 		} finally {
 			if (totalTimeMonitor != null) totalTimeMonitor.stop();
 			logger.debug("OUT");
@@ -406,7 +407,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		try{
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSource = dataSourceDAO.loadDataSourceWriteDefault();
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new SpagoBIEngineRuntimeException(e);
 		}
 		
@@ -441,9 +442,9 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			 */
 			
 			logger.debug("Dataset persisted");
-		} catch (Throwable t) {
-			logger.error("Error while persisting dataset", t);
-			throw new SpagoBIRuntimeException("Error while persisting dataset", t);
+		} catch (Exception e) {
+			logger.error("Error while persisting dataset", e);
+			throw new SpagoBIRuntimeException("Error while persisting dataset", e);
 		}
 		
 		logger.debug("Dataset persisted successfully. Table descriptor : " + td);
@@ -496,7 +497,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		try{
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSource = dataSourceDAO.loadDataSourceWriteDefault();
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new SpagoBIEngineRuntimeException(e);
 		}
 		

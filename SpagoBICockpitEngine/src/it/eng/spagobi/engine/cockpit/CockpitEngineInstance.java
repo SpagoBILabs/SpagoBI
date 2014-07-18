@@ -50,8 +50,8 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 		try {
 			this.template = new JSONObject(template);
 			this.associationManager = new AssociationManager();
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Impossible to parse template", t);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to parse template", e);
 		}
 	}
 
@@ -124,8 +124,8 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 				return null;
 			else
 				return JSONUtils.asStringArray(JSONUtils.toJSONArray(strCommunities));
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Impossible to get communities list", t);		}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get communities list", e);		}
 	}
 
 	public List<Integer> getDocumentFunctionalities() {
@@ -135,8 +135,8 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 				return null;
 			else
 				return JSONUtils.asList(JSONUtils.toJSONArray(strFunctionalities));
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Impossible to get functionalities list", t);		}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get functionalities list", e);		}
 	}
 	
 	public String getDocumentIsPublic() {

@@ -77,8 +77,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 			}
 			
 			return resultsJSON.toString();	
-		} catch(Throwable t) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), t);
+		} catch(Exception e) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
 		} finally {			
 			logger.debug("OUT");
 		}	
@@ -127,8 +127,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
 			}
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
-		} catch(Throwable t) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), t);
+		} catch(Exception e) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
 		} finally {			
 			logger.debug("OUT");
 		}	
