@@ -67,13 +67,13 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 			try {
 				SourceBean template = SourceBean.fromXMLFile( WhatIfEngineConfig.getInstance().getTemplateFilePath());
 				whatIfEngineInstance = WhatIfEngine.createInstance(template, getEnv());
-			} catch (Throwable t) {
+			} catch (Exception e) {
 				logger.error(
 						"Error starting the What-If engine: error while generating the engine instance.",
-						t);
+						e);
 				throw new SpagoBIEngineRuntimeException(
 						"Error starting the What-If engine: error while generating the engine instance.",
-						t);
+						e);
 			}
 			logger.debug("Engine instance succesfully created");
 
@@ -92,10 +92,10 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 								+ REQUEST_DISPATCHER_URL, e);
 			}
 
-		} catch (Throwable t) {
-			logger.error("Error starting the What-If engine", t);
+		} catch (Exception e) {
+			logger.error("Error starting the What-If engine", e);
 			throw new SpagoBIEngineRuntimeException(
-					"Error starting the What-If engine", t);
+					"Error starting the What-If engine", e);
 		} finally {
 			logger.debug("OUT");
 		}

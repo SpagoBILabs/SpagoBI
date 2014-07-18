@@ -38,9 +38,9 @@ public class WhatIfEngineRuntimeException extends SpagoBIEngineRuntimeException 
      * Builds a <code>WhatIfEngineException</code>.
      * 
      * @param message Text of the exception
-     * @param ex previous Throwable object
+     * @param ex previous Exception object
      */
-    public WhatIfEngineRuntimeException(String message, Throwable ex) {
+    public WhatIfEngineRuntimeException(String message, Exception ex) {
     	super(message, ex);
     }
     

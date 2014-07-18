@@ -155,7 +155,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 				Boolean memberVisibleInTheSchema = true;
 				try {
 					memberVisibleInTheSchema = (Boolean)aMember.getPropertyValue(StandardMemberProperty.$visible);
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					logger.error("impossible to load the property visible for the member "+aMember.getUniqueName());
 				}
 				if(memberVisibleInTheSchema== null || memberVisibleInTheSchema){

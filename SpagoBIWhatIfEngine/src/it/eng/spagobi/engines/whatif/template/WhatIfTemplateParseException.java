@@ -25,18 +25,18 @@ public class WhatIfTemplateParseException extends SpagoBIEngineRuntimeException 
      * Builds a <code>SpagoBIRuntimeException</code>.
      * 
      * @param message Text of the exception
-     * @param ex previous Throwable object
+     * @param ex previous Exception object
      */
-    public WhatIfTemplateParseException(String message, Throwable ex) {
+    public WhatIfTemplateParseException(String message, Exception ex) {
     	super(message, ex);
     }
     
     /**
      * Builds a <code>SpagoBIRuntimeException</code>.
      * 
-     * @param ex previous Throwable object
+     * @param ex previous Exception object
      */
-    public WhatIfTemplateParseException(Throwable ex) {
+    public WhatIfTemplateParseException(Exception ex) {
     	super(ex);
     }
 

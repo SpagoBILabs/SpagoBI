@@ -113,7 +113,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 			try {
 				AllocationAlgorithm algorithm = transformation.getAlgorithm();
 				algorithm.persist(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), connection, version);
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				logger.error("Error persisting the transformation "+transformation, e);
 				throw new WhatIfPersistingTransformationException(getLocale(), bestStack, e);
 			}

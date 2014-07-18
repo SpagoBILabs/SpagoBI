@@ -120,12 +120,12 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		// execute the MDX now
 		try {
 			pivotModel.getCellSet();
-		} catch (Throwable t) {
-			Throwable rootException = t;
+		} catch (Exception e) {
+			Throwable rootException = e;
 			while (rootException.getCause() != null) {
 				rootException = rootException.getCause();
 			}
-			throw new SpagoBIEngineRuntimeException("Error while executing MDX statement: " + rootException.getMessage(), t);
+			throw new SpagoBIEngineRuntimeException("Error while executing MDX statement: " + rootException.getMessage(), e);
 		}
 		
 		//init configs 
