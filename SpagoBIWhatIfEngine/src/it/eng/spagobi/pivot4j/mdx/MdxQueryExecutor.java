@@ -48,9 +48,9 @@ public class MdxQueryExecutor {
 			toReturn = pivotModel.getCellSet();
 			//restore the previous situation
 			pivotModel.setMdx( previous );
-		} catch (Throwable t) {
-			logger.error("Error while executing MDX [" + mdx + "]", t);
-			throw new SpagoBIEngineRuntimeException("Error while executing MDX [" + mdx + "]", t);
+		} catch (Exception e) {
+			logger.error("Error while executing MDX [" + mdx + "]", e);
+			throw new SpagoBIEngineRuntimeException("Error while executing MDX [" + mdx + "]", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -63,9 +63,9 @@ public class MdxQueryExecutor {
 		try {
 			Cell cell = this.getCellForTuple(members, cube, pivotModel);
 			toReturn = cell.getValue();
-		} catch (Throwable t) {
-			logger.error("Error while getting value for tuple [" + members + "]", t);
-			throw new SpagoBIEngineRuntimeException("Error while getting value for tuple [" + members + "]", t);
+		} catch (Exception e) {
+			logger.error("Error while getting value for tuple [" + members + "]", e);
+			throw new SpagoBIEngineRuntimeException("Error while getting value for tuple [" + members + "]", e);
 		} finally {
 			logger.debug("OUT: returning [" + toReturn + "]");
 		}
@@ -81,9 +81,9 @@ public class MdxQueryExecutor {
 			logger.debug("Executing MDX : " + mdx + " ...");
 			toReturn = this.executeMdx(mdx,pivotModel);
 			logger.debug("MDX query executed");
-		} catch (Throwable t) {
-			logger.error("Error while getting cellset for tuple [" + members + "]", t);
-			throw new SpagoBIEngineRuntimeException("Error while getting cellset for tuple [" + members + "]", t);
+		} catch (Exception e) {
+			logger.error("Error while getting cellset for tuple [" + members + "]", e);
+			throw new SpagoBIEngineRuntimeException("Error while getting cellset for tuple [" + members + "]", e);
 		} finally {
 			logger.debug("OUT: returning [" + toReturn + "]");
 		}
@@ -96,9 +96,9 @@ public class MdxQueryExecutor {
 		try {
 			CellSet cellSet = this.getCellSetForTuple(members, cube, pivotModel);
 			toReturn = cellSet.getCell(0);
-		} catch (Throwable t) {
-			logger.error("Error while getting cell for tuple [" + members + "]", t);
-			throw new SpagoBIEngineRuntimeException("Error while getting cell for tuple [" + members + "]", t);
+		} catch (Exception e) {
+			logger.error("Error while getting cell for tuple [" + members + "]", e);
+			throw new SpagoBIEngineRuntimeException("Error while getting cell for tuple [" + members + "]", e);
 		} finally {
 			logger.debug("OUT: returning [" + toReturn + "]");
 		}

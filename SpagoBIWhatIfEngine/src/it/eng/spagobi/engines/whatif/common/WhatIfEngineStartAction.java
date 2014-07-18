@@ -98,13 +98,13 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 				throw engineException;
 			} catch (SpagoBIEngineRuntimeException e) {
 				throw e;
-			} catch (Throwable t) {
+			} catch (Exception e) {
 				logger.error(
 						"Error starting the What-If engine: error while generating the engine instance.",
-						t);
+						e);
 				throw new SpagoBIEngineRuntimeException(
 						"Error starting the What-If engine: error while generating the engine instance.",
-						t);
+						e);
 			}
 			logger.debug("Engine instance succesfully created");
 
@@ -127,50 +127,50 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 				getAuditServiceProxy().notifyServiceEndEvent();
 			}
 			
-		} catch (Throwable t) {
-			logger.error("Error starting the What-If engine", t);
+		} catch (Exception e) {
+			logger.error("Error starting the What-If engine", e);
 			if (getAuditServiceProxy() != null) {
-				getAuditServiceProxy().notifyServiceErrorEvent(t.getMessage());
+				getAuditServiceProxy().notifyServiceErrorEvent(e.getMessage());
 			}
 			
-			SpagoBIEngineStartupException serviceException = this.getWrappedException( t );
+			SpagoBIEngineStartupException serviceException = this.getWrappedException( e );
 			
 			getExecutionSession().setAttributeInSession(STARTUP_ERROR,
 					serviceException);
 			try {
 				servletRequest.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL)
 						.forward(servletRequest, response);
-			} catch (Exception e) {
+			} catch (Exception ex) {
 				logger.error(
 						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ FAILURE_REQUEST_DISPATCHER_URL, e);
+								+ FAILURE_REQUEST_DISPATCHER_URL, ex);
 				throw new SpagoBIEngineRuntimeException(
 						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ FAILURE_REQUEST_DISPATCHER_URL, e);
+								+ FAILURE_REQUEST_DISPATCHER_URL, ex);
 			}
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 	
-	private SpagoBIEngineStartupException getWrappedException(Throwable t) {
+	private SpagoBIEngineStartupException getWrappedException(Exception e) {
 		SpagoBIEngineStartupException serviceException;
-		if(t instanceof SpagoBIEngineStartupException) {
-			serviceException = (SpagoBIEngineStartupException) t;
-		} else if (t instanceof SpagoBIEngineRuntimeException) {
-			SpagoBIEngineRuntimeException e = (SpagoBIEngineRuntimeException) t; 
-			serviceException = new SpagoBIEngineStartupException(this.getEngineName(), e.getMessage(), e.getCause());
-			serviceException.setDescription(e.getDescription());
-			serviceException.setHints(e.getHints());
+		if(e instanceof SpagoBIEngineStartupException) {
+			serviceException = (SpagoBIEngineStartupException) e;
+		} else if (e instanceof SpagoBIEngineRuntimeException) {
+			SpagoBIEngineRuntimeException ex = (SpagoBIEngineRuntimeException) e; 
+			serviceException = new SpagoBIEngineStartupException(this.getEngineName(), ex.getMessage(), ex.getCause());
+			serviceException.setDescription(ex.getDescription());
+			serviceException.setHints(ex.getHints());
 		} else {
-			Throwable rootException = t;
+			Throwable rootException = e;
 			while(rootException.getCause() != null) {
 				rootException = rootException.getCause();
 			}
 			String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
 			String message = "An unpredicted error occurred while executing " + getEngineName() + " service."
 							 + "\nThe root cause of the error is: " + str;
-			serviceException = new SpagoBIEngineStartupException(getEngineName(), message, t);
+			serviceException = new SpagoBIEngineStartupException(getEngineName(), message, e);
 		}
 		return serviceException;
 	}

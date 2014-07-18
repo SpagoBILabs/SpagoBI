@@ -61,9 +61,9 @@ public class MDXQueryBuilder {
 			
 			toReturn = buffer.toString();
 			
-		} catch (Throwable t) {
-			logger.error("Error while getting value for tuple [" + members + "]", t);
-			throw new SpagoBIEngineRuntimeException("Error while getting value for tuple [" + members + "]", t);
+		} catch (Exception e) {
+			logger.error("Error while getting value for tuple [" + members + "]", e);
+			throw new SpagoBIEngineRuntimeException("Error while getting value for tuple [" + members + "]", e);
 		} finally {
 			logger.debug("OUT: returning [" + toReturn + "]");
 		}

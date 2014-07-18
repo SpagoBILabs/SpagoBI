@@ -27,7 +27,7 @@ public class WhatIfPersistingTransformationException extends SpagoBIEngineExcept
 	private final String localizationMessage = "sbi.olap.weiteback.persist.error";
 	private CellTransformationsStack transformations;
 
-    public WhatIfPersistingTransformationException(Locale locale, CellTransformationsStack transformations, Throwable ex) {
+    public WhatIfPersistingTransformationException(Locale locale, CellTransformationsStack transformations, Exception ex) {
     	super("Error peristing the transformation", ex);
     	this.transformations = transformations;
     	

@@ -148,9 +148,9 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			setProfilingUserAttributes(template, toReturn);
 
 			logger.debug("Template parsed succesfully");
-		} catch (Throwable t) {
-			logger.error("Impossible to parse template [" + template.toString() + "]", t);
-			throw new WhatIfTemplateParseException( t );
+		} catch (Exception e) {
+			logger.error("Impossible to parse template [" + template.toString() + "]", e);
+			throw new WhatIfTemplateParseException( e );
 		} finally {
 			logger.debug("OUT");
 		}	
@@ -283,7 +283,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			try {
 				writeBackConfig.setInitialVersion(new Integer(initialVersion));
 				logger.error("The inital version is "+initialVersion);
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				logger.error("Error loading the inital version from the template "+initialVersion);
 			}
 		}
