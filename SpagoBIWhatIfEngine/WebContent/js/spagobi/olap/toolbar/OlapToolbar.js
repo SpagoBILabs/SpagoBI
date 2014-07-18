@@ -209,8 +209,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				//width: 20,
 				items: [
 				        // these will render as dropdown menu items when the arrow is clicked:
-				        {text: '', handler: function(){ }},
-				        // {text: 'Item 2', handler: function(){ alert("Item 2 clicked"); }}
+				        {text: '', handler: function(){ }}
+				        // , {text: 'Item 2', handler: function(){ alert("Item 2 clicked"); }}
 				        ]
 			})
 		});
