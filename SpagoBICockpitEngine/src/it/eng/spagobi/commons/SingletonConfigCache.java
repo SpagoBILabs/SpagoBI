@@ -39,8 +39,8 @@ public class SingletonConfigCache implements ISingletonConfigCache {
 				cache.put(config.getLabel(), config.getValueCheck());
 				logger.info("Add: "+config.getLabel() +" / "+config.getValueCheck());
 			}
-		} catch (Throwable t) {
-			logger.error("Impossible to load configuration for report engine", t);
+		} catch (Exception e) {
+			logger.error("Impossible to load configuration for report engine", e);
 		} finally{
 			logger.debug("OUT");
 		}

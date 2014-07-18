@@ -40,8 +40,8 @@ public class EngineResource extends AbstractCockpitEngineResource {
 		logger.debug("IN");
 		try {
 			return serializeEngine();
-		} catch(Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} catch(Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		} finally {			
 			logger.debug("OUT");
 		}	
@@ -66,8 +66,8 @@ public class EngineResource extends AbstractCockpitEngineResource {
 			long seconds = remainder / 1000;
 			resultJSON.put("uptime", days + "d " + hours + "h " + minutes + "m " + seconds + "s");
 			return resultJSON.toString();
-		} catch(Throwable t) {
-			throw new RuntimeException("An unexpected error occured while serializing results",  t);
+		} catch(Exception e) {
+			throw new RuntimeException("An unexpected error occured while serializing results", e);
 		}	
 	}
 

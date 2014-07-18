@@ -35,9 +35,9 @@ public class CockpitEngineRuntimeException extends SpagoBIEngineRuntimeException
      * Builds a <code>CockpitEngineRuntimeException</code>.
      * 
      * @param message Text of the exception
-     * @param ex previous Throwable object
+     * @param ex previous Exception object
      */
-    public CockpitEngineRuntimeException(String message, Throwable ex) {
+    public CockpitEngineRuntimeException(String message, Exception ex) {
     	super(message, ex);
     }
     

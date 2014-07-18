@@ -51,8 +51,8 @@ public class AssociationResource extends AbstractCockpitEngineResource {
 			AssociationManager associationManager = this.getEngineInstance().getAssociationManager();
 			List<Association> associations = associationManager.getAssociations();
 			return serializeAssociations(associations).toString();
-		} catch(Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} catch(Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		} finally {			
 			logger.debug("OUT");
 		}	
@@ -75,8 +75,8 @@ public class AssociationResource extends AbstractCockpitEngineResource {
 			List<AssociationGroup> associationGroups = associationManager.getAssociationGroups();
 			
 			return serializeAssociationGroups(associationGroups).toString();
-		} catch(Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} catch(Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		} finally {			
 			logger.debug("OUT");
 		}	
@@ -90,8 +90,8 @@ public class AssociationResource extends AbstractCockpitEngineResource {
 		try {
 			AssociationJSONSerializer serializer = new AssociationJSONSerializer();
 			return serializer.serialize(associations);
-		} catch(Throwable t) {
-			throw new RuntimeException("An unexpected error occured while serializing results",  t);
+		} catch(Exception e) {
+			throw new RuntimeException("An unexpected error occured while serializing results",  e);
 		}	
 	}
 	
@@ -99,8 +99,8 @@ public class AssociationResource extends AbstractCockpitEngineResource {
 		try {
 			AssociationJSONSerializer serializer = new AssociationJSONSerializer();
 			return serializer.deserialize(associations);
-		} catch(Throwable t) {
-			throw new RuntimeException("An unexpected error occured while serializing results",  t);
+		} catch(Exception e) {
+			throw new RuntimeException("An unexpected error occured while serializing results", e);
 		}	
 	}
 	
@@ -108,8 +108,8 @@ public class AssociationResource extends AbstractCockpitEngineResource {
 		try {
 			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
 			return serializer.serialize(associationGroups);
-		} catch(Throwable t) {
-			throw new RuntimeException("An unexpected error occured while serializing results",  t);
+		} catch(Exception e) {
+			throw new RuntimeException("An unexpected error occured while serializing results", e);
 		}	
 	}
 
