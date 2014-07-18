@@ -45,6 +45,12 @@ import org.olap4j.OlapException;
 import org.olap4j.OlapStatement;
 import org.olap4j.Position;
 
+/**
+ * 
+ * @author Zerbetto Davide (davide.zerbetto@eng.it)
+ *
+ * @see org.olap4j.CellSet
+ */
 public class SpagoBICellSetWrapper implements CellSet {
 
 	private CellSet wrapped = null;
@@ -61,6 +67,11 @@ public class SpagoBICellSetWrapper implements CellSet {
 		return spagoBIPivotModel;
 	}
 	
+	/**
+	 * Restores pending transformations (i.e. transformations not committed into the database)
+	 * 
+	 * @param stack The pending transformations' stack
+	 */
 	public void restorePendingTransformations(CellTransformationsStack stack) {
 		CellTransformationsAnalyzer analyzer = new CellTransformationsAnalyzer();
 		CellTransformationsStack bestStack = analyzer.getShortestTransformationsStack(stack);
@@ -71,11 +82,21 @@ public class SpagoBICellSetWrapper implements CellSet {
 		}
 	}
 
+	/**
+	 * Restores a pending transformation (i.e. a transformation not committed into the database)
+	 * 
+	 * @param transformation The pending transformation
+	 */
 	public void restoreTranformation(CellTransformation transformation) {
 		AllocationAlgorithm algorithm = transformation.getAlgorithm();
 		algorithm.apply(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), this);
 	}
 	
+	/**
+	 * Applies a transformation
+	 * 
+	 * @param transformation The transformation
+	 */
 	public void applyTranformation(CellTransformation transformation) {
 		AllocationAlgorithm algorithm = transformation.getAlgorithm();
 		algorithm.apply(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), this);
