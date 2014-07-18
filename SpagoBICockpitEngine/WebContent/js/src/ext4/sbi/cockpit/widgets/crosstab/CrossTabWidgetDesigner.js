@@ -301,7 +301,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 			, defaults: {height: 150}
 			, items:[
 		      {
-		    	  border: false,		    	  
+		    	  border: false	    	  
 		      }		         
 		         , this.columnsContainerPanel
 		         , this.rowsContainerPanel
