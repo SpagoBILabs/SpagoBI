@@ -89,6 +89,16 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/TableWidgetDesigner.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/locale/<%=locale.getLanguage()%>.js'/></script>
 
+<!-- Cross Tab widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabWidget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/GenericDropTarget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabWidgetDesigner.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/AttributesContainerPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/MeasuresContainerPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/locale/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/HTMLCrossTab.js'/></script>
+
+
 <!-- NEW Abstract Chart widget -->
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/abstractchart/AbstractChartWidgetRuntime.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/abstractchart/AbstractCartesianChartWidgetRuntime.js'/></script>
@@ -130,15 +140,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidget.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidgetDesigner.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/linechart/locale/<%=locale.getLanguage()%>.js'/></script>
-
-<!-- Cross Tab widget -->
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabWidget.js'/></script>
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/GenericDropTarget.js'/></script>
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabWidgetDesigner.js'/></script>
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/AttributesContainerPanel.js'/></script>
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/MeasuresContainerPanel.js'/></script>
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/locale/<%=locale.getLanguage()%>.js'/></script>
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/HTMLCrossTab.js'/></script>
 
 <!-- Selection widget -->
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/selection/SelectionWidget.js'/></script>
