@@ -67,18 +67,14 @@ Ext.define('Sbi.data.AssociationEditorWizardPanel', {
 		this.buttons.push('->');
 		
 		this.buttons.push({
-			id: 'submit'
-			, hidden: false
+			hidden: false
 	        , text:  LN('sbi.ds.wizard.confirm')
 	        , handler: this.onSubmit
 	        , scope: this
-//	        , disabled: (this.activeItem == 0)?false:true
-//	        , disabled: true
 	    });
 		
 		this.buttons.push({
-			id: 'cancel'
-	        , text:  LN('sbi.ds.wizard.cancel')
+			text:  LN('sbi.ds.wizard.cancel')
 	        , handler: this.onCancel
 	        , scope: this
 	    });

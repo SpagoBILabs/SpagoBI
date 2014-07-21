@@ -538,7 +538,7 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 });
 
 Sbi.registerWidget('piechart-ext', {
-	name: 'Pie Chart (NEW)'
+	name: 'Pie Chart'
 	, icon: 'js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime'
 	, designerClass: 'Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner'
