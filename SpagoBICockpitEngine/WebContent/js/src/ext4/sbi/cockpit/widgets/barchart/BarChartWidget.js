@@ -496,6 +496,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 
 });
 
+/*
 Sbi.registerWidget('barchart', {
 	name: 'Bar Chart'
 	, icon: 'js/src/ext4/sbi/cockpit/widgets/barchart/barchart_64x64_ico.png'
@@ -503,3 +504,4 @@ Sbi.registerWidget('barchart', {
 	, designerClass: 'Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner'
 	//, designerClass: 'Ext.Panel'
 });
+*/

@@ -225,7 +225,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 
 
 Sbi.registerWidget('linechart-ext', {
-	name: 'Line Chart (NEW)'
+	name: 'Line Chart'
 	, icon: 'js/src/ext4/sbi/cockpit/widgets/extjs/linechart/img/linechart_64x64_ico.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime'
 	, designerClass: 'Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner'

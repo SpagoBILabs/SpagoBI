@@ -531,12 +531,30 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	
 		var tbItems = ['->'];
 		
-//		tbItems.push({
-//        	text: LN('sbi.cockpit.mainpanel.btn.clearselections')
-//        	, handler: this.onClearSelections
-//        	, scope: this
-//        });
+		tbItems.push(  new Ext.Button({
+			id: 'add'
+     		, iconCls: 'icon_add_widget' 
+			, tooltip: LN('sbi.cockpit.mainpanel.btn.addWidget')
+			, scope: this
+			, handler:  this.onAddWidget					
+		 }));		
 		
+		tbItems.push(  new Ext.Button({
+			id: 'associatation'
+     		, iconCls: 'icon_associations' 
+			, tooltip: LN('sbi.cockpit.mainpanel.btn.associations')
+			, scope: this
+			, handler:  this.onShowAssociationEditorWizard					
+		 }));			
+		
+		
+		tbItems.push(  new Ext.Button({
+			id: 'addSelection'
+     		, iconCls: 'icon_add_selection' 
+			, tooltip: LN('sbi.cockpit.mainpanel.btn.selections')
+			, scope: this
+			, handler:  this.onShowSelectionsWindow					
+		 }));
 		
 		tbItems.push(  new Ext.Button({
 			id: 'delSelection'
@@ -546,13 +564,6 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, handler:  this.onClearSelections					
 		 }));		
 		
-		tbItems.push(  new Ext.Button({
-			id: 'addSelection'
-     		, iconCls: 'icon_add_selection' 
-			, tooltip: LN('sbi.cockpit.mainpanel.btn.selections')
-			, scope: this
-			, handler:  this.onShowSelectionsWindow					
-		 }));
 		
 		if (Sbi.isValorized(Sbi.config.isTechnicalUser) && Sbi.config.isTechnicalUser == 'true'){
 			tbItems.push(  new Ext.Button({
@@ -563,30 +574,6 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 				, handler:  this.onShowFilterEditorWizard					
 			 }));				
 		}
-		
-		tbItems.push(  new Ext.Button({
-			id: 'associatation'
-     		, iconCls: 'icon_associations' 
-			, tooltip: LN('sbi.cockpit.mainpanel.btn.associations')
-			, scope: this
-			, handler:  this.onShowAssociationEditorWizard					
-		 }));			
-		
-		tbItems.push( new Ext.Button({
-		 	id: 'saveAs'
-	 		, iconCls: 'icon-saveas' 
-	 		, tooltip: 'Save As'
-	 		, scope: this
-	 		, handler:  this.onShowSaveDocumentAsWindow
-	 	}));
-		
-		tbItems.push(  new Ext.Button({
-			id: 'add'
-     		, iconCls: 'icon_add_widget' 
-			, tooltip: LN('sbi.cockpit.mainpanel.btn.addWidget')
-			, scope: this
-			, handler:  this.onAddWidget					
-		 }));			
 		
 		tbItems.push(	new Ext.Button({
 			id: 'save'
@@ -604,6 +591,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 		, scope: this
 	 		, handler:  this.onShowSaveDocumentAsWindow
 	 	}));
+		
 		/*
 		tbItems.push(new Ext.Button({
 		 		id: 'debug'
@@ -612,6 +600,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			 		   , handler:  this.onDebug
 			 	 }));
 		 */
+		
 		this.tbar = new Ext.Toolbar({
 		    items: tbItems,
 		    height: 30

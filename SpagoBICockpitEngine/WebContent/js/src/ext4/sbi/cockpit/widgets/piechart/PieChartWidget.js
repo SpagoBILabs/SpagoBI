@@ -397,9 +397,11 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 
 });
 
+/*
 Sbi.registerWidget('piechart', {
 	name: 'Pie Chart'
 	, icon: 'js/src/ext4/sbi/cockpit/widgets/piechart/img/piechart_64x64_ico.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.piechart.PieChartWidget'
 	, designerClass: 'Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner'
 });
+*/

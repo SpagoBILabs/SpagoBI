@@ -391,15 +391,21 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		if (wizardState.storeId != null){
 			var storeConf = {storeId: wizardState.storeId};
 			if(wizardState.wconf.series && wizardState.wconf.category) {
+				var categories = [];
+				categories.push(wizardState.wconf.category);
+				if(wizardState.wconf.groupingVariable) categories.push(wizardState.wconf.groupingVariable);
+				
 				var aggregations = {
 					measures: wizardState.wconf.series,
-					categories: [wizardState.wconf.category]
+					categories: categories
 				};
 				storeConf.aggregations = aggregations;
 				Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: add store [" + wizardState.storeId + "] with aggregations");
 			} else {
 				Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: add store [" + wizardState.storeId + "] without aggregations");
 			}
+			
+			
 			// the method addStore add the store only if it is not contained yet in the manager
 			Sbi.storeManager.addStore(storeConf);
 			Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: selected store [" + wizardState.storeId + "] succesfully added to store manager");
@@ -415,11 +421,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
          * I compare the type to know if I was creating a new one, changing type or just modifying parameters 			
          */ 			
         if ((wtype == wizardState.wtype) || (!existingWidget)){ 			
-                component.setWidgetConfiguration(wizardState);		
-                 			
-                var widget = component.getWidget();	
-                 			
-                this.getWidgetManager().register(widget);		
+		component.setWidgetConfiguration( wizardState );
+		var widget = component.getWidget();
+		this.getWidgetManager().register(widget);
         } else {                         			
                 /* 			
                  * If i was changing type of widget i have to 			

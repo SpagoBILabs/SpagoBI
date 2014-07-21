@@ -559,10 +559,11 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 });
 
 
-
+/*
 Sbi.registerWidget('linechart', {
 	name: 'Line Chart'
 	, icon: 'js/src/ext4/sbi/cockpit/widgets/linechart/img/linechart_64x64_ico.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.linechart.LineChartWidget'
 	, designerClass: 'Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner'
 });
+*/

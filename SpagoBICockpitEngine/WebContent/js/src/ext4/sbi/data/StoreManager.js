@@ -866,7 +866,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 				return false;
 			}
 			if(agg1.measures.length != agg2.measures.length) {
-				Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (the number od mesures is different)");
+				Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (the number of mesures is different)");
 				return false;
 			}
 			for(var i = 0; i < agg1.measures.length; i++) {
