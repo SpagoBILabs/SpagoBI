@@ -73,12 +73,14 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 		Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: IN");
 		this.targetComponent = component;
 		var widget = this.targetComponent.getWidget();
+		
 		if(Sbi.isValorized(widget)) {
 			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: target component already contains a widget");
 			this.resetWizardState();
 			var widgetConf = widget.getConfiguration();			
 			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: widget conf is equal to [" + Sbi.toSource(widgetConf) + "]");
-			if(widgetConf.storeId) {
+			
+			if ((widgetConf.storeId) || (widget.wtype == 'selection')){
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: select dataset [" + widgetConf.storeId + "]");
 				this.getDatasetBrowserPage().setPageState({
 					dataset: widgetConf.storeId
