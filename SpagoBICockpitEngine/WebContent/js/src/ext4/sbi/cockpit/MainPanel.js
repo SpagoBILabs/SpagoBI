@@ -592,14 +592,14 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 		, handler:  this.onShowSaveDocumentAsWindow
 	 	}));
 		
-		/*
+		
 		tbItems.push(new Ext.Button({
 		 		id: 'debug'
 			 	   	   , text: 'Debug'
 			 	       , scope: this
 			 		   , handler:  this.onDebug
 			 	 }));
-		 */
+		
 		
 		this.tbar = new Ext.Toolbar({
 		    items: tbItems,
@@ -633,31 +633,58 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 */
 	, debug: function() {
 		Sbi.trace("[MainPanel.debug]: IN");
-		testFunctions = [];
-		for(p in this) {			
-			if( p.indexOf("Test", p.length - "Test".length) !== -1 ) {
-				if(Ext.isFunction(this[p]))
-				testFunctions.push(p);
-			}
-		}
 		
-		for(var i = 0; i < testFunctions.length; i++) {
-			this.setUp();
-			try {
-				this[testFunctions[i]]();
-				alert("Test [" + testFunctions[i] + "] succesfully executed");
-			} catch(e) {
-				alert("Test [" + testFunctions[i] + "] not passed: " + e);
-			}
-	
-			this.tearDown();
-		}
-//		try {
+		// to be sure to have the conf pretty printed also on old browser that dont support
+        // JSON object natively it is possible to include json2.jd by Douglas Crockford (
+        // https://github.com/douglascrockford/JSON-js)
+        var confStr = (typeof JSON === 'object')
+        				? JSON.stringify(this.getAnalysisState(), null, 2)
+        				: Ext.JSON.encode(this.getAnalysisState());
+        	    		
+        		
+        	
+        var win = new Ext.Window({
+        		layout:'fit',
+                width:500,
+                height:300,
+                //closeAction:'hide',
+                plain: true,
+                title: "Cockpit configuration",
+                items: new Ext.form.TextArea({
+                	border: false
+                	, value: confStr
+                    , name: 'configuration'
+                }),
+
+                buttons: [
+                {
+                	text: 'Close',
+                    handler: function(){
+                    	win.close();
+                    }
+                }]
+        });
+        win.show();
+    	
+		
+//		testFunctions = [];
+//		for(p in this) {			
+//			if( p.indexOf("Test", p.length - "Test".length) !== -1 ) {
+//				if(Ext.isFunction(this[p]))
+//				testFunctions.push(p);
+//			}
+//		}
+//		
+//		for(var i = 0; i < testFunctions.length; i++) {
 //			this.setUp();
-//			this.removeWidgetTest();
-//			alert("Test [removeWidgetTest] succesfully executed");
-//		} catch(e) {
-//			alert("Test [removeWidgetTest] not passed: " + e);
+//			try {
+//				this[testFunctions[i]]();
+//				alert("Test [" + testFunctions[i] + "] succesfully executed");
+//			} catch(e) {
+//				alert("Test [" + testFunctions[i] + "] not passed: " + e);
+//			}
+//	
+//			this.tearDown();
 //		}
 		
 		Sbi.trace("[MainPanel.debug]: OUT");

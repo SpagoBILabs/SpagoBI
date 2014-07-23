@@ -354,10 +354,10 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 	    	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: editor succesfully instantiated");
     	}
     	
-    	// TODO implement setTitle method
-    	//this.widgetEditorWizard.setTitle("Widget [" + widget.id + "] editor");
-    	this.widgetEditorWizard.getDatasetBrowserPage().setUsedDatasets(Sbi.storeManager.getStoreIds());
-    	this.widgetEditorWizard.setWizardTargetComponent(component); // TODO verify if it is possible only to set widgetState
+    	var storeIds = Sbi.storeManager.getStoreIds();
+    	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: used dataset ids [" + storeIds + "]");
+    	this.widgetEditorWizard.getDatasetBrowserPage().setUsedDatasets( storeIds );
+    	this.widgetEditorWizard.setWizardTargetComponent(component); 
     	
     	this.widgetEditorWizard.show();
     	

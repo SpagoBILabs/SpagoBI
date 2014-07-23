@@ -109,14 +109,19 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	, unregister: function(w) {
 		Sbi.trace("[WidgetManager.unregister]: IN");
 		if(this.widgets.contains(w)) {
-			var storeId = w.getStoreId();
+			var store = w.getStore();
+			var storeId = Sbi.storeManager.getStoreId(store);
+			var storeAggregation = Sbi.storeManager.getAggregationOnStore(store);
+			
 			w.unboundStore();
+			Sbi.info("[WidgetManager.unregister]: unregistering widget [" + this.widgets.getKey(w) + "]. " +
+					"Before deletion there are [" + this.widgets.getCount()+ "] registered widget(s)");
 			this.widgets.remove(w);
 			Sbi.info("[WidgetManager.unregister]: widget [" + this.widgets.getKey(w) + "] succesfully unregistered. " +
 					"Now there are [" + this.widgets.getCount()+ "] registered widget(s)");
 			
-			if( this.isStoreUsed(storeId) == false) {
-				Sbi.storeManager.removeStore(w.getStore(), true );
+			if( this.isStoreUsed(storeId, storeAggregation) == false) {
+				Sbi.storeManager.removeStore(store, true );
 				Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] succesfully removed");
 			} else {
 				Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] not removed because there are other widgets using it");;
@@ -187,25 +192,41 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	, getWidgetsByStore: function(storeId, aggregations){
 		Sbi.trace("[WidgetManager.getWidgetsByStore]: IN");
 		
+		if (Sbi.isNotValorized(storeId)){
+			alert("[WidgetManager.getWidgetsByStore]: input parameter [storeId] must valorized");
+			return;
+		}
 		if(!Ext.isString(storeId)) {
 			alert("[WidgetManager.getWidgetsByStore]: input parameter [storeId] must be of type String");
 			return;
 		}
 		
-		if(Sbi.isValorized(aggregations)) {
-			alert("[WidgetManager.getWidgetsByStore]: is unable to manager properly aggregation parameters");
-			// TODO implement it!
-		}
-		
 		var toReturn = new Ext.util.MixedCollection();
-		if (Sbi.isValorized(storeId)){
-			for(var i=0; i < this.widgets.getCount(); i++){
+		
+		if(aggregations === undefined) {
+			Sbi.trace("[WidgetManager.getWidgetsByStore]: aggregation on store not defined");
+			for(var i=0; i < this.widgets.getCount(); i++) {
 				var w = this.widgets.get(i);
 				if (Sbi.isValorized(w.getStoreId()) && w.getStoreId() == storeId){
 					toReturn.add(w);
 				}
 			}
+		} else {
+			Sbi.trace("[WidgetManager.getWidgetsByStore]: aggregation on store are equal to [" + aggregations + "]");
+			for(var i=0; i < this.widgets.getCount(); i++){
+				var w = this.widgets.get(i);
+				Sbi.trace("[WidgetManager.getWidgetsByStore]: processing widget [" + i + "][" + this.widgets.getKey(w) + "] ...");
+					
+				if ( Sbi.isValorized(w.getStoreId()) ){ // can be null for some widgets like the selection widgte
+					var s = w.getStore();
+					var a = Sbi.storeManager.getAggregationOnStore(s);
+					if( w.getStoreId() === storeId && Sbi.storeManager.isSameAggregationLevel(a, aggregations) ) {
+						toReturn.add(w);
+					}
+				}
+			}
 		}
+		
 		
 		Sbi.trace("[WidgetManager.getWidgetsByStore]: store [" + storeId + "] is used " +
 				"by [" + toReturn.getCount()  + "] widget(s)");
@@ -231,7 +252,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		var isUsed = (Sbi.isValorized(widgets)  && widgets.getCount() > 0);
 		Sbi.trace("[WidgetManager.isStoreUsed]: Store [" + storeId + "] is used [" + isUsed+ "]");
 		Sbi.trace("[WidgetManager.isStoreUsed]: OUT");
-		return ;
+		return isUsed;
 	}
 	
 

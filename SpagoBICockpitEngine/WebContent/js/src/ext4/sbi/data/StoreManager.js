@@ -593,19 +593,38 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		} 
 		
 		var storeId = this.getStoreId(store);
+		var storeAggregation = this.getAggregationOnStore(store);
+		
+		Sbi.trace("[StoreManager.removeStore]: removing store [" + storeId + "] at aggregation level [" + storeAggregation + "]");
 		var registeredStore = this.stores.get(storeId);
 		var newAggregatedVersions = [];
+		
 		if(Sbi.isValorized(registeredStore)) {
-			Sbi.trace("[StoreManager.removeStore]: registered store before deletion is [" + registeredStore.aggregatedVersions.length + "]");
-			for(var i = 0; i < registeredStore.aggregatedVersions.length; i++) {
-				var agg1 = this.getAggregationOnStore(store);
-				var agg2 = this.getAggregationOnStore(registeredStore.aggregatedVersions[i]);
-				if(this.isSameAggregationLevel(agg1, agg2) == false ){
+			Sbi.trace("[StoreManager.removeStore]: There are [" + registeredStore.aggregatedVersions.length + "] store(s) with id equal to [" + storeId + "] registered");
+			for(var i = 0; i < registeredStore.aggregatedVersions.length; i++) {		
+				var agg = this.getAggregationOnStore(registeredStore.aggregatedVersions[i]);
+				if(this.isSameAggregationLevel(storeAggregation, agg) == false ){
 					newAggregatedVersions.push(registeredStore.aggregatedVersions[i]);
 				}
 			}
 			registeredStore.aggregatedVersions = newAggregatedVersions;
-			Sbi.trace("[StoreManager.removeStore]: registered store after deletion is [" + registeredStore.aggregatedVersions.length + "]");
+			Sbi.trace("[StoreManager.removeStore]: There should be [" + registeredStore.aggregatedVersions.length + "] store(s) with id equal to [" + storeId + "] registered after deletion");
+			
+			registeredStore = this.stores.get(storeId);
+			Sbi.trace("[StoreManager.removeStore]: There are [" + registeredStore.aggregatedVersions.length + "] store(s) with id equal to [" + storeId + "] registered after deletion");
+			
+			if(registeredStore.aggregatedVersions.length === 0) {
+				Sbi.trace("[StoreManager.removeStore]: There are no more entry for store id [" + storeId+ "]");
+				this.stores.remove(registeredStore);
+				var registeredStore = this.stores.get(storeId);
+				if(Sbi.isValorized(registeredStore)) {
+					alert("Huston abbiamo un problema!!!");
+				}
+			}
+			
+			Sbi.trace("[StoreManager.removeStore]: registered store ids after deletion are [" + this.getStoreIds() + "]");
+		} else {
+			Sbi.warn("[StoreManager.removeStore]: There are no store with id equal to [" + storeId + "] registered");
 		}
 		
 		
@@ -743,20 +762,18 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			for(var i = 0; i < registeredStore.aggregatedVersions.length; i++) {
 				
 				var aggregationOnRegisteredStore = this.getAggregationOnStore(registeredStore.aggregatedVersions[i]);
-//				Sbi.trace("[StoreManager.getStore]: registered store [" + i + "] for id [" + storeId+ "] have the following aggregationd defined: [" 
-//						+ Sbi.toSource(aggregationOnRegisteredStore) +"]");
-				
+
 				if( this.isSameAggregationLevel(aggregations, aggregationOnRegisteredStore) ) {
-					Sbi.trace("[StoreManager.getStore]: there is already a store for id [" + storeId +"]");
+					//Sbi.trace("[StoreManager.getStore]: there is already a store for id [" + storeId +"]");
 					store = registeredStore.aggregatedVersions[i]; 
 				}
 			}
 		} else {
-			Sbi.trace("[StoreManager.getStore]: There is no store registered with id [" + storeId + "]");
+			//Sbi.trace("[StoreManager.getStore]: There is no store registered with id [" + storeId + "]");
 		}
 		
 		if(store === null) {
-			Sbi.trace("[StoreManager.getStore]: no store found with id [" + storeId + "] and specified aggregation level");
+			//Sbi.trace("[StoreManager.getStore]: no store found with id [" + storeId + "] and specified aggregation level");
 		}
 		
 		Sbi.trace("[StoreManager.getStore]: OUT");
@@ -850,23 +867,21 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	}
 	
 	, isSameAggregationLevel: function(agg1, agg2) {
-		//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregation1 is equal to [" + Sbi.toSource(agg1) + "]");
-		//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregation2 is equal to [" + Sbi.toSource(agg2) + "]");
 		
 		if(Sbi.isNotValorized(agg1) && Sbi.isNotValorized(agg2)) {
-			Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are the same (both empty)");
+			//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are the same (both empty)");
 			return true;
 		} else if( (Sbi.isValorized(agg1) && Sbi.isNotValorized(agg2)) || (Sbi.isNotValorized(agg1) && Sbi.isValorized(agg2))) {
-			Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (one of the two is not valorized)");
+			//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (one of the two is not valorized)");
 			return false;
 		} else {
 			if( (Sbi.isValorized(agg1.measures) && Sbi.isNotValorized(agg2.measures)) 
 					|| (Sbi.isNotValorized(agg1.measures) && Sbi.isValorized(agg2.measures))) {
-				Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (one of the two have no measures)");
+				//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (one of the two have no measures)");
 				return false;
 			}
 			if(agg1.measures.length != agg2.measures.length) {
-				Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (the number of mesures is different)");
+				//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (the number of mesures is different)");
 				return false;
 			}
 			for(var i = 0; i < agg1.measures.length; i++) {
@@ -874,48 +889,43 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 				|| agg1.measures[i].alias != agg2.measures[i].alias
 				|| agg1.measures[i].funct != agg2.measures[i].funct
 				|| agg1.measures[i].nature != agg2.measures[i].nature) {
-					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (measures are not equals)");
+					//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (measures are not equals)");
 					return false;
 				}
 			}
 			
 			if( (Sbi.isValorized(agg1.categories) && Sbi.isNotValorized(agg2.categories)) 
 					|| (Sbi.isNotValorized(agg1.categories) && Sbi.isValorized(agg2.categories))) {
-				Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (one of the two have no categories)");
+				//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (one of the two have no categories)");
 				return false;
 			}
 			if(agg1.categories.length != agg2.categories.length) {
-				Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (the number of categories is different)");
+				//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (the number of categories is different)");
 				return false;
 			}
 			for(var i = 0; i < agg1.categories.length; i++) {
 				
-				Sbi.trace("[StoreManager.isSameAggregationLevel]: comapring category[" + i + "].1: " + Sbi.toSource(agg1.categories[i]));
-				Sbi.trace("[StoreManager.isSameAggregationLevel]: comapring category[" + i + "].2: " + Sbi.toSource(agg2.categories[i]));
+//				Sbi.trace("[StoreManager.isSameAggregationLevel]: comapring category[" + i + "].1: " + Sbi.toSource(agg1.categories[i]));
+//				Sbi.trace("[StoreManager.isSameAggregationLevel]: comapring category[" + i + "].2: " + Sbi.toSource(agg2.categories[i]));
 				if(agg1.categories[i].id != agg2.categories[i].id) {
-					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
-							"[id] is different [" + agg1.categories[i].id + ", " + agg2.categories[i].id + "])");
+//					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
+//							"[id] is different [" + agg1.categories[i].id + ", " + agg2.categories[i].id + "])");
 					return false;
 				}
 				if(agg1.categories[i].alias != agg2.categories[i].alias) {
-					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
-							"[alias] is different [" + agg1.categories[i].alias + ", " + agg2.categories[i].alias + "])");
+//					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
+//							"[alias] is different [" + agg1.categories[i].alias + ", " + agg2.categories[i].alias + "])");
 					return false;
 				}
-//				if(agg1.categories[i].funct != agg2.categories[i].funct) {
-//					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
-//							"[funct] is different [" + agg1.categories[i].funct + ", " + agg2.categories[i].funct + "])");
-//					return false;
-//				}
 				if(agg1.categories[i].nature != agg2.categories[i].nature) {
-					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
-							"[nature] is different [" + agg1.categories[i].nature + ", " + agg2.categories[i].nature + "])");
+//					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
+//							"[nature] is different [" + agg1.categories[i].nature + ", " + agg2.categories[i].nature + "])");
 					return false;
 				}
 			}
 		}
 		
-		Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are the same");
+		//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are the same");
 		
 		return true;
 	}
