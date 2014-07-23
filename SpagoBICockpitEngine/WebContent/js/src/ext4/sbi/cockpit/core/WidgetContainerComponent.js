@@ -299,19 +299,17 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     		handler: this.onShowWidgetEditor,
     		scope: this
     	}, 
-//    	{
-//    		type:'help',
-//    		tooltip: LN('sbi.cockpit.window.toolbar.configuration'),
-//            handler: this.onShowWidgetConfiguration,
-//    		scope: this
-//        }, 
+    	{
+    		type:'help',
+    		tooltip: LN('sbi.cockpit.window.toolbar.configuration'),
+            handler: this.onShowWidgetConfiguration,
+    		scope: this
+        }, 
         {
         	type:'refresh',
         	tooltip: LN('sbi.cockpit.window.toolbar.refresh'),
         	handler: this.onWidgetRefresh,
-//     	   	handler: function(){
-//     	   		Ext.Msg.alert('Message', 'The REFRESH tool was clicked.');
-//     	    },
+
     		scope: this
         }, {
         	type:'plus',
@@ -358,16 +356,5 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		var widget = this.getWidget();
 		widget.resize();
 		return o;
-	}
-	
-//	, this.addEvents(
-//		/**
-//	     * @event performaction
-//	     * Fired when the user trigger the execution of a specific action doing something on this widget 
-//	     * @param {Sbi.xxx.Xxxx} this
-//	     * @param {Ext.Toolbar} the contained widget
-//	     * @param {Sring} action
-//	     */
-//		'performaction'
-//	);		
+	}	
 });
