@@ -58,12 +58,13 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 	getSeriesConfig: function() {
 	    	
 		var store = this.getStore();
-	    	
+	    
 	    var seriesFields = [];
 		var seriesTitles = [];
-		for(var i = 0; i < this.wconf.series.length; i++) {
-//			var id = this.wconf.series[i].id;
+		
+		for(var i = 0; i < this.wconf.series.length; i++) {			
 			var id = this.wconf.series[i].alias;
+		
 			seriesFields.push(store.fieldsMeta[id].name);
 			seriesTitles.push(id);
 		}
@@ -89,7 +90,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 			var categoriesTitles = [];
 			for(var i = 0; i < categories.length; i++) {
 //				var id = categories[i].id;
-				var id = categories[i].alias;
+				var id = categories[i].alias;				
 				categoriesFields.push(store.fieldsMeta[id].name);
 				categoriesTitles.push(id);
 			}
@@ -129,7 +130,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		return (this.wconf.type == 'stacked-barchart' || this.wconf.type == 'percent-stacked-barchart');
 	}
 	
-	, isPercentStacked: function() {
+	, isPercentStacked: function() {		
 		return this.wconf.type == 'percent-stacked-barchart';
 	}
   
@@ -155,31 +156,61 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		var series = this.getSeries( categoriesConfig, seriresConfig );
 		
 		var store = this.getStore();
-			
+		
 		var colors = this.getColors();
+			
+		
+		for(var i = 0; i < store.data.items.length; i++){
+			var seriesum = 0;
 
-		if(this.isPercentStacked()) {
-			var data = [];
-			if(categoriesConfig.fields.length == 1) {
-				var fields = [];
-				for(var h in store.fieldsMeta) {
-					fields.push(store.fieldsMeta[h].name);
-				}
-				var newStore =  new Ext.data.JsonStore({
-			        fields:fields,
-			        data: store.data
-			    });
-				//store = newStore;
-				alert("Impossible to create a percet stacked bar chart");
-			} else {
-				alert("Impossible to create a percet stacked bar chart with more then on category");
+			if(this.isStacked()){
+				for(var j = 0; j < seriresConfig.fields.length; j++){										
+					for (var h in store.data.items[i].data){
+						if (h == seriresConfig.fields[j]){
+							seriesum = seriesum + parseFloat(store.data.items[i].data[h]);
+						}
+					}									
+				}								
+				
+				for(var j = 0; j < seriresConfig.fields.length; j++){										
+					for (var h in store.data.items[i].data){
+						if (h == seriresConfig.fields[j]){
+							if (seriesum != 0){
+								store.data.items[i].data[h] = parseFloat((store.data.items[i].data[h]/seriesum)*100);
+							} 
+							
+							//console.log("Val percent: " + store.data.items[i].data[h]);
+						}
+					}									
+				}	
 			}
+									
 		}
+		
+//		z['seriesflatvalue'+j] = z['series'+j];
+//		z['series'+j] = (z['series'+j]/seriesum)*100;;
+//		if(this.isPercentStacked()) {
+//			var data = [];
+//			if(categoriesConfig.fields.length == 1) {
+//				var fields = [];
+//				for(var h in store.fieldsMeta) {
+//					fields.push(store.fieldsMeta[h].name);
+//				}
+//				var newStore =  new Ext.data.JsonStore({
+//			        fields:fields,
+//			        data: store.data
+//			    });
+//				//store = newStore;
+//				//alert("Impossible to create a percet stacked bar chart");
+//			} else {
+//				alert("Impossible to create a percet stacked bar chart with more then on category");
+//			}
+//		}
 		store.sort(categoriesConfig.fields[0], 'ASC');
 		
 		//Create theme for using custom defined colors
 		Ext.define('Ext.chart.theme.CustomTheme', {
-		    extend: 'Ext.chart.theme.Base',
+		    extend: 'Ext.chart.theme.CustomBlue',
 
 		    constructor: function(config) {
 		        this.callParent([Ext.apply({
@@ -236,6 +267,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		//For the percent type chart set the axes scale maximum to 100
 		if(this.isPercentStacked()) {
 			seriesAxis.maximum = 100;
+			seriesAxis.stacked = true;
 		}
 		
 		var categoryAxis = {
