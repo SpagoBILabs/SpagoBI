@@ -47,8 +47,10 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.math.BigDecimal;
@@ -56,9 +58,11 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -202,7 +206,29 @@ public class SQLDBCache implements ICache {
 				CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
 				String tableName = cacheItem.getTable();	
 				logger.debug("The table associated to dataset ["+resultsetSignature+"] is [" + tableName + "]");
-				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);		
+//				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);
+				
+				StringBuffer selectBuffer = new StringBuffer();
+				IDataSetTableDescriptor descriptor = TemporaryTableManager.getTableDescriptor(null, tableName, dataSource);
+				Set<String> columns = descriptor.getColumnNames();
+				Iterator<String> it = columns.iterator();
+				while (it.hasNext()) {
+					String column = it.next();
+					if (column.equalsIgnoreCase("sbicache_row_id")) {
+						continue;
+					}
+					selectBuffer.append(AbstractJDBCDataset.encapsulateColumnAlaias(column, dataSource));
+					if (it.hasNext()) {
+						selectBuffer.append(", ");
+					}
+				}
+				String selectClause = selectBuffer.toString();
+				if (selectClause.endsWith(", ")) {
+					selectClause = selectClause.substring(0, selectClause.length() - 2);
+				}
+				String sql = "SELECT " + selectClause + " FROM " + tableName;
+				dataStore = dataSource.executeStatement(sql, 0, 0);
+				
 			} else {
 				logger.debug("Resultset with signature ["+resultsetSignature+"] not found");
 			}
