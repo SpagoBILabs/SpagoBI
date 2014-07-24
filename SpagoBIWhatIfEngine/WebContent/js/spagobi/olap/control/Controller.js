@@ -187,12 +187,20 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		service.callService(this);
 	}
-	,persistNewVersionTransformations: function() {
+	,persistNewVersionTransformations: function(params) {
 
+		var name = params.versionName;
+		var descr = params.versionDescription;
+		
+		if(!name){
+			name = "sbiNoDescription";
+			descr = "sbiNoDescription";
+		}
+		
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "model",
 			method: 'POST',
-			pathParams: ["saveAs"],
+			pathParams: ["saveAs",name,descr],
 			longExecution: true,
 			timeout: Sbi.settings.olap.whatif.timeout.persistNewVersionTransformations
 		});

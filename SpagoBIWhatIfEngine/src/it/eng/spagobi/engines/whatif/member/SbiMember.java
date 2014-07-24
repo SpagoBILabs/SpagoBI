@@ -28,20 +28,30 @@ public class SbiMember {
 	private String text;
 	private boolean leaf;
 	private boolean visible;
+	private String qtip;
+	
 	
 	public SbiMember(){};
 	
-	public SbiMember(Member member, boolean visible){
-		this.name = member.getName();
+//	
+//	public SbiMember(Member member, boolean visible){
+//		this(member, visible, "");
+//	}
+	
+	public SbiMember(Member member, boolean visible, String description){
+
 		this.uniqueName = member.getUniqueName();
 		this.id = member.getUniqueName();
-		this.text = member.getName();
+		this.name = member.getCaption();		
+		this.text  = calculateText(member.getName(), member.getCaption());
+
 		try{
 			this.leaf = member.getChildMemberCount()==0;
 		} catch (OlapException e) {
 			throw new SpagoBIEngineRuntimeException("Error getting the childs count for the member "+member.getUniqueName(),e);
 		}
 		this.visible = visible;
+		this.qtip = description;
 	}
 
 	public String getName() {
@@ -98,6 +108,20 @@ public class SbiMember {
 	}
 	
 	public void setChecked(Object o) {}
-		
 	
+	private String calculateText(String name, String caption){
+		if(caption!=null && !caption.equals(name)){
+			return name +"-"+ caption;
+		}
+		return name;
+	}
+
+	public String getQtip() {
+		return qtip;
+	}
+
+	public void setQtip(String qtip) {
+		this.qtip = qtip;
+	}
+
 }

@@ -63,6 +63,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	
 	public static transient Logger logger = Logger.getLogger(ModelResource.class);
 	public static transient Logger auditlogger = Logger.getLogger("audit.stack");
+	private static final String VERSION_FAKE_DESCR = "sbiNoDescription";
 	
 	// input parameters
 	public static final String EXPRESSION = "expression";
@@ -222,15 +223,20 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	 * 
 	 */
 	@POST
-	@Path("/saveAs")
+	@Path("/saveAs/{name}/{descr}")
 	@Produces("text/html; charset=UTF-8")
-	public String increaseVersion(){
+	public String increaseVersion(@PathParam("name") String name, @PathParam("descr") String descr){
 		logger.debug("IN");
 		logOperation("Save As");
 		
+		if(name.equals(VERSION_FAKE_DESCR)){
+			name = null;
+			descr = null;
+		}
+		
 		PivotModel model;
 		try {
-			model = getVersionBusiness().persistNewVersionProcedure();
+			model = getVersionBusiness().persistNewVersionProcedure(name, descr);
 		} catch (WhatIfPersistingTransformationException e) {
 			logErrorTransformations(e.getTransformations());
 			logger.error("Error persisting the trasformations in the new version a new version",e);

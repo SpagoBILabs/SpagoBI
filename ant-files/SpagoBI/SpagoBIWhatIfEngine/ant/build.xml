@@ -190,6 +190,7 @@
 				<file name='./spagobi/olap/toolbar/OlapToolbar.js' />
 				<file name='./spagobi/olap/toolbar/VersionManagerWindow.js' />
 				<file name='./spagobi/olap/toolbar/ExportWizardWindow.js' />
+				<file name='./spagobi/olap/toolbar/SaveAsWindow.js' />
 
 				<file name='./spagobi/olap/execution/table/OlapExecutionFilterTree.js' />
 				<file name='./spagobi/olap/execution/table/OlapExecutionDimension.js' />

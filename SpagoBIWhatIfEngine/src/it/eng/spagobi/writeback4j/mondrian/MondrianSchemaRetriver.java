@@ -50,6 +50,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 
 	public static String ALL_MEMBER_NAME = "(All)";
 	private String versionColumnName;
+	private String versionTableName;
 
 	public MondrianSchemaRetriver(MondrianDriver driver, String editCubeName) throws SpagoBIEngineException{
 		String catalogUri = driver.getOlapSchema();
@@ -247,7 +248,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	 * @return 
 	 */
 	public List<String> getMeasuresColumn(){
-		
+
 		logger.debug("IN: loading the measure form the cube");
 		List<String> measures= new ArrayList<String>();
 
@@ -299,33 +300,63 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	}
 
 	public String getVersionColumnName(){;
-	logger.debug("IN");
-	if(versionColumnName!=null){
-		logger.debug("Version column name is in the cache");
-		return versionColumnName;
-	}
-	logger.debug("Version column name isn't in the cache");
-	String dimension = WhatIfConstants.VERSION_DIMENSION_NAME;
-	Dimension thisDimension = null;
-	MondrianDef.CubeDimension[] dimensons = editCube.dimensions;
-	for (int i = 0; i < dimensons.length; i++) {
-		MondrianDef.CubeDimension aDimension = dimensons[i];
-		if(aDimension.name.equals(dimension)){
-			thisDimension =  aDimension.getDimension(schema);
-			break;
+		logger.debug("IN");
+		if(versionColumnName!=null){
+			logger.debug("Version column name is in the cache");
+			return versionColumnName;
 		}
+		logger.debug("Version column name isn't in the cache");
+		String dimension = WhatIfConstants.VERSION_DIMENSION_NAME;
+		Dimension thisDimension = null;
+		MondrianDef.CubeDimension[] dimensons = editCube.dimensions;
+		for (int i = 0; i < dimensons.length; i++) {
+			MondrianDef.CubeDimension aDimension = dimensons[i];
+			if(aDimension.name.equals(dimension)){
+				thisDimension =  aDimension.getDimension(schema);
+				break;
+			}
+		}
+		if(thisDimension==null){
+			logger.error("Error loading the verison dimension "+WhatIfConstants.VERSION_DIMENSION_NAME);
+			throw new SpagoBIEngineRuntimeException("Error loading the verison dimension "+WhatIfConstants.VERSION_DIMENSION_NAME);
+		}
+		MondrianDef.Hierarchy thisHierarchy = thisDimension.hierarchies[0];
+		versionColumnName = thisHierarchy.levels[0].column;
+
+		logger.debug("OUT");
+
+		return versionColumnName;
+
 	}
-	if(thisDimension==null){
-		logger.error("Error loading the verison dimension "+WhatIfConstants.VERSION_DIMENSION_NAME);
-		throw new SpagoBIEngineRuntimeException("Error loading the verison dimension "+WhatIfConstants.VERSION_DIMENSION_NAME);
-	}
-	MondrianDef.Hierarchy thisHierarchy = thisDimension.hierarchies[0];
-	versionColumnName = thisHierarchy.levels[0].column;
 
-	logger.debug("OUT");
-
-	return versionColumnName;
-
+	public String getVersionTableName(){;
+		logger.debug("IN");
+		if(versionTableName!=null){
+			logger.debug("Version table name is in the cache");
+			return versionTableName;
+		}
+		logger.debug("Version table name isn't in the cache");
+		String dimension = WhatIfConstants.VERSION_DIMENSION_NAME;
+		Dimension thisDimension = null;
+		MondrianDef.CubeDimension[] dimensons = editCube.dimensions;
+		for (int i = 0; i < dimensons.length; i++) {
+			MondrianDef.CubeDimension aDimension = dimensons[i];
+			if(aDimension.name.equals(dimension)){
+				thisDimension =  aDimension.getDimension(schema);
+				break;
+			}
+		}
+		if(thisDimension==null){
+			logger.error("Error loading the verison dimension "+WhatIfConstants.VERSION_DIMENSION_NAME);
+			throw new SpagoBIEngineRuntimeException("Error loading the verison dimension "+WhatIfConstants.VERSION_DIMENSION_NAME);
+		}
+		MondrianDef.Hierarchy thisHierarchy = thisDimension.hierarchies[0];
+		versionTableName = getTableName(thisHierarchy);
+	
+		logger.debug("OUT");
+	
+		return versionTableName;
+	
 	}
 
 	public static String getTableName(MondrianDef.Hierarchy hierarchy){

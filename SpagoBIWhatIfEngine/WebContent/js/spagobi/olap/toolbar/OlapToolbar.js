@@ -93,9 +93,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				'BUTTON_SAVE': function(){ 
 					Sbi.olap.eventManager.persistTransformations();
 				},
-				'BUTTON_SAVE_NEW': function(){
-					Sbi.olap.eventManager.persistNewVersionTransformations();
-				},
+				'BUTTON_SAVE_NEW': this.openSaveAsWindow,
 				'BUTTON_VERSION_MANAGER': this.openVersionManagerWindow,
 				'BUTTON_EXPORT_OUTPUT': this.openOutputWindow
 		};
@@ -852,6 +850,17 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		window.show();
 		window.on('exportOutput', function(params){
 			Sbi.olap.eventManager.exportOutput(params);
+		},this);
+	},
+	
+	/**
+	 * Opens the output table export configuration wizard
+	 */
+	openSaveAsWindow :function() {
+		var window = Ext.create('Sbi.olap.toolbar.SaveAsWindow',{});
+		window.show();
+		window.on('saveAs', function(params){
+			Sbi.olap.eventManager.persistNewVersionTransformations(params);
 		},this);
 	},
 

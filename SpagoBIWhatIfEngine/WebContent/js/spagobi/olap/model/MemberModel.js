@@ -16,6 +16,7 @@ Ext.define('Sbi.olap.MemberModel', {
 	fields: [		
 	         {name: 'name'},
 	         {name: 'uniqueName'},
+	         {name: 'qtip'},
 	         {name: "visible", type: "boolean"}
 	]
 });

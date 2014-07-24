@@ -370,8 +370,8 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * Persists the transformations in the db 
 	 * creating a new version and cleans the stack
 	 */
-	persistNewVersionTransformations: function () {
-		this.olapController.persistNewVersionTransformations();	
+	persistNewVersionTransformations: function (params) {
+		this.olapController.persistNewVersionTransformations(params);	
 	}
 	,
 	/**

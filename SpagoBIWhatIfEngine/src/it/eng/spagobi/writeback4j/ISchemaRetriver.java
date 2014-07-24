@@ -24,6 +24,7 @@ public interface ISchemaRetriver {
 	public String getMeasureColumn(Member member) throws SpagoBIEngineException ;
 	public List<String> getColumnNamesList();
 	public String getVersionColumnName();
+	public String getVersionTableName();
 	public List<String> getMeasuresColumn();
 
 }

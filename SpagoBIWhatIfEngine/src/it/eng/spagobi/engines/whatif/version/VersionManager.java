@@ -43,13 +43,13 @@ public class VersionManager {
 		versionDAO = new VersionDAO(instance);
 	}
 	
-	public PivotModel persistNewVersionProcedure() throws WhatIfPersistingTransformationException{
-		return persistNewVersionProcedure(null);
+	public PivotModel persistNewVersionProcedure(String name, String descr) throws WhatIfPersistingTransformationException{
+		return persistNewVersionProcedure(null, name, descr);
 	}
 	
-	public PivotModel persistNewVersionProcedure(Integer newVersion) throws WhatIfPersistingTransformationException{
+	public PivotModel persistNewVersionProcedure(Integer newVersion, String name, String descr) throws WhatIfPersistingTransformationException{
 		Integer actualVersion = ((SpagoBIPivotModel)instance.getPivotModel()).getActualVersionSlicer(instance.getModelConfig());
-		return persistNewVersionProcedure(actualVersion, newVersion);
+		return persistNewVersionProcedure(actualVersion, newVersion, name, descr);
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class VersionManager {
 	 * @param version the actual version (the new one will be version+1)
 	 * @return
 	 */
-	public PivotModel persistNewVersionProcedure(Integer version, Integer newVersion) throws WhatIfPersistingTransformationException{
+	public PivotModel persistNewVersionProcedure(Integer version, Integer newVersion, String name, String descr) throws WhatIfPersistingTransformationException{
 		logger.debug("IN");
 
 		
@@ -82,7 +82,7 @@ public class VersionManager {
 			}
 
 			logger.debug("Duplicate data with new version");
-			versionDAO.increaseActualVersion(connection, version, newVersion);
+			versionDAO.increaseActualVersion(connection, version, newVersion, name, descr);
 
 			logger.debug("Apply Transformations on new version");
 			applyTransformation(connection, newVersion);

@@ -72,6 +72,8 @@ Sbi.locale.ln['sbi.common.next'] = 'Next';
 Sbi.locale.ln['sbi.common.prev'] = 'Back';
 Sbi.locale.ln['sbi.common.wait'] = 'Please wait...';
 Sbi.locale.ln['sbi.common.wait.long'] = 'This operation can take some minutes. Please wait...';
+Sbi.locale.ln['sbi.common.name'] = 'Name';
+Sbi.locale.ln['sbi.common.description'] = 'Description';
 
 //===================================================================
 // TOOLBAR
@@ -91,7 +93,9 @@ Sbi.locale.ln['sbi.olap.toolbar.unlock'] = "Unlock model";
 Sbi.locale.ln['sbi.olap.toolbar.lock_other'] = "Model locked by other user";
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_VERSION_MANAGER'] = "Delete versions";
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_EXPORT_OUTPUT'] = "Output wizard";
-
+Sbi.locale.ln['sbi.olap.toolbar.save.as.description'] = "Type the name of the new version. If you leave it blank the name and the description assume the version number";
+Sbi.locale.ln['sbi.olap.toolbar.save.as.version.name'] = "Version name";
+Sbi.locale.ln['sbi.olap.toolbar.save.as.version.description'] = "Version description";
 
 //===================================================================
 //FILTERS
