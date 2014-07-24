@@ -15,6 +15,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 /**
  * PublisherService Rest service can be used to display a jsp. It can be called passing the
@@ -37,15 +38,18 @@ public class PublisherService {
 	public void publish(@Context HttpServletRequest req) {
 
 		try {
-			String publisher = req.getParameter(PUBLISHER);
-			if(publisher!= null){
-				req.getRequestDispatcher(publisher).forward(req, servletResponse);
+			
+			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+		    HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+			
+			String publisher = request.getParameter(PUBLISHER);
+			if (publisher != null) {
+				request.getRequestDispatcher(publisher).forward(request,
+						response);
 			}
 
-		} catch (ServletException e) {
-			logger.error("Error dispatching request");
-		} catch (IOException e) {
-			logger.error("Error writing content");
+		} catch (Exception e) {
+			logger.error("Error forwarding request", e);
 		}
 	}
 
