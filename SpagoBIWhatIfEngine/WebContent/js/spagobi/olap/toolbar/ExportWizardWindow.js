@@ -71,7 +71,15 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 			    		   thisPanel.navigate(btn.up("panel"), "ok");
 			    	   },
 			    	   disabled: true
+			       },
+			       {
+			    	   id: 'out-move-cancel',
+			    	   text: LN('sbi.common.cancel'),
+			    	   handler: function(btn) {
+			    		   thisPanel.destroy();
+			    	   }
 			       }
+			       
 			       ],
 
 			       items: [this.selectExportTypePanel, this.selectExportTablePanel, this.selectExportCsvPanel]

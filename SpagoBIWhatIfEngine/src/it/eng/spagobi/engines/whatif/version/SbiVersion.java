@@ -19,11 +19,19 @@ package it.eng.spagobi.engines.whatif.version;
 public class SbiVersion {
 	Integer id;
 	String description;
+	String name;
 
-	public SbiVersion(Integer id, String description) {
+	public SbiVersion(Integer id, String name, String description) {
 		super();
 		this.id = id;
 		this.description = description;
+		this.name = name;
+	}
+	public SbiVersion(Integer id) {
+		super();
+		this.id = id;
+		this.description = id.toString();
+		this.name = id.toString();
 	}
 	public Integer getId() {
 		return id;
@@ -36,6 +44,12 @@ public class SbiVersion {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	

@@ -15,6 +15,7 @@ Ext.define('Sbi.olap.VersionModel', {
 	idProperty: 'id',
 	fields: [		
 	         {name: 'id'},
+	         {name: 'name'},
 	         {name: 'description'}
 	]
 });

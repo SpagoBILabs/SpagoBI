@@ -69,6 +69,9 @@ Sbi.locale.ln['sbi.common.next'] = 'Successivo';
 Sbi.locale.ln['sbi.common.prev'] = 'Precedente';
 Sbi.locale.ln['sbi.common.wait'] = 'Attendere prego...';
 Sbi.locale.ln['sbi.common.wait.long'] = 'Attendere prego.. Questa operazione potrebbe richiedere qualche minuto...';
+Sbi.locale.ln['sbi.common.name'] = 'Nome';
+Sbi.locale.ln['sbi.common.description'] = 'Descrizione';
+
 //===================================================================
 //TOOLBAR
 //===================================================================
@@ -87,6 +90,9 @@ Sbi.locale.ln['sbi.olap.toolbar.unlock'] = "Sblocca il modello";
 Sbi.locale.ln['sbi.olap.toolbar.lock_other'] = "Modello bloccato da un altro utente";
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_VERSION_MANAGER'] = "Elimina delle versioni";
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_EXPORT_OUTPUT'] = "Output wizard";
+Sbi.locale.ln['sbi.olap.toolbar.save.as.description'] = "Inserire il nome e la descrizione della versione. Se non viene inserito alcun valore verrà preso come default il numero della versione.";
+Sbi.locale.ln['sbi.olap.toolbar.save.as.version.name'] = "Nome versione";
+Sbi.locale.ln['sbi.olap.toolbar.save.as.version.description'] = "Descrizione versione";
 
 //===================================================================
 //FILTERS
@@ -140,6 +146,7 @@ Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Selezion
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 'Attenzione: questa operazione potrebbe richiedere qualche minuto. ';
 Sbi.locale.ln['sbi.olap.control.controller.delete.version.ok'] = 'Le versioni sono state eliminate correttamente.';
 //Sbi.locale.ln['sbi.olap.control.controller.delete.version.error'] = 'Si \u00E9 verificato un errore nella cancellazione delle versioni. Controllare il log.';
+
 
 //===================================================================
 //OUTPUT
