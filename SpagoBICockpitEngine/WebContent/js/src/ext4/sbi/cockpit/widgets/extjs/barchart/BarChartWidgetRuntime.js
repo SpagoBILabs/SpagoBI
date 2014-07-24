@@ -19,14 +19,9 @@ Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime = function(config) {
 	
 	var categories = [];
 	categories.push(this.wconf.category);
-	if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
+	if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);	
 	
-	this.aggregations = {
-		measures: this.wconf.series,
-		categories: categories
-	};
-	
-	Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime.superclass.constructor.call(this, c);
+	Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime.superclass.constructor.call(this, c);	
 	
 	this.boundStore();
 	this.reload();
@@ -56,16 +51,19 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 	// cartesian chart shared methods
 	// -----------------------------------------------------------------------------------------------------------------  
 	getSeriesConfig: function() {
-	    	
+		Sbi.trace("[BarChartWidgetRuntime.getSeriesConfig]: IN");
+		
 		var store = this.getStore();
 	    
 	    var seriesFields = [];
 		var seriesTitles = [];
+			
+//		alert(this.wconf.series.length);
 		
 		for(var i = 0; i < this.wconf.series.length; i++) {			
 			var id = this.wconf.series[i].alias;
-		
-			seriesFields.push(store.fieldsMeta[id].name);
+			
+			seriesFields.push(store.fieldsMeta[id].name);			
 			seriesTitles.push(id);
 		}
 			
@@ -75,6 +73,8 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 			position: this.isHorizontallyOriented()? 'bottom' : 'left'
 		};
 			
+		Sbi.trace("[BarChartWidgetRuntime.getSeriesConfig]: OUT");
+		
 		return series;
 	}
 	    
@@ -187,25 +187,6 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 									
 		}
 		
-//		z['seriesflatvalue'+j] = z['series'+j];
-//		z['series'+j] = (z['series'+j]/seriesum)*100;;
-//		if(this.isPercentStacked()) {
-//			var data = [];
-//			if(categoriesConfig.fields.length == 1) {
-//				var fields = [];
-//				for(var h in store.fieldsMeta) {
-//					fields.push(store.fieldsMeta[h].name);
-//				}
-//				var newStore =  new Ext.data.JsonStore({
-//			        fields:fields,
-//			        data: store.data
-//			    });
-//				//store = newStore;
-//				//alert("Impossible to create a percet stacked bar chart");
-//			} else {
-//				alert("Impossible to create a percet stacked bar chart with more then on category");
-//			}
-//		}
 		store.sort(categoriesConfig.fields[0], 'ASC');
 		
 		//Create theme for using custom defined colors
