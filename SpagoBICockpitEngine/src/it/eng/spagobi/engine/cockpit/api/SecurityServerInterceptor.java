@@ -221,7 +221,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			try {
 				engProfile = GeneralUtilities.createNewUserProfile(userId);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Error while creating user profile with user id = [" + userId + "]", e);
 			}	
 			setUserProfileInSession(engProfile);
 		}

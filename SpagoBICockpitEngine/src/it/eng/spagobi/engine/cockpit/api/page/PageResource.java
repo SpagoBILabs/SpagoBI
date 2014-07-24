@@ -45,6 +45,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 	static private Map<String, JSONObject> pages;
 	static private Map<String, String> urls;
 	
+	static private Logger logger = Logger.getLogger(PageResource.class);
+	
 	static {
 		pages = new HashMap<String, JSONObject>();
 		urls = new HashMap<String, String>();
@@ -57,13 +59,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 			pages.put("test", new JSONObject("{name: 'test', description: 'the cockpit test page', parameters: ['template']}"));
 			urls.put("execute", "/WEB-INF/jsp/test4.jsp");
 		} catch (JSONException t) {
-			// TODO Auto-generated catch block
-			t.printStackTrace();
+			logger.error(t);
 		}
 	}
 	
-	static private Logger logger = Logger.getLogger(PageResource.class);
-
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)

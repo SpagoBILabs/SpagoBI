@@ -330,8 +330,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			Serializable state = model.saveState();
 			stream.writeObject(state);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error while serializing model", e);
 		}
     	
 
