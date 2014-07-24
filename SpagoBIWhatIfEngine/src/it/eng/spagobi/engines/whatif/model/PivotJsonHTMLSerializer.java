@@ -270,7 +270,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 							for(int k=0; k<slicers.size(); k++){
 								Map<String,String> slicer = new HashMap<String,String>();
 								slicer.put(UNIQUE_NAME, slicers.get(k).getUniqueName());
-								slicer.put(NAME, slicers.get(k).getName());
+								slicer.put(NAME, slicers.get(k).getCaption());
 								slicerMap.add(slicer);
 							}
 							hierarchyObject.setSlicers( slicerMap);
