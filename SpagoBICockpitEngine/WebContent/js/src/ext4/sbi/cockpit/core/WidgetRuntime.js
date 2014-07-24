@@ -201,7 +201,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		Sbi.trace("[WidgetRuntime.setConfiguration]: IN");
 		
 		var needRefresh = this.isRefreshable(config);
-		
+				
 		this.setStoreId(config.storeId, false);
 		this.setWType(config.wtype, false);
 		this.setCustomConfiguration(config.wconf, false);
@@ -414,6 +414,12 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		if(Sbi.isValorized(wconf)) {
 			this.wconf = wconf;
 			Sbi.trace("[WidgetRuntime.setCustomConfiguration]: wconf set to [" + Sbi.toSource(wconf) + "]");
+			
+			if (Sbi.isValorized(wconf.series)){
+				this.aggregations.measures = wconf.series;							
+				Sbi.trace("[WidgetRuntime.setCustomConfiguration]: aggregations.measures set to [" + Sbi.toSource(wconf.measures) + "]");
+			}
+			
 			if(refresh !== false) {
 				this.refresh();
 			} else {
