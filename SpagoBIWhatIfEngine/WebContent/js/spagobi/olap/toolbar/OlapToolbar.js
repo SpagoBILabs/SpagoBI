@@ -31,6 +31,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			drillType: 'position'
 		},
 		mdx: "",
+		hideSaveAsWindow: false,
 		label2PropertyMap: {
 			'BUTTON_HIDE_EMPTY':'suppressEmpty',
 			'BUTTON_SHOW_PROPERTIES':'showProperties',
@@ -857,11 +858,15 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	 * Opens the output table export configuration wizard
 	 */
 	openSaveAsWindow :function() {
-		var window = Ext.create('Sbi.olap.toolbar.SaveAsWindow',{});
-		window.show();
-		window.on('saveAs', function(params){
-			Sbi.olap.eventManager.persistNewVersionTransformations(params);
-		},this);
+		if(this.hideSaveAsWindow){
+			Sbi.olap.eventManager.persistNewVersionTransformations({});
+		}else{
+			var window = Ext.create('Sbi.olap.toolbar.SaveAsWindow',{});
+			window.show();
+			window.on('saveAs', function(params){
+				Sbi.olap.eventManager.persistNewVersionTransformations(params);
+			},this);
+		}
 	},
 
 	/**

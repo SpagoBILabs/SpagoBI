@@ -16,5 +16,12 @@ Sbi.settings.olap= {
 				persistTransformations : 1800000,  // 1800000 milliseconds = 30 minutes
 				persistNewVersionTransformations : 1800000  // 1800000 milliseconds = 30 minutes
 			}
+		},		
+		toolbar:{
+			OlapToolbar: {
+				hideSaveAsWindow: false
+			}
 		}
+		
+		
 }; 
