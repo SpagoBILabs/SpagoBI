@@ -18,6 +18,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Dimension;
@@ -43,6 +44,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 	private Map<Integer, String> positionMeasureMap;
 	private boolean initialized = false;
 	
+	public static transient Logger logger = Logger.getLogger(HtmlRenderer.class);
 
 	public void render(PivotModel model){
 		super.render(model);
@@ -180,7 +182,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 						}
 					}					
 				} catch (OlapException e) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}else if(context.getCellType() == CellType.Title){
 				styleClass = "dimension-title";			
