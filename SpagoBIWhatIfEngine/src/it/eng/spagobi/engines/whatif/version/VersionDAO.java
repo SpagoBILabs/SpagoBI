@@ -94,6 +94,7 @@ public class VersionDAO {
 		logger.debug("IN");
 
 		if(descr==null){
+			name = ""+newVersion;
 			descr = ""+newVersion;
 		}
 
