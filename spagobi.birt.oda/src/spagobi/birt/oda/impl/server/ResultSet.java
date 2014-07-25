@@ -155,9 +155,15 @@ public class ResultSet implements IResultSet
 		int fieldIndex = dataStoreMeta.getFieldIndex(fieldName);	*/
 		int fieldIndex = index-1;
 		logger.debug("fieldIndex: "+fieldIndex);
-		IField field = record.getFieldAt(fieldIndex);
-        
-		String toReturn = "" + field.getValue();
+		
+		String toReturn = null;
+		try {
+			IField field = record.getFieldAt(fieldIndex);
+			toReturn = "" + field.getValue();
+		} catch (IndexOutOfBoundsException e) {
+			logger.warn("Column index not found in the record",e);
+		}
+
 		logger.debug("OUT getString: "+toReturn);
 		return toReturn;
 	}
@@ -184,18 +190,29 @@ public class ResultSet implements IResultSet
 		/*String fieldName = dataStoreMeta.getFieldName(index-1);
 		int fieldIndex = dataStore.getMetaData().getFieldIndex(fieldName);	*/
 		int fieldIndex = index-1;
-		IField field = record.getFieldAt(fieldIndex);
-		
-		if(field == null){
-			throw (OdaException) new OdaException("Impossible to read column [" + (index-1) + "]. The resultset contains [" + dataStore.getMetaData().getFieldCount() + "] columns");
-		}
-		
-		int value = -1;
+		IField field = null;
+		int value = 0;
 		try {
-			value = Integer.parseInt( "" + field.getValue() );
-		} catch(Throwable t) {
-			throw (OdaException) new OdaException("Impossible to convert column value [" + field.getValue() +"] to integer").initCause(t);
+			field = record.getFieldAt(fieldIndex);
+			
+			if(field == null){
+				throw (OdaException) new OdaException("Impossible to read column [" + (index-1) + "]. The resultset contains [" + dataStore.getMetaData().getFieldCount() + "] columns");
+			}
+			
+			try {
+				value = Integer.parseInt( "" + field.getValue() );
+			} catch(Throwable t) {
+				//throw (OdaException) new OdaException("Impossible to convert column value [" + field.getValue() +"] to integer").initCause(t);
+				logger.warn("Impossible to convert column value [" + field.getValue() +"] to integer",t);
+			}
+		} catch (IndexOutOfBoundsException e) {
+			logger.warn("Column index not found in the record",e);
+			value = 0;
 		}
+		
+
+		
+
 		
         return value;
 	}

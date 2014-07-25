@@ -13,6 +13,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHBaseDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.query.IQueryTransformer;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
@@ -95,6 +96,14 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			}
 		} else if (getTargetDataSet() instanceof JDBCHBaseDataSet) {
 			JDBCHBaseDataSet jdbcDataSet = (JDBCHBaseDataSet)getTargetDataSet();
+			if( StringUtilities.isNotEmpty( jdbcDataSet.getQueryScript() ) ) {
+				statement = (String)jdbcDataSet.getQuery();
+				statement =  applyScript(statement, jdbcDataSet.getQueryScript(), jdbcDataSet.getQueryScriptLanguage());
+			} else {
+				statement = (String)jdbcDataSet.getQuery();
+			}
+		} else if (getTargetDataSet() instanceof JDBCOrientDbDataSet) {
+			JDBCOrientDbDataSet jdbcDataSet = (JDBCOrientDbDataSet)getTargetDataSet();
 			if( StringUtilities.isNotEmpty( jdbcDataSet.getQueryScript() ) ) {
 				statement = (String)jdbcDataSet.getQuery();
 				statement =  applyScript(statement, jdbcDataSet.getQueryScript(), jdbcDataSet.getQueryScriptLanguage());
