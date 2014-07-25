@@ -5,6 +5,15 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.common.datawriter;
 
+import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -15,14 +24,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -136,8 +137,15 @@ public class JSONDataWriter implements IDataWriter {
 						continue;
 					}
 				
-					field = record.getFieldAt( dataStore.getMetaData().getFieldIndex( fieldMetaData ) );
 					
+					field = new Field();
+					try{
+						field = record.getFieldAt( dataStore.getMetaData().getFieldIndex( fieldMetaData ) );
+					}catch(IndexOutOfBoundsException idxEx){
+						logger.info("Unavailable field "+fieldMetaData.getName());
+						field.setValue(null);
+						continue;
+					}
 					String fieldValue = "";
 					if(field.getValue() != null) {
 						if(Timestamp.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {

@@ -61,7 +61,18 @@ public class DataSetFactory {
 			throw new SpagoBIRuntimeException("No dataset class found for dataset type [" + dsType + "]");
 		}
 		Constructor c = null;
-		Object object = null;;
+		Object object = null;
+		if(className.endsWith("JDBCDataSet")){
+			String dialect = dataSetConfig.getDataSource().getHibDialectName();
+			if(dialect.contains("hbase")){
+				className =  JDBCHBaseDataSet.class.getName();
+			}else if(dialect.contains("hive")){
+				className = JDBCHiveDataSet.class.getName();
+			}else if (dialect.contains("orient")) {
+				className = JDBCOrientDbDataSet.class.getName();
+			}
+			
+		}
 		try {
 			c = Class.forName(className).getConstructor(SpagoBiDataSet.class);
 			object = c.newInstance(dataSetConfig);

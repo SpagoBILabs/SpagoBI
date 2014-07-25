@@ -26,6 +26,8 @@ public class JDBCDatasetFactory {
 			dataSet = new JDBCHBaseDataSet();
 		} else if (dialect.contains("hive")) {
 			dataSet = new JDBCHiveDataSet();
+		}else if (dialect.contains("orient")) {
+			dataSet = new JDBCOrientDbDataSet();
 		} else {
 			dataSet = new JDBCDataSet();
 		}
