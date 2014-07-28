@@ -43,6 +43,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	String engineContext;
 	String engineServerHost;
 	String enginePort;
+	String engineProtocol;
 	String executionId;
 	String spagobiServerHost;
 	String spagobiContext;
@@ -73,6 +74,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
     
  // used in local ServiceRegistry
+ 	engineProtocol = request.getScheme();
  	engineServerHost = request.getServerName();
  	enginePort = "" + request.getServerPort();
     engineContext = request.getContextPath();
@@ -131,7 +133,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     // gets analytical driver
    // Map analyticalDrivers  = chartEngineInstance.getAnalyticalDrivers();
  	//String JSONUrl = "http://localhost:8080/SpagoBIChartEngine/servlet/AdapterHTTP?ACTION_NAME=CHART_ENGINE_D3_START_ACTION&SBI_EXECUTION_ID="+executionId+"&ds_label=treemap&LIGHT_NAVIGATOR_DISABLED=null";
- 	String urlProva= "http://"+engineServerHost+":"+enginePort+"/"+engineContext+"/"+"servlet/AdapterHTTP?ACTION_NAME="+actionName+"&SBI_EXECUTION_ID="+executionId+"&ds_label="+dsLabel+"&LIGHT_NAVIGATOR_DISABLED="+lightNavigator;
+ 	String urlProva= engineProtocol+"://"+engineServerHost+":"+enginePort+"/"+engineContext+"/"+"servlet/AdapterHTTP?ACTION_NAME="+actionName+"&SBI_EXECUTION_ID="+executionId+"&ds_label="+dsLabel+"&LIGHT_NAVIGATOR_DISABLED="+lightNavigator;
 %>
 
 
