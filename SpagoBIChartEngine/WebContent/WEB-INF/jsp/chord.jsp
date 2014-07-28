@@ -44,6 +44,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	String engineContext;
 	String engineServerHost;
 	String enginePort;
+	String engineProtocol;
 	String executionId;
 	String spagobiServerHost;
 	String spagobiContext;
@@ -72,6 +73,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
 	spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
 
+ 	engineProtocol = request.getScheme();
 	engineServerHost = request.getServerName();
 	enginePort = "" + request.getServerPort();
 	engineContext = request.getContextPath();
@@ -158,7 +160,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			
 	}
 
-	String urlProva = "http://" + engineServerHost + ":" + enginePort
+	String urlProva = engineProtocol+"://" + engineServerHost + ":" + enginePort
 			+ "/" + engineContext + "/"
 			+ "servlet/AdapterHTTP?ACTION_NAME=" + actionName
 			+ "&SBI_EXECUTION_ID=" + executionId + "&ds_label="
