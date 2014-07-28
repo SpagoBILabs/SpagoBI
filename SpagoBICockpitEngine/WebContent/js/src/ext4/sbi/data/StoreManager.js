@@ -665,9 +665,12 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 * @return the store id
 	 */
 	, getStoreId: function(store) {
-		var storeId = null;
+		var storeId;
 		
-		if(Ext.isString(store)) {
+		if(Sbi.isNotValorized(store)) {
+			storeId = null;
+			Sbi.warn("[StoreManager.getStoreId]: Input parameter [store] is not defined");
+		} else if(Ext.isString(store)) {
 			storeId = store;
 		} else {
 			storeId = store.storeId;
@@ -850,7 +853,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 */
 	, getAggregationOnStore: function(store) {
 		var aggregations = null;
-		if(store.getProxy() && store.getProxy().extraParams && store.getProxy().extraParams.aggregations) {
+		if(Sbi.isNotValorized(store)) {
+			aggregations = null;
+			Sbi.warn("[StoreManager.getAggregationOnStore]: Input prameter [store] is undfined");
+		} else if(store.getProxy() && store.getProxy().extraParams && store.getProxy().extraParams.aggregations) {
 			aggregations = Ext.JSON.decode(store.getProxy().extraParams.aggregations);
 		} 
 		return aggregations;

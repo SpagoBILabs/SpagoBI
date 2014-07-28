@@ -109,22 +109,34 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	, unregister: function(w) {
 		Sbi.trace("[WidgetManager.unregister]: IN");
 		if(this.widgets.contains(w)) {
+			var widgetId = this.widgets.getKey(w);
 			var store = w.getStore();
 			var storeId = Sbi.storeManager.getStoreId(store);
 			var storeAggregation = Sbi.storeManager.getAggregationOnStore(store);
 			
-			w.unboundStore();
-			Sbi.info("[WidgetManager.unregister]: unregistering widget [" + this.widgets.getKey(w) + "]. " +
+			if(Sbi.isValorized(store)) {
+				w.unboundStore();
+				Sbi.trace("[WidgetManager.unregister]: store [" + storeId + "] succesfully unbounded from widget [" + widgetId + "]");
+			} else {
+				Sbi.trace("[WidgetManager.unregister]: the widget have no store bounded to unbound");
+			}
+			
+			
+			Sbi.trace("[WidgetManager.unregister]: unregistering widget [" + this.widgets.getKey(w) + "]. " +
 					"Before deletion there are [" + this.widgets.getCount()+ "] registered widget(s)");
 			this.widgets.remove(w);
-			Sbi.info("[WidgetManager.unregister]: widget [" + this.widgets.getKey(w) + "] succesfully unregistered. " +
+			Sbi.trace("[WidgetManager.unregister]: widget [" + this.widgets.getKey(w) + "] succesfully unregistered. " +
 					"Now there are [" + this.widgets.getCount()+ "] registered widget(s)");
 			
-			if( this.isStoreUsed(storeId, storeAggregation) == false) {
-				Sbi.storeManager.removeStore(store, true );
-				Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] succesfully removed");
+			if(Sbi.isValorized(store)) {
+				if( this.isStoreUsed(storeId, storeAggregation) == false) {
+					Sbi.storeManager.removeStore(store, true );
+					Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] succesfully removed");
+				} else {
+					Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] not removed because there are other widgets using it");;
+				}
 			} else {
-				Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] not removed because there are other widgets using it");;
+				Sbi.trace("[WidgetManager.unregister]: the widget have no store bounded to remove from store manager");
 			}
 		} else {
 			Sbi.warn("[WidgetManager.unregister]: widget [" + this.widgets.getKey(w) + "] is not registered in this manager.");
@@ -510,7 +522,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		Sbi.trace("[WidgetManager.getSelectionsByStore]: IN");
 		var selectedValues = {};
 		var fields = Sbi.storeManager.getStoreFields(store);
-		Sbi.trace("[WidgetManager.getSelectionsByStore]: store has [" + fields.length + "] fields");
+		Sbi.trace("[WidgetManager.getSelectionsByStore]: store [" + store.storeId + "] has [" + fields.length + "] fields: [" + fields + "]");
 		for(var i = 0; i < fields.length; i++) {
 			var values = this.getStoreFieldSelectedValues(store.storeId, fields[i].header);
 			var fieldSelectedValues = [];
@@ -518,6 +530,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 			Sbi.trace("[WidgetManager.getSelectionsByStore]: selected value for field [" + fields[i].header + "] are [" + Sbi.toSource(fieldSelectedValues)+ "]");
 			selectedValues[fields[i].header] = fieldSelectedValues;
 		}
+		Sbi.trace("[WidgetManager.getSelectionsByStore]: Selected values on store [" + store.storeId + "] are equal to [" + Sbi.toSource(selectedValues)+ "]");
 		Sbi.trace("[WidgetManager.getSelectionsByStore]: OUT");
 		return selectedValues;
 	}
@@ -528,8 +541,10 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		var stores = Sbi.storeManager.getStores();
 		Sbi.trace("[WidgetManager.getSelectionsByStores]: Number of stores is equal to [" + stores.length + "]");
 		for(var i = 0; i < stores.length; i++) {
-			selections[stores[i].storeId] = this.getSelectionsByStore(stores[i]);
+			selections[stores[i].storeId] = selections[stores[i].storeId] || {};
+			Ext.apply(selections[stores[i].storeId], this.getSelectionsByStore(stores[i]));
 		}
+		Sbi.trace("[WidgetManager.getSelectionsByStore]: Selected values by stores are equal to [" + Sbi.toSource(selections)+ "]");
 		Sbi.trace("[WidgetManager.getSelectionsByStores]: OUT");
 		return selections;
 	}
@@ -646,17 +661,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	
     	if(Sbi.isValorized(associationGroup)) {
     		this.applySelectionsOnAssociationGroup(associationGroup);
-//    		var selections = this.getSelectionsByAssociations();
-//    		for(var field in selectionsOnWidget) {
-//    			if(!selections[field]) {
-//    				selections[widget.getStore().storeId  + "." + field] = selectionsOnWidget[field].values;
-//    			}
-//    		}
-//        	Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
     	} else {
     		this.applySelectionsOnAggregation(widget.getStore());
-//    		var selections = this.getSelectionsByStores();
-//    		Sbi.storeManager.loadStoresByAggregations( widget.getStore().storeId,  selections);
     	}
     	
     	this.fireEvent('selectionChange');
