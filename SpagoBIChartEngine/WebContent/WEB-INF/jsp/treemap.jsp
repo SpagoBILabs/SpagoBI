@@ -143,15 +143,25 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	
 	<head>
 		<%@include file="commons/includeD3.jspf"%>
+		<link id="treemap-style" rel="styleSheet" href ="../css/treemap.css" type="text/css" />
+
 	</head>
 	
 	<body>		
 	    <div id="<%=executionId%>_title" align="center" style="width:90%;color:<%=mapParams.get("titleColor") %>;font-size:<%=mapParams.get("titleFontSize") %>;font-weight:<%=mapParams.get("titleFontWeight") %>"><%=mapParams.get("titleTxt") %></div>
 	    <div id="<%=executionId%>_subtitle" align="center" style="width:90%;color:<%=mapParams.get("subtitleColor") %>;font-size:<%=mapParams.get("subtitleFontSize") %>;font-weight:<%=mapParams.get("subtitleFontWeight") %>"><%=mapParams.get("subtitleTxt") %></div>
-	    <div id="chartD3" align="center" style="width:90%;"></div>   	
-	
-    <script type="text/javascript">  
-   
+	    		<div class="footer" align="center">
+			Tiles dimension by 
+			<select>
+				<option value="size">Size</option>
+				<option value="count">Count</option>
+			</select>
+		</div>
+	    <div id="chartD3" align="center" style="width:90%;"></div>
+
+
+	<script type="text/javascript">
+
     function returnValues(item, template){
     	//console.log('template');	
     	//console.log(template);	
@@ -161,36 +171,34 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     		return template.height;
     	} 
     }
-    	
-    var width = returnValues('width',<%=chartTemplate%>);
-    var height = returnValues('height',<%=chartTemplate%>);
-    
-       	var w = width - 80,
-        h = height - 180,
-        x = d3.scale.linear().range([0, w]),
-        y = d3.scale.linear().range([0, h]),
-        color = d3.scale.category20c(),
-        root,
-        node;
+    var chartWidth = returnValues('width',<%=chartTemplate%>);
+    var chartHeight = returnValues('height',<%=chartTemplate%>);
+    var xscale = d3.scale.linear().range([0, chartWidth]);
+    var yscale = d3.scale.linear().range([0, chartHeight]);
+    var color = d3.scale.category10();
+    var headerHeight = 20;
+    var headerColor = "#555555";
+    var transitionDuration = 500;
+    var root;
+    var node;
 
     var treemap = d3.layout.treemap()
         .round(false)
-        .size([w, h])
+        .size([chartWidth, chartHeight])
         .sticky(true)
-        .value(function(d) { return d.size; });
+        .value(function(d) {
+            return d.size;
+        });
 
-    var svg = d3.select("#chartD3").append("div")
-        .attr("class", "chart")
-        .style("width", w + "px")
-        .style("height", h + "px")
-      .append("svg:svg")
-        .attr("width", w)
-        .attr("height", h)
-      .append("svg:g")
-        .attr("transform", "translate(.5,.5)");  	
-    	  
+    var chart = d3.select("#chartD3")
+        .append("svg:svg")
+        .attr("width", chartWidth)
+        .attr("height", chartHeight)
+        .append("svg:g");
+
+
     function prepareData(data,template){
-    	//reperisco le variabili dal template 
+    	//retrieve variables from the template 
     	var label = template.label.field;
     	var key = template.key.field;
     	var parentKey = template.parentkey.field;
@@ -217,7 +225,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
      	var root = {nome:"root",children:[]};
      	var map = new Object;
      	for (index = 0; index < rows.length; ++index) {
-     		/*var nodo = { name: rows[index][decodificaLabel], key: rows[index][decodificaKey], parentKey:rows[index][decodificaParentKey], size:rows[index][decodificaSerie]};*/
+
      		var nodo = { name: rows[index][decodificaLabel], key: rows[index][decodificaKey], parentKey:rows[index][decodificaParentKey], size:(decodificaSerie)?rows[index][decodificaSerie]:1};
      		map[nodo.key]=nodo;
      	};
@@ -251,75 +259,281 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
      
     	return root;
     } 
-    
+
 	var fields,rows;
-	
-    d3.json("<%=urlProva %>", function(data) {
+
+	d3.json("<%=urlProva %>", function(data) {
+    
      node=root=prepareData(data,<%=chartTemplate%>);
-			
-      //console.log(root);
-      var nodes = treemap.nodes(root)
-          .filter(function(d) { return !d.children; });
-      
-      var cell = svg.selectAll("g")
-          .data(nodes)
-        .enter().append("svg:g")
-          .attr("class", "cell")
-          .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-          .on("click", function(d) { return zoom(node == d.parent ? root : d.parent); });
+        var nodes = treemap.nodes(root);
 
-      cell.append("svg:rect")
-          .attr("width", function(d) { return d.dx - 1; })
-          .attr("height", function(d) { return d.dy - 1; })
-          .style("fill", function(d) { return color(d.parent.name); });
-      
-      cell.append("svg:text")
-          .attr("x", function(d) { return d.dx / 2; })
-          .attr("y", function(d) { return d.dy / 2; })
-          .attr("dy", ".35em")
-          .attr("text-anchor", "middle")
-          .text(function(d) { return d.name; })
-          .style("opacity", function(d) { d.w = this.getComputedTextLength(); return d.dx > d.w ? 1 : 0; });
-      
-      d3.select(window).on("click", function() { zoom(root); });
+        var children = nodes.filter(function(d) {
+            return !d.children;
+        });
+        var parents = nodes.filter(function(d) {
+            return d.children;
+        });
 
-      d3.select("select").on("change", function() {
-        treemap.value(this.value == "size" ? size : count).nodes(root);
+        // create parent cells
+        var parentCells = chart.selectAll("g.cell.parent")
+            .data(parents, function(d) {
+                return "p-" + d.name;
+            });
+        var parentEnterTransition = parentCells.enter()
+            .append("g")
+            .attr("class", "cell parent")
+            .on("click", function(d) {
+                zoom(d);
+            })
+            .append("svg")
+            .attr("class", "clip")
+            .attr("width", function(d) {
+                return Math.max(0.01, d.dx);
+            })
+            .attr("height", headerHeight);
+        parentEnterTransition.append("rect")
+            .attr("width", function(d) {
+                return Math.max(0.01, d.dx);
+            })
+            .attr("height", headerHeight)
+            .style("fill", headerColor);
+        parentEnterTransition.append('text')
+            .attr("class", "label")
+            .attr("transform", "translate(3, 13)")
+            .attr("width", function(d) {
+                return Math.max(0.01, d.dx);
+            })
+            .attr("height", headerHeight)
+            .text(function(d) {
+                return d.name;
+            });
+        // update transition
+        var parentUpdateTransition = parentCells.transition().duration(transitionDuration);
+        parentUpdateTransition.select(".cell")
+            .attr("transform", function(d) {
+                return "translate(" + d.dx + "," + d.y + ")";
+            });
+        parentUpdateTransition.select("rect")
+            .attr("width", function(d) {
+                return Math.max(0.01, d.dx);
+            })
+            .attr("height", headerHeight)
+            .style("fill", headerColor);
+        parentUpdateTransition.select(".label")
+            .attr("transform", "translate(3, 13)")
+            .attr("width", function(d) {
+                return Math.max(0.01, d.dx);
+            })
+            .attr("height", headerHeight)
+            .text(function(d) {
+                return d.name;
+            });
+        // remove transition
+        parentCells.exit()
+            .remove();
+
+        // create children cells
+        var childrenCells = chart.selectAll("g.cell.child")
+            .data(children, function(d) {
+                return "c-" + d.name;
+            });
+        // enter transition
+        var childEnterTransition = childrenCells.enter()
+            .append("g")
+            .attr("class", "cell child")
+            .on("click", function(d) {
+                zoom(node === d.parent ? root : d.parent);
+            })
+            .append("svg")
+            .attr("class", "clip");
+        childEnterTransition.append("rect")
+            .classed("background", true)
+            .style("fill", function(d) {
+                return color(d.parent.name);
+            });
+        childEnterTransition.append('text')
+            .attr("class", "label")
+            .attr('x', function(d) {
+                return d.dx / 2;
+            })
+            .attr('y', function(d) {
+                return d.dy / 2;
+            })
+            .attr("dy", ".35em")
+            .attr("text-anchor", "middle")
+            .style("display", "none")
+            .text(function(d) {
+                return d.name;
+            });
+        // update transition
+        var childUpdateTransition = childrenCells.transition().duration(transitionDuration);
+        childUpdateTransition.select(".cell")
+            .attr("transform", function(d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
+        childUpdateTransition.select("rect")
+            .attr("width", function(d) {
+                return Math.max(0.01, d.dx);
+            })
+            .attr("height", function(d) {
+                return d.dy;
+            })
+            .style("fill", function(d) {
+                return color(d.parent.name);
+            });
+        childUpdateTransition.select(".label")
+            .attr('x', function(d) {
+                return d.dx / 2;
+            })
+            .attr('y', function(d) {
+                return d.dy / 2;
+            })
+            .attr("dy", ".35em")
+            .attr("text-anchor", "middle")
+            .style("display", "none")
+            .text(function(d) {
+                return d.name;
+            });
+
+        // exit transition
+        childrenCells.exit()
+            .remove();
+
+        d3.select("select").on("change", function() {
+            console.log("select zoom(node)");
+            treemap.value(this.value == "size" ? size : count)
+                .nodes(root);
+            zoom(node);
+        });
+
         zoom(node);
-      });
-    });
    
+	});	
+
+
+
     function size(d) {
-      return d.size;
+        return d.size;
     }
+
 
     function count(d) {
-      return 1;
+        return 1;
     }
+
+
+    //and another one
+    function textHeight(d) {
+        var ky = chartHeight / d.dy;
+        yscale.domain([d.y, d.y + d.dy]);
+        return (ky * d.dy) / headerHeight;
+    }
+
+    function getRGBComponents(color) {
+        var r = color.substring(1, 3);
+        var g = color.substring(3, 5);
+        var b = color.substring(5, 7);
+        return {
+            R: parseInt(r, 16),
+            G: parseInt(g, 16),
+            B: parseInt(b, 16)
+        };
+    }
+
+
+    function idealTextColor(bgColor) {
+        var nThreshold = 105;
+        var components = getRGBComponents(bgColor);
+        var bgDelta = (components.R * 0.299) + (components.G * 0.587) + (components.B * 0.114);
+        return ((255 - bgDelta) < nThreshold) ? "#000000" : "#ffffff";
+    }
+
 
     function zoom(d) {
-      var kx = w / d.dx, ky = h / d.dy;
-      x.domain([d.x, d.x + d.dx]);
-      y.domain([d.y, d.y + d.dy]);
+        this.treemap
+            .padding([headerHeight / (chartHeight / d.dy), 0, 0, 0])
+            .nodes(d);
 
-      var t = svg.selectAll("g.cell").transition()
-          .duration(d3.event.altKey ? 7500 : 750)
-          .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
+        // moving the next two lines above treemap layout messes up padding of zoom result
+        var kx = chartWidth / d.dx;
+        var ky = chartHeight / d.dy;
+        var level = d;
 
-      t.select("rect")
-          .attr("width", function(d) { return kx * d.dx - 1; })
-          .attr("height", function(d) { return ky * d.dy - 1; });
+        xscale.domain([d.x, d.x + d.dx]);
+        yscale.domain([d.y, d.y + d.dy]);
 
-      t.select("text")
-          .attr("x", function(d) { return kx * d.dx / 2; })
-          .attr("y", function(d) { return ky * d.dy / 2; })
-          .style("opacity", function(d) { return kx * d.dx > d.w ? 1 : 0; });
+        if (node != level) {
+            chart.selectAll(".cell.child .label")
+                .style("display", "none");
+        }
 
-      node = d;
-      d3.event.stopPropagation();
+        var zoomTransition = chart.selectAll("g.cell").transition().duration(transitionDuration)
+            .attr("transform", function(d) {
+                return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")";
+            })
+            .each("start", function() {
+                d3.select(this).select("label")
+                    .style("display", "none");
+            })
+            .each("end", function(d, i) {
+                if (!i && (level !== self.root)) {
+                    chart.selectAll(".cell.child")
+                        .filter(function(d) {
+                            return d.parent === self.node; // only get the children for selected group
+                        })
+                        .select(".label")
+                        .style("display", "")
+                        .style("fill", function(d) {
+                            return idealTextColor(color(d.parent.name));
+                        });
+                }
+            });
+
+        zoomTransition.select(".clip")
+            .attr("width", function(d) {
+                return Math.max(0.01, (kx * d.dx));
+            })
+            .attr("height", function(d) {
+                return d.children ? headerHeight : Math.max(0.01, (ky * d.dy));
+            });
+
+        zoomTransition.select(".label")
+            .attr("width", function(d) {
+                return Math.max(0.01, (kx * d.dx));
+            })
+            .attr("height", function(d) {
+                return d.children ? headerHeight : Math.max(0.01, (ky * d.dy));
+            })
+            .text(function(d) {
+                return d.name;
+            });
+
+        zoomTransition.select(".child .label")
+            .attr("x", function(d) {
+                return kx * d.dx / 2;
+            })
+            .attr("y", function(d) {
+                return ky * d.dy / 2;
+            });
+
+        zoomTransition.select("rect")
+            .attr("width", function(d) {
+                return Math.max(0.01, (kx * d.dx));
+            })
+            .attr("height", function(d) {
+                return d.children ? headerHeight : Math.max(0.01, (ky * d.dy));
+            })
+            .style("fill", function(d) {
+                return d.children ? headerColor : color(d.parent.name);
+            });
+
+        node = d;
+
+        if (d3.event) {
+            d3.event.stopPropagation();
+        }
     }
-	   
-	    </script>
+</script>
  
 	</body>
 
