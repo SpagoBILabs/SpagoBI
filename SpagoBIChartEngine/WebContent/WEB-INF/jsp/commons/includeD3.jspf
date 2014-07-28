@@ -7,8 +7,10 @@
  
  
  <!-- Include Ext and app-specific scripts:-->
-
-<script type="text/javascript" src='../js/lib/D3.js'/></script> 
-<script type="text/javascript" src='../js/lib/D3.layout.js'/></script> 
+<meta charset="UTF8">
+<!-- This is NOT the minified version of d3 -->
+<!-- script type="text/javascript" src='../js/lib/D3.js' charset="utf-8"/></script--> 
+<!-- This is the minified version of d3 -->
+<script type="text/javascript" src='../js/lib/d3.min.js' charset="utf-8"/></script> 
 
 	      
