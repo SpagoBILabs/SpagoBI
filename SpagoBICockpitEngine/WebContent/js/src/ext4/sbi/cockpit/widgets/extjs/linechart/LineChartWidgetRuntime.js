@@ -54,14 +54,14 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 		return this.wconf.colorarea;
 	}
 
-	, isStacked: function() {
-		//return (this.wconf.type == 'stacked-barchart' || this.wconf.type == 'percent-stacked-barchart');
-		return false;
+	, isStacked: function() {		
+		return (this.wconf.type == 'stacked-linechart');
+		//return false;
 	}
 	
 	, isPercentStacked: function() {
-		//return this.wconf.type == 'percent-stacked-barchart';
-		return((this.wconf.type).indexOf('percent')>=0);
+		return (this.wconf.type == 'percent-stacked-linechart');
+		//return((this.wconf.type).indexOf('percent')>=0);
 	}
 	
 	, refresh:  function() {  
@@ -83,6 +83,31 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 		var series = this.getSeries( categoriesConfig, seriresConfig );
 		
 		var store = this.getStore();
+		
+		for(var i = 0; i < store.data.items.length; i++){
+			var seriesum = 0;
+
+			if(this.isPercentStacked()){
+				for(var j = 0; j < seriresConfig.fields.length; j++){					
+					for (var h in store.data.items[i].data){
+						if (h == seriresConfig.fields[j]){
+							seriesum = seriesum + parseFloat(store.data.items[i].data[h]);
+						}
+					}									
+				}								
+				
+				for(var j = 0; j < seriresConfig.fields.length; j++){										
+					for (var h in store.data.items[i].data){
+						if (h == seriresConfig.fields[j]){
+							if (seriesum != 0){
+								store.data.items[i].data[h] = parseFloat((store.data.items[i].data[h]/seriesum)*100);
+							} 									
+						}
+					}									
+				}	
+			}								
+		}
+		
 		store.sort(categoriesConfig.fields[0], 'ASC');
 		
 		this.chartPanel =  Ext.create('Ext.chart.Chart', {
@@ -109,11 +134,12 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 		    , fields: seriesConfig.fields
 		    , minorTickSteps: 1 // The number of small ticks between two major ticks. Default is zero.
 		    , label: {
+		    	display: 'inside',
 		    	renderer: Ext.util.Format.numberRenderer('0,0')
 		    }
 			, title: seriesConfig.titles.length == 1? seriesConfig.titles[0]: undefined
 		   	, grid: true
-		    , minimum: 0
+		    , minimum: 0		    
 		};
 		
 		//For the percent type chart set the axes scale maximum to 100
@@ -151,7 +177,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	            axis: seriesConfig.position,  
 	            smooth: true,
 	            tips: this.getSeriesTips(seriesConfig),
-	            label: this.getSeriesLabel(seriesConfig),
+	            label: { field: seriesConfig.fields[i], display: 'over'},
 	            xField: categoriesConfig.fields[0],
 	            yField: seriesConfig.fields[i],
 	            listeners: {
