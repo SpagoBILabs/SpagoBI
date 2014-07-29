@@ -19,13 +19,13 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class DataSetFactory {
 
 	private static transient Logger logger = Logger.getLogger(DataSetFactory.class);
 
-	public static IDataSet getDataSet( SpagoBiDataSet dataSetConfig ) {
+	public static IDataSet getDataSet(SpagoBiDataSet dataSetConfig) {
 		IDataSet dataSet = null;
 
 		if (dataSetConfig == null) {
@@ -41,73 +41,78 @@ public class DataSetFactory {
 		}
 		String dsType = dataSetConfig.getType();
 		String className = p.getProperty(dsType);
-		
+
 		logger.debug("Dataset type: " + dsType);
-		if(className.equals(JDBCDataSet.class.getName())){
-			try{
-				IDataSource ds = DataSourceFactory.getDataSource( dataSetConfig.getDataSource()) ;
-				if((ds.getHibDialectName()).toLowerCase().contains("hive")){
+		if (className.equals(JDBCDataSet.class.getName())) {
+			try {
+				IDataSource ds = DataSourceFactory.getDataSource(dataSetConfig.getDataSource());
+				if ((ds.getHibDialectName()).toLowerCase().contains("hive")) {
 					className = JDBCHiveDataSet.class.getName();
+				} else if ((ds.getHibDialectClass()).toLowerCase().contains("mongo")) {
+					className = MongoDataSet.class.getName();
 				}
+
 			} catch (Exception e) {
 				throw new RuntimeException("Missing right exstension", e);
 			}
 		}
-		
-		
-		
+
 		logger.debug("Dataset class: " + className);
 		if (className == null) {
 			throw new SpagoBIRuntimeException("No dataset class found for dataset type [" + dsType + "]");
 		}
 		Constructor c = null;
 		Object object = null;
-		if(className.endsWith("JDBCDataSet")){
+		if (className.endsWith("JDBCDataSet")) {
 			String dialect = dataSetConfig.getDataSource().getHibDialectName();
-			if(dialect.contains("hbase")){
-				className =  JDBCHBaseDataSet.class.getName();
-			}else if(dialect.contains("hive")){
+			if (dialect.contains("hbase")) {
+				className = JDBCHBaseDataSet.class.getName();
+			} else if (dialect.contains("hive")) {
 				className = JDBCHiveDataSet.class.getName();
-			}else if (dialect.contains("orient")) {
+			} else if (dialect.contains("orient")) {
 				className = JDBCOrientDbDataSet.class.getName();
 			}
-			
+
 		}
 		try {
 			c = Class.forName(className).getConstructor(SpagoBiDataSet.class);
 			object = c.newInstance(dataSetConfig);
 			dataSet = (IDataSet) object;
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while instantiating dataset type [" + dsType 
+			throw new SpagoBIRuntimeException("Error while instantiating dataset type [" + dsType
 					+ "], class [" + className + "]", e);
 		}
 
 		// if custom data set type try instantiate the referred class
 		IDataSet customDataset = dataSet;
-		if(CustomDataSet.DS_TYPE.equals(( dataSetConfig.getType() ) )
-				&& customDataset instanceof CustomDataSet){
+		if (CustomDataSet.DS_TYPE.equals((dataSetConfig.getType()))
+				&& customDataset instanceof CustomDataSet) {
 			try {
-				dataSet = ((CustomDataSet)customDataset).instantiate();			
+				dataSet = ((CustomDataSet) customDataset).instantiate();
 			} catch (Exception e) {
-				logger.error("Cannot instantiate class "+((CustomDataSet)customDataset).getJavaClassName()+ ": go on with CustomDatasetClass");
-			}			
+				logger.error("Cannot instantiate class " + ((CustomDataSet) customDataset).getJavaClassName() + ": go on with CustomDatasetClass");
+			}
 		}
 
-
-		//		if ( ScriptDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
-		//			dataSet = new ScriptDataSet( dataSetConfig );	
-		//		} else if (  JDBCDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
-		//			dataSet = new JDBCDataSet( dataSetConfig );
-		//		} else if ( JavaClassDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
-		//			dataSet = new JavaClassDataSet( dataSetConfig );
-		//		} else if ( WebServiceDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
-		//			dataSet = new WebServiceDataSet( dataSetConfig );
-		//		} else if ( FileDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
-		//			dataSet = new FileDataSet( dataSetConfig );
-		//		} else {
-		//			logger.error("Invalid dataset type [" + dataSetConfig.getType() + "]");
-		//			throw new IllegalArgumentException("dataset type in dataset-config cannot be equal to [" + dataSetConfig.getType() + "]");
-		//		}
+		// if ( ScriptDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
+		// dataSet = new ScriptDataSet( dataSetConfig );
+		// } else if ( JDBCDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
+		// dataSet = new JDBCDataSet( dataSetConfig );
+		// } else if ( JavaClassDataSet.DS_TYPE.equals( dataSetConfig.getType()
+		// ) ) {
+		// dataSet = new JavaClassDataSet( dataSetConfig );
+		// } else if ( WebServiceDataSet.DS_TYPE.equals( dataSetConfig.getType()
+		// ) ) {
+		// dataSet = new WebServiceDataSet( dataSetConfig );
+		// } else if ( FileDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
+		// dataSet = new FileDataSet( dataSetConfig );
+		// } else {
+		// logger.error("Invalid dataset type [" + dataSetConfig.getType() +
+		// "]");
+		// throw new
+		// IllegalArgumentException("dataset type in dataset-config cannot be equal to ["
+		// + dataSetConfig.getType() + "]");
+		// }
 
 		return dataSet;
 	}
