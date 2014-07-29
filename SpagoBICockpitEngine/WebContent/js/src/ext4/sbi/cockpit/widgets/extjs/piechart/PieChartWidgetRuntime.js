@@ -52,7 +52,8 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		var store = this.getStore();
 	    	
 	    var seriesFields = [];
-		var seriesTitles = [];
+		var seriesTitles = [];			
+		
 		for(var i = 0; i < this.wconf.series.length; i++) {
 			var id = this.wconf.series[i].alias;
 			seriesFields.push(store.fieldsMeta[id].name);
@@ -119,20 +120,96 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		return series;
 	}
 	
+	
 	, getTooltip : function(storeItem, item){
 		
 		Sbi.trace("[PieChartWidgetRuntime.getTooltip]: IN");
-		
+				
 		var tooltip;
+		var percent = this.wconf.showpercentage;		
+		var store = this.getStore();			
+
+		var seriresConfig = this.getSeriesConfig();
+					
+//		item = slice; series; storeItem; index; startAngle; endAngle; margin; rho; startRho; endRho; middle; shadows; sprite; 
+//		item.storeItem.store.data.items[j].data = id; recNo; column_1; column_2;
+		
+		var seriesum = 0;
+		
+		if (percent){
+			for(var i = 0; i < store.data.items.length; i++){																				
+				for (var h in store.data.items[i].data){
+					if (h == seriresConfig.fields){
+						seriesum = seriesum + parseFloat(store.data.items[i].data[h]);
+					}
+				}													
+			}			
+		}
 		
 		var itemMeta = this.getItemMeta(item);
-		tooltip =  itemMeta.seriesFieldHeader + ': ' + itemMeta.seriesFieldValue 
-					+ " <p> " + itemMeta.categoryFieldHeaders;
+		var fieldValue = itemMeta.seriesFieldValue;
+		
+		if (percent) fieldValue = (fieldValue/seriesum)*100 + "%";
+		
+		tooltip =  itemMeta.seriesFieldHeader + ': ' + fieldValue + " <p> " + itemMeta.categoryFieldHeaders;
 		
 		Sbi.trace("[PieChartWidgetRuntime.getTooltip]: IN");
 		
 		return tooltip;
 	}
+	
+	/*
+	, getTooltip : function(record, item){
+		var percent = this.wconf.showpercentage;
+		var allDesignSeries = this.wconf.series;		
+		var colors = this.getColors();
+		var storeObject = item.storeItem;
+		
+		//the total sum for percentage calculation
+		var seriesum=0;
+		if (percent) {
+			for(var j=0; j<storeObject.store.data.items.length; j++){
+				seriesum += parseFloat(((storeObject.store.getAt(j)).data)['seriesflatvalue0']);
+			}
+		}
+		
+		var selectedSerieName = 'series0';		
+		var selectedSerie;	
+		var seriesFields = [];
+		var seriesTitles = [];
+		
+		for(var i = 0; i < this.wconf.series.length; i++) {
+			var id = this.wconf.series[i].alias;
+			seriesFields.push(storeObject.store.fieldsMeta[id].name);
+			seriesTitles.push(id);
+		}
+		
+		
+		var series = this.getChartSeries(seriesFields, colors);
+		
+		for (var i =0; i<series.length;i++){
+			if (series[i].field == selectedSerieName){
+				selectedSerie = series[i];
+				break;
+			}
+		}
+		
+		var valueObj = this.getFormattedValue(record, selectedSerie, null, allDesignSeries, seriesum);
+		
+		var tooltip = '';
+		
+		if (valueObj.measureName !== valueObj.serieName) {
+			tooltip = valueObj.serieName + '<br/>' + record.data.categories + '<br/>';
+			// in case the serie name is different from the measure name, put also the measure name
+			//tooltip += this.formatTextWithMeasureScaleFactor(valueObj.measureName, valueObj.measureName) + ' : ';
+		} else {
+			tooltip =  record.data.categories + '<br/>' + selectedSerie.displayName + ' : ' ;
+		}
+		tooltip += valueObj.value;
+		
+		return tooltip;
+	}
+	*/
 	
 	, getItemMeta: function(item) {
 		var itemMeta = {};
@@ -253,9 +330,9 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
                 field: seriesNames,	      
                 label: {
                     field: 'categories',
-                    display: 'rotate',
+                    display: 'outside',
                     contrast: true,
-                    font: '0px Arial'
+                    font: '10px Arial'
                 },
     	        tips: {
 	            	  trackMouse: true,
@@ -292,7 +369,7 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
     
 	, refresh:  function() {  
 		Sbi.trace("[LineChartWidgetRuntime.refresh]: IN");
-		Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.refresh.call(this);			
+		Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime.superclass.refresh.call(this);			
 		this.redraw();
 		Sbi.trace("[LineChartWidgetRuntime.refresh]: OUT");
 	}
@@ -323,14 +400,14 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		Sbi.trace("[PieChartWidgetRuntime.redraw]: OUT");
 	}
 	
-
-
+	/*
     , createChart: function () {
     	var retriever = new Sbi.cockpit.widgets.chart.DefaultChartDimensionRetrieverStrategy();
 		var size = retriever.getChartDimension(this);		
 		this.update(' <div align=\"center\" id="' + this.chartDivId + '" style="padding-top:0px;padding-bottom:0px;width: ' + size.width + '; height: ' + size.height + ';"></div>');		
 		
 		var storeObject = this.getJsonStore();
+		
 		var colors = this.getColors();
 		
 		var extraStyle ={};
@@ -367,6 +444,8 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 			items: [titlePanel, pieChartPanel]			
 		});
 	}	
+    */
+    
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -419,18 +498,9 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		var chart = Ext.create("Ext.chart.Chart", config);
 	    
 	    return chart;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
+	}	
 
-
-//	Format the value to display
+	//	Format the value to display
 	, getFormattedValue: function (record, series, allRuntimeSeries, allDesignSeries, seriesum){
 		var showPercentage = this.wconf.showpercentage;
 		var theSerieName  = series.displayName;
@@ -486,54 +556,7 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime.superclass.onRender.call(this, ct, position);	
 		
 		Sbi.trace("[PieChartWidgetRuntime.onRender]: OUT");
-	}
-	
-	/*
-	, getTooltip : function(record, item){
-		var percent = this.wconf.showpercentage;
-		var allRuntimeSeries = this.getRuntimeSeries();
-		var allDesignSeries = this.wconf.series;
-		var type = this.wconf.type;
-		var colors = this.getColors();
-		var storeObject = this.getJsonStore(percent);
-		var series;
-		//the total sum for percentage calculation
-		var seriesum=0;
-		if (percent) {
-			for(var j=0; j<storeObject.store.data.items.length; j++){
-//				seriesum += parseFloat(((storeObject.store.getAt(j)).data)['series0']);
-				seriesum += parseFloat(((storeObject.store.getAt(j)).data)['seriesflatvalue0']);
-			}
-		}
-		
-		var selectedSerieName = 'series0';		
-		var selectedSerie;
-		
-		series = this.getChartSeries(storeObject.serieNames, colors);
-		
-		for (var i =0; i<series.length;i++){
-			if (series[i].field == selectedSerieName){
-				selectedSerie = series[i];
-				break;
-			}
-		}
-		
-		var valueObj = this.getFormattedValue(record, selectedSerie, allRuntimeSeries, allDesignSeries, seriesum);
-		
-		var tooltip = '';
-		
-		if (valueObj.measureName !== valueObj.serieName) {
-			tooltip = valueObj.serieName + '<br/>' + record.data.categories + '<br/>';
-			// in case the serie name is different from the measure name, put also the measure name
-			//tooltip += this.formatTextWithMeasureScaleFactor(valueObj.measureName, valueObj.measureName) + ' : ';
-		} else {
-			tooltip =  record.data.categories + '<br/>' + selectedSerie.displayName + ' : ' ;
-		}
-		tooltip += valueObj.value;
-		
-		return tooltip;
-	}
-	*/
+	}	
 	
 });
 
