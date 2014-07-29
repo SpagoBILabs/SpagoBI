@@ -127,7 +127,8 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 	}
 	
 	, isStacked: function() {
-		return (this.wconf.type == 'stacked-barchart' || this.wconf.type == 'percent-stacked-barchart');
+		//return (this.wconf.type == 'stacked-barchart' || this.wconf.type == 'percent-stacked-barchart');
+		return (this.wconf.type == 'stacked-barchart');
 	}
 	
 	, isPercentStacked: function() {		
@@ -158,13 +159,12 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		var store = this.getStore();
 		
 		var colors = this.getColors();
-			
-		
+					
 		for(var i = 0; i < store.data.items.length; i++){
 			var seriesum = 0;
 
-			if(this.isStacked()){
-				for(var j = 0; j < seriresConfig.fields.length; j++){										
+			if(this.isPercentStacked()){
+				for(var j = 0; j < seriresConfig.fields.length; j++){					
 					for (var h in store.data.items[i].data){
 						if (h == seriresConfig.fields[j]){
 							seriesum = seriesum + parseFloat(store.data.items[i].data[h]);
@@ -177,14 +177,11 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 						if (h == seriresConfig.fields[j]){
 							if (seriesum != 0){
 								store.data.items[i].data[h] = parseFloat((store.data.items[i].data[h]/seriesum)*100);
-							} 
-							
-							//console.log("Val percent: " + store.data.items[i].data[h]);
+							} 									
 						}
 					}									
 				}	
-			}
-									
+			}								
 		}
 		
 		store.sort(categoriesConfig.fields[0], 'ASC');
@@ -230,8 +227,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		return background;
 	}
 	
-	, getAxes: function( categoriesConfig, seriesConfig ) {
-				
+	, getAxes: function( categoriesConfig, seriesConfig ) {			
 		var seriesAxis = {
 		    type: 'Numeric'
 		    , position: seriesConfig.position
