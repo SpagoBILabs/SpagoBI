@@ -5,11 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.datasource.service.rest;
 
-
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.service.JSONFailure;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,7 +21,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
+
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -33,62 +32,80 @@ import org.json.JSONException;
 @Path("/datasources")
 public class TestConnection {
 
-	static private String testDataSourceError = "Test data source fieled. SPAGOBIERRORCODE0015";
-
-	
 	static private Logger logger = Logger.getLogger(TestConnection.class);
-	
+
 	@POST
 	@Path("/test")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String testDataSource(@javax.ws.rs.core.Context HttpServletRequest req) throws Exception {
-		
-		logger.debug("IN");
-	
-		String jndi = (String)req.getParameter("JNDI_URL");
-		String url = (String)req.getParameter("CONNECTION_URL");
-		String user = (String)req.getParameter("USER");
-		String pwd = (String)req.getParameter("PASSWORD");
-		String driver = (String)req.getParameter("DRIVER");
-		String schemaAttr = (String)req.getParameter("CONNECTION_URL");
 
+		logger.debug("IN");
+
+		String jndi = req.getParameter("JNDI_URL");
+		String url = req.getParameter("CONNECTION_URL");
+		String user = req.getParameter("USER");
+		String pwd = req.getParameter("PASSWORD");
+		String driver = req.getParameter("DRIVER");
+		String schemaAttr = req.getParameter("CONNECTION_URL");
 
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
-		String schema=(String)profile.getUserAttribute(schemaAttr);
-		logger.debug("schema:"+ schema);
+		String schema = (String) profile.getUserAttribute(schemaAttr);
+		logger.debug("schema:" + schema);
 		Connection connection = null;
 
 		try {
-			if (jndi!=null && jndi.length()>0){
-					String jndiName = schema == null ? jndi : jndi + schema;
-					logger.debug("Lookup JNDI name:"+ jndiName);
-					Context ctx = new InitialContext();
-				    DataSource ds = (DataSource) ctx.lookup(jndiName);
-				    connection = ds.getConnection();
-			}else{			
-				    Class.forName(driver);
-				    connection = DriverManager.getConnection(url, user, pwd);
+			if (jndi != null && jndi.length() > 0) {
+				String jndiName = schema == null ? jndi : jndi + schema;
+				logger.debug("Lookup JNDI name:" + jndiName);
+				Context ctx = new InitialContext();
+				DataSource ds = (DataSource) ctx.lookup(jndiName);
+				connection = ds.getConnection();
+			} else {
+
+				if (driver.toLowerCase().contains("mongo")) {
+					logger.debug("Checking the connection for MONGODB");
+					MongoClient mongoClient = null;
+					try {
+						int databaseNameStart = url.lastIndexOf("/");
+						String databaseUrl = url.substring(0, databaseNameStart);
+						String databaseName = url.substring(databaseNameStart + 1);
+
+						mongoClient = new MongoClient(databaseUrl);
+						DB database = mongoClient.getDB(databaseName);
+						database.getCollectionNames();
+
+						logger.debug("Connection OK");
+						return ("{}");
+					} catch (Exception e) {
+						logger.error("Error connecting to the mongoDB", e);
+					} finally {
+						if (mongoClient != null) {
+							mongoClient.close();
+						}
+					}
+				} else {
+					Class.forName(driver);
+					connection = DriverManager.getConnection(url, user, pwd);
+				}
+
 			}
-		 if (connection != null){//test ok
-			 return ("{}");
-		 }else{
-			 return (new JSONFailure(new Exception(testDataSourceError))).toString();
-		 }
+			if (connection != null) {// test ok
+				logger.debug("Connection OK");
+				return ("{}");
+			} else {
+				return "{error: ''}";
+			}
 		} catch (Exception ex) {
 			logger.error("Error testing datasources", ex);
 			try {
-				return "{error: '"+ex.getMessage()+"'}";
+				return "{error: '" + ex.getMessage() + "'}";
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
 				throw new SpagoBIRuntimeException(
 						"Cannot fill response container", e);
 			}
 		}
-	}	
-	
-	
-	private String serializeException(Exception e) throws JSONException{
-		return ExceptionUtilities.serializeException(e.getMessage(),null);
 	}
+
 }

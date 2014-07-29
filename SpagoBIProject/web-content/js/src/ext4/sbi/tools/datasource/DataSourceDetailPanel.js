@@ -203,7 +203,6 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		this.dataSourceJdbcUser = Ext.create("Ext.form.field.Text",{
 			name: "USER",
 			fieldLabel: LN('sbi.datasource.type.jdbc.user'),
-			allowBlank: false,
 			hidden: true
 		});
 		
@@ -275,6 +274,8 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		
 		this.getForm().setValues(v);
 		
+
+		
 		if (Sbi.user.isSuperAdmin != 'true' && (this.dataSourceTypeJndi.getValue() || (v.USERIN!="" && v.USERIN != Sbi.user.userId))){
 			 
 			 //set all fields readonly
@@ -312,6 +313,12 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			 this.dataSourceJdbcUser.enable();
 			 this.dataSourceDriver.enable();
 		 }
+		
+		if(v.READ_ONLY != true)
+		{
+			this.dataSourceWriteDefault.disable();	
+		}
+
 	}
 	
 	, getValues: function(){
@@ -345,7 +352,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			valid = valid && (v.JNDI_URL!=null && v.JNDI_URL!=undefined &&  v.JNDI_URL!="");
 		}else{
 			valid = valid && (v.CONNECTION_URL!=null && v.CONNECTION_URL!=undefined &&  v.CONNECTION_URL!="");
-			valid = valid && (v.USER!=null && v.USER!=undefined &&  v.USER!="");
+			//valid = valid && (v.USER!=null && v.USER!=undefined &&  v.USER!="");
 			valid = valid && (v.DRIVER!=null && v.DRIVER!=undefined &&  v.DRIVER!="");
 		}
 		return valid;
