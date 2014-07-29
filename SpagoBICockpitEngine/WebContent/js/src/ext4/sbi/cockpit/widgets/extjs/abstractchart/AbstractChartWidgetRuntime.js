@@ -182,9 +182,19 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, getColors : function () {
-		Sbi.trace("[AbstractChartWidgetRuntime.init]: IN");
-		var colors = Sbi.widgets.Colors.defaultColors;
-		Sbi.trace("[AbstractChartWidgetRuntime.init]: IN");
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.init]: IN");
+		var colors = [];
+		if (this.wconf !== undefined && this.wconf.groupingVariable != null) {
+			colors = Sbi.widgets.Colors.defaultColors;
+		} else {
+			if (this.wconf !== undefined && this.wconf.series !== undefined && this.wconf.series.length > 0) {
+				var i = 0;
+				for (; i < this.wconf.series.length; i++) {
+					colors.push(this.wconf.series[i].color);
+				}
+			}
+		}
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.init]: IN");
 		return colors;
 	}
 	
