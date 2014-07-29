@@ -105,6 +105,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- NEW Line Chart widget -->
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/LineChartWidgetRuntime.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidgetDesigner.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/locale/<%=locale.getLanguage()%>.js'/></script>
 
 <!-- NEW Bar Chart widget -->
@@ -135,11 +136,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidget.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidgetDesigner.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/piechart/locale/<%=locale.getLanguage()%>.js'/></script>
-
-<!-- Line Chart widget -->
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidget.js'/></script>
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidgetDesigner.js'/></script>
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/linechart/locale/<%=locale.getLanguage()%>.js'/></script>
 
 <!-- Selection widget -->
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/selection/SelectionWidget.js'/></script>
