@@ -89,6 +89,8 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
      */
     parentContainer: null
     
+    , loadingMask: null
+    
     /**
      * @property {String} storeId
      * The label of the dataset used to feed the widget
@@ -266,8 +268,11 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		var store = this.getStore();
 		if(Sbi.isValorized(store)) {
 			store.on('metachange', this.onStoreMetaChange, this);
-			store.on('load', this.onStoreLoad, this);
 			store.on('datachanged', this.onDataChanged, this);
+			store.on('beforeload', this.onStoreBeforeLoad, this);
+			store.on('load', this.onStoreLoad, this);
+			store.on('beforeassociation', this.onStoreBeforeAssociation, this);
+			store.on('association', this.onStoreAssociation, this);
 			// exceptions are centralized managed by the store manager
 			bounded = true;
 		} else {
@@ -284,8 +289,11 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		var store = this.getStore();
 		if(Sbi.isValorized(store)) {
 			store.un('metachange', this.onStoreMetaChange, this);
-			store.un('load', this.onStoreLoad, this);
 			store.un('datachanged', this.onDataChanged, this);	
+			store.un('beforeload', this.onStoreBeforeLoad, this);
+			store.un('load', this.onStoreLoad, this);
+			store.un('beforeassociation', this.onStoreBeforeAssociation, this);
+			store.on('association', this.onStoreAssociation, this);
 		} else {
 			Sbi.debug("Widget is not bound to any store or it is bound to a store that has already been removed from store manager");
 		}
@@ -771,6 +779,34 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     	Sbi.trace("[WidgetRuntime.setFilterValue]: OUT");    	
     }
 	
+    
+    , showLoadingMask: function() {
+    	Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: IN");
+    	if(this.rendered === true) {
+			Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: " +
+					"widget is rendered so need to be masked");
+			if(this.loadingMask === null) {
+				Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: " +
+				"initializing mask...");
+				this.loadingMask = new Ext.LoadMask(this, {msg:"Please wait..."});
+				Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: " +
+				"mask succesfully initialized");
+			}
+			this.loadingMask.show();
+		} else{
+			Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: no need to mask because the widget is not rendered yet");
+		}
+    	Sbi.trace("[WidgetRuntime.showLoadingMask]: OUT");
+    }
+    
+    , hideLoadingMask: function() {
+    	Sbi.trace("[WidgetRuntime.hideLoadingMask][" + this.getId() + "]: IN");
+		if(this.loadingMask !== null) {
+			this.loadingMask.hide();
+		}
+		Sbi.trace("[WidgetRuntime.hideLoadingMask]: OUT");
+    }
+    
 	, toString: function() {
 		return this.id;
 	}
@@ -783,9 +819,31 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		Sbi.cockpit.core.WidgetRuntime.superclass.onRender.call(this, ct, position);	
 	}
 	
-	, onStoreLoad: function(store) {
-		// do nothing	
+	, onStoreBeforeLoad: function(store, operation, eOpts) {
+		Sbi.trace("[WidgetRuntime.onStoreBeforeLoad][" + this.getId() + "]: IN");
+		this.showLoadingMask();
+		Sbi.trace("[WidgetRuntime.onStoreBeforeLoad]: OUT");
 	}
+	
+	, onStoreLoad: function(store) {
+		Sbi.trace("[WidgetRuntime.onStoreLoad][" + this.getId() + "]: IN");
+		this.hideLoadingMask();
+		Sbi.trace("[WidgetRuntime.onStoreLoad]: OUT");
+	}
+	
+	, onStoreBeforeAssociation: function(store, operation, eOpts) {
+		Sbi.trace("[WidgetRuntime.onStoreBeforeAssociation][" + this.getId() + "]: IN");
+		this.showLoadingMask();
+		Sbi.trace("[WidgetRuntime.onStoreBeforeAssociation]: OUT");
+	}
+	
+	, onStoreAssociation: function(store, operation, eOpts) {
+		Sbi.trace("[WidgetRuntime.onStoreAssociation][" + this.getId() + "]: IN");
+		this.hideLoadingMask();
+		Sbi.trace("[WidgetRuntime.onStoreAssociation]: OUT");
+	}
+	
+	
 	
 	, onDataChanged: function(store, eOpts) {
 		// do nothing	
