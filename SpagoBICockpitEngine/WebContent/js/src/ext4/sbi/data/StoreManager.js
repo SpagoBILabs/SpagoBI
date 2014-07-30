@@ -1031,6 +1031,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		var storesAggregated = [];
 		for(var i = 0; i < stores.length; i++) {
 			var store = stores[i];
+			store.fireEvent('beforeassociation', store, associationGroup, selections);
+			
 			if(this.isStoreAggregated(store)) {
 				storesAggregations.push(this.getAggregationOnStore(store));
 				storesAggregated.push(this.getStoreId(store));
@@ -1520,6 +1522,16 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	Sbi.trace("[StoreManager.onAssociationGroupReloaded]: Options object contains the following properties: " + Sbi.toSource(options.params, true));
     	Sbi.trace("[StoreManager.onAssociationGroupReloaded]: Options object is equal to [" + Sbi.toSource(options.params, true) + "]");
     	
+    	
+    	var storeIds = Ext.JSON.decode(options.params.datasets);
+    	var aggregations = Ext.JSON.decode(options.params.aggregations);
+    	var associationGroup = Ext.JSON.decode(options.params.associationGroup);
+    	var selections = Ext.JSON.decode(options.params.selections);
+    	
+    	for(var i = 0; i < storeIds.length; i++) {
+			var store = this.getStore(storeIds[i], aggregations);
+			store.fireEvent('association', store, associationGroup, selections);
+		}
     	
 		if(response !== undefined && response.statusText=="OK") {
     		var r = response.responseText || response.responseXML;
