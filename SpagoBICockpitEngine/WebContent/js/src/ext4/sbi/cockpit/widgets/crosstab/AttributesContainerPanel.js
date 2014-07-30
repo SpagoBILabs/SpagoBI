@@ -62,11 +62,9 @@ Sbi.cockpit.widgets.crosstab.AttributesContainerPanel = function(config) {
         //, sm: this.sm
         , enableDragDrop: true   
         , ddGroup: this.ddGroup || 'worksheetDesignerDDGroup'
-	    , layout: 'fit'
+	    , layout: 'fit'	    
 	    , hideHeaders: true
-	    , viewConfig: {
-	    	forceFit: true
-	    }
+	    , forceFit: true
 		, tools: [
 	          {
 	        	  type: 'close'
@@ -81,8 +79,7 @@ Sbi.cockpit.widgets.crosstab.AttributesContainerPanel = function(config) {
 				//grid.getView().select('.x-box-inner').setStyle('display', 'none');				
     		}
         	, keydown: function(e) { 
-        		if (e.keyCode === 46) {
-        			alert("canc");
+        		if (e.keyCode === 46) {        			
         			this.removeSelectedAttributes();
       	      	}      
       	    }
@@ -398,6 +395,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.AttributesContainerPanel, Ext.grid.Panel
         
 	    var fieldColumn = {
 	    	header:  ''
+	    	, flex: 0
 	    	, dataIndex: 'alias'
 	    	, hideable: false
 	    	, hidden: false	
