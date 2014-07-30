@@ -368,6 +368,8 @@ public class SQLDBCache implements ICache {
 			}
 			
 			String queryText = sqlBuilder.toString();
+			logger.debug("Cached dataset access query is equal to [" + queryText + "]");
+			
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 			DataStore toReturn = (DataStore) dataStore;
 			
