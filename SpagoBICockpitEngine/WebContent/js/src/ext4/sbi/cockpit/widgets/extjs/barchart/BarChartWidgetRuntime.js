@@ -127,8 +127,8 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 	}
 	
 	, isStacked: function() {
-		//return (this.wconf.type == 'stacked-barchart' || this.wconf.type == 'percent-stacked-barchart');
-		return (this.wconf.type == 'stacked-barchart');
+		return (this.wconf.type == 'stacked-barchart' || this.wconf.type == 'percent-stacked-barchart');
+		//return (this.wconf.type == 'stacked-barchart');
 	}
 	
 	, isPercentStacked: function() {		
