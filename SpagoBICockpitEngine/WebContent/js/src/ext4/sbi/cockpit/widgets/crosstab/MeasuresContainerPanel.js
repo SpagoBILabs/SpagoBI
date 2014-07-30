@@ -74,9 +74,8 @@ Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel = function(config) {
         , enableDragDrop: true
         , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
 	    , layout: 'fit'
-	    , viewConfig: {
-	    	forceFit: true
-	    }
+	    , hideHeaders: true
+	    , forceFit: true
 		, tools: [
 	          {
 	        	  type: 'help'
@@ -127,7 +126,7 @@ Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel = function(config) {
     
 };
 
-Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
+Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.Panel, {
 	
 	initialData: undefined
 	, isStatic: false
@@ -143,6 +142,8 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.GridPan
 	      , {name: 'nature', type: 'string'}
 	])
 
+	, defaultAggregationFunction : "SUM"
+		
 	, init: function() {
 		this.initStore();
 		this.initColumnModel();
@@ -203,9 +204,10 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.GridPan
 
 		this.template = new Ext.XTemplate(this.renderTpl1);
         this.template.compile();
-        
+              
 	    var fieldColumn = {
 	    	header:  ''
+	    	, flex: 0
 	    	, dataIndex: 'alias'
 	    	, hideable: false
 	    	, hidden: false	
