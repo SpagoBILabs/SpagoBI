@@ -540,7 +540,7 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 			Content content = dao.loadActiveArtifactContent(artifact.getId());
 			pars.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, content.getId());
 			return pars;
-		} catch (SourceBeanException e) {
+		} catch (Throwable e) {
 			logger.error("Error while decorating document's template", e);
 			throw new SpagoBIRuntimeException("Error while decorating document's template", e);
 		}
