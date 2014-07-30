@@ -181,8 +181,7 @@ public class DefaultEngineDatamartRetriever implements
 		try {
 			zipFile = new ZipFile(metamodelJarFile);
 		} catch (Throwable t) {
-			//throw new DAOException("Impossible to read jar file [" + metamodelJarFile + "]");
-			throw new SpagoBIRuntimeException("Impossible to read jar file [" + metamodelJarFile + "]");
+			throw new SpagoBIRuntimeException("Impossible to read jar file [" + metamodelJarFile + "]", t);
 		} 
 		
 		zipEntry = zipFile.getEntry("META-INF/persistence.xml");
