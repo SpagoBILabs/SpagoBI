@@ -1,5 +1,6 @@
 package it.eng.spagobi.engine.cockpit.api.crosstable;
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
@@ -8,9 +9,11 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engine.cockpit.api.AbstractCockpitEngineResource;
+import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -22,6 +25,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.utils.datamart.DefaultEngineDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -40,10 +44,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.LogMF;
@@ -73,6 +79,15 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	public enum OutputType {JSON, HTML};
 	
 	private String temporaryTableName;
+	
+	@Context
+	private HttpServletRequest servletRequest;
+	
+	
+	private UserProfile getUserProfile() {
+		UserProfile profile = this.getIOManager().getUserProfile();
+		return profile;
+	}
 	
 	@GET
 	@Path("/")	
@@ -111,7 +126,12 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			logger.debug("Parameter [datasetLabel] is equals to [" + datasetLabel + "]");							
 						
 			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+			dataSetDao.setUserProfile(this.getUserProfile());
 			IDataSet dataset = dataSetDao.loadDataSetByLabel(datasetLabel);
+			checkQbeDataset(dataset);
+			
+			
+			IDataSource dataSource = dataset.getDataSource();
 			
 			// persist dataset into temporary table	
 			IDataSetTableDescriptor descriptor = this.persistDataSet(dataset);
@@ -168,9 +188,9 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			htmlCode = crossTab.getHTMLCrossTab(this.getLocale());//									
 									
 		} catch(Exception e) {
-			logger.error("Error while creating cross table", e);
 			errorHitsMonitor = MonitorFactory.start("WorksheetEngine.errorHits");
 			errorHitsMonitor.stop();
+			throw new SpagoBIRuntimeException("An unexpecte error occured while genereting cross tab html", e);
 		} finally {
 			if (totalTimeMonitor != null) totalTimeMonitor.stop();
 			logger.debug("OUT");
@@ -406,6 +426,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		
 		try{
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			dataSourceDAO.setUserProfile(this.getUserProfile());
 			dataSource = dataSourceDAO.loadDataSourceWriteDefault();
 		} catch (Exception e) {
 			throw new SpagoBIEngineRuntimeException(e);
@@ -496,6 +517,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		
 		try{
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			dataSourceDAO.setUserProfile(this.getUserProfile());
 			dataSource = dataSourceDAO.loadDataSourceWriteDefault();
 		} catch (Exception e) {
 			throw new SpagoBIEngineRuntimeException(e);
@@ -623,4 +645,29 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			}
 		}
 	}	
+	
+	private void checkQbeDataset(IDataSet dataSet) {
+		
+		IDataSet ds = null;
+		if (dataSet instanceof VersionedDataSet) {
+			VersionedDataSet versionedDataSet = (VersionedDataSet)dataSet;
+			ds = versionedDataSet.getWrappedDataset();
+		} else {
+			ds = dataSet;
+		}
+		
+		
+		if (ds instanceof QbeDataSet) {
+			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			String userId = userProfile.getUserId().toString();
+			MetamodelServiceProxy proxy = new MetamodelServiceProxy(userId, servletRequest.getSession());
+			DefaultEngineDatamartRetriever retriever = new DefaultEngineDatamartRetriever(proxy);
+			Map parameters = ds.getParamsMap();
+			if (parameters == null) {
+				parameters = new HashMap();
+				ds.setParamsMap(parameters);
+			}
+			ds.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+		}
+	}
 }
