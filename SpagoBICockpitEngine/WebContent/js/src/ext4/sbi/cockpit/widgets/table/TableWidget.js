@@ -28,13 +28,13 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 		    frame: false,
 		    border:false,
 		    autoScroll: true,
-		    collapsible: false,
-		    loadMask: true,		    
+		    collapsible: false,		    
 		    viewConfig: {
 		    	forceFit:false,
 		        autoFill: true,
 		        enableRowBody:true,
-		        showPreview:true
+		        showPreview:true,
+		        loadMask: false
 		    },
 		    layout: "fit"
 		},

@@ -282,6 +282,10 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 	
 	, onStoreLoad: function() {
 		Sbi.trace("[AbstractChartWidgetRuntime.onStoreLoad][" + this.getId() + "]: IN");
+		
+		Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime.superclass.onStoreLoad.call(this, this.getStore());
+		
+		
 		if(this.getStore().status === "error") {
 			return;
 		}
