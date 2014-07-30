@@ -176,16 +176,24 @@ public class SpagoBICacheConfiguration {
 				throw new CacheException("Impossible to find configuartion blocks [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "." + TYPE_TAG + "]");
 			}
 			
+			logger.trace("Initializing types' default dimension");
+			logger.trace("Types' default dimension configuration block is equal to " + typesList.toString());
 			dimensionTypes = new ArrayList<Properties>();
 			for(SourceBean type : typesList) {
 				String name = (String)type.getAttribute("name");
-				String bytes = (String)type.getAttribute("bytes");			
+				String bytes = (String)type.getAttribute("bytes");	
 				
 				Properties props = new Properties();
-				if(name != null) props.setProperty("name", name);
-				if(bytes != null) props.setProperty("bytes", bytes);
+				if(name != null) {
+					props.setProperty("name", name);
+				}
+				if(bytes != null) {
+					props.setProperty("bytes", bytes);
+				}
+				logger.trace("Type [" + name + "] defualt dimension is equal to [" + bytes + "]");
 				dimensionTypes.add(props);
 			}
+			logger.trace("Types' default dimension succesfully initialized");
 		} catch(Throwable t) {
 			throw new RuntimeException("An error occured while loading geo dimension levels' properties from file engine-config.xml", t);
 		} finally {
