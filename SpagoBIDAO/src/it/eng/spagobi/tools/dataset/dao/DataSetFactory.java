@@ -6,6 +6,7 @@
 package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
@@ -139,6 +140,10 @@ public class DataSetFactory {
 	}
 
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet) {
+		return toDataSet(sbiDataSet, null);
+	}
+	
+	public static IDataSet toDataSet(SbiDataSet sbiDataSet, IEngUserProfile userProfile) {
 		IDataSet ds = null;
 		VersionedDataSet versionDS = null;
 		logger.debug("IN");
@@ -169,6 +174,7 @@ public class DataSetFactory {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+				if(userProfile != null) dataSourceDao.setUserProfile(userProfile);
 				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
 
 				if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
@@ -234,6 +240,7 @@ public class DataSetFactory {
 				((QbeDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 				((QbeDataSet) ds).setDatamarts(jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+				if(userProfile != null) dataSourceDao.setUserProfile(userProfile);
 				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 				if (dataSource != null) {
 					((QbeDataSet) ds).setDataSource(dataSource);
@@ -249,6 +256,7 @@ public class DataSetFactory {
 				ds = new FlatDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+				if(userProfile != null) dataSourceDao.setUserProfile(userProfile);
 				IDataSource dataSource = dataSourceDao
 						.loadDataSourceByLabel(jsonConf
 								.getString(DataSetConstants.DATA_SOURCE));
@@ -306,6 +314,7 @@ public class DataSetFactory {
 				if (ds.getDataSourceForWriting() == null) {
 					logger.debug("take write default data source as data source for writing");
 					DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+					if(userProfile != null) dataSourceDao.setUserProfile(userProfile);
 					IDataSource dataSourceWriteDef = dataSourceDao.loadDataSourceWriteDefault();
 					if (dataSourceWriteDef != null) {
 						logger.debug("data source write default is " + dataSourceWriteDef.getLabel());

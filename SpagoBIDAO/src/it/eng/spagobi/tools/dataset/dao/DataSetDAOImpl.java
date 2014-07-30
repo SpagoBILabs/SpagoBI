@@ -75,7 +75,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibQuery.setInteger(1, id);	
 			SbiDataSet dsActiveDetail =(SbiDataSet)hibQuery.uniqueResult();
 			if(dsActiveDetail!=null){
-				toReturn = DataSetFactory.toDataSet(dsActiveDetail);
+				toReturn = DataSetFactory.toDataSet(dsActiveDetail, this.getUserProfile());
 			}
 			transaction.commit();
 
@@ -124,7 +124,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if(sbiDataSet!=null){
 				//GuiDataSetDetail detail = DataSetFactory.toGuiDataSet(sbiDataSet);
 				//toReturn = DataSetFactory.toGuiDataSet(sbiDataSet);
-				toReturn = DataSetFactory.toDataSet(sbiDataSet);
+				toReturn = DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile());
 			}
 			
 			transaction.commit();
@@ -465,7 +465,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if( sbiDatasetVersions != null && sbiDatasetVersions.isEmpty() == false ){
 				for(SbiDataSet sbiDatasetVersion : sbiDatasetVersions) {
-					IDataSet guiDataSet = DataSetFactory.toDataSet(sbiDatasetVersion);
+					IDataSet guiDataSet = DataSetFactory.toDataSet(sbiDatasetVersion, this.getUserProfile());
 					
 					List<IDataSet> oldDsVersion = new ArrayList();
 
@@ -554,7 +554,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if( sbiDatasetVersions != null && sbiDatasetVersions.isEmpty() == false ){
 				for(SbiDataSet sbiDatasetVersion : sbiDatasetVersions) {
-					IDataSet guiDataSet = DataSetFactory.toDataSet(sbiDatasetVersion);
+					IDataSet guiDataSet = DataSetFactory.toDataSet(sbiDatasetVersion, this.getUserProfile());
 					
 					List<IDataSet> oldDsVersion = new ArrayList();
 
@@ -658,7 +658,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Iterator it = sbiActiveDatasetsList.iterator();		
 				while (it.hasNext()) {
 					SbiDataSet hibDataSet = (SbiDataSet)it.next();
-					IDataSet ds = DataSetFactory.toDataSet(hibDataSet);
+					IDataSet ds = DataSetFactory.toDataSet(hibDataSet, this.getUserProfile());
 					List<IDataSet> oldDsVersion = new ArrayList();
 
 					if(Integer.valueOf(hibDataSet.getId().getDsId()) != null){
@@ -765,7 +765,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Iterator it = sbiActiveDatasetsList.iterator();		
 				while (it.hasNext()) {
 					SbiDataSet hibDataSet = (SbiDataSet)it.next();
-					IDataSet ds = DataSetFactory.toDataSet(hibDataSet);
+					IDataSet ds = DataSetFactory.toDataSet(hibDataSet, this.getUserProfile());
 					List<IDataSet> oldDsVersion = new ArrayList();
 
 					if(Integer.valueOf(hibDataSet.getId().getDsId()) != null){
@@ -1303,7 +1303,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			List<SbiDataSet> sbiDataSetList = hibernateQuery.list();
 			for (SbiDataSet sbiDataSet : sbiDataSetList) {
 				if(sbiDataSet != null){
-					IDataSet toReturn = DataSetFactory.toDataSet(sbiDataSet);
+					IDataSet toReturn = DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile());
 					session.delete(sbiDataSet);		
 					DataSetEventManager.getInstance().notifyDelete(toReturn);
 				}
@@ -1367,7 +1367,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			List<SbiDataSet> sbiDataSetList = hibernateQuery.list();
 			for (SbiDataSet sbiDataSet : sbiDataSetList) {
 				if(sbiDataSet != null){
-					IDataSet toReturn = DataSetFactory.toDataSet(sbiDataSet);
+					IDataSet toReturn = DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile());
 					session.delete(sbiDataSet);		
 					DataSetEventManager.getInstance().notifyDelete(toReturn);
 				}
@@ -1415,7 +1415,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibQuery.setBoolean(0, true);
 				hibQuery.setInteger(1, dsId);	
 				SbiDataSet dsActiveDetail =(SbiDataSet)hibQuery.uniqueResult();
-				oldDataSet = DataSetFactory.toDataSet(dsActiveDetail);
+				oldDataSet = DataSetFactory.toDataSet(dsActiveDetail, this.getUserProfile());
 				dsActiveDetail.setActive(false);
 				
 				Query hibernateQuery = session.createQuery("from SbiDataSet h where h.id.versionNum = ? and h.id.dsId = ?" );
@@ -1785,7 +1785,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		results = new ArrayList<IDataSet>();
 		for (SbiDataSet sbiDataSet : sbiDataSetList) {
 			if(sbiDataSet != null){
-				results.add(DataSetFactory.toDataSet(sbiDataSet));				
+				results.add(DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile()));				
 			}
 		}
 		return results;
