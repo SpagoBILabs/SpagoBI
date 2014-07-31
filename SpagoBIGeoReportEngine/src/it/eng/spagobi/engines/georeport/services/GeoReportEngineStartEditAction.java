@@ -220,7 +220,7 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 		Properties levelProps = null;
 		levelProps = GeoReportEngineConfig.getInstance().getLevelByName(levelName);
 		if(levelProps == null) {
-			throw new RuntimeException("Impossible to load from engine-config.xml properties of hierachy level [" + levelName + "]");
+			throw new RuntimeException("Impossible to load from the layers catalogue properties of hierachy level [" + levelName + "]");
 		}
 		
 		String layerID = levelProps.getProperty("layerId");
