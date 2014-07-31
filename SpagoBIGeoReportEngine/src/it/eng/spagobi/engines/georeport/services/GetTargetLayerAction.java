@@ -167,21 +167,9 @@ public class GetTargetLayerAction extends AbstractBaseServlet {
 				SimpleFeature f  = (SimpleFeature)it.next();
 				Property property = f.getProperty(layerId);
 				if(property != null) {
-					String id = (String)f.getProperty(layerId).getValue();
+					String id = "" + f.getProperty(layerId).getValue();
 					if(idIndex.containsKey(id)) {
 						list.add(f);
-					} else {
-						if("comuni".equalsIgnoreCase(layerName)) {
-							Property p = f.getProperty("codice_provincia");
-							if(p != null) {
-								String code = (String)p.getValue();
-								if("021".equalsIgnoreCase(code)) {
-									logger.debug("Feature [" + id + "] filtered out");
-								}
-							}
-						} else {
-							logger.debug("Feature [" + id + "] filtered out");
-						}
 					}
 				} else {
 					 logger.warn("Impossible to read attribute [" + layerId + "] from feature [" + f + "]");					

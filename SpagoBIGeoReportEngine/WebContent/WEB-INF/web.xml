@@ -109,6 +109,15 @@
     <!--  ============================================================================ -->
 	<!--  SERVLETS								 									                                   -->
 	<!--  ============================================================================ -->
+	<servlet>
+		<servlet-name>ConfigServlet</servlet-name>
+		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
+		<init-param>
+			<param-name>AF_CONFIG_FILE</param-name>
+			<param-value>/WEB-INF/conf/master.xml</param-value>
+		</init-param>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
 	
 	<servlet>
   		<servlet-name>ProxyTicketReceptor</servlet-name> 
