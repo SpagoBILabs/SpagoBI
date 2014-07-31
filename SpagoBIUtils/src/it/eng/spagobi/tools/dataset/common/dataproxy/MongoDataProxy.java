@@ -22,10 +22,49 @@ public class MongoDataProxy extends AbstractDataProxy {
 	String statement;
 	CommandResult result;
 
+	private static final String SINGLE_RESULT = "SINGLE_DOCUMENT_QUERY";
+	private static final String LIST_RESULT = "LIST_DOCUMENT_QUERY";
+
 	private static transient Logger logger = Logger.getLogger(MongoDataProxy.class);
+	/**
+	 * Override the tojsonObject to serialize the MongoObject like ObjectID as
+	 * String. For example {_id: ObjectID("313213")} will be serialized in {_id:
+	 * "313213"}
+	 */
+	private StringBuffer overridenToJSONObject;
+
+	/**
+	 * Decorate the js adding a function that navigates the cursor resulting
+	 * from the query
+	 */
+	private StringBuffer decorateFunction;
 
 	public MongoDataProxy() {
 		this.setCalculateResultNumberOnLoad(true);
+
+		overridenToJSONObject = new StringBuffer();
+		overridenToJSONObject = overridenToJSONObject.append("var tojsonObject2 = tojsonObject;");
+		overridenToJSONObject = overridenToJSONObject.append("tojsonObject = function (x, indent, nolint){");
+		overridenToJSONObject = overridenToJSONObject.append(" assert.eq((typeof x), \"object\", \"tojsonObject needs object, not [\" + (typeof x) + \"]\");");
+		overridenToJSONObject = overridenToJSONObject.append("if (typeof(x.tojson) == \"function\" && x.tojson != tojson) {");
+		overridenToJSONObject = overridenToJSONObject.append("return '\"'+x+'\"' ;");
+		overridenToJSONObject = overridenToJSONObject.append("}else{");
+		overridenToJSONObject = overridenToJSONObject.append("return tojsonObject2(x, indent, nolint);");
+		overridenToJSONObject = overridenToJSONObject.append("}");
+		overridenToJSONObject = overridenToJSONObject.append("};");
+
+		decorateFunction = new StringBuffer();
+		decorateFunction = decorateFunction.append("var serializeResult = function(cursor){");
+		decorateFunction = decorateFunction.append("result='[';");
+		decorateFunction = decorateFunction.append(" cursor.forEach(function(c){result=result+(tojson(c))+',';});");
+		decorateFunction = decorateFunction.append("var length = result.length;");
+		decorateFunction = decorateFunction.append("print(result[length-1]);");
+		decorateFunction = decorateFunction.append("if(result[length-1]==','){");
+		decorateFunction = decorateFunction.append("result= result.substring(0,length-1);");
+		decorateFunction = decorateFunction.append("} ");
+		decorateFunction = decorateFunction.append("result=result+']';");
+		decorateFunction = decorateFunction.append(" return result;};");
+		decorateFunction = decorateFunction.append("return serializeResult(query); }");
 	}
 
 	public MongoDataProxy(IDataSource dataSource, String statement) {
@@ -55,8 +94,6 @@ public class MongoDataProxy extends AbstractDataProxy {
 			dataReader.setFetchSize(getFetchSize());
 			dataReader.setOffset(getOffset());
 			dataReader.setMaxResults(getMaxResults());
-			// ((MongoDataReader)
-			// dataReader).setSingleDocumentQuery(isSingleDocumentQuery());
 			((MongoDataReader) dataReader).setAggregatedQuery(isAggregatedQuery());
 			dataStore = dataReader.read(result);
 		} catch (Throwable t) {
@@ -111,7 +148,7 @@ public class MongoDataProxy extends AbstractDataProxy {
 			logger.error("Exception executing the MongoDataset", e);
 			throw new SpagoBIRuntimeException("Exception executing the MongoDataset", e);
 		} finally {
-			logger.error("Closing connection");
+			logger.debug("Closing connection");
 			mongoClient.close();
 		}
 
@@ -129,27 +166,36 @@ public class MongoDataProxy extends AbstractDataProxy {
 	 */
 	private String getDecoredStatement() {
 
-		// THE DECORATING FUNCTION
-		// " function(){		"+this.statement
-		// + "var serializeResult = function(cursor){"
-		// + "	result='['; "
-		// + "	cursor.forEach(function(c){result=result+(tojson(c))+',';});"
-		// + "	var length = result.length;"
-		// + "	print(result[length-1]);" + "	if(result[length-1]==','){"
-		// + "		print('ok');"
-		// + "		result= result.substring(0,length-1);"
-		// + "	}"
-		// + "	result=result+']';" + "return result;" + "};"
-		// + "return serializeResult(x); }";
-
 		String decored = "";
 
-		if (isSingleDocumentQuery()) {
-			decored = " function(){ " + this.statement + " return query};";
-		} else {
+		/**
+		 * The result is a fixed value (for example return 55). In this case we
+		 * envelop the result in a object. If the result is already an object
+		 * return it
+		 */
+
+		if (isSingleValue()) {// the result is a fixed value
+			decored = " function(){ " + overridenToJSONObject.toString() + " " + this.statement
+					+ " if(typeof(sbiDatasetfixedResult)==\"object\"){return sbiDatasetfixedResult}else{return {\"result\": sbiDatasetfixedResult}};}";
+		}
+
+		/**
+		 * The result is a single document so return it
+		 */
+		else if (isSingleDocumentQuery()) {
+			decored = " function(){ " + overridenToJSONObject.toString() + " " + this.statement + " return query};";
+		}
+
+		/**
+		 * The result is a cursor so navigate it using decorateFunction
+		 */
+		else {
 			decored = " function(){"
+					+ overridenToJSONObject.toString()
+					+ " "
 					+ this.statement
-					+ "var serializeResult = function(cursor){	result='['; cursor.forEach(function(c){result=result+(tojson(c))+',';});	var length = result.length;	print(result[length-1]);	if(result[length-1]==','){	result= result.substring(0,length-1);	} result=result+']'; return result;}; return serializeResult(query); }";
+					+ decorateFunction.toString();
+			// "var serializeResult = function(cursor){	result='['; cursor.forEach(function(c){result=result+(tojson(c))+',';});	var length = result.length;	print(result[length-1]);	if(result[length-1]==','){	result= result.substring(0,length-1);	} result=result+']'; return result;}; return serializeResult(query); }";
 		}
 
 		logger.debug("Mongo decorated query:");
@@ -165,7 +211,22 @@ public class MongoDataProxy extends AbstractDataProxy {
 	 */
 	private boolean isSingleDocumentQuery() {
 		if (this.statement != null) {
-			if (this.statement.contains("findOne") || this.statement.contains("aggregate")) {
+			if (this.statement.contains(SINGLE_RESULT) || this.statement.contains("findOne") || this.statement.contains("aggregate")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * findOne and aggregation queries returns a single document. The normal
+	 * find returns a cursor
+	 * 
+	 * @return
+	 */
+	private boolean isSingleValue() {
+		if (this.statement != null) {
+			if (this.statement.contains("sbiDatasetfixedResult")) {
 				return true;
 			}
 		}
@@ -174,6 +235,9 @@ public class MongoDataProxy extends AbstractDataProxy {
 
 	private boolean isAggregatedQuery() {
 		if (this.statement != null) {
+			if (this.statement.contains(SINGLE_RESULT) || this.statement.contains(LIST_RESULT) || isSingleValue()) {
+				return false;
+			}
 			if (this.statement.contains("aggregate")) {
 				return true;
 			}
