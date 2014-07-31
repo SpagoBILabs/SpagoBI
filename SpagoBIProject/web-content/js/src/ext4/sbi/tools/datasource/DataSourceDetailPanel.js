@@ -314,7 +314,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			 this.dataSourceDriver.enable();
 		 }
 		
-		if(v.READ_ONLY != true)
+		if(v.READ_ONLY == true)
 		{
 			this.dataSourceWriteDefault.disable();	
 		}
