@@ -204,7 +204,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		
 		var needRefresh = this.isRefreshable(config);
 				
-		this.setStoreId(config.storeId, false);
+		var aggregations;
+		if(config.storeConf) aggregations = config.storeConf.aggregations;
+		this.setStoreId(config.storeId, aggregations, false);
 		this.setWType(config.wtype, false);
 		this.setCustomConfiguration(config.wconf, false);
     	this.setStyleConfiguration(config.wstyle, false);    	
@@ -218,7 +220,8 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     			Sbi.trace("[WidgetRuntime.setConfiguration]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
     		}
     	} else {    		
-    		if(needRefresh) {    		
+    		if(needRefresh) {    
+    			Sbi.trace("[WidgetRuntime.setConfiguration]: There are some changes in configurations so the widget will be refreshed");
     			this.refresh();
     		} else {    			
     			Sbi.trace("[WidgetRuntime.setConfiguration]: No change found in configuration, so widget won't be refreshed");
@@ -301,17 +304,21 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		Sbi.trace("[WidgetRuntime.unboundStore]: OUT");
 	}
 	
-	, setStoreId: function(storeId, refresh) {
+	, setStoreId: function(storeId, aggregations, refresh) {
 		if(Sbi.isValorized(storeId)) {
 			
-			if(storeId == this.storeId) {
-				Sbi.trace("[WidgetRuntime.setStoreId]: New store id is equal to the old one. Nothing to update.");
+			var currentStore = this.getStore();
+			var currentAggregations = Sbi.storeManager.getAggregationOnStore(currentStore);
+			
+			if(storeId == this.storeId && Sbi.storeManager.isSameAggregationLevel(currentAggregations, aggregations)  ) {
+				Sbi.trace("[WidgetRuntime.setStoreId]: New store id and aggregations are equal to the old one. Nothing to update.");
 				Sbi.trace("[WidgetRuntime.setStoreId]: OUT");
 				return;
 			}
 			
 			this.unboundStore();
 			this.storeId = storeId;
+			this.aggregations = aggregations;
 			Sbi.trace("[WidgetRuntime.setStoreId]: Store id set to [" + storeId + "]");
 			this.boundStore();
 		

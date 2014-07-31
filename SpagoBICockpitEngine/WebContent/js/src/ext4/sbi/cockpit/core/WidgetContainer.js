@@ -381,7 +381,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
         var existingWidget = component.getWidget(); 			
          			
         if (existingWidget){ 			
-                wtype = existingWidget.wtype;               			
+        	wtype = existingWidget.wtype;               			
         } 
     	
 		var wizardState = this.widgetEditorWizard.getWizardState();
@@ -400,6 +400,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 					categories: categories
 				};
 				storeConf.aggregations = aggregations;
+				wizardState.storeConf = storeConf;
 				Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: add store [" + wizardState.storeId + "] with aggregations");
 			} else {
 				Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: add store [" + wizardState.storeId + "] without aggregations");
@@ -421,9 +422,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
          * I compare the type to know if I was creating a new one, changing type or just modifying parameters 			
          */ 			
         if ((wtype == wizardState.wtype) || (!existingWidget)){ 			
-		component.setWidgetConfiguration( wizardState );
-		var widget = component.getWidget();
-		this.getWidgetManager().register(widget);
+			component.setWidgetConfiguration( wizardState );
+			var widget = component.getWidget();
+			this.getWidgetManager().register(widget);
         } else {                         			
                 /* 			
                  * If i was changing type of widget i have to 			

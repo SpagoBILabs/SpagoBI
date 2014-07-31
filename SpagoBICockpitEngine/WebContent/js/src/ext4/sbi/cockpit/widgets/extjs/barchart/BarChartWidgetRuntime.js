@@ -137,11 +137,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
   
     , refresh:  function() {  
     	Sbi.trace("[BarChartWidgetRuntime.refresh]: IN");
-    	
     	Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime.superclass.refresh.call(this);	
-    	
-    	this.redraw();
-		
     	Sbi.trace("[BarChartWidgetRuntime.refresh]: OUT");
 	}
     
