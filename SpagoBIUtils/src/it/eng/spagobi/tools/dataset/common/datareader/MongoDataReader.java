@@ -44,6 +44,13 @@ public class MongoDataReader extends AbstractDataReader {
 
 		logger.debug("IN");
 		CommandResult result = (CommandResult) data;
+
+		// Check if there is some error in the execution of the query
+		String error = result.getString("errmsg");
+		if (error != null) {
+			throw new SpagoBIRuntimeException(error);
+		}
+
 		JSONArray resultArray = getResultAsJSONArray(result);
 
 		// init the data store
@@ -123,7 +130,7 @@ public class MongoDataReader extends AbstractDataReader {
 
 						FieldMetadata fieldMeta = new FieldMetadata();
 						fieldMeta.setName(fieldName);
-						setFieldType(fieldMeta, fieldValue);
+						setFieldType(field, fieldMeta, fieldValue);
 
 						dataStoreMeta.addFiedMeta(fieldMeta);
 
@@ -136,7 +143,7 @@ public class MongoDataReader extends AbstractDataReader {
 						// String or number..
 						// if one field of the collection is not number the type
 						// is String
-						setFieldType(fieldMeta, fieldValue);
+						setFieldType(field, fieldMeta, fieldValue);
 
 						// insert the field in the correct position
 						fieldsCollection.set(fieldIndex, field);
@@ -153,6 +160,8 @@ public class MongoDataReader extends AbstractDataReader {
 		}
 		// set the result number
 		dataStore.getMetaData().setProperty("resultNumber", new Integer(resultArray.length()));
+		dataStore.getMetaData().setProperty("isSparse", new Boolean(true));
+
 		return dataStore;
 
 	}
@@ -168,13 +177,21 @@ public class MongoDataReader extends AbstractDataReader {
 		logger.debug("Parsing the CommandResult into a JSONArray");
 		JSONArray resultArray = null;
 		String obj = result.getString("retval");
+
+		// DBObject dbObject = (DBObject) JSON.parse(obj);
+		// dbObject.get("result");
 		try {
 
 			if (isAggregatedQuery()) {
 				logger.debug("It is an aggregation");
 
 				JSONObject resultObject = new JSONObject(obj);
-				obj = resultObject.getString("result");
+
+				obj = resultObject.optString("result");
+
+				if (obj == null || obj.equals("")) {
+					obj = resultObject.optString("_firstBatch");
+				}
 
 				try {
 					logger.debug("The result of the aggregation is an array");
@@ -185,7 +202,7 @@ public class MongoDataReader extends AbstractDataReader {
 					resultObject = new JSONObject(obj);
 					resultArray.put(resultObject);
 				}
-				resultObject = resultObject.getJSONObject("result");
+
 			} else {
 				try {
 					logger.debug("List of document query");
@@ -206,15 +223,17 @@ public class MongoDataReader extends AbstractDataReader {
 		return resultArray;
 	}
 
-	private void setFieldType(IFieldMetaData fieldMeta, String fieldValue) {
+	private void setFieldType(IField field, IFieldMetaData fieldMeta, String fieldValue) {
 		// if one field of the collection is not number the type
 		// is String
-		if (fieldMeta.getType().equals(String.class)) {
+		if (fieldMeta.getType() == null || !fieldMeta.getType().equals(String.class)) {
 			try {
-				new Double(fieldValue);
+				Object value = new Double(fieldValue);
 				fieldMeta.setType(Double.class);
 				logger.debug("Double type");
+				field.setValue(value);
 			} catch (Exception e) {
+				fieldMeta.setType(String.class);
 				logger.debug("String type");
 			}
 		}

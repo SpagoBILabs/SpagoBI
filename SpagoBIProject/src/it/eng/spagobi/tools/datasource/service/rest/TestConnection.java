@@ -68,6 +68,9 @@ public class TestConnection {
 					MongoClient mongoClient = null;
 					try {
 						int databaseNameStart = url.lastIndexOf("/");
+						if (databaseNameStart < 0) {
+							logger.error("Error connecting to the mongoDB. No database selected");
+						}
 						String databaseUrl = url.substring(0, databaseNameStart);
 						String databaseName = url.substring(databaseNameStart + 1);
 
