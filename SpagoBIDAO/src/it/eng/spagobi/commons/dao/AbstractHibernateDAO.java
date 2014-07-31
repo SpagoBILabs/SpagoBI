@@ -48,7 +48,7 @@ public class AbstractHibernateDAO {
 		if (profile != null) {
 			this.setUserID( (String) (((UserProfile)profile).getUserId() ));
 		}
-		LogMF.debug(logger, "userID = [{0}]", this.userID);
+		logger.debug("userID = [{0}]"+ this.userID);
 	}
 
 	public IEngUserProfile getUserProfile() {
@@ -72,7 +72,7 @@ public class AbstractHibernateDAO {
 	public String getTenant() {
 		// if a tenant is set into the DAO object, it wins
 		String tenantId = this.tenant;
-		LogMF.debug(logger, "This DAO object instance tenant = [{0}]", tenantId);
+		logger.debug("This DAO object instance tenant = [{0}]" + tenantId);
 		
 		if (tenantId == null) {
 			logger.debug("Tenant id not find in this DAO object instance; looking for it in the user profile object ... ");
@@ -81,7 +81,7 @@ public class AbstractHibernateDAO {
 			if (profile != null) {
 				UserProfile userProfile = (UserProfile) profile;
 				tenantId = userProfile.getOrganization();
-				LogMF.debug(logger, "User profile tenant = [{0}]", tenantId);
+				logger.debug( "User profile tenant = [{0}]" + tenantId);
 			} else {
 				logger.debug("User profile object not found");
 			}
@@ -94,13 +94,13 @@ public class AbstractHibernateDAO {
 			Tenant tenant = TenantManager.getTenant();
 			if (tenant != null) {
 				tenantId = tenant.getName();
-				LogMF.debug(logger, "TenantManager returns tenant = [{0}]", tenantId);
+				logger.debug("TenantManager returns tenant = [{0}]" + tenantId);
 			} else {
 				logger.debug("TenantManager did not return any Tenant");
 			}
 		}
 		
-		LogMF.debug(logger, "OUT: tenant = [{0}]", tenantId);
+		logger.debug( "OUT: tenant = [{0}]" + tenantId);
 		return tenantId;
 	}
 
