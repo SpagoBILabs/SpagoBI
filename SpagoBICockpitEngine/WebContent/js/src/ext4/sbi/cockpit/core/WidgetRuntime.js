@@ -350,17 +350,17 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	, getStore: function(forceCreation) {
 		var store;
 		
-		Sbi.warn("[WidgetRuntime.getStore]: IN");
+		Sbi.trace("[WidgetRuntime.getStore]: IN");
 		
 		if(Sbi.isNotValorized(this.getStoreId())) {
 			Sbi.warn("[WidgetRuntime.getStore]: The widget have no store associated (i.e storeId in not valorized)");
 			return null;
 		}
 		
-		Sbi.warn("[WidgetRuntime.getStore]: aggregation defined on this widget are equals to [" + Sbi.toSource(this.aggregations) + "]");
+		Sbi.trace("[WidgetRuntime.getStore]: aggregation defined on this widget are equals to [" + Sbi.toSource(this.aggregations) + "]");
 		
 		if(Sbi.storeManager.containsStore(this.getStoreId(), this.aggregations) === false && forceCreation === true) {
-			Sbi.warn("[WidgetRuntime.getStore]: store [" + this.getStoreId() + "] will be added to store manager");
+			Sbi.trace("[WidgetRuntime.getStore]: store [" + this.getStoreId() + "] will be added to store manager");
 			var storeConfig = {storeId: this.getStoreId()};
 			if(aggregations !== null) {
 				storeConfig.aggregations = this.aggregations;
@@ -369,7 +369,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		}
 		store = Sbi.storeManager.getStore( this.getStoreId(), this.aggregations );
 		
-		Sbi.warn("[WidgetRuntime.getStore]: OUT");
+		Sbi.trace("[WidgetRuntime.getStore]: OUT");
 		
 		return store;
 	}

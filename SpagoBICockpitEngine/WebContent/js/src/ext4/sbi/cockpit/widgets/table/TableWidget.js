@@ -42,6 +42,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 			maxRecords: 1000
 			, isBlocking: false
 		}
+		, fieldsSelectionEnabled: true
 	};
 			
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.table.TableWidget', defaultSettings);
@@ -158,7 +159,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				
 		for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {			
 			for(var i = 0; i < meta.fields.length; i++) {
-//				if(meta.fields[i].header === this.wconf.visibleselectfields[j].id) {
 				if(meta.fields[i].header === this.wconf.visibleselectfields[j].alias) {
 					this.applyRendererOnField(meta.fields[i]);
 					this.applySortableOnField(meta.fields[i]);					
@@ -470,6 +470,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
     	var selections = {};
     	
     	var meta = Sbi.storeManager.getRecordMeta(record);
+    	//alert(Sbi.toSource(meta));
     	
     	var fields = record.data;
     	
@@ -477,6 +478,17 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
     		if (fieldName === 'id' || fieldName === 'recNo') continue;
     		
     		var fieldHeader = Sbi.storeManager.getFieldHeaderByName(meta, fieldName);
+    		//alert(fieldHeader + " = " + meta[fieldHeader].type.type + " - " + (meta[fieldHeader].type.type === 'float'));
+    		if(meta[fieldHeader].type.type === 'float') {
+    			// Ignoriamo le colonne di tipo float perchè applicando un filtro di uguaglianza su di esse
+    			// in alcuni database (ex. mysql)non si hanno risultati per via di errori di approssimmazione
+    			// @see http://stackoverflow.com/questions/5921584/cannot-achieve-a-where-clause-on-a-float-value
+    			// TODO possibile soluzione pulita: quando si persiste la tabella in cache per i database problematici
+    			// evitare di usare il tipo float. Usare solo decimal con precisione fissata. Il numero reale dovrebbe 
+    			// poi essere arrotondato a tale precisione.
+    			Sbi.warn("[TableWidget.onColumnMove]: column [" + fieldHeader + "] is of type [float] so its selction will be ignored");    			
+    			continue;
+    		}
     		var fieldValue = fields[fieldName];
     		
     		selections[fieldHeader] = fieldValue;
