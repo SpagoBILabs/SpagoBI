@@ -984,6 +984,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 				
 		try {
+			Sbi.trace("[StoreManager.loadStore]: Start loading store [" + storeId + "] ...");
 			store.load({params: params});
 		} catch(e){
 			Sbi.exception.ExceptionHandler.showErrorMessage(e, LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'));
@@ -1624,6 +1625,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     
     , onStoreLoad: function(store, records, successful, eOpts) {
     	
+    	Sbi.trace("[StoreManager.onStoreLoad]: IN");
+    	
     	// {"service":"/1.0/datasets/AAA_SALES_1998/data",
     	// "errors":[{"message":"An unexpected [java.lang.NullPointerException] exception has been trown during service execution"}]}
     	
@@ -1667,7 +1670,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	if(successful) {
     		Sbi.trace("[StoreManager.onStoreLoad]: record loaded for store [" + this.getStoreId(store) + "] are [" + records.length + "]");	
     	}
-    	Sbi.trace("[StoreManager.onStoreLoad]: eOpts for store [" + this.getStoreId(store) + "] is equal to [" + Sbi.toSource(eOpts, true) + "]");		
+    	Sbi.trace("[StoreManager.onStoreLoad]: eOpts for store [" + this.getStoreId(store) + "] is equal to [" + Sbi.toSource(eOpts, true) + "]");	
+    	
+    	Sbi.trace("[StoreManager.onStoreLoad]: OUT");
     }
 });
 	

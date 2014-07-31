@@ -370,7 +370,6 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 	, refresh:  function() {  
 		Sbi.trace("[LineChartWidgetRuntime.refresh]: IN");
 		Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime.superclass.refresh.call(this);			
-		this.redraw();
 		Sbi.trace("[LineChartWidgetRuntime.refresh]: OUT");
 	}
     

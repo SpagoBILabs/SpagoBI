@@ -67,7 +67,6 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	, refresh:  function() {  
 		Sbi.trace("[LineChartWidgetRuntime.refresh]: IN");
 		Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.refresh.call(this);			
-		this.redraw();
 		Sbi.trace("[LineChartWidgetRuntime.refresh]: OUT");
 	}
 
