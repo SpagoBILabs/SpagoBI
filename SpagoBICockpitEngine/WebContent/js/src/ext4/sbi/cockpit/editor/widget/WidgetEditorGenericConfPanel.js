@@ -42,7 +42,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
      * @property {Array} services
      * This array contains all the services invoked by this class
      */
-	services: null
+	services: null,
+	re: null
    
 	// =================================================================================================================
 	// METHODS
@@ -63,13 +64,17 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 
 	, initFields: function() {
 		
+		this.re = new RegExp("^([A-Z0-9 ]*)$","i");
+				   		   
 		this.fields = [];
 		
-		 var title = new Ext.form.field.Text({
+		var title = new Ext.form.field.Text({
 			fieldLabel: 'Title',
 			name: 'title',
-            allowBlank: false,
-            tooltip: 'Enter the widget title'  
+            allowBlank: true,
+            tooltip: 'Enter the widget title',
+            regex: this.re,
+            regextText: 'Not a valid title.  Must enter only alphnumeric character'
 		});
 		
 		var description = new Ext.form.field.TextArea({
@@ -118,25 +123,5 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
-
-	// =================================================================================================================
-	// EVENTS
-	// =================================================================================================================
 	
-	//this.addEvents(
-	/**
-     * @event eventone
-     * Fired when ...
-     * @param {Sbi.xxx.Xxxx} this
-     * @param {Ext.Toolbar} ...
-     */
-	//'eventone'
-	/**
-     * @event eventtwo
-     * Fired before ...
-     * @param {Sbi.xxx.Xxxx} this
-     * @param {Object} ...
-     */
-	//'eventtwo'
-	//);	
 });
