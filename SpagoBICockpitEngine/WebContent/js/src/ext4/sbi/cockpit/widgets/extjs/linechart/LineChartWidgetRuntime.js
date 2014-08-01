@@ -132,10 +132,10 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 		    , position: seriesConfig.position
 		    , fields: seriesConfig.fields
 		    , minorTickSteps: 1 // The number of small ticks between two major ticks. Default is zero.
-		    , label: {
-		    	display: 'inside',
-		    	renderer: Ext.util.Format.numberRenderer('0,0')
-		    }
+//		    , label: {
+//		    	display: 'inside',
+//		    	renderer: Ext.util.Format.numberRenderer('0,0')
+//		    }
 			, title: seriesConfig.titles.length == 1? seriesConfig.titles[0]: undefined
 		   	, grid: true
 		    , minimum: 0		    
@@ -163,9 +163,9 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 		Sbi.trace("[LineChartWidgetRuntime.getSeries]: IN");
 		var series = [];
 		
-		for(var i = 0; i < seriesConfig.fields.length; i++) {
+		for(var i = 0; i < seriesConfig.fields.length; i++) {			
 			series.push({
-				type: this.getChartType(), 
+				type: this.getChartType(), 				
 				fill: this.isAreaFilled(),
 				stacked: this.isStacked(),
 				title: seriesConfig.titles[i],
@@ -175,14 +175,21 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	            },
 	            axis: seriesConfig.position,  
 	            smooth: true,
-	            tips: this.getSeriesTips(seriesConfig),
-	            label: { field: seriesConfig.fields[i], display: 'over'},
+	            tips: this.getSeriesTips(seriesConfig),	            
 	            xField: categoriesConfig.fields[0],
 	            yField: seriesConfig.fields[i],
 	            listeners: {
 	    	    	itemmousedown: this.onItemMouseDown,
 	    	    	scope: this
-	    	    }
+	    	    },
+	    	    label: 
+	            {
+	               display: 'over',
+	               field: seriesConfig.fields[i],
+	               renderer: function(val) {	                   
+	                   return val;
+	              }
+	            }
 	        });
 		}
 
