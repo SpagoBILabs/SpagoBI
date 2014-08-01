@@ -50,7 +50,7 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 					state.showlegend = thePanel.showlegend;
 					state.category = thePanel.category;
 					state.groupingVariable = thePanel.groupingVariable;
-					state.series = thePanel.series;
+					state.series = thePanel.series;					
 					state.wtype = 'barchart';
 					this.setDesignerState(state);
 				}, 				
@@ -287,15 +287,15 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		};
 	
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-' + this.radioGroupIds[0],
+			target: this.radioGroupIds[0] + '-bodyEl',
 			html: LN('sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.side-by-side')
 		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-' + this.radioGroupIds[1],
+			target: this.radioGroupIds[1] + '-bodyEl',
 			html: LN('sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.stacked')
 		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-' + this.radioGroupIds[2],
+			target: this.radioGroupIds[2] + '-bodyEl',
 			html: LN('sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.percent-stacked')
 		}, sharedConf));
 	}
@@ -321,7 +321,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		state.showlegend = this.showLegendCheck.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
 		state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
-		state.series = this.seriesContainerPanel.getContainedMeasures();	
+		state.series = this.seriesContainerPanel.getContainedMeasures();			
 		
 		Sbi.trace("[BarChartWidgetDesigner.getDesignerState]: OUT");
 		return state;
@@ -336,7 +336,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.groupingVariable) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
-		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
+		if (state.series) this.seriesContainerPanel.setMeasures(state.series);		
 //		state.wtype = 'barchart';
 		Sbi.trace("[BarChartWidgetDesigner.setDesignerState]: OUT");
 	}
