@@ -186,7 +186,7 @@
 		</servlet-class>
 	</servlet>
 	
-    
+    <!-- 
     <servlet>
 	    <servlet-name>mapfish.print</servlet-name>
 	    <servlet-class>org.mapfish.print.servlet.MapPrinterServlet</servlet-class>
@@ -195,7 +195,8 @@
 	      <param-value>config.yaml</param-value>
 		</init-param>
 	</servlet>
-	
+	 -->
+	 
 	<servlet>
       <servlet-name>LayerWms</servlet-name>
       <jsp-file>/WEB-INF/LayerWms.jsp</jsp-file>
@@ -255,12 +256,12 @@
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/GeoReportEngineStartActionTest</url-pattern>
 	</servlet-mapping>
-	
+	<!-- 
 	<servlet-mapping>
 	    <servlet-name>mapfish.print</servlet-name>
 	    <url-pattern>/pdf/*</url-pattern>
   	</servlet-mapping>
-
+ -->
 
 	<servlet-mapping>
     	<servlet-name>LayerWms</servlet-name>
