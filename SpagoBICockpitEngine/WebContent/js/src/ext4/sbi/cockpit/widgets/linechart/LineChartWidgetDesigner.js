@@ -134,7 +134,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		return false;
 	}
 	
-	, addToolTips: function(){
+	, addToolTips: function(){				
 		this.removeListener('afterLayout', this.addToolTips, this);
 		
 		var sharedConf = {
@@ -144,15 +144,15 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		};
 	
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-' + this.radioGroupIds[0],
+			target: this.radioGroupIds[0] + '-bodyEl',
 			html: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.side-by-side')
 		}, sharedConf));
+//		new Ext.ToolTip(Ext.apply({
+//			target: this.radioGroupIds[1] + '-bodyEl',
+//			html: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.stacked')
+//		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-' + this.radioGroupIds[1],
-			html: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.stacked')
-		}, sharedConf));
-		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-' + this.radioGroupIds[2],
+			target: this.radioGroupIds[1] + '-bodyEl',
 			html: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.percent-stacked')
 		}, sharedConf));
 	}
@@ -248,7 +248,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 			columns: 3,
 			items: [
 		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[0], ctCls:'side-by-side-linechart-line', inputValue: 'side-by-side-linechart', checked: true},
-		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[1], ctCls:'stacked-linechart-line', inputValue: 'stacked-linechart'},
+//		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[1], ctCls:'stacked-linechart-line', inputValue: 'stacked-linechart'},
 		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[2], ctCls:'percent-stacked-linechart-line', inputValue: 'percent-stacked-linechart'}
 			]
 		});
