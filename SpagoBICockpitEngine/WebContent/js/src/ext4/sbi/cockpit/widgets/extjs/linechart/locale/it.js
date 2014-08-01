@@ -7,9 +7,9 @@
 Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
-Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.side-by-side'] = 'Side-by-side';
-Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.stacked'] = 'Stacked';
-Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.percent-stacked'] = 'Percent stacked';
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.side-by-side'] = 'Linee sovrapposte';
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.stacked'] = 'Linee cumulate';
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.percent-stacked'] = 'Linee cumulate in percentuale';
 
 
 Sbi.locale.ln['sbi.widget.designer.validation.invalidFields'] = 'Following fields are no more retrieved: ';
