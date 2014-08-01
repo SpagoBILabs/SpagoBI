@@ -107,7 +107,7 @@ Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel = function(config) {
         	}
         	, rowdblclick: function(theGrid, rowIndex, e) {        		
         		var theRow = this.store.getAt(rowIndex);
-        		alert(theRow);
+        		
 				var aWindow = new Sbi.cockpit.widgets.crosstab.ChooseAggregationFunctionWindow({
 					behindMeasure: Ext.apply({}, theRow.data) // creates a clone
         	  	});
