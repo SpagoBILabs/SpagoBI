@@ -82,18 +82,14 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	        },
 	        scope: this,
 			failure: function(response, options) {		
-				this.refreshCrossTab(response.responseText);
-//				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+//				this.refreshCrossTab(response.responseText);
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
 			}      
 		});		
 	}
 	
 	, refreshCrossTab: function(serviceResponseText) {		
-//		this.removeAll(true);
-		
-//		this.crosstab = new Sbi.cockpit.widgets.crosstab.HTMLCrossTab({
-//			htmlData : "asd"
-//		});
+
 		this.crosstab = new Sbi.cockpit.widgets.crosstab.HTMLCrossTab({
 			htmlData : serviceResponseText 
 			, bodyCssClass : 'crosstab'
