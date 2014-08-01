@@ -342,6 +342,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	
     	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: IN");
     	
+    	var widget = component.getWidget();
+    	
     	if(this.widgetEditorWizard === null) {
     		
     		Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: instatiating the editor");
@@ -369,7 +371,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     }
 
     , applyWidgetEditorWizardState: function() {
-    	Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: IN");
+    	
+    	Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: IN");    	        	    
+		
     	var component = this.widgetEditorWizard.getWizardTargetComponent(); 
     	
     	var wtype = ""; 			
@@ -379,17 +383,30 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
          * I store the type for further compare 			
          */ 			
         var existingWidget = component.getWidget(); 			
-         			
+        
         if (existingWidget){ 			
         	wtype = existingWidget.wtype;               			
         } 
     	
 		var wizardState = this.widgetEditorWizard.getWizardState();
 		
+		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: Title validation");  
+		
+		var re = this.widgetEditorWizard.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.genericConfPanel.re;
+		
+		var titleRegExp = new RegExp(re);
+		
+		if (!titleRegExp.test(wizardState.wgeneric.title)){			
+			Ext.Msg.alert('Message', 'Title not valid');
+			
+			return false;
+		}
+		
+		
 		wizardState.storeId = wizardState.selectedDatasetLabel;
 		
 		if (wizardState.storeId != null){
-			var storeConf = {storeId: wizardState.storeId};
+			var storeConf = {storeId: wizardState.storeId};			
 			if(wizardState.wconf.series && wizardState.wconf.category) {
 				var categories = [];
 				categories.push(wizardState.wconf.category);
@@ -416,8 +433,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		
 		var unselectedDatasetLabel = wizardState.unselectedDatasetLabel;
 		delete wizardState.selectedDatasetLabel;
-		delete wizardState.unselectedDatasetLabel;
-		  
+		delete wizardState.unselectedDatasetLabel;		 				
+
 		 /* 			
          * I compare the type to know if I was creating a new one, changing type or just modifying parameters 			
          */ 			
@@ -425,6 +442,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 			component.setWidgetConfiguration( wizardState );
 			var widget = component.getWidget();
 			this.getWidgetManager().register(widget);
+
         } else {                         			
                 /* 			
                  * If i was changing type of widget i have to 			
@@ -444,9 +462,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		this.applyStoreUnselection(unselectedDatasetLabel);
 		
 		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: OUT");
+		
+		return true;
     }
     
     , applyStoreUnselection: function(unselectedDatasetLabel) {
+    	
     	Sbi.trace("[WidgetContainer.applyStoreUnselection]: IN");
     	
 		if(Sbi.isValorized(unselectedDatasetLabel)) {
@@ -737,8 +758,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
    
     , onWidgetEditorWizardSubmit: function(wizard) {
 		Sbi.trace("[WidgetContainer.onWidgetEditorWizardSubmit]: IN");
-		this.hideWidgetEditorWizard();
-		this.applyWidgetEditorWizardState();
+		var validated = this.applyWidgetEditorWizardState();
+		
+		if (validated) this.hideWidgetEditorWizard();		
 		Sbi.trace("[WidgetContainer.onWidgetEditorWizardSubmit]: OUT");
 	}
     
