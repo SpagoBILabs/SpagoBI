@@ -450,7 +450,10 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         	
         	for(var i = 0; i< storeSize; i++){
         		var record = this.getAt(i);
-        		var val = record.get('value');
+        		var val = record.get('description');
+        		if(!val){
+        			val = record.get('value');
+        		}
         		containerScope.allValues[i]= val;
         	}
         	
