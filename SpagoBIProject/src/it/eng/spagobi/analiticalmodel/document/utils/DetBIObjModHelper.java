@@ -361,6 +361,8 @@ public class DetBIObjModHelper {
 	    String parUrlNm = (String)request.getAttribute("parurl_nm");
 		String priorityStr = (String)request.getAttribute("priority");
 		Integer priority = new Integer(priorityStr);
+		Integer colSpan = request.getAttribute("colSpan") != null ? new Integer(request.getAttribute("colSpan").toString()) : 1;
+		Integer thickPerc = request.getAttribute("thickPerc") != null ? new Integer(request.getAttribute("thickPerc").toString()) : 0;
 		String reqFl = (String)request.getAttribute("req_fl");
 		Integer reqFlBD = new Integer(reqFl);
 		String modFl = (String) request.getAttribute("mod_fl");
@@ -386,6 +388,8 @@ public class DetBIObjModHelper {
         objPar.setVisible(viewFlBD);
         objPar.setMultivalue(multFlBD);
         objPar.setPriority(priority); 
+        objPar.setColSpan(colSpan);
+        objPar.setThickPerc(thickPerc);
 		return objPar;
 	}
 	

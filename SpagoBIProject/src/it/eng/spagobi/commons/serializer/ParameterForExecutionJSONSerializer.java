@@ -47,6 +47,8 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 			result.put("enableMaximizer", parameter.isEnableMaximizer() );
 			result.put("typeCode", parameter.getTypeCode() );
 			result.put("mandatory", parameter.isMandatory() );
+			result.put("colspan", parameter.getColspan());
+			result.put("thickPerc", parameter.getThickPerc());
 			result.put("multivalue", parameter.isMultivalue() );
 			result.put("visible", parameter.isVisible() );
 			result.put("valuesCount", parameter.getValuesCount() );

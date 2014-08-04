@@ -74,6 +74,13 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     
     initSlider : function(cfg) {
     	Sbi.trace("[Sbi.SliderField.afterRender] : [" + this.name + "] : IN");
+    	if(this.colspan){
+    		cfg.colspan = this.colspan;
+    	}
+    	if(this.thickPerc){
+    		cfg.thickPerc = this.thickPerc;
+    	}
+    	
     	this.slider = new Ext.slider.MultiSlider(cfg);
     	this.slider.store = this.store;
     	Sbi.trace("[Sbi.SliderField.afterRender] : [" + this.name + "] :  OUT");

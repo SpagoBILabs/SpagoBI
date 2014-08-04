@@ -148,8 +148,10 @@ Ext.extend(Ext.slider.Thumb, Ext.Component, {
         slider.fireEvent('dragend', slider, e);
 
         if (this.dragStartValue != value) {
-            slider.fireEvent('changecomplete', slider, value, this);
+        	slider.fireEvent('changecomplete', slider, value, this);
         }
+        var valText = slider.allValues[value];
+        slider.setCurrentValue(valText, this.index);
     }
 });
 
@@ -249,6 +251,8 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      * The number used internally to set the z index of the top thumb (see promoteThumb for details)
      */
     topThumbZIndex: 10000,
+    
+    allValues: null,
 
     // private override
     initComponent : function(){
@@ -390,15 +394,37 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
     // private override
     onRender : function() {
     	Sbi.trace("[Slider.onRender] : IN");
+    	
+    	var arrayCn = [];
+    	
         this.autoEl = {
             cls: 'x-slider ' + (this.vertical ? 'x-slider-vert' : 'x-slider-horz'),
-            cn : {
+            cn : [{
                 cls: 'x-slider-end',
                 cn : {
                     cls:'x-slider-inner',
                     cn : [{tag:'a', cls:'x-slider-focus', href:"#", tabIndex: '-1', hidefocus:'on'}]
                 }
+            },
+            {
+            	// div container of sliderinfo
+            	tag:'div', 
+            	cls: 'x-slider-info-container',
+            	cn: arrayCn
+            },
+            
+            {
+            	// div container of sliderinfo
+            	tag:'div', 
+            	cls: 'x-slider-info-container-current-value'
+            		
+            	//,html: 'aaa'
+            		,cn : [ 
+            		        {tag:'div' , cls:'.x-slider-info-current-value-left'}
+            		        , {tag:'div' , cls:'.x-slider-info-current-value-right'}
+            	     ]
             }
+            ]
         };
 
         Ext.slider.MultiSlider.superclass.onRender.apply(this, arguments);
@@ -407,6 +433,76 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         this.innerEl = this.endEl.first();
         this.focusEl = this.innerEl.child('.x-slider-focus');
         Sbi.trace("[Slider.onRender] : this innerEl is equal to [" +  this.innerEl + "]");
+
+        this.infoEl = this.el;  
+        
+        this.store.scope = this;
+        var thisScope = this;
+          
+        this.store.on('load', function(a,b,c,d,e){
+        	
+        	// When store is loaded get a map of all values
+        	var storeSize = this.getCount();
+        	
+          	// get the scope to fill with divs
+        	var containerScope = this.scope;
+        	containerScope.allValues = {};
+        	
+        	for(var i = 0; i< storeSize; i++){
+        		var record = this.getAt(i);
+        		var val = record.get('value');
+        		containerScope.allValues[i]= val;
+        	}
+        	
+      
+        	var containerInfoEl = containerScope.infoEl;
+        	
+        	var colspan = containerScope.colspan;
+        	var thickPerc = containerScope.thickPerc;
+        	
+        	var container = containerInfoEl.child('.x-slider-info-container');
+        	
+        	if(container){
+
+        		containerScope.setInitialValue();
+
+        		// choose how many points basing on colspan and store size
+        		var points = Math.floor(storeSize/100 * thickPerc);
+
+        		if(points > 0){
+        			// if percentage is > 0 at least first and last element are put
+
+        			var pointSize = Math.floor(100 / points);
+
+        			var rootInterval = Math.ceil(storeSize / points);
+
+        			var cont = 0;
+        			var iteration = 1;
+
+
+        			while(iteration <points && cont<storeSize){
+        				if(cont == 0){
+        					// first one
+        					container.createChild("<div class='x-slider-info-left' style='width: "+pointSize+"%'>"+containerScope.allValues[0]+"</div>"); 
+        				}
+        				else{
+        					container.createChild("<div class='x-slider-info-left' style='width: "+pointSize+"%; text-align:center;'>"+containerScope.allValues[cont]+"</div>");
+        				}
+
+        				cont = cont+rootInterval;
+        				iteration++;
+        			}
+        			// last one
+        			container.createChild("<div class='x-slider-info-right' style='width: "+pointSize+"%; text-align:right;'>"+containerScope.allValues[storeSize-1]+"</div>");
+        		}
+        	}
+
+
+
+        });
+
+        
+
 
         //render each thumb
         for (var i=0; i < this.thumbs.length; i++) {
@@ -420,7 +516,77 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         this.initEvents();
         
         Sbi.trace("[Slider.onRender] : OUT");
-    },
+    }
+    
+    /**
+     * Set initial info value of first slider, and second if exists
+     */
+    , setInitialValue: function(){
+    	var containerInfoEl = this.infoEl;
+    	var currValue1 = null;
+    	var currValue2 = null;
+    	
+    	var currIndex1 = this.getValue(0);
+    	var currIndex2 = this.getValue(1);
+    	
+    	currValue1 = this.allValues[currIndex1];
+    	if(currIndex2){
+    		currValue2 = this.allValues[currIndex2];
+    	}
+    	
+    	var containerCurrentValues = containerInfoEl.child('.x-slider-info-container-current-value');
+
+    	if(containerCurrentValues){
+
+    		var containerCurr = containerCurrentValues.first();
+    		currValue1 = 'Current value slider: '+currValue1; 
+    		containerCurr.dom.innerHTML = currValue1;  
+
+    		if(currValue2){
+    			var containerCurr2 = containerCurrentValues.last();
+    			currValue2 = 'Current value second slider: '+currValue2; 
+    			containerCurr2.dom.innerHTML = currValue2;   
+    		}
+
+    	}
+    }
+    /**
+     * Set current info value of dragged slider
+     */
+    , setCurrentValue: function(valText, index){
+    	var containerInfoEl = this.infoEl;
+
+    	var currValue = null;
+    	if(!valText){
+    		var currIndex = this.getValue();
+    		currValue = this.allValues[currIndex];
+    	}
+    	else {
+    		currValue = valText; 
+    	}
+
+    	var containerCurrentValues = containerInfoEl.child('.x-slider-info-container-current-value');
+
+    	if(containerCurrentValues){
+    	
+    	var containerCurr = null;
+    	
+    	// index of the thumb moved
+    	if(index==0){
+    		containerCurr = containerCurrentValues.first();
+    		currValue = 'Current value slider: '+currValue; 
+    	}
+    	else{
+       		containerCurr = containerCurrentValues.last();
+    		currValue = 'Current value second slider: '+currValue; 
+    	}       	 
+    	
+    	if(containerCurr != null){
+    		containerCurr.dom.innerHTML = currValue;    		
+    	}
+
+    	}
+    },    
 
     /**
      * @private
@@ -849,7 +1015,13 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
      */
     getValue : function(index) {
     	var i = index || 0;
-        return this.thumbs[i].value;
+    	if(this.thumbs[i]){
+            return this.thumbs[i].value;    		
+    	}
+    	else{
+    		return null;
+    	}
+
     },
 
     /**
