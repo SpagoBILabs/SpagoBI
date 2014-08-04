@@ -452,7 +452,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				JSONObject originalRecord = gridDataFeed.getJSONObject(i);
 				JSONObject[] datasetRecord = splitRecord(originalRecord, datasetLabels, breakIndexes);
 				for(int j = 0; j < datasetRecords.length; j++) {
-					String currentRowNoName = "column_1";
+					String currentRowNoName = "column_0";
 					String currentRowNo = datasetRecord[j].getString(currentRowNoName);
 					if(currentRowNo == null || !currentRowNo.equals(lastRowNo[j])) {
 						datasetRecords[j].put(datasetRecord[j]);
@@ -493,7 +493,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			int breakIndexNo = 0;
 			int breakIndex =  breakIndexes.get(breakIndexNo);
 			JSONObject record = datasetRecord[0];
-			for(int j = 3, colNo = 1; j < props.length(); j++, colNo++) {
+			for(int j = 2, colNo = 0; j < props.length(); j++, colNo++) { // prima colonna id, seconda colonna cache_id del dataset di join, terza colonna cache_id primo dataset
 				String p = props.getString(j);
 				
 				if (j == breakIndex + 2) { // breakIndex + 1 is the last element of the previous dataset. breakIndex + 2 is the first one of the new dataset, 
@@ -503,6 +503,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 					breakIndex = breakIndexes.get(breakIndexNo);
 					record = datasetRecord[breakIndexNo];
 					colNo = 0;
+					record.put("column_" + colNo, originalRecord.getString(p));
 					
 				} else {
 					

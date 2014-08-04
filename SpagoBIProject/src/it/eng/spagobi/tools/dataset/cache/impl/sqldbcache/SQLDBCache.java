@@ -206,8 +206,11 @@ public class SQLDBCache implements ICache {
 				CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
 				String tableName = cacheItem.getTable();	
 				logger.debug("The table associated to dataset ["+resultsetSignature+"] is [" + tableName + "]");
-//				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);
+				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);
+
+					
 				
+				/*
 				StringBuffer selectBuffer = new StringBuffer();
 				IDataSetTableDescriptor descriptor = TemporaryTableManager.getTableDescriptor(null, tableName, dataSource);
 				Set<String> columns = descriptor.getColumnNames();
@@ -228,7 +231,7 @@ public class SQLDBCache implements ICache {
 				}
 				String sql = "SELECT " + selectClause + " FROM " + tableName;
 				dataStore = dataSource.executeStatement(sql, 0, 0);
-				
+				*/
 			} else {
 				logger.debug("Resultset with signature ["+resultsetSignature+"] not found");
 			}
