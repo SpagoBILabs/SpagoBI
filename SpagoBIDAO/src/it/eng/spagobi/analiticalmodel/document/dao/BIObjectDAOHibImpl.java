@@ -1580,6 +1580,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 							sbiObjPar.setMultFl(new Short(objPar.getMultivalue().shortValue()));
 							sbiObjPar.setProg(objPar.getProg());
 							sbiObjPar.setPriority(new Integer(totalParameters.size()+1)); 
+							sbiObjPar.setColSpan(objPar.getColSpan());
+							sbiObjPar.setThickPerc(objPar.getThickPerc());
 							updateSbiCommonInfo4Insert(sbiObjPar);
 							aSession.save(sbiObjPar);
 							totalParameters.add(objPar.getLabel());
@@ -1666,6 +1668,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 							sbiObjPar.setModFl(new Short(objPar.getModifiable().shortValue()));
 							sbiObjPar.setViewFl(new Short(objPar.getVisible().shortValue()));
 							sbiObjPar.setMultFl(new Short(objPar.getMultivalue().shortValue()));
+							sbiObjPar.setColSpan(objPar.getColSpan());							
+							sbiObjPar.setThickPerc(objPar.getThickPerc());							
 							sbiObjPar.setProg(objPar.getProg());
 							sbiObjPar.setPriority(new Integer(totalParameters.size()+1)); 
 							updateSbiCommonInfo4Insert(sbiObjPar);

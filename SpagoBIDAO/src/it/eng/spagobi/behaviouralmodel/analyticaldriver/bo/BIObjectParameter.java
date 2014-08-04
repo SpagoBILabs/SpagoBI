@@ -45,7 +45,15 @@ public class BIObjectParameter implements Serializable {
 
 	/* MULT_FL NUMBER Y Multivalue parameter. */
 	private Integer multivalue = null;
+	
+	/* COL_SPAN Span column parameter. */
+	private Integer colSpan = null;
 
+	/* thick_perc column parameter. */
+	private Integer thickPerc = null;
+
+
+	
 	/*
 	 * PROG NUMBER N Ordinal number for sorting
 	 */
@@ -426,6 +434,9 @@ public class BIObjectParameter implements Serializable {
 		toReturn.setProg(prog);
 		toReturn.setRequired(required);
 		toReturn.setVisible(visible);
+		toReturn.setColSpan(colSpan);
+		toReturn.setThickPerc(thickPerc);
+		
 		return toReturn;
 	}
 
@@ -437,5 +448,23 @@ public class BIObjectParameter implements Serializable {
 			ParameterValuesRetriever parameterValuesRetriever) {
 		this.parameterValuesRetriever = parameterValuesRetriever;
 	}
+
+	public Integer getColSpan() {
+		return colSpan;
+	}
+
+	public void setColSpan(Integer colSpan) {
+		this.colSpan = colSpan;
+	}
+
+	public Integer getThickPerc() {
+		return thickPerc;
+	}
+
+	public void setThickPerc(Integer thickPerc) {
+		this.thickPerc = thickPerc;
+	}
+	
+	
 	
 }
