@@ -1568,6 +1568,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 						var data = stores[s];
 						var store = this.getStore(s, aggregations);
 						if(store) {
+							//alert(s + " = " + Sbi.toSource(data));
 				    		store.loadData(data);
 				    		Sbi.trace("[StoreManager.onAssociationGroupReloaded]: Data sucesfully loaded into store [" + s + "] at aggregation level [" + aggregations + "]");
 				    	} else {
@@ -1619,6 +1620,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		} catch(e) {
 			alert("[StoreManager.onStoreMetaChange]: " + e);
 		}
+		
+		//alert(this.getStoreId(store) +  " = " + Sbi.toSource(store.fieldsMeta));
 		
 		Sbi.trace("[StoreManager.onStoreMetaChange]: OUT");
 	}
