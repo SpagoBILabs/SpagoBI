@@ -28,7 +28,9 @@ public class SbiObjPar  extends SbiHibernateModel {
      private String parurlNm;
      private Integer prog;
      private Integer priority;
-
+     private Integer colSpan;
+     private Integer ThickPerc;
+     
 
     // Constructors
 
@@ -249,5 +251,25 @@ public class SbiObjPar  extends SbiHibernateModel {
 	public void setPriority(Integer priority) {
 		this.priority = priority;
 	}
+
+
+	public Integer getColSpan() {
+		return colSpan;
+	}
+
+	public void setColSpan(Integer colSpan) {
+		this.colSpan = colSpan;
+	}
+
+	public Integer getThickPerc() {
+		return ThickPerc;
+	}
+
+	public void setThickPerc(Integer thickPerc) {
+		ThickPerc = thickPerc;
+	}
+	
+	
+	
    
 }

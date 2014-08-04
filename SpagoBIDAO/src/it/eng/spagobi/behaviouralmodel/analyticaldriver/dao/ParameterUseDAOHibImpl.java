@@ -157,6 +157,12 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 			query.setString(1, roleName);
 
 			SbiParuse hibParuse = (SbiParuse)query.uniqueResult();	
+			
+			if(hibParuse == null){
+				logger.error("Par Use not found for role "+roleName+" adn parameter with id "+parameterId);
+				return null;
+			}
+			
 			toReturn = toParameterUse(hibParuse);
 			tx.commit();
 		}catch(HibernateException he){

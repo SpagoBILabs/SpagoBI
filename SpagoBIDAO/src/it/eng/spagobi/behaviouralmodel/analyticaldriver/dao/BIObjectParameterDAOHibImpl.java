@@ -173,6 +173,10 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			hibObjPar.setViewFl(new Short(aBIObjectParameter.getVisible().shortValue()));
 			hibObjPar.setMultFl(new Short(aBIObjectParameter.getMultivalue().shortValue()));
 			hibObjPar.setParurlNm(aBIObjectParameter.getParameterUrlName());
+			
+			Integer colSpan = aBIObjectParameter.getColSpan();
+			Integer thickPerc = aBIObjectParameter.getThickPerc();
+			
 			Integer oldPriority = hibObjPar.getPriority();
 			Integer newPriority = aBIObjectParameter.getPriority();
 			if (!oldPriority.equals(newPriority)) {
@@ -190,6 +194,9 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			}
 			hibObjPar.setPriority(newPriority);
 			hibObjPar.setProg(new Integer(1));
+			hibObjPar.setColSpan(colSpan);
+			hibObjPar.setThickPerc(thickPerc);
+
 			updateSbiCommonInfo4Update(hibObjPar);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -235,6 +242,8 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			hibObjectParameterNew.setViewFl(new Short(aBIObjectParameter.getVisible().shortValue()));
 			hibObjectParameterNew.setMultFl(new Short(aBIObjectParameter.getMultivalue().shortValue()));
 			hibObjectParameterNew.setParurlNm(aBIObjectParameter.getParameterUrlName());
+			hibObjectParameterNew.setColSpan(aBIObjectParameter.getColSpan());
+			hibObjectParameterNew.setThickPerc(aBIObjectParameter.getThickPerc());
 
 			String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority + 1) where s.priority >= " 
 				+ aBIObjectParameter.getPriority() + " and s.sbiObject.biobjId = " + aSbiObject.getBiobjId();
@@ -573,6 +582,9 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		aBIObjectParameter.setVisible(new Integer(hiObjPar.getViewFl().intValue()));
 		aBIObjectParameter.setPriority(hiObjPar.getPriority());
 		aBIObjectParameter.setProg(hiObjPar.getProg());
+		aBIObjectParameter.setColSpan(hiObjPar.getColSpan());
+		aBIObjectParameter.setThickPerc(hiObjPar.getThickPerc());
+		
 		Parameter parameter = new Parameter();
 		parameter.setId(hiObjPar.getSbiParameter().getParId());
 		aBIObjectParameter.setParameter(parameter);
