@@ -135,6 +135,8 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		boolean mandatory;
 		boolean multivalue;
 		boolean visible;
+		Integer colspan;
+		Integer thickPerc;
 
 		int valuesCount;
 		// used to comunicate to the client the unique 
@@ -248,6 +250,9 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			multivalue = analyticalDocumentParameter.isMultivalue();
 
 			visible = analyticalDocumentParameter.getVisible() == 1;
+			
+			colspan = analyticalDocumentParameter.getColSpan() != null ? analyticalDocumentParameter.getColSpan() : 1;
+			thickPerc = analyticalDocumentParameter.getThickPerc() != null ? analyticalDocumentParameter.getThickPerc() : 0;
 
 			try {
 				analyticalDriverExecModality = ANALYTICAL_DRIVER_USE_MODALITY_DAO.loadByParameterIdandRole(analyticalDocumentParameter.getParID(), executionInstance.getExecutionRole());
@@ -571,6 +576,23 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		public void setDefaultValues(DefaultValuesList defaultValues) {
 			this.defaultValues = defaultValues;
 		}
+
+		public int getColspan() {
+			return colspan;
+		}
+
+		public void setColspan(int colspan) {
+			this.colspan = colspan;
+		}
+
+		public Integer getThickPerc() {
+			return thickPerc;
+		}
+
+		public void setThickPerc(Integer thickPerc) {
+			this.thickPerc = thickPerc;
+		}
+		
 		
 	}
 

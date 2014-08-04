@@ -82,6 +82,11 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 		c.parametersRegion = doc.parametersRegion;
 	}
 	
+	// change column number to 1 if region is east
+	if(c.parametersRegion != 'north')
+		c.columnNo = 1;
+	
+	
 	this.baseConfig = c;
 	
 	
@@ -155,6 +160,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	            , border: false
     	}]
 	});
+
 	
 	// constructor
     Sbi.execution.ParametersPanel.superclass.constructor.call(this, c);
@@ -186,6 +192,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	 * DocumentExecutionPanel is listening on ParametersPnel on 'synchronize' AND on 'ready'. */
     , firstLoadCounter: 0
     , firstLoadTotParams: 0
+    
+
+    , columnNo: 0 
     
     /**
      * parameters configuration as returned from getParametersForExecutionService. 
@@ -389,7 +398,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	, getFieldValue: function(field) {
 		var value;
 		
-		if(field.behindParameter.multivalue === true) {
+		if(!field) return;
+		
+		if(field.behindParameter && field.behindParameter.multivalue === true) {
 			if(field.getValues) {
 				value = field.getValues();
 			} else {
@@ -410,6 +421,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		state = {};
 		for(p in this.fields) {
 			var field = this.fields[p];
+			if(field.title == 'empty') continue;
 			var value = this.getFieldValue(field);
 			state[field.name] = value;
 			var rawValue = field.getRawValue();
@@ -661,13 +673,38 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 //			this.fireEvent("hideparameterspanel");
 //		}
 			
-		for(var i = 0; i < parameters.length; i++) {
-			var field = this.createField( parameters[i] );
-			 
+		var occupiedInRow = 0;
 		
+		for(var i = 0; i < parameters.length; i++) {
+			
+			if(this.parametersRegion != 'north'){
+				parameters[i].colspan = 1;
+			}
+			
+			if(this.columnNo > 1){
+			// how many spaces to insert
+			if( occupiedInRow != this.columnNo &&
+					occupiedInRow+parameters[i].colspan > this.columnNo
+					){
+				var howManySpacesToInsert = this.columnNo - occupiedInRow;
+				
+				for(var sp=0;sp<howManySpacesToInsert;sp++){
+					this.addEmptyField(null, nonTransientField++);
+				}
+				
+				occupiedInRow = 0;
+			}
+
+			}
+			
+			var field = this.createField( parameters[i] );
+				
+			var isAdded = false;
+			
 			if( this.parameterHasOnlyOneValue( parameters[i] ) ) {
 				if( this.parameterHasDependencies( parameters[i] ) || parameters[i].type === 'DATE') {
 					this.addField(field, nonTransientField++);
+					isAdded = true;
 				} else {
 					field.isTransient = true;
 					field.setValue(parameters[i].value);
@@ -699,14 +736,20 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					
 					if (parameters[i].visible === true && parameters[i].vizible !== false) {
 						this.addField(field, nonTransientField++);
+						isAdded = true;
 						Sbi.debug('field [' + parameters[i].id + '] is added');
 					} else {
 						Sbi.debug('field [' + parameters[i].id + '] is not added');
 					}
 				}
 			}
-			
-			 this.fields[parameters[i].id] = field;
+
+			if(isAdded==true){
+				this.fields[parameters[i].id] = field;
+			}
+				// update occupiedInRow 
+				occupiedInRow  += parameters[i].colspan; 
+			 
 		}
 
 		if(this.thereAreParametersToBeFilled() !== true) {
@@ -762,6 +805,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		state = {};
 		for (p in this.fields) {
 			var field = this.fields[p];
+			
+			if(field.title == 'empty') continue;
+			
 			var behindParameter = field.behindParameter;
 			var value = this.concatenateDefaultValues(behindParameter.defaultValues);
 			Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : default values for field [' + field.name + '] is [' + value + ']');
@@ -870,8 +916,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		for(var p in this.fields) {
 			var theField = this.fields[p];
 			
+			if(theField.title == 'empty') continue;
 			
-			if (theField.behindParameter.selectionType === 'TREE') {
+			if (theField.behindParameter && theField.behindParameter.selectionType === 'TREE') {
 				
 				this.fields[p].on('select', function(field, record, index) {
 					this.updateDependentFields( field );
@@ -879,7 +926,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				
 			} else 
 			
-			if (theField.behindParameter.selectionType === 'LOOKUP') {
+			if (theField.behindParameter && theField.behindParameter.selectionType === 'LOOKUP') {
 			
 				this.fields[p].on('select', function(field, record, index) {
 					this.updateDependentFields( field );
@@ -1119,6 +1166,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var newPanel = new Ext.Panel({
 	        layout: 'form'
 	        , autoDestroy: false
+	        //, title: 'miaoooooo'
+	        , colspan: this.columnNo > 1 ? field.colspan : 1
 	        , border: false
 	        , autoScroll: true
 	        , bodyStyle : {
@@ -1128,7 +1177,21 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	        , items : [ field ]
 		});
 		this.tableContainer.add ( newPanel );
+
+		
 	}
+	
+	, addEmptyField: function(field, index) {
+		var newPanel = new Ext.Panel({
+			html: "aaa"
+				,title: "Title not present"
+		});
+		this.tableContainer.add ( newPanel );
+		// panel empty must be invisible
+		newPanel.setVisible(false);
+		
+	}
+
 	
 	/**
 	 * Remove and destroy all fields contained in the form. This is a private function
@@ -1272,6 +1335,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		Sbi.trace('[ParametersPanel.createSliderField] : baseConfig.autoLoad is equal to [' + baseConfig.autoLoad + ']');
 		
+		// set slider width as 200 * colspan
+		
+		if(!p.colspan) p.colspan = 1;
+		var sliderWidth = 200 * p.colspan;
+		baseConfig.width  = sliderWidth;
 		
 		field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
 			multiSelect: p.multivalue,
@@ -1393,6 +1461,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		   , width: this.baseConfig.fieldWidth
 		   , allowBlank: !p.mandatory
 		   , parameter: p
+		   , colspan: p.colspan
+		   , thickPerc: p.thickPerc
 		   // do not load store if the right value is passed in the preferences. In this case infact the field will be not added to the parameters panel
 		   // so it is not necessary to calculate all its values
 		   , autoLoad: !this.parameterValueIsPassedFromMenu(p) 
