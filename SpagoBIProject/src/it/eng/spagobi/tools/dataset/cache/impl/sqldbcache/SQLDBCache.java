@@ -554,18 +554,35 @@ public class SQLDBCache implements ICache {
 			for(Association association: associaions) {
 				String whereClause = "";
 				String separator = "";
+				Association.Field previousField = null;
 				for(Association.Field field: association.getFields()) {
-					String dataset = field.getDataSetLabel();
-					String column = field.getFieldName();
-					column = AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
-					whereClause += separator + datasetAliases.get(dataset) + "." + column;
-					separator = " = ";
+					if(previousField != null) {
+						String dataset, column;
+						
+						dataset = previousField.getDataSetLabel();
+						column = previousField.getFieldName();
+						column = AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
+						whereClause += separator + datasetAliases.get(dataset) + "." + column;
+						
+						separator = " = ";
+						
+						dataset = field.getDataSetLabel();
+						column = field.getFieldName();
+						column = AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
+						whereClause += separator + datasetAliases.get(dataset) + "." + column;
+						
+						sqlBuilder.where(whereClause);
+						
+					}
+					previousField = field;
+					
 				}
-				sqlBuilder.where(whereClause);
+				
 			}
 			
 			
 			String queryText = sqlBuilder.toString();
+			logger.trace("Join query is equal to [" + queryText + "]");
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 						
 			dataStore.getMetaData().setProperty("BREAK_INDEXES", columnBreakIndexes);
