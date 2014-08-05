@@ -60,7 +60,12 @@ public class DataStoreStatistics {
 		BigDecimal recordMemorySize = new BigDecimal(0);
 		BigDecimal[] fieldsMemorySize = extimateFieldsMemorySize();
 		for(int i = 0; i < fieldsMemorySize.length; i++) {
-			recordMemorySize = recordMemorySize.add( fieldsMemorySize[i] );
+			if(fieldsMemorySize[i] != null) {
+				recordMemorySize = recordMemorySize.add( fieldsMemorySize[i] );
+			} else {
+				logger.warn("Impossible to estimate size of field [" + i + "]");
+			}
+			
 		}
 		return recordMemorySize;
 	}
@@ -111,6 +116,9 @@ public class DataStoreStatistics {
 						fieldMemorySize = new BigDecimal(valueLength);
 					} else {
 						fieldMemorySize = getBytesForType(fieldTypeName);
+						if(fieldMemorySize == null) {
+							logger.warn("Impossible to get memory size of field [" + fmd.getName() + "] of type [" + fieldTypeName + "]");
+						}
 					}
 	
 					if(fieldsMaxMemorySize[i] == null) fieldsMaxMemorySize[i] = fieldMemorySize;
