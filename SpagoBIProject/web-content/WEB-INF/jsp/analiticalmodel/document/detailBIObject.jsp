@@ -1674,7 +1674,7 @@ else{
    ParameterUse use = DAOFactory.getParameterUseDAO().loadByParameterIdandRole(objPar.getParID(), role);
    if(use != null){
        String selType = use.getSelectionType();
-       if(selType.equalsIgnoreCase("SLIDER") ){
+       if(selType != null && selType.equalsIgnoreCase("SLIDER") ){
     	    isSlider = true;
 
     	    }
