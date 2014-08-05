@@ -22,3 +22,6 @@ ALTER TABLE SBI_OBJECTS ADD COLUMN PARAMETERS_REGION VARCHAR(20) NULL;
 
 UPDATE SBI_ENGINES SET LABEL = 'SpagoBIDataMiningEngine', NAME = 'Data-Mining Engine', DESCR = 'Data-Mining Engine', MAIN_URL = '/SpagoBIDataMiningEngine/WekaServlet', DRIVER_NM = 'it.eng.spagobi.engines.drivers.datamining.DataMiningDriver' WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.weka.WekaDriver';\p\g
 COMMIT;\p\g
+
+ALTER TABLE SBI_OBJ_PAR ADD COLUMN COL_SPAN INTEGER NULL;
+ALTER TABLE SBI_OBJ_PAR ADD COLUMN THICK_PERC INTEGER NULL;
