@@ -324,6 +324,7 @@ public class DatasetManagementAPI {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			checkQbeDataset( dataSet);
 			
+			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
 			if (parameters.size() >  parametersValues.size()){
 				String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
@@ -358,6 +359,13 @@ public class DatasetManagementAPI {
 			
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			checkQbeDataset(dataSet);
+			
+			dataSet.setParamsMap(parametersValues);
+			List<JSONObject> parameters = getDataSetParameters(label);
+			if (parameters.size() >  parametersValues.size()){
+				String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
+				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");				
+			}
 			
 			ICache cache = SpagoBICacheManager.getCache();
 			IDataStore dataStore = null;
@@ -401,6 +409,11 @@ public class DatasetManagementAPI {
 		
 		try {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
+			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
+			for(IDataSet dataSet : joinedDatasets) {
+				checkQbeDataset(dataSet);
+			}
+			
 			joinedDataSet.setParamsMap(parametersValues);
 			
 			ICache cache = SpagoBICacheManager.getCache();
@@ -605,7 +618,9 @@ public class DatasetManagementAPI {
 	}
 	
 	
-	
+	/**
+	 * @deprectade
+	 */
 	public IDataStore getAggregatedDataStore(String label, int offset, int fetchSize, int maxResults, CrosstabDefinition crosstabDefinition) {
 		try {
 			
