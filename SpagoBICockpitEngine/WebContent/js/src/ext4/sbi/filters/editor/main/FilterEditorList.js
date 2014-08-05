@@ -131,7 +131,7 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 												var r = Ext.util.JSON.decode(response.responseText);
 												if (Sbi.isValorized(r.results) && r.results.length > 0){
 													var f = r.results[0].id;	
-													var isFilterLoaded = Sbi.isValorized(Sbi.storeManager.getFilter(f));
+													var isFilterLoaded = Sbi.isValorized(Sbi.storeManager.getParameter(f));
 													if (Sbi.isValorized(r.results) && !isFilterLoaded){
 														this.store.loadData(r.results,true);
 													}

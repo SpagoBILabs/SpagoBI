@@ -440,7 +440,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		var config = {};
 		config.storesList = Sbi.storeManager.getStoreIds();
 		Sbi.trace("[MainPanel.onShowFilterEditorWizard]: config.stores is equal to [" + Sbi.toSource(config.stores) + "]");
-		config.filters = Sbi.storeManager.getFilters();
+		config.filters = Sbi.storeManager.getParameters();
 		Sbi.trace("[MainPanel.onShowFilterEditorWizard]: config.filters is equal to [" + Sbi.toSource(config.filters) + "]");		
 		Sbi.trace("[MainPanel.showFilterEditorWizard]: instatiating the editor");    		
 		this.filterEditorWizard = Ext.create('Sbi.filters.FilterEditorWizard',config);
@@ -463,7 +463,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		Sbi.trace("[MainPanel.onFilterEditorWizardSubmit]: IN");
 		var wizardState = wizard.getWizardState();
 		if (Sbi.isValorized(wizardState.filters)){
-			Sbi.storeManager.setFilterConfigurations(wizardState.filters);
+			Sbi.storeManager.setParameterConfigurations(wizardState.filters);
 			Sbi.trace("[MainPanel.onFilterEditorWizardSubmit]: setted filter group [" + Sbi.toSource(wizardState.filters) + "] succesfully added to store manager");
 		}
 		this.filterEditorWizard.close();

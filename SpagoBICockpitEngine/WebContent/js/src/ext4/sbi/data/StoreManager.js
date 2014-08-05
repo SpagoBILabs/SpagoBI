@@ -973,6 +973,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		// add pareameters to params
 		var p = this.getStoreParametersValues(storeId);
+		//alert("[StoreManager.loadStore]: store [" + storeId + "] parameters are equal to [" + Sbi.toSource(p) + "]");
 		params.parameters = Ext.JSON.encode( p );
 		
 		// add selections to params
