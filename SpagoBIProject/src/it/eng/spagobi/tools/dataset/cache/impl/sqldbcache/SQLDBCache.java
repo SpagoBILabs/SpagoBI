@@ -552,11 +552,12 @@ public class SQLDBCache implements ICache {
 			
 			Collection<Association> associaions = associationGroup.getAssociations();
 			for(Association association: associaions) {
-				String whereClause = "";
+				String whereClause;
 				String separator = "";
 				Association.Field previousField = null;
 				for(Association.Field field: association.getFields()) {
 					if(previousField != null) {
+						whereClause = "";
 						String dataset, column;
 						
 						dataset = previousField.getDataSetLabel();
