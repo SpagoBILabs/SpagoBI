@@ -210,6 +210,8 @@ CREATE TABLE SBI_OBJ_PAR (
        PROG                 INTEGER NOT NULL,
        PARURL_NM            VARCHAR(20) NULL,
        PRIORITY             INTEGER NULL,
+       COL_SPAN             INTEGER NULL,
+       THICK_PERC           INTEGER NULL,
        USER_IN              VARCHAR(100) NOT NULL,
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
@@ -2103,7 +2105,7 @@ CREATE TABLE SBI_ARTIFACTS (
        DESCR                VARCHAR(500) NULL,
        TYPE                 VARCHAR(50) NULL,
        MODEL_LOCKED         BOOLEAN NULL,
-       MODEL_LOCKER         VARCHAR(100) NULL;
+       MODEL_LOCKER         VARCHAR(100) NULL,
        USER_IN              VARCHAR(100) NOT NULL,
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),

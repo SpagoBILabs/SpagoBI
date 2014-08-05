@@ -2675,3 +2675,7 @@ insert into SBI_CONFIG(ID,LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALU
 -- 09/07/2014 Davide: changed SpagoBIWekaEngine to SpagoBIDataMiningEngine
 UPDATE SBI_ENGINES SET LABEL = 'SpagoBIDataMiningEngine', NAME = 'Data-Mining Engine', DESCR = 'Data-Mining Engine', MAIN_URL = '/SpagoBIDataMiningEngine/WekaServlet', DRIVER_NM = 'it.eng.spagobi.engines.drivers.datamining.DataMiningDriver' WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.weka.WekaDriver';
 COMMIT;
+
+-- 04/08/2014
+ALTER TABLE SBI_OBJ_PAR ADD COLUMN COL_SPAN INTEGER NULL DEFAULT 1;
+ALTER TABLE SBI_OBJ_PAR ADD COLUMN THICK_PERC INTEGER NULL DEFAULT 0;
