@@ -181,9 +181,29 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
         		v.push(this.slider.maxValue);
         	}
         }        
-        if(!Ext.isArray(v)) {
-        	v = [v];
-        }
+        //if(!Ext.isArray(v)) {
+    	//v = [v];
+        //}
+        
+    	var isArray = Ext.isArray(v);
+   
+        
+    	if(!isArray){
+    	 	var isNumber = !isNaN(v);
+    		if(isNumber){
+    			v = [v];
+    		}
+    		else {
+    			// try to convert
+    			var array = v.split(",");
+    			if(!Ext.isArray(array)){
+    				v = [v];
+    			}
+    			else{
+    				v = array;
+    			}
+    		}
+    	}
         
         return v;
     },
