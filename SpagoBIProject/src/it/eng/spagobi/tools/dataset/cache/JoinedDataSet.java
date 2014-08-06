@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -118,6 +119,18 @@ public class JoinedDataSet extends AbstractDataSet {
 		 
 	public List<IDataSet> getDataSets() {
 		return this.joinedDataSets;
+	}
+	
+	public IDataSet getDataSet(String datasetLabel) {
+		IDataSet targetDataSet = null;
+		if(datasetLabel == null) return targetDataSet;
+		for(IDataSet dataSet: joinedDataSets) {
+			if(dataSet.getLabel().equals(datasetLabel)) {
+				targetDataSet = dataSet;
+				break;
+			}
+		}
+		return targetDataSet;
 	}
 	
 	private void setDataSetsByLabel(Collection<String> dataSetLabels) {
@@ -285,6 +298,15 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	public void setUserProfile(UserProfile userProfile) {
 		this.userProfile = userProfile;
+	}
+	
+	public void setParamsMaps(Map<String, Map<String, String>> paramsMaps) {
+		Set<String> datasetLabels = paramsMaps.keySet();
+		for(String datasetLabel : datasetLabels) {
+			Map paramsMap = paramsMaps.get(datasetLabel);
+			IDataSet dataSet = getDataSet(datasetLabel);
+			dataSet.setParamsMap(paramsMap);
+		}
 	}
 	
 	public void setParamsMap(Map paramsMap) {

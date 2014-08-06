@@ -397,11 +397,13 @@ public class DatasetManagementAPI {
 	}
 	
 	/**
-	 * @param associationGroupJSON
-	 * @param selectionsJSON
+	 * @param associationGroup
+	 * @param selections
+	 * @param parametersValues A map of map with the following structure: storeId->paramName->paramValue
+	 * 
 	 * @return
 	 */
-	public IDataStore getJoinedDataStore(AssociationGroup associationGroup, JSONObject selections, Map<String, String> parametersValues) {
+	public IDataStore getJoinedDataStore(AssociationGroup associationGroup, JSONObject selections, Map<String, Map<String, String>> parametersValues) {
 		
 		IDataStore joinedDataStore = null;
 		
@@ -414,7 +416,7 @@ public class DatasetManagementAPI {
 				checkQbeDataset(dataSet);
 			}
 			
-			joinedDataSet.setParamsMap(parametersValues);
+			joinedDataSet.setParamsMaps(parametersValues);
 			
 			ICache cache = SpagoBICacheManager.getCache();
 			if (cache.contains(joinedDataSet) == false) {
@@ -472,7 +474,7 @@ public class DatasetManagementAPI {
 	 */
 	public IDataStore getJoinedDataStore(AssociationGroup associationGroup, 
 			JSONObject selections, 
-			Map<String, String> parametersValues,
+			Map<String, Map<String, String>> parametersValues,
 			List<GroupCriteria> groupCriteria, 
 			List<FilterCriteria> filterCriteria,
 			List<ProjectionCriteria> projectionCriteria) {
@@ -483,7 +485,7 @@ public class DatasetManagementAPI {
 		
 		try {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
-			joinedDataSet.setParamsMap(parametersValues);
+			joinedDataSet.setParamsMaps(parametersValues);
 			
 			ICache cache = SpagoBICacheManager.getCache();
 			if (cache.contains(joinedDataSet) == false) {

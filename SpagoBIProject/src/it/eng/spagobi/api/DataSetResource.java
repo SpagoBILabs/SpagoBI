@@ -316,9 +316,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			IDataStore dataStore = null;
 			if(groupCriteria.size() == 0 && projectionCriteria.size() == 0) {
-				dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGroupObject, selectionsJSON, getParametersMap(parameters));
+				dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGroupObject, selectionsJSON, getParametersMaps(parameters));
 			} else {
-				dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGroupObject, selectionsJSON, getParametersMap(parameters), groupCriteria, null, projectionCriteria);
+				dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGroupObject, selectionsJSON, getParametersMaps(parameters), groupCriteria, null, projectionCriteria);
 			}
 						
 			// serializing response
@@ -522,23 +522,56 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 	
 	
+	private static Map<String, Map<String, String>> getParametersMaps(String parameters){
+		Map<String, Map<String, String>> toReturn = new HashMap<String, Map<String, String>>();
+		
+		if(parameters == null) {
+			return toReturn;
+		}
+		
+		try {
+			parameters = JSONUtils.escapeJsonString(parameters);
+			JSONObject parametersJSON  = ObjectUtils.toJSONObject(parameters);
+			Iterator<String> datasetLabels = parametersJSON.keys();
+			while( datasetLabels.hasNext() ){
+				 String datasetLabel = datasetLabels.next();   
+				 JSONObject datasetFilters = parametersJSON.getJSONObject(datasetLabel);
+				 Map<String, String> filtersMap = getParametersMap(datasetFilters);
+				 toReturn.put(datasetLabel, filtersMap);
+			}
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi filters [" + parameters + "]", t);
+		}
+		
+		return toReturn;
+	}
+	
 	private static Map<String, String> getParametersMap(String filters){
-		Map<String, String> toReturn = new HashMap<String, String>();
+		Map<String, String> toReturn = null;
 		
 		if(filters != null) {
 			filters = JSONUtils.escapeJsonString(filters);
 			JSONObject jsonFilters  = ObjectUtils.toJSONObject(filters);	
-			Iterator<String> keys = jsonFilters.keys();
-			try{
-		        while( keys.hasNext() ){
-		            String key = keys.next();            
-		            String value = jsonFilters.getString(key);
-		            toReturn.put(key, value);
-		        }
-			} catch(Throwable t) {
-				throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi filters [" + filters + "]", t);
-			}	
+			toReturn = getParametersMap(jsonFilters);
+		} else {
+			toReturn = new HashMap<String, String>();
 		}
+		return toReturn;
+	}
+	
+	private static Map<String, String> getParametersMap(JSONObject jsonFilters){
+		Map<String, String> toReturn = new HashMap<String, String>();
+		
+		Iterator<String> keys = jsonFilters.keys();
+		try{
+	        while( keys.hasNext() ){
+	            String key = keys.next();            
+	            String value = jsonFilters.getString(key);
+	            toReturn.put(key, value);
+	        }
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi filters [" + jsonFilters + "]", t);
+		}	
 		
 		return toReturn;
 	}
