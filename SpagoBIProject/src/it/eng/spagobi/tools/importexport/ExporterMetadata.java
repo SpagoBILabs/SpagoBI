@@ -1072,6 +1072,8 @@ public class ExporterMetadata {
 			hibBIObj.setObjectTypeCode(biobj.getBiObjectTypeCode());
 			hibBIObj.setPath(biobj.getPath());
 			hibBIObj.setUuid(biobj.getUuid());
+			hibBIObj.setParametersRegion(biobj.getParametersRegion());
+			
 			Integer visFlagIn = biobj.getVisible();
 			Short visFlagSh = new Short(visFlagIn.toString());
 			hibBIObj.setVisible(visFlagSh);
@@ -1218,12 +1220,16 @@ public class ExporterMetadata {
 			hibBIObjPar.setParurlNm(biobjpar.getParameterUrlName());
 			hibBIObjPar.setPriority(biobjpar.getPriority());
 			hibBIObjPar.setProg(biobjpar.getProg());
+			hibBIObjPar.setColSpan(biobjpar.getColSpan());
+			hibBIObjPar.setThickPerc(biobjpar.getThickPerc());
+
 			Integer biobjid = biobjpar.getBiObjectID();
 			SbiObjects sbiob = (SbiObjects)session.load(SbiObjects.class, biobjid);
 			Integer parid = biobjpar.getParID();			
 			SbiParameters sbipar = (SbiParameters)session.load(SbiParameters.class, parid);
 			hibBIObjPar.setSbiObject(sbiob);
 			hibBIObjPar.setSbiParameter(sbipar);
+			
 			// save the BI Object Parameter
 			session.save(hibBIObjPar);
 			tx.commit();

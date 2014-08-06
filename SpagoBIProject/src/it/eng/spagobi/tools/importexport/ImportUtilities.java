@@ -1011,6 +1011,8 @@ MetadataLogger metaLog;
 		newObj.setCreationDate(obj.getCreationDate());
 		newObj.setCreationUser(obj.getCreationUser());
 		newObj.setRefreshSeconds(obj.getRefreshSeconds());
+		newObj.setParametersRegion(obj.getParametersRegion());
+		
 		//newObj.setDataSource(obj.getDataSource());
 		logger.debug("OUT");
 		return newObj;
@@ -1264,6 +1266,8 @@ MetadataLogger metaLog;
 			newObjPar.setSbiObject(expObjpar.getSbiObject());
 			newObjPar.setSbiParameter(expObjpar.getSbiParameter());
 			newObjPar.setViewFl(expObjpar.getViewFl());
+			newObjPar.setColSpan(expObjpar.getColSpan());
+			newObjPar.setThickPerc(expObjpar.getThickPerc());
 
 			entitiesAssociations(expObjpar, newObjPar, sessionCurrDB, metaAss);
 		}
