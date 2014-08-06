@@ -11,7 +11,8 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 		var defaultSettings = {
 			name: 'barChartWidgetDesigner'
 			,title: LN('sbi.cockpit.widgets.barchart.barChartWidgetDesigner.title')
-			,border: false
+			, border: false
+			, showSeriesGroupingPanel: false
 		};
 			
 		if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.barchart && Sbi.settings.cockpit.widgets.barchart.barChartWidgetDesigner) {
@@ -59,8 +60,10 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 		this.on('afterLayout', this.addToolTips, this);
 
 		this.categoryContainerPanel.on(	'beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);
-		this.seriesGroupingPanel.on(	'beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);
 		
+		if(this.showSeriesGroupingPanel === true) {
+			this.seriesGroupingPanel.on('beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);
+		}
 };
 
 Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core.WidgetDesigner, {
@@ -142,6 +145,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		});	
 		
 		
+		
+		
 		this.categoryContainerPanel = new Sbi.cockpit.widgets.chart.ChartCategoryPanel({
             width: 200
             , height: 70
@@ -164,27 +169,32 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			this
 		);
 		
-		this.seriesGroupingPanel = new Sbi.cockpit.widgets.chart.SeriesGroupingPanel({
-            width: 430
-            , height: 70
-            , initialData: null
-            , ddGroup: this.ddGroup
-		});
-		// propagate events
-		this.seriesGroupingPanel.on(
-			'attributeDblClick' , 
-			function (thePanel, attribute) { 
-				this.fireEvent("attributeDblClick", this, attribute); 
-			}, 
-			this
-		);
-		this.seriesGroupingPanel.on(
-			'attributeRemoved' , 
-			function (thePanel, attribute) { 
-				this.fireEvent("attributeRemoved", this, attribute); 
-			}, 
-			this
-		);
+		if(this.showSeriesGroupingPanel === true) {
+			this.seriesGroupingPanel = new Sbi.cockpit.widgets.chart.SeriesGroupingPanel({
+	            width: 430
+	            , height: 70
+	            , initialData: null
+	            , ddGroup: this.ddGroup
+			});
+			// propagate events
+			this.seriesGroupingPanel.on(
+				'attributeDblClick' , 
+				function (thePanel, attribute) { 
+					this.fireEvent("attributeDblClick", this, attribute); 
+				}, 
+				this
+			);
+			this.seriesGroupingPanel.on(
+				'attributeRemoved' , 
+				function (thePanel, attribute) { 
+					this.fireEvent("attributeRemoved", this, attribute); 
+				}, 
+				this
+			);
+		} else {
+			this.seriesGroupingPanel = new Ext.Panel({border:false, frame: false});
+		}
+		
 		
 		this.seriesContainerPanel = new Sbi.cockpit.widgets.chart.ChartSeriesPanel({
             width: 430
@@ -204,12 +214,10 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 	    this.axisDefinitionPanel = new Ext.Panel({
 	        baseCls:'x-plain'
 		    , cls: 'centered-panel' //for center the panel
-			//, width: this.seriesContainerPanel.width+this.imageContainerPanel.width+20 //for center the panel <-- Original Conf from WorkSheet
-		    ,width: '100%'	
+			 ,width: '100%'	
 	        , padding: '0 10 10 10'
 	        , layout: {type: 'table', columns : 2}
-	        // applied to child components
-	        //, defaults: {height: 100}
+	    	//, items: axisDefinitionPanelItems
 	        , items:[	                 
 	              this.seriesContainerPanel
 	            , this.imageContainerPanel 
@@ -320,7 +328,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		state.showvalues = this.showValuesCheck.getValue();
 		state.showlegend = this.showLegendCheck.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
-		state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
+		if(this.showSeriesGroupingPanel === true) {
+			state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
+		}
 		state.series = this.seriesContainerPanel.getContainedMeasures();			
 		
 		Sbi.trace("[BarChartWidgetDesigner.getDesignerState]: OUT");
@@ -335,7 +345,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
-		if (state.groupingVariable) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
+		if (state.groupingVariable && this.showSeriesGroupingPanel === true) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);		
 //		state.wtype = 'barchart';
 		Sbi.trace("[BarChartWidgetDesigner.setDesignerState]: OUT");
@@ -348,7 +358,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 
 		valErr+=''+this.categoryContainerPanel.validate(validFields);
 		valErr+=''+this.seriesContainerPanel.validate(validFields);
-		valErr+=''+this.seriesGroupingPanel.validate(validFields);
+		if(this.showSeriesGroupingPanel === true) {
+			valErr+=''+this.seriesGroupingPanel.validate(validFields);
+		}
 		
 		if(valErr!= ''){
 			valErr = valErr.substring(0, valErr.length - 1)
@@ -374,9 +386,11 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		if (category != null && category.id == attributeId) {
 			return true;
 		}
-		var groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
-		if (groupingVariable != null && groupingVariable.id == attributeId) {
-			return true;
+		if(this.showSeriesGroupingPanel === true) {
+			var groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
+			if (groupingVariable != null && groupingVariable.id == attributeId) {
+				return true;
+			}
 		}
 		return false;
 	}

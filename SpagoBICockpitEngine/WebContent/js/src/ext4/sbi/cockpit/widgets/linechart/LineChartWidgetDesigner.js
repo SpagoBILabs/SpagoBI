@@ -16,6 +16,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		, border: false
 		, chartLib: 'highcharts'
 		, ddGroup: null
+		, showSeriesGroupingPanel: false
 	}	
 
 	, form: null
@@ -38,8 +39,6 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		
 		this.initialConfig = config || null;
 		this.initConfig(config);
-		//this.chartLib.toLowerCase();
-		
 		this.init(config);
 		this.items = [this.form];
 		
@@ -70,7 +69,10 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		state.showvalues = this.showValuesCheck.getValue();
 		state.showlegend = this.showLegendCheck.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
-		state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
+		if(this.showSeriesGroupingPanel === true) {
+			state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
+		}
+		
 		state.series = this.seriesContainerPanel.getContainedMeasures();
 		Sbi.trace("[LineChartWidgetDesigner.getDesignerState]: OUT");
 		
@@ -85,7 +87,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
-		if (state.groupingVariable) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
+		if (state.groupingVariable && this.showSeriesGroupingPanel === true) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 		
 		if (this.rendered) {        
@@ -102,7 +104,9 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		var valErr='';
 		valErr+= ''+this.categoryContainerPanel.validate(validFields);
 		valErr+= ''+this.seriesContainerPanel.validate(validFields);
-		valErr+= ''+this.seriesGroupingPanel.validate(validFields);
+		if(this.showSeriesGroupingPanel === true) {
+			valErr+= ''+this.seriesGroupingPanel.validate(validFields);
+		}
 		
 		if(valErr != ''){
 			valErr = valErr.substring(0, valErr.length - 1)
@@ -127,9 +131,11 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		if (category != null && category.id == attributeId) {
 			return true;
 		}
-		var groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
-		if (groupingVariable != null && groupingVariable.id == attributeId) {
-			return true;
+		if(this.showSeriesGroupingPanel === true) {
+			var groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
+			if (groupingVariable != null && groupingVariable.id == attributeId) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -320,27 +326,31 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	}
 	
 	, initSeriesGroupingPanel: function() {
-		this.seriesGroupingPanel = new Sbi.cockpit.widgets.chart.SeriesGroupingPanel({
-            width: 430
-            , height: 70
-            , initialData: null
-            , ddGroup: this.ddGroup
-		});
-		// propagate events
-		this.seriesGroupingPanel.on(
-			'attributeDblClick' , 
-			function (thePanel, attribute) { 
-				this.fireEvent("attributeDblClick", this, attribute); 
-			}, 
-			this
-		);
-		this.seriesGroupingPanel.on(
-			'attributeRemoved' , 
-			function (thePanel, attribute) { 
-				this.fireEvent("attributeRemoved", this, attribute); 
-			}, 
-			this
-		);
+		if(this.showSeriesGroupingPanel === true) {
+			this.seriesGroupingPanel = new Sbi.cockpit.widgets.chart.SeriesGroupingPanel({
+	            width: 430
+	            , height: 70
+	            , initialData: null
+	            , ddGroup: this.ddGroup
+			});
+			// propagate events
+			this.seriesGroupingPanel.on(
+				'attributeDblClick' , 
+				function (thePanel, attribute) { 
+					this.fireEvent("attributeDblClick", this, attribute); 
+				}, 
+				this
+			);
+			this.seriesGroupingPanel.on(
+				'attributeRemoved' , 
+				function (thePanel, attribute) { 
+					this.fireEvent("attributeRemoved", this, attribute); 
+				}, 
+				this
+			);
+		} else {
+			this.seriesGroupingPanel = new Ext.Panel({border:false, frame:false});
+		}
 	}
 	
 	, initSeriesContainerPanel: function() {
@@ -376,8 +386,9 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		
 		this.on('afterLayout', this.addToolTips, this);
 		this.categoryContainerPanel.on(	'beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);
-		this.seriesGroupingPanel.on('beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);
-		
+		if(this.showSeriesGroupingPanel === true) {
+			this.seriesGroupingPanel.on('beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);
+		}
 		this.addEvents("attributeDblClick", "attributeRemoved");
 	}
 	
