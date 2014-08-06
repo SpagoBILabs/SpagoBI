@@ -21,7 +21,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	    
 	    <script type="text/javascript">
 		    Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/resources/images/default/s.gif")%>';
-		
+		    
 		    if (Sbi.config == undefined) Sbi.config = {};
 		
 		    // the user language
@@ -35,6 +35,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		    Sbi.config.clientServerDateFormat = '<%= GeneralUtilities.getServerDateFormatExtJs() %>';
 		    // the timestamp format to be used when communicating with server
 		    Sbi.config.clientServerTimestampFormat = '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>';
+		    
+		    Sbi.config.isTechnicalUser = <%= isTechnicalUser %>;
 		    
 		    var url = {
 		    	host: '<%= request.getServerName()%>'

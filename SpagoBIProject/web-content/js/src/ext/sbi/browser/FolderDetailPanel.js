@@ -241,8 +241,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 			urlToCall = Sbi.config.contextName + '/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&SBI_ENVIRONMENT=DOCBROWSER';						
 		}else if(type =='createcockpit'){
 			urlToCall =  this.cockpitServiceUrl +  '&SBI_ENVIRONMENT=DOCBROWSER';
-//		}else if(type =='createworksheet'){
-//			urlToCall =  this.worksheetServiceUrl;
+			urlToCall =  this.cockpitServiceUrl +  '&IS_TECHNICAL_USER=' + Sbi.config.isTechnicalUser;
 		}
 		
 		if (Sbi.settings.browser.typeLayout !== undefined && Sbi.settings.browser.typeLayout == 'card'){
