@@ -35,6 +35,8 @@ The following directive catches exceptions thrown by jsps, must be commented in 
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
+
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 
@@ -139,17 +141,20 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	String userId="";
 	String userName="";
 	String defaultRole="";
+	boolean isTechnicalUser=false;
 	List userRoles = new ArrayList();;
 	
-	//if (userProfile!=null) userId=(String)userProfile.getUserUniqueIdentifier();
 	if (userProfile!=null){
 		userId=(String)((UserProfile)userProfile).getUserId();
 		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
 		userName=(String)((UserProfile)userProfile).getUserName();
 		userRoles = (ArrayList)userProfile.getRoles();
-		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
-		
+		defaultRole = ((UserProfile)userProfile).getDefaultRole();
+		isTechnicalUser = UserUtilities.isTechnicalUser(userProfile);
 	}
+	
+	
+	
 	
 	// Set Theme
 	String currTheme=ThemesManager.getCurrentTheme(aRequestContainer);
