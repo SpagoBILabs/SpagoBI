@@ -150,9 +150,12 @@ Ext.define('Sbi.widgets.WizardPanel', {
 			Sbi.trace("[WizardPanel.moveToPage]: target page is valid");
 			
 			this.layout.setActiveItem(targetPageNumber);
-			Ext.getCmp('move-prev').setDisabled(targetPageNumber==0);
-			Ext.getCmp('move-next').setDisabled(targetPageNumber==totPageNumber);
-		 	Ext.getCmp('submit').setVisible(!(parseInt(targetPageNumber)<parseInt(totPageNumber)));
+			//Ext.getCmp('move-prev').setDisabled(targetPageNumber==0);
+			this.backButton.setDisabled(targetPageNumber==0);
+			//Ext.getCmp('move-next').setDisabled(targetPageNumber==totPageNumber);
+			this.nextButton.setDisabled(targetPageNumber==totPageNumber);
+		 	//Ext.getCmp('submit').setVisible(!(parseInt(targetPageNumber)<parseInt(totPageNumber)));
+		 	this.submitButton.setVisible(!(parseInt(targetPageNumber)<parseInt(totPageNumber)));
 		
 		} else {
 			var messages = this.getMoveToPageValidationErrorMessages(targetPageNumber);
@@ -374,44 +377,46 @@ Ext.define('Sbi.widgets.WizardPanel', {
 		var buttonsBar = [];
 		
 		buttonsBar.push('->');
-		buttonsBar.push({ 
-			id: 'move-prev'
-	        ,text: LN('sbi.ds.wizard.back')
+		
+		this.backButton = Ext.create('Ext.Button', { 
+			text: LN('sbi.ds.wizard.back')
 	        , handler: this.onMovePrevious 
 	        , scope: this
 	        , disabled: (this.activeItem == 0)?true:false
 	    });
 		
-		buttonsBar.push({
-			id: 'move-next'
-	        , text:  LN('sbi.ds.wizard.next')
+		buttonsBar.push(this.backButton);
+		
+		this.nextButton = Ext.create('Ext.Button', {
+			text:  LN('sbi.ds.wizard.next')
 	        , handler: this.onMoveNext
 	        , scope: this
 	        , disabled: (this.activeItem == 0)?false:true
 	    });
+		buttonsBar.push(this.nextButton);
 		
-		buttonsBar.push({
-			id: 'submit'
-			, hidden: true
+		this.submitButton = Ext.create('Ext.Button', {
+			hidden: true
 	        , text:  LN('sbi.ds.wizard.confirm')
 	        , handler: this.onSubmit
 	        , scope: this
 	    });
+		buttonsBar.push(this.submitButton);
 		
-		buttonsBar.push({
-			id: 'apply'
-			, hidden: true
+		this.applyButton = Ext.create('Ext.Button', {
+			hidden: true
 	        , text:  LN('sbi.ds.wizard.apply')
 	        , handler: this.onApply
 	        , scope: this
 	    });
+		buttonsBar.push(this.applyButton);
 		
-		buttonsBar.push({
-			id: 'cancel'
-	        , text:  LN('sbi.ds.wizard.cancel')
+		this.cancelButton = Ext.create('Ext.Button', {
+			text:  LN('sbi.ds.wizard.cancel')
 	        , handler: this.onCancel
 	        , scope: this
 	    });
+		buttonsBar.push(this.cancelButton);
 		
 		this.buttons = buttonsBar;
 		
