@@ -11,6 +11,7 @@ import it.eng.spagobi.tools.importexport.ITransformer;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
@@ -46,8 +47,8 @@ public class TransformerFrom4_2_0To5_0_0 implements ITransformer {
 		Connection conn = null;
 		try {
 			conn = TransformersUtilities.getConnectionToDatabase(pathImpTmpFolder, archiveName);
-
-
+			fixSbiObjects(conn);
+			fixSbiObjPar(conn);
 
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
@@ -64,9 +65,46 @@ public class TransformerFrom4_2_0To5_0_0 implements ITransformer {
 	}
 	
 	
-
+	private void fixSbiObjects(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			
+			sql = "ALTER TABLE SBI_OBJECTS ADD COLUMN PARAMETERS_REGION VARCHAR(20);";
+			stmt.executeUpdate(sql);
+		
+		} catch (Exception e) {
+			logger.error(
+					"Error in altering SBI_OBJECTS",
+					e);
+		}
+		
+		logger.debug("OUT");
+		
+	}
 	
+	private void fixSbiObjPar(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			
+			sql = "ALTER TABLE SBI_OBJ_PAR ADD COLUMN COL_SPAN INTEGER;";
+			stmt.executeUpdate(sql);
 
+			sql = "ALTER TABLE SBI_OBJ_PAR ADD COLUMN THICK_PERC INTEGER;";
+			stmt.executeUpdate(sql);
+			
+		} catch (Exception e) {
+			logger.error(
+					"Error in altering SBI_OBJ_PAR",
+					e);
+		}
+		
+		logger.debug("OUT");
+		
+	}
 
 }
 
