@@ -56,5 +56,11 @@
         <property name="priority" type="integer">
             <column name="priority" />
         </property>
+        <property name="colSpan" type="integer">
+            <column name="col_span" />
+        </property>        
+        <property name="thickPerc" type="integer">
+            <column name="thick_perc" />
+        </property>          
     </class>
 </hibernate-mapping>
