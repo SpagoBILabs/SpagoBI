@@ -1046,6 +1046,14 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		Sbi.trace("[StoreManager.loadStoresByAssociations]: not agrregated stores are [" + storesNotAggregated.length + "][" + storesNotAggregated+ "]");
 		Sbi.trace("[StoreManager.loadStoresByAssociations]: agrregated stores are [" + storesAggregated.length + "][" + storesAggregated + "]");
 		
+		// add pareameters to params
+		
+		var parameters = {};
+		for(var i = 0; i < stores.length; i++) {
+			var store = stores[i];
+			var storeId = this.getStoreId(store);
+			parameters[storeId] = this.getStoreParametersValues(storeId);
+		}
 
 		Sbi.trace("[StoreManager.loadStoresByAssociations]: Loading joined dataset used by [" + Sbi.toSource(storesNotAggregated) + "] " +
 				"not aggregated store(s)");
@@ -1054,6 +1062,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		    method: 'GET',
 		    params: {
 		    	associationGroup:  Ext.JSON.encode(associationGroup)
+		    	, parameters: Ext.JSON.encode( parameters )
 		        , selections: Ext.JSON.encode(selections)
 		        , datasets: Ext.JSON.encode(storesNotAggregated)
 		    },
@@ -1072,6 +1081,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			    method: 'GET',
 			    params: {
 			    	associationGroup:  Ext.JSON.encode(associationGroup)
+			    	, parameters: Ext.JSON.encode( parameters )
 			        , selections: Ext.JSON.encode(selections)
 			        , datasets: Ext.JSON.encode([storeId])
 			        , aggregations: Ext.JSON.encode(storeAggregations)
@@ -1333,7 +1343,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	/**
 	 * @method
 	 * 
-	 * @returns the parameters' values for the given store
+	 * @returns the parameters' values for the given store. es. [{p1: value1},{p2: value2}]
 	 */
 	, getStoreParametersValues: function(store) {
 		Sbi.trace("[StoreManager.getStoreParametersValues]: IN");
