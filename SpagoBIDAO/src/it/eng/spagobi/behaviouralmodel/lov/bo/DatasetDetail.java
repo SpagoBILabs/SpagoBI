@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class DatasetDetail implements ILovDetail {
+public class DatasetDetail extends DependenciesPostProcessingLov implements ILovDetail {
 
 	private static transient Logger logger = Logger.getLogger(DatasetDetail.class);
 
