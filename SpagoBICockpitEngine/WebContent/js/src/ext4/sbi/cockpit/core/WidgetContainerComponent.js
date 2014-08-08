@@ -299,12 +299,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     		handler: this.onShowWidgetEditor,
     		scope: this
     	}, 
-    	{
+    	/*{
     		type:'help',
     		tooltip: LN('sbi.cockpit.window.toolbar.configuration'),
             handler: this.onShowWidgetConfiguration,
     		scope: this
-        }, 
+        }, */
         {
         	type:'refresh',
         	tooltip: LN('sbi.cockpit.window.toolbar.refresh'),
