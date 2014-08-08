@@ -592,14 +592,14 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 		, handler:  this.onShowSaveDocumentAsWindow
 	 	}));
 		
-		
+		/*
 		tbItems.push(new Ext.Button({
 		 		id: 'debug'
 			 	   	   , text: 'Debug'
 			 	       , scope: this
 			 		   , handler:  this.onDebug
 			 	 }));
-		
+		*/
 		
 		this.tbar = new Ext.Toolbar({
 		    items: tbItems,
