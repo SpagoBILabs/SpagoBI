@@ -453,7 +453,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 	 * @see it.eng.spagobi.engines.config.dao.IEngineDAO#modifyEngine(it.eng.spagobi.engines.config.bo.Engine)
 	 */
 	public void modifyEngine(Engine aEngine) throws EMFUserError {
-		logger.debug("IN");
+		logger.debug("IN"); 
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -483,7 +483,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			hibEngine.setBiobjType(hibDomainBiobjType);
 			hibEngine.setUseDataSet(new Boolean(aEngine.getUseDataSet()));			
 			hibEngine.setUseDataSource(new Boolean(aEngine.getUseDataSource()));						
-			updateSbiCommonInfo4Update(hibEngine);
+			updateSbiCommonInfo4Update(hibEngine, true);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
