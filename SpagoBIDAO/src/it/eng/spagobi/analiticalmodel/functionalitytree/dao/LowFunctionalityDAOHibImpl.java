@@ -1387,6 +1387,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		Transaction tx = null;
 		List realResult = new ArrayList();
 		try {
+			
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			String username = null;
@@ -1481,7 +1482,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			//maintains functionalities that have the same user's role
 			while (it.hasNext()) {
 				SbiFunctions tmpFunc = (SbiFunctions) it.next();
-				if((UserUtilities.isAdministrator(profile) &&tmpFunc.getFunctTypeCd().equalsIgnoreCase("USER_FUNCT")) || 
+				if((UserUtilities.isAdministrator(profile) && (tmpFunc.getFunctTypeCd().equalsIgnoreCase("USER_FUNCT") || tmpFunc.getFunctTypeCd().equalsIgnoreCase("LOW_FUNCT") )) || 
 						tmpFunc.getFunctTypeCd().equalsIgnoreCase("COMMUNITY_FUNCT")){
 					realResult.add(toLowFunctionality(tmpFunc, recoverBIObjects));
 				}else{
