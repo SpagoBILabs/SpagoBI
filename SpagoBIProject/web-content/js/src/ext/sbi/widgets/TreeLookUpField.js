@@ -219,10 +219,14 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				pvalues = values;
 				values = values.split(";");
 			}
-			Sbi.widgets.LookupField.superclass.setValue.call( this, pvalues);
+		}else{
+			values=null;
+			this.reloadTree({});
 		}
+		Sbi.widgets.LookupField.superclass.setValue.call( this, pvalues);
 		this.xStartingValues = values;
 		this.xvalues = values;
+		
 	}
 
 	,
@@ -238,8 +242,10 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				pvalues = values;
 				values = values.split(";");
 			}
-			Sbi.widgets.LookupField.superclass.setRawValue.call( this, pvalues);
+		}else{
+			values=null;
 		}
+		Sbi.widgets.LookupField.superclass.setRawValue.call( this, pvalues);
 		this.xStartingDescriptions = values;
 		this.xdescriptions = values;
 	}
