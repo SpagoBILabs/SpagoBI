@@ -9,7 +9,7 @@
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
  
-  
+   
 Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 	extend: 'Sbi.widgets.compositepannel.ListDetailPanel'
 
@@ -131,8 +131,13 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 							var selectedRow = this.grid.getSelectionModel().getSelection();
 							
 							
+							selectedRow[0].data = Ext.apply(selectedRow[0].data, record);	
+							selectedRow[0].raw = Ext.apply(selectedRow[0].raw, record);	
+							selectedRow[0].data.DATASOURCE_ID = record.DATASOURCE_ID;
+
+							
 							//unused.. Its a workaround because it doesn't update the values in the grids...
-							selectedRow[0].set("DESCRIPTION",selectedRow.DESCRIPTION);
+							//selectedRow[0].set("DESCRIPTION",selectedRow.DESCRIPTION);
 							
 							// if it has been set write deafult must change the previous write default
 							if(object.data.WRITE_DEFAULT == true){
@@ -146,10 +151,23 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 						        	}
 						        }
 							}
+							selectedRow[0].commit();
+
+							this.grid.store.sync();
+							this.grid.store.commitChanges() ;
+							this.grid.store.loadData( selectedRow[0], true ) ;
 							
-							selectedRow[0].data = Ext.apply(selectedRow[0].data,record);
-							this.grid.store.commitChanges();	
-							this.detailPanel.setFormState(record);
+							this.grid.getView().refresh();
+							
+							this.detailPanel.dataSourceId.setValue(record.DATASOURCE_ID);
+							
+							
+/*							selectedRow[0].data = Ext.apply(selectedRow[0].data,record);
+							selectedRow[0].commit();
+							this.grid.store.sync();
+							this.grid.store.load() ;
+							this.grid.getView().select(this.grid.store.data.length -1);*/
+							
 						}
 					}
 				} else {
