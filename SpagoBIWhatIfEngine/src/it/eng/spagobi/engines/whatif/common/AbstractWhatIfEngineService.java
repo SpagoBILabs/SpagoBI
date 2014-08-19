@@ -16,6 +16,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.rest.AbstractEngineRestService;
 import it.eng.spagobi.utilities.engines.rest.ExecutionSession;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.util.ArrayList;
@@ -25,58 +26,61 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.gson.JsonObject;
 
 /**
  * 
- * @author Zerbetto Davide (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * @author Zerbetto Davide (davide.zerbetto@eng.it), Alberto Ghedin
+ *         (alberto.ghedin@eng.it)
+ * 
  */
 public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 
-    private static final String ENGINE_NAME = "SpagoBIWhatIfEngine";
-	
+	private static final String ENGINE_NAME = "SpagoBIWhatIfEngine";
+
 	private static final String OUTPUTFORMAT = "OUTPUTFORMAT";
 	private static final String OUTPUTFORMAT_JSONHTML = "application/json";
-	
-	
+
+	private String successString;
+
 	public static transient Logger logger = Logger.getLogger(AbstractWhatIfEngineService.class);
 
 	@Context
 	protected HttpServletRequest servletRequest;
-	
+
 	/**
 	 * Renders the model and return the HTML table
+	 * 
 	 * @param request
 	 * @return the String that contains the HTML table
 	 */
-	public String renderModel(PivotModel model){
+	public String renderModel(PivotModel model) {
 		logger.debug("IN");
-		
+
 		String serializedModel = null;
-	
 
 		try {
-			serializedModel = (String) serialize(model);
+			serializedModel = serialize(model);
 		} catch (SerializationException e) {
 			logger.error("Error serializing the pivot", e);
-			throw new SpagoBIEngineRuntimeException("Error serializing the pivot",e);
+			throw new SpagoBIEngineRuntimeException("Error serializing the pivot", e);
 		}
 
-		
 		logger.debug("OUT: table correctly serialized");
 		return serializedModel;
 
 	}
 
-	public HttpServletRequest getServletRequest(){
+	@Override
+	public HttpServletRequest getServletRequest() {
 		return servletRequest;
 	}
-	
+
 	/**
 	 * Gets the what if engine instance.
 	 * 
@@ -84,56 +88,55 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 	 */
 	public WhatIfEngineInstance getWhatIfEngineInstance() {
 		ExecutionSession es = getExecutionSession();
-		return (WhatIfEngineInstance)es.getAttributeFromSession( EngineConstants.ENGINE_INSTANCE );
+		return (WhatIfEngineInstance) es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
 
 	}
-	
-	public PivotModel getPivotModel(){
+
+	public PivotModel getPivotModel() {
 		return getWhatIfEngineInstance().getPivotModel();
 	}
-	
-	public ModelConfig getModelConfig(){
+
+	public ModelConfig getModelConfig() {
 		return getWhatIfEngineInstance().getModelConfig();
 	}
-	
-	
-	public String getOutputFormat(){
+
+	public String getOutputFormat() {
 		String outputFormat = servletRequest.getParameter(OUTPUTFORMAT);
-		
-		if(outputFormat==null  || outputFormat.equals("") ){
-			logger.debug("the output format is null.. use the default one"+OUTPUTFORMAT_JSONHTML);
+
+		if (outputFormat == null || outputFormat.equals("")) {
+			logger.debug("the output format is null.. use the default one" + OUTPUTFORMAT_JSONHTML);
 			outputFormat = OUTPUTFORMAT_JSONHTML;
 		}
 
 		return outputFormat;
 	}
-	
-	public String serialize(Object obj) throws SerializationException{
+
+	public String serialize(Object obj) throws SerializationException {
 		String outputFormat = getOutputFormat();
 		return (String) SerializationManager.serialize(outputFormat, obj);
 	}
 
-	public Object deserialize(String obj, Class clazz) throws SerializationException{
+	public Object deserialize(String obj, Class clazz) throws SerializationException {
 		String outputFormat = getOutputFormat();
 		return SerializationManager.deserialize(outputFormat, obj, clazz);
 	}
 
-	public Object deserialize(String obj, TypeReference object) throws SerializationException{
+	public Object deserialize(String obj, TypeReference object) throws SerializationException {
 		String outputFormat = getOutputFormat();
 		return SerializationManager.deserialize(outputFormat, obj, object);
 	}
-	
-	
-	public List<Member> getMembersFromBody(){
+
+	public List<Member> getMembersFromBody() {
 		logger.debug("Getting the members from the request");
 		List<SbiMember> sbiMembers = null;
 		List<Member> members = new ArrayList<Member>();
-		String membersString=null;
-		
+		String membersString = null;
+
 		try {
 			membersString = RestUtilities.readBody(getServletRequest());
-			TypeReference<List<SbiMember>> type = new TypeReference<List<SbiMember>>() {};
-			sbiMembers = (List<SbiMember>)deserialize(membersString, type);
+			TypeReference<List<SbiMember>> type = new TypeReference<List<SbiMember>>() {
+			};
+			sbiMembers = (List<SbiMember>) deserialize(membersString, type);
 			for (int i = 0; i < sbiMembers.size(); i++) {
 				members.add(sbiMembers.get(i).getMember(getPivotModel().getCube()));
 			}
@@ -142,7 +145,6 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 			throw new SpagoBIEngineRestServiceRuntimeException("generic.error.request.members.getting", getLocale(), e);
 		}
 
-		
 		return members;
 	}
 
@@ -150,16 +152,24 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 	public String getEngineName() {
 		return ENGINE_NAME;
 	}
-	
+
 	/**
 	 * Builds a simple success json {result: ok}
+	 * 
 	 * @return
 	 */
-	public String getJsonSuccess(){
-		JsonObject obj = new JsonObject();
-		obj.addProperty("result", "ok");
-		return obj.toString();
+	public String getJsonSuccess() {
+		if (successString == null) {
+			JSONObject obj = new JSONObject();
+			try {
+				obj.put("result", "ok");
+			} catch (JSONException e) {
+				logger.error("Error building the success string");
+				throw new SpagoBIRuntimeException("Error building the success string");
+			}
+			successString = obj.toString();
+		}
+		return successString;
 	}
 
-	
 }
