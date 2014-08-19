@@ -189,7 +189,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 			        	name: 'version',
 			        	fieldLabel: LN("sbi.olap.toolbar.export.wizard.version"),
 			        	store: store,
-			        	displayField: 'id',
+			        	displayField: 'name',
 			        	valueField: 'id',
 			        	value: this.actualVersion
 			        }]

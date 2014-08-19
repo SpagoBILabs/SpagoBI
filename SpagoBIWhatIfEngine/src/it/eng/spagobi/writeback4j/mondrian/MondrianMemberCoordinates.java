@@ -1,4 +1,3 @@
-
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -23,58 +22,69 @@ import org.olap4j.metadata.Member;
 
 /**
  * @author ghedin
- *
+ * 
  */
-public class MondrianMemberCoordinates implements IMemberCoordinates{
+public class MondrianMemberCoordinates implements IMemberCoordinates {
 
 	MondrianDef.CubeDimension dimension;
 	MondrianDef.Hierarchy hieararchy;
 	Map<TableEntry, Member> level2Member;
 	List<TableEntry> levels;
 
-	public MondrianMemberCoordinates(CubeDimension dimension, Hierarchy hieararchy,Map<TableEntry, Member> level2Member) {
+	public MondrianMemberCoordinates(CubeDimension dimension, Hierarchy hieararchy, Map<TableEntry, Member> level2Member) {
 		super();
 		this.dimension = dimension;
 		this.hieararchy = hieararchy;
 		this.level2Member = level2Member;
 	}
+
+	public String getDimensionName() {
+		return getDimension().name;
+	}
+
 	public MondrianDef.CubeDimension getDimension() {
 		return dimension;
 	}
+
 	public void setDimension(MondrianDef.CubeDimension dimension) {
 		this.dimension = dimension;
 	}
+
 	public MondrianDef.Hierarchy getHieararchy() {
 		return hieararchy;
 	}
+
 	public void setHieararchy(MondrianDef.Hierarchy hieararchy) {
 		this.hieararchy = hieararchy;
 	}
+
 	public Map<TableEntry, Member> getLevel2Member() {
 		return level2Member;
 	}
+
 	public void setLevel2Member(Map<TableEntry, Member> level2Member) {
 		this.level2Member = level2Member;
 	}
-	public boolean isAllMember(){
-		return level2Member.size()==0;
+
+	public boolean isAllMember() {
+		return level2Member.size() == 0;
 	}
 
-	public String getTableName(){
+	public String getTableName() {
 		return MondrianSchemaRetriver.getTableName(getHieararchy());
 	}
 
-	public String getPrimaryKey(){
+	public String getPrimaryKey() {
 		return getHieararchy().primaryKey;
 	}
 
-	public String getForeignKey(){
+	public String getForeignKey() {
 		return getDimension().foreignKey;
 	}
 
-	public EquiJoin getInnerDimensionJoinConditions(){
+	public EquiJoin getInnerDimensionJoinConditions() {
 		MondrianDef.RelationOrJoin relOrJoin = getHieararchy().relation;
-		if(relOrJoin instanceof MondrianDef.Join){
+		if (relOrJoin instanceof MondrianDef.Join) {
 			MondrianDef.Join join = (MondrianDef.Join) relOrJoin;
 			MondrianDef.Table leftT = (MondrianDef.Table) join.left;
 			MondrianDef.Table rightT = (MondrianDef.Table) join.right;
@@ -85,24 +95,22 @@ public class MondrianMemberCoordinates implements IMemberCoordinates{
 		return null;
 	}
 
-	
-
 	@Override
 	public String toString() {
 		return "MondrianMemberCoordinates [dimension=" + dimension.name
 				+ ", hieararchy=" + hieararchy.name + "]";
 	}
-	public List<TableEntry> getLevels(){
-		if(levels==null){
+
+	public List<TableEntry> getLevels() {
+		if (levels == null) {
 			levels = new ArrayList<TableEntry>();
-			MondrianDef.Level[] schemaLevels =  hieararchy.levels;
+			MondrianDef.Level[] schemaLevels = hieararchy.levels;
 
-
-			for(int i=0; i<schemaLevels.length; i++) {
+			for (int i = 0; i < schemaLevels.length; i++) {
 				MondrianDef.Level aLevel = schemaLevels[i];
 
-				String table =  aLevel.table;
-				if(table==null){
+				String table = aLevel.table;
+				if (table == null) {
 					table = MondrianSchemaRetriver.getTableName(hieararchy);
 				}
 				levels.add(new TableEntry(aLevel.column, table));
