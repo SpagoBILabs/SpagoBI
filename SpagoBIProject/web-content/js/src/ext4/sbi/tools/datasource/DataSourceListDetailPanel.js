@@ -135,10 +135,6 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 							selectedRow[0].raw = Ext.apply(selectedRow[0].raw, record);	
 							selectedRow[0].data.DATASOURCE_ID = record.DATASOURCE_ID;
 
-							
-							//unused.. Its a workaround because it doesn't update the values in the grids...
-							//selectedRow[0].set("DESCRIPTION",selectedRow.DESCRIPTION);
-							
 							// if it has been set write deafult must change the previous write default
 							if(object.data.WRITE_DEFAULT == true){
 								var currentLabel = object.data.DATASOURCE_LABEL;
@@ -161,12 +157,7 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 							
 							this.detailPanel.dataSourceId.setValue(record.DATASOURCE_ID);
 							
-							
-/*							selectedRow[0].data = Ext.apply(selectedRow[0].data,record);
-							selectedRow[0].commit();
-							this.grid.store.sync();
-							this.grid.store.load() ;
-							this.grid.getView().select(this.grid.store.data.length -1);*/
+
 							
 						}
 					}
@@ -182,9 +173,17 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 	}
 
 	, onFormTest: function(record){
+		var r = record;
+		try{			
+			if ((this.grid.selModel.selected !== undefined) && (record.DATASOURCE_LABEL === undefined || record.DATASOURCE_LABEL == null)){
+				var r = this.grid.selModel.selected.items[0].raw;
+			}
+		}catch(error){			
+		}
+
 		Ext.Ajax.request({
 			url: this.services["test"],
-			params: record,
+			params: r,
 			success : function(response, options) {
 				if(response !== undefined && response.statusText !== undefined) {
 					var responceText = Ext.decode(response.responseText);
