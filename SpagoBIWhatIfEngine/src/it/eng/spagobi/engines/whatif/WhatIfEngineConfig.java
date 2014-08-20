@@ -10,6 +10,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -37,74 +38,77 @@ import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
  * @author ...
  */
 public class WhatIfEngineConfig {
-	
+
 	private static final BASE64Encoder ENCODER = new BASE64Encoder();
-	
+
 	private EnginConf engineConfig;
-	
+
 	private Map<String, List> includes;
 	private Set<String> enabledIncludes;
+	private Map<String, AllocationAlgorithmDefinition> algorithmsDefinitionMap;
 	private static transient Logger logger = Logger.getLogger(WhatIfEngineConfig.class);
-	private static final String PROPORTIONAL_ALGORITHM_CONF = "proportionalAlgorithmPersistQueryWhereClause"; 
+	private static final String PROPORTIONAL_ALGORITHM_CONF = "proportionalAlgorithmPersistQueryWhereClause";
 
-	
 	// -- singleton pattern --------------------------------------------
 	private static WhatIfEngineConfig instance;
-	
-	public static WhatIfEngineConfig getInstance(){
-		if(instance==null) {
+
+	public static WhatIfEngineConfig getInstance() {
+		if (instance == null) {
 			instance = new WhatIfEngineConfig();
 		}
 		return instance;
 	}
-	
+
 	private WhatIfEngineConfig() {
-		setEngineConfig( EnginConf.getInstance() );
+		setEngineConfig(EnginConf.getInstance());
 	}
-	// -- singleton pattern  --------------------------------------------
-	
-	
+
+	// -- singleton pattern --------------------------------------------
+
 	// -- CORE SETTINGS ACCESSOR Methods---------------------------------
-	
+
 	public List getIncludes() {
 		List results;
-		
-		//includes = null;
-		if(includes == null) {
+
+		// includes = null;
+		if (includes == null) {
 			initIncludes();
 		}
-		
+
 		results = new ArrayList();
 		Iterator<String> it = enabledIncludes.iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			String includeName = it.next();
-			List urls = includes.get( includeName );
+			List urls = includes.get(includeName);
 			results.addAll(urls);
 			logger.debug("Added [" + urls.size() + "] for include [" + includeName + "]");
 		}
-		
-		
+
 		return results;
 	}
-	
-	
+
 	// -- PARSE Methods -------------------------------------------------
-	
+
 	private final static String INCLUDES_TAG = "INCLUDES";
 	private final static String INCLUDE_TAG = "INCLUDE";
 	private final static String URL_TAG = "URL";
 	private final static String WRITEBACK_TAG = "WRITEBACK";
-	
-	
-	public String getTemplateFilePath(){
+	private final static String ALGORITHMS_TAG = "ALGORITHMS";
+	private final static String ALGORITHM_TAG = "ALGORITHM";
+	private final static String NAME_ATTRIBUTE = "name";
+	private final static String CLASS_ATTRIBUTE = "class";
+	private final static String INMEMORY_ATTRIBUTE = "inMemory";
+	private final static String PERSISTENT_ATTRIBUTE = "persistent";
+
+	public String getTemplateFilePath() {
 		String templatePath = "";
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("TEMPLATE");
-		if(sb!=null){
+		if (sb != null) {
 			templatePath = sb.getCharacters();
 		}
 		return templatePath;
 	}
-	
+
 	public OlapDataSource getOlapDataSource(IDataSource ds, String reference, WhatIfTemplate template, IEngUserProfile profile, Locale locale) {
 		Properties connectionProps = new Properties();
 		String connectionString = null;
@@ -112,33 +116,34 @@ public class WhatIfEngineConfig {
 			connectionProps.put("DataSource", ds.getJndi());
 			connectionString = "jdbc:mondrian:DataSource=" + ds.getJndi();
 		} else {
-			connectionProps.put("JdbcUser",ds.getUser());
-			connectionProps.put("JdbcPassword",ds.getPwd());
-			connectionProps.put("JdbcDrivers",ds.getDriver());
+			connectionProps.put("JdbcUser", ds.getUser());
+			connectionProps.put("JdbcPassword", ds.getPwd());
+			connectionProps.put("JdbcDrivers", ds.getDriver());
 			connectionString = "jdbc:mondrian:Jdbc=" + ds.getUrlConnection();
 		}
-		
+
 		connectionProps.put("Catalog", reference);
 		connectionProps.put("Provider", "Mondrian");
 		connectionProps.put("Locale", locale.toString());
-		
+
 		this.defineSchemaProcessorProperties(connectionProps, template, profile);
-				
 
 		OlapDataSource olapDataSource = new SimpleOlapDataSource();
-		((SimpleOlapDataSource)olapDataSource).setConnectionString( connectionString);
-		((SimpleOlapDataSource)olapDataSource).setConnectionProperties(connectionProps);
-		
+		((SimpleOlapDataSource) olapDataSource).setConnectionString(connectionString);
+		((SimpleOlapDataSource) olapDataSource).setConnectionProperties(connectionProps);
+
 		return olapDataSource;
 	}
-	
+
 	private void defineSchemaProcessorProperties(Properties connectionProps,
 			WhatIfTemplate template, IEngUserProfile profile) {
 		List<String> userProfileAttributes = template.getProfilingUserAttributes();
-		// SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchemaProcessor, that is responsible for i18n, therefore we put it 
+		// SpagoBIFilterDynamicSchemaProcessor extends
+		// LocalizingDynamicSchemaProcessor, that is responsible for i18n,
+		// therefore we put it
 		// in the connection properties anyway
-		connectionProps.put("DynamicSchemaProcessor","it.eng.spagobi.engines.whatif.schema.SpagoBIFilterDynamicSchemaProcessor");
-		if ( !userProfileAttributes.isEmpty() ) {
+		connectionProps.put("DynamicSchemaProcessor", "it.eng.spagobi.engines.whatif.schema.SpagoBIFilterDynamicSchemaProcessor");
+		if (!userProfileAttributes.isEmpty()) {
 			logger.debug("Template contains data access restriction based on user's attributes");
 			Iterator<String> it = userProfileAttributes.iterator();
 			while (it.hasNext()) {
@@ -163,8 +168,8 @@ public class WhatIfEngineConfig {
 		}
 		logger.debug("Found profile attribute [" + attributeName + "]"
 				+ " with value [" + value + "]");
-		
-		// encoding value in Base64 
+
+		// encoding value in Base64
 		String valueBase64 = null;
 		if (value != null) {
 			try {
@@ -175,7 +180,7 @@ public class WhatIfEngineConfig {
 			}
 		}
 		logger.debug("Attribute value in Base64 encoding is " + valueBase64);
-		
+
 		return valueBase64;
 	}
 
@@ -185,58 +190,58 @@ public class WhatIfEngineConfig {
 		SourceBean includeSB;
 		List urlSBList;
 		SourceBean urlSB;
-		
+
 		includes = new HashMap();
 		enabledIncludes = new LinkedHashSet();
-		
+
 		includesSB = (SourceBean) getConfigSourceBean().getAttribute(INCLUDES_TAG);
-		if(includesSB == null) {
+		if (includesSB == null) {
 			logger.debug("Tag [" + INCLUDES_TAG + "] not specifeid in [engine-config.xml] file");
 			return;
 		}
-		
+
 		includeSBList = includesSB.getAttributeAsList(INCLUDE_TAG);
-		if(includeSBList == null || includeSBList.size() == 0) {
+		if (includeSBList == null || includeSBList.size() == 0) {
 			logger.debug("Tag [" + INCLUDES_TAG + "] does not contains any [" + INCLUDE_TAG + "] tag");
 			return;
 		}
-		
-		for(int i = 0; i < includeSBList.size(); i++) {
-			includeSB = (SourceBean)includeSBList.get(i);
-			String name = (String)includeSB.getAttribute("name");
-			String bydefault = (String)includeSB.getAttribute("default");
-			
+
+		for (int i = 0; i < includeSBList.size(); i++) {
+			includeSB = (SourceBean) includeSBList.get(i);
+			String name = (String) includeSB.getAttribute("name");
+			String bydefault = (String) includeSB.getAttribute("default");
+
 			logger.debug("Include [" + name + "]: [" + bydefault + "]");
-			
+
 			List urls = new ArrayList();
-			
+
 			urlSBList = includeSB.getAttributeAsList(URL_TAG);
-			for(int j = 0; j < urlSBList.size(); j++) {
-				urlSB = (SourceBean)urlSBList.get(j);
+			for (int j = 0; j < urlSBList.size(); j++) {
+				urlSB = (SourceBean) urlSBList.get(j);
 				String url = urlSB.getCharacters();
 				urls.add(url);
 				logger.debug("Url [" + name + "] added to include list");
 			}
-			
+
 			includes.put(name, urls);
-			if(bydefault.equalsIgnoreCase("enabled")) {
+			if (bydefault.equalsIgnoreCase("enabled")) {
 				enabledIncludes.add(name);
 			}
-		}		
+		}
 	}
-	
-	public boolean getProportionalAlghorithmConf(){
+
+	public boolean getProportionalAlghorithmConf() {
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(WRITEBACK_TAG);
-		if(sb!=null){
-			String conf =  (String)sb.getAttribute(PROPORTIONAL_ALGORITHM_CONF);
-			if(conf!=null && conf.length()>0){
+		if (sb != null) {
+			String conf = (String) sb.getAttribute(PROPORTIONAL_ALGORITHM_CONF);
+			if (conf != null && conf.length() > 0) {
 				return conf.equals("in");
 			}
 		}
-		return 	true;
+		return true;
 	}
-	
-	// -- ACCESS Methods  -----------------------------------------------
+
+	// -- ACCESS Methods -----------------------------------------------
 	public EnginConf getEngineConfig() {
 		return engineConfig;
 	}
@@ -244,18 +249,72 @@ public class WhatIfEngineConfig {
 	private void setEngineConfig(EnginConf engineConfig) {
 		this.engineConfig = engineConfig;
 	}
-	
+
 	public SourceBean getConfigSourceBean() {
 		return getEngineConfig().getConfig();
 	}
-	
+
 	public String getEngineResourcePath() {
 		String path = null;
-		if(getEngineConfig().getResourcePath() != null) {
+		if (getEngineConfig().getResourcePath() != null) {
 			path = getEngineConfig().getResourcePath() + System.getProperty("file.separator");
 		} else {
 			path = ConfigSingleton.getRootPath() + System.getProperty("file.separator") + "resources";
 		}
 		return path;
+	}
+
+	/**
+	 * Reads the configuration file and gets the list of allocation algorithms
+	 * 
+	 * @return
+	 */
+	public Map<String, AllocationAlgorithmDefinition> getAllocationAlgorithms() {
+
+		if (algorithmsDefinitionMap == null) {
+			SourceBean algorithmsBean;
+			List<SourceBean> algorithmsListBean;
+
+			algorithmsDefinitionMap = new HashMap<String, AllocationAlgorithmDefinition>();
+
+			SourceBean writeBackBean = (SourceBean) getConfigSourceBean().getAttribute(WRITEBACK_TAG);
+			if (writeBackBean != null) {
+				algorithmsBean = (SourceBean) writeBackBean.getAttribute(ALGORITHMS_TAG);
+				if (algorithmsBean != null) {
+					algorithmsListBean = algorithmsBean.getAttributeAsList(ALGORITHM_TAG);
+					if (algorithmsListBean != null) {
+						for (int i = 0; i < algorithmsListBean.size(); i++) {
+							SourceBean algorithmBean = algorithmsListBean.get(i);
+							String name = (String) algorithmBean.getAttribute(NAME_ATTRIBUTE);
+							String className = (String) algorithmBean.getAttribute(CLASS_ATTRIBUTE);
+							String inMemoryString = (String) algorithmBean.getAttribute(INMEMORY_ATTRIBUTE);
+							String persistentString = (String) algorithmBean.getAttribute(PERSISTENT_ATTRIBUTE);
+
+							Boolean inMemory = true;
+							if (inMemoryString != null) {
+								try {
+									inMemory = new Boolean(inMemoryString);
+								} catch (Exception e) {
+									logger.error("inMemory attribute is a boolean, so the admissible values are [true, false] not [" + inMemoryString + "]");
+								}
+							}
+
+							Boolean persistent = true;
+							if (persistentString != null) {
+								try {
+									persistent = new Boolean(persistentString);
+								} catch (Exception e) {
+									logger.error("persistent attribute is a boolean, so the admissible values are [true, false] not [" + persistentString + "]");
+								}
+							}
+
+							algorithmsDefinitionMap.put(name, new AllocationAlgorithmDefinition(name, className, inMemory, persistent));
+
+						}
+					}
+				}
+			}
+		}
+		return algorithmsDefinitionMap;
 	}
 }

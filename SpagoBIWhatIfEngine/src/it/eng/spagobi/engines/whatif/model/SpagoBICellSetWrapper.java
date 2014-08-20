@@ -13,7 +13,7 @@ package it.eng.spagobi.engines.whatif.model;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -88,7 +88,7 @@ public class SpagoBICellSetWrapper implements CellSet {
 	 * @param transformation The pending transformation
 	 */
 	public void restoreTranformation(CellTransformation transformation) {
-		AllocationAlgorithm algorithm = transformation.getAlgorithm();
+		IAllocationAlgorithm algorithm = transformation.getAlgorithm();
 		algorithm.apply(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), this);
 	}
 	
@@ -98,7 +98,7 @@ public class SpagoBICellSetWrapper implements CellSet {
 	 * @param transformation The transformation
 	 */
 	public void applyTranformation(CellTransformation transformation) {
-		AllocationAlgorithm algorithm = transformation.getAlgorithm();
+		IAllocationAlgorithm algorithm = transformation.getAlgorithm();
 		algorithm.apply(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), this);
 		spagoBIPivotModel.addPendingTransformation(transformation);
 	}

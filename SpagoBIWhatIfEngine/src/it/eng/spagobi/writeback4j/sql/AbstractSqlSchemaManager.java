@@ -51,7 +51,7 @@ public abstract class AbstractSqlSchemaManager {
 				if (from != null) {
 					from.add(aLevel.table);
 				}
-				if (cordinates.getDimensionName().equalsIgnoreCase(WhatIfConstants.VERSION_DIMENSION_NAME)) {
+				if (version != null && cordinates.getDimensionName().equalsIgnoreCase(WhatIfConstants.VERSION_DIMENSION_NAME)) {
 					condition2Value.put(new TableEntry(aLevel.column, aLevel.table), version.toString());
 				} else {
 					condition2Value.put(new TableEntry(aLevel.column, aLevel.table), lelvel2Member.get(aLevel).getName());

@@ -11,20 +11,12 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.writeback4j.IMemberCoordinates;
 import it.eng.spagobi.writeback4j.ISchemaRetriver;
 import it.eng.spagobi.writeback4j.sql.AnalysisExporter;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-
-import org.olap4j.OlapException;
-import org.olap4j.metadata.Dimension.Type;
-import org.olap4j.metadata.Member;
 
 import test.AbstractWhatIfTestCase;
 
@@ -36,7 +28,7 @@ import test.AbstractWhatIfTestCase;
 
 /**
  * @author ghedin
- *
+ * 
  */
 public abstract class AbstractWhatIfExportResult extends AbstractWhatIfTestCase {
 
@@ -45,46 +37,46 @@ public abstract class AbstractWhatIfExportResult extends AbstractWhatIfTestCase 
 	SpagoBICellWrapper cellWrapper;
 	WhatIfEngineInstance ei;
 
-
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		ei = getWhatifengineiEngineInstance(getCatalogue());
-		SpagoBIPivotModel pivotModel = (SpagoBIPivotModel)ei.getPivotModel();
+		SpagoBIPivotModel pivotModel = (SpagoBIPivotModel) ei.getPivotModel();
 
-		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper)pivotModel.getCellSet();
+		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) pivotModel.getCellSet();
 		cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(0);
 
-		Double value = (new Random()).nextFloat()*1000000d;
+		Double value = (new Random()).nextFloat() * 1000000d;
 
-		DefaultWeightedAllocationAlgorithm al = new DefaultWeightedAllocationAlgorithm(ei, false);
-		CellTransformation transformation = new CellTransformation(value,cellWrapper.getValue(), cellWrapper, al);
+		DefaultWeightedAllocationAlgorithm al = new DefaultWeightedAllocationAlgorithm(ei);
+		CellTransformation transformation = new CellTransformation(value, cellWrapper.getValue(), cellWrapper, al);
 		cellSetWrapper.applyTranformation(transformation);
 
-		
 		dataSource = ei.getDataSource();
 		try {
 
-			connection = dataSource.getConnection( null );
+			connection = dataSource.getConnection(null);
 		} catch (Exception e) {
 			fail();
 			throw e;
-		} 
+		}
 	}
 
+	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
 	}
 
-	public void testExportCSV() throws Exception{
+	public void testExportCSV() throws Exception {
 		try {
 			ISchemaRetriver retriver = ei.getWriteBackManager().getRetriver();
 			AnalysisExporter ae = new AnalysisExporter(ei.getPivotModel(), retriver);
-			ae.exportCSV( connection, 2, "|","");
+			ae.exportCSV(connection, 2, "|", "");
 		} catch (WhatIfPersistingTransformationException e) {
 
 			fail();
 			throw e;
-		}finally{
+		} finally {
 			try {
 				connection.close();
 			} catch (SQLException e) {
@@ -92,21 +84,18 @@ public abstract class AbstractWhatIfExportResult extends AbstractWhatIfTestCase 
 			}
 		}
 
-
 	}
 
-
-
-	public void testExportTable() throws Exception{
-		try {	
+	public void testExportTable() throws Exception {
+		try {
 			ISchemaRetriver retriver = ei.getWriteBackManager().getRetriver();
 			AnalysisExporter ae = new AnalysisExporter(ei.getPivotModel(), retriver);
-			ae.exportTable( connection, dataSource, dataSource,2, "expotedTable");
+			ae.exportTable(connection, dataSource, dataSource, 2, "expotedTable");
 		} catch (WhatIfPersistingTransformationException e) {
 
 			fail();
 			throw e;
-		}finally{
+		} finally {
 			try {
 				connection.close();
 			} catch (SQLException e) {
@@ -114,13 +103,8 @@ public abstract class AbstractWhatIfExportResult extends AbstractWhatIfTestCase 
 			}
 		}
 
-
 	}
 
-
-
 	public abstract String getCatalogue();
-
-
 
 }
