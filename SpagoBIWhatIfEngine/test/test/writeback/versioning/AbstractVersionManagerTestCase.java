@@ -53,7 +53,7 @@ public abstract class AbstractVersionManagerTestCase extends AbstractWhatIfTestC
 
 		Double value = (new Random()).nextFloat() * 1000000d;
 
-		DefaultWeightedAllocationAlgorithm al = new DefaultWeightedAllocationAlgorithm(ei, true);
+		DefaultWeightedAllocationAlgorithm al = new DefaultWeightedAllocationAlgorithm(ei);
 		CellTransformation transformation = new CellTransformation(value, cellWrapper.getValue(), cellWrapper, al);
 		cellSetWrapper.applyTranformation(transformation);
 

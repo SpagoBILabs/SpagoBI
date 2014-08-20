@@ -27,36 +27,34 @@ import test.AbstractWhatIfTestCase;
 
 /**
  * @author ghedin
- *
+ * 
  */
 public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 
-
-
-
-
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 	}
 
+	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
 	}
 
-
-
-
-	public Double persistTransformations( String catalog, boolean useIn) throws Exception{
+	public Double persistTransformations(String catalog, boolean useIn) throws Exception {
 		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(catalog);
-		SpagoBIPivotModel pivotModel = (SpagoBIPivotModel)ei.getPivotModel();
+		SpagoBIPivotModel pivotModel = (SpagoBIPivotModel) ei.getPivotModel();
 
-		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper)pivotModel.getCellSet();
+		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) pivotModel.getCellSet();
 		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(0);
 
-		Double value = (new Random()).nextFloat()*1000000d;
+		Double value = (new Random()).nextFloat() * 1000000d;
 
-		DefaultWeightedAllocationAlgorithm al = new DefaultWeightedAllocationAlgorithm(ei, useIn);
-		CellTransformation transformation = new CellTransformation(value,cellWrapper.getValue(), cellWrapper, al);
+		DefaultWeightedAllocationAlgorithm al = new DefaultWeightedAllocationAlgorithm(ei);
+		al.setUseInClause(useIn);
+		al.initAlgorithm();
+
+		CellTransformation transformation = new CellTransformation(value, cellWrapper.getValue(), cellWrapper, al);
 		cellSetWrapper.applyTranformation(transformation);
 
 		Connection connection;
@@ -64,11 +62,11 @@ public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 
 		try {
 
-			connection = dataSource.getConnection( null );
+			connection = dataSource.getConnection(null);
 		} catch (Exception e) {
 			fail();
 			throw e;
-		} 
+		}
 
 		try {
 			pivotModel.persistTransformations(connection);
@@ -76,7 +74,7 @@ public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 
 			fail();
 			throw e;
-		}finally{
+		} finally {
 			try {
 				connection.close();
 			} catch (SQLException e) {
@@ -84,49 +82,46 @@ public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 			}
 		}
 
-
 		CacheManager.flushCache(pivotModel.getDataSource());
 		String mdx = pivotModel.getMdx();
-		pivotModel.setMdx( mdx);
+		pivotModel.setMdx(mdx);
 		pivotModel.initialize();
 
-		cellSetWrapper = (SpagoBICellSetWrapper)pivotModel.getCellSet();
+		cellSetWrapper = (SpagoBICellSetWrapper) pivotModel.getCellSet();
 		cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(0);
 
-		Double newValue =  (Double) cellWrapper.getValue();
-		Double ration = 1-newValue/value;
-		System.out.println("Execute query = "+ al.getLastQuery());
+		Double newValue = (Double) cellWrapper.getValue();
+		Double ration = 1 - newValue / value;
+		System.out.println("Execute query = " + al.getLastQuery());
 		return ration;
 	}
 
-	public void testWithIn() throws Exception{
+	public void testWithIn() throws Exception {
 
 		long dateA = System.currentTimeMillis();
-		Double ration = persistTransformations(getCatalogue() , true);
+		Double ration = persistTransformations(getCatalogue(), true);
 		long dateB = System.currentTimeMillis();
 
-		System.out.println("Time with in "+(dateB-dateA));
-		System.out.println("Ratio is "+ration);
+		System.out.println("Time with in " + (dateB - dateA));
+		System.out.println("Ratio is " + ration);
 
-		assertTrue(ration<accurancy);
+		assertTrue(ration < accurancy);
 
 	}
 
-	public void testNoIn() throws Exception{
+	public void testNoIn() throws Exception {
 
 		long dateA = System.currentTimeMillis();
 		Double ration = persistTransformations(getCatalogue(), false);
 		long dateB = System.currentTimeMillis();
 
-		System.out.println("Time no in "+(dateB-dateA));
-		System.out.println("Ratio is "+ration);
+		System.out.println("Time no in " + (dateB - dateA));
+		System.out.println("Ratio is " + ration);
 
-		assertTrue(ration<accurancy && ration>-accurancy);
+		assertTrue(ration < accurancy && ration > -accurancy);
 
 	}
 
 	public abstract String getCatalogue();
-
-
 
 }

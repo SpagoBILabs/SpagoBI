@@ -15,16 +15,16 @@ package it.eng.spagobi.engines.whatif.model.transform;
 
 
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
 
 public class CellTransformation {
 
 	private SpagoBICellWrapper cell;
-	private AllocationAlgorithm algorithm;
+	private IAllocationAlgorithm algorithm;
 	private Object newValue;
 	private Object oldValue;
 	
-	public CellTransformation (Object newValue, Object oldValue, SpagoBICellWrapper cell, AllocationAlgorithm algorithm) {
+	public CellTransformation (Object newValue, Object oldValue, SpagoBICellWrapper cell, IAllocationAlgorithm algorithm) {
 		this.newValue = newValue;
 		this.cell = cell;
 		this.algorithm = algorithm;
@@ -39,11 +39,11 @@ public class CellTransformation {
 		this.cell = cell;
 	}
 
-	public AllocationAlgorithm getAlgorithm() {
+	public IAllocationAlgorithm getAlgorithm() {
 		return algorithm;
 	}
 
-	public void setAlgorithm(AllocationAlgorithm algorithm) {
+	public void setAlgorithm(IAllocationAlgorithm algorithm) {
 		this.algorithm = algorithm;
 	}
 

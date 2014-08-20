@@ -10,7 +10,6 @@
 
 package it.eng.spagobi.engines.whatif.model.transform.algorithm;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngine;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
@@ -19,6 +18,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.writeback4j.sql.DefaultWeightedAllocationAlgorithmPersister;
 
 import java.sql.Connection;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.olap4j.Position;
@@ -26,40 +26,42 @@ import org.olap4j.Position;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
-public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
+public class DefaultWeightedAllocationAlgorithm implements IAllocationAlgorithm {
 
 	public static final String NAME = "DEFAULT_WEIGHTED_ALLOCATION_ALGORITHM";
-	
+
+	public static final String ENGINEINSTANCE_PROPERTY = "EngineInstance";
+	public static final String USEINCLAUSE_PROPERTY = "UseInClause";
 	private static Logger logger = Logger.getLogger(DefaultWeightedAllocationAlgorithm.class);
 	private WhatIfEngineInstance ei;
 	private DefaultWeightedAllocationAlgorithmPersister persister;
 	private String lastQuery;
-	
-	
-	public DefaultWeightedAllocationAlgorithm(WhatIfEngineInstance ei, boolean useInClause) {
-		super();
+	private boolean useInClause = true;
+
+	public DefaultWeightedAllocationAlgorithm() {
+	}
+
+	public DefaultWeightedAllocationAlgorithm(WhatIfEngineInstance ei) {
+		this();
 		this.ei = ei;
+		initAlgorithm();
+	}
+
+	public void initAlgorithm() {
 		persister = new DefaultWeightedAllocationAlgorithmPersister(ei.getWriteBackManager().getRetriver(), ei.getDataSource());
 		persister.setUseInClause(useInClause);
 	}
 
-	
-	public DefaultWeightedAllocationAlgorithm(WhatIfEngineInstance ei) {
-		this(ei, WhatIfEngine.getConfig().getProportionalAlghorithmConf());
-	}
-	
-	@Override
 	public String getName() {
 		return NAME;
 	}
 
-	@Override
 	public void apply(SpagoBICellWrapper cell, Object oldValue,
 			Object newValue, SpagoBICellSetWrapper cellSetWrapper) {
-		
+
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
-		
+
 		logger.debug("IN");
 		try {
 			totalTimeMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.apply.totalTime");
@@ -79,7 +81,7 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 
 	private void applyInternal(SpagoBICellWrapper cell, Object oldValue,
 			Object newValue, SpagoBICellSetWrapper cellSetWrapper) throws Exception {
-		
+
 		// Iteration over a two-axis query
 		for (Position axis_0_Position : cellSetWrapper.getAxes()
 				.get(0).getPositions()) {
@@ -88,46 +90,45 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 					.get(1).getPositions()) {
 
 				SpagoBICellWrapper wrappedCell = (SpagoBICellWrapper) cellSetWrapper.getCell(axis_0_Position, axis_1_Position);
-				
+
 				CellRelation relation = wrappedCell.getRelationTo(cell);
 				Double newDoubleValue = null;
 				switch (relation) {
-				case EQUAL : 
+				case EQUAL:
 					newDoubleValue = ((Number) newValue).doubleValue();
 					wrappedCell.setValue(newDoubleValue);
 					break;
-				case ABOVE : 
-					// in case we modified a cell that had no value, we consider 0 as previous value
+				case ABOVE:
+					// in case we modified a cell that had no value, we consider
+					// 0 as previous value
 					if (oldValue == null) {
 						oldValue = 0;
 					}
-					newDoubleValue = wrappedCell.getDoubleValue() + ((Number) newValue).doubleValue() -  ((Number) oldValue).doubleValue();
+					newDoubleValue = wrappedCell.getDoubleValue() + ((Number) newValue).doubleValue() - ((Number) oldValue).doubleValue();
 					wrappedCell.setValue(newDoubleValue);
 					break;
-				case BELOW :
-					// in case the cell is below and doesn't contain a value, we don't modify it
+				case BELOW:
+					// in case the cell is below and doesn't contain a value, we
+					// don't modify it
 					if (wrappedCell.isNull() || wrappedCell.isError() || wrappedCell.isEmpty()) {
 						continue;
 					}
-					newDoubleValue = wrappedCell.getDoubleValue() * ((Number) newValue).doubleValue() /  ((Number) oldValue).doubleValue();
+					newDoubleValue = wrappedCell.getDoubleValue() * ((Number) newValue).doubleValue() / ((Number) oldValue).doubleValue();
 					wrappedCell.setValue(newDoubleValue);
 					break;
 				default:
 					break;
 				}
-				
+
 			}
 		}
 	}
 
-	
-	
-
 	public void persist(SpagoBICellWrapper cell, Object oldValue, Object newValue, Connection connection, Integer version) throws Exception {
-		
+
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
-		
+
 		logger.debug("IN");
 		try {
 			totalTimeMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.persist.totalTime");
@@ -145,24 +146,37 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 
 	}
 
-	private void persistInternal(SpagoBICellWrapper cell, Object oldValue,Object newValue, Connection connection, Integer version) throws Exception {
-		Double prop = ((Number) newValue).doubleValue()/((Number) oldValue).doubleValue();
+	private void persistInternal(SpagoBICellWrapper cell, Object oldValue, Object newValue, Connection connection, Integer version) throws Exception {
+		Double prop = ((Number) newValue).doubleValue() / ((Number) oldValue).doubleValue();
 		lastQuery = persister.executeProportionalUpdate(cell.getMembers(), prop, connection, version);
 	}
-
 
 	public String getLastQuery() {
 		return lastQuery;
 	}
 
-
 	public DefaultWeightedAllocationAlgorithmPersister getPersister() {
 		return persister;
 	}
-	
-	
+
+	public void setProperties(Map<String, Object> properties) {
+		if (properties != null) {
+			this.ei = (WhatIfEngineInstance) properties.get(ENGINEINSTANCE_PROPERTY);
+			String useInClauseString = (String) properties.get(USEINCLAUSE_PROPERTY);
+
+			if (useInClauseString != null) {
+				try {
+					useInClause = (new Boolean(useInClauseString));
+				} catch (Exception e) {
+					logger.error("Impossible to decode te property useInClause. The value " + useInClauseString + " is not admissible");
+				}
+			}
+		}
+		initAlgorithm();
+	}
+
+	public void setUseInClause(boolean useInClause) {
+		this.useInClause = useInClause;
+	}
 
 }
-	
-
-

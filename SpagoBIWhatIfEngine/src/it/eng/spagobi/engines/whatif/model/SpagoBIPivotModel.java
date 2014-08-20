@@ -15,7 +15,7 @@ import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationExc
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
@@ -73,7 +73,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		this.wrapper = wrapper;
 	}
 
-	public void setValue(Object newValue, Cell cell, AllocationAlgorithm algorithm) {
+	public void setValue(Object newValue, Cell cell, IAllocationAlgorithm algorithm) {
 		// store the transformation into the stack
 		SpagoBICellSetWrapper cellSetWrapper = this.getCellSetWrapper();
 		SpagoBICellWrapper cellWrapper = SpagoBICellWrapper.wrap(cell, cellSetWrapper);
@@ -111,7 +111,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		while (iterator.hasNext()) {
 			CellTransformation transformation = iterator.next();
 			try {
-				AllocationAlgorithm algorithm = transformation.getAlgorithm();
+				IAllocationAlgorithm algorithm = transformation.getAlgorithm();
 				algorithm.persist(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), connection, version);
 			} catch (Exception e) {
 				logger.error("Error persisting the transformation "+transformation, e);

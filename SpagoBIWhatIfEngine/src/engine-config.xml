@@ -36,6 +36,11 @@
     <ArtifactServiceProxy_URL>/services/ArtifactService</ArtifactServiceProxy_URL>
 	
 	<TEMPLATE>\WEB-INF\resources\tpl.xml</TEMPLATE>
-	<WRITEBACK proportionalAlgorithmPersistQueryWhereClause="in"></WRITEBACK>
+	
+	<WRITEBACK proportionalAlgorithmPersistQueryWhereClause="in">
+		<ALGORITHMS>
+			<ALGORITHM name="proportional" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm" inMemory="true" persistent="true"/>
+		</ALGORITHMS>
+	</WRITEBACK>
 
 </ENGINE-CONFIGURATION>
