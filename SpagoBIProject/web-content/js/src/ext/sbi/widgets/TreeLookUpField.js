@@ -103,6 +103,25 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 					}
 				}
 				
+				attr.uiProvider = Ext.extend(Ext.tree.TreeNodeUI, {
+                    // private
+                    onDblClick:function (e) {
+                        e.preventDefault();
+                        if (this.disabled) {
+                            return;
+                        }
+                        if (this.fireEvent("beforedblclick", this.node, e) !== false) {
+                             if (this.checkbox) {
+                                 this.toggleCheck();
+                             }
+                             if (!this.animating && this.node.isExpandable()) {
+                                 this.node.toggle();
+                             }
+                            this.fireEvent("dblclick", this.node, e);
+                        }
+                    }
+                });
+				
 				var node = Ext.tree.TreeLoader.prototype.createNode.call(this,
 						attr);
 				
@@ -132,7 +151,18 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 								thisPanel.onOkSingleValue(node);
 							}, this);
 				}
+				
 
+				if (thisPanel.multivalue || thisPanel.allowInternalNodeSelection ){
+					node.on('beforedblclick',
+							function(node, e) {
+						return false;
+					}, this);
+					node.on('beforeclick',
+							function(node, e) {
+						return false;
+					}, this);
+				}
 				return node;
 			}
 		});
@@ -145,6 +175,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			root : new Ext.tree.AsyncTreeNode(this.rootConfig)
 		// , rootVisible: false
 		});
+		
 
 		this.win = new Ext.Window({
 			title : LN('sbi.lookup.Select'),
@@ -193,11 +224,12 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 
 	,
 	onOkSingleValue : function(value) {
-
-		this.setValue(value.attributes.value);
-		this.setRawValue(value.attributes.description);
-		this.fireEvent('select', this, value.attributes.value);
-		this.win.hide();
+		if (!this.multivalue && !this.allowInternalNodeSelection ){
+			this.setValue(value.attributes.value);
+			this.setRawValue(value.attributes.description);
+			this.fireEvent('select', this, value.attributes.value);
+			this.win.hide();
+		}
 	}
 	
 	,
