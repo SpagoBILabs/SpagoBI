@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<DATA_MINING>
+	<SCRIPT>
+		<![CDATA[
+str(dataset);
+dataset$time;
+time_plus<-dataset$time+1;
+time_plus;
+		]]>
+	</SCRIPT>
+	<DATASETS>
+		<DATASET name="dataset" readType="table" />	
+	</DATASETS>	
+	<OUTPUT type="video"  />
+</DATA_MINING>
