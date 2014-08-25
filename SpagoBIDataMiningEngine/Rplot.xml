@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<DATA_MINING>
+	<SCRIPT>
+		<![CDATA[
+		plot(c(1,5,3,8,5), type='l', col=2)
+		dev.off()
+		]]>
+	</SCRIPT>
+	
+	<OUTPUT type="plot" plotName="prova" />
+</DATA_MINING>

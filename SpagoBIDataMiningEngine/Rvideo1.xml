@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<DATA_MINING>
+	<SCRIPT>
+		<![CDATA[
+roll<-function(){die<-1:6;dice<-sample(die,size=2,replace=TRUE,prob=c(1/8,1/8,1/8,1/8,1/8,3/8));sum(dice)};
+rolls<-replicate(100,roll());
+rolls;
+		]]>
+	</SCRIPT>
+	<DATASETS></DATASETS>
+	<OUTPUT type="video"  />
+</DATA_MINING>
