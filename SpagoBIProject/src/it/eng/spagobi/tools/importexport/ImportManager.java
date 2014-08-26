@@ -79,6 +79,7 @@ import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeaturesId;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
 import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
@@ -147,6 +148,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	private AssociationFile associationFile = null;
 	private String impAssMode = IMPORT_ASS_DEFAULT_MODE;
 
+	private boolean isSuperadmin = false;
+	
 	ImportUtilities importUtilities = null;
 	
 	// cntains columns returned by lovs
@@ -167,7 +170,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		logger.debug("IN");
 		
 		importUtilities = new ImportUtilities();
-		importUtilities.setProfile(this.getUserProfile());
+	
+		IEngUserProfile profile = this.getUserProfile();
+		if(profile instanceof UserProfile && ((UserProfile)profile).getIsSuperadmin()){
+			isSuperadmin = true;
+		}
+		
+		importUtilities.setProfile(profile);
 		
 		// create directories of the tmp import folder
 		File impTmpFold = new File(pathImpTmpFold);
@@ -790,7 +799,20 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	
 	
-	
+	/*
+	 * error case
+	 * user is not superadmin and datasource is not associated to current tenant (not superadmin cannot do association)
+	 * 
+	 */
+	void checkIfCanImportEngine(SbiDataSource dataSource, Integer existingDatasourceId) throws EMFUserError{
+		logger.debug("IN");
+
+		// if user not superadmin and data source of type JNDI throw error
+
+
+
+		logger.debug("OUT");
+	}
 	
 	
 	/**
@@ -810,6 +832,27 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				Map engIdAss = metaAss.getEngineIDAssociation();
 				Set engIdAssSet = engIdAss.keySet();
 				if (engIdAssSet.contains(oldId)) {
+					
+					// check if user is not superadmin and its tenant does not own existing associated engine an error must be thrown
+					if(!isSuperadmin){
+						boolean engineFound = false;
+							List<SbiOrganizationEngine> orgDs = DAOFactory.getTenantsDAO().loadSelectedEngines(getTenant());
+							for (Iterator iterator = orgDs.iterator(); iterator.hasNext() && !engineFound;) {
+								SbiOrganizationEngine sbiOrganizationEngine = (SbiOrganizationEngine) iterator.next();
+								if(sbiOrganizationEngine.getSbiEngines().getEngineId() == engIdAss.get(oldId))
+									engineFound = true;
+							}
+							if(engineFound == false){
+								logger.error("Exported engine "+engine.getLabel()+" is not associated to current tenant "+getTenant()+"and user is not superadmin and thus cannot do association");
+								List params = new ArrayList();
+								if(engine != null)params.add(engine.getLabel());
+								else params.add("");
+								params.add(getTenant());
+								throw new EMFUserError(EMFErrorSeverity.ERROR, "8024", params, ImportManager.messageBundle);
+							}
+						
+					}
+										
 					metaLog.log("Exported engine " + engine.getName() + " not inserted"
 							+ " because it has been associated to an existing engine or it has the same label "
 							+ " of an existing engine");
@@ -818,6 +861,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 							+ " of an existing engine");
 					continue;
 				}
+				
 				SbiEngines newEng = importUtilities.makeNew(engine);
 				SbiDomains engineTypeDomain = engine.getEngineType();
 				Map uniqueEngineType = new HashMap();
@@ -843,6 +887,16 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				IEngUserProfile profile = this.getUserProfile();
 				if(profile instanceof UserProfile && ((UserProfile)profile).getIsSuperadmin()==true){
 				logger.debug("User is superadmin: Insert engine "+newEng.getName()+"");
+
+				if(!isSuperadmin){
+					logger.error("Current user is not superadmin and cannot insert new Engines");
+					List params = new ArrayList();
+					if(engine != null)params.add(engine.getLabel());
+					else params.add("");
+					params.add(getTenant());
+					throw new EMFUserError(EMFErrorSeverity.ERROR, "8025", params, ImportManager.messageBundle);
+				}
+				
 				sessionCurrDB.save(newEng);
 				sessionCurrDB.flush();
 				
@@ -966,9 +1020,47 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 
+	/*
+	 * Two error cases
+	 * user is not superadmin and datsource is of type JNDI  8022
+	 * user is not superadmin and datasource is not associated to current tenant (not superadmin cannot do association) 8023
+	 */
+	void checkIfCanImportDataSource(SbiDataSource dataSource, Integer existingDatasourceId) throws EMFUserError{
+		logger.debug("IN");
+
+		// if user not superadmin and data source of type JNDI throw error
+		if(!isSuperadmin){
+			if(dataSource.getJndi() != null && !dataSource.getJndi().equals("")) {
+				// error case; data source JNDI and not superadmin user
+				logger.error("Exported datasource "+dataSource.getLabel()+" is of type JNDI but current user is not superadmin and has no right to handle jndi data source; import functions stops with error");
+				List params = new ArrayList();
+				if(dataSource != null)params.add(dataSource.getLabel());
+				else params.add("");
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "8022", params, ImportManager.messageBundle);
+			}
+
+			if(existingDatasourceId != null){
+				boolean dsFound = false;
+				List<SbiOrganizationDatasource> orgDs = DAOFactory.getTenantsDAO().loadSelectedDS(getTenant());
+				for (Iterator iterator = orgDs.iterator(); iterator.hasNext() && !dsFound;) {
+					SbiOrganizationDatasource sbiOrganizationDatasource = (SbiOrganizationDatasource) iterator.next();
+					if(sbiOrganizationDatasource.getSbiDataSource().getDsId()== existingDatasourceId.intValue())
+						dsFound = true;
+				}
+				if(dsFound == false){
+					logger.error("Exported datasource "+dataSource.getLabel()+" is not associated to current tenant "+getTenant()+"and user is not superadmin and thus cannot do association");
+					List params = new ArrayList();
+					if(dataSource != null)params.add(dataSource.getLabel());
+					else params.add("");
+					params.add(getTenant());
+					throw new EMFUserError(EMFErrorSeverity.ERROR, "8023", params, ImportManager.messageBundle);
+				}
+			}
+		}
 
 
-
+		logger.debug("OUT");
+	}
 
 
 
@@ -985,15 +1077,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				Integer existingDatasourceId = null;
 				Map dsIdAss = metaAss.getDataSourceIDAssociation();
 				Set engIdAssSet = dsIdAss.keySet();
-				if (engIdAssSet.contains(oldId) && !overwrite) {
-					logger.debug("Exported dataSource " + dataSource.getLabel() + " not inserted"
-							+ " because exist dataSource with the same label ");
-					metaLog.log("Exported dataSource " + dataSource.getLabel() + " not inserted"
-							+ " because exist dataSource with the same label ");
-					continue;
-				} else {
+				
+				
+				if(engIdAssSet.contains(oldId))
 					existingDatasourceId = (Integer) dsIdAss.get(oldId);
-				}
 				
 				// if association made by user has prvilege
 				Integer userDatasourceId = getUserAssociation().getDsExportedToUser().get(oldId);
@@ -1004,73 +1091,59 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					existingDatasourceId = userDatasourceId;
 				}
 				
+				checkIfCanImportDataSource(dataSource, existingDatasourceId);
 				
-				// if association made by user do not update!
-//				if(!getUserAssociation().isDataSourceAssociated(oldId)){
+				
+				if (engIdAssSet.contains(oldId) && !overwrite) {
+					logger.debug("Exported dataSource " + dataSource.getLabel() + " not inserted"
+							+ " because exist dataSource with the same label ");
+					metaLog.log("Exported dataSource " + dataSource.getLabel() + " not inserted"
+							+ " because exist dataSource with the same label ");
+					continue;
+				} 
+
 				if (existingDatasourceId != null) {
 						logger.debug("The data source with label:[" + dataSource.getLabel() + "] is just present. not be updated.");
 						metaLog.log("The data source with label = [" + dataSource.getLabel() + "] will not be updated.");
+						
 						//SbiDataSource existingDs = importUtilities.modifyExisting(dataSource, sessionCurrDB, existingDatasourceId);
 						//importUtilities.associateWithExistingEntities(existingDs, dataSource, sessionCurrDB, importer, metaAss);
 						//this.updateSbiCommonInfo4Update(existingDs);
 						//sessionCurrDB.update(existingDs);
 						//sessionCurrDB.flush();
-					} else {
-						// insert case, can do only if superadmin or if is a jdbc dataset not a jndi
-						
-						boolean canInsert=false;
-						IEngUserProfile profile = this.getUserProfile();
-						if(profile instanceof UserProfile && ((UserProfile)profile).getIsSuperadmin()==true){
-							canInsert=true;
-							logger.debug("DAtasource insert enabled because user is superadmin");
-						}
-						else if(dataSource.getJndi() == null || dataSource.getJndi().equals("")) {
-							canInsert = true;
-							logger.debug("Datasource insert enabled because datasource "+dataSource.getLabel()+" is not JNDI");
+				} else {
 
-						}
-						
-						if(canInsert){
-						SbiDataSource newDS = importUtilities.makeNew(dataSource);
-						importUtilities.associateWithExistingEntities(newDS, dataSource, sessionCurrDB, importer, metaAss);
-						this.updateSbiCommonInfo4Insert(newDS);
-						Integer newId = (Integer) sessionCurrDB.save(newDS);
-						sessionCurrDB.flush();
-						metaLog.log("Inserted new datasource " + newDS.getLabel());
-						logger.debug("Inserted new datasource " + newDS.getLabel());
-						
-						logger.debug("Associate datasource with current tenant " + getTenant());
-						
-						SbiTenant sbiOrganizations= DAOFactory.getTenantsDAO().loadTenantByName(getTenant());
-						SbiOrganizationDatasource sbiOrganizationDatasource = new SbiOrganizationDatasource();
-						sbiOrganizationDatasource.setSbiDataSource(newDS);
-						sbiOrganizationDatasource.setSbiOrganizations(sbiOrganizations);
-						SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId();
-						idRel.setDatasourceId(newDS.getDsId());
-						idRel.setOrganizationId(sbiOrganizations.getId());
-						sbiOrganizationDatasource.setId(idRel);
-						sbiOrganizationDatasource.getCommonInfo().setOrganization(getTenant());
-						updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
-					
-						sessionCurrDB.save(sbiOrganizationDatasource);
-						sessionCurrDB.flush();
-						logger.debug("Association made between datasource "+newDS.getDescr()+" with current tenant " + getTenant());
-						
-						metaAss.insertCoupleDataSources(oldId, newId);
-						
-						}
-						else{
-							logger.warn("Datasource insert not enabled because datasource "+dataSource.getLabel()+" is JNDI and you are nbot superadmin: datasource not inserted");	
-							metaLog.log("Exported dataSource " + dataSource.getLabel() + " not inserted"
-									+ " because is of type  JNDI and user is not superadmin");
-						}
+
+							SbiDataSource newDS = importUtilities.makeNew(dataSource);
+							importUtilities.associateWithExistingEntities(newDS, dataSource, sessionCurrDB, importer, metaAss);
+							this.updateSbiCommonInfo4Insert(newDS);
+							Integer newId = (Integer) sessionCurrDB.save(newDS);
+							sessionCurrDB.flush();
+							metaLog.log("Inserted new datasource " + newDS.getLabel());
+							logger.debug("Inserted new datasource " + newDS.getLabel());
+
+							logger.debug("Associate datasource with current tenant " + getTenant());
+
+							SbiTenant sbiOrganizations= DAOFactory.getTenantsDAO().loadTenantByName(getTenant());
+							SbiOrganizationDatasource sbiOrganizationDatasource = new SbiOrganizationDatasource();
+							sbiOrganizationDatasource.setSbiDataSource(newDS);
+							sbiOrganizationDatasource.setSbiOrganizations(sbiOrganizations);
+							SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId();
+							idRel.setDatasourceId(newDS.getDsId());
+							idRel.setOrganizationId(sbiOrganizations.getId());
+							sbiOrganizationDatasource.setId(idRel);
+							sbiOrganizationDatasource.getCommonInfo().setOrganization(getTenant());
+							updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
+
+							sessionCurrDB.save(sbiOrganizationDatasource);
+							sessionCurrDB.flush();
+							logger.debug("Association made between datasource "+newDS.getDescr()+" with current tenant " + getTenant());
+
+							metaAss.insertCoupleDataSources(oldId, newId);
+
 					}
 			}
-//				else{
-//					metaLog.log("Not inserted nor update data source with ID " + oldId+" because has been associated by user" );		
-//					logger.debug("Not inserted nor update data source with ID " + oldId+" because has been associated by user");
-//				
-//			}
+
 		}  
 		catch (EMFUserError he) {
 			throw he;
