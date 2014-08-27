@@ -25,3 +25,11 @@ COMMIT;
 
 ALTER TABLE SBI_OBJ_PAR ADD COLUMN COL_SPAN INTEGER NULL;
 ALTER TABLE SBI_OBJ_PAR ADD COLUMN THICK_PERC INTEGER NULL;
+
+INSERT INTO SBI_AUTHORIZATIONS
+(ID, NAME,  USER_IN, TIME_IN) 
+values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
+'CREATE_SOCIAL_ANALYSIS',  'server', current_timestamp) ;
+commit;
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
+commit;

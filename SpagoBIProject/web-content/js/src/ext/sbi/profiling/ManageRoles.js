@@ -125,6 +125,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'kpiCommentEditAll'
 	                        	          , 'kpiCommentEditMy'
 	                        	          , 'kpiCommentDelete'
+	                        	          , 'createSocialAnalysis'
 	                        	        ];
 		
 		this.configurationObject.emptyRecToAdd = new Ext.data.Record({
@@ -156,6 +157,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		                        	        kpiCommentEditAll: true,
 		                        	        kpiCommentEditMy: true,
 		                        	        kpiCommentDelete: true,
+		                        	        createSocialAnalysis: true,
 											bmCategories: []
 										});
 		
@@ -529,7 +531,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		                {boxLabel: LN('sbi.roles.seeFavourites'), name: 'seeFavourites', checked:'seeFavourites',inputValue: 1},
 		                {boxLabel: LN('sbi.roles.seeSubscriptions'), name: 'seeSubscriptions', checked:'seeSubscriptions',inputValue: 1},
 		                {boxLabel: LN('sbi.roles.seeToDoList'), name: 'seeToDoList', checked:'seeToDoList',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.createDocument'), name: 'createDocument', checked:'createDocument',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.createDocument'), name: 'createDocument', checked:'createDocument',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.createSocialAnalysis'), name: 'createSocialAnalysis', checked:'createSocialAnalysis',inputValue: 1}
 		            ]
 		        }
            ]
@@ -582,6 +585,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         			  item.setValue('seeFavourites', rec.get('seeFavourites'));
         			  item.setValue('seeToDoList', rec.get('seeToDoList'));
         			  item.setValue('createDocument', rec.get('createDocument'));
+        			  item.setValue('createSocialAnalysis', rec.get('createSocialAnalysis'));
             	  }        		  
      	  });
 		
@@ -653,6 +657,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
                     	        kpiCommentEditAll:true,
                     	        kpiCommentEditMy:true,
                     	        kpiCommentDelete:true,
+                    	        createSocialAnalysis: true,
 								bmCategories: []
 							});
 		
@@ -686,7 +691,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         var seeFavourites =values['seeFavourites'];  
         var seeSubscriptions =values['seeSubscriptions'];  
         var seeToDoList =values['seeToDoList'];  
-        var createDocument =values['createDocument'];  
+        var createDocument =values['createDocument'];
+        var createSocialAnalysis =values['createSocialAnalysis'];
         var kpiCommentEditAll =values['kpiCommentEditAll'];  
         var kpiCommentEditMy =values['kpiCommentEditMy'];  
         var kpiCommentDelete =values['kpiCommentDelete'];  
@@ -806,6 +812,11 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         }else{
         	record.set('kpiCommentDelete', false);
         }
+        if(createSocialAnalysis == 1){
+        	record.set('createSocialAnalysis', true);
+        }else{
+        	record.set('createSocialAnalysis', false);
+        }
         
         //Find selected business models categories
 		var bmCategoriesArray = [];
@@ -886,6 +897,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			seeSubscriptions: newRec.data.seeSubscriptions,
 			seeToDoList: newRec.data.seeToDoList,
 			createDocument: newRec.data.createDocument,
+			createSocialAnalysis: newRec.data.createSocialAnalysis,
 			kpiCommentEditAll: newRec.data.kpiCommentEditAll,
 			kpiCommentEditMy: newRec.data.kpiCommentEditMy,
 			kpiCommentDelete: newRec.data.kpiCommentDelete,

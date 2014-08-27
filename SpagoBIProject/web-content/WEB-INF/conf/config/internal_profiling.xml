@@ -73,6 +73,7 @@
 			<AUTHORIZATION authorizationName="SEE_MY_DATA" organization="SPAGOBI"/>
 			<AUTHORIZATION authorizationName="SEE_TODO_LIST" organization="SPAGOBI"/>
 			<AUTHORIZATION authorizationName="CREATE_DOCUMENTS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="CREATE_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
 		</DEFAULT_AUTHORIZATIONS>
 		
 		

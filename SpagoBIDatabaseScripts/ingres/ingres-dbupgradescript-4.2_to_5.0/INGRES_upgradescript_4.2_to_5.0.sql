@@ -23,5 +23,14 @@ ALTER TABLE SBI_OBJECTS ADD COLUMN PARAMETERS_REGION VARCHAR(20) NULL;
 UPDATE SBI_ENGINES SET LABEL = 'SpagoBIDataMiningEngine', NAME = 'Data-Mining Engine', DESCR = 'Data-Mining Engine', MAIN_URL = '/SpagoBIDataMiningEngine/WekaServlet', DRIVER_NM = 'it.eng.spagobi.engines.drivers.datamining.DataMiningDriver' WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.weka.WekaDriver';\p\g
 COMMIT;\p\g
 
-ALTER TABLE SBI_OBJ_PAR ADD COLUMN COL_SPAN INTEGER NULL;
-ALTER TABLE SBI_OBJ_PAR ADD COLUMN THICK_PERC INTEGER NULL;
+ALTER TABLE SBI_OBJ_PAR ADD COLUMN COL_SPAN INTEGER NULL;\p\g
+ALTER TABLE SBI_OBJ_PAR ADD COLUMN THICK_PERC INTEGER NULL;\p\g
+
+INSERT INTO SBI_AUTHORIZATIONS
+(ID, NAME, USER_IN, TIME_IN) 
+values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'), 
+'CREATE_SOCIAL_ANALYSIS', 
+'server', current_timestamp) ;\p\g
+commit;\p\g
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';\p\g
+commit;\p\g

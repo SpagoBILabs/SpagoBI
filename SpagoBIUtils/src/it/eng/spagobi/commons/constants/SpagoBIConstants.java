@@ -380,6 +380,7 @@ public class SpagoBIConstants {
 	public static final String KPI_COMMENT_EDIT_ALL = "KpiCommentEditAll";
 	public static final String KPI_COMMENT_EDIT_MY = "KpiCommentEditMy";
 	public static final String KPI_COMMENT_DELETE = "KpiCommentDelete";
+	public static final String CREATE_SOCIAL_ANALYSIS = "CreateSocialAnalysis";
 	
 
 	
