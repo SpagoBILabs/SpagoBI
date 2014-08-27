@@ -317,6 +317,7 @@ public class SpagoBIConstants {
 	//---superadmin functionalities
 	public static final String TENANT_MANAGEMENT = "TenantManagement";
 	public static final String ENGINES_MANAGEMENT = "EnginesManagement";
+	public static final String READ_ENGINES_MANAGEMENT = "ReadEnginesManagement";
 	//---end
 	public static final String DATASET_MANAGEMENT = "DatasetManagement";
 	public static final String FUNCTIONALITIES_MANAGEMENT = "FunctionalitiesManagement";
