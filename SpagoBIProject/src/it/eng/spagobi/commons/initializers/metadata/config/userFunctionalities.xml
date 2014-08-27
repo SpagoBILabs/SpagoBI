@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <USER_FUNCTIONALITIES>
 <USER_FUNCTIONALITY name="EnginesManagement" description="EnginesManagement"/>
+<USER_FUNCTIONALITY name="ReadEnginesManagement" description="ReadEnginesManagement"/>
 <USER_FUNCTIONALITY name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
 <USER_FUNCTIONALITY name="LovsManagement" description="LovsManagement"/>
 <USER_FUNCTIONALITY name="ConstraintManagement" description="ConstraintManagement"/>

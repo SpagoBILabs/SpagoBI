@@ -36,11 +36,8 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 	public static final String NUMBER_TYPE = "number";
 	public static final String RAW_TYPE = "raw";
 	public static final String GENERIC_TYPE = "generic";
-	
-	public static final String ENGINE_LIST = "ENGINE_LIST";
 	public static final String ENGINE_INSERT = "ENGINE_INSERT";
 	public static final String ENGINE_DELETE = "ENGINE_DELETE";
-	public static final String ENGINE_DATASOURCES = "ENGINE_DATASOURCES";
 	public static final String ENGINE_TEST = "ENGINE_TEST";
 
 	
@@ -75,60 +72,22 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
 
-		if (serviceType != null && serviceType.equalsIgnoreCase(ENGINE_LIST)) {			
-			listEngines(engineDao);
-		} else if(serviceType != null && serviceType.equalsIgnoreCase(ENGINE_INSERT)) {			
+			if(serviceType != null && serviceType.equalsIgnoreCase(ENGINE_INSERT)) {			
 			insertEngine(engineDao);
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ENGINE_DELETE)) {			
 			deleteEngine(engineDao);
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ENGINE_DATASOURCES)) {			
-			getDataSources();
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ENGINE_TEST)) {			
+		} 
+		 else if (serviceType != null	&& serviceType.equalsIgnoreCase(ENGINE_TEST)) {			
 			testEngine();
-		} else {
+			} 
+		else {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to process action of type [" + serviceType + "]");
 		}
 		
 		logger.debug("OUT");
 	}
 
-	private void listEngines(IEngineDAO engineDao)   {
-		List<Engine> engines;
-		
-		Integer start = getAttributeAsInteger( START );
-		Integer limit = getAttributeAsInteger( LIMIT );
-		if(start==null){
-			start = START_DEFAULT;
-		}
-		if(limit==null){
-			limit = LIMIT_DEFAULT;
-		}
-		
-		Integer enginesNum = 0;
-		try {
-			//engines = engineDao.loadAllEngines();
-			enginesNum = engineDao.countEngines();
-			
-			engines = engineDao.loadPagedEnginesList(start, limit);
-			
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load engines from database", t);
-		}
-		
-		JSONObject responseJSON;
-		try {
-			JSONArray enginesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(engines, getLocale());
-			responseJSON = createJSONResponse(enginesJSON, enginesNum);
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to serialize engines", t);
-		}
-		
-		try {
-			writeBackToClient(new JSONSuccess(responseJSON));
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back response to client", t);
-		}
-	}
+
 	
 	private JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber)
 	throws JSONException {
