@@ -398,6 +398,7 @@ public class UserUtilities {
 			superadminFunctionalities.add(SpagoBIConstants.TENANT_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.ENGINES_MANAGEMENT);
+			superadminFunctionalities.add(SpagoBIConstants.READ_ENGINES_MANAGEMENT);
 		}
 		String[] a = new String[]{""};
 		return superadminFunctionalities;
