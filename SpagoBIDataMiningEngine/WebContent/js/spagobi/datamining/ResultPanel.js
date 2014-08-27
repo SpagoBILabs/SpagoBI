@@ -31,20 +31,22 @@ Ext.define('Sbi.datamining.ResultPanel', {
 		html: ' '
 	},
 	
-	dataminingResult: null,
+	dataminingParentPanel: null,
 	
 	type: null,
 	result: '',
-	uploadPanel: null,
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
+		
+		this.dataminingParentPanel = config.itsParent;
+		
 		this.callParent(arguments);
 	},
 
 	initComponent: function() {
 		this.callParent();
-		this.getResult();
+
 	}
 
 	
@@ -71,7 +73,7 @@ Ext.define('Sbi.datamining.ResultPanel', {
 					thisPanel.update('<div style="font-size:bold; color: red;">Result</div><br/>'+this.result);
 				}
 			}else{
-				thisPanel.update('<div>No Result for the script!</div>');
+				thisPanel.update('');
 			}
 		};
 		

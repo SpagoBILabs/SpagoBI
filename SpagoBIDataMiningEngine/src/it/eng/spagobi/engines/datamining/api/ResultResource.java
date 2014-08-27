@@ -1,9 +1,15 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.api;
 
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.compute.DataMiningScriptExecutor;
+import it.eng.spagobi.engines.datamining.compute.DatasetFileUtils;
 import it.eng.spagobi.engines.datamining.serializer.SerializationException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -31,15 +37,16 @@ public class ResultResource extends AbstractDataMiningEngineService {
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 		String outputOfExecution = null;
 		DataMiningResult dmRes = new DataMiningResult();
-		if (dataMiningEngineInstance.getDatasets() == null || dataMiningEngineInstance.getDatasets().isEmpty()) {
-			dmRes = performScriptExecution(dataMiningEngineInstance);
-			try {
-				outputOfExecution = serialize(dmRes);
-			} catch (SerializationException e) {
-				logger.error("Error serializing the result", e);
-				throw new SpagoBIEngineRuntimeException("Error serializing the result", e);
-			}
+		// /if (dataMiningEngineInstance.getDatasets() == null ||
+		// dataMiningEngineInstance.getDatasets().isEmpty()) {
+		dmRes = performScriptExecution(dataMiningEngineInstance);
+		try {
+			outputOfExecution = serialize(dmRes);
+		} catch (SerializationException e) {
+			logger.error("Error serializing the result", e);
+			throw new SpagoBIEngineRuntimeException("Error serializing the result", e);
 		}
+		// }
 
 		if (!isNullOrEmpty(outputOfExecution)) {
 			logger.debug("Returning result");
@@ -49,6 +56,27 @@ public class ResultResource extends AbstractDataMiningEngineService {
 
 		logger.debug("OUT");
 		return outputOfExecution;
+
+	}
+
+	/**
+	 * Checks whether the result panel has to be displyed ad first execution
+	 * 
+	 */
+	@GET
+	@Path("/needsResultAtForstExec")
+	@Produces("text/html; charset=UTF-8")
+	public String needsResultAtForstExec() {
+		logger.debug("IN");
+		Boolean resNeeded = true;
+		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
+
+		resNeeded = DatasetFileUtils.areDatasetsProvided(dataMiningEngineInstance);
+		if (!resNeeded) {
+			return getJsonKo();
+		}
+		logger.debug("OUT");
+		return getJsonOk();
 
 	}
 

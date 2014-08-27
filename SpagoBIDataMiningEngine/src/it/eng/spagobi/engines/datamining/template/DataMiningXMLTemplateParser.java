@@ -28,6 +28,12 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 
 	public static String DATASET_ATTRIBUTE_READTYPE = "readType";
 	public static String DATASET_ATTRIBUTE_NAME = "name";
+	public static String DATASET_ATTRIBUTE_SPAGOBILABEL = "spagobiLabel";
+	public static String DATASET_ATTRIBUTE_TYPE = "type";
+
+	public static final String DATASET_TYPE_FILE = "file";
+	public static final String DATASET_TYPE_SPAGOBI_DS = "spagobi_ds";
+
 	public static String OUTPUT_ATTRIBUTE_TYPE = "type";
 	public static String OUTPUT_ATTRIBUTE_NAME = "plotName";
 
@@ -71,14 +77,32 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 						FileDataset ftds = new FileDataset();
 						logger.debug("dataset: " + datasetSB);
 						Assert.assertNotNull(datasetSB, "Template is missing " + TAG_DATASET + " tag");
-						String datasetReadType = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_READTYPE);
-						if (datasetReadType != null) {
-							ftds.setReadType(datasetReadType);
-						}
+
 						String datasetName = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_NAME);
 						if (datasetName != null) {
 							ftds.setName(datasetName);
 						}
+						String datasetType = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_TYPE);
+						if (datasetType != null) {
+							ftds.setType(datasetType);
+							if (datasetType.equalsIgnoreCase(DATASET_TYPE_FILE)) {
+								String datasetReadType = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_READTYPE);
+								if (datasetReadType != null) {
+									ftds.setReadType(datasetReadType);
+								}
+								String options = datasetSB.getCharacters();
+								if (options != null) {
+									ftds.setOptions(options);
+
+								}
+							} else if (datasetType.equalsIgnoreCase(DATASET_TYPE_SPAGOBI_DS)) {
+								String dsLabel = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_SPAGOBILABEL);
+								if (dsLabel != null) {
+									ftds.setSpagobiLabel(dsLabel);
+								}
+							}
+						}
+
 						datasets.add(ftds);
 					}
 					toReturn.setDatasets(datasets);

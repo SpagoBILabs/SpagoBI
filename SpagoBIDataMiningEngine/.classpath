@@ -53,5 +53,9 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/scannotation-1.0.3.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javassist-3.12.0.GA.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-codec-1.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-fileupload-1.2.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/resteasy-multipart-provider-2.3.5.final.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/apache-mime4j.jar"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
