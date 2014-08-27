@@ -80,6 +80,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	private final String KPI_COMMENT_EDIT_ALL="kpiCommentEditAll";
 	private final String KPI_COMMENT_EDIT_MY="kpiCommentEditMy";
 	private final String KPI_COMMENT_DELETE="kpiCommentDelete";
+	private final String CREATE_SOCIAL_ANALYSIS="createSocialAnalysis";
 	
 	private final String BM_CATEGORY_ID="bmCategoryId";
 	private final String BM_CATEGORIES="bmCategories";
@@ -168,6 +169,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 			Boolean kpiCommEditAll = getAttributeAsBoolean(KPI_COMMENT_EDIT_ALL);
 			Boolean kpiCommEditMy = getAttributeAsBoolean(KPI_COMMENT_EDIT_MY);
 			Boolean kpiCommDelete = getAttributeAsBoolean(KPI_COMMENT_DELETE);
+			Boolean createAnalysisSocial = getAttributeAsBoolean(CREATE_SOCIAL_ANALYSIS);
 			
 			List<String> bmCategoryIds = getAttributeAsList(BM_CATEGORIES);
 			if (bmCategoryIds.size() == 1){
@@ -253,6 +255,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				role.setAbleToEditAllKpiComm(kpiCommEditAll);
 				role.setAbleToEditMyKpiComm(kpiCommEditMy);
 				role.setAbleToDeleteKpiComm(kpiCommDelete);
+				role.setIsAbleToCreateSocialAnalysis(createAnalysisSocial);
 				
 				try {
 					String id = getAttributeAsString(ID);

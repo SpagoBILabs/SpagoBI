@@ -523,6 +523,7 @@ Sbi.locale.ln['sbi.roles.seeFavourites'] = 'View Favorites';
 Sbi.locale.ln['sbi.roles.seeSubscriptions'] = 'View Subscriptions';
 Sbi.locale.ln['sbi.roles.seeToDoList'] = 'View ToDo List';
 Sbi.locale.ln['sbi.roles.createDocument'] = 'Create Documents';
+Sbi.locale.ln['sbi.roles.createSocialAnalysis'] = 'Create analysis on social networks';
 Sbi.locale.ln['sbi.roles.allKpiComment'] = 'All kpi comments';
 Sbi.locale.ln['sbi.roles.myKpiComment'] = 'Owned kpi comments';
 Sbi.locale.ln['sbi.roles.kpiComment'] = 'Kpi comments';

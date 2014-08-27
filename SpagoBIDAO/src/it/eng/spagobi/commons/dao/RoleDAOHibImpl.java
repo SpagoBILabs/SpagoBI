@@ -397,7 +397,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					(authI.getName().equals("KPI_COMMENT_EDIT_ALL") && aRole.isAbleToEditAllKpiComm())||
 					(authI.getName().equals("KPI_COMMENT_EDIT_MY") && aRole.isAbleToEditMyKpiComm())||
 					(authI.getName().equals("KPI_COMMENT_DELETE") && aRole.isAbleToDeleteKpiComm())||
-					(authI.getName().equals("CREATE_DOCUMENTS") && aRole.isAbleToCreateDocuments())){
+					(authI.getName().equals("CREATE_DOCUMENTS") && aRole.isAbleToCreateDocuments()) ||
+					(authI.getName().equals("CREATE_SOCIAL_ANALYSIS") && aRole.isAbleToCreateSocialAnalysis())
+					){
 					
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(authI.getId(), hibRole.getExtRoleId());
@@ -640,6 +642,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				role.setIsAbleToSeeToDoList(true);}
 			if(name.equals("CREATE_DOCUMENTS")){
 				role.setIsAbleToCreateDocuments(true);	}
+			if(name.equals("CREATE_SOCIAL_ANALYSIS")){
+				role.setIsAbleToCreateSocialAnalysis(true);	}
 			if(name.equals("KPI_COMMENT_EDIT_ALL")){
 				role.setAbleToEditAllKpiComm(true);	}
 			if(name.equals("KPI_COMMENT_EDIT_MY")){
@@ -803,7 +807,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					(functI.getName().equals("KPI_COMMENT_EDIT_ALL") && role.isAbleToEditAllKpiComm())||
 					(functI.getName().equals("KPI_COMMENT_EDIT_MY") && role.isAbleToEditMyKpiComm())||
 					(functI.getName().equals("KPI_COMMENT_DELETE") && role.isAbleToDeleteKpiComm())||
-					(functI.getName().equals("CREATE_DOCUMENTS") && role.isAbleToCreateDocuments())){
+					(functI.getName().equals("CREATE_DOCUMENTS") && role.isAbleToCreateDocuments()) ||
+					(functI.getName().equals("CREATE_SOCIAL_ANALYSIS") && role.isAbleToCreateSocialAnalysis())
+					){
 
 						SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 						SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(functI.getId(), hibRole.getExtRoleId());

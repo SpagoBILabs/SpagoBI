@@ -52,7 +52,7 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String KPI_COMMENT_EDIT_ALL="kpiCommentEditAll";
 	private static final String KPI_COMMENT_EDIT_MY="kpiCommentEditMy";
 	private static final String KPI_COMMENT_DELETE="kpiCommentDelete";
-
+	private static final String CREATE_SOCIAL_ANALYSIS="createSocialAnalysis";
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -95,6 +95,7 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(KPI_COMMENT_EDIT_ALL, role.isAbleToEditAllKpiComm() );
 			result.put(KPI_COMMENT_EDIT_MY, role.isAbleToEditMyKpiComm() );
 			result.put(KPI_COMMENT_DELETE, role.isAbleToDeleteKpiComm() );
+			result.put(CREATE_SOCIAL_ANALYSIS, role.isAbleToCreateSocialAnalysis() );
 			
 			//create an array for Business Model Categories Ids
 			JSONArray bmCategories = new JSONArray();

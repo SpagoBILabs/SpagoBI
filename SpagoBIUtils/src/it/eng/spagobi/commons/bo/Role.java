@@ -45,6 +45,7 @@ public class Role  implements Serializable  {
     private boolean isAbleToSeeMyData;
     private boolean isAbleToSeeToDoList;
     private boolean isAbleToCreateDocuments;
+    private boolean isAbleToCreateSocialAnalysis;
 
 	private boolean isAbleToEditAllKpiComm;
     private boolean isAbleToEditMyKpiComm;
@@ -543,6 +544,14 @@ public class Role  implements Serializable  {
 
 	public void setAbleToDeleteKpiComm(boolean isAbleToDeleteKpiComm) {
 		this.isAbleToDeleteKpiComm = isAbleToDeleteKpiComm;
+	}
+	
+	public boolean isAbleToCreateSocialAnalysis() {
+		return isAbleToCreateSocialAnalysis;
+	}
+
+	public void setIsAbleToCreateSocialAnalysis(boolean isAbleToCreateSocialAnalysis) {
+		this.isAbleToCreateSocialAnalysis = isAbleToCreateSocialAnalysis;
 	}
 
 }

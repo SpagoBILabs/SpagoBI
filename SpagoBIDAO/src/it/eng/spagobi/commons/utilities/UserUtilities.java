@@ -486,6 +486,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToDeleteKpiComm()) {
 				roleFunctionalities.add(SpagoBIConstants.KPI_COMMENT_DELETE);
 			}
+			if (virtualRole.isAbleToCreateSocialAnalysis()) {
+				roleFunctionalities.add(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS);
+			}
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
 				roleFunctionalities.addAll(roleTypeFunctionalities);
@@ -544,6 +547,7 @@ public class UserUtilities {
 		virtualRole.setAbleToDeleteKpiComm(false);
 		virtualRole.setAbleToEditAllKpiComm(false);
 		virtualRole.setAbleToEditMyKpiComm(false);		
+		virtualRole.setIsAbleToCreateSocialAnalysis(false);
 		
 		if (roles != null) {
 			for (int i = 0; i < roles.length; i++) {
@@ -645,7 +649,10 @@ public class UserUtilities {
 						logger.debug("User has role " + roleName + " that is able to delete kpi comments.");
 						virtualRole.setAbleToDeleteKpiComm(true);
 					}
-					
+					if (anotherRole.isAbleToCreateSocialAnalysis()) {
+						logger.debug("User has role " + roleName + " that is able to create social analysis.");
+						virtualRole.setIsAbleToCreateSocialAnalysis(true);
+					}
 				}
 			}
 		}
