@@ -104,7 +104,7 @@ Ext
 						
 						 this.configurationObject.getDataSourcesServiceUrl =
 							 Sbi.config.serviceRegistry.getServiceUrl({
-								 serviceName : 'MANAGE_ENGINE_ACTION',
+								 serviceName : 'READ_ENGINE_ACTION',
 								 baseParams : {
 									 MESSAGE_DET : "ENGINE_DATASOURCES"
 								 }
@@ -119,7 +119,7 @@ Ext
 
 						this.configurationObject.manageListService = Sbi.config.serviceRegistry
 								.getServiceUrl({
-									serviceName : 'MANAGE_ENGINE_ACTION',
+									serviceName : 'READ_ENGINE_ACTION',
 									baseParams : {
 										MESSAGE_DET : "ENGINE_LIST"
 									}

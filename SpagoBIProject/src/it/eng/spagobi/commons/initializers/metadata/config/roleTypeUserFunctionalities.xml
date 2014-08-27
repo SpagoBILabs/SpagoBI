@@ -41,6 +41,7 @@
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DocumentUserManagement" roleType="DEV_ROLE" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DocumentUserManagement" roleType="TEST_ROLE" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="EnginesManagement" roleType="ADMIN" />
+<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ReadEnginesManagement" roleType="ADMIN" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="EventsManagement" roleType="USER" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="EventsManagement" roleType="ADMIN" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="EventsManagement" roleType="DEV_ROLE" />
