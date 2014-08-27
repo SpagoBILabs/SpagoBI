@@ -22,53 +22,60 @@
 Ext.define('Sbi.datamining.UploadPanel', {
 	extend: 'Ext.panel.Panel',
 	layout: {
-		type: 'fit'
+		type: 'vbox'
     },
 
-	fileForm: null,
-	
+	executeScriptBtn: null,
+	datasetFiles : [],
+	itsParent: null,
 	constructor : function(config) {
 		this.initConfig(config||{});
 
-		this.fileForm = Ext.create('Ext.form.Panel', {
-		    title: 'Dataset loading panel',
-		    bodyPadding: 5,
-		    width: 500,
-		    // Fields will be arranged vertically, stretched to full width
-		    layout: 'anchor',
-		    defaults: {
-		        anchor: '100%'
-		    },
-
-		    // The fields
-		    defaultType: 'fileuploadfield',
-		    items: [],
-
-		    // Reset and Submit buttons
-		    buttons: [{
-		        text: 'Reset',
-		        handler: function() {
-		            this.up('form').getForm().reset();
-		        }
-		    }, {
-		        text: 'Carica',
-		        formBind: true, //only enabled once the form is valid
-		        disabled: true,
-		        handler: this.uploadFiles
-		    }]
-		});
+		this.itsParent = config.itsParent;
 		
 		this.callParent(arguments);
 	},
 
 	initComponent: function() {
 		this.callParent();
-		this.add(this.fileForm);
+		
 		this.getUploadButtons();
+	
 	},
 	
-	uploadFiles: function(){
-		alert('upload');
+	uploadFiles: function(formPanelN, fName, posItem){
+        var form = formPanelN.items.items[posItem].getForm();
+        //var fName = form.owner.items.items[0].name;
+
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "dataset"
+			,method: "POST"
+			,subPath: "loadDataset"
+			,pathParams: [fName]
+		});
+        
+             form.submit({
+                 url: service.getRestUrlWithParameters(), // a multipart form cannot contain parameters on its main URL;
+                 												   // they must POST parameters
+                 waitMsg: 'Uploading your file...',
+                 success: function(form, action) {
+         			Ext.Msg.show({
+      				   title : 'Upload',
+      				   msg: 'ok',
+      				   buttons: Ext.Msg.OK
+      				});
+        			
+                 },
+                 failure : function (form, action) {
+         			Ext.Msg.show({
+       				   title: 'Error',
+       				   msg: action.result.msg,
+       				   buttons: Ext.Msg.OK
+       				});
+                 },
+                 scope : this
+             });
+
 	},
 	
 	getUploadButtons: function(){
@@ -82,31 +89,65 @@ Ext.define('Sbi.datamining.UploadPanel', {
 		service.callService(this);
 		
 		var functionSuccess = function(response){
+			var thisPanel = this;
 			if(response != null && response.responseText !== undefined && response.responseText !== null && response.responseText !== ''){
 				var res = Ext.decode(response.responseText);
 				
 				if(res && Array.isArray(res)){
+					
 					for (var i=0; i< res.length; i++){
 						var dataset = res[i];
 						
-						var fileField = Ext.create("Ext.form.field.File",{
-					        xtype: 'fileuploadfield',
-					        name: dataset.name,
-					        fieldLabel: 'Dataset ' +dataset.name,
-					        labelWidth: 50,
-					        msgTarget: 'side',
-					        allowBlank: false,
-					        anchor: '100%',
-					        buttonText: 'Select DS file '+dataset.readType
-					    });
-						this.fileForm.add(fileField);
+						var fileFormN = Ext.create('Ext.form.Panel', {
+						    fileUpload: true,
+						    bodyPadding: 5,
+						    width: 500,
+						    // Fields will be arranged vertically, stretched to full width
+						    layout: 'anchor',
+						    defaults: {
+						        anchor: '100%'
+						    },
+
+						    // The fields
+						    defaultType: 'fileuploadfield',
+						    items: [Ext.create("Ext.form.field.File",{
+						        xtype: 'fileuploadfield',
+						        name: dataset.name,
+						        fieldLabel: dataset.name,
+						        labelWidth: 50,
+						        msgTarget: 'side',
+						        allowBlank: false,
+						        anchor: '100%',
+						        buttonText: 'Upload'
+						    })],
+
+						    // Reset and Submit buttons
+						    buttons: [{
+						        text: 'Reset',
+						        handler: function() {
+						            this.up('form').getForm().reset();
+						        }
+						    }, {
+						        text: 'Carica',
+						        formBind: true, //only enabled once the form is valid
+						        disabled: true,		        
+						        handler:  Ext.Function.pass(this.uploadFiles, [this, dataset.name, i]),
+						        scope: thisPanel
+						    }]
+						});
+						
+						thisPanel.add(fileFormN);
+
 					}
+					
 				}
 			
-			}	
+			}else{			
+				//hides the execution button
+				thisPanel.itsParent.executeScriptBtn.hide();
+				
+			}
 		};
-		
-		
 		
 		service.callService(this, functionSuccess);
 	}

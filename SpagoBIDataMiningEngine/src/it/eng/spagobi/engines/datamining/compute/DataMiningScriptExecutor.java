@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.compute;
 
+import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.model.FileDataset;
 
@@ -26,9 +27,12 @@ public class DataMiningScriptExecutor {
 	private static String PLOT_OUTPUT = "plot";
 	private static String VIDEO_OUTPUT = "video";
 
-	private static final String OUTPUT_SERVER_DIR = "D:/";
 	private static final String OUTPUT_PLOT_EXTENSION = "jpg";
 	private static final String OUTPUT_PLOT_IMG = "jpeg";
+
+	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + "\\datamining\\";
+
+	private Rengine re;
 
 	/**
 	 * @param dataminingInstance
@@ -37,7 +41,7 @@ public class DataMiningScriptExecutor {
 	public String executeScript(DataMiningEngineInstance dataminingInstance) {
 		String result = null;
 		// new R-engine
-		Rengine re = Rengine.getMainEngine();
+		re = Rengine.getMainEngine();
 		if (re == null) {
 			re = new Rengine(new String[] { "--vanilla" }, false, null);
 		}
@@ -47,18 +51,22 @@ public class DataMiningScriptExecutor {
 			return null;
 		}
 
-		String scriptToExecute = dataminingInstance.getScript();
-		if (dataminingInstance.getOutputType().equalsIgnoreCase(PLOT_OUTPUT) && dataminingInstance.getOutputName() != null) {
-			String plotName = dataminingInstance.getOutputName();
-			re.eval(getPlotFilePath(plotName));
-		}
-		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
-			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
-				FileDataset ds = (FileDataset) dsIt.next();
-				re.eval(ds.getName() + "<-read." + ds.getReadType() + "(\"D:/progetti/RIntegration/Integrazione_R_prova_dataset/rats.txt\",header=T);");
-			}
+		// datasets preparation
+		evalDatasets(dataminingInstance);
 
-		}
+		// prepares output
+		evalOutput(dataminingInstance);
+
+		// evaluates script code
+		result = evalScript(dataminingInstance);
+
+		// re.end();//has some problems
+		return result;
+	}
+
+	private String evalScript(DataMiningEngineInstance dataminingInstance) {
+		String result = null;
+		String scriptToExecute = dataminingInstance.getScript();
 		String[] linesOfCode = scriptToExecute.split("\n");
 		for (int i = 0; i < linesOfCode.length; i++) {
 			REXP rexp = re.eval(linesOfCode[i]);
@@ -66,9 +74,33 @@ public class DataMiningScriptExecutor {
 				result = getResultAsString(rexp);
 			}
 		}
-
-		// re.end();//has some problems
 		return result;
+	}
+
+	private void evalOutput(DataMiningEngineInstance dataminingInstance) {
+		if (dataminingInstance.getOutputType().equalsIgnoreCase(PLOT_OUTPUT) && dataminingInstance.getOutputName() != null) {
+			String plotName = dataminingInstance.getOutputName();
+			re.eval(getPlotFilePath(plotName));
+		}
+	}
+
+	private void evalDatasets(DataMiningEngineInstance dataminingInstance) {
+		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
+			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
+				FileDataset ds = (FileDataset) dsIt.next();
+				if (ds.getType().equalsIgnoreCase("file")) {
+					File fileDSDir = new File(DATAMINING_FILE_PATH + ds.getName());
+					// /find file in dir
+					File[] dsfiles = fileDSDir.listFiles();
+					String fileDSPath = dsfiles[0].getPath();
+
+					fileDSPath = fileDSPath.replaceAll("\\\\", "/");
+
+					String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
+					re.eval(stringToEval);
+				}
+			}
+		}
 	}
 
 	private String getResultAsString(REXP rexp) {
@@ -124,13 +156,14 @@ public class DataMiningScriptExecutor {
 	private String getPlotFilePath(String plotName) {
 		String path = null;
 		if (plotName != null && !plotName.equals("")) {
-			path = OUTPUT_PLOT_IMG + "(\"" + OUTPUT_SERVER_DIR + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
+			String filePath = DATAMINING_FILE_PATH.replaceAll("\\\\", "/");
+			path = OUTPUT_PLOT_IMG + "(\"" + filePath + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
 		}
 		return path;
 	}
 
 	public String getPlotImageAsBase64(String plotName) {
-		String fileImg = OUTPUT_SERVER_DIR + plotName + "." + OUTPUT_PLOT_EXTENSION;
+		String fileImg = DATAMINING_FILE_PATH + plotName + "." + OUTPUT_PLOT_EXTENSION;
 		BufferedImage img = null;
 		String imgstr = null;
 		try {

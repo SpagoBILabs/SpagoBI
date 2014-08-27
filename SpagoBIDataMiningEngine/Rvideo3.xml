@@ -9,9 +9,10 @@ time_plus;
 		]]>
 	</SCRIPT>
 	<DATASETS>
-		<DATASET name="dataset" readType="table" type="file">	
-			<![CDATA[header = TRUE]]>
-		</DATASET>
+		<DATASET name="dataset1" readType="table" />	
+		<DATASET name="dataset2" readType="csv">
+			<![CDATA[header = TRUE, sep = ",", quote = "\""]]>
+		</DATASET>	
 	</DATASETS>	
-	<OUTPUT type="video"  />
+	<OUTPUT type="video" />
 </DATA_MINING>

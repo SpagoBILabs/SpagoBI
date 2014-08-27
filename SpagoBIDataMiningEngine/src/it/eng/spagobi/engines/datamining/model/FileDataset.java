@@ -18,6 +18,33 @@ public class FileDataset implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String readType;
 	private String name;
+	private String options;
+	private String spagobiLabel;
+	private String type;
+
+	public String getOptions() {
+		return options;
+	}
+
+	public void setOptions(String options) {
+		this.options = options;
+	}
+
+	public String getSpagobiLabel() {
+		return spagobiLabel;
+	}
+
+	public void setSpagobiLabel(String spagobiLabel) {
+		this.spagobiLabel = spagobiLabel;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	public String getReadType() {
 		return readType;
