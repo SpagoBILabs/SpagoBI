@@ -146,6 +146,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);
 		}
 
+		algorithm = "equalPartitionOnLeafs";
+
 		logger.debug("Resolving the allocation algorithm");
 		logger.debug("The name of the algorithm is [" + algorithm + "]");
 		IAllocationAlgorithm allocationAlgorithm;

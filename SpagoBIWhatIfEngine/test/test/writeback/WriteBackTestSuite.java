@@ -15,15 +15,15 @@ import junit.framework.TestSuite;
 
 /**
  * @author ghedin
- *
+ * 
  */
 public class WriteBackTestSuite extends TestCase {
 	static public Test suite() {
 		TestSuite suite = new TestSuite("Db writeback tests");
-		if(TestConstants.enableTestsOnMySql){
+		if (TestConstants.enableTestsOnMySql) {
 			suite.addTestSuite(MySQLTestCase.class);
 		}
-		if(TestConstants.enableTestsOnPostgres){
+		if (TestConstants.enableTestsOnPostgres) {
 			suite.addTestSuite(OracleTestCase.class);
 		}
 
