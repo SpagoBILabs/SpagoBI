@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: spagobi.birt.oda;singleton:=true
-Bundle-Version: 4.1.0
+Bundle-Version: 5.0.0
 Bundle-ClassPath: .,
  src,
  lib/activation-1.1.1.jar,
@@ -52,12 +52,12 @@ Bundle-ClassPath: .,
  lib/logback/ch.qos.logback.slf4j_0.9.19.v20100519-1910.jar,
  lib/logback/org.slf4j.api_1.5.11.v20100519-1910.jar,
  lib/jgrapht-jdk1.6.jar,
- lib/spagobi-qbecore-4.1.0.jar,
- lib/spagobi-utils-4.1.0.jar,
- lib/spagobi-utils-json-4.1.0.jar
+ lib/spagobi-qbecore-5.0.0.jar,
+ lib/spagobi-utils-5.0.0.jar,
+ lib/spagobi-utils-json-5.0.0.jar
 Bundle-Activator: spagobi.birt.oda.Activator
 Bundle-Localization: plugin
-Export-Package: it.eng.spagobi.commons.constants,
+Export-Package: 
  spagobi.birt.oda.impl;version="1.0.0.qualifier";
   uses:="org.eclipse.datatools.connectivity.oda.util.manifest,
    com.ibm.icu.util,
