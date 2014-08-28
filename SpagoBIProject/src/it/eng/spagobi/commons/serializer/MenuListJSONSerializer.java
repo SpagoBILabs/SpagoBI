@@ -69,6 +69,7 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_MYDATA_ADMIN ="/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=false";
 	private static final String HREF_LOGIN ="/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
 	private static final String HREF_LOGOUT ="/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
+	private static final String HREF_SOCIAL_ANALYSIS ="/SpagoBITwitterAnalysisWeb";
 	
 	public String contextName = "";
 	public String defaultThemePath="/themes/sbi_default";
@@ -252,6 +253,17 @@ public class MenuListJSONSerializer implements Serializer {
 					HREF_MYDATA,
 					messageBuilder.getMessage("menu.MyData", locale), true, null);
 			tempMenuList.put(myData);
+		}
+		
+		if (isAbleTo(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS, funcs)){
+			JSONObject socialAnalysis = new JSONObject();
+			socialAnalysis.put(ICON_CLS, "social_analysis");
+			socialAnalysis.put(TOOLTIP, messageBuilder.getMessage("menu.SocialAnalysis", locale));
+			socialAnalysis.put(ICON_ALIGN, "top");
+			socialAnalysis.put(SCALE, "large");
+			socialAnalysis.put(TARGET, "_self");
+			socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "');");
+			tempMenuList.put(socialAnalysis);
 		}
 
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
