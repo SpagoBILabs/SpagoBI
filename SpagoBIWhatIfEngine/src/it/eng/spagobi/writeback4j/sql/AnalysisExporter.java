@@ -62,6 +62,8 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 	 */
 	public byte[] exportCSV(Connection connection, Integer version, String fieldSeparator, String lineSeparator) throws Exception {
 
+		byte[] toReturn = null;
+
 		logger.debug("IN");
 		ResultSet resultSet = executeExportDataQuery(connection, version);
 
@@ -69,35 +71,41 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 		ByteArrayOutputStream fos = new ByteArrayOutputStream();
 		Writer out = new OutputStreamWriter(fos);
 
-		logger.debug("Starts to navigate the result set");
-		int ncols = resultSet.getMetaData().getColumnCount();
-		for (int j = 1; j < (ncols + 1); j++) {
-			out.append(resultSet.getMetaData().getColumnName(j));
-			if (j < ncols) {
-				out.append(fieldSeparator);
-			} else {
-				out.append(lineSeparator);
-			}
-		}
-
-		while (resultSet.next()) {
-
-			for (int k = 1; k < (ncols + 1); k++) {
-
-				out.append(resultSet.getString(k));
-
-				if (k < ncols) {
+		try {
+			logger.debug("Starts to navigate the result set");
+			int ncols = resultSet.getMetaData().getColumnCount();
+			for (int j = 1; j < (ncols + 1); j++) {
+				out.append(resultSet.getMetaData().getColumnName(j));
+				if (j < ncols) {
 					out.append(fieldSeparator);
 				} else {
 					out.append(lineSeparator);
 				}
 			}
 
-		}
+			while (resultSet.next()) {
 
-		logger.debug("Finished to navigate the result set");
-		byte[] toReturn = fos.toByteArray();
-		logger.debug("OUT");
+				for (int k = 1; k < (ncols + 1); k++) {
+
+					out.append(resultSet.getString(k));
+
+					if (k < ncols) {
+						out.append(fieldSeparator);
+					} else {
+						out.append(lineSeparator);
+					}
+				}
+
+			}
+
+			out.flush();
+
+			logger.debug("Finished to navigate the result set");
+			toReturn = fos.toByteArray();
+			logger.debug("OUT");
+		} catch (Exception e) {
+			out.close();
+		}
 
 		return toReturn;
 	}

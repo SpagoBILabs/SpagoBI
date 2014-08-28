@@ -40,6 +40,7 @@
 	<WRITEBACK proportionalAlgorithmPersistQueryWhereClause="in">
 		<ALGORITHMS>
 			<ALGORITHM name="proportional" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm" inMemory="true" persistent="true"/>
+			<ALGORITHM name="equalPartitionOnLeafs" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.EqualPartitioningOnLeafsAllocationAlgorithm" inMemory="true" persistent="true"/>
 		</ALGORITHMS>
 	</WRITEBACK>
 

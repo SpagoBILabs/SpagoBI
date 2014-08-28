@@ -15,6 +15,7 @@ public class AllocationAlgorithmDefinition {
 	private final String className;
 	private final boolean inMemory;
 	private final boolean persistent;
+	private boolean defaultAlgorithm;
 
 	public AllocationAlgorithmDefinition(String name, String className, boolean inMemory, boolean persistent) {
 		super();
@@ -38,6 +39,14 @@ public class AllocationAlgorithmDefinition {
 
 	public boolean isPersistent() {
 		return persistent;
+	}
+
+	public boolean isDefaultAlgorithm() {
+		return defaultAlgorithm;
+	}
+
+	public void setDefaultAlgorithm(boolean defaultAlgorithm) {
+		this.defaultAlgorithm = defaultAlgorithm;
 	}
 
 }
