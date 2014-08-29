@@ -6,6 +6,7 @@
 package it.eng.spagobi.engines.datamining.template;
 
 import it.eng.spagobi.engines.datamining.model.FileDataset;
+import it.eng.spagobi.engines.datamining.model.Output;
 
 import java.util.List;
 
@@ -15,10 +16,18 @@ import java.util.List;
 public class DataMiningTemplate {
 
 	private String script;
-	private String outputType;
-	private String outputName;
+
+	private List<Output> outputs;
 
 	private List<FileDataset> datasets;
+
+	public List<Output> getOutputs() {
+		return outputs;
+	}
+
+	public void setOutputs(List<Output> outputs) {
+		this.outputs = outputs;
+	}
 
 	public List<FileDataset> getDatasets() {
 		return datasets;
@@ -44,22 +53,6 @@ public class DataMiningTemplate {
 
 	public void setScript(String script) {
 		this.script = script;
-	}
-
-	public String getOutputType() {
-		return outputType;
-	}
-
-	public void setOutputType(String outputType) {
-		this.outputType = outputType;
-	}
-
-	public String getOutputName() {
-		return outputName;
-	}
-
-	public void setOutputName(String outputName) {
-		this.outputName = outputName;
 	}
 
 	public class Parameter {

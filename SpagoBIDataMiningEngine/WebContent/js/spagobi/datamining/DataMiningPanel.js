@@ -27,7 +27,8 @@ Ext.define('Sbi.datamining.DataMiningPanel', {
     },
 	
 	config:{
-
+		padding: 10
+		, border: 0
 	},
 	
 	resultPanel: null,

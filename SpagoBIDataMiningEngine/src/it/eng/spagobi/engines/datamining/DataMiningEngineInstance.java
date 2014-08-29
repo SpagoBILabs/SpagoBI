@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.datamining;
 
 import it.eng.spagobi.engines.datamining.model.FileDataset;
+import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplateParser;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
@@ -47,8 +48,7 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 	private final List<String> includes;
 	private String script;
 
-	private String outputType;
-	private String outputName;
+	private final List<Output> outputs;
 
 	private List<FileDataset> datasets;
 
@@ -70,8 +70,7 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 
 		script = template.getScript();
 		datasets = template.getDatasets();
-		outputType = template.getOutputType();
-		outputName = template.getOutputName();
+		outputs = template.getOutputs();
 
 		logger.debug("OUT");
 	}
@@ -119,28 +118,16 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 		this.script = script;
 	}
 
-	public String getOutputType() {
-		return outputType;
-	}
-
-	public void setOutputType(String outputType) {
-		this.outputType = outputType;
-	}
-
-	public String getOutputName() {
-		return outputName;
-	}
-
-	public void setOutputName(String outputName) {
-		this.outputName = outputName;
-	}
-
 	public List<FileDataset> getDatasets() {
 		return datasets;
 	}
 
 	public void setDatasets(List<FileDataset> datasets) {
 		this.datasets = datasets;
+	}
+
+	public List<Output> getOutputs() {
+		return outputs;
 	}
 
 }

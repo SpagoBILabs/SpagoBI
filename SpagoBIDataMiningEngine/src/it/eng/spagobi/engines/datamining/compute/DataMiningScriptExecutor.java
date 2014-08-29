@@ -7,17 +7,24 @@ package it.eng.spagobi.engines.datamining.compute;
 
 import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
+import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.model.FileDataset;
+import it.eng.spagobi.engines.datamining.model.Output;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
@@ -38,8 +45,8 @@ public class DataMiningScriptExecutor {
 	 * @param dataminingInstance
 	 * @return
 	 */
-	public String executeScript(DataMiningEngineInstance dataminingInstance) {
-		String result = null;
+	public List<DataMiningResult> executeScript(DataMiningEngineInstance dataminingInstance) {
+		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
 		// new R-engine
 		re = Rengine.getMainEngine();
 		if (re == null) {
@@ -55,34 +62,93 @@ public class DataMiningScriptExecutor {
 		evalDatasets(dataminingInstance);
 
 		// prepares output
-		evalOutput(dataminingInstance);
+		// evalOutput(dataminingInstance);
 
 		// evaluates script code
-		result = evalScript(dataminingInstance);
+		results = evalScript(dataminingInstance);
 
 		// re.end();//has some problems
-		return result;
+		return results;
 	}
 
-	private String evalScript(DataMiningEngineInstance dataminingInstance) {
-		String result = null;
+	private List<DataMiningResult> evalScript(DataMiningEngineInstance dataminingInstance) {
+		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
 		String scriptToExecute = dataminingInstance.getScript();
-		String[] linesOfCode = scriptToExecute.split("\n");
-		for (int i = 0; i < linesOfCode.length; i++) {
-			REXP rexp = re.eval(linesOfCode[i]);
-			if (dataminingInstance.getOutputType().equalsIgnoreCase(VIDEO_OUTPUT) && (i == linesOfCode.length - 1)) {
-				result = getResultAsString(rexp);
+		String ret = createTemporarySourceScript(scriptToExecute);
+		re.eval("source(\"" + ret + "\")");
+		if (dataminingInstance.getOutputs() != null && !dataminingInstance.getOutputs().isEmpty()) {
+			for (Iterator dsIt = dataminingInstance.getOutputs().iterator(); dsIt.hasNext();) {
+				Output out = (Output) dsIt.next();
+				DataMiningResult res = new DataMiningResult();
+				res.setVariablename(out.getOutputValue());
+				if (out.getOutputType().equalsIgnoreCase(PLOT_OUTPUT) && out.getOutputName() != null && out.getOutputValue() != null) {
+					String plotName = out.getOutputName();
+					re.eval(getPlotFilePath(plotName));
+					re.eval("plot(" + out.getOutputValue() + ", type='l', col=2)");
+					re.eval("dev.off()");
+					res.setOutputType(out.getOutputType());
+					res.setResult(getPlotImageAsBase64(out.getOutputName()));
+					res.setPlotName(plotName);
+					results.add(res);
+
+					deleteTemporarySourceScript(DATAMINING_FILE_PATH + "temp\\" + plotName + "." + OUTPUT_PLOT_EXTENSION);
+
+				} else if (out.getOutputType().equalsIgnoreCase(VIDEO_OUTPUT) && out.getOutputValue() != null && out.getOutputDataType() != null) {
+					REXP rexp = re.eval(out.getOutputValue());
+					if (rexp != null) {
+						res.setOutputType(out.getOutputType());
+						res.setResult(getResultAsString(rexp));
+						results.add(res);
+					}
+
+				}
+			}
+
+		}
+
+		deleteTemporarySourceScript(ret);
+		return results;
+	}
+
+	private void deleteTemporarySourceScript(String path) {
+		boolean success = (new File(path)).delete();
+	}
+
+	private String createTemporarySourceScript(String code) {
+		String name = RandomStringUtils.randomAlphabetic(10);
+		File temporarySource = new File(DATAMINING_FILE_PATH + "temp\\" + name + ".R");
+		FileWriter fw = null;
+		String ret = "";
+		try {
+			fw = new FileWriter(temporarySource);
+			fw.write(code);
+			fw.close();
+			ret = temporarySource.getPath();
+			ret = ret.replaceAll("\\\\", "/");
+		} catch (IOException e) {
+			logger.error(e);
+		} finally {
+			if (fw != null) {
+				try {
+					fw.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
 			}
 		}
-		return result;
+
+		return ret;
+
 	}
 
-	private void evalOutput(DataMiningEngineInstance dataminingInstance) {
-		if (dataminingInstance.getOutputType().equalsIgnoreCase(PLOT_OUTPUT) && dataminingInstance.getOutputName() != null) {
-			String plotName = dataminingInstance.getOutputName();
-			re.eval(getPlotFilePath(plotName));
-		}
-	}
+	// private void evalOutput(DataMiningEngineInstance dataminingInstance) {
+	// // plot(x, type='l', col=2)
+	// if (dataminingInstance.getOutputType().equalsIgnoreCase(PLOT_OUTPUT) &&
+	// dataminingInstance.getOutputName() != null) {
+	// String plotName = dataminingInstance.getOutputName();
+	// re.eval(getPlotFilePath(plotName));
+	// }
+	// }
 
 	private void evalDatasets(DataMiningEngineInstance dataminingInstance) {
 		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
@@ -104,48 +170,30 @@ public class DataMiningScriptExecutor {
 	}
 
 	private String getResultAsString(REXP rexp) {
-		String result = null;
+		String result = "";
 
 		int rexpType = rexp.getType();
 
 		if (rexpType == REXP.XT_ARRAY_INT) {
-			result = "";
 			int[] intArr = rexp.asIntArray();
-			for (int i = 0; i < intArr.length; i++) {
-				result += intArr[i] + ",";
-			}
+			result = Arrays.toString(intArr);
 		} else if (rexpType == REXP.XT_ARRAY_DOUBLE) {
-			result = "";
 			double[] doubleArr = rexp.asDoubleArray();
-			for (int i = 0; i < doubleArr.length; i++) {
-				result += doubleArr[i] + ",";
-			}
+			result = Arrays.toString(doubleArr);
 		} else if (rexpType == REXP.XT_ARRAY_STR || (rexpType == REXP.XT_ARRAY_BOOL)) {
-			result = "";
 			String[] strArr = rexp.asStringArray();
-			for (int i = 0; i < strArr.length; i++) {
-				result += strArr[i] + ",";
-			}
-			// } else if (rexpType == REXP.XT_ARRAY_BOOL) {
-			// logger.debug(rexp.asStringArray());
-			// result = rexp.asInt() + "";
+			result = Arrays.toString(strArr);
 		} else if (rexpType == REXP.XT_INT) {
-			logger.debug(rexp.asInt());
 			result = rexp.asInt() + "";
 		} else if (rexpType == REXP.XT_BOOL) {
-			logger.debug(rexp.asBool());
 			result = rexp.asBool().toString();
 		} else if (rexpType == REXP.XT_DOUBLE) {
-			logger.debug(rexp.asDouble());
 			result = rexp.asDouble() + "";
 		} else if (rexpType == REXP.XT_LIST) {
-			logger.debug(rexp.asList());
 			result = rexp.asList().getBody().asString();
 		} else if (rexpType == REXP.XT_STR) {
-			logger.debug(rexp.asString());
 			result = rexp.asString();
 		} else if (rexpType == REXP.XT_VECTOR) {
-			logger.debug(rexp.asVector());
 			result = rexp.asVector().toString();
 		}
 
@@ -157,13 +205,13 @@ public class DataMiningScriptExecutor {
 		String path = null;
 		if (plotName != null && !plotName.equals("")) {
 			String filePath = DATAMINING_FILE_PATH.replaceAll("\\\\", "/");
-			path = OUTPUT_PLOT_IMG + "(\"" + filePath + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
+			path = OUTPUT_PLOT_IMG + "(\"" + filePath + "temp/" + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
 		}
 		return path;
 	}
 
 	public String getPlotImageAsBase64(String plotName) {
-		String fileImg = DATAMINING_FILE_PATH + plotName + "." + OUTPUT_PLOT_EXTENSION;
+		String fileImg = DATAMINING_FILE_PATH + "temp\\" + plotName + "." + OUTPUT_PLOT_EXTENSION;
 		BufferedImage img = null;
 		String imgstr = null;
 		try {

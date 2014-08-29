@@ -13,5 +13,7 @@ time_plus;
 			<![CDATA[header = TRUE]]>
 		</DATASET>
 	</DATASETS>	
-	<OUTPUT type="video"  />
+	<OUTPUTS>
+		<OUTPUT type="video" plotName="time_plus" value="time_plus" datatype=""/>
+	</OUTPUTS>
 </DATA_MINING>

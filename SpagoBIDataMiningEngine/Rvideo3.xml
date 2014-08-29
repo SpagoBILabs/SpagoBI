@@ -9,10 +9,12 @@ time_plus;
 		]]>
 	</SCRIPT>
 	<DATASETS>
-		<DATASET name="dataset1" readType="table" />	
-		<DATASET name="dataset2" readType="csv">
+		<DATASET name="dataset1" readType="table" type="file"/>	
+		<DATASET name="dataset2" readType="csv" type="file">
 			<![CDATA[header = TRUE, sep = ",", quote = "\""]]>
 		</DATASET>	
 	</DATASETS>	
-	<OUTPUT type="video" />
+	<OUTPUTS>
+		<OUTPUT type="video" plotName="time_plus" value="time_plus" datatype=""/>
+	</OUTPUTS>
 </DATA_MINING>
