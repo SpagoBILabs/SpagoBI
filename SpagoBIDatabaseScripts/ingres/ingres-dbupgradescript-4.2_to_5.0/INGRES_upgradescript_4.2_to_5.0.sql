@@ -34,3 +34,6 @@ values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHO
 commit;\p\g
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';\p\g
 commit;\p\g
+
+UPDATE SBI_ENGINES SET MAIN_URL = '/SpagoBICockpitEngine/api/1.0/pages/execute' WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.cockpit.CockpitDriver';\p\g
+COMMIT;\p\g
