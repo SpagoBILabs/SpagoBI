@@ -3,12 +3,14 @@
 	<SCRIPT>
 		<![CDATA[
 roll<-function(){die<-1:6;dice<-sample(die,size=2,replace=TRUE,prob=c(1/8,1/8,1/8,1/8,1/8,3/8));sum(dice)};
-rolls<-replicate(100,roll());
+test<-3;
+rolls<-replicate(50,roll());
 rolls;
 		]]>
 	</SCRIPT>
 	<DATASETS></DATASETS>
 	<OUTPUTS>
-		<OUTPUT type="video" plotName="rolls" value="rolls" datatype=""/>
+		<OUTPUT type="video" plotName="" value="rolls" datatype=""/>
+		<OUTPUT type="video" plotName="" value="test" datatype=""/>
 	</OUTPUTS>
 </DATA_MINING>

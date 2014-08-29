@@ -25,16 +25,23 @@ Ext.define('Sbi.datamining.ResultPanel', {
         type: 'fit'
 		,flex: 1
 		, minWidth: 500
+		, border: 0
     },
 	
 	config:{
-		html: ' '
+		minWidth: 600
+		, width: 800
+		, scroll: true
+		, border:0
+		, padding: 10
+		, style: 'margin-bottom: 10px;'
 	},
 	
 	dataminingParentPanel: null,
 	
 	type: null,
 	result: '',
+	resultTitleStyle: 'font-weight: bold; color: grey;',
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
@@ -64,14 +71,24 @@ Ext.define('Sbi.datamining.ResultPanel', {
 			
 				var res = Ext.decode(response.responseText);				
 				
-				this.type = res.outputType;
-				this.result = res.result;
-				
-				if(this.type == 'plot'){
-					thisPanel.update('<div style="font-size:bold; color: red;">Result</div><br/><img alt="Result" src="data:image/jpg;base64,'+this.result+'" />');
-				}else{
-					thisPanel.update('<div style="font-size:bold; color: red;">Result</div><br/>'+this.result);
+				if(res && Array.isArray(res)){
+					var html ='';
+					for (var i=0; i< res.length; i++){
+						var output = res[i];
+						var type = output.outputType;
+						var result = output.result;
+						var varName = output.variablename;
+						var plotName = output.plotName;
+						
+						if(type == 'plot'){
+							html+='<div style="'+this.resultTitleStyle+'">'+plotName+' : </div><br/><img alt="Result for '+plotName+'" src="data:image/jpg;base64,'+result+'" /><br/><br/><br/>';
+						}else{
+							html+='<div style="'+this.resultTitleStyle+'">'+varName+' : </div><br/>'+result+'<br/><br/><br/>';
+						}
+					}
+					thisPanel.update(html);
 				}
+
 			}else{
 				thisPanel.update('');
 			}

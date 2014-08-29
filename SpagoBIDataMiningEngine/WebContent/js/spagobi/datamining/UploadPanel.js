@@ -24,7 +24,12 @@ Ext.define('Sbi.datamining.UploadPanel', {
 	layout: {
 		type: 'vbox'
     },
-
+    config:{
+		minWidth: 600
+		, width: 800
+		, border:0
+		, style: 'margin-bottom: 10px;'
+	},
 	executeScriptBtn: null,
 	datasetFiles : [],
 	itsParent: null,
@@ -59,6 +64,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
                  												   // they must POST parameters
                  waitMsg: 'Uploading your file...',
                  success: function(form, action) {
+                	
          			Ext.Msg.show({
       				   title : 'Upload',
       				   msg: 'ok',

@@ -7,6 +7,7 @@ package it.eng.spagobi.engines.datamining.template;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.datamining.model.FileDataset;
+import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	public static String TAG_SCRIPT = "SCRIPT";
 	public static String TAG_DATASETS = "DATASETS";
 	public static String TAG_DATASET = "DATASET";
+	public static String TAG_OUTPUTS = "OUTPUTS";
 	public static String TAG_OUTPUT = "OUTPUT";
 
 	public static String DATASET_ATTRIBUTE_READTYPE = "readType";
@@ -36,6 +38,8 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 
 	public static String OUTPUT_ATTRIBUTE_TYPE = "type";
 	public static String OUTPUT_ATTRIBUTE_NAME = "plotName";
+	public static String OUTPUT_ATTRIBUTE_DATATYPE = "dataType";
+	public static String OUTPUT_ATTRIBUTE_VALUE = "value";
 
 	public static String PROP_PARAMETER_NAME = "name";
 	public static String PROP_PARAMETER_ALIAS = "as";
@@ -109,13 +113,29 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 				}
 			}
 
-			SourceBean outputSB = (SourceBean) template.getAttribute(TAG_OUTPUT);
-			logger.debug("output: " + outputSB);
-			Assert.assertNotNull(outputSB, "Template is missing " + TAG_OUTPUT + " tag");
-			String outputType = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_TYPE);
-			toReturn.setOutputType(outputType);
-			String outputName = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_NAME);
-			toReturn.setOutputName(outputName);
+			SourceBean outputsSB = (SourceBean) template.getAttribute(TAG_OUTPUTS);
+			if (outputsSB != null) {
+
+				List<Output> outputs = new ArrayList<Output>();
+				List<SourceBean> outputListSB = outputsSB.getAttributeAsList(TAG_OUTPUT);
+				if (outputListSB != null && outputListSB.size() != 0) {
+					for (Iterator iterator = outputListSB.iterator(); iterator.hasNext();) {
+						SourceBean outputSB = (SourceBean) iterator.next();
+						Output out = new Output();
+						String outputType = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_TYPE);
+						out.setOutputType(outputType);
+						String outputName = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_NAME);
+						out.setOutputName(outputName);
+						String outputDataType = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_DATATYPE);
+						out.setOutputDataType(outputDataType);
+						String outputValue = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_VALUE);
+						out.setOutputValue(outputValue);
+
+						outputs.add(out);
+					}
+					toReturn.setOutputs(outputs);
+				}
+			}
 
 			// List<DataMiningTemplate.Parameter> parameters = new
 			// ArrayList<DataMiningTemplate.Parameter>();

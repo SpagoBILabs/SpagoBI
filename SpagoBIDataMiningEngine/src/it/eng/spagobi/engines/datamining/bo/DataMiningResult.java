@@ -8,6 +8,16 @@ package it.eng.spagobi.engines.datamining.bo;
 public class DataMiningResult {
 	private String result;
 	private String outputType;
+	private String variablename;
+	private String plotName;
+
+	public String getPlotName() {
+		return plotName;
+	}
+
+	public void setPlotName(String plotName) {
+		this.plotName = plotName;
+	}
 
 	public String getResult() {
 		return result;
@@ -23,6 +33,14 @@ public class DataMiningResult {
 
 	public void setOutputType(String outputType) {
 		this.outputType = outputType;
+	}
+
+	public String getVariablename() {
+		return variablename;
+	}
+
+	public void setVariablename(String variablename) {
+		this.variablename = variablename;
 	}
 
 }

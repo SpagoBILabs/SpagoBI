@@ -2,10 +2,11 @@
 <DATA_MINING>
 	<SCRIPT>
 		<![CDATA[
-		plot(c(1,5,3,8,5), type='l', col=2)
-		dev.off()
+		x<-c(1,5,3,8,5)		
 		]]>
 	</SCRIPT>
+	<OUTPUTS>
+		<OUTPUT type="plot" plotName="prova" value="x" datatype=""/>
+	</OUTPUTS>
 	
-	<OUTPUT type="plot" plotName="prova" />
 </DATA_MINING>
