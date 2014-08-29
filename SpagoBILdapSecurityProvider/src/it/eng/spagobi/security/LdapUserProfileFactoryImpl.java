@@ -25,7 +25,7 @@ import com.novell.ldap.LDAPException;
 public class LdapUserProfileFactoryImpl implements ISecurityServiceSupplier {
 
     static private Logger logger = Logger.getLogger(LdapUserProfileFactoryImpl.class);
-
+    
     /**
      * @return The profile of the user if the provided credentials are valid. null otherwise. Note: the profile if returned contains
      * only the user id and user name. All other properties are not initialized yet.
@@ -49,8 +49,9 @@ public class LdapUserProfileFactoryImpl implements ISecurityServiceSupplier {
 		    } else {
 		    	logger.warn("Impossible to authenticate user [" + username + "]");
 		    }
-		} catch (Throwable t) {
-		    throw new RuntimeException("An unexpected error occure while loading profile of user [" + username + "]", t);
+		} catch (Exception e) {
+		    logger.error("An unexpected error occure while loading profile of user [" + username + "]", e);
+		    return null;
 		} finally {
 			logger.debug("OUT");
 		}
