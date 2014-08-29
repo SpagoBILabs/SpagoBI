@@ -81,8 +81,9 @@ public class ServerPWCallback implements CallbackHandler {
 			}
 		} catch (WSSecurityException e) {
 			throw e;
-		} catch (Throwable t) {
-			logger.error("Error while authenticating userId = " + userId, t);
+		} catch (Exception e) {
+			logger.error("Error while authenticating userId = " + userId, e);
+			throw new RuntimeException("Error while authenticating userId = " + userId, e);
 		} finally {
 			logger.debug("OUT");
 		}
