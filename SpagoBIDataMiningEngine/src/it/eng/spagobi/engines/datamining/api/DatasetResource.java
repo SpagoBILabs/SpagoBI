@@ -8,12 +8,14 @@ package it.eng.spagobi.engines.datamining.api;
 import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
-import it.eng.spagobi.engines.datamining.model.FileDataset;
+import it.eng.spagobi.engines.datamining.compute.DataMiningDatasetUtils;
+import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +45,22 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 		String datasetsJson = "";
-		List<FileDataset> datasets = null;
+		List<DataMiningDataset> datasets = null;
 		if (dataMiningEngineInstance.getDatasets() != null && !dataMiningEngineInstance.getDatasets().isEmpty()) {
 			datasets = dataMiningEngineInstance.getDatasets();
+			// finds existing files for datasets
+
+			for (Iterator dsIt = dataMiningEngineInstance.getDatasets().iterator(); dsIt.hasNext();) {
+				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
+				if (ds.getType().equalsIgnoreCase("file")) {
+					File fileDSDir = new File(DataMiningDatasetUtils.UPLOADED_FILE_PATH + ds.getName());
+					// /find file in dir
+					File[] dsfiles = fileDSDir.listFiles();
+					String fileName = dsfiles[0].getName();
+					ds.setFileName(fileName);
+				}
+
+			}
 			datasetsJson = serializeDatasetsList(datasets);
 		}
 

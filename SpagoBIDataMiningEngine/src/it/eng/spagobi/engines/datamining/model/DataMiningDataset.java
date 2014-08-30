@@ -10,17 +10,23 @@ import java.io.Serializable;
 /**
  * @author Monica Franceschini
  */
-public class FileDataset implements Serializable {
+public class DataMiningDataset implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String readType;
 	private String name;
 	private String options;
 	private String spagobiLabel;
 	private String type;
+	private String fileName;
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 
 	public String getOptions() {
 		return options;

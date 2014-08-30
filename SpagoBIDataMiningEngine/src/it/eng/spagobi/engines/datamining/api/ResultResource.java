@@ -9,7 +9,7 @@ import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.compute.DataMiningScriptExecutor;
-import it.eng.spagobi.engines.datamining.compute.DatasetFileUtils;
+import it.eng.spagobi.engines.datamining.compute.DataMiningDatasetUtils;
 import it.eng.spagobi.engines.datamining.serializer.SerializationException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -41,7 +41,7 @@ public class ResultResource extends AbstractDataMiningEngineService {
 		// /if (dataMiningEngineInstance.getDatasets() == null ||
 		// dataMiningEngineInstance.getDatasets().isEmpty()) {
 		DataMiningScriptExecutor executor = new DataMiningScriptExecutor();
-		List<DataMiningResult> results = executor.executeScript(dataMiningEngineInstance);
+		List<DataMiningResult> results = executor.executeScript(dataMiningEngineInstance, getUserProfile());
 		try {
 			outputOfExecution = serialize(results);
 		} catch (SerializationException e) {
@@ -73,7 +73,7 @@ public class ResultResource extends AbstractDataMiningEngineService {
 		Boolean resNeeded = true;
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 
-		resNeeded = DatasetFileUtils.areDatasetsProvided(dataMiningEngineInstance);
+		resNeeded = DataMiningDatasetUtils.areDatasetsProvided(dataMiningEngineInstance);
 		if (!resNeeded) {
 			return getJsonKo();
 		}

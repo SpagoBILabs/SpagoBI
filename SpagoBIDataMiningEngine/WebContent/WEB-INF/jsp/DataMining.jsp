@@ -44,7 +44,7 @@ author:...
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
-<%@page import="it.eng.spagobi.engines.datamining.model.FileDataset"%>
+<%@page import="it.eng.spagobi.engines.datamining.model.DataMiningDataset"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>

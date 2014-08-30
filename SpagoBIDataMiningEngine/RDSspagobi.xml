@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<DATA_MINING>
+	<SCRIPT>
+		<![CDATA[
+str(spagobids);
+spagobids$time;
+time_plus<-spagobids$time+1;
+time_plus;
+		]]>
+	</SCRIPT>
+	<DATASETS>
+		<DATASET name="spagobids" spagobiLabel="spagobids1" readType="" type="spagobi_ds">	
+		</DATASET>
+	</DATASETS>	
+	<OUTPUTS>
+		<OUTPUT type="video" plotName="time_plus" value="time_plus" datatype=""/>
+	</OUTPUTS>
+</DATA_MINING>
