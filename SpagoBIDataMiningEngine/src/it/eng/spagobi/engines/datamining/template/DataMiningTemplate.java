@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.template;
 
-import it.eng.spagobi.engines.datamining.model.FileDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.Output;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class DataMiningTemplate {
 
 	private List<Output> outputs;
 
-	private List<FileDataset> datasets;
+	private List<DataMiningDataset> datasets;
 
 	public List<Output> getOutputs() {
 		return outputs;
@@ -29,11 +29,11 @@ public class DataMiningTemplate {
 		this.outputs = outputs;
 	}
 
-	public List<FileDataset> getDatasets() {
+	public List<DataMiningDataset> getDatasets() {
 		return datasets;
 	}
 
-	public void setDatasets(List<FileDataset> datasets) {
+	public void setDatasets(List<DataMiningDataset> datasets) {
 		this.datasets = datasets;
 	}
 

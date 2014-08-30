@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.engines.datamining;
 
-import it.eng.spagobi.engines.datamining.model.FileDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplateParser;
@@ -50,7 +50,7 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 
 	private final List<Output> outputs;
 
-	private List<FileDataset> datasets;
+	private List<DataMiningDataset> datasets;
 
 	public static transient Logger logger = Logger.getLogger(DataMiningEngineInstance.class);
 
@@ -118,11 +118,11 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 		this.script = script;
 	}
 
-	public List<FileDataset> getDatasets() {
+	public List<DataMiningDataset> getDatasets() {
 		return datasets;
 	}
 
-	public void setDatasets(List<FileDataset> datasets) {
+	public void setDatasets(List<DataMiningDataset> datasets) {
 		this.datasets = datasets;
 	}
 

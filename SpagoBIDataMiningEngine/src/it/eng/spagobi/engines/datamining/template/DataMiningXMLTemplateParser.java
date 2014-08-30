@@ -6,7 +6,7 @@
 package it.eng.spagobi.engines.datamining.template;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.datamining.model.FileDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -73,12 +73,12 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 			SourceBean datasetsSB = (SourceBean) template.getAttribute(TAG_DATASETS);
 			if (datasetsSB != null) {
 
-				List<FileDataset> datasets = new ArrayList<FileDataset>();
+				List<DataMiningDataset> datasets = new ArrayList<DataMiningDataset>();
 				List<SourceBean> datasetListSB = datasetsSB.getAttributeAsList(TAG_DATASET);
 				if (datasetListSB != null && datasetListSB.size() != 0) {
 					for (Iterator iterator = datasetListSB.iterator(); iterator.hasNext();) {
 						SourceBean datasetSB = (SourceBean) iterator.next();
-						FileDataset ftds = new FileDataset();
+						DataMiningDataset ftds = new DataMiningDataset();
 						logger.debug("dataset: " + datasetSB);
 						Assert.assertNotNull(datasetSB, "Template is missing " + TAG_DATASET + " tag");
 

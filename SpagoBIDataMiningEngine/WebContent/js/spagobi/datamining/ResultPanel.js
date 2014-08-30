@@ -4,18 +4,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * 
- * Container of all the UI of the olap engine.<br>
- * It contains:
- * <ul>
- *		<li>View definition tools</li>
- *		<li>Table/Chart</li>
- *		<li>Options</li>
- *	</ul>
- * 
- *     
+ *   
  *  @author
- *  Alberto Ghedin (alberto.ghedin@eng.it)
+ *  Monica Franceschini
  */
  
   
@@ -31,7 +22,7 @@ Ext.define('Sbi.datamining.ResultPanel', {
 	config:{
 		minWidth: 600
 		, width: 800
-		, scroll: true
+		, autoScroll: true
 		, border:0
 		, padding: 10
 		, style: 'margin-bottom: 10px;'

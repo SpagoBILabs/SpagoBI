@@ -3,6 +3,7 @@
 	<name>SpagoBIDataMiningEngine</name>
 	<comment></comment>
 	<projects>
+		<project>SpagoBIDAO</project>
 		<project>SpagoBIUtils</project>
 	</projects>
 	<buildSpec>

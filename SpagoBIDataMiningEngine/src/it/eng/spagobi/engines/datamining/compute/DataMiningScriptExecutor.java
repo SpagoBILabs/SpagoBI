@@ -5,10 +5,11 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.compute;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
-import it.eng.spagobi.engines.datamining.model.FileDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.Output;
 
 import java.awt.image.BufferedImage;
@@ -40,12 +41,15 @@ public class DataMiningScriptExecutor {
 	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + "\\datamining\\";
 
 	private Rengine re;
+	private IEngUserProfile profile;
 
 	/**
 	 * @param dataminingInstance
 	 * @return
 	 */
-	public List<DataMiningResult> executeScript(DataMiningEngineInstance dataminingInstance) {
+	public List<DataMiningResult> executeScript(DataMiningEngineInstance dataminingInstance, IEngUserProfile userProfile) {
+
+		profile = userProfile;
 		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
 		// new R-engine
 		re = Rengine.getMainEngine();
@@ -141,19 +145,10 @@ public class DataMiningScriptExecutor {
 
 	}
 
-	// private void evalOutput(DataMiningEngineInstance dataminingInstance) {
-	// // plot(x, type='l', col=2)
-	// if (dataminingInstance.getOutputType().equalsIgnoreCase(PLOT_OUTPUT) &&
-	// dataminingInstance.getOutputName() != null) {
-	// String plotName = dataminingInstance.getOutputName();
-	// re.eval(getPlotFilePath(plotName));
-	// }
-	// }
-
 	private void evalDatasets(DataMiningEngineInstance dataminingInstance) {
 		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
 			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
-				FileDataset ds = (FileDataset) dsIt.next();
+				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
 				if (ds.getType().equalsIgnoreCase("file")) {
 					File fileDSDir = new File(DATAMINING_FILE_PATH + ds.getName());
 					// /find file in dir
@@ -163,6 +158,11 @@ public class DataMiningScriptExecutor {
 					fileDSPath = fileDSPath.replaceAll("\\\\", "/");
 
 					String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
+					re.eval(stringToEval);
+				} else if (ds.getType().equalsIgnoreCase("spagobi_ds")) {
+
+					String csvToEval = DataMiningDatasetUtils.getFileFromSpagoBIDataset(ds, profile);
+					String stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
 					re.eval(stringToEval);
 				}
 			}

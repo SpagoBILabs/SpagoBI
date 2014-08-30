@@ -7,7 +7,7 @@
 package it.eng.spagobi.engines.datamining.common;
 
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
-import it.eng.spagobi.engines.datamining.model.FileDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.serializer.SerializationException;
 import it.eng.spagobi.engines.datamining.serializer.SerializationManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -73,7 +73,7 @@ public class AbstractDataMiningEngineService extends AbstractEngineRestService {
 		return outputFormat;
 	}
 
-	public String serializeDatasetsList(List<FileDataset> datasets) {
+	public String serializeDatasetsList(List<DataMiningDataset> datasets) {
 		logger.debug("IN");
 
 		String serializedList = null;

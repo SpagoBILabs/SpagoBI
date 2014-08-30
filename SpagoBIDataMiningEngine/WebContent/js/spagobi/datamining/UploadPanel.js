@@ -5,14 +5,6 @@
 
 /**
  * 
- * Container of all the UI of the olap engine.<br>
- * It contains:
- * <ul>
- *		<li>View definition tools</li>
- *		<li>Table/Chart</li>
- *		<li>Options</li>
- *	</ul>
- * 
  *     
  *  @author
  *  Monica Franceschini
@@ -103,6 +95,22 @@ Ext.define('Sbi.datamining.UploadPanel', {
 					
 					for (var i=0; i< res.length; i++){
 						var dataset = res[i];
+						var fieldLbl = dataset.name;
+						if(dataset.fileName !== undefined && dataset.fileName != null){
+							fieldLbl = dataset.name +' ('+dataset.fileName+')';
+						}
+						var fileField= Ext.create("Ext.form.field.File",{
+					        xtype: 'fileuploadfield',
+					        value: 'default',
+					        name: dataset.name,
+					        fieldLabel: fieldLbl,
+					        labelWidth: 150,
+					        msgTarget: 'side',
+					        allowBlank: false,
+					        anchor: '100%',
+					        buttonText: 'Upload'
+					    });
+
 						
 						var fileFormN = Ext.create('Ext.form.Panel', {
 						    fileUpload: true,
@@ -116,16 +124,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 
 						    // The fields
 						    defaultType: 'fileuploadfield',
-						    items: [Ext.create("Ext.form.field.File",{
-						        xtype: 'fileuploadfield',
-						        name: dataset.name,
-						        fieldLabel: dataset.name,
-						        labelWidth: 50,
-						        msgTarget: 'side',
-						        allowBlank: false,
-						        anchor: '100%',
-						        buttonText: 'Upload'
-						    })],
+						    items: [fileField],
 
 						    // Reset and Submit buttons
 						    buttons: [{

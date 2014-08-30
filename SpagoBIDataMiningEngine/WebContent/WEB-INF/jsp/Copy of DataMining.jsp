@@ -44,7 +44,7 @@ author:...
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
-<%@page import="it.eng.spagobi.engines.datamining.model.FileDataset"%>
+<%@page import="it.eng.spagobi.engines.datamining.model.DataMiningDataset"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -72,11 +72,11 @@ author:...
 	String datasetsToUpload ="[]";
 	if(doUploadDatasets!= null && doUploadDatasets){
 		datasetsToUpload ="[";
-		List<FileDataset> datasets = dataMiningEngineInstance.getDatasets();
+		List<DataMiningDataset> datasets = dataMiningEngineInstance.getDatasets();
 		for (Iterator iterator = datasets.iterator(); iterator.hasNext();) {
-			FileDataset ds = (FileDataset)iterator.next();
+	DataMiningDataset ds = (DataMiningDataset)iterator.next();
 
-			datasetsToUpload+= "{name:'"+ds.getName()+"', type:'"+ds.getReadType()+"'},";
+	datasetsToUpload+= "{name:'"+ds.getName()+"', type:'"+ds.getReadType()+"'},";
 		}
 		datasetsToUpload = datasetsToUpload.substring(0, datasetsToUpload.length() -1)+"]";
 	}

@@ -24,5 +24,6 @@
 	<CONFIGURATOR path="/WEB-INF/conf/initializers/presentation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/initializers/publishers.xml" />	
 	
+	<CONFIGURATOR path="/WEB-INF/conf/config/spagobi_dao.xml" />	
 	
 </MASTER>
