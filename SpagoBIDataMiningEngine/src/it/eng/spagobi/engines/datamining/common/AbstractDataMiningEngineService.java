@@ -129,6 +129,25 @@ public class AbstractDataMiningEngineService extends AbstractEngineRestService {
 		return successString;
 	}
 
+	/**
+	 * Builds a simple success json {success: true}
+	 * 
+	 * @return
+	 */
+	public String getJsonSuccessTrue() {
+		if (successString == null) {
+			JSONObject obj = new JSONObject();
+			try {
+				obj.put("success", true);
+			} catch (JSONException e) {
+				logger.error("Error building the success string");
+				throw new SpagoBIRuntimeException("Error building the success string");
+			}
+			successString = obj.toString();
+		}
+		return successString;
+	}
+
 	public String getJsonOk() {
 		if (successString == null) {
 			JSONObject obj = new JSONObject();

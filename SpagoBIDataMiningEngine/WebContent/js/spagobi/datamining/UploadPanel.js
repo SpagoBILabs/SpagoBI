@@ -56,10 +56,10 @@ Ext.define('Sbi.datamining.UploadPanel', {
                  												   // they must POST parameters
                  waitMsg: 'Uploading your file...',
                  success: function(form, action) {
-                	
+                	var x = 3;
          			Ext.Msg.show({
-      				   title : 'Upload',
-      				   msg: 'ok',
+      				   title : 'Upload success',
+      				   msg: 'Dataset file uploaded',
       				   buttons: Ext.Msg.OK
       				});
         			
@@ -94,54 +94,72 @@ Ext.define('Sbi.datamining.UploadPanel', {
 				if(res && Array.isArray(res)){
 					
 					for (var i=0; i< res.length; i++){
+						
 						var dataset = res[i];
-						var fieldLbl = dataset.name;
-						if(dataset.fileName !== undefined && dataset.fileName != null){
-							fieldLbl = dataset.name +' ('+dataset.fileName+')';
+						
+						//file datasets
+						if(dataset.type == 'file'){
+							var fieldLbl = dataset.name;
+							if(dataset.fileName !== undefined && dataset.fileName != null){
+								fieldLbl = dataset.name +' ('+dataset.fileName+')';
+							}
+							var fileField= Ext.create("Ext.form.field.File",{
+						        xtype: 'fileuploadfield',
+						        value: 'default',
+						        name: dataset.name,
+						        fieldLabel: fieldLbl,
+						        labelWidth: 150,
+						        msgTarget: 'side',
+						        allowBlank: false,
+						        anchor: '100%',
+
+						        buttonText: 'Upload'
+						    });
+
+							
+							var fileFormN = Ext.create('Ext.form.Panel', {
+							    fileUpload: true,
+							    bodyPadding: 5,
+							    width: 500,
+							    // Fields will be arranged vertically, stretched to full width
+							    layout: 'anchor',
+							    defaults: {
+							        anchor: '100%'
+							    },
+
+							    // The fields
+							    defaultType: 'fileuploadfield',
+							    items: [fileField],
+
+							    // Reset and Submit buttons
+							    buttons: [{
+							        text: 'Reset',
+							        handler: function() {
+							            this.up('form').getForm().reset();
+							        }
+							    }, {
+							        text: 'Carica',
+							        formBind: true, //only enabled once the form is valid
+							        disabled: true,	
+							        scale: 'small',
+							        iconCls:'upload',
+							        handler:  Ext.Function.pass(this.uploadFiles, [this, dataset.name, i]),
+							        scope: thisPanel
+							    }]
+							});
+							
+							thisPanel.add(fileFormN);
+						}else if(dataset.type == 'spagobi_ds'){
+							
+							var datasetField =Ext.create("Ext.form.field.Display", {
+						        xtype: 'displayfield',
+						        fieldLabel: 'SpagoBI Dataset label',
+						        name: dataset.spagobiLabel,
+						        value: dataset.spagobiLabel
+						    });
+							thisPanel.add(datasetField);
 						}
-						var fileField= Ext.create("Ext.form.field.File",{
-					        xtype: 'fileuploadfield',
-					        value: 'default',
-					        name: dataset.name,
-					        fieldLabel: fieldLbl,
-					        labelWidth: 150,
-					        msgTarget: 'side',
-					        allowBlank: false,
-					        anchor: '100%',
-					        buttonText: 'Upload'
-					    });
-
 						
-						var fileFormN = Ext.create('Ext.form.Panel', {
-						    fileUpload: true,
-						    bodyPadding: 5,
-						    width: 500,
-						    // Fields will be arranged vertically, stretched to full width
-						    layout: 'anchor',
-						    defaults: {
-						        anchor: '100%'
-						    },
-
-						    // The fields
-						    defaultType: 'fileuploadfield',
-						    items: [fileField],
-
-						    // Reset and Submit buttons
-						    buttons: [{
-						        text: 'Reset',
-						        handler: function() {
-						            this.up('form').getForm().reset();
-						        }
-						    }, {
-						        text: 'Carica',
-						        formBind: true, //only enabled once the form is valid
-						        disabled: true,		        
-						        handler:  Ext.Function.pass(this.uploadFiles, [this, dataset.name, i]),
-						        scope: thisPanel
-						    }]
-						});
-						
-						thisPanel.add(fileFormN);
 
 					}
 					

@@ -115,7 +115,7 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 
 		}
 
-		return getJsonSuccess();
+		return getJsonSuccessTrue();
 
 	}
 

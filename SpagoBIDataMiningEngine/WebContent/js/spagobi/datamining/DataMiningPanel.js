@@ -18,7 +18,7 @@ Ext.define('Sbi.datamining.DataMiningPanel', {
     },
 	
 	config:{
-		padding: 10
+		padding: 3
 		, border: 0
 	},
 	
@@ -33,9 +33,10 @@ Ext.define('Sbi.datamining.DataMiningPanel', {
 		this.resultPanel = Ext.create('Sbi.datamining.ResultPanel',{itsParent: this}); 
 		this.uploadPanel = Ext.create('Sbi.datamining.UploadPanel',{itsParent: this});
 		this.executeScriptBtn = Ext.create('Ext.Button', {
-		    text: 'Execute script',
+		    text: 'Run script',
 		    scope: this,
-		    //hidden: true,
+		    iconCls: 'run',
+		    scale: 'medium',
 		    handler: function() {
 		        this.resultPanel.getResult();
 		    }
