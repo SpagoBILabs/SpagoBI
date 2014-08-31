@@ -14,25 +14,25 @@ Ext.define('Sbi.datamining.ResultPanel', {
 	extend: 'Ext.panel.Panel',
 	layout: {
         type: 'fit'
-		,flex: 1
-		, minWidth: 500
+		, flex: 1
 		, border: 0
     },
 	
 	config:{
-		minWidth: 600
-		, width: 800
-		, autoScroll: true
+		 autoScroll: true
 		, border:0
-		, padding: 10
-		, style: 'margin-bottom: 10px;'
+		, padding: 3
+		, width: 800
+		, style: 'margin-bottom: 5px; '
 	},
 	
 	dataminingParentPanel: null,
 	
 	type: null,
 	result: '',
-	resultTitleStyle: 'font-weight: bold; color: grey;',
+	resultTitleStyle: 'font-weight: bold; color: grey; padding-bottom: 2px;',
+	plotStyle: 'font-weight: normal; padding:5px;',
+	videoStyle: 'font-weight: normal; padding:5px; border: 1px solid #d7e0ea; width:100%;',
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
@@ -72,9 +72,9 @@ Ext.define('Sbi.datamining.ResultPanel', {
 						var plotName = output.plotName;
 						
 						if(type == 'plot'){
-							html+='<div style="'+this.resultTitleStyle+'">'+plotName+' : </div><br/><img alt="Result for '+plotName+'" src="data:image/jpg;base64,'+result+'" /><br/><br/><br/>';
+							html+='<div style="'+this.resultTitleStyle+'">'+plotName+' : </div><br/><p style="'+this.plotStyle+'"><img alt="Result for '+plotName+'" src="data:image/jpg;base64,'+result+'" /></p><br/><br/><br/>';
 						}else{
-							html+='<div style="'+this.resultTitleStyle+'">'+varName+' : </div><br/>'+result+'<br/><br/><br/>';
+							html+='<div style="'+this.resultTitleStyle+'">'+varName+' : </div><br/><p style="'+this.videoStyle+'">'+result+'</p><br/><br/><br/>';
 						}
 					}
 					thisPanel.update(html);
