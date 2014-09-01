@@ -237,3 +237,10 @@ Sbi.locale.ln['sbi.cockpit.core.selections.list.columnField'] = 'Selection field
 Sbi.locale.ln['sbi.cockpit.core.selections.list.columnValues'] = 'Values';
 Sbi.locale.ln['sbi.cockpit.core.selections.list.items'] = 'Items';
 
+
+//===================================================================
+//Sbi.cockpit.core.WidgetContainerComponent
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.window.toolbar.editor'] = 'Edit';
+Sbi.locale.ln['sbi.cockpit.window.toolbar.refresh'] = 'Refresh';
+Sbi.locale.ln['sbi.cockpit.window.toolbar.clone'] = 'Clone';
