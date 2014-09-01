@@ -485,6 +485,7 @@ Sbi.locale.ln['sbi.roles.seeFavourites'] = 'Favoriten anzeigen'; //'View Favorit
 Sbi.locale.ln['sbi.roles.seeSubscriptions'] = 'Sehen Abos'; //'View Subscriptions';
 Sbi.locale.ln['sbi.roles.seeToDoList'] = 'Sehen ToDo List'; //'View ToDo List';
 Sbi.locale.ln['sbi.roles.createDocument'] = 'erstellen von Dokumenten'; //'Create Documents';
+Sbi.locale.ln['sbi.roles.createSocialAnalysis'] = 'Create analysis on social networks';
 Sbi.locale.ln['sbi.users.fullName'] = 'voller Name'; //'Full Name';
 Sbi.locale.ln['sbi.users.userId'] = 'User ID'; //'User ID';
 Sbi.locale.ln['sbi.users.pwd'] = 'Passwort'; //'Password';
