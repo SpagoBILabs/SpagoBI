@@ -278,7 +278,7 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	public String getPivotColumnValue(){
-		return wrappedDataset.getPivotColumnName();
+		return wrappedDataset.getPivotColumnValue();
 	}
 	public void setPivotColumnValue(String pivotColumnValue){
 		wrappedDataset.setPivotColumnValue(pivotColumnValue);
