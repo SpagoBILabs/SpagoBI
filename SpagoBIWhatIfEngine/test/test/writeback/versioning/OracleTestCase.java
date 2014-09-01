@@ -3,7 +3,7 @@
  */
 package test.writeback.versioning;
 
-import integration.output.versions.VersionManagerTestCase;
+import integration.versions.VersionManagerTestCase;
 import test.DbConfigContainer;
 
 
