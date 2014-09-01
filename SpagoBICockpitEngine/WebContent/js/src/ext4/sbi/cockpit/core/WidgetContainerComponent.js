@@ -64,6 +64,8 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 		this.html = "Please configure the widget";
 	}
 	
+	this.closable = Sbi.config.docAuthor == '' || Sbi.user.userId == Sbi.config.docAuthor;
+	
 	
 	// constructor
 	Sbi.cockpit.core.WidgetContainerComponent.superclass.constructor.call(this, c);
