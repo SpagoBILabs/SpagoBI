@@ -11,6 +11,7 @@
 package db;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.SQLException;
 
 import org.hsqldb.Server;
@@ -69,17 +70,31 @@ public class HSQLDBEnviromentSingleton {
 
 	}
 
-	public synchronized void closeDB() {
+	public synchronized void closeDB() throws Exception {
 		// Closing the server
+		clean();
 		if (hsqlServer != null && !isLeaveOpen()) {
 			hsqlServer.stop();
 			hsqlServer = null;
 		}
-		clean();
+
 	}
 
-	private void clean() {
+	private void clean() throws Exception {
 		File foodmartLog = new File(new File("").getAbsoluteFile(), "\\test\\db\\foodmart.log");
+
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(foodmartLog);
+			fos.write(new byte[0]);
+			fos.flush();
+			fos.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+		}
+
 		foodmartLog.delete();
 	}
 

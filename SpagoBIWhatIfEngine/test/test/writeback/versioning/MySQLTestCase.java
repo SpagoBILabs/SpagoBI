@@ -3,6 +3,7 @@
  */
 package test.writeback.versioning;
 
+import integration.output.versions.VersionManagerTestCase;
 import test.DbConfigContainer;
 
 /* SpagoBI, the Open Source Business Intelligence suite
@@ -15,7 +16,7 @@ import test.DbConfigContainer;
  * @author ghedin
  *
  */
-public class MySQLTestCase extends AbstractVersionManagerTestCase {
+public class MySQLTestCase extends VersionManagerTestCase {
 
 	
 
