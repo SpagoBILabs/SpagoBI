@@ -744,9 +744,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				}
 			}
 
-			if(isAdded==true){
+			//if(isAdded==true){
 				this.fields[parameters[i].id] = field;
-			}
+			//}
 				// update occupiedInRow 
 				occupiedInRow  += parameters[i].colspan; 
 			 
