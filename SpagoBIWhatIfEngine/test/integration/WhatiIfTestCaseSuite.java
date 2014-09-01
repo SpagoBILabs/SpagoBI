@@ -41,7 +41,6 @@ public class WhatiIfTestCaseSuite extends AbstractWhatIfInMemoryTestCase {
 		suite.addTestSuite(DefaultWeightedAllocationAlgorithmTestCase.class);
 		suite.addTestSuite(LeafsNodesTestCase.class);
 		suite.addTestSuite(EqualPartitioningOnLeafsAllocationAlgorithmTestCase.class);
-
 		suite.addTestSuite(WhatIfExportResult.class);
 
 		return suite;

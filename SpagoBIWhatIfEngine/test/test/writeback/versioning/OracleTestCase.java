@@ -3,6 +3,7 @@
  */
 package test.writeback.versioning;
 
+import integration.output.versions.VersionManagerTestCase;
 import test.DbConfigContainer;
 
 
@@ -17,7 +18,7 @@ import test.DbConfigContainer;
  * @author ghedin
  *
  */
-public class OracleTestCase extends AbstractVersionManagerTestCase {
+public class OracleTestCase extends VersionManagerTestCase {
 
 
 	public String getCatalogue(){
