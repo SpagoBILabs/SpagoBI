@@ -1,7 +1,7 @@
 /**
  * 
  */
-package integration.output.versions;
+package integration.versions;
 
 import integration.agorithms.AbstractWhatIfInMemoryTestCase;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
