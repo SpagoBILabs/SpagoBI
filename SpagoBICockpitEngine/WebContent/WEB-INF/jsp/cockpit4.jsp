@@ -9,7 +9,6 @@
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
 
-
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
 	     pageEncoding="UTF-8"%>	
@@ -28,12 +27,15 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.Iterator"%>
+<%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <% 
 	CockpitEngineInstance engineInstance;
+	IEngUserProfile profile;
+	String profileJSONStr;
 	Map env;
 	String contextName;
 	String environment;
@@ -57,6 +59,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 	engineInstance = (CockpitEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
+	profile = engineInstance.getUserProfile();
+	profileJSONStr = new ObjectMapper().writeValueAsString(profile);
 	locale = engineInstance.getLocale();
 	
 	contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); 
@@ -114,6 +118,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 		var template = <%= template %>;
 
+		Sbi.user = <%= profileJSONStr %>;
+		
 		Sbi.config = {};
 		var url = {
 			protocol: '<%= request.getScheme()%>'   
