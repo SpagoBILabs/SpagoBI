@@ -71,3 +71,4 @@ Sbi.locale.ln['sbi.dm.execution.msg'] = 'Risultato esecuzione';
 Sbi.locale.ln['sbi.dm.execution.upload.btn'] = 'Upload';
 Sbi.locale.ln['sbi.dm.execution.load.btn'] = 'Carica';
 Sbi.locale.ln['sbi.dm.execution.reset.btn'] = 'Reset';
+Sbi.locale.ln['sbi.dm.execution.loading'] = 'Operazione in corso...';
