@@ -104,7 +104,7 @@ public class VersionManagerTestCase extends AbstractWhatIfInMemoryTestCase {
 			connection = ei.getDataSource().getConnection();
 			VersionDAO dao = new VersionDAO(ei);
 			List<SbiVersion> versions = dao.getAllVersions(connection);
-			assertEquals(versions.size(), 2);
+			assertEquals(versions.size(), 3);
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
