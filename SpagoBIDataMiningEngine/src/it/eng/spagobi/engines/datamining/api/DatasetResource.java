@@ -8,6 +8,7 @@ package it.eng.spagobi.engines.datamining.api;
 import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.compute.DataMiningDatasetUtils;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 
@@ -36,7 +37,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 public class DatasetResource extends AbstractDataMiningEngineService {
 
 	public static transient Logger logger = Logger.getLogger(DatasetResource.class);
-	private final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + "\\datamining\\";
+	private final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 
 	@GET
 	@Produces("text/html; charset=UTF-8")
@@ -52,7 +53,7 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 
 			for (Iterator dsIt = dataMiningEngineInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
-				if (ds.getType().equalsIgnoreCase("file")) {
+				if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_FILE)) {
 					File fileDSDir = new File(DataMiningDatasetUtils.UPLOADED_FILE_PATH + ds.getName());
 					// /find file in dir
 					File[] dsfiles = fileDSDir.listFiles();

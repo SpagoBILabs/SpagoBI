@@ -24,50 +24,49 @@ package it.eng.spagobi.engines.datamining;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 /**
- * @author ...
+ * @author Monica Franceschini
  */
 
 /**
  * The Class DataMiningEngineException.
  */
 public class DataMiningEngineRuntimeException extends SpagoBIEngineRuntimeException {
-    
-	/** The hints. 
-	List hints;
-	*/
-	
+
+	/**
+	 * The hints. List hints;
+	 */
+
 	DataMiningEngineInstance engineInstance;
-	
-	
+
 	/**
 	 * Builds a <code>DataMiningException</code>.
 	 * 
-	 * @param message Text of the exception
+	 * @param message
+	 *            Text of the exception
 	 */
-    public DataMiningEngineRuntimeException(String message) {
-    	super(message);
-    }
-	
-    /**
-     * Builds a <code>DataMiningEngineException</code>.
-     * 
-     * @param message Text of the exception
-     * @param ex previous Throwable object
-     */
-    public DataMiningEngineRuntimeException(String message, Throwable ex) {
-    	super(message, ex);
-    }
-    
-    public DataMiningEngineInstance getEngineInstance() {
+	public DataMiningEngineRuntimeException(String message) {
+		super(message);
+	}
+
+	/**
+	 * Builds a <code>DataMiningEngineException</code>.
+	 * 
+	 * @param message
+	 *            Text of the exception
+	 * @param ex
+	 *            previous Throwable object
+	 */
+	public DataMiningEngineRuntimeException(String message, Throwable ex) {
+		super(message, ex);
+	}
+
+	@Override
+	public DataMiningEngineInstance getEngineInstance() {
 		return engineInstance;
 	}
 
 	public void setEngineInstance(DataMiningEngineInstance engineInstance) {
 		this.engineInstance = engineInstance;
 	}
-    
-   
-
 
 }
-

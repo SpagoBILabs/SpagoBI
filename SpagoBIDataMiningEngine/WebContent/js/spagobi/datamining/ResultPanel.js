@@ -58,6 +58,9 @@ Ext.define('Sbi.datamining.ResultPanel', {
 		
 		var functionSuccess = function(response){
 			
+			if(thisPanel.dataminingParentPanel.dmMask !== undefined && thisPanel.dataminingParentPanel.dmMask != null){
+				thisPanel.dataminingParentPanel.dmMask.hide();
+			}
 			if(response != null && response.responseText !== undefined && response.responseText !== null && response.responseText !== ''){
 			
 				var res = Ext.decode(response.responseText);				

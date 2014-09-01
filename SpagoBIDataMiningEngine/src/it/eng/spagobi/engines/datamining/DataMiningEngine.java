@@ -30,7 +30,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 /**
- * @author ...
+ * @author Monica Franceschini
  */
 public class DataMiningEngine {
 
@@ -52,9 +52,9 @@ public class DataMiningEngine {
 		DataMiningEngineInstance dataMiningEngineInstance = null;
 		logger.debug("IN");
 		dataMiningEngineInstance = new DataMiningEngineInstance(template, env);
-		logger.debug("OUT");
 
 		SerializationManager.registerSerializer(AbstractDataMiningEngineService.OUTPUTFORMAT_JSONHTML, new GenericSerializer());
+		logger.debug("OUT");
 		return dataMiningEngineInstance;
 	}
 

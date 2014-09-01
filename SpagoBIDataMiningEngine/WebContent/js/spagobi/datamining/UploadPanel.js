@@ -42,7 +42,6 @@ Ext.define('Sbi.datamining.UploadPanel', {
 	
 	uploadFiles: function(formPanelN, fName, posItem){
         var form = formPanelN.items.items[posItem].getForm();
-        //var fName = form.owner.items.items[0].name;
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "dataset"
@@ -54,19 +53,18 @@ Ext.define('Sbi.datamining.UploadPanel', {
              form.submit({
                  url: service.getRestUrlWithParameters(), // a multipart form cannot contain parameters on its main URL;
                  												   // they must POST parameters
-                 waitMsg: 'Uploading your file...',
+                 waitMsg: LN('sbi.dm.execution.load.dataset.wait'),
                  success: function(form, action) {
-                	var x = 3;
          			Ext.Msg.show({
-      				   title : 'Upload success',
-      				   msg: 'Dataset file uploaded',
+      				   title : LN('sbi.dm.execution.msg'),
+      				   msg: LN('sbi.dm.execution.load.dataset.ok'),
       				   buttons: Ext.Msg.OK
       				});
         			
                  },
                  failure : function (form, action) {
          			Ext.Msg.show({
-       				   title: 'Error',
+         				title : LN('sbi.dm.execution.msg'),
        				   msg: action.result.msg,
        				   buttons: Ext.Msg.OK
        				});
@@ -98,7 +96,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						var dataset = res[i];
 						
 						//file datasets
-						if(dataset.type == 'file'){
+						if(dataset.type == Sbi.settings.datamining.execution.fileDataset){
 							var fieldLbl = dataset.name;
 							if(dataset.fileName !== undefined && dataset.fileName != null){
 								fieldLbl = dataset.name +' ('+dataset.fileName+')';
@@ -112,8 +110,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						        msgTarget: 'side',
 						        allowBlank: false,
 						        anchor: '100%',
-
-						        buttonText: 'Upload'
+						        buttonText: LN('sbi.dm.execution.upload.btn')
 						    });
 
 							
@@ -133,12 +130,12 @@ Ext.define('Sbi.datamining.UploadPanel', {
 
 							    // Reset and Submit buttons
 							    buttons: [{
-							        text: 'Reset',
+							        text: LN('sbi.dm.execution.reset.btn'),
 							        handler: function() {
 							            this.up('form').getForm().reset();
 							        }
 							    }, {
-							        text: 'Carica',
+							        text: LN('sbi.dm.execution.load.btn'),
 							        formBind: true, //only enabled once the form is valid
 							        disabled: true,	
 							        scale: 'small',
@@ -149,7 +146,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 							});
 							
 							thisPanel.add(fileFormN);
-						}else if(dataset.type == 'spagobi_ds'){
+						}else if(dataset.type == Sbi.settings.datamining.execution.spagoBIDsDataset){
 							
 							var datasetField =Ext.create("Ext.form.field.Display", {
 						        xtype: 'displayfield',
