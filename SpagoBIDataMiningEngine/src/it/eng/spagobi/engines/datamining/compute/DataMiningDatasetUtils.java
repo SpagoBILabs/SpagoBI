@@ -9,6 +9,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -19,6 +20,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +32,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class DataMiningDatasetUtils {
 	static private Logger logger = Logger.getLogger(DataMiningDatasetUtils.class);
 
-	public static final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + "\\datamining\\";
+	public static final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 
 	public static Boolean areDatasetsProvided(DataMiningEngineInstance dataminingInstance) {
 		Boolean areProvided = true;
@@ -53,9 +55,11 @@ public class DataMiningDatasetUtils {
 		return areProvided;
 	}
 
-	public static String getFileFromSpagoBIDataset(DataMiningDataset ds, IEngUserProfile profile) {
+	public static String getFileFromSpagoBIDataset(DataMiningDataset ds, IEngUserProfile profile) throws IOException {
+		logger.debug("IN");
 		String filePath = "";
 		IDataSetDAO dataSetDao;
+		CSVWriter writer = null;
 		try {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
@@ -63,21 +67,28 @@ public class DataMiningDatasetUtils {
 			spagobiDataset.loadData();
 			DataStore dataStore = (DataStore) spagobiDataset.getDataStore();
 
-			filePath = UPLOADED_FILE_PATH + "temp\\" + ds.getName() + "\\" + ds.getSpagobiLabel() + ".csv";
+			filePath = UPLOADED_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + ds.getName() + "\\" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
 			File csvFile = new File(filePath);
 			csvFile.createNewFile();
 
-			CSVWriter writer = new CSVWriter(new FileWriter(filePath), ',');
+			writer = new CSVWriter(new FileWriter(filePath), ',');
 			writeColumns(dataStore, writer);
 			writeFields(dataStore, writer);
 			writer.flush();
-			writer.close();
 
 			filePath = filePath.replaceAll("\\\\", "/");
 			return filePath;
 
 		} catch (Exception e) {
 			logger.error(e);
+			if (writer != null) {
+				writer.close();
+			}
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+			logger.debug("OUT");
 		}
 		return filePath;
 
@@ -91,13 +102,14 @@ public class DataMiningDatasetUtils {
 		for (int j = 0; j < dataStore.getMetaData().getFieldCount(); j++) {
 			IFieldMetaData fieldMetaData = dataStore.getMetaData().getFieldMeta(j);
 			String fieldHeader = fieldMetaData.getAlias() != null ? fieldMetaData.getAlias() : fieldMetaData.getName();
-			col += fieldHeader + ",";
+			col += fieldHeader + DataMiningConstants.CSV_SEPARATOR;
 		}
-		writer.writeNext(col.split(","));
-
+		writer.writeNext(col.split(DataMiningConstants.CSV_SEPARATOR));
+		logger.debug("OUT");
 	}
 
 	public static void writeFields(DataStore dataStore, CSVWriter writer) {
+		logger.debug("IN");
 		Iterator records = dataStore.iterator();
 		while (records.hasNext()) {
 			IRecord record = (IRecord) records.next();
@@ -106,14 +118,14 @@ public class DataMiningDatasetUtils {
 				IField field = record.getFieldAt(i);
 
 				if (field.getValue() != null) {
-					row += field.getValue().toString() + ",";
+					row += field.getValue().toString() + DataMiningConstants.CSV_SEPARATOR;
 				} else {
-					row += "" + ",";
+					row += "" + DataMiningConstants.CSV_SEPARATOR;
 				}
 			}
 
-			writer.writeNext(row.split(","));
+			writer.writeNext(row.split(DataMiningConstants.CSV_SEPARATOR));
 		}
-
+		logger.debug("OUT");
 	}
 }

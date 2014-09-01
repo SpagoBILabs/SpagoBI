@@ -28,23 +28,20 @@ import org.apache.log4j.Logger;
 /**
  * The Class AbstractConsoleEngineAction.
  * 
- * @author ...
+ * @author Monica Franceschini
  */
 public class AbstractDataMiningEngineAction extends AbstractEngineAction {
-	
-	
+
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(AbstractDataMiningEngineAction.class);
-    	
-		
+	private static transient Logger logger = Logger.getLogger(AbstractDataMiningEngineAction.class);
+
 	/**
 	 * Gets the console engine instance.
 	 * 
 	 * @return the console engine instance
 	 */
 	public DataMiningEngineInstance getDataMiningEngineInstance() {
-		return (DataMiningEngineInstance)getEngineInstance();
+		return (DataMiningEngineInstance) getEngineInstance();
 	}
-	
-	
+
 }

@@ -57,9 +57,6 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/DataMining.jsp";
 	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
 
-	public static final String EXECUTION_OUTPUT = "EXECUTION_OUTPUT";
-	public static final String DO_UPLOAD_DATASETS = "DO_UPLOAD_DATASETS";
-
 	@GET
 	@Produces("text/html")
 	public void startAction(@Context HttpServletResponse response) {

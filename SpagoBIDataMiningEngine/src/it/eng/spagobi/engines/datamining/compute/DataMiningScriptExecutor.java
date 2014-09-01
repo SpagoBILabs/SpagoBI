@@ -9,6 +9,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.Output;
 
@@ -32,13 +33,11 @@ import org.rosuda.JRI.Rengine;
 
 public class DataMiningScriptExecutor {
 	static private Logger logger = Logger.getLogger(DataMiningScriptExecutor.class);
-	private static String PLOT_OUTPUT = "plot";
-	private static String VIDEO_OUTPUT = "video";
 
 	private static final String OUTPUT_PLOT_EXTENSION = "jpg";
 	private static final String OUTPUT_PLOT_IMG = "jpeg";
 
-	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + "\\datamining\\";
+	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 
 	private Rengine re;
 	private IEngUserProfile profile;
@@ -46,8 +45,9 @@ public class DataMiningScriptExecutor {
 	/**
 	 * @param dataminingInstance
 	 * @return
+	 * @throws IOException
 	 */
-	public List<DataMiningResult> executeScript(DataMiningEngineInstance dataminingInstance, IEngUserProfile userProfile) {
+	public List<DataMiningResult> executeScript(DataMiningEngineInstance dataminingInstance, IEngUserProfile userProfile) throws IOException {
 
 		profile = userProfile;
 		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
@@ -75,7 +75,7 @@ public class DataMiningScriptExecutor {
 		return results;
 	}
 
-	private List<DataMiningResult> evalScript(DataMiningEngineInstance dataminingInstance) {
+	private List<DataMiningResult> evalScript(DataMiningEngineInstance dataminingInstance) throws IOException {
 		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
 		String scriptToExecute = dataminingInstance.getScript();
 		String ret = createTemporarySourceScript(scriptToExecute);
@@ -85,7 +85,7 @@ public class DataMiningScriptExecutor {
 				Output out = (Output) dsIt.next();
 				DataMiningResult res = new DataMiningResult();
 				res.setVariablename(out.getOutputValue());
-				if (out.getOutputType().equalsIgnoreCase(PLOT_OUTPUT) && out.getOutputName() != null && out.getOutputValue() != null) {
+				if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.PLOT_OUTPUT) && out.getOutputName() != null && out.getOutputValue() != null) {
 					String plotName = out.getOutputName();
 					re.eval(getPlotFilePath(plotName));
 					re.eval("plot(" + out.getOutputValue() + ", type='l', col=2)");
@@ -95,9 +95,9 @@ public class DataMiningScriptExecutor {
 					res.setPlotName(plotName);
 					results.add(res);
 
-					deleteTemporarySourceScript(DATAMINING_FILE_PATH + "temp\\" + plotName + "." + OUTPUT_PLOT_EXTENSION);
+					deleteTemporarySourceScript(DATAMINING_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "." + OUTPUT_PLOT_EXTENSION);
 
-				} else if (out.getOutputType().equalsIgnoreCase(VIDEO_OUTPUT) && out.getOutputValue() != null && out.getOutputDataType() != null) {
+				} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.VIDEO_OUTPUT) && out.getOutputValue() != null && out.getOutputDataType() != null) {
 					REXP rexp = re.eval(out.getOutputValue());
 					if (rexp != null) {
 						res.setOutputType(out.getOutputType());
@@ -118,9 +118,9 @@ public class DataMiningScriptExecutor {
 		boolean success = (new File(path)).delete();
 	}
 
-	private String createTemporarySourceScript(String code) {
+	private String createTemporarySourceScript(String code) throws IOException {
 		String name = RandomStringUtils.randomAlphabetic(10);
-		File temporarySource = new File(DATAMINING_FILE_PATH + "temp\\" + name + ".R");
+		File temporarySource = new File(DATAMINING_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + name + ".R");
 		FileWriter fw = null;
 		String ret = "";
 		try {
@@ -129,8 +129,6 @@ public class DataMiningScriptExecutor {
 			fw.close();
 			ret = temporarySource.getPath();
 			ret = ret.replaceAll("\\\\", "/");
-		} catch (IOException e) {
-			logger.error(e);
 		} finally {
 			if (fw != null) {
 				try {
@@ -145,7 +143,7 @@ public class DataMiningScriptExecutor {
 
 	}
 
-	private void evalDatasets(DataMiningEngineInstance dataminingInstance) {
+	private void evalDatasets(DataMiningEngineInstance dataminingInstance) throws IOException {
 		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
 			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
@@ -161,9 +159,15 @@ public class DataMiningScriptExecutor {
 					re.eval(stringToEval);
 				} else if (ds.getType().equalsIgnoreCase("spagobi_ds")) {
 
-					String csvToEval = DataMiningDatasetUtils.getFileFromSpagoBIDataset(ds, profile);
-					String stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
-					re.eval(stringToEval);
+					try {
+						String csvToEval = DataMiningDatasetUtils.getFileFromSpagoBIDataset(ds, profile);
+						String stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
+						re.eval(stringToEval);
+					} catch (IOException e) {
+						logger.error(e.getMessage());
+						throw e;
+					}
+
 				}
 			}
 		}
@@ -205,21 +209,17 @@ public class DataMiningScriptExecutor {
 		String path = null;
 		if (plotName != null && !plotName.equals("")) {
 			String filePath = DATAMINING_FILE_PATH.replaceAll("\\\\", "/");
-			path = OUTPUT_PLOT_IMG + "(\"" + filePath + "temp/" + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
+			path = OUTPUT_PLOT_IMG + "(\"" + filePath + DataMiningConstants.DATA_MINING_TEMP_FOR_SCRIPT + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
 		}
 		return path;
 	}
 
-	public String getPlotImageAsBase64(String plotName) {
-		String fileImg = DATAMINING_FILE_PATH + "temp\\" + plotName + "." + OUTPUT_PLOT_EXTENSION;
+	public String getPlotImageAsBase64(String plotName) throws IOException {
+		String fileImg = DATAMINING_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "." + OUTPUT_PLOT_EXTENSION;
 		BufferedImage img = null;
 		String imgstr = null;
-		try {
-			img = ImageIO.read(new File(fileImg));
-			imgstr = encodeToString(img, OUTPUT_PLOT_EXTENSION);
-		} catch (IOException e) {
-			logger.error(e);
-		}
+		img = ImageIO.read(new File(fileImg));
+		imgstr = encodeToString(img, OUTPUT_PLOT_EXTENSION);
 		return imgstr;
 
 	}

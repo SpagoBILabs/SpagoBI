@@ -8,11 +8,12 @@ package it.eng.spagobi.engines.datamining.api;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
-import it.eng.spagobi.engines.datamining.compute.DataMiningScriptExecutor;
 import it.eng.spagobi.engines.datamining.compute.DataMiningDatasetUtils;
+import it.eng.spagobi.engines.datamining.compute.DataMiningScriptExecutor;
 import it.eng.spagobi.engines.datamining.serializer.SerializationException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -38,17 +39,19 @@ public class ResultResource extends AbstractDataMiningEngineService {
 
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 		String outputOfExecution = null;
-		// /if (dataMiningEngineInstance.getDatasets() == null ||
-		// dataMiningEngineInstance.getDatasets().isEmpty()) {
+
 		DataMiningScriptExecutor executor = new DataMiningScriptExecutor();
-		List<DataMiningResult> results = executor.executeScript(dataMiningEngineInstance, getUserProfile());
+
 		try {
+			List<DataMiningResult> results = executor.executeScript(dataMiningEngineInstance, getUserProfile());
 			outputOfExecution = serialize(results);
 		} catch (SerializationException e) {
 			logger.error("Error serializing the result", e);
 			throw new SpagoBIEngineRuntimeException("Error serializing the result", e);
+		} catch (IOException e) {
+			logger.error("Error executing script", e);
+			throw new SpagoBIEngineRuntimeException("Error executing script", e);
 		}
-		// }
 
 		if (!isNullOrEmpty(outputOfExecution)) {
 			logger.debug("Returning result");
