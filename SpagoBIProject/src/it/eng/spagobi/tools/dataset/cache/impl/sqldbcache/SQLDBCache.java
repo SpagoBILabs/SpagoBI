@@ -553,7 +553,6 @@ public class SQLDBCache implements ICache {
 			Collection<Association> associaions = associationGroup.getAssociations();
 			for(Association association: associaions) {
 				String whereClause;
-				String separator = "";
 				Association.Field previousField = null;
 				for(Association.Field field: association.getFields()) {
 					if(previousField != null) {
@@ -563,14 +562,12 @@ public class SQLDBCache implements ICache {
 						dataset = previousField.getDataSetLabel();
 						column = previousField.getFieldName();
 						column = AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
-						whereClause += separator + datasetAliases.get(dataset) + "." + column;
-						
-						separator = " = ";
+						whereClause += datasetAliases.get(dataset) + "." + column;
 						
 						dataset = field.getDataSetLabel();
 						column = field.getFieldName();
 						column = AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
-						whereClause += separator + datasetAliases.get(dataset) + "." + column;
+						whereClause += " = " + datasetAliases.get(dataset) + "." + column;
 						
 						sqlBuilder.where(whereClause);
 						
