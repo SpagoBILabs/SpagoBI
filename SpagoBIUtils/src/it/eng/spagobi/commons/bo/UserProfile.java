@@ -24,6 +24,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * This class contain the information about the user
  */
@@ -47,7 +49,7 @@ public class UserProfile implements IEngUserProfile {
 	private String organization = null;
 	private Boolean isSuperadmin = null;
 
-
+	@JsonIgnore
 	private SpagoBIUserProfile spagoBIUserProfile = null;
 
 	/**

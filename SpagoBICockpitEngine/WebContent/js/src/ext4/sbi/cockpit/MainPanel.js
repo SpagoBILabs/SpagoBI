@@ -536,7 +536,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
      		, iconCls: 'icon_add_widget' 
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.addWidget')
 			, scope: this
-			, handler:  this.onAddWidget					
+			, handler:  this.onAddWidget
+			, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
 		 }));		
 		
 		tbItems.push(  new Ext.Button({
@@ -544,7 +545,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
      		, iconCls: 'icon_associations' 
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.associations')
 			, scope: this
-			, handler:  this.onShowAssociationEditorWizard					
+			, handler:  this.onShowAssociationEditorWizard
+			, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
 		 }));			
 		
 		
@@ -581,7 +583,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, tooltip: 'Save'
 			, scope: this
 			, handler:  this.onShowSaveDocumentWindow
-			, hidden: this.isDocumentNotSaved()
+			, hidden: this.isDocumentNotSaved() || (Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor) 
 		 }));
 		
 		tbItems.push( new Ext.Button({
@@ -590,6 +592,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 		, tooltip: 'Save As'
 	 		, scope: this
 	 		, handler:  this.onShowSaveDocumentAsWindow
+	 		, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor 
 	 	}));
 		
 		/*

@@ -297,7 +297,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			type:'gear',
 			tooltip: LN('sbi.cockpit.window.toolbar.editor'),
     		handler: this.onShowWidgetEditor,
-    		scope: this
+    		scope: this,
+    		hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
     	}, 
     	/*{
     		type:'help',
@@ -315,7 +316,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
         	type:'plus',
         	tooltip: LN('sbi.cockpit.window.toolbar.clone'),
         	handler: this.onWidgetClone,
-        	scope:this
+        	scope:this,
+        	hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
         }];			
 	}
 		
