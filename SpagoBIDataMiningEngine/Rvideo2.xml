@@ -6,7 +6,7 @@
         <PARAMETER name="par3" />
     </PARAMETERS> 
 	<SCRIPTS>  
-        <SCRIPT name="scriptdataset" mode="auto" datasets="" label="label timeplus">
+        <SCRIPT name="scriptroll" mode="auto" datasets="" label="label timeplus">
 			<![CDATA[
 				str(dataset);
 				dataset$time;

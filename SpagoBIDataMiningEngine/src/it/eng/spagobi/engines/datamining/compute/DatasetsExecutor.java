@@ -90,12 +90,14 @@ public class DatasetsExecutor {
 						File fileDSDir = new File(DATAMINING_FILE_PATH + ds.getName());
 						// /find file in dir
 						File[] dsfiles = fileDSDir.listFiles();
-						String fileDSPath = dsfiles[0].getPath();
+						if (dsfiles != null && dsfiles.length != 0) {
+							String fileDSPath = dsfiles[0].getPath();
 
-						fileDSPath = fileDSPath.replaceAll("\\\\", "/");
+							fileDSPath = fileDSPath.replaceAll("\\\\", "/");
 
-						String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
-						re.eval(stringToEval);
+							String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
+							re.eval(stringToEval);
+						}
 					} else {
 						// use it!
 						logger.debug("dataset " + ds.getName() + " already loaded in user workspace!");
