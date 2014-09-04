@@ -61,8 +61,10 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 					File fileDSDir = new File(DataMiningDatasetUtils.UPLOADED_FILE_PATH + ds.getName());
 					// /find file in dir
 					File[] dsfiles = fileDSDir.listFiles();
-					String fileName = dsfiles[0].getName();
-					ds.setFileName(fileName);
+					if (dsfiles != null && dsfiles.length != 0) {
+						String fileName = dsfiles[0].getName();
+						ds.setFileName(fileName);
+					}
 				}
 
 			}
