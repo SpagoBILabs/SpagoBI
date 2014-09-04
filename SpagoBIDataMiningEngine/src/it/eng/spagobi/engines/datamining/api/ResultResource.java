@@ -9,15 +9,19 @@ import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.compute.DataMiningDatasetUtils;
-import it.eng.spagobi.engines.datamining.compute.DataMiningScriptExecutor;
+import it.eng.spagobi.engines.datamining.compute.DataMiningExecutor;
+import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
+import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.serializer.SerializationException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
@@ -33,24 +37,44 @@ public class ResultResource extends AbstractDataMiningEngineService {
 	 * 
 	 */
 	@GET
+	@Path("/{command}/{output}")
 	@Produces("text/html; charset=UTF-8")
-	public String getResult() {
+	public String getResult(@PathParam("command") String commandName, @PathParam("output") String outputName) {
 		logger.debug("IN");
 
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 		String outputOfExecution = null;
 
-		DataMiningScriptExecutor executor = new DataMiningScriptExecutor();
+		DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance);
 
-		try {
-			List<DataMiningResult> results = executor.executeScript(dataMiningEngineInstance, getUserProfile());
-			outputOfExecution = serialize(results);
-		} catch (SerializationException e) {
-			logger.error("Error serializing the result", e);
-			throw new SpagoBIEngineRuntimeException("Error serializing the result", e);
-		} catch (IOException e) {
-			logger.error("Error executing script", e);
-			throw new SpagoBIEngineRuntimeException("Error executing script", e);
+		List<DataMiningCommand> commands = null;
+		if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
+			commands = dataMiningEngineInstance.getCommands();
+			for (Iterator it = commands.iterator(); it.hasNext();) {
+				DataMiningCommand cmd = (DataMiningCommand) it.next();
+				if (cmd.getName().equals(commandName)) {
+					List<Output> outputs = cmd.getOutputs();
+					if (outputs != null && !outputs.isEmpty()) {
+						for (Iterator it2 = outputs.iterator(); it2.hasNext();) {
+							Output output = (Output) it2.next();
+							if (output.getOutputName().equals(outputName)) {
+								// and starts execution!
+								try {
+									DataMiningResult result = executor.execute(cmd, output, getUserProfile());
+									outputOfExecution = serialize(result);
+								} catch (SerializationException e) {
+									logger.error("Error serializing the result", e);
+									throw new SpagoBIEngineRuntimeException("Error serializing the result", e);
+								} catch (IOException e) {
+									logger.error("Error executing script", e);
+									throw new SpagoBIEngineRuntimeException("Error executing script", e);
+								}
+							}
+						}
+					}
+
+				}
+			}
 		}
 
 		if (!isNullOrEmpty(outputOfExecution)) {

@@ -30,12 +30,15 @@ Ext.define('Sbi.datamining.ResultPanel', {
 	
 	type: null,
 	result: '',
-	resultTitleStyle: 'font-weight: bold; color: grey; padding-bottom: 2px;',
+	resultTitleStyle: 'font-weight: bold; color: #28596A; padding-bottom: 2px; background: #CDD2D4; padding: 3px; margin: 0px;',
 	plotStyle: 'font-weight: normal; padding:5px;',
-	videoStyle: 'font-weight: normal; padding:5px; border: 1px solid #d7e0ea; width:100%;',
+	videoStyle: 'font-weight: normal; padding:5px; border: 1px solid #CDD2D4; width:100%; margin-top: 0px;',
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
+		
+		this.command = config.command;
+		this.output = config.output;
 		
 		this.dataminingParentPanel = config.itsParent;
 		
@@ -44,7 +47,7 @@ Ext.define('Sbi.datamining.ResultPanel', {
 
 	initComponent: function() {
 		this.callParent();
-
+		this.getResult();
 	}
 
 	
@@ -54,6 +57,7 @@ Ext.define('Sbi.datamining.ResultPanel', {
 		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "result"
+			,pathParams: [this.command, this.output]
 		});
 		
 		var functionSuccess = function(response){
@@ -64,28 +68,26 @@ Ext.define('Sbi.datamining.ResultPanel', {
 			if(response != null && response.responseText !== undefined && response.responseText !== null && response.responseText !== ''){
 			
 				var res = Ext.decode(response.responseText);				
-				
-				if(res && Array.isArray(res)){
-					var html ='';
-					for (var i=0; i< res.length; i++){
-						var output = res[i];
-						var type = output.outputType;
-						var result = output.result;
-						var varName = output.variablename;
-						var plotName = output.plotName;
-						
-						if(type == 'plot'){
-							html+='<div style="'+this.resultTitleStyle+'">'+plotName+' : </div><br/><p style="'+this.plotStyle+'"><img alt="Result for '+plotName+'" src="data:image/jpg;base64,'+result+'" /></p><br/><br/><br/>';
-						}else{
-							html+='<div style="'+this.resultTitleStyle+'">'+varName+' : </div><br/><p style="'+this.videoStyle+'">'+result+'</p><br/><br/><br/>';
-						}
+				var html='';
+				if(res != null){
+					var output = res;
+					var type = output.outputType;
+					var result = output.result;
+					var varName = output.variablename;
+					var plotName = output.plotName;
+					
+					if(type == Sbi.settings.datamining.execution.typeImage){
+						html+='<div style="'+this.resultTitleStyle+'">'+plotName+' : </div><br/><p style="'+this.plotStyle+'"><img alt="Result for '+plotName+'" src="data:image/jpg;base64,'+result+'" /></p><br/><br/><br/>';
+					}else{
+						html+='<div style="'+this.resultTitleStyle+'">'+varName+' : </div><br/><p style="'+this.videoStyle+'">'+result+'</p><br/><br/><br/>';
 					}
-					thisPanel.update(html);
+				}else {
+					html='no result';
 				}
-
-			}else{
-				thisPanel.update('');
+				thisPanel.update(html);
 			}
+			
+			thisPanel.dataminingParentPanel.uploadPanel.refreshUploadButtons();
 		};
 		
 		

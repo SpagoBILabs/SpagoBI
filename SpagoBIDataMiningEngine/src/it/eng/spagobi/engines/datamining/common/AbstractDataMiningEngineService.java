@@ -90,6 +90,23 @@ public class AbstractDataMiningEngineService extends AbstractEngineRestService {
 
 	}
 
+	public String serializeList(List listToserialize) {
+		logger.debug("IN");
+
+		String serializedList = null;
+
+		try {
+			serializedList = serialize(listToserialize);
+		} catch (SerializationException e) {
+			logger.error("Error serializing the list", e);
+			throw new SpagoBIEngineRuntimeException("Error serializing the list", e);
+		}
+
+		logger.debug("OUT: list correctly serialized");
+		return serializedList;
+
+	}
+
 	public String serialize(Object obj) throws SerializationException {
 		String outputFormat = getOutputFormat();
 		return (String) SerializationManager.serialize(outputFormat, obj);

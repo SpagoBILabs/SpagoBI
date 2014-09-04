@@ -2,9 +2,9 @@
 <DATA_MINING>
 	<SCRIPT>
 		<![CDATA[
-str(dataset);
-dataset$time;
-time_plus<-dataset$time+1;
+str(dataset1);
+dataset1$time;
+time_plus<-dataset1$time+1;
 time_plus;
 		]]>
 	</SCRIPT>
@@ -15,6 +15,6 @@ time_plus;
 		</DATASET>	
 	</DATASETS>	
 	<OUTPUTS>
-		<OUTPUT type="video" plotName="time_plus" value="time_plus" datatype=""/>
+		<OUTPUT type="text" plotName="time_plus" value="time_plus" datatype=""/>
 	</OUTPUTS>
 </DATA_MINING>

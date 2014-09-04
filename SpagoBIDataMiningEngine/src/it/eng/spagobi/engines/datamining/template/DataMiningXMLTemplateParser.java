@@ -6,7 +6,9 @@
 package it.eng.spagobi.engines.datamining.template;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningScript;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -22,24 +24,43 @@ import org.apache.log4j.Logger;
 public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 
 	public static String TAG_ROOT = "DATA_MINING";
+	public static String TAG_SCRIPTS = "SCRIPTS";
 	public static String TAG_SCRIPT = "SCRIPT";
 	public static String TAG_DATASETS = "DATASETS";
 	public static String TAG_DATASET = "DATASET";
 	public static String TAG_OUTPUTS = "OUTPUTS";
 	public static String TAG_OUTPUT = "OUTPUT";
+	public static String TAG_COMMANDS = "COMMANDS";
+	public static String TAG_COMMAND = "COMMAND";
+
+	public static String SCRIPT_ATTRIBUTE_MODE = "mode";
+	public static String SCRIPT_ATTRIBUTE_NAME = "name";
+	public static String SCRIPT_ATTRIBUTE_DATASETS = "datasets";
+	public static String SCRIPT_ATTRIBUTE_LABEL = "label";
+
+	public static String COMMAND_ATTRIBUTE_SCRIPTNAME = "scriptName";
+	public static String COMMAND_ATTRIBUTE_NAME = "name";
+	public static String COMMAND_ATTRIBUTE_OUTPUTS = "outputs";
+	public static String COMMAND_ATTRIBUTE_LABEL = "label";
+	public static String COMMAND_ATTRIBUTE_MODE = "mode";
 
 	public static String DATASET_ATTRIBUTE_READTYPE = "readType";
 	public static String DATASET_ATTRIBUTE_NAME = "name";
 	public static String DATASET_ATTRIBUTE_SPAGOBILABEL = "spagobiLabel";
 	public static String DATASET_ATTRIBUTE_TYPE = "type";
+	public static String DATASET_ATTRIBUTE_MODE = "mode";
+	public static String DATASET_ATTRIBUTE_LABEL = "label";
 
 	public static final String DATASET_TYPE_FILE = "file";
 	public static final String DATASET_TYPE_SPAGOBI_DS = "spagobi_ds";
 
 	public static String OUTPUT_ATTRIBUTE_TYPE = "type";
-	public static String OUTPUT_ATTRIBUTE_NAME = "plotName";
+	public static String OUTPUT_ATTRIBUTE_NAME = "name";
 	public static String OUTPUT_ATTRIBUTE_DATATYPE = "dataType";
 	public static String OUTPUT_ATTRIBUTE_VALUE = "value";
+	public static String OUTPUT_ATTRIBUTE_MODE = "mode";
+	public static String OUTPUT_ATTRIBUTE_LABEL = "label";
+	public static String OUTPUT_ATTRIBUTE_FUNCTION = "function";
 
 	public static String PROP_PARAMETER_NAME = "name";
 	public static String PROP_PARAMETER_ALIAS = "as";
@@ -63,13 +84,37 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 
 			toReturn = new DataMiningTemplate();
 
-			SourceBean scriptSB = (SourceBean) template.getAttribute(TAG_SCRIPT);
-			logger.debug(TAG_SCRIPT + ": " + scriptSB);
-			Assert.assertNotNull(scriptSB, "Template is missing " + TAG_SCRIPT + " tag");
-			String text = scriptSB.getCharacters();
-			logger.debug("script : " + text);
-			toReturn.setScript(text);
+			SourceBean scriptsSB = (SourceBean) template.getAttribute(TAG_SCRIPTS);
+			if (scriptsSB != null) {
 
+				List<DataMiningScript> scripts = new ArrayList<DataMiningScript>();
+				List<SourceBean> scriptListSB = scriptsSB.getAttributeAsList(TAG_SCRIPT);
+				if (scriptListSB != null && scriptListSB.size() != 0) {
+					for (Iterator iterator = scriptListSB.iterator(); iterator.hasNext();) {
+						SourceBean scriptSB = (SourceBean) iterator.next();
+						DataMiningScript script = new DataMiningScript();
+						String text = scriptSB.getCharacters();
+						script.setCode(text);
+						String name = (String) scriptSB.getAttribute(SCRIPT_ATTRIBUTE_NAME);
+						if (name != null) {
+							script.setName(name);
+						}
+						String ds = (String) scriptSB.getAttribute(SCRIPT_ATTRIBUTE_DATASETS);
+						if (ds != null) {
+							script.setDatasets(ds);
+						}
+						String mode = (String) scriptSB.getAttribute(SCRIPT_ATTRIBUTE_MODE);
+						if (mode != null) {
+							script.setMode(mode);
+						}
+						String label = (String) scriptSB.getAttribute(SCRIPT_ATTRIBUTE_LABEL);
+						script.setLabel(label);
+
+						scripts.add(script);
+					}
+					toReturn.setScripts(scripts);
+				}
+			}
 			SourceBean datasetsSB = (SourceBean) template.getAttribute(TAG_DATASETS);
 			if (datasetsSB != null) {
 
@@ -82,9 +127,15 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 						logger.debug("dataset: " + datasetSB);
 						Assert.assertNotNull(datasetSB, "Template is missing " + TAG_DATASET + " tag");
 
+						String label = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_LABEL);
+						ftds.setLabel(label);
 						String datasetName = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_NAME);
 						if (datasetName != null) {
 							ftds.setName(datasetName);
+						}
+						String mode = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_MODE);
+						if (mode != null) {
+							ftds.setMode(mode);
 						}
 						String datasetType = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_TYPE);
 						if (datasetType != null) {
@@ -112,55 +163,83 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 					toReturn.setDatasets(datasets);
 				}
 			}
+			SourceBean commandsSB = (SourceBean) template.getAttribute(TAG_COMMANDS);
+			if (commandsSB != null) {
 
-			SourceBean outputsSB = (SourceBean) template.getAttribute(TAG_OUTPUTS);
-			if (outputsSB != null) {
+				List<DataMiningCommand> commands = new ArrayList<DataMiningCommand>();
+				List<SourceBean> commandListSB = commandsSB.getAttributeAsList(TAG_COMMAND);
+				if (commandListSB != null && commandListSB.size() != 0) {
+					for (Iterator iterator = commandListSB.iterator(); iterator.hasNext();) {
+						SourceBean commandSB = (SourceBean) iterator.next();
+						DataMiningCommand command = new DataMiningCommand();
 
-				List<Output> outputs = new ArrayList<Output>();
-				List<SourceBean> outputListSB = outputsSB.getAttributeAsList(TAG_OUTPUT);
-				if (outputListSB != null && outputListSB.size() != 0) {
-					for (Iterator iterator = outputListSB.iterator(); iterator.hasNext();) {
-						SourceBean outputSB = (SourceBean) iterator.next();
-						Output out = new Output();
-						String outputType = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_TYPE);
-						out.setOutputType(outputType);
-						String outputName = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_NAME);
-						out.setOutputName(outputName);
-						String outputDataType = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_DATATYPE);
-						out.setOutputDataType(outputDataType);
-						String outputValue = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_VALUE);
-						out.setOutputValue(outputValue);
+						String commandName = (String) commandSB.getAttribute(COMMAND_ATTRIBUTE_NAME);
+						if (commandName != null) {
+							command.setName(commandName);
+						}
+						String commandMode = (String) commandSB.getAttribute(COMMAND_ATTRIBUTE_MODE);
+						command.setMode(commandMode);
 
-						outputs.add(out);
+						String commandLabel = (String) commandSB.getAttribute(COMMAND_ATTRIBUTE_LABEL);
+						command.setLabel(commandLabel);
+
+						String scriptName = (String) commandSB.getAttribute(COMMAND_ATTRIBUTE_SCRIPTNAME);
+						if (scriptName != null) {
+							command.setScriptName(scriptName);
+						}
+						SourceBean outputsSB = (SourceBean) commandSB.getAttribute(TAG_OUTPUTS);
+						if (outputsSB != null) {
+
+							List<Output> outputs = new ArrayList<Output>();
+							List<SourceBean> outputListSB = outputsSB.getAttributeAsList(TAG_OUTPUT);
+							if (outputListSB != null && outputListSB.size() != 0) {
+								for (Iterator iterator2 = outputListSB.iterator(); iterator2.hasNext();) {
+									SourceBean outputSB = (SourceBean) iterator2.next();
+									Output out = new Output();
+									String outputType = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_TYPE);
+									out.setOutputType(outputType);
+									String outputName = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_NAME);
+									out.setOutputName(outputName);
+									String outputDataType = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_DATATYPE);
+									out.setOutputDataType(outputDataType);
+									String outputValue = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_VALUE);
+									out.setOutputValue(outputValue);
+									String outputMode = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_MODE);
+									out.setOutputMode(outputMode);
+									String outputLabel = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_LABEL);
+									out.setOuputLabel(outputLabel);
+									String outputFunction = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_FUNCTION);
+									out.setOutputFunction(outputFunction);
+									outputs.add(out);
+								}
+								command.setOutputs(outputs);
+							}
+						}
+						commands.add(command);
 					}
-					toReturn.setOutputs(outputs);
+
 				}
+				toReturn.setCommands(commands);
 			}
 
-			// List<DataMiningTemplate.Parameter> parameters = new
-			// ArrayList<DataMiningTemplate.Parameter>();
-			// List parametersSB = datasetSB.getAttributeAsList(TAG_PARAMETER);
-			// Iterator it = parametersSB.iterator();
-			// while (it.hasNext()) {
-			// SourceBean parameterSB = (SourceBean) it.next();
-			// logger.debug("Found " + TAG_PARAMETER + " definition :" +
-			// parameterSB);
-			// String name = (String)
-			// parameterSB.getAttribute(PROP_PARAMETER_NAME);
-			// String alias = (String)
-			// parameterSB.getAttribute(PROP_PARAMETER_ALIAS);
-			// Assert.assertNotNull(name, "Missing parameter's " +
-			// PROP_PARAMETER_NAME + " attribute");
-			// Assert.assertNotNull(alias, "Missing parameter's " +
-			// PROP_PARAMETER_ALIAS + " attribute");
-			// DataMiningTemplate.Parameter parameter = toReturn.new
-			// Parameter();
-			// parameter.setName(name);
-			// parameter.setAlias(alias);
-			// parameters.add(parameter);
-			// }
-			// toReturn.setParameters(parameters);
-
+			List<DataMiningTemplate.Parameter> parameters = new ArrayList<DataMiningTemplate.Parameter>();
+			List parametersSB = template.getAttributeAsList(TAG_PARAMETER);
+			if (parametersSB != null && !parametersSB.isEmpty()) {
+				Iterator it = parametersSB.iterator();
+				while (it.hasNext()) {
+					SourceBean parameterSB = (SourceBean) it.next();
+					logger.debug("Found " + TAG_PARAMETER + " definition :" + parameterSB);
+					String name = (String) parameterSB.getAttribute(PROP_PARAMETER_NAME);
+					String alias = (String) parameterSB.getAttribute(PROP_PARAMETER_ALIAS);
+					Assert.assertNotNull(name, "Missing parameter's " + PROP_PARAMETER_NAME + " attribute");
+					Assert.assertNotNull(alias, "Missing parameter's " + PROP_PARAMETER_ALIAS + " attribute");
+					DataMiningTemplate.Parameter parameter = toReturn.new Parameter();
+					parameter.setName(name);
+					parameter.setAlias(alias);
+					parameters.add(parameter);
+				}
+				toReturn.setParameters(parameters);
+			}
 			// read user profile for profiled data access
 			// setProfilingUserAttributes(template, toReturn);
 

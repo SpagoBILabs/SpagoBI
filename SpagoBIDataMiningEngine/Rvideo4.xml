@@ -10,7 +10,7 @@ rolls;
 	</SCRIPT>
 	<DATASETS></DATASETS>
 	<OUTPUTS>
-		<OUTPUT type="video" plotName="" value="rolls" datatype=""/>
-		<OUTPUT type="video" plotName="" value="test" datatype=""/>
+		<OUTPUT type="text" plotName="" value="rolls" datatype=""/>
+		<OUTPUT type="text" plotName="" value="test" datatype=""/>
 	</OUTPUTS>
 </DATA_MINING>

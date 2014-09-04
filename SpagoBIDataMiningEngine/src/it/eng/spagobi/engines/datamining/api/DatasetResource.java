@@ -10,7 +10,9 @@ import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.compute.DataMiningDatasetUtils;
+import it.eng.spagobi.engines.datamining.compute.DataMiningExecutor;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,12 +22,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.io.IOUtils;
@@ -75,14 +79,55 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 		return datasetsJson;
 	}
 
+	@GET
+	@Path("/updateDataset/{fileName}/{dsName}")
+	@Produces("text/html; charset=UTF-8")
+	public String updateDataset(@PathParam("fileName") String fileName, @PathParam("dsName") String dsName) {
+		logger.debug("IN");
+
+		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
+		String datasetsJson = "";
+		List<DataMiningDataset> datasets = null;
+		if (dataMiningEngineInstance.getDatasets() != null && !dataMiningEngineInstance.getDatasets().isEmpty()) {
+			datasets = dataMiningEngineInstance.getDatasets();
+			// finds existing files for datasets
+
+			for (Iterator dsIt = dataMiningEngineInstance.getDatasets().iterator(); dsIt.hasNext();) {
+				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
+				if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_FILE) && ds.getName().equals(dsName)) {
+					ds.setFileName(fileName);
+					// and update its content in R workspace!
+					DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance);
+					try {
+						executor.updateDatasetInWorkspace(ds, getUserProfile());
+					} catch (IOException e) {
+						throw new SpagoBIEngineRuntimeException("Error updating file dataset", e);
+					}
+				}
+
+			}
+		}
+
+		if (!isNullOrEmpty(datasetsJson)) {
+			logger.debug("Returning dataset list");
+		} else {
+			logger.debug("No dataset list found");
+		}
+
+		logger.debug("OUT");
+		return getJsonSuccess();
+	}
+
 	@POST
 	@Path("/loadDataset/{fieldName}")
 	@Consumes("multipart/form-data")
-	public String loadDataset(MultipartFormDataInput input, @PathParam("fieldName") String fieldName) {
+	@Produces("text/html; charset=UTF-8")
+	public String loadDataset(@Context HttpServletRequest req, MultipartFormDataInput input, @PathParam("fieldName") String fieldName) {
 
 		String fileName = "";
 
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+
 		List<InputPart> inputParts = uploadForm.get(fieldName);
 
 		for (InputPart inputPart : inputParts) {
@@ -105,6 +150,15 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 																			// inside
 																			// resources
 				dirToSaveDS.mkdir();
+				// leave just une file per dataset
+				File[] dsfiles = dirToSaveDS.listFiles();
+				if (dsfiles.length >= 1) {
+					for (int i = 0; i < dsfiles.length; i++) {
+						File olFile = dsfiles[i];
+						olFile.delete();
+					}
+				}
+
 				// // constructs upload file path
 				fileName = dirToSaveDS.getPath() + "\\" + fileName;
 
@@ -112,6 +166,7 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 
 			} catch (IOException e) {
 				logger.error(e.getMessage());
+				throw new SpagoBIEngineRuntimeException("Error loading file dataset", e);
 			}
 
 		}

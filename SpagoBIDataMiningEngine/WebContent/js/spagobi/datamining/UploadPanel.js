@@ -42,7 +42,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 	
 	uploadFiles: function(formPanelN, fName, posItem){
         var form = formPanelN.items.items[posItem].getForm();
-
+        var thisPanel = this;
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "dataset"
 			,method: "POST"
@@ -60,7 +60,11 @@ Ext.define('Sbi.datamining.UploadPanel', {
       				   msg: LN('sbi.dm.execution.load.dataset.ok'),
       				   buttons: Ext.Msg.OK
       				});
-        			
+
+         			var file=form.owner.items.items[0].value;
+         			file = file.substring(file.lastIndexOf('\\')+1);
+
+         			thisPanel.updateDatasetFile(fName, file);
                  },
                  failure : function (form, action) {
          			Ext.Msg.show({
@@ -72,6 +76,29 @@ Ext.define('Sbi.datamining.UploadPanel', {
                  scope : this
              });
 
+	},
+	
+	updateDatasetFile: function(dsName, fileName){
+		var thisPanel = this;
+		
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "dataset"
+			,subPath: "updateDataset"
+			,pathParams: [fileName,dsName]
+		});
+		
+		service.callService(this);
+		
+		var functionSuccess = function(response){
+			var thisPanel = this;
+			if(response != null && response.responseText !== undefined && response.responseText !== null && response.responseText !== ''){
+				var res = Ext.decode(response.responseText);
+				if(res.result != null && res.result == Sbi.settings.datamining.execution.ok){
+					//update page content...to be done 
+				}
+			}
+		}
+		service.callService(this, functionSuccess);
 	},
 	
 	getUploadButtons: function(){
@@ -110,9 +137,11 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						        msgTarget: 'side',
 						        allowBlank: false,
 						        anchor: '100%',
+						        border: 0,
+						        labelStyle: 'font-weight: bold; color: #28596A;',
 						        buttonText: LN('sbi.dm.execution.upload.btn')
 						    });
-
+							
 							
 							var fileFormN = Ext.create('Ext.form.Panel', {
 							    fileUpload: true,
@@ -122,8 +151,9 @@ Ext.define('Sbi.datamining.UploadPanel', {
 							    layout: 'anchor',
 							    defaults: {
 							        anchor: '100%'
+							        
 							    },
-
+							    border: 0,
 							    // The fields
 							    defaultType: 'fileuploadfield',
 							    items: [fileField],
@@ -151,6 +181,8 @@ Ext.define('Sbi.datamining.UploadPanel', {
 							var datasetField =Ext.create("Ext.form.field.Display", {
 						        xtype: 'displayfield',
 						        fieldLabel: 'SpagoBI Dataset label',
+						        labelStyle: 'font-weight: bold; color: #28596A;',
+						        labelWidth: 150,
 						        name: dataset.spagobiLabel,
 						        value: dataset.spagobiLabel
 						    });
@@ -171,6 +203,8 @@ Ext.define('Sbi.datamining.UploadPanel', {
 		
 		service.callService(this, functionSuccess);
 	}
-	
+	,refreshUploadButtons: function(){
+		this.doLayout();
+	}
 	
 });

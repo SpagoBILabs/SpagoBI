@@ -1,0 +1,134 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+package it.eng.spagobi.engines.datamining.compute;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
+import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
+import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+
+import org.apache.log4j.Logger;
+import org.rosuda.JRI.REXP;
+import org.rosuda.JRI.Rengine;
+
+public class DatasetsExecutor {
+
+	static private Logger logger = Logger.getLogger(DatasetsExecutor.class);
+	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + DataMiningConstants.DATA_MINING_PATH_SUFFIX;
+	private Rengine re;
+
+	DataMiningEngineInstance dataminingInstance;
+
+	public DatasetsExecutor(DataMiningEngineInstance dataminingInstance) {
+		this.dataminingInstance = dataminingInstance;
+	}
+
+	public Rengine getRe() {
+		return re;
+	}
+
+	public void setRe(Rengine re) {
+		this.re = re;
+	}
+
+	protected void evalDatasets(IEngUserProfile profile) throws IOException {
+		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
+			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
+				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
+				if (ds.getType().equalsIgnoreCase("file")) {
+					// tries to get it from user workspace
+					REXP datasetNameInR = re.eval(ds.getName());
+					if (datasetNameInR == null) {
+						File fileDSDir = new File(DATAMINING_FILE_PATH + ds.getName());
+						// /find file in dir
+						File[] dsfiles = fileDSDir.listFiles();
+						String fileDSPath = dsfiles[0].getPath();
+
+						fileDSPath = fileDSPath.replaceAll("\\\\", "/");
+
+						String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
+						re.eval(stringToEval);
+					} else {
+						// use it!
+						logger.debug("dataset " + ds.getName() + " already loaded in user workspace!");
+					}
+				} else if (ds.getType().equalsIgnoreCase("spagobi_ds")) {
+					// spagobi dataset content could change independently from
+					// the engine, so it must be recalculated every time
+					try {
+
+						String csvToEval = DataMiningDatasetUtils.getFileFromSpagoBIDataset(ds, profile);
+						String stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
+						re.eval(stringToEval);
+
+					} catch (IOException e) {
+						logger.error(e.getMessage());
+						throw e;
+					}
+
+				}
+			}
+		}
+	}
+
+	protected void evalDatasetsNeeded(IEngUserProfile profile) throws IOException {
+		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
+			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
+				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
+				if (ds.getType().equalsIgnoreCase("file")) {
+					// tries to get it from user workspace
+					REXP datasetNameInR = re.eval(ds.getName());
+					if (datasetNameInR == null) {
+						File fileDSDir = new File(DATAMINING_FILE_PATH + ds.getName());
+						// /find file in dir
+						File[] dsfiles = fileDSDir.listFiles();
+						String fileDSPath = dsfiles[0].getPath();
+
+						fileDSPath = fileDSPath.replaceAll("\\\\", "/");
+
+						String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
+						re.eval(stringToEval);
+					} else {
+						// use it!
+						logger.debug("dataset " + ds.getName() + " already loaded in user workspace!");
+					}
+				} else if (ds.getType().equalsIgnoreCase("spagobi_ds")) {
+					// spagobi dataset content could change independently from
+					// the engine, so it must be recalculated every time
+					try {
+
+						String csvToEval = DataMiningDatasetUtils.getFileFromSpagoBIDataset(ds, profile);
+						String stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
+						re.eval(stringToEval);
+
+					} catch (IOException e) {
+						logger.error(e.getMessage());
+						throw e;
+					}
+
+				}
+			}
+		}
+	}
+
+	protected void updateDataset(DataMiningDataset ds, IEngUserProfile profile) throws IOException {
+
+		File fileDSDir = new File(DATAMINING_FILE_PATH + ds.getName());
+		// /find file in dir
+		File[] dsfiles = fileDSDir.listFiles();
+		String fileDSPath = dsfiles[0].getPath();
+
+		fileDSPath = fileDSPath.replaceAll("\\\\", "/");
+
+		String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
+		re.eval(stringToEval);// updated!!!
+	}
+}
