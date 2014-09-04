@@ -16,6 +16,7 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
         type: 'fit'        
     },
     activeTab: 0,
+    tosetactive:0,
 	config:{
 		border: 0
 	},
@@ -31,6 +32,7 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 	initComponent: function() {
 		this.callParent();
 		this.getOuputs();
+		this.setActiveTab(this.tosetactive);
 	}
 	,getOuputs: function(){
 		var thisPanel = this;
@@ -47,7 +49,8 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 				var res = Ext.decode(response.responseText);				
 				
 				if(res && Array.isArray(res)){
-					thisPanel.activeTab=0;
+
+
 					for (var i=0; i< res.length; i++){						
 						var output = res[i];
 						var outputName= output.outputName;
@@ -55,11 +58,6 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 						var ouputLabel= output.ouputLabel;
 						var outputMode= output.outputMode;
 
-						if(outputMode == 'auto'){
-							thisPanel.activeTab = i+1;
-							this.setAutoMode(name, i);
-						}
-						
 						var outputTab= Ext.create("Sbi.datamining.OutputPanel",{
 					        title: ouputLabel,
 	                        bodyStyle: 'padding:10px;',
@@ -67,7 +65,12 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 	                        output: outputName
 					    });
 						
+
 						thisPanel.add(outputTab);
+						if(outputMode == 'auto'){
+							thisPanel.tosetactive = i;
+							thisPanel.setAutoMode(name, i);
+						}
 					}	
 				}
 
