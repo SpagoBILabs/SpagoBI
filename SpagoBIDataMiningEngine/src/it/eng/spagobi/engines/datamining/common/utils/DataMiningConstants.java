@@ -15,7 +15,10 @@ public class DataMiningConstants {
 
 	public static final String DATA_MINING_TEMP_FOR_SCRIPT = "temp/";
 
-	public static final String PLOT_OUTPUT = "plot";
-	public static final String VIDEO_OUTPUT = "video";
+	public static final String IMAGE_OUTPUT = "image";
+	public static final String TEXT_OUTPUT = "text";
+	public static final String SCRIPT_OUTPUT = "script";
 
+	public static final String EXECUTION_TYPE_MANUAL = "manual";
+	public static final String EXECUTION_TYPE_AUTO = "auto";
 }

@@ -5,8 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.template;
 
+import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
-import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.engines.datamining.model.DataMiningScript;
 
 import java.util.List;
 
@@ -15,18 +16,18 @@ import java.util.List;
  */
 public class DataMiningTemplate {
 
-	private String script;
+	private List<DataMiningScript> scripts;
 
-	private List<Output> outputs;
+	private List<DataMiningCommand> commands;
 
 	private List<DataMiningDataset> datasets;
 
-	public List<Output> getOutputs() {
-		return outputs;
+	public List<DataMiningCommand> getCommands() {
+		return commands;
 	}
 
-	public void setOutputs(List<Output> outputs) {
-		this.outputs = outputs;
+	public void setCommands(List<DataMiningCommand> commands) {
+		this.commands = commands;
 	}
 
 	public List<DataMiningDataset> getDatasets() {
@@ -47,12 +48,12 @@ public class DataMiningTemplate {
 		this.parameters = parameters;
 	}
 
-	public String getScript() {
-		return script;
+	public List<DataMiningScript> getScripts() {
+		return scripts;
 	}
 
-	public void setScript(String script) {
-		this.script = script;
+	public void setScripts(List<DataMiningScript> scripts) {
+		this.scripts = scripts;
 	}
 
 	public class Parameter {

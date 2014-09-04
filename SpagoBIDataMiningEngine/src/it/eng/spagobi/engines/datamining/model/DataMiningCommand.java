@@ -6,21 +6,20 @@
 package it.eng.spagobi.engines.datamining.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Monica Franceschini
  */
-public class DataMiningDataset implements Serializable {
+public class DataMiningCommand implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private String readType;
+
+	private String scriptName;
 	private String name;
-	private String options;
-	private String spagobiLabel;
-	private String type;
-	private String fileName;
 	private String mode;
 	private String label;
+	private List<Output> outputs;
 
 	public String getLabel() {
 		return label;
@@ -38,44 +37,12 @@ public class DataMiningDataset implements Serializable {
 		this.mode = mode;
 	}
 
-	public String getFileName() {
-		return fileName;
+	public String getScriptName() {
+		return scriptName;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-
-	public String getOptions() {
-		return options;
-	}
-
-	public void setOptions(String options) {
-		this.options = options;
-	}
-
-	public String getSpagobiLabel() {
-		return spagobiLabel;
-	}
-
-	public void setSpagobiLabel(String spagobiLabel) {
-		this.spagobiLabel = spagobiLabel;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getReadType() {
-		return readType;
-	}
-
-	public void setReadType(String readType) {
-		this.readType = readType;
+	public void setScriptName(String scriptName) {
+		this.scriptName = scriptName;
 	}
 
 	public String getName() {
@@ -84,6 +51,14 @@ public class DataMiningDataset implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public List<Output> getOutputs() {
+		return outputs;
+	}
+
+	public void setOutputs(List<Output> outputs) {
+		this.outputs = outputs;
 	}
 
 }

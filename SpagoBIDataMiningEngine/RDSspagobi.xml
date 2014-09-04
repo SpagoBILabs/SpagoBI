@@ -13,6 +13,6 @@ time_plus;
 		</DATASET>
 	</DATASETS>	
 	<OUTPUTS>
-		<OUTPUT type="video" plotName="time_plus" value="time_plus" datatype=""/>
+		<OUTPUT type="text" plotName="time_plus" value="time_plus" datatype=""/>
 	</OUTPUTS>
 </DATA_MINING>

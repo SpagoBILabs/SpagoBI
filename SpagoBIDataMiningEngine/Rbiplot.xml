@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<DATA_MINING>
+    <SCRIPTS>  
+        <SCRIPT name="scriptAAA" mode="auto" datasets="[fileDS]">
+            <![CDATA[x1<-matrix(c(1,2,3,4), ncol=2) 
+				y1<- matrix(c(5,6,7,8), ncol=2)]]>
+        </SCRIPT>
+        <SCRIPT name="scriptBBB" mode="manual" datasets="">
+            <![CDATA[biplot(x=x1, y =y1)]]>
+        </SCRIPT>
+    </SCRIPTS>
+    <DATASETS>
+        <DATASET name="fileDS" readType="table" type="file">  
+            <![CDATA[]]>
+        </DATASET>
+    </DATASETS>  
+    <COMMANDS>
+        <COMMAND name="command1" scriptName="scriptBBB">
+            <OUTPUTS>
+                <OUTPUT type="image" name="biblot_img" value=""  mode="auto"/>
+            </OUTPUTS>
+        </COMMAND>
+    </COMMANDS>
+</DATA_MINING>

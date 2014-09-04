@@ -57,7 +57,7 @@ public class DataMiningEngineStartActionSpago extends AbstractEngineStartAction 
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse)  {
 		logger.debug("IN");		
 		Locale locale;
-		DataMiningEngineInstance consoleEngineInstance = null;
+		DataMiningEngineInstance dataminingEngineInstance = null;
 		
 		try {
 			setEngineName(ENGINE_NAME);
@@ -78,7 +78,7 @@ public class DataMiningEngineStartActionSpago extends AbstractEngineStartAction 
 			logger.debug("Creating engine instance ...");
 			
 			try {
-				consoleEngineInstance = DataMiningEngine.createInstance( getTemplateAsString(), getEnv() );
+				dataminingEngineInstance = DataMiningEngine.createInstance( getTemplateAsString(), getEnv() );
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";
@@ -95,10 +95,10 @@ public class DataMiningEngineStartActionSpago extends AbstractEngineStartAction 
 			}
 			logger.debug("Engine instance succesfully created");
 			
-			locale = (Locale)consoleEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+			locale = (Locale)dataminingEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 			
-			setAttributeInSession( ENGINE_INSTANCE, consoleEngineInstance);		
-			setAttribute(ENGINE_INSTANCE, consoleEngineInstance);
+			setAttributeInSession( ENGINE_INSTANCE, dataminingEngineInstance);		
+			setAttribute(ENGINE_INSTANCE, dataminingEngineInstance);
 			
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());

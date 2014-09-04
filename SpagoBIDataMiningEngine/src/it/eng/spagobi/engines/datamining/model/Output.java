@@ -7,7 +7,7 @@ package it.eng.spagobi.engines.datamining.model;
 
 public class Output {
 	/**
-	 * outputType: possible values plot or video
+	 * outputType: possible values image,text or script
 	 */
 	private String outputType;
 	/**
@@ -22,6 +22,43 @@ public class Output {
 	 * outputDataType: data type of the result (internally)
 	 */
 	private String outputDataType;
+	/**
+	 * ouputLabel: used by layout
+	 */
+	private String ouputLabel;
+	/**
+	 * outputMode: manual or auto
+	 */
+	private String outputMode;
+	/**
+	 * outputFunction: used by image outputType for simple functions as plot,
+	 * biplot ecc
+	 */
+	private String outputFunction;
+
+	public String getOutputFunction() {
+		return outputFunction;
+	}
+
+	public void setOutputFunction(String outputFunction) {
+		this.outputFunction = outputFunction;
+	}
+
+	public String getOuputLabel() {
+		return ouputLabel;
+	}
+
+	public void setOuputLabel(String ouputLabel) {
+		this.ouputLabel = ouputLabel;
+	}
+
+	public String getOutputMode() {
+		return outputMode;
+	}
+
+	public void setOutputMode(String outputMode) {
+		this.outputMode = outputMode;
+	}
 
 	public String getOutputType() {
 		return outputType;

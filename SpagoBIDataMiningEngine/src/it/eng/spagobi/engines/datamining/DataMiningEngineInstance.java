@@ -21,8 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.engines.datamining;
 
+import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
-import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.engines.datamining.model.DataMiningScript;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplateParser;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
@@ -46,11 +47,10 @@ import org.apache.log4j.Logger;
 public class DataMiningEngineInstance extends AbstractEngineInstance {
 
 	private final List<String> includes;
-	private String script;
 
-	private final List<Output> outputs;
-
+	private final List<DataMiningCommand> commands;
 	private List<DataMiningDataset> datasets;
+	private final List<DataMiningScript> scripts;
 
 	public static transient Logger logger = Logger.getLogger(DataMiningEngineInstance.class);
 
@@ -68,11 +68,19 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 		// IEngUserProfile profile = (IEngUserProfile)
 		// env.get(EngineConstants.ENV_USER_PROFILE);
 
-		script = template.getScript();
 		datasets = template.getDatasets();
-		outputs = template.getOutputs();
+		commands = template.getCommands();
+		scripts = template.getScripts();
 
 		logger.debug("OUT");
+	}
+
+	public List<DataMiningCommand> getCommands() {
+		return commands;
+	}
+
+	public List<DataMiningScript> getScripts() {
+		return scripts;
 	}
 
 	public IDataSource getDataSource() {
@@ -110,24 +118,12 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 		throw new DataMiningEngineRuntimeException("Unsupported method [validate]");
 	}
 
-	public String getScript() {
-		return script;
-	}
-
-	public void setScript(String script) {
-		this.script = script;
-	}
-
 	public List<DataMiningDataset> getDatasets() {
 		return datasets;
 	}
 
 	public void setDatasets(List<DataMiningDataset> datasets) {
 		this.datasets = datasets;
-	}
-
-	public List<Output> getOutputs() {
-		return outputs;
 	}
 
 }

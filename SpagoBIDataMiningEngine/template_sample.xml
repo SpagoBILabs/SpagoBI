@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<DATA_MINING>
+    <PARAMETERS>
+        <PARAMETER name="par1" />
+        <PARAMETER name="par2" />
+        <PARAMETER name="par3" />
+    </PARAMETERS>  
+    <DATASETS>
+        <DATASET name="fileDS" readType="table" type="file" label="label Data set 1">  
+            <![CDATA[ ....opzioni di read....]]>
+        </DATASET>
+        <DATASET name="spagobiDS" spagobiLabel="datasetQQQ" type="spagobi_ds"  label="label Data set 2"/>
+    </DATASETS>  
+    <SCRIPTS>  
+        <SCRIPT name="scriptAAA" mode="auto" datasets="[fileDs,spagobiDS]"  label="label Script1">
+            <![CDATA[....x,y... ]]>
+        </SCRIPT>
+        <SCRIPT name="scriptBBB" mode="manual" datasets="[fileDs]" label="label Script2">
+            <![CDATA[...z... ]]>
+        </SCRIPT>
+        <SCRIPT name="scriptCCC" mode="manual" label="label Script3">
+            <![CDATA[...z... ]]>
+        </SCRIPT>
+    </SCRIPTS>
+    <COMMANDS>
+        <COMMAND name="command1" scriptName="scriptAAA" label="label Command 1" mode="auto">
+            <OUTPUTS>
+                <OUTPUT type="image" name="a" value="x"  function="plot" mode="auto" label="label Output 1"/>
+                <OUTPUT type="image" name="c" value="z,k"  function="biplot" mode="manual" label="label Output 2"/>
+                <OUTPUT type="script" name="d" value="scriptCCC"  mode="manual" label="label Output 3"/>
+                <OUTPUT type="text" name="b" value="y"  mode="manual" label="label Output 4"/>
+            </OUTPUTS>
+        </COMMAND>
+        <COMMAND name="command2" scriptName="scriptBBB" label="label Command 2" mode="manual">
+            <OUTPUTS>
+                <OUTPUT type="text" name="c" value="z"  mode="manual" label="label Output 1"/>
+            </OUTPUTS>
+        </COMMAND>
+        <COMMAND name="command3" scriptName="scriptAAA" label="label Command 3" mode="manual">
+            <OUTPUTS>
+                <OUTPUT type="text" name="c" value="z"  mode="manual" label="label Output 1"/>
+            </OUTPUTS>
+        </COMMAND>
+    </COMMANDS>
+</DATA_MINING>
