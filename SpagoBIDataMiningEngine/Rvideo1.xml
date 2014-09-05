@@ -18,7 +18,7 @@
 	<COMMANDS>
         <COMMAND name="command1" scriptName="scriptroll"  label="label Command1" mode="auto">
             <OUTPUTS>
-                <OUTPUT type="text" name="prova" value="x"  mode="auto" label="label Output 1"/>
+                <OUTPUT type="text" name="prova" value="rolls"  mode="auto" label="label Output 1"/>
             </OUTPUTS>
         </COMMAND>
     </COMMANDS>

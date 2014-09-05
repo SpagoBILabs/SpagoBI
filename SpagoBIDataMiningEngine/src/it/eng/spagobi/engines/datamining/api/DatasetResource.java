@@ -11,13 +11,17 @@ import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.compute.DataMiningDatasetUtils;
 import it.eng.spagobi.engines.datamining.compute.DataMiningExecutor;
+import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningScript;
+import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -44,20 +48,27 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 	private final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 
 	@GET
+	@Path("/{commandName}")
 	@Produces("text/html; charset=UTF-8")
-	public String getDatasets() {
+	public String getDatasets(@PathParam("commandName") String commandName) {
 		logger.debug("IN");
 
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
+
+		List<String> scripts = getScriptsForDatasets(dataMiningEngineInstance, commandName);
+		List<String> datasetNames = geDatasetsToDisplay(dataMiningEngineInstance, scripts);
+
 		String datasetsJson = "";
 		List<DataMiningDataset> datasets = null;
+		List<DataMiningDataset> datasetsToReturn = new ArrayList<DataMiningDataset>();
 		if (dataMiningEngineInstance.getDatasets() != null && !dataMiningEngineInstance.getDatasets().isEmpty()) {
-			datasets = dataMiningEngineInstance.getDatasets();
-			// finds existing files for datasets
+			datasets = dataMiningEngineInstance.getDatasets(); // finds existing
+																// files for
+																// datasets
 
 			for (Iterator dsIt = dataMiningEngineInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
-				if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_FILE)) {
+				if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_FILE) && datasetNames.contains(ds.getName())) {
 					File fileDSDir = new File(DataMiningDatasetUtils.UPLOADED_FILE_PATH + ds.getName());
 					// /find file in dir
 					File[] dsfiles = fileDSDir.listFiles();
@@ -65,10 +76,11 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 						String fileName = dsfiles[0].getName();
 						ds.setFileName(fileName);
 					}
+					datasetsToReturn.add(ds);
 				}
 
 			}
-			datasetsJson = serializeDatasetsList(datasets);
+			datasetsJson = serializeDatasetsList(datasetsToReturn);
 		}
 
 		if (!isNullOrEmpty(datasetsJson)) {
@@ -208,6 +220,48 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 		fop.flush();
 		fop.close();
 
+	}
+
+	private List<String> getScriptsForDatasets(DataMiningEngineInstance dataminingInstance, String commandName) {
+		List<String> scriptsToLoad = new ArrayList<String>();
+		if (dataminingInstance.getCommands() != null && !dataminingInstance.getCommands().isEmpty()) {
+			for (Iterator it = dataminingInstance.getCommands().iterator(); it.hasNext();) {
+				DataMiningCommand command = (DataMiningCommand) it.next();
+				if (command.getName().equals(commandName)) {
+					scriptsToLoad.add(command.getScriptName());
+					if (command.getOutputs() != null && !command.getOutputs().isEmpty()) {
+						for (Iterator it2 = command.getOutputs().iterator(); it2.hasNext();) {
+							Output output = (Output) it2.next();
+							if (output.getOutputMode().equals(DataMiningConstants.EXECUTION_TYPE_AUTO)
+									&& output.getOutputType().equalsIgnoreCase(DataMiningConstants.SCRIPT_OUTPUT)) {
+								scriptsToLoad.add(output.getOutputValue());
+							}
+						}
+					}
+				}
+			}
+		}
+		return scriptsToLoad;
+	}
+
+	// script tag refers to comma separated list of datasets in datasets
+	// attributes
+	private List<String> geDatasetsToDisplay(DataMiningEngineInstance dataminingInstance, List<String> scriptNames) {
+		String datasets = "";
+		List<String> dsNames = new ArrayList<String>();
+		if (dataminingInstance.getScripts() != null && !dataminingInstance.getScripts().isEmpty()) {
+			for (Iterator it = dataminingInstance.getScripts().iterator(); it.hasNext();) {
+				DataMiningScript script = (DataMiningScript) it.next();
+				if (scriptNames.contains(script.getName())) {
+					datasets += script.getDatasets() + ",";
+				}
+			}
+		}
+		String[] datasetNames = datasets.split(",");
+		for (int i = 0; i < datasetNames.length; i++) {
+			dsNames.add(datasetNames[i].trim());
+		}
+		return dsNames;
 	}
 
 }

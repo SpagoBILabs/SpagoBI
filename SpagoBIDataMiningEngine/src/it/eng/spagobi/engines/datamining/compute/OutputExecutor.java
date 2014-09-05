@@ -160,6 +160,9 @@ public class OutputExecutor {
 			result = rexp.asString();
 		} else if (rexpType == REXP.XT_VECTOR) {
 			result = rexp.asVector().toString();
+		} else if (rexpType == REXP.XT_ARRAY_BOOL_INT) {
+			int[] doubleArr = rexp.asIntArray();
+			result = Arrays.toString(doubleArr);
 		}
 
 		return result;
