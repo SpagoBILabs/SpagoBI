@@ -38,24 +38,24 @@ import org.json.JSONObject;
  */
 @Path("/1.0/associations")
 public class AssociationResource extends AbstractCockpitEngineResource {
-	
+
 	static private Logger logger = Logger.getLogger(AssociationResource.class);
-	
+
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getAssociations() {
-		
+
 		logger.debug("IN");
 		try {
 			AssociationManager associationManager = this.getEngineInstance().getAssociationManager();
 			List<Association> associations = associationManager.getAssociations();
 			return serializeAssociations(associations).toString();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
-		} finally {			
+		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
 
 	@POST
@@ -63,54 +63,54 @@ public class AssociationResource extends AbstractCockpitEngineResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String setAssociations(String jsonData) {
-		
+
 		logger.debug("IN");
 		try {
 			JSONObject dataJSON = new JSONObject(jsonData);
 			JSONArray associationsJSON = dataJSON.getJSONArray("items");
 			List<Association> associations = deserializeAssociations(associationsJSON);
-			
+
 			AssociationManager associationManager = this.getEngineInstance().getAssociationManager();
 			associationManager.addAssociations(associations);
 			List<AssociationGroup> associationGroups = associationManager.getAssociationGroups();
-			
+
 			return serializeAssociationGroups(associationGroups).toString();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
-		} finally {			
+		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
-	
+
 	// =======================================================================
 	// SERIALIZATION METHODS
 	// =======================================================================
-	
+
 	private JSONArray serializeAssociations(List<Association> associations) {
 		try {
 			AssociationJSONSerializer serializer = new AssociationJSONSerializer();
 			return serializer.serialize(associations);
-		} catch(Exception e) {
-			throw new RuntimeException("An unexpected error occured while serializing results",  e);
-		}	
+		} catch (Exception e) {
+			throw new RuntimeException("An unexpected error occured while serializing results", e);
+		}
 	}
-	
+
 	private List<Association> deserializeAssociations(JSONArray associations) {
 		try {
 			AssociationJSONSerializer serializer = new AssociationJSONSerializer();
 			return serializer.deserialize(associations);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("An unexpected error occured while serializing results", e);
-		}	
+		}
 	}
-	
+
 	private JSONArray serializeAssociationGroups(List<AssociationGroup> associationGroups) {
 		try {
 			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
 			return serializer.serialize(associationGroups);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("An unexpected error occured while serializing results", e);
-		}	
+		}
 	}
 
 }

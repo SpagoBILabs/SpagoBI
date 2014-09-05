@@ -5,13 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.cockpit.api.crosstable;
 
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.engine.cockpit.api.crosstable.CrosstabSerializationConstants;
-import it.eng.spagobi.engine.cockpit.api.crosstable.Attribute;
-import it.eng.spagobi.engine.cockpit.api.crosstable.Field;
-import it.eng.spagobi.engine.cockpit.api.crosstable.Measure;
-
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,15 +13,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * This class wrap the crosstab configuration state (a JSONObject) and provide parsing methods.
+ * This class wrap the crosstab configuration state (a JSONObject) and provide
+ * parsing methods.
  * 
  * @author Alberto Alagna
- *
+ * 
  */
 public class CrosstabDefinition {
-	
+
 	public static CrosstabDefinition EMPTY_CROSSTAB;
-	
+
 	static {
 		EMPTY_CROSSTAB = new CrosstabDefinition();
 		EMPTY_CROSSTAB.setColumns(new ArrayList<CrosstabDefinition.Column>());
@@ -37,7 +31,7 @@ public class CrosstabDefinition {
 		EMPTY_CROSSTAB.setConfig(new JSONObject());
 		EMPTY_CROSSTAB.setCalculatedFields(new JSONArray());
 	}
-	
+
 	private int cellLimit;
 	private List<Row> rows = null;
 	private List<Column> columns = null;
@@ -46,11 +40,13 @@ public class CrosstabDefinition {
 	private JSONArray calculatedFields = null;
 	private JSONObject additionalData = null;
 	private boolean isStatic = true;
-	
+
 	public CrosstabDefinition() {
-//		cellLimit = new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) ;
+		// cellLimit = new Integer((String)
+		// ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value"))
+		// ;
 	}
-	
+
 	public int getCellLimit() {
 		return cellLimit;
 	}
@@ -58,7 +54,7 @@ public class CrosstabDefinition {
 	public void setCellLimit(int cellLimit) {
 		this.cellLimit = cellLimit;
 	}
-	
+
 	public List<Row> getRows() {
 		return rows;
 	}
@@ -103,36 +99,39 @@ public class CrosstabDefinition {
 		String value = config.optString(CrosstabSerializationConstants.MEASURESON);
 		if (value != null) {
 			return value.equalsIgnoreCase("rows");
-		} else return false;
+		} else
+			return false;
 	}
-	
+
 	public boolean isMeasuresOnColumns() {
 		String value = config.optString(CrosstabSerializationConstants.MEASURESON);
 		if (value != null) {
 			return value.equalsIgnoreCase("columns");
-		} else return true;
+		} else
+			return true;
 	}
-	
+
 	public class Row extends Attribute {
-		
+
 		public Row(String entityId, String alias, String iconCls, String nature, String values) {
 			super(entityId, alias, iconCls, nature, values);
 		}
+
 		public Row(Attribute attribute) {
 			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues());
 		}
 	}
-	
+
 	public class Column extends Attribute {
 		public Column(String entityId, String alias, String iconCls, String nature, String values) {
 			super(entityId, alias, iconCls, nature, values);
 		}
+
 		public Column(Attribute attribute) {
 			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues());
 		}
 	}
 
-	
 	public List<Attribute> getFiltersOnDomainValues() {
 		List<Attribute> toReturn = new ArrayList<Attribute>();
 		List<Row> rows = getRows();
@@ -144,7 +143,7 @@ public class CrosstabDefinition {
 				toReturn.add(row);
 			}
 		}
-		
+
 		List<Column> columns = getColumns();
 		Iterator<Column> columnsIt = columns.iterator();
 		while (columnsIt.hasNext()) {
@@ -158,7 +157,6 @@ public class CrosstabDefinition {
 		return toReturn;
 	}
 
-	
 	public List<Field> getAllFields() {
 		List<Field> toReturn = new ArrayList<Field>();
 		toReturn.addAll(getColumns());
@@ -174,19 +172,19 @@ public class CrosstabDefinition {
 	public void setAdditionalData(JSONObject additionalData) {
 		this.additionalData = additionalData;
 	}
-	
+
 	/**
 	 * 
 	 * @return true if the component is a pivot table (not a chart)
 	 */
-	public boolean isPivotTable(){
-		String type =  config.optString("type");
-		if(type!=null && type.equals(CrosstabSerializationConstants.PIVOT)){
+	public boolean isPivotTable() {
+		String type = config.optString("type");
+		if (type != null && type.equals(CrosstabSerializationConstants.PIVOT)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean isStatic() {
 		return isStatic;
 	}
@@ -194,5 +192,5 @@ public class CrosstabDefinition {
 	public void setStatic(boolean isStatic) {
 		this.isStatic = isStatic;
 	}
-	
+
 }

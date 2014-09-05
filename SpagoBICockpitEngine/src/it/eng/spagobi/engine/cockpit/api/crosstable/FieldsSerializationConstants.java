@@ -9,7 +9,7 @@ package it.eng.spagobi.engine.cockpit.api.crosstable;
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class FieldsSerializationConstants {
-	
+
 	public static final String ID = "id";
 	public static final String ALIAS = "alias";
 	public static final String ICON_CLS = "iconCls";
@@ -26,5 +26,5 @@ public class FieldsSerializationConstants {
 	public static final String SELECTION_MULTIVALUE = "multivalue";
 	public static final String SELECTION_SINGLEVALUE = "singlevalue";
 	public static final String SPLITTING_FILTER = "splittingFilter";
-	
+
 }

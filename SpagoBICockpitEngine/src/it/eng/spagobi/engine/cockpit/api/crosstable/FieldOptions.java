@@ -10,7 +10,7 @@ import java.util.List;
 public class FieldOptions {
 
 	protected Field field = null;
-	
+
 	private List<FieldOption> options = null;
 
 	public List<FieldOption> getOptions() {
@@ -20,13 +20,13 @@ public class FieldOptions {
 	public void setOptions(List<FieldOption> options) {
 		this.options = options;
 	}
-	
+
 	public Field getField() {
 		return field;
 	}
-	
+
 	public void setField(Field field) {
 		this.field = field;
 	}
-	
+
 }

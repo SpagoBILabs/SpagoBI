@@ -31,22 +31,18 @@ import org.json.JSONObject;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CockpitEngineInstance extends AbstractEngineInstance {
-	
+
 	JSONObject template;
 	AssociationManager associationManager;
-	
-	//ENVIRONMENT VARIABLES
-	private String[] lstEnvVariables = {"SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", 
-										"SBI_SPAGO_CONTROLLER",  "SBI_EXECUTION_ROLE", "SBI_HOST", "country", "language", "user_id",
-										"DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES",
-										"DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID","DOCUMENT_USER", 
-										"DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES", "DOCUMENT_VERSION",
-									   };
-	
-	
-	
+
+	// ENVIRONMENT VARIABLES
+	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
+			"SBI_HOST", "country", "language", "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES",
+			"DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
+			"DOCUMENT_VERSION", };
+
 	public CockpitEngineInstance(String template, Map env) {
-		super( env );
+		super(env);
 		try {
 			this.template = new JSONObject(template);
 			this.associationManager = new AssociationManager();
@@ -58,148 +54,145 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 	public JSONObject getTemplate() {
 		return template;
 	}
-	
+
 	public AssociationManager getAssociationManager() {
 		return associationManager;
-	}	
-	
-	
-	
+	}
+
 	public IDataSource getDataSource() {
-		return (IDataSource)this.getEnv().get(EngineConstants.ENV_DATASOURCE);
+		return (IDataSource) this.getEnv().get(EngineConstants.ENV_DATASOURCE);
 	}
-	
+
 	public IDataSet getDataSet() {
-		return (IDataSet)this.getEnv().get(EngineConstants.ENV_DATASET);
+		return (IDataSet) this.getEnv().get(EngineConstants.ENV_DATASET);
 	}
-	
+
 	public Locale getLocale() {
-		return (Locale)this.getEnv().get(EngineConstants.ENV_LOCALE);
+		return (Locale) this.getEnv().get(EngineConstants.ENV_LOCALE);
 	}
-	
+
 	public String getDocumentLabel() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_LABEL);
+		return (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_LABEL);
 	}
-	
+
 	public String getDocumentVersion() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_VERSION);
+		return (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_VERSION);
 	}
-	
+
 	public String getDocumentAuthor() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_AUTHOR);
+		return (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_AUTHOR);
 	}
-	
+
 	public String getDocumentUser() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_USER);
+		return (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_USER);
 	}
-	
+
 	public String getDocumentName() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_NAME);
+		return (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_NAME);
 	}
-	
+
 	public String getDocumentDescription() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_DESCRIPTION);
+		return (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_DESCRIPTION);
 	}
-	
+
 	public String getDocumentIsVisible() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_IS_VISIBLE);
+		return (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_IS_VISIBLE);
 	}
-	
+
 	public String getDocumentPreviewFile() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_PREVIEW_FILE);
+		return (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_PREVIEW_FILE);
 	}
-	
+
 	public IEngUserProfile getUserProfile() {
-		return (IEngUserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		return (IEngUserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	}
-	
+
 	public String isTechnicalUser() {
-		return (String)this.getEnv().get(EngineConstants.ENV_IS_TECHNICAL_USER);
+		return (String) this.getEnv().get(EngineConstants.ENV_IS_TECHNICAL_USER);
 	}
-	
+
 	public String[] getDocumentCommunities() {
-		try{
-			String strCommunities = (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_COMMUNITIES);
-			if (strCommunities == null) 
+		try {
+			String strCommunities = (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_COMMUNITIES);
+			if (strCommunities == null)
 				return null;
 			else
 				return JSONUtils.asStringArray(JSONUtils.toJSONArray(strCommunities));
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Impossible to get communities list", e);		}
+			throw new SpagoBIRuntimeException("Impossible to get communities list", e);
+		}
 	}
 
 	public List<Integer> getDocumentFunctionalities() {
-		try{
-			String strFunctionalities = (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_FUNCTIONALITIES);
-			if (strFunctionalities == null) 
+		try {
+			String strFunctionalities = (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_FUNCTIONALITIES);
+			if (strFunctionalities == null)
 				return null;
 			else
 				return JSONUtils.asList(JSONUtils.toJSONArray(strFunctionalities));
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Impossible to get functionalities list", e);		}
-	}
-	
-	public String getDocumentIsPublic() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_IS_PUBLIC);
-	}
-	
-	public AuditServiceProxy getAuditServiceProxy() {
-		return (AuditServiceProxy)this.getEnv().get(EngineConstants.ENV_AUDIT_SERVICE_PROXY);
-	}
-	
-	public EventServiceProxy getEventServiceProxy() {
-		return (EventServiceProxy)this.getEnv().get(EngineConstants.ENV_EVENT_SERVICE_PROXY);
+			throw new SpagoBIRuntimeException("Impossible to get functionalities list", e);
+		}
 	}
 
-	public boolean isVisibleDataSet(){
-		IDataSet datSet = getDataSet();
-    	if(datSet!=null){
-    		IEngUserProfile profile = getUserProfile();
-    		return DataSetUtilities.isExecutableByUser(datSet, profile);
-    	}
-    	return true;
+	public String getDocumentIsPublic() {
+		return (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_IS_PUBLIC);
 	}
-	
+
+	public AuditServiceProxy getAuditServiceProxy() {
+		return (AuditServiceProxy) this.getEnv().get(EngineConstants.ENV_AUDIT_SERVICE_PROXY);
+	}
+
+	public EventServiceProxy getEventServiceProxy() {
+		return (EventServiceProxy) this.getEnv().get(EngineConstants.ENV_EVENT_SERVICE_PROXY);
+	}
+
+	public boolean isVisibleDataSet() {
+		IDataSet datSet = getDataSet();
+		if (datSet != null) {
+			IEngUserProfile profile = getUserProfile();
+			return DataSetUtilities.isExecutableByUser(datSet, profile);
+		}
+		return true;
+	}
+
 	public Map getAnalyticalDrivers() {
 		Map toReturn = new HashMap();
 		Iterator it = getEnv().keySet().iterator();
-		while(it.hasNext()) {
-			String parameterName = (String)it.next();
-			Object parameterValue = (Object) getEnv().get(parameterName);
-
-			if (parameterValue != null && 
-				parameterValue.getClass().getName().equals("java.lang.String") && //test necessary for don't pass complex objects like proxy,...
-				isAnalyticalDriver(parameterName)){
+		while (it.hasNext()) {
+			String parameterName = (String) it.next();
+			Object parameterValue = getEnv().get(parameterName);
+			// test necessary for don't pass complex objects like proxy,...
+			if (parameterValue != null && parameterValue.getClass().getName().equals("java.lang.String") && isAnalyticalDriver(parameterName)) {
 				toReturn.put(parameterName, parameterValue);
 			}
 		}
 		return toReturn;
 	}
-	
-	private boolean isAnalyticalDriver (String parName){
-		for (int i=0; i < lstEnvVariables.length; i++){
-			if (lstEnvVariables[i].equalsIgnoreCase(parName)){
+
+	private boolean isAnalyticalDriver(String parName) {
+		for (int i = 0; i < lstEnvVariables.length; i++) {
+			if (lstEnvVariables[i].equalsIgnoreCase(parName)) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
 
-	
-	// -- unimplemented methods ------------------------------------------------------------
+	// -- unimplemented methods ----------------------------------
 
+	@Override
 	public IEngineAnalysisState getAnalysisState() {
 		throw new CockpitEngineRuntimeException("Unsupported method [getAnalysisState]");
 	}
 
-
+	@Override
 	public void setAnalysisState(IEngineAnalysisState analysisState) {
-		throw new CockpitEngineRuntimeException("Unsupported method [setAnalysisState]");		
+		throw new CockpitEngineRuntimeException("Unsupported method [setAnalysisState]");
 	}
 
-
+	@Override
 	public void validate() throws SpagoBIEngineException {
-		throw new CockpitEngineRuntimeException("Unsupported method [validate]");		
+		throw new CockpitEngineRuntimeException("Unsupported method [validate]");
 	}
 }

@@ -8,23 +8,23 @@ package it.eng.spagobi.engine.cockpit.api.crosstable;
 public abstract class FieldOption {
 
 	protected Field field = null; // the field the option is applied to
-	protected String name = null;  // the name of the option
-	protected Object value = null;  // the value of the option
-	
+	protected String name = null; // the name of the option
+	protected Object value = null; // the value of the option
+
 	public abstract String getName();
-	
+
 	public Field getField() {
 		return field;
 	}
-	
+
 	public void setField(Field field) {
 		this.field = field;
 	}
-	
+
 	public Object getValue() {
 		return value;
 	}
-	
+
 	public void setValue(Object value) {
 		this.value = value;
 	}

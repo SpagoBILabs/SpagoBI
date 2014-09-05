@@ -23,60 +23,53 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-
 /**
- * Creates the crosstab query 
+ * Creates the crosstab query
  * 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- *
+ * 
  */
 public class CrosstabQueryCreator {
 
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(CrosstabQueryCreator.class);
-	
-    public static final String QBE_SMARTFILTER_COUNT = "qbe_smartfilter_count";
-    
-    public static final String DEFAULT_ORDER_TYPE = "ASC";
-    
-	public static String getCrosstabQuery(
-			CrosstabDefinition crosstabDefinition,
-			IDataSetTableDescriptor descriptor,
-			List<WhereField> whereFields, IDataSource dataSource) {
+	public static transient Logger logger = Logger.getLogger(CrosstabQueryCreator.class);
+
+	public static final String QBE_SMARTFILTER_COUNT = "qbe_smartfilter_count";
+
+	public static final String DEFAULT_ORDER_TYPE = "ASC";
+
+	public static String getCrosstabQuery(CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor, List<WhereField> whereFields,
+			IDataSource dataSource) {
 		logger.debug("IN");
 		StringBuffer buffer = new StringBuffer();
-		
+
 		putSelectClause(buffer, crosstabDefinition, descriptor, dataSource);
-		
+
 		putFromClause(buffer, descriptor);
-		
+
 		putWhereClause(buffer, whereFields, descriptor, dataSource);
-		
+
 		putGroupByClause(buffer, crosstabDefinition, descriptor, dataSource);
-		
+
 		putOrderByClause(buffer, crosstabDefinition, descriptor, dataSource);
-		
+
 		String toReturn = buffer.toString();
 		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 
-    
-    
-	private static void putFromClause(StringBuffer buffer,
-				IDataSetTableDescriptor descriptor) {
+	private static void putFromClause(StringBuffer buffer, IDataSetTableDescriptor descriptor) {
 		buffer.append(" FROM " + descriptor.getTableName() + " ");
 	}
 
-	private static void putSelectClause(StringBuffer toReturn,
-			CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor, IDataSource dataSource) {
+	private static void putSelectClause(StringBuffer toReturn, CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor, IDataSource dataSource) {
 		logger.debug("IN");
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
-		List<Measure> measures = crosstabDefinition.getMeasures(); 
-		
+		List<Measure> measures = crosstabDefinition.getMeasures();
+
 		toReturn.append("SELECT ");
-		
+
 		// appends columns
 		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
 		while (columsIt.hasNext()) {
@@ -93,7 +86,7 @@ public class CrosstabQueryCreator {
 			toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource));
 			toReturn.append(", ");
 		}
-		
+
 		// appends measures
 		Iterator<Measure> measuresIt = measures.iterator();
 		while (measuresIt.hasNext()) {
@@ -101,8 +94,10 @@ public class CrosstabQueryCreator {
 			IAggregationFunction function = aMeasure.getAggregationFunction();
 			String columnName = descriptor.getColumnName(aMeasure.getEntityId());
 			if (columnName == null) {
-				// when defining a crosstab inside the SmartFilter document, an additional COUNT field with id QBE_SMARTFILTER_COUNT
-				// is automatically added inside query fields, therefore the entity id is not found on base query selected fields
+				// when defining a crosstab inside the SmartFilter document, an
+				// additional COUNT field with id QBE_SMARTFILTER_COUNT
+				// is automatically added inside query fields, therefore the
+				// entity id is not found on base query selected fields
 				columnName = "Count";
 				if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) {
 					toReturn.append(AggregationFunctions.COUNT_FUNCTION.apply("*"));
@@ -125,115 +120,115 @@ public class CrosstabQueryCreator {
 
 		logger.debug("OUT");
 	}
-	
-	private static void putGroupByClause(StringBuffer toReturn,
-			CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor, IDataSource dataSource) {
-		logger.debug("IN");
-		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
-		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
-		
-		toReturn.append(" GROUP BY ");
-		
-		// appends columns
-		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
-		while (columsIt.hasNext()) {
-			CrosstabDefinition.Column aColumn = columsIt.next();
-			String columnName = descriptor.getColumnName(aColumn.getEntityId());
-			toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource));
-			if (columsIt.hasNext()) {
-				toReturn.append(", ");
-			}
-		}
-		
-		// append an extra comma between grouping on columns and grouping on rows, if necessary
-		if (colums.size() > 0 && rows.size() > 0) {
-			toReturn.append(", ");
-		}
-		
-		// appends rows
-		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
-		while (rowsIt.hasNext()) {
-			CrosstabDefinition.Row aRow = rowsIt.next();
-			String columnName = descriptor.getColumnName(aRow.getEntityId());
-			toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource));
-			if (rowsIt.hasNext()) {
-				toReturn.append(", ");
-			}
-		}
-		logger.debug("OUT");
-		
-	}
-	
-	private static void putOrderByClause(StringBuffer toReturn,
-			CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor, IDataSource dataSource) {
-		logger.debug("IN");
-		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
-		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
-		
-		toReturn.append(" ORDER BY ");
-		
-		// appends columns
-		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
-		while (columsIt.hasNext()) {
-			CrosstabDefinition.Column aColumn = columsIt.next();
-			String columnName = descriptor.getColumnName(aColumn.getEntityId());
-			toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource));
-			toReturn.append(" " + DEFAULT_ORDER_TYPE);
-			if (columsIt.hasNext()) {
-				toReturn.append(", ");
-			}
-		}
-		
-		// append an extra comma between grouping on columns and grouping on rows, if necessary
-		if (colums.size() > 0 && rows.size() > 0) {
-			toReturn.append(", ");
-		}
-		
-		// appends rows
-		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
-		while (rowsIt.hasNext()) {
-			CrosstabDefinition.Row aRow = rowsIt.next();
-			String columnName = descriptor.getColumnName(aRow.getEntityId());
-			toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource));
-			toReturn.append(" " + DEFAULT_ORDER_TYPE);
-			if (rowsIt.hasNext()) {
-				toReturn.append(", ");
-			}
-		}
-		
-		logger.debug("OUT");
-	}
-	
-//	public static String getColumnName(String elementElias, Query baseQuery, List baseQuerySelectedFields) {
-//		logger.debug("IN");
-//		String toReturn = null;
-//		
-//		List qbeQueryFields = baseQuery.getSelectFields(true);
-//		int index = -1;
-//		for (int i = 0; i < qbeQueryFields.size(); i++) {
-//			ISelectField field = (ISelectField) qbeQueryFields.get(i);
-//			if (field.getAlias().equals(elementElias)) {
-//				index = i;
-//				break;
-//			}
-//		}
-//		
-//		if (index > -1) {
-//			String[] sqlField = (String[]) baseQuerySelectedFields.get(index);
-//			toReturn = sqlField[1] != null ? sqlField[1] : sqlField[0];
-//		}
-//		
-//		logger.debug("OUT: returning " + toReturn);
-//		return toReturn;
-//	}
-	
-	
-	private static void putWhereClause(StringBuffer toReturn,
-			List<WhereField> whereFields, IDataSetTableDescriptor descriptor,
+
+	private static void putGroupByClause(StringBuffer toReturn, CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor,
 			IDataSource dataSource) {
+		logger.debug("IN");
+		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
+		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
+
+		toReturn.append(" GROUP BY ");
+
+		// appends columns
+		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
+		while (columsIt.hasNext()) {
+			CrosstabDefinition.Column aColumn = columsIt.next();
+			String columnName = descriptor.getColumnName(aColumn.getEntityId());
+			toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource));
+			if (columsIt.hasNext()) {
+				toReturn.append(", ");
+			}
+		}
+
+		// append an extra comma between grouping on columns and grouping on
+		// rows, if necessary
+		if (colums.size() > 0 && rows.size() > 0) {
+			toReturn.append(", ");
+		}
+
+		// appends rows
+		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
+		while (rowsIt.hasNext()) {
+			CrosstabDefinition.Row aRow = rowsIt.next();
+			String columnName = descriptor.getColumnName(aRow.getEntityId());
+			toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource));
+			if (rowsIt.hasNext()) {
+				toReturn.append(", ");
+			}
+		}
+		logger.debug("OUT");
+
+	}
+
+	private static void putOrderByClause(StringBuffer toReturn, CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor,
+			IDataSource dataSource) {
+		logger.debug("IN");
+		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
+		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
+
+		toReturn.append(" ORDER BY ");
+
+		// appends columns
+		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
+		while (columsIt.hasNext()) {
+			CrosstabDefinition.Column aColumn = columsIt.next();
+			String columnName = descriptor.getColumnName(aColumn.getEntityId());
+			toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource));
+			toReturn.append(" " + DEFAULT_ORDER_TYPE);
+			if (columsIt.hasNext()) {
+				toReturn.append(", ");
+			}
+		}
+
+		// append an extra comma between grouping on columns and grouping on
+		// rows, if necessary
+		if (colums.size() > 0 && rows.size() > 0) {
+			toReturn.append(", ");
+		}
+
+		// appends rows
+		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
+		while (rowsIt.hasNext()) {
+			CrosstabDefinition.Row aRow = rowsIt.next();
+			String columnName = descriptor.getColumnName(aRow.getEntityId());
+			toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource));
+			toReturn.append(" " + DEFAULT_ORDER_TYPE);
+			if (rowsIt.hasNext()) {
+				toReturn.append(", ");
+			}
+		}
+
+		logger.debug("OUT");
+	}
+
+	// public static String getColumnName(String elementElias, Query baseQuery,
+	// List baseQuerySelectedFields) {
+	// logger.debug("IN");
+	// String toReturn = null;
+	//
+	// List qbeQueryFields = baseQuery.getSelectFields(true);
+	// int index = -1;
+	// for (int i = 0; i < qbeQueryFields.size(); i++) {
+	// ISelectField field = (ISelectField) qbeQueryFields.get(i);
+	// if (field.getAlias().equals(elementElias)) {
+	// index = i;
+	// break;
+	// }
+	// }
+	//
+	// if (index > -1) {
+	// String[] sqlField = (String[]) baseQuerySelectedFields.get(index);
+	// toReturn = sqlField[1] != null ? sqlField[1] : sqlField[0];
+	// }
+	//
+	// logger.debug("OUT: returning " + toReturn);
+	// return toReturn;
+	// }
+
+	private static void putWhereClause(StringBuffer toReturn, List<WhereField> whereFields, IDataSetTableDescriptor descriptor, IDataSource dataSource) {
 		String boundedValue, leftValue, columnName;
 		String[] rightValues;
-		
+
 		logger.debug("IN");
 		String dialect = dataSource.getHibDialectClass();
 		if (whereFields != null && whereFields.size() > 0) {
@@ -244,12 +239,11 @@ public class CrosstabQueryCreator {
 
 				rightValues = whereFields.get(i).getRightOperand().values;
 				if (rightValues.length == 1) {
-					boundedValue = getValueBounded(rightValues[0],
-							descriptor.getColumnType(leftValue), dataSource);
-					if(dialect.contains("SQLServerDialect")){
-						if(boundedValue.equals("true")){
+					boundedValue = getValueBounded(rightValues[0], descriptor.getColumnType(leftValue), dataSource);
+					if (dialect.contains("SQLServerDialect")) {
+						if (boundedValue.equals("true")) {
 							boundedValue = "1";
-						}else if(boundedValue.equals("false")){
+						} else if (boundedValue.equals("false")) {
 							boundedValue = "0";
 						}
 					}
@@ -257,8 +251,7 @@ public class CrosstabQueryCreator {
 				} else {
 					toReturn.append(AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + " IN (");
 					for (int j = 0; j < rightValues.length; j++) {
-						boundedValue = getValueBounded(rightValues[j],
-								descriptor.getColumnType(leftValue), dataSource);
+						boundedValue = getValueBounded(rightValues[j], descriptor.getColumnType(leftValue), dataSource);
 						toReturn.append(boundedValue);
 						if (j < rightValues.length - 1) {
 							toReturn.append(", ");
@@ -273,22 +266,23 @@ public class CrosstabQueryCreator {
 		}
 		logger.debug("OUT: returning " + toReturn);
 	}
-	
+
 	public static String getValueBounded(String operandValueToBound, Class clazz, IDataSource dataSource) {
 		String boundedValue;
 		Date operandValueToBoundDate;
-		
+
 		boundedValue = operandValueToBound;
-		
-		if ( String.class.isAssignableFrom(clazz) ) {
-			// if the value is already surrounded by quotes, does not neither add quotes nor escape quotes 
-			if ( StringUtils.isBounded(operandValueToBound, "'") ) {
+
+		if (String.class.isAssignableFrom(clazz)) {
+			// if the value is already surrounded by quotes, does not neither
+			// add quotes nor escape quotes
+			if (StringUtils.isBounded(operandValueToBound, "'")) {
 				boundedValue = operandValueToBound;
 			} else {
 				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
 				return StringUtils.bound(operandValueToBound, "'");
 			}
-		} else if ( Date.class.isAssignableFrom(clazz) ) {
+		} else if (Date.class.isAssignableFrom(clazz)) {
 			Long time = null;
 			try {
 				time = Long.valueOf(operandValueToBound);
@@ -303,15 +297,12 @@ public class CrosstabQueryCreator {
 			}
 			boundedValue = composeStringToDt(dialect, operandValueToBoundDate);
 		}
-		
+
 		return boundedValue;
 	}
-	
-	
-	public static String getTableQuery(List<String> fieldsName,
-			boolean distinct, IDataSetTableDescriptor descriptor,
-			List<WhereField> whereFields, String orderBy,
-			List<String> orderByFieldsName) {
+
+	public static String getTableQuery(List<String> fieldsName, boolean distinct, IDataSetTableDescriptor descriptor, List<WhereField> whereFields,
+			String orderBy, List<String> orderByFieldsName) {
 		logger.debug("IN");
 
 		String query = getTableQuery(fieldsName, distinct, descriptor, whereFields, descriptor.getDataSource());
@@ -322,29 +313,28 @@ public class CrosstabQueryCreator {
 		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
-	
-	public static String getTableQuery(List<String> fieldsName, boolean distinct, 
-			IDataSetTableDescriptor descriptor, List<WhereField> whereFields, IDataSource dataSource) {
+
+	public static String getTableQuery(List<String> fieldsName, boolean distinct, IDataSetTableDescriptor descriptor, List<WhereField> whereFields,
+			IDataSource dataSource) {
 		logger.debug("IN");
 		StringBuffer buffer = new StringBuffer();
-		
+
 		putSelectClause(buffer, fieldsName, distinct, descriptor, dataSource);
-			
+
 		putFromClause(buffer, descriptor);
-		
+
 		putWhereClause(buffer, whereFields, descriptor, dataSource);
-		
+
 		String toReturn = buffer.toString();
 		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 
-	private static void putSelectClause(StringBuffer buffer, 
-			List<String> fieldsName,
-			boolean distinct, IDataSetTableDescriptor descriptor, IDataSource dataSource) {
-		
+	private static void putSelectClause(StringBuffer buffer, List<String> fieldsName, boolean distinct, IDataSetTableDescriptor descriptor,
+			IDataSource dataSource) {
+
 		logger.debug("IN");
-		
+
 		buffer.append("SELECT ");
 		if (distinct) {
 			buffer.append("DISTINCT ");
@@ -363,17 +353,14 @@ public class CrosstabQueryCreator {
 		}
 
 		logger.debug("OUT");
-		
+
 	}
-	
-	private static void putOrderByClause(StringBuffer buffer, 
-			List<String> fieldsName,
-			String orderBy,
-			IDataSetTableDescriptor descriptor,
+
+	private static void putOrderByClause(StringBuffer buffer, List<String> fieldsName, String orderBy, IDataSetTableDescriptor descriptor,
 			IDataSource dataSource) {
-		
+
 		logger.debug("IN");
-		
+
 		buffer.append(" ORDER BY ");
 
 		for (int i = 0; i < fieldsName.size(); i++) {
@@ -391,87 +378,86 @@ public class CrosstabQueryCreator {
 		}
 
 		logger.debug("OUT");
-		
+
 	}
 
-	public static String composeStringToDt(String dialect, Date date){
+	public static String composeStringToDt(String dialect, Date date) {
 		String toReturn = "";
-		
-		DateFormat stagingDataFormat = new SimpleDateFormat("dd/MM/yyyy");	
+
+		DateFormat stagingDataFormat = new SimpleDateFormat("dd/MM/yyyy");
 		String dateStr = stagingDataFormat.format(date);
-			
-		if(dialect!=null){
-			
-			if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)){
+
+		if (dialect != null) {
+
+			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
 				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
-					toReturn = " STR_TO_DATE("+dateStr+",'%d/%m/%Y %h:%i:%s') ";
-				}else{
-					toReturn = " STR_TO_DATE('"+dateStr+"','%d/%m/%Y %h:%i:%s') ";
+					toReturn = " STR_TO_DATE(" + dateStr + ",'%d/%m/%Y %h:%i:%s') ";
+				} else {
+					toReturn = " STR_TO_DATE('" + dateStr + "','%d/%m/%Y %h:%i:%s') ";
 				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
 				try {
 					DateFormat df;
-					if ( StringUtils.isBounded(dateStr, "'") ) {
+					if (StringUtils.isBounded(dateStr, "'")) {
 						df = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
-					}else{
+					} else {
 						df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
 					}
-					
+
 					Date myDate = df.parse(dateStr);
-					df = new SimpleDateFormat("yyyy-MM-dd");		
-					toReturn =  "'"+df.format(myDate)+"'";
+					df = new SimpleDateFormat("yyyy-MM-dd");
+					toReturn = "'" + df.format(myDate) + "'";
 
 				} catch (Exception e) {
-					toReturn = "'" +dateStr+ "'";
+					toReturn = "'" + dateStr + "'";
 				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)) {
 				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
-					toReturn = " STR_TO_DATE("+dateStr+",'%d/%m/%Y') ";
-				}else{
-					toReturn = " STR_TO_DATE('"+dateStr+"','%d/%m/%Y') ";
+					toReturn = " STR_TO_DATE(" + dateStr + ",'%d/%m/%Y') ";
+				} else {
+					toReturn = " STR_TO_DATE('" + dateStr + "','%d/%m/%Y') ";
 				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)){
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)) {
 				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP("+dateStr+",'DD/MM/YYYY HH24:MI:SS.FF') ";
-				}else{
-					toReturn = " TO_TIMESTAMP('"+dateStr+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+					toReturn = " TO_TIMESTAMP(" + dateStr + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				} else {
+					toReturn = " TO_TIMESTAMP('" + dateStr + "','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)){
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)) {
 				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP("+dateStr+",'DD/MM/YYYY HH24:MI:SS.FF') ";
-				}else{
-					toReturn = " TO_TIMESTAMP('"+dateStr+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+					toReturn = " TO_TIMESTAMP(" + dateStr + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				} else {
+					toReturn = " TO_TIMESTAMP('" + dateStr + "','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)){
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)) {
 				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP("+dateStr+",'DD/MM/YYYY HH24:MI:SS.FF') ";
-				}else{
-					toReturn = " TO_TIMESTAMP('"+dateStr+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+					toReturn = " TO_TIMESTAMP(" + dateStr + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				} else {
+					toReturn = " TO_TIMESTAMP('" + dateStr + "','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)){
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)) {
 				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
 					toReturn = dateStr;
-				}else{
-					toReturn = "'"+dateStr+"'";
+				} else {
+					toReturn = "'" + dateStr + "'";
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
 				/*
-				 * Unfortunately we cannot use neither
-				 * CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') 
-				 * nor
-				 * CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy')) As Date)
-				 * because Hibernate does not recognize (and validate) those SQL functions.
-				 * Therefore we must use a predefined date format (yyyy-MM-dd).
+				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS
+				 * DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + "
+				 * (Date,Format 'dd/mm/yyyy')) As Date) because Hibernate does
+				 * not recognize (and validate) those SQL functions. Therefore
+				 * we must use a predefined date format (yyyy-MM-dd).
 				 */
 				try {
 					DateFormat dateFormat;
-					if ( StringUtils.isBounded(dateStr, "'") ) {
+					if (StringUtils.isBounded(dateStr, "'")) {
 						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
 					} else {
 						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 					}
 					Date myDate = dateFormat.parse(dateStr);
-					dateFormat = new SimpleDateFormat("yyyy-MM-dd");		
+					dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 					toReturn = "'" + dateFormat.format(myDate) + "'";
 				} catch (Exception e) {
 					logger.error("Error parsing the date " + dateStr, e);
@@ -479,8 +465,8 @@ public class CrosstabQueryCreator {
 				}
 			}
 		}
-		
+
 		return toReturn;
 	}
-	
+
 }

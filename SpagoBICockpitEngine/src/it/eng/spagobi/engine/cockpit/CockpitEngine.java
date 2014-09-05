@@ -14,30 +14,32 @@ import org.apache.log4j.Logger;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CockpitEngine {
-	
+
 	private static boolean enabled;
 	private static Date creationDate;
 	private static CockpitEngineConfig engineConfig;
-	
+
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(CockpitEngine.class);
-	
-    // init engine
-    static {
-    	enabled = true;
-    	creationDate = new Date(System.currentTimeMillis());
-    	engineConfig = CockpitEngineConfig.getInstance();
-    }
-    
-    public static CockpitEngineConfig getConfig() {
-    	return engineConfig;
-    }
-    
+	private static transient Logger logger = Logger.getLogger(CockpitEngine.class);
+
+	// init engine
+	static {
+		enabled = true;
+		creationDate = new Date(System.currentTimeMillis());
+		engineConfig = CockpitEngineConfig.getInstance();
+	}
+
+	public static CockpitEngineConfig getConfig() {
+		return engineConfig;
+	}
+
 	/**
 	 * Creates the instance.
 	 * 
-	 * @param template the template
-	 * @param env the env
+	 * @param template
+	 *            the template
+	 * @param env
+	 *            the env
 	 * 
 	 * @return the geo report engine instance
 	 */
@@ -46,9 +48,9 @@ public class CockpitEngine {
 		logger.debug("IN");
 		cockpitEngineInstance = new CockpitEngineInstance(template, env);
 		logger.debug("OUT");
-		return cockpitEngineInstance;	
+		return cockpitEngineInstance;
 	}
-	
+
 	public static boolean isEnabled() {
 		return enabled;
 	}
@@ -56,7 +58,7 @@ public class CockpitEngine {
 	public static void setEnabled(boolean enabled) {
 		CockpitEngine.enabled = enabled;
 	}
-	
+
 	public static Date getCreationDate() {
 		return creationDate;
 	}

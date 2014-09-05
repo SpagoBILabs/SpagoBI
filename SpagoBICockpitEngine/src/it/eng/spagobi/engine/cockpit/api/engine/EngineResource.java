@@ -29,35 +29,35 @@ import org.json.JSONObject;
  */
 @Path("/1.0/engine")
 public class EngineResource extends AbstractCockpitEngineResource {
-	
+
 	static private Logger logger = Logger.getLogger(EngineResource.class);
-	
+
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getEngine() {
-		
+
 		logger.debug("IN");
 		try {
 			return serializeEngine();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
-		} finally {			
+		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
-	
+
 	// =======================================================================
 	// SERIALIZATION METHODS
 	// =======================================================================
-	
+
 	private String serializeEngine() {
 		try {
 			JSONObject resultJSON = new JSONObject();
 			resultJSON.put("enabled", CockpitEngine.isEnabled());
 			resultJSON.put("creationDate", CockpitEngine.getCreationDate());
 			long uptime = System.currentTimeMillis() - CockpitEngine.getCreationDate().getTime();
-			long days  = uptime / 86400000;
+			long days = uptime / 86400000;
 			long remainder = uptime % 86400000;
 			long hours = remainder / 3600000;
 			remainder = remainder % 3600000;
@@ -66,9 +66,9 @@ public class EngineResource extends AbstractCockpitEngineResource {
 			long seconds = remainder / 1000;
 			resultJSON.put("uptime", days + "d " + hours + "h " + minutes + "m " + seconds + "s");
 			return resultJSON.toString();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("An unexpected error occured while serializing results", e);
-		}	
+		}
 	}
 
 }

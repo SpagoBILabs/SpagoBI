@@ -17,26 +17,24 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ExceptionUtilities {
-	
-	
-	public static String serializeException(String message, String localizedMessage){
-		
+
+	public static String serializeException(String message, String localizedMessage) {
+
 		try {
 			JSONArray ja = new JSONArray();
 			JSONObject jo = new JSONObject();
 			JSONObject je = new JSONObject();
-			if(message != null){
+			if (message != null) {
 				jo.put("message", message);
 			}
-			if(localizedMessage != null){
+			if (localizedMessage != null) {
 				jo.put("localizedMessage", localizedMessage);
 			}
 			ja.put(jo);
 			je.put("errors", ja);
 			return je.toString();
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException(
-					"Cannot fill response container", e);
+			throw new SpagoBIRuntimeException("Cannot fill response container", e);
 		}
 	}
 }

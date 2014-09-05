@@ -8,36 +8,36 @@ package it.eng.spagobi.engine.cockpit.api.crosstable;
 import it.eng.qbe.serializer.IDeserializer;
 import it.eng.qbe.serializer.IDeserializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.spagobi.engine.cockpit.api.crosstable.Measure;
-import it.eng.spagobi.engine.cockpit.api.crosstable.MeasureJSONDeserializer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- *
+ * 
  */
 public class MeasureDeserializerFactory implements IDeserializerFactory {
-	
+
 	static MeasureDeserializerFactory instance;
-	
+
 	static MeasureDeserializerFactory getIntsnce() {
 		return instance;
 	}
-	
+
 	static {
 		instance = new MeasureDeserializerFactory();
 		SerializationManager.registerDeserializerFactory(Measure.class, instance);
 	}
-	
+
 	public static MeasureDeserializerFactory getInstance() {
 		if (instance == null) {
 			instance = new MeasureDeserializerFactory();
 		}
 		return instance;
 	}
-	
-	private MeasureDeserializerFactory() {}
 
+	private MeasureDeserializerFactory() {
+	}
+
+	@Override
 	public IDeserializer getDeserializer(String mimeType) {
 		if (mimeType != null && !mimeType.equalsIgnoreCase("application/json")) {
 			throw new SpagoBIRuntimeException("Deserializer for mimeType " + mimeType + " not implemented");

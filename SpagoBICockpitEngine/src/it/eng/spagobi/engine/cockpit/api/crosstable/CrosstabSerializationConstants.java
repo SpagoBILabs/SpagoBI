@@ -9,7 +9,7 @@ package it.eng.spagobi.engine.cockpit.api.crosstable;
  * @author Alberto Alagna
  */
 public class CrosstabSerializationConstants {
-	
+
 	public static final String ROWS = "rows";
 	public static final String COLUMNS = "columns";
 	public static final String MEASURES = "measures";
@@ -17,9 +17,9 @@ public class CrosstabSerializationConstants {
 	public static final String CONFIG = "config";
 	public static final String CALCULATED_FIELDS = "calculatedFields";
 	public static final String MEASURESON = "measureson";
-	
+
 	public static final String ADDITIONAL_DATA = "additionalData";
-	
+
 	public static final String PIVOT = "pivot";
-	
+
 }
