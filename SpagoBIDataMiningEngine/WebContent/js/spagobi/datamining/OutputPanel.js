@@ -36,6 +36,8 @@ Ext.define('Sbi.datamining.OutputPanel', {
 		this.resultPanel = Ext.create('Sbi.datamining.ResultPanel',{itsParent: this, command: this.command, output: this.output, mode: this.mode}); 
 		this.uploadPanel = Ext.create('Sbi.datamining.UploadPanel',{itsParent: this, command: this.command});
 		
+
+		
 		this.dmMask = new Ext.LoadMask(Ext.getBody(), {msg:LN('sbi.dm.execution.loading')});
 		
 		this.executeScriptBtn = Ext.create('Ext.Button', {
