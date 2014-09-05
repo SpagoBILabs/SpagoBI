@@ -125,10 +125,14 @@ Ext.define('Sbi.datamining.UploadPanel', {
 					for (var i=0; i< res.length; i++){
 						
 						var dataset = res[i];
+
 						
 						//file datasets
 						if(dataset.type == Sbi.settings.datamining.execution.fileDataset){
 							var fieldLbl = dataset.name;
+							
+
+							
 							if(dataset.fileName !== undefined && dataset.fileName != null){
 								fieldLbl = dataset.name +' ('+dataset.fileName+')';
 							}
@@ -179,7 +183,32 @@ Ext.define('Sbi.datamining.UploadPanel', {
 							    }]
 							});
 							
-							thisPanel.add(fileFormN);
+						    var uploadWin = Ext.create('Ext.Window', {
+						        title: dataset.name,
+						        width: 500,
+						        height: 100,
+						        x: 10,
+						        y: 100,
+						        plain: true,
+						        autoDestroy: false,
+						        headerPosition: 'right',
+						        closeAction:'hide',
+						        layout: 'fit',
+						        items: [fileFormN]
+						    });
+						    
+							var addDsFile= Ext.create('Ext.button.Button', {
+					            xtype: 'button',
+					            iconCls: 'file_import',
+					            text: dataset.name,
+					            scale: 'medium',
+					            handler: function() {
+					            	uploadWin.show();
+							    }
+					        });
+							
+							thisPanel.add(addDsFile);
+							
 						}else if(dataset.type == Sbi.settings.datamining.execution.spagoBIDsDataset){
 							
 							var datasetField =Ext.create("Ext.form.field.Display", {
