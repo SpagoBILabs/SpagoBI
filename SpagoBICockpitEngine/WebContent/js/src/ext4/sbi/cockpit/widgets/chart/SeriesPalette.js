@@ -1,9 +1,8 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
 
 Ext.define('Sbi.cockpit.widgets.chart.SeriesPalette', {
 	extend: 'Ext.Window'
@@ -23,8 +22,8 @@ Ext.define('Sbi.cockpit.widgets.chart.SeriesPalette', {
 	, grid : null
 	, colorFieldEditor : null
 	, colorColumn : null
-	, defaultColors : Sbi.widgets.Colors.defaultColors	
-	
+	, defaultColors : Sbi.widgets.Colors.defaultColors
+
 
 	, constructor : function(config) {
 		Sbi.trace("[SeriesPalette.constructor]: IN");
@@ -34,16 +33,16 @@ Ext.define('Sbi.cockpit.widgets.chart.SeriesPalette', {
 		this.callParent(arguments);
 		Sbi.trace("[SeriesPalette.constructor]: OUT");
 	}
-	
+
 	, initComponent: function() {
-  
+
 		 Ext.apply(this, {
 	            items: [this.grid]
 	     });
-        
+
         this.callParent();
     }
-		
+
 	, init: function(c) {
 		this.initStore(c);
 		this.initGrid(c);
@@ -55,8 +54,8 @@ Ext.define('Sbi.cockpit.widgets.chart.SeriesPalette', {
 		});
 		this.setColors(this.defaultColors);
 	}
-	
-	
+
+
 	, initGrid: function (c) {
 		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
 	        clicksToEdit: 1
@@ -70,17 +69,17 @@ Ext.define('Sbi.cockpit.widgets.chart.SeriesPalette', {
 				, dataIndex: 'color'
 				, renderer : function(v, metadata, record) {
 					metadata.attr = ' style="background:' + v + ';"';
-					return '';  
+					return '';
 		          }
-	           , getEditor: function(record){	        	   
+	           , getEditor: function(record){
 		            if( Sbi.isValorized(record) ){
 		            	var rowIndex = record.store.indexOf(record);
 		            	var editorField = new Ext.ux.ColorField({ value: record.data.color, msgTarget: 'qtip', fallback: true});
-//		            	var editorField = new Ext.picker.Color({ value: record.data.color, msgTarget: 'qtip', fallback: true});		            	
+//		            	var editorField = new Ext.picker.Color({ value: record.data.color, msgTarget: 'qtip', fallback: true});
 		            	editorField.on('change', function(f, val) {
 		            		record.store.getAt(rowIndex).set('color', '#'+val);
-	        			}, this); 
-		            	
+	        			}, this);
+
 		                return Ext.create('Ext.grid.CellEditor', {field: editorField});
 		            } else return false;
 		        }
@@ -95,7 +94,7 @@ Ext.define('Sbi.cockpit.widgets.chart.SeriesPalette', {
 		    }
 		});
 	}
-	
+
 	, getColors: function() {
 		var colors = [];
 		for(i = 0; i < this.store.getCount(); i++) {
@@ -105,7 +104,7 @@ Ext.define('Sbi.cockpit.widgets.chart.SeriesPalette', {
 		}
 		return colors;
 	}
-	
+
 	, setColors: function(colors) {
 		var array = [];
 		for (var i = 0; i < colors.length; i++) {

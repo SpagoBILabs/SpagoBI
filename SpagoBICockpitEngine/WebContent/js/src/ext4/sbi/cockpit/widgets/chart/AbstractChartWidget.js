@@ -1,20 +1,21 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 
 /*
  * NOTE: This class is meant to be extended and not directly istantiated
  */
+
 Ext.ns("Sbi.cockpit.widgets.chart");
 
-Sbi.cockpit.widgets.chart.AbstractChartWidget = function(config) {	
+Sbi.cockpit.widgets.chart.AbstractChartWidget = function(config) {
 	Sbi.trace("[AbstractChartWidget.constructor]: IN");
-	
+
 	var defaultSettings = {
-			
+
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.chart.AbstractChartWidget', defaultSettings);
@@ -22,40 +23,40 @@ Sbi.cockpit.widgets.chart.AbstractChartWidget = function(config) {
 	Ext.apply(this, c);
 
 	this.chartDivId = Ext.id();
-	
+
 	c = Ext.apply(c, {
 		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
 		, autoScroll: true
 	});
-	
+
 	Sbi.cockpit.widgets.chart.AbstractChartWidget.superclass.constructor.call(this, c);
 
 	Sbi.trace("[AbstractChartWidget.constructor]: OUT");
 };
 
 Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.WidgetRuntime, {
-	
+
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
 	  chartDivId : null
 	, chart : null
-	, chartConfig : null 	
-	
+	, chartConfig : null
+
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	
+
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
-	
+
 	/**
-	 * Loads the data for the chart. Call the action which loads the crosstab 
+	 * Loads the data for the chart. Call the action which loads the crosstab
 	 * (the crosstab is the object that contains the data for the chart)
-	 * 
+	 *
 	 * @param dataConfig the field for the chart.The syntax is {rows, measures}.
-	 *  For example 
+	 *  For example
 	 *  {'rows':[{
 	 *  	'id':'it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily'
 	 *  	, 'nature':'attribute'
@@ -77,31 +78,31 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 	 *  }]}
 	 */
 	, loadChartData: function(dataConfig, filters){
-		
+
 		if ( !this.chartConfig.hiddenContent ) {
-			
+
 			var encodedParams = Ext.JSON.encode({
 				'rows': dataConfig.columns,
 				'columns': dataConfig.rows,
 				'measures': dataConfig.measures,
 				'config': {'measureson':'rows'}
 			});
-			
+
 			var requestParameters = {
-				'crosstabDefinition': encodedParams	
+				'crosstabDefinition': encodedParams
 			};
-			
+
 			if ( filters != null ) {
 				requestParameters.FILTERS = Ext.encode(filters);
 			}
-			
+
 			Ext.Ajax.request({
 				url: Sbi.config.serviceReg.getServiceUrl('loadChartDataSetStore', {
 					pathParams: {datasetLabel: this.storeId}
 				}),
 		        params: requestParameters,
 		        success : function(response, opts) {
-		        	
+
 		        	this.dataContainerObject = Ext.JSON.decode( response.responseText );
 		        	if (this.isEmpty()) {
 		    			Ext.Msg.show({
@@ -118,15 +119,15 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 			        	}else{
 			        		this.on('afterrender',function(){this.createChart();this.fireEvent('contentloaded');}, this);
 			        	}
-			        	
+
 		        	}
-		        	
+
 		        },
 		        scope: this,
 				failure: function(response, options) {
 					this.fireEvent('contentloaded');
 					Sbi.exception.ExceptionHandler.handleFailure(response, options);
-				}      
+				}
 			});
 		}else{
         	if(this.rendered){
@@ -135,29 +136,29 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
         		this.on('afterrender',function(){this.fireEvent('contentloaded');}, this);
         	}
 		}
-		
-		
+
+
 	}
 
 	/**
 	 * Create a Store for Ext Charts
 	 */
 	, getJsonStore: function(percent){
-		
+
 		Sbi.debug("[AbstractChartWidget.getJsonStore]: IN");
-		
+
 		Sbi.debug("[AbstractChartWidget.getJsonStore]: storeObject is equal to [" + Sbi.toSource(this.dataContainerObject) + "]");
-		
+
 		var storeObject = {};
-		
+
 		var series = this.getSeries();
 		var categories = this.getCategories();
-		
+
 		var data = new Array();
 		var fields = new Array();
 		var serieNames = new Array();
-	
-		
+
+
 		for(var i=0; i<categories.length; i++){
 			var z = {};
 			var seriesum = 0;
@@ -169,39 +170,39 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 				for(var j=0; j<series.length; j++){
 					z['seriesflatvalue'+j] = z['series'+j];
 					z['series'+j] = (z['series'+j]/seriesum)*100;
-				}	
+				}
 			}
 			z['seriesum'] = seriesum;
 			z['categories'] = categories[i];
 			data.push(z);
 		}
-		
+
 		for(var j=0; j<series.length; j++){
 			fields.push('series'+j);
 			fields.push('seriesflatvalue'+j);
 			serieNames.push(series[j].name);
 		}
-		
+
 		fields.push('seriesum');
 		fields.push('categories');
-	
-		
+
+
 	    var store = new Ext.data.JsonStore({
 	        fields:fields,
 	        data: data
 	    });
-	    
+
 	    storeObject.store = store;
 	    storeObject.serieNames = serieNames;
-	    
+
 	    Sbi.debug("[AbstractChartWidget.getJsonStore]: storeObject fields are equal to [" + Sbi.toSource(fields) + "]");
 	    Sbi.debug("[AbstractChartWidget.getJsonStore]: storeObject data is equal to [" + Sbi.toSource(data) + "]");
-	    
+
 	    Sbi.debug("[AbstractChartWidget.getJsonStore]: OUT");
-	
+
 	    return storeObject;
 	}
-	
+
 	/**
 	 * Loads the series for the chart
 	 */
@@ -213,7 +214,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 			var measures_metadata_map = {};
 			//load the metadata of the measures (we need the type)
 			var i=0;
-	
+
 			for(; i<measures_metadata.length; i++){
 				measures_metadata_map[measures_metadata[i].name] ={'format':measures_metadata[i].format, 'type': measures_metadata[i].type};
 				//measures_metadata_map[measures_metadata[i].name].scaleFactorValue = (this.getMeasureScaleFactor(measures_metadata[i].name)).value;
@@ -238,11 +239,11 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 				serie.data = serieDataFormatted;
 				serie.shadow = false;
 				series.push(serie);
-			}	
+			}
 			return series;
 		}
 	}
-	
+
 	/**
 	 * Load the categories for the chart
 	 */
@@ -257,7 +258,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 			return  categories;
 		}
 	}
-	
+
 	, getRuntimeSeries : function () {
 		var toReturn = [];
 		// rows (of dataContainerObject) can contain 2 level, it depends if a groupingVariable was defined or not
@@ -268,7 +269,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 				var measureNodes = groupingAttributeValues[i].node_childs;
 				for(var j = 0; j < measureNodes.length; j++) {
 					toReturn.push({
-						name : groupingAttributeValues[i].node_description + 
+						name : groupingAttributeValues[i].node_description +
 								( measureNodes.length > 1 ? ' [' + measureNodes[j].node_description + ']' : '' )
 						, measure : measureNodes[j].node_description
 					});
@@ -284,12 +285,12 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 				});
 			}
 		}
-		
+
 		Sbi.trace("[AbstractChartWidget.getRuntimeSeries]: runtime series is equa to [" + Sbi.toSource(toReturn) + "]");
-		
+
 		return toReturn;
 	}
-	
+
 	, getRuntimeSerie : function (theSerieName) {
 		var allRuntimeSeries = this.getRuntimeSeries();
 		var i = 0;
@@ -299,7 +300,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 			}
 		}
 		return null;
-	}	
+	}
 
 	, addChartConf: function(chartConf, showTipMask){
 		if((this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true){
@@ -310,8 +311,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 		}
 		//chartConf.tipRenderer = this.getTooltipFormatter();
 	}
-	
-	
+
+
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -329,7 +330,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 		}
 		return colors;
 	}
-	
+
 	, getMeasureScaleFactor: function (theMeasureName){
 		var i=0;
 		var scaleFactor={value:1, text:''};
@@ -364,23 +365,23 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 		}
 		return scaleFactor;
 	}
-	
+
 	, formatTextWithMeasureScaleFactor : function(text, measureName) {
 		var legendSuffix;
 		legendSuffix = (this.getMeasureScaleFactor(measureName)).text;
-		
+
 		if (legendSuffix != '' ) {
 			return text + ' ' + legendSuffix;
 		}
 		return text;
 	}
-	
+
 	, formatLegendWithScale : function(theSerieName) {
 		var serie = this.getRuntimeSerie(theSerieName);
 		var toReturn = this.formatTextWithMeasureScaleFactor(serie.name, serie.measure);
 		return toReturn;
 	}
-	
+
     , format: function(value, type, format, scaleFactor) {
     	if(value==null){
     		return value;
@@ -400,33 +401,33 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 		} catch (err) {
 			return value;
 		}
-	}	
-	
-	
-	, isEmpty : function () {		
+	}
+
+
+	, isEmpty : function () {
 		var measures = undefined;
-		
+
 		if (Sbi.isValorized(this.dataContainerObject.columns))
 			measures = this.dataContainerObject.columns.node_childs;
-		
+
 		return measures === undefined;
 	}
-	
+
 	, maximize: function(){
-		Sbi.trace("[AbstractChartWidget.maximize]: Ext.window.Window.maximize method overriden has been called");		
+		Sbi.trace("[AbstractChartWidget.maximize]: Ext.window.Window.maximize method overriden has been called");
 		this.redraw();
-	} 
-	
+	}
+
 	, restore: function() {
 		Sbi.trace("[AbstractChartWidget.restore]: Ext.window.Window.restore method overriden has been called");
 		this.redraw();
 	}
-	
+
 	, resize: function() {
 		Sbi.trace("[AbstractChartWidget.resize]: Ext.window.Window.resize method overriden has been called");
 		alert("resizing");
 		this.redraw();
 	}
-	
+
 
 });

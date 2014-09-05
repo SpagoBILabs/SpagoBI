@@ -1,26 +1,26 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
+
 Ext.ns("Sbi.cockpit.widgets.barchart");
 
-Sbi.cockpit.widgets.barchart.BarChartWidget = function(config) {	
+Sbi.cockpit.widgets.barchart.BarChartWidget = function(config) {
 	Sbi.trace("[BarChartWidget.constructor]: IN");
 	var defaultSettings = {
-			
+
 	};
-	
+
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.barchart.BarChartWidget', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
-	
+
 	Sbi.cockpit.widgets.barchart.BarChartWidget.superclass.constructor.call(this, c);
 	this.init();
 
 	this.addEvents('selection');
-	
+
 	Sbi.trace("[BarChartWidget.constructor]: OUT");
 
 };
@@ -35,25 +35,25 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	// =================================================================================================================
 	  chartDivId : null
 	, chart : null
-	, chartConfig : null 	
-	
+	, chartConfig : null
+
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	
+
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, redraw: function() {
-		Sbi.trace("[BarChartWidget.redraw]: IN");		
-		this.createChart();	
+		Sbi.trace("[BarChartWidget.redraw]: IN");
+		this.createChart();
 		Sbi.trace("[BarChartWidget.redraw]: OUT");
 	}
 
-    , refresh:  function() {  
+    , refresh:  function() {
     	Sbi.trace("[BarChartWidget.refresh]: IN");
-    	this.init();	
+    	this.init();
     	this.createChart();
 		Sbi.trace("[BarChartWidget.refresh]: OUT");
 	}
@@ -102,15 +102,15 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
-	
+
 	//----- Ext 4 Implementation related functions ------------------------------------------
 	, getChart : function(horizontal, items, colors, percent){
-		
+
 		var chartDataStore = items.store;
-		
-		var chartType; 
+
+		var chartType;
 		var isStacked = false;
-		
+
 		//Define Ext4 Chart appropriate type
 		if(horizontal){
 			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
@@ -131,7 +131,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		var chartAxes = this.createAxes(horizontal, items, percent);
 		//Create Series Configuration
 		var chartSeries = this.createSeries(horizontal, items, chartType, isStacked);
-		
+
 		//Legend visibility
 		var showlegend;
 		if (this.chartConfig.showlegend !== undefined){
@@ -139,7 +139,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		} else {
 			showlegend = true;
 		}
-		
+
 		//Create theme for using custom defined colors
 		Ext.define('Ext.chart.theme.CustomTheme', {
 		    extend: 'Ext.chart.theme.Base',
@@ -150,7 +150,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		        }, config)]);
 		    }
 		});
-		
+
 	    var chart = Ext.create("Ext.chart.Chart", {
 	        width: '100%',
 	    	height: '100%',
@@ -171,7 +171,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 //	    chart.on('selection', this.pippo, this);
 	    return chart;
 	}
-	
+
 //	,pippo:function(){
 //		alert('pippo');
 //	}
@@ -182,7 +182,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		var thisPanel = this;
 		var axisPosition;
 		var series = [];
-		
+
 		if (horizontal){
 			//bar chart
 			axisPosition = 'bottom';
@@ -190,10 +190,10 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			//column chart
 			axisPosition = 'left';
 		}
-		
+
 		var seriesNames = [];
 		var displayNames = [];
-		
+
 
 		//Extract technical series names and corresponding name to display
 		for (var i=0; i< items.series.length; i++){
@@ -207,7 +207,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			var displayName = items.series[i].displayName;
 			displayNames.push(displayName);
 		}
-		
+
 		//Costruct the series object(s)
 		var aSerie = {
                 type: chartType,
@@ -219,7 +219,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
                 smooth: true,
                 stacked: isStacked,
                 xField: "categories",
-                yField: seriesNames,	                
+                yField: seriesNames,
                 title: displayNames,
     	        tips: {
 	            	  trackMouse: true,
@@ -238,9 +238,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		  				var categoryField ;
 		  				var valueField ;
 		  				categoryField = obj.storeItem.data[obj.series.xField];
-//		  				valueField = obj.storeItem.data[obj.yField];	
+//		  				valueField = obj.storeItem.data[obj.yField];
 		  				valueField = obj.storeItem.data[obj.series.xField];
-//		  				alert(displayNames + ' - ' + categoryField + ' - ' + valueField);		  				
+//		  				alert(displayNames + ' - ' + categoryField + ' - ' + valueField);
 	  		    		var selections = {};
 		  				var values =  [];
 		  				selections[displayNames] = {};
@@ -249,17 +249,17 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	  		    		thisPanel.fireEvent('selection', thisPanel, selections);
 		  			}
 			}
-                
+
          };
 		series.push(aSerie);
-		
+
 		return series;
 	}
 	/*
 	 * Create the Axes object configuration
 	 */
 	, createAxes : function(horizontal,items,percent){
-		var axes;	
+		var axes;
 		var positionNumeric;
 		var positionCategory;
 
@@ -272,9 +272,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			positionNumeric = 'left';
 			positionCategory = 'bottom';
 		}
-		
+
 		var seriesNames = [];
-		
+
 		for (var i=0; i< items.series.length; i++){
 			var name;
 			if (horizontal){
@@ -299,15 +299,15 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			fields: ["categories"]
 //			title: "Category"
 		}];
-		
+
 		//For the percent type chart set the axes scale maximum to 100
 		if (percent){
 			axes[0].maximum = 100;
 		}
-		
+
 		return axes;
 	}
-	
+
 	, getTooltip : function(record, item){
 		var chartType = this.chartConfig.designer;
 		var allRuntimeSeries = this.getRuntimeSeries();
@@ -316,14 +316,14 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		var horizontal = this.chartConfig.orientation === 'horizontal';
 		var colors = this.getColors();
 		var series;
-		
+
 		var percent = ((this.chartConfig.type).indexOf('percent')>=0);
 		var storeObject = this.getJsonStore(percent);
-		
+
 		var selectedSerieName = item.yField;
-		
+
 		var selectedSerie;
-		
+
 		if(horizontal){
 			series = this.getChartSeries(storeObject.serieNames, colors, true);
 			for (var i =0; i<series.length;i++){
@@ -335,7 +335,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 
 		}else{
 			series = this.getChartSeries(storeObject.serieNames, colors);
-			
+
 			for (var i =0; i<series.length;i++){
 				if (series[i].yField == selectedSerieName){
 					selectedSerie = series[i];
@@ -344,11 +344,11 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			}
 		}
 
-		
+
 		var valueObj = this.getFormattedValue(null, record, selectedSerie, chartType, allRuntimeSeries, allDesignSeries, type, horizontal);
-		
+
 		var tooltip = '';
-		
+
 		if (valueObj.measureName !== valueObj.serieName) {
 			tooltip = valueObj.serieName + '<br/>' + record.data.categories + '<br/>';
 			// in case the serie name is different from the measure name, put also the measure name
@@ -357,45 +357,45 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			tooltip =  record.data.categories + '<br/>' + selectedSerie.displayName + ' : ' ;
 		}
 		tooltip += valueObj.value;
-		
+
 		return tooltip;
 
 	}
-	
-	
+
+
 	///---------------------------------------------------------------------
-	
-	
+
+
 	, getChartSeries: function(serieNames, colors, horizontal){
 		var seriesForChart = new Array();
 		for(var i=0; i<serieNames.length; i++){
-			var serie = {	
+			var serie = {
 	                style: {}
 			};
-			
+
 //			if(this.chartConfig.type == 'percent-stacked-barchart'){
-//				serie.displayName =  (serieNames[i]);//if percent doesn't matter the scale 
+//				serie.displayName =  (serieNames[i]);//if percent doesn't matter the scale
 //			}else{
 				//serie.displayName =  this.formatLegendWithScale(serieNames[i]); //Commented by MC
 //			}
 			serie.displayName =  serieNames[i];
-			
+
 			if(horizontal){
 				serie.xField = 'series'+i;
 			}else{
 				serie.yField = 'series'+i;
 			}
-			
+
 			if(colors!=null){
 				serie.style.color= colors[i];
 			}
-			
+
 			seriesForChart.push(serie);
 		}
 		return seriesForChart;
 	}
 
-	//used for tooltip	
+	//used for tooltip
 	, getFormattedValue: function (chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type, horizontal){
 		var theSerieName  = series.displayName;
 		var value ;
@@ -412,12 +412,12 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		}else{
 			//value = Ext.util.Format.number(record.data[series.xField], '0.00');
 			if(horizontal){
-				value = record.data['seriesflatvalue'+series.xField.substring(series.xField.length-1)];		        
+				value = record.data['seriesflatvalue'+series.xField.substring(series.xField.length-1)];
 			}else{
 				value = record.data['seriesflatvalue'+series.yField.substring(series.yField.length-1)];
 			}
 		}
-		
+
 		// find the measure's name
 		var i = 0;
 		for (; i < allRuntimeSeries.length; i++) {
@@ -428,7 +428,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 				break;
 			}
 		}
-		
+
 		i = 0;
 		// find the serie's (design-time) definition
 		for (; i < allDesignSeries.length; i++) {
@@ -447,7 +447,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
     		currencySymbol: '',
     		nullValue: ''
 		});
-			
+
 		// add suffix
 		if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
 			value = value + ' ' + serieDefinition.suffix;
@@ -459,26 +459,26 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		toReturn.measureName = measureName;
 		return toReturn;
 	}
-	
-	
+
+
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
-	, onRender: function(ct, position) {	
+	, onRender: function(ct, position) {
 		Sbi.trace("[BarChartWidget.onRender]: IN");
-		
+
 		this.msg = 'Sono un widget di tipo BarChart';
-		
-		Sbi.cockpit.widgets.barchart.BarChartWidget.superclass.onRender.call(this, ct, position);	
-		
+
+		Sbi.cockpit.widgets.barchart.BarChartWidget.superclass.onRender.call(this, ct, position);
+
 		Sbi.trace("[BarChartWidget.onRender]: OUT");
 	}
-	
+
 	, getByteArraysForExport: function(){
 		var byteArrays = new Array();
 		for(var i=0; i<this.charts; i++){
 			byteArrays.push((this.charts[i]).exportPNG());
-		}	
+		}
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -486,7 +486,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	// -----------------------------------------------------------------------------------------------------------------
 	, init : function () {
 		this.chartConfig = this.wconf;
-		
+
 		this.loadChartData({
 			'rows':[this.chartConfig.category]
 			, 'measures': this.chartConfig.series

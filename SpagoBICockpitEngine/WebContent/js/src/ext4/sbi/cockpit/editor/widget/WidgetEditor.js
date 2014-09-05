@@ -1,15 +1,15 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
+
 Ext.ns("Sbi.cockpit.editor.widget");
 
-Sbi.cockpit.editor.widget.WidgetEditor = function(config) { 
+Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 
 	Sbi.trace("[WidgetEditor.constructor]: IN");
-	
+
 	var defaultSettings = {
 		//title: LN('Sbi.cockpit.editor.widget.WidgetEditor.title')
 		engineAlreadyInitialized : false
@@ -19,14 +19,14 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.widget.WidgetEditor', defaultSettings);
-	
+
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 
 	this.addEvents('afterworksheetinitialized');
-	
+
 	this.init(config);
-	
+
 	c = Ext.apply(c, {
 			layout: 'border',
 			autoScroll: false,
@@ -51,11 +51,11 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 		        	items: [this.mainPanel]
 		        }
 			]
-	}); 
-		
+	});
 
-	Sbi.cockpit.editor.widget.WidgetEditor.superclass.constructor.call(this, c);	 		
-	
+
+	Sbi.cockpit.editor.widget.WidgetEditor.superclass.constructor.call(this, c);
+
 	this.on('render', function () {
 		if (!this.engineAlreadyInitialized) {
 			this.initializeEngineInstance({
@@ -68,33 +68,33 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 			this.fireEvent('afterworksheetinitialized', this);
 		}
 	}, this, { single : true } );
-	
+
 	Sbi.trace("[WidgetEditor.constructor]: OUT");
-	
+
 };
 
 /**
  * @class Sbi.cockpit.editor.widget.WidgetEditor
  * @extends Ext.Panel
- * 
+ *
  * WorksheetDesignerPanel
  */
 Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
-	
+
 	services: null
-	
+
 	, controlPanel: null
 	, sheetsContainerPanel: null
 	, contextMenu: null
-	
+
 	, worksheetTemplate: {}  // the initial worksheet template; to be passed as a property of the constructor's input object!!!
 	, engineAlreadyInitialized : null
 	, mainPanel: null
-	
+
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	
+
 	, initializeEngineInstance : function (config) {
 //		Ext.Ajax.request({
 //			url: this.services['executeWorksheetStartAction'],
@@ -104,65 +104,65 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 //			failure: Sbi.exception.ExceptionHandler.handleFailure
 //		});
 	}
-	
+
 	, init : function (config) {
 		this.initPanels(config);
 		//this.initContextMenu();
 		//this.setGlobalFilters(this.worksheetTemplate.globalFilters || []);
 		//this.setFieldsOptions(this.worksheetTemplate.fieldsOptions || {});
 	}
-	
+
 	, initPanels: function(config){
 		this.initDesignToolPanel(config);
 		this.initSheetsContainerPanel(config);
 	}
-	
+
 	, initDesignToolPanel: function(config) {
 		this.controlPanel = new Sbi.cockpit.editor.widget.WidgetEditorControlPanel(config);
-		
+
 //		this.controlPanel = new Sbi.worksheet.designer.DesignToolsPanel({
 //		});
 //		this.controlPanel.on('toolschange',function(change){
 //			this.mainPanel.updateActiveSheet(change);
 //		},this);
 //		this.controlPanel.on(
-//				'attributeDblClick', 
-//				this.attributeDblClickHandler, 
+//				'attributeDblClick',
+//				this.attributeDblClickHandler,
 //				this
 //			);
 //		this.controlPanel.on(
-//				'fieldRightClick', 
-//				this.fieldRightClickHandler, 
+//				'fieldRightClick',
+//				this.fieldRightClickHandler,
 //				this
 //			);
 	}
-	
+
 	, initSheetsContainerPanel: function(config) {
 		this.mainPanel = new Sbi.cockpit.editor.widget.WidgetEditorMainPanel();
-		
-		
+
+
 //		this.mainPanel = new Sbi.worksheet.designer.SheetsContainerPanel(Ext.apply(this.mainPanelCfg  || {}, {
 //			sheets : this.worksheetTemplate.sheets || []  ,
 //			smartFilter: config.smartFilter || false
 //		}));
 //		this.mainPanel.on(
-//			'attributeDblClick', 
+//			'attributeDblClick',
 //			this.attributeDblClickHandler,
 //			this
 //		);
-//		
+//
 //		this.mainPanel.on('sheetchange',function(activeSheet){
 //			this.controlPanel.updateToolsForActiveTab(activeSheet);
 //		},this);
 	}
-	
+
 	, initContextMenu : function () {
 		var items = [{
 			text : LN('sbi.config.optionswindow.title')
 			, scope : this
 			, handler : this.showOptions
 		}];
-	   	this.contextMenu = 
+	   	this.contextMenu =
 			new Ext.menu.Menu({
 				items: items
 		});
@@ -173,11 +173,11 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 	   		return this.contextField;
 	   	};
 	}
-	
+
 	, attributeDblClickHandler : function (thePanel, attribute, theSheet) {
-		
+
 		Ext.Msg.alert('Message', 'attributeDblClickHandler');
-		
+
 //		var worksheetDefinition = this.getWorksheetDefinition();
 //		var params = {
 //			worksheetDefinition : Ext.encode(worksheetDefinition)
@@ -214,27 +214,27 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 //     		attribute.values = selection;
 //     	}, this);
 	}
-	
+
 	, getWorksheetDefinition: function () {
-		
+
 		Ext.Msg.alert('Message', 'attributeDblClickHandler');
 		return null;
-		
+
 //		var	worksheetDefinition = this.mainPanel.getSheetsState();
 //		worksheetDefinition.globalFilters = this.getGlobalFilters();
 //		worksheetDefinition.fieldsOptions = this.getFieldsOptions();
 //		worksheetDefinition.version = Sbi.config.worksheetVersion;
 //		return worksheetDefinition;
 	}
-	
+
 	// return an array of validationError object, if no error returns an empty array
 	, validate: function (successHandler, failureHandler, scope) {
-	
+
 		Ext.Msg.alert('Message', 'validate');
 		return null;
-		
+
 //		var validFields = this.controlPanel.designToolsFieldsPanel.getFields();
-//		
+//
 //		var errorArray = this.mainPanel.validate(validFields);
 //
 //		if(errorArray && errorArray.length>0){
@@ -245,63 +245,63 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 //			}
 //		else {
 //			if (successHandler != undefined){
-//				return successHandler.call(scope || this);	
+//				return successHandler.call(scope || this);
 //			}
 //				else return null;
 //		}
 	}
-	
+
 	, getGlobalFilters : function () {
 		Ext.Msg.alert('Message', 'getGlobalFilters');
 		return null;
 		//return this.controlPanel.getGlobalFilters();
 	}
-	
+
 	, getFieldsOptions : function () {
 		Ext.Msg.alert('Message', 'getGlobalFilters');
 		return null;
 		//return this.controlPanel.getFieldsOptions();
 	}
-	
+
     , showValidationErrors : function(errorsArray) {
     	errMessage = '';
-    	
+
     	for(var i = 0; i < errorsArray.length; i++) {
     		var error = errorsArray[i];
     		var sheet = error.sheet;
     		var message = error.message;
     		errMessage += error.sheet + ': ' + error.message + '<br>';
     	}
-    	
+
     	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, LN('sbi.crosstab.crossTabValidation.title'));
-   	
+
     }
-	
+
     , getGlobalFilterForAttribute : function (attribute) {
     	Ext.Msg.alert('Message', 'getGlobalFilterForAttribute');
 		return null;
     	//return this.controlPanel.getGlobalFilterForAttribute(attribute);
     }
-    
+
     , getOptionsForField : function (field) {
     	Ext.Msg.alert('Message', 'getOptionsForField');
 		return null;
     	//return this.controlPanel.getOptionsForField(field);
     }
-    
+
 	, setGlobalFilters : function (globalFilters) {
 		Ext.Msg.alert('Message', 'setGlobalFilters');
 		//this.controlPanel.setGlobalFilters(globalFilters);
 	}
-	
+
 	, setFieldsOptions : function (fieldsOptions) {
 		Ext.Msg.alert('Message', 'setFieldsOptions');
 		//this.controlPanel.setFieldsOptions(fieldsOptions);
 	}
-	
+
 	, fieldRightClickHandler : function (thePanel, field, e) {
 		Ext.Msg.alert('Message', 'fieldRightClickHandler');
-		
+
 //		e.stopEvent();
 //		if (
 //				(field.nature == 'attribute' || field.nature == 'segment_attribute')
@@ -316,10 +316,10 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 //			this.contextMenu.showAt(e.getXY());
 //		}
 	}
-	
+
 	, showOptions : function (item) {
 		Ext.Msg.alert('Message', 'showOptions');
-		
+
 //		var field = item.parentMenu.getField();
 //		var optionsToDisplay = null;
 //		if (field.nature == 'attribute' || field.nature == 'segment_attribute') {
@@ -327,7 +327,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 //		} else {
 //			optionsToDisplay = Sbi.worksheet.config.options.measures;
 //		}
-//		
+//
 //     	var optionsWindow = new Sbi.worksheet.config.OptionsWindow({
 //     		options : optionsToDisplay
 //     	});
