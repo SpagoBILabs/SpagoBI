@@ -22,6 +22,7 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
    
 	config:{
 		border: 0
+
 	},
 	
 	constructor : function(config) {
@@ -60,17 +61,23 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 						var label = command.label;
 
 
-						var commandTab= Ext.create("Sbi.datamining.OutputsTabPanel",{
+						var outputsTab= Ext.create("Sbi.datamining.OutputsTabPanel",{
 					        title: '<span style="color: #28596A;">'+label+'</span>',
+					        iconCls: 'tab-icon',
+					        tabPosition: 'left',
+							listeners: {
+					            'tabchange': function (tabPanel, tab) {
+					               //alert("outputs "+tabPanel.id + ' ' + tab.id);
+					               tabPanel.setAutoMode(tab.output);
+					            }
+					        },
 					        commandName: name
 					    });
 						
-						thisPanel.add(commandTab);
+						thisPanel.add(outputsTab);
 						if(mode == 'auto'){
-
 							thisPanel.setAutoMode(name, i);
 							thisPanel.tosetactive=i;
-							//thisPanel.setActiveItem(commandTab);
 						}
 					}	
 				}
@@ -94,7 +101,8 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 			
 				var res = Ext.decode(response.responseText);		
 				
-				if(res.result != null && res.result == Sbi.settings.datamining.execution.ok){
+				if(res != null && res !== undefined){
+					var autooutput = res.outputName;
 					this.setActiveTab(activetab);
 				}
 			}

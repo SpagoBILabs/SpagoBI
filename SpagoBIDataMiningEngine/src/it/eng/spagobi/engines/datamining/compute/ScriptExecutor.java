@@ -23,7 +23,8 @@ import org.rosuda.JRI.Rengine;
 public class ScriptExecutor {
 
 	static private Logger logger = Logger.getLogger(ScriptExecutor.class);
-	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + DataMiningConstants.DATA_MINING_PATH_SUFFIX;
+	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath()
+			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 	private Rengine re;
 	DataMiningEngineInstance dataminingInstance;
 

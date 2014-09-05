@@ -9,6 +9,9 @@ import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
+import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.engines.datamining.serializer.SerializationException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -52,6 +55,7 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 	@Produces("text/html; charset=UTF-8")
 	public String setAutoMode(@PathParam("command") String commandName) {
 		logger.debug("IN");
+		String autoOutputJson = "";
 
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 		List<DataMiningCommand> commands = null;
@@ -61,12 +65,24 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 				DataMiningCommand cmd = (DataMiningCommand) it.next();
 				if (cmd.getName().equals(commandName)) {
 					cmd.setMode(DataMiningConstants.EXECUTION_TYPE_AUTO);
+					if (cmd.getOutputs() != null && !cmd.getOutputs().isEmpty()) {
+						for (Iterator it2 = cmd.getOutputs().iterator(); it2.hasNext();) {
+							Output output = (Output) it2.next();
+							if (output.getOutputMode().equals(DataMiningConstants.EXECUTION_TYPE_AUTO)) {
+								try {
+									autoOutputJson = serialize(output);
+								} catch (SerializationException e) {
+									throw new SpagoBIEngineRuntimeException("Error serializing output", e);
+								}
+							}
+						}
+					}
 				} else {
 					cmd.setMode(DataMiningConstants.EXECUTION_TYPE_MANUAL);
 				}
 			}
 		}
 		logger.debug("OUT");
-		return getJsonSuccess();
+		return autoOutputJson;
 	}
 }

@@ -1,20 +1,46 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <DATA_MINING>
-	<SCRIPT>
-		<![CDATA[
-str(dataset1);
-dataset1$time;
-time_plus<-dataset1$time+1;
+    <PARAMETERS>
+        <PARAMETER name="par1" />
+        <PARAMETER name="par2" />
+        <PARAMETER name="par3" />
+    </PARAMETERS> 
+	<SCRIPTS>  
+        <SCRIPT name="timescript1" mode="auto" datasets="datasetA" label="timeplus 1">
+			<![CDATA[
+str(datasetA);
+datasetA$time;
+time_plus<-datasetA$time+1;
 time_plus;
-		]]>
-	</SCRIPT>
+			]]>
+		</SCRIPT>
+		<SCRIPT name="timescript2" mode="manual" datasets="datasetB" label="timeplus 2">
+			<![CDATA[
+str(datasetB);
+datasetB$time;
+time_plus2<-datasetB$time+5;
+time_plus2;
+			]]>
+		</SCRIPT>
+	</SCRIPTS>	
 	<DATASETS>
-		<DATASET name="dataset1" readType="table" type="file"/>	
-		<DATASET name="dataset2" readType="csv" type="file">
+		<DATASET name="datasetA" readType="table" type="file" label="Data set 1">	
 			<![CDATA[header = TRUE, sep = ",", quote = "\""]]>
-		</DATASET>	
+		</DATASET>
+		<DATASET name="datasetB" readType="csv" type="file" label="Data set 2">
+			<![CDATA[header = TRUE, sep = ",", quote = "\""]]>
+		</DATASET>
 	</DATASETS>	
-	<OUTPUTS>
-		<OUTPUT type="text" plotName="time_plus" value="time_plus" datatype=""/>
-	</OUTPUTS>
+	<COMMANDS>
+        <COMMAND name="command1" scriptName="timescript1"  label="Command1" mode="auto">
+            <OUTPUTS>
+                <OUTPUT type="text" name="time_plus" value="time_plus"  mode="auto" label="Time plus"/>
+            </OUTPUTS>
+        </COMMAND>
+        <COMMAND name="command2" scriptName="timescript2"  label="Command2" mode="manual">
+            <OUTPUTS>
+                <OUTPUT type="text" name="time_plus2" value="time_plus2"  mode="manual" label="Time plus + 5"/>
+            </OUTPUTS>
+        </COMMAND>
+    </COMMANDS>
 </DATA_MINING>

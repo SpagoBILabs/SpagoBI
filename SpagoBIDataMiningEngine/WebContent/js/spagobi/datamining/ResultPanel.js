@@ -33,12 +33,14 @@ Ext.define('Sbi.datamining.ResultPanel', {
 	resultTitleStyle: 'font-weight: bold; color: #28596A; padding-bottom: 2px; background: #CDD2D4; padding: 3px; margin: 0px;',
 	plotStyle: 'font-weight: normal; padding:5px;',
 	videoStyle: 'font-weight: normal; padding:5px; border: 1px solid #CDD2D4; width:100%; margin-top: 0px;',
+	mode:'manual',
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
 		
 		this.command = config.command;
 		this.output = config.output;
+		this.mode = config.mode;
 		
 		this.dataminingParentPanel = config.itsParent;
 		
@@ -47,7 +49,9 @@ Ext.define('Sbi.datamining.ResultPanel', {
 
 	initComponent: function() {
 		this.callParent();
-		this.getResult();
+		if(this.mode == 'auto'){
+			this.getResult();
+		}
 	}
 
 	

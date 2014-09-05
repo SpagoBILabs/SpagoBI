@@ -27,7 +27,17 @@ Ext.define('Sbi.datamining.DataMiningPanel', {
 	constructor : function(config) {
 		this.initConfig(config||{});
 		
-		this.commandsTabPanel = Ext.create('Sbi.datamining.CommandsTabPanel',{itsParent: this}); 
+		this.commandsTabPanel = Ext.create('Sbi.datamining.CommandsTabPanel',{
+			itsParent: this, 
+			listeners: {
+	            'tabchange': function (tabPanel, tab) {
+
+	               tabPanel.setAutoMode(tab.commandName);
+	               //tab.setActive();
+	            }
+	        }
+			
+		}); 
 		
 		this.callParent(arguments);
 	},

@@ -24,15 +24,17 @@ Ext.define('Sbi.datamining.OutputPanel', {
 	dmMask: null,
 	command: null,
 	output: null,
+	mode: 'manual',
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
 		
 		this.command = config.command;
 		this.output = config.output;
+		this.mode = config.mode;
 		
-		this.resultPanel = Ext.create('Sbi.datamining.ResultPanel',{itsParent: this, command: this.command, output: this.output}); 
-		this.uploadPanel = Ext.create('Sbi.datamining.UploadPanel',{itsParent: this});
+		this.resultPanel = Ext.create('Sbi.datamining.ResultPanel',{itsParent: this, command: this.command, output: this.output, mode: this.mode}); 
+		this.uploadPanel = Ext.create('Sbi.datamining.UploadPanel',{itsParent: this, command: this.command});
 		
 		this.dmMask = new Ext.LoadMask(Ext.getBody(), {msg:LN('sbi.dm.execution.loading')});
 		
@@ -43,7 +45,7 @@ Ext.define('Sbi.datamining.OutputPanel', {
 		    scale: 'medium',		    
 		    handler: function() {
 		    	this.dmMask.show();
-		        this.resultPanel.getResult(Sbi.settings.datamining.execution.manual);
+		        this.resultPanel.getResult();
 		    }
 		});
 		

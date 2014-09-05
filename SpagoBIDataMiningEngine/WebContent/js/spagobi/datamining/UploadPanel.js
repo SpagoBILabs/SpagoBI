@@ -25,10 +25,13 @@ Ext.define('Sbi.datamining.UploadPanel', {
 	executeScriptBtn: null,
 	datasetFiles : [],
 	itsParent: null,
+	command: null,
+	
 	constructor : function(config) {
 		this.initConfig(config||{});
 
 		this.itsParent = config.itsParent;
+		this.command = config.command;
 		
 		this.callParent(arguments);
 	},
@@ -107,6 +110,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "dataset"
+			,pathParams: [this.command]
 		});
 		
 		service.callService(this);

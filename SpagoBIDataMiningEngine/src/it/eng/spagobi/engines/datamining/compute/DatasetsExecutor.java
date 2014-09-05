@@ -22,7 +22,8 @@ import org.rosuda.JRI.Rengine;
 public class DatasetsExecutor {
 
 	static private Logger logger = Logger.getLogger(DatasetsExecutor.class);
-	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + DataMiningConstants.DATA_MINING_PATH_SUFFIX;
+	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath()
+			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 	private Rengine re;
 
 	DataMiningEngineInstance dataminingInstance;
@@ -56,6 +57,7 @@ public class DatasetsExecutor {
 
 						String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
 						re.eval(stringToEval);
+						REXP dataframe = re.eval(ds.getName());
 					} else {
 						// use it!
 						logger.debug("dataset " + ds.getName() + " already loaded in user workspace!");
@@ -83,6 +85,10 @@ public class DatasetsExecutor {
 		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
 			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
+				String options = ds.getOptions();
+				if (options == null || options.equals("")) {
+					options = "header = TRUE, sep = \",\"";
+				}
 				if (ds.getType().equalsIgnoreCase("file")) {
 					// tries to get it from user workspace
 					REXP datasetNameInR = re.eval(ds.getName());
@@ -95,8 +101,9 @@ public class DatasetsExecutor {
 
 							fileDSPath = fileDSPath.replaceAll("\\\\", "/");
 
-							String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
+							String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + options + ");";
 							re.eval(stringToEval);
+							REXP dataframe = re.eval(ds.getName());
 						}
 					} else {
 						// use it!
