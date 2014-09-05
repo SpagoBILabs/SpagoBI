@@ -11,38 +11,40 @@ import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import org.apache.log4j.Logger;
 
 /**
- * Factory class for the security supplier 
+ * Factory class for the security supplier
+ * 
  * @author Bernabei Angelo
- *
+ * 
  */
 public class SecurityServiceSupplierFactory {
 
-    static Logger logger = Logger.getLogger(SecurityServiceSupplierFactory.class);
-    /**
-     * Creates a new SecurityServiceSupplier object.
-     * 
-     * @return the i security service supplier
-     */
-    public static ISecurityServiceSupplier createISecurityServiceSupplier(){
+	static Logger logger = Logger.getLogger(SecurityServiceSupplierFactory.class);
+
+	/**
+	 * Creates a new SecurityServiceSupplier object.
+	 * 
+	 * @return the i security service supplier
+	 */
+	public static ISecurityServiceSupplier createISecurityServiceSupplier() {
 		logger.debug("IN");
 		SingletonConfig configSingleton = SingletonConfig.getInstance();
 		String engUserProfileFactorySB = configSingleton.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
-		if (engUserProfileFactorySB==null){
-		    logger.warn("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS ... NOT FOUND");
+		if (engUserProfileFactorySB == null) {
+			logger.warn("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS ... NOT FOUND");
 		}
 		String engUserProfileFactoryClass = engUserProfileFactorySB;
-		engUserProfileFactoryClass = engUserProfileFactoryClass.trim(); 
+		engUserProfileFactoryClass = engUserProfileFactoryClass.trim();
 		try {
-		    return  (ISecurityServiceSupplier)Class.forName(engUserProfileFactoryClass).newInstance();
+			return (ISecurityServiceSupplier) Class.forName(engUserProfileFactoryClass).newInstance();
 		} catch (InstantiationException e) {
-		    logger.warn("InstantiationException",e);
+			logger.warn("InstantiationException", e);
 		} catch (IllegalAccessException e) {
-		    logger.warn("IllegalAccessException",e);
+			logger.warn("IllegalAccessException", e);
 		} catch (ClassNotFoundException e) {
-		    logger.warn("ClassNotFoundException",e);
-		}finally{
-		    logger.debug("OUT");
+			logger.warn("ClassNotFoundException", e);
+		} finally {
+			logger.debug("OUT");
 		}
 		return null;
-	    }  
+	}
 }

@@ -22,11 +22,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
@@ -44,13 +44,13 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	static private Map<String, JSONObject> pages;
 	static private Map<String, String> urls;
-	
+
 	static private Logger logger = Logger.getLogger(PageResource.class);
-	
+
 	static {
 		pages = new HashMap<String, JSONObject>();
 		urls = new HashMap<String, String>();
-		
+
 		try {
 			pages.put("edit", new JSONObject("{name: 'execute', description: 'the cockpit edit page', parameters: []}"));
 			urls.put("edit", "/WEB-INF/jsp/cockpit.jsp");
@@ -62,7 +62,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			logger.error(t);
 		}
 	}
-	
+
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -70,76 +70,71 @@ public class PageResource extends AbstractCockpitEngineResource {
 		try {
 			JSONArray resultsJSON = new JSONArray();
 			Iterator<String> it = pages.keySet().iterator();
-			while(it.hasNext()) {
+			while (it.hasNext()) {
 				String pageName = it.next();
 				resultsJSON.put(pages.get(pageName));
 			}
-			
-			return resultsJSON.toString();	
-		} catch(Exception e) {
+
+			return resultsJSON.toString();
+		} catch (Exception e) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
-		} finally {			
+		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
-	
+
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public void openPage(@PathParam("pagename") String pageName
-			, @QueryParam("extjs") @DefaultValue("4") String extjs) {
+	public void openPage(@PathParam("pagename") String pageName, @QueryParam("extjs") @DefaultValue("4") String extjs) {
 		CockpitEngineInstance engineInstance;
 		String dispatchUrl = null;
-		
+
 		try {
-			if("execute".equals(pageName)) {
-	        	engineInstance = CockpitEngine.createInstance(
-	        			getIOManager().getTemplateAsString(), getIOManager().getEnv()
-	        	);
-	        	// TODO put this not in session but in context
-	        	getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-	        	if(extjs.equalsIgnoreCase("3")) {
-	        		dispatchUrl = "/WEB-INF/jsp/cockpit.jsp";
-	        	} else {
-	        		dispatchUrl = "/WEB-INF/jsp/cockpit4.jsp";
-	        	}	        	
-			} else if("edit".equals(pageName)) {
+			if ("execute".equals(pageName)) {
+				engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
+				// TODO put this not in session but in context
+				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				if (extjs.equalsIgnoreCase("3")) {
+					dispatchUrl = "/WEB-INF/jsp/cockpit.jsp";
+				} else {
+					dispatchUrl = "/WEB-INF/jsp/cockpit4.jsp";
+				}
+			} else if ("edit".equals(pageName)) {
 				JSONObject template = null;
-	        	template = buildBaseTemplate();
-	     
-	        	// create a new engine instance
-	        	engineInstance = CockpitEngine.createInstance(
-	        			template.toString(), // servletIOManager.getTemplateAsString(), 
-	        			getIOManager().getEnv()
-	        	);
-	        	// TODO put this not in session but in context
-	        	getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-	        	if(extjs.equalsIgnoreCase("3")) {
-	        		dispatchUrl = "/WEB-INF/jsp/cockpit.jsp";
-	        	} else {
-	        		dispatchUrl = "/WEB-INF/jsp/cockpit4.jsp";
-	        	}
-			} else if("test".equals(pageName)) {
+				template = buildBaseTemplate();
+
+				// create a new engine instance
+				engineInstance = CockpitEngine.createInstance(template.toString(), // servletIOManager.getTemplateAsString(),
+						getIOManager().getEnv());
+				// TODO put this not in session but in context
+				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				if (extjs.equalsIgnoreCase("3")) {
+					dispatchUrl = "/WEB-INF/jsp/cockpit.jsp";
+				} else {
+					dispatchUrl = "/WEB-INF/jsp/cockpit4.jsp";
+				}
+			} else if ("test".equals(pageName)) {
 				dispatchUrl = "/WEB-INF/jsp/test4.jsp";
 			} else {
-				//error
+				// error
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
 			}
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
-		} finally {			
+		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
-	
+
 	private JSONObject buildBaseTemplate() {
 		JSONObject template;
-		
+
 		logger.debug("IN");
 		template = new JSONObject();
 		logger.debug("OUT");
-		
+
 		return template;
 	}
 }

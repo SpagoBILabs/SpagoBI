@@ -14,17 +14,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 public class Attribute extends Field {
+
 	/**
 	 * contains an array of selected values encoded into a string
 	 */
 	String values = null;
+
 	public String getValues() {
 		return values;
 	}
+
 	public Attribute(String entityId, String alias, String iconCls, String nature, String values) {
 		super(entityId, alias, iconCls, nature);
 		this.values = values;
 	}
+
 	public List<String> getValuesAsList() {
 		List<String> toReturn = new ArrayList<String>();
 		if (values == null) {
@@ -42,9 +46,12 @@ public class Attribute extends Field {
 		}
 		return toReturn;
 	}
+
+	@Override
 	public Attribute clone() {
 		return new Attribute(entityId, alias, iconCls, nature, values);
 	}
+
 	public void setValues(List<String> values) {
 		JSONArray array = new JSONArray();
 		if (values != null) {
@@ -56,6 +63,7 @@ public class Attribute extends Field {
 		String valuesStr = array.toString();
 		setValues(valuesStr);
 	}
+
 	private void setValues(String values) {
 		this.values = values;
 	}

@@ -14,34 +14,32 @@ import org.apache.log4j.Logger;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CockpitEngineConfig {
+
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
-	
 
-	
 	private static EnginConf engineConfig;
 
-	
 	private static transient Logger logger = Logger.getLogger(CockpitEngineConfig.class);
-	
-	
+
 	// -- singleton pattern --------------------------------------------
 	private static CockpitEngineConfig instance;
-	
-	public static CockpitEngineConfig getInstance(){
-		if(instance==null) {
+
+	public static CockpitEngineConfig getInstance() {
+		if (instance == null) {
 			instance = new CockpitEngineConfig();
 		}
 		return instance;
 	}
-	
+
 	private CockpitEngineConfig() {
-		setEngineConfig( EnginConf.getInstance() );
+		setEngineConfig(EnginConf.getInstance());
 	}
-	// -- singleton pattern  --------------------------------------------
-	
-	// -- ACCESSOR Methods  -----------------------------------------------
+
+	// -- singleton pattern --------------------------------------------
+
+	// -- ACCESSOR Methods -----------------------------------------------
 	public static EnginConf getEngineConfig() {
 		return engineConfig;
 	}
@@ -49,9 +47,9 @@ public class CockpitEngineConfig {
 	private void setEngineConfig(EnginConf engineConfig) {
 		this.engineConfig = engineConfig;
 	}
-	
+
 	public static SourceBean getConfigSourceBean() {
 		return getEngineConfig().getConfig();
 	}
-	
+
 }

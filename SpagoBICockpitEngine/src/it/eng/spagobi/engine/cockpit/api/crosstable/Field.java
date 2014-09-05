@@ -10,33 +10,39 @@ public class Field {
 	String alias = null;
 	String iconCls = null;
 	String nature = null;
+
 	public Field(String entityId, String alias, String iconCls, String nature) {
 		this.entityId = entityId;
 		this.alias = alias;
 		this.iconCls = iconCls;
 		this.nature = nature;
 	}
+
 	public String getEntityId() {
 		return entityId;
 	}
+
 	public String getAlias() {
 		return alias;
 	}
+
 	public String getIconCls() {
 		return iconCls;
 	}
+
 	public String getNature() {
 		return nature;
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((alias == null) ? 0 : alias.hashCode());
-		result = prime * result
-				+ ((entityId == null) ? 0 : entityId.hashCode());
+		result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

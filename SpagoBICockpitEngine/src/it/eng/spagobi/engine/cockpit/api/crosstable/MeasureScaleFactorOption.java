@@ -5,30 +5,31 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.cockpit.api.crosstable;
 
-import java.util.Locale;
-
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
+import java.util.Locale;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * 
  */
 public class MeasureScaleFactorOption extends FieldOption {
 
 	public static final String NAME = "measureScaleFactor";
-	
-	public enum AdmissibleValues {NONE, K, M, G};
-	
+
+	public enum AdmissibleValues {
+		NONE, K, M, G
+	};
+
 	@Override
 	public String getName() {
 		return NAME;
 	}
-	
+
 	@Override
 	public void setValue(Object valueObj) {
-		if ( !(valueObj instanceof String) ) {
+		if (!(valueObj instanceof String)) {
 			throw new SpagoBIEngineRuntimeException("Value for this option must be a string");
 		}
 		String valueStr = (String) valueObj;
@@ -40,37 +41,30 @@ public class MeasureScaleFactorOption extends FieldOption {
 		}
 		super.setValue(value);
 	}
-	
+
 	@Override
 	public Object getValue() {
 		AdmissibleValues value = (AdmissibleValues) super.getValue();
 		return value.name();
 	}
-	
-	public static Double applyScaleFactor(Double value, String scaleFactor){
-		if(scaleFactor!=null){
-			
-			if(scaleFactor.equals("K")){
-				return value/1000;
-			} else if(scaleFactor.equals("M")){
-				return value/1000000;
-			} else if(scaleFactor.equals("G")){
-				return value/1000000000;
-			} 
+
+	public static Double applyScaleFactor(Double value, String scaleFactor) {
+		if (scaleFactor != null) {
+
+			if (scaleFactor.equals("K")) {
+				return value / 1000;
+			} else if (scaleFactor.equals("M")) {
+				return value / 1000000;
+			} else if (scaleFactor.equals("G")) {
+				return value / 1000000000;
+			}
 		}
 		return value;
 	}
-	
-	public static String getScaledName(String name, String scaleFactor,
-			Locale locale) {
-		if (scaleFactor != null && !scaleFactor.equals("") && locale != null
-				&& !scaleFactor.equals("NONE")) {
-			return name
-					+ " ("
-					+ EngineMessageBundle.getMessage(
-							"worksheet.export.scaleFactor." + scaleFactor,
-							locale)
-					+ ")";
+
+	public static String getScaledName(String name, String scaleFactor, Locale locale) {
+		if (scaleFactor != null && !scaleFactor.equals("") && locale != null && !scaleFactor.equals("NONE")) {
+			return name + " (" + EngineMessageBundle.getMessage("worksheet.export.scaleFactor." + scaleFactor, locale) + ")";
 		}
 		return name;
 	}
