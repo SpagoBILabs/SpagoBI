@@ -1,54 +1,54 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 Ext.ns("Sbi.cockpit.widgets.chart");
 
-Sbi.cockpit.widgets.chart.ChartCategoryPanel = function(config) { 
+Sbi.cockpit.widgets.chart.ChartCategoryPanel = function(config) {
 
 	var defaultSettings = {
 		  title: LN('sbi.cockpit.widgets.chartcategorypanel.title')
 		, frame: true
 		, emptyMsg: LN('sbi.cockpit.widgets.chartcategorypanel.emptymsg')
 	};
-		
+
 	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.chart && Sbi.settings.cockpit.widgets.chart.chartCategoryPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.widgets.chart.chartCategoryPanel);
 	}
-		
+
 	var c = Ext.apply(defaultSettings, config || {});
-	
+
 	Ext.apply(this, c);
-	
+
 	this.addEvents("attributeDblClick", "attributeRemoved", "beforeAddAttribute");
-	
+
 	this.init();
-	
+
 	c = Ext.apply(c, {
 		items: [this.emptyMsgPanel]
 	});
 
-	// constructor	
+	// constructor
 	Sbi.cockpit.widgets.chart.ChartCategoryPanel.superclass.constructor.call(this, c);
-	
+
 	this.on('render', this.initDropTarget, this);
-	
+
 };
 
 Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
-	
+
 	emptyMsg : null
 	, emptyMsgPanel : null
     , category : null
 	, content : null
-	
+
 	, init: function() {
 		this.initEmptyMsgPanel();
 		this.content = this.emptyMsgPanel;
 	}
-	
+
 	, initDropTarget: function() {
 		this.removeListener('render', this.initDropTarget, this);
 		this.dropTarget = new Sbi.widgets.GenericDropTarget(this, {
@@ -71,7 +71,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 			});
 		}
 		*/
-		
+
 		if (ddSource.id === "field-grid-body") {
 			this.notifyDropFromQueryFieldsPanel(ddSource);
 		} else {
@@ -82,11 +82,11 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 				   icon: Ext.MessageBox.WARNING
 				});
 		}
-		
+
 		Sbi.trace("[ChartCategoryPanel.onFieldDrop]: OUT");
 
 	}
-	
+
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
 		var rows = ddSource.dragData.records;
 		if (rows.length > 1) {
@@ -118,16 +118,16 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 				});
 				return;
 			}
-			
+
 			if (this.fireEvent('beforeAddAttribute', this, aRow.data) == false) {
 				return;
 			}
-			
+
 			this.setCategory(aRow.data, true);
 		}
 
 	}
-	
+
 	, setCategory: function (category, isValid) {
 		var previousCategory = this.category;
 		this.category = Ext.apply({}, category); // making a clone of the input object
@@ -140,11 +140,11 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 		}
 		this.doLayout();
 	}
-	
+
 	, getCategory: function () {
 		return this.category;
 	}
-	
+
 	, removeCategory: function() {
 		var previousCategory = this.category;
 		this.category = null;
@@ -157,7 +157,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 		}
 		this.doLayout();
 	}
-	
+
 	, initEmptyMsgPanel: function() {
 		this.emptyMsgPanel = new Ext.Panel({
 			html: this.emptyMsg
@@ -166,22 +166,22 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 	}
 
 	, createCategoryPanel: function(isValid) {
-		
+
 		var validation= '';
-		
+
 		if(isValid != undefined && isValid==false){
 			validation = 'color:#ff0000; text-decoration:line-through;';
-			 
+
 		}
-	
-		
+
+
 //		thePanel.on('render', function(panel) {
 //			panel.getEl().on('dblclick', function() {
 //		     	this.fireEvent("attributeDblClick", this, this.category);
 //			}, this);
 //		}, this);
-		
-	
+
+
 		var item = new Ext.Panel({
             layout: {
                 type:'column'
@@ -201,20 +201,20 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
        		     , scope: this
        		})]
 		});
-		
+
 		item.on('dblclick', function() {
 		     	this.fireEvent("attributeDblClick", this, this.category);
 			}, this);
-		
+
 		return item;
 	}
-	
+
 	, validate: function (validFields) {
 		var invalidFields ='';
 		if (this.category != null){
 			var isValid = this.validateRecord(this.category,validFields);
 			if(isValid == false){
-				invalidFields +=''+this.category.alias+',';	
+				invalidFields +=''+this.category.alias+',';
 			}
 			this.setCategory(this.category, isValid);
 		}
@@ -226,10 +226,10 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 		var i = 0;
 		for(; i<validFields.length && isValid == false; i++){
 			if(validFields[i].id == category.id){
-			isValid = true;	
+			isValid = true;
 			}
 		}
 		return isValid;
 	}
-    
+
 });

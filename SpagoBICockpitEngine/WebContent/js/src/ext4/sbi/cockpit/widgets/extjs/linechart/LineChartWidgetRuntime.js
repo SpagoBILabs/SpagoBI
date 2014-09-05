@@ -1,23 +1,23 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
+
 Ext.ns("Sbi.cockpit.widgets.extjs.linechart");
 
-Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime = function(config) {	
+Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime = function(config) {
 	Sbi.trace("[LineChartWidgetRuntime.constructor]: IN");
 	var defaultSettings = {
-			
+
 	};
-	
+
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
-	
+
 	Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.constructor.call(this, c);
-	
+
 	Sbi.trace("[LineChartWidgetRuntime.constructor]: OUT");
 
 };
@@ -33,82 +33,82 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 
 	// no props for the moment
 
-	
+
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	
+
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	
+
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
-	
+
 	getChartType: function() {
-		return 'line'; 
+		return 'line';
 	}
-	
+
 	, isAreaFilled: function() {
 		return this.wconf.colorarea;
 	}
 
-	, isStacked: function() {		
+	, isStacked: function() {
 		return (this.wconf.type == 'stacked-linechart');
 		//return false;
 	}
-	
+
 	, isPercentStacked: function() {
 		return (this.wconf.type == 'percent-stacked-linechart');
 		//return((this.wconf.type).indexOf('percent')>=0);
 	}
-	
-	, refresh:  function() {  
+
+	, refresh:  function() {
 		Sbi.trace("[LineChartWidgetRuntime.refresh]: IN");
-		Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.refresh.call(this);			
+		Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.refresh.call(this);
 		Sbi.trace("[LineChartWidgetRuntime.refresh]: OUT");
 	}
 
 	, redraw: function() {
 		Sbi.trace("[LineChartWidgetRuntime.redraw]: IN");
-		
+
 		Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.redraw.call(this);
-		
+
 		var seriresConfig = this.getSeriesConfig();
 		var categoriesConfig =  this.getCategoriesConfig();
-		
+
 		var axes = this.getAxes( categoriesConfig, seriresConfig );
 		var series = this.getSeries( categoriesConfig, seriresConfig );
-		
+
 		var store = this.getStore();
-		
+
 		for(var i = 0; i < store.data.items.length; i++){
 			var seriesum = 0;
 
 			if(this.isPercentStacked()){
-				for(var j = 0; j < seriresConfig.fields.length; j++){					
+				for(var j = 0; j < seriresConfig.fields.length; j++){
 					for (var h in store.data.items[i].data){
 						if (h == seriresConfig.fields[j]){
 							seriesum = seriesum + parseFloat(store.data.items[i].data[h]);
 						}
-					}									
-				}								
-				
-				for(var j = 0; j < seriresConfig.fields.length; j++){										
+					}
+				}
+
+				for(var j = 0; j < seriresConfig.fields.length; j++){
 					for (var h in store.data.items[i].data){
 						if (h == seriresConfig.fields[j]){
 							if (seriesum != 0){
 								store.data.items[i].data[h] = parseFloat((store.data.items[i].data[h]/seriesum)*100);
-							} 									
+							}
 						}
-					}									
-				}	
-			}								
+					}
+				}
+			}
 		}
-		
+
 		store.sort(categoriesConfig.fields[0], 'ASC');
-		
+
 		this.chartPanel =  Ext.create('Ext.chart.Chart', {
             store: store,
             axes: axes,
@@ -119,14 +119,14 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
             background: this.getBackground(),
 	        legend: this.isLegendVisible()
         });
-		
+
 		this.setContentPanel(this.chartPanel);
-		
+
 		Sbi.trace("[LineChartWidgetRuntime.redraw]: OUT");
 	}
-	
+
 	, getAxes: function( categoriesConfig, seriesConfig ) {
-		
+
 		var seriesAxis = {
 		    type: 'Numeric'
 		    , position: seriesConfig.position
@@ -138,34 +138,34 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 //		    }
 			, title: seriesConfig.titles.length == 1? seriesConfig.titles[0]: undefined
 		   	, grid: true
-		    , minimum: 0		    
+		    , minimum: 0
 		};
-		
+
 		//For the percent type chart set the axes scale maximum to 100
 		if(this.isPercentStacked()) {
 			seriesAxis.maximum = 100;
 		}
-		
+
 		var categoryAxis = {
 		    type: 'Category'
 		    , position: categoriesConfig.position
 		    , fields: categoriesConfig.fields
-		    , title: categoriesConfig.titles.length == 1? categoriesConfig.titles[0]: undefined       
+		    , title: categoriesConfig.titles.length == 1? categoriesConfig.titles[0]: undefined
 	    };
 
 		var axes = [seriesAxis, categoryAxis];
-		
+
 		return axes;
 	}
 
 	, getSeries: function( categoriesConfig, seriesConfig ) {
-		
+
 		Sbi.trace("[LineChartWidgetRuntime.getSeries]: IN");
 		var series = [];
-		
-		for(var i = 0; i < seriesConfig.fields.length; i++) {			
+
+		for(var i = 0; i < seriesConfig.fields.length; i++) {
 			series.push({
-				type: this.getChartType(), 				
+				type: this.getChartType(),
 				fill: this.isAreaFilled(),
 				stacked: this.isStacked(),
 				title: seriesConfig.titles[i],
@@ -173,83 +173,83 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	            	size: 7,
 	                radius: 7
 	            },
-	            axis: seriesConfig.position,  
+	            axis: seriesConfig.position,
 	            smooth: true,
-	            tips: this.getSeriesTips(seriesConfig),	            
+	            tips: this.getSeriesTips(seriesConfig),
 	            xField: categoriesConfig.fields[0],
 	            yField: seriesConfig.fields[i],
 	            listeners: {
 	    	    	itemmousedown: this.onItemMouseDown,
 	    	    	scope: this
 	    	    },
-	    	    label: 
+	    	    label:
 	            {
 	               display: 'over',
 	               field: seriesConfig.fields[i],
-	               renderer: function(val) {	                   
+	               renderer: function(val) {
 	                   return val;
 	              }
 	            }
 	        });
 		}
 
-		
+
 		Sbi.trace("[LineChartWidgetRuntime.getSeries]: OUT");
-		
+
 		return series;
 	}
-	
+
 	, getItemMeta: function(item) {
 		var itemMeta = {};
-		
+
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: IN " + Sbi.toSource(item, true));
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: IN " + Sbi.toSource(item.series, true));
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: IN yField: " + item.series.yField);
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: IN xField: " + item.series.xField);
-		
+
 		// selected categories: names, headers & values
 		var categoriesConfig = this.getCategoriesConfig();
 		itemMeta.categoryFieldNames = [categoriesConfig.fields[0]];
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected categories names are equal to [" + itemMeta.categoryFieldNames +"]");
-		
+
 		itemMeta.categoryFieldHeaders = [];
 		for(var i = 0; i < itemMeta.categoryFieldNames.length; i++) {
 			itemMeta.categoryFieldHeaders[i] = this.getFieldHeaderByName( itemMeta.categoryFieldNames[i] );
 		}
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected categories headers are equal to [" + itemMeta.categoryFieldHeaders +"]");
-		
+
 		itemMeta.categoryValues = [];
 		for(var i = 0; i < itemMeta.categoryFieldNames.length; i++) {
-			itemMeta.categoryValues.push( item.storeItem.data[itemMeta.categoryFieldNames[i]] );	
+			itemMeta.categoryValues.push( item.storeItem.data[itemMeta.categoryFieldNames[i]] );
 		}
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected categories values are equal to [" + itemMeta.categoryValues +"]");
-	
+
 		// selected series: name, header & value
 		itemMeta.seriesFieldName = item.series.yField;
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected series name is equal to [" + itemMeta.seriesFieldName +"]");
-		
+
 		itemMeta.seriesFieldHeader = this.getFieldHeaderByName(itemMeta.seriesFieldName);
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected series header is equal to [" + itemMeta.seriesFieldHeader +"]");
-		
-		itemMeta.seriesFieldValue = item.storeItem.data[itemMeta.seriesFieldName];	 
+
+		itemMeta.seriesFieldValue = item.storeItem.data[itemMeta.seriesFieldName];
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: selected series value is equal to [" + itemMeta.seriesFieldValue +"]");
- 
-    	
+
+
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getItemMeta]: OUT");
-		
+
 		return itemMeta;
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
-	, onRender: function(ct, position) {	
+	, onRender: function(ct, position) {
 		Sbi.trace("[LineChartWidgetRuntime.onRender]: IN");
-		
+
 		this.msg = 'Sono un widget di tipo LineChart';
-		
-		Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.onRender.call(this, ct, position);	
-		
+
+		Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.onRender.call(this, ct, position);
+
 		Sbi.trace("[LineChartWidgetRuntime.onRender]: OUT");
 	}
 });

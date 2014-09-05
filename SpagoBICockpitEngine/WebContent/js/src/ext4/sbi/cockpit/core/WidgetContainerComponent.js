@@ -1,16 +1,15 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
- 
+
 Ext.ns("Sbi.cockpit.core");
 
 /**
  * @class Sbi.cockpit.core.WidgetContainerComponent
  * @extends Ext.Window
- * 
+ *
  * bla bla bla bla bla ...
  */
 
@@ -19,12 +18,12 @@ Ext.ns("Sbi.cockpit.core");
  * ...
  */
 Sbi.cockpit.core.WidgetContainerComponent = function(config) {
-	
+
 	Sbi.trace("[WidgetContainerComponent.costructor]: IN");
-	
+
 	this.adjustConfigObject(config);
 	this.validateConfigObject(config);
-	
+
 	// init properties...
 	var defaultSettings = {
 		title : this.getTitle(config)
@@ -41,75 +40,75 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	    , maximizable: true
 	    , resizable: true
 	};
-	
+
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.core.WidgetContainerComponent', defaultSettings);
-	
+
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 	Sbi.trace("[WidgetContainerComponent.costructor]: region is equal to [" + Sbi.toSource(this.region) + "]");
-	
+
 	Ext.apply(c, this.region);
 	delete this.region;
-	
+
 	// init events...
 	this.addEvents('performaction', 'move', 'resize');
-	
+
 	this.initServices();
 	this.init();
-	
+
 	if(this.widget) {
 		this.items = [this.widget];
 		this.widget.setParentComponent(this);
 	} else {
 		this.html = "Please configure the widget";
 	}
-	
+
 	this.closable = Sbi.config.docAuthor == '' || Sbi.user.userId == Sbi.config.docAuthor;
-	
-	
+
+
 	// constructor
 	Sbi.cockpit.core.WidgetContainerComponent.superclass.constructor.call(this, c);
-	
+
 	Sbi.trace("[WidgetContainerComponent.costructor]: OUT");
 };
 
 Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
-    
+
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
-	
+
 	/**
      * @property {Array} services
      * This array contains all the services invoked by this class
      */
 	services: null
-	
+
 	/**
      * @property {Sbi.cockpit.core.WidgetContainer} parentContainer
      * The parent container
      */
 	, parentContainer: null
-	
+
 	/**
      * @property {Sbi.cockpit.core.Widget} widget
      * The wrapped widget object
      */
 	, widget: null
-   
+
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	
+
 	/**
-	 * @method 
-	 * 
-	 * Controls that the configuration object passed in to the class constructor contains all the compulsory properties. 
+	 * @method
+	 *
+	 * Controls that the configuration object passed in to the class constructor contains all the compulsory properties.
 	 * If it is not the case an exception is thrown. Use it when there are properties necessary for the object
 	 * construction for whom is not possible to find out a valid default value.
-	 * 
+	 *
 	 * @param {Object} the configuration object passed in to the class constructor
-	 * 
+	 *
 	 * @return {Object} the config object received as input
 	 */
 	, validateConfigObject: function(config) {
@@ -117,53 +116,53 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	}
 
 	/**
-	 * @method 
-	 * 
-	 * Modify the configuration object passed in to the class constructor adding/removing properties. Use it for example to 
+	 * @method
+	 *
+	 * Modify the configuration object passed in to the class constructor adding/removing properties. Use it for example to
 	 * rename a property or to filter out not necessary properties.
-	 * 
+	 *
 	 * @param {Object} the configuration object passed in to the class constructor
-	 * 
+	 *
 	 * @return {Object} the modified version config object received as input
-	 * 
+	 *
 	 */
 	, adjustConfigObject: function(config) {
 		return config;
 	}
-	
+
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
-		
+
 	, getTitle: function(config) {
-		
+
 		var title = config.widget ? config.widget.getTitle() : 'Widget';
-		
+
 		return title;
-	}	
-	
+	}
+
 	, refreshTitle: function() {
 		var config = this.getWidgetConfiguration();
-		
+
 		this.setTitle(config.wgeneric.title);
 	}
-	
+
 	/**
 	 * @method
-	 * 
+	 *
 	 * @return {boolean} false if there is a wrapped widget; true otherwise
 	 */
 	, isEmpty: function() {
 		return (this.getWidget() === null);
 	}
-	
+
 	, isNotEmpty: function() {
 		return (this.isEmpty() === false);
 	}
-	
+
 	/**
 	 * @method
-	 * 
+	 *
 	 * Replace the old embedded widget with the new one passed as argument
 	 * @param {Object} the configuration object passed in to the class constructor
 	 */
@@ -171,7 +170,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		Sbi.trace("[WidgetContainerComponent.setWidget]: IN");
 		this.removeAll(true);
 		Sbi.trace("[WidgetContainerComponent.setWidget]: removed component content");
-		
+
 		if(Sbi.isValorized(widget)) {
 			// TODO check if widget is an instance of widget
 			this.widget = widget;
@@ -186,53 +185,53 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			this.widget = widget;
 		}
 		this.doLayout();
-		
+
 		this.refreshTitle();
-		
+
 		Sbi.trace("[WidgetContainerComponent.setWidget]: layout refreshed");
-		
+
 		Sbi.trace("[WidgetContainerComponent.setWidget]: OUT");
 	}
-	
+
 	/**
 	 * @method
-	 * 
+	 *
 	 * @return {Sbi.cockpit.core.Widget} the wrapped widget. null if there is widget wrapped
 	 */
 	, getWidget: function() {
 		var w = null;
 		if(Sbi.isValorized(this.widget)) {
 			w = this.widget;
-		} 
+		}
 		return w;
 	}
-	
+
 	, getWidgetId: function(){
 		var id = null;
 		if(Sbi.isValorized(this.widget)) {
 			id = this.widget.getId();
-		} 
+		}
 		return id;
 	}
-	
-	
-	
+
+
+
 	, setWidgetConfiguration: function(widgetConf) {
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: IN");
 		var widget;
-		
+
 		if(this.isEmpty()) {
 			widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(widgetConf);
 			this.setWidget(widget);
 		} else {
-			widget = this.getWidget();			
+			widget = this.getWidget();
 			widget.setConfiguration(widgetConf);
 		}
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: widgetConf is equal to [" + Sbi.toSource(widgetConf) + "]");
-	
+
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: OUT");
 	}
-	
+
 	, getWidgetConfiguration: function(widgetConf) {
 		var widgetConf = null;
 		if(Sbi.isValorized(this.widget)) {
@@ -240,14 +239,14 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		}
 		return widgetConf;
 	}
-	
-	, getParentContainer: function() {	
-		return this.parentContainer;	
+
+	, getParentContainer: function() {
+		return this.parentContainer;
 	}
 
-    , setParentContainer: function(container) {	
+    , setParentContainer: function(container) {
     	Sbi.trace("[WidgetContainerComponent.setParentContainer]: IN");
-		this.parentContainer = container;	
+		this.parentContainer = container;
 		Sbi.trace("[WidgetContainerComponent.setParentContainer]: OUT");
 	}
 	// -----------------------------------------------------------------------------------------------------------------
@@ -255,12 +254,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	// -----------------------------------------------------------------------------------------------------------------
 	, onShowWidgetConfiguration: function() {
 		this.fireEvent('performaction', this, 'showConfiguration');
-    } 
-    
+    }
+
     , onShowWidgetEditor: function() {
     	this.fireEvent('performaction', this, 'showEditor');
-    } 
-    
+    }
+
     , onWidgetRefresh: function() {
     	if(this.isNotEmpty()) {
     		var widget = this.getWidget();
@@ -269,39 +268,39 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     		Ext.Msg.alert('Message', 'No widget to refresh.');
     	}
     }
-	
+
     , onWidgetClone: function() {
-    	this.fireEvent('performaction', this, 'cloneWidget');    	    
+    	this.fireEvent('performaction', this, 'cloneWidget');
     }
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
-	
+
 	/**
-	 * @method 
-	 * 
+	 * @method
+	 *
 	 * Initialize the following services exploited by this component:
-	 * 
+	 *
 	 *    - none
 	 */
 	, initServices: function() {
-		
+
 	}
 
 
 	/**
-	 * @method 
-	 * 
+	 * @method
+	 *
 	 * Initialize the GUI
 	 */
-	, init: function() {					
+	, init: function() {
 		this.tools =  [{
 			type:'gear',
 			tooltip: LN('sbi.cockpit.window.toolbar.editor'),
     		handler: this.onShowWidgetEditor,
     		scope: this,
     		hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
-    	}, 
+    	},
     	/*{
     		type:'help',
     		tooltip: LN('sbi.cockpit.window.toolbar.configuration'),
@@ -320,16 +319,16 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
         	handler: this.onWidgetClone,
         	scope:this,
         	hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
-        }];			
+        }];
 	}
-		
+
 	// =================================================================================================================
 	// EVENTS
 	// =================================================================================================================
 	/**
 	 * @method
-	 * 
-	 * Override of Ext.window.Window.maximize method to handle resizing of charts 
+	 *
+	 * Override of Ext.window.Window.maximize method to handle resizing of charts
 	 */
 	, maximize: function() {
 		var o = this.callParent(arguments);
@@ -337,11 +336,11 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		widget.maximize();
 		return o;
 	}
-	
+
 	/**
 	 * @method
-	 * 
-	 * Override of restore method to handle resizing of charts 
+	 *
+	 * Override of restore method to handle resizing of charts
 	 */
 	, restore: function() {
 		var o = this.callParent(arguments);
@@ -349,16 +348,16 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		widget.restore();
 		return o;
 	}
-	
+
 	/**
 	 * @method
-	 * 
-	 * Override of resize method to handle resizing of charts 
+	 *
+	 * Override of resize method to handle resizing of charts
 	 */
 	, resize: function() {
 		var o = this.callParent(arguments);
 		var widget = this.getWidget();
 		widget.resize();
 		return o;
-	}	
+	}
 });

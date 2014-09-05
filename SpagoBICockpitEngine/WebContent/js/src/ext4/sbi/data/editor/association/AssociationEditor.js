@@ -1,19 +1,18 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
 
 Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	extend: 'Ext.Panel'
     , layout: 'border'
 
-	, config:{	
-		  services: null		
+	, config:{
+		  services: null
 		, stores: null
 		, associations: null
-		, contextMenu: null		
+		, contextMenu: null
 		, border: false
 	}
 
@@ -31,15 +30,15 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	 * @property {Ext.Array} associations
 	 * The list with all associations
 	 */
-	, association: null 	
+	, association: null
 
 	, constructor : function(config) {
 		Sbi.trace("[AssociationEditor.constructor]: IN");
 		this.initConfig(config);
 		this.initPanels(config);
-		this.callParent(arguments);		
+		this.callParent(arguments);
 		this.addEvents('addAssociation','addAssociationToList');
-		Sbi.trace("[AssociationEditor.constructor]: OUT");	
+		Sbi.trace("[AssociationEditor.constructor]: OUT");
 	}
 
 	,  initComponent: function() {
@@ -53,7 +52,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 						items: [this.dsContainerPanel]
 						},
 						{
-						id: 'assContainerPanel',	  
+						id: 'assContainerPanel',
 						region: 'south',
 						autoScroll: true,
 						split: true,
@@ -62,32 +61,32 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	        });
 	        this.callParent();
 	    }
-	   
+
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	
+
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, initializeEngineInstance : function (config) {
 
 	}
-	
+
 	, initPanels: function(config){
 		this.initDatasetPanel(config);
 		this.initAssociationPanel(config);
 	}
-	
+
 	, initDatasetPanel: function(config) {
 		this.dsContainerPanel = Ext.create('Sbi.data.editor.association.AssociationEditorDatasetContainer',{
 			stores: this.stores
 		});
 	}
-	
+
 	, initAssociationPanel: function(config) {
 		this.assContainerPanel = Ext.create('Sbi.data.editor.association.AssociationEditorList',{
-			height:200, 
+			height:200,
 			associations: this.associations
 		});
 		this.assContainerPanel.addListener('addAssociation', this.addAssociation, this);
@@ -96,7 +95,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 		this.assContainerPanel.addListener('selectAssociation', this.selectAssociation, this);
 		this.assContainerPanel.addListener('updateIdentifier', this.updateIdentifier, this);
 	}
-	
+
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -104,33 +103,33 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	/**
 	 * @method (fired)
 	 * Adds a new Association with active selections to the associations and to the associations grid
-	 * 
+	 *
 	 * @param {String} n The identifier (set for update context)
 	 */
-	, addAssociation: function(n){		
+	, addAssociation: function(n){
 		var toReturn = true;
-		
+
 		var allDs = this.dsContainerPanel.getAllDatasets();
 		var assToAdd = new Array();
 		assToAdd.id = this.getAssociationId(n);
-		for (var i=0; i< allDs.length; i++){			
+		for (var i=0; i< allDs.length; i++){
 			var ds = allDs.get(i);
 			var f = this.dsContainerPanel.getSelection(ds.dataset);
 			if (f !== null){
-				f.ds = ds.dataset;	
+				f.ds = ds.dataset;
 				assToAdd.push(f);
 			}
 		}
-		
+
 		toReturn = this.addAssociationToList(assToAdd);
-		
+
 		return toReturn;
 	}
-	
+
 	/**
 	 * @method (fired)
 	 * Remove the association from the associations
-	 * 
+	 *
 	 * @param {String} r The Association content to remove
 	 */
 	, removeAssociation: function(r){
@@ -144,14 +143,14 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 		Sbi.trace("[AssociationEditor.removeAssociation]: Removed association ['"+ r +"']");
 		Sbi.trace("[AssociationEditor.removeAssociation]: Associations List upgraded is  [ " +  Sbi.toSource(this.associations) + ']');
 	}
-	
+
 	/**
 	 * @method (fired)
 	 * Update (with an add and remove of the element) the association from the associations and grid
-	 * 
+	 *
 	 */
 	, modifyAssociation: function(){
-		var assToModify = this.assContainerPanel.getCurrentAss();		
+		var assToModify = this.assContainerPanel.getCurrentAss();
 		if (assToModify == null){
 	   		  alert(LN('sbi.cockpit.association.editor.msg.modify'));
 	   		  return;
@@ -159,15 +158,15 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 		var assToModifyRec = this.assContainerPanel.getAssociationById(assToModify.id);
 	    if (this.addAssociation(assToModify.id)){
 			this.assContainerPanel.removeAssociationFromGrid(assToModifyRec);
-			this.removeAssociation(assToModify.description);	    
+			this.removeAssociation(assToModify.description);
 	    }
-		
+
 	}
-	 
+
 	/**
 	 * @method (fired)
 	 * Select the cells linked to the list grid
-	 * 
+	 *
 	 * @param {String} r The Association content to use for the selection of elements
 	 */
 	, selectAssociation: function(r){
@@ -178,82 +177,82 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 			this.dsContainerPanel.setSelection(el);
 		}
 	}
-	
+
 	/**
 	 * @method (fired)
 	 * Update the identifier modified manually from the user
-	 * 
+	 *
 	 * @param {Element} e The element (cell) modified.
 	 */
 	, updateIdentifier: function(e){
 		var obj = this.getAssociationById(e.originalValue);
 		if (Sbi.isValorized(obj)) obj.id = e.value;
-		
+
 	}
-	
+
 	/**
-	 * @method 
+	 * @method
 	 * Returns the Associations list
-	 * 
+	 *
 	 */
 	, getAssociationsList: function(){
 		return this.associations;
 	}
 
 	/**
-	 * @method 
+	 * @method
 	 * Set the Associations list
-	 * 
+	 *
 	 */
 	, setAssociationsList: function(associations){
 		this.associations = associations;
 	}
-	
+
 	/**
-	 * @method 
+	 * @method
 	 * Reset the Associations list
-	 * 
+	 *
 	 */
 	, removeAllAssociations: function(){
 		this.associations = new Array();
 	}
-	
+
 	// -----------------------------------------------------------------------------------------------------------------
     // utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 	/**
-	 * @method 
+	 * @method
 	 * Adds a new Association to the associations with the selected elements.
-	 * 
+	 *
 	 * @param {Array} r The array of elements
 	 */
 	, addAssociationToList: function(r){
 		var toReturn = true;
-		
-		if (this.associations == null) 
+
+		if (this.associations == null)
 			this.associations = new Array();
-		
+
 		var obj = '';
 		var objType = '';
 		var equal = '';
 		var wrongTypes = false;
-		
-		for (var i=0; i< r.length; i++){			
-			var el = r[i];			
-			
+
+		for (var i=0; i< r.length; i++){
+			var el = r[i];
+
 			if (i==0){
 				objType = el.colType;
 				equal = '=';
 			}else{
 				//check consistency between type fields
 				if (objType !== el.colType){
-					wrongTypes = true;					
+					wrongTypes = true;
 				}
 			}
 			//create association string (ex: tabA.colA=tabB.colB...)
-			obj += el.ds + '.' + el.alias + ((i<r.length-1)?equal:'');				
+			obj += el.ds + '.' + el.alias + ((i<r.length-1)?equal:'');
 		}
-		
+
 		if (this.existsAssociation(obj)){
 			alert(LN('sbi.cockpit.association.editor.msg.duplicate'));
 			return false;
@@ -266,7 +265,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 					, LN('sbi.cockpit.association.editor.msg.differentType')
 		            , function(btn, text) {
 		                if ( btn == 'yes' ) {
-		                	this.associations.push({id: r.id, description:obj});	
+		                	this.associations.push({id: r.id, description:obj});
 		                	this.assContainerPanel.addAssociationToList({id: r.id, description:obj});
 		                	toReturn = true;
 		                }else
@@ -287,30 +286,30 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 		Sbi.trace("[AssociationEditor.addAssociation]: Associations List updated with  [ " +  Sbi.toSource(this.associations) + ']');
 		return toReturn;
 	}
-	
+
 	, existsAssociation: function(a){
 		if (this.getAssociationByAss(a)  != null)
-			return true;				
+			return true;
 		else
 			return false;
 	}
-	
+
 	/**
-	 * @method 
+	 * @method
 	 * Returns the identifier for the Association (insert or update action)
-	 * 
+	 *
 	 * @param {String} n The identifier. Setted only for update action
 	 */
 	, getAssociationId: function(n){
 		var newId = '';
 		//parameter n is valorized only in modify context
-		if (n !== null && n !== undefined) 
+		if (n !== null && n !== undefined)
 			newId += n;
 		else{
 			newId += '#';
 			if (this.associations != null){
 				//get max id already setted
-				var maxId = 0;			
+				var maxId = 0;
 				for (var i=0; i<this.associations.length; i++ ){
 					var currId = this.associations[i].id.substring(1);
 					if (maxId < parseInt(currId))
@@ -320,19 +319,19 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 			}
 			else
 				newId += '0';
-		}	
-		
+		}
+
 		return newId;
 	}
-	
+
 	/**
-	 * @method 
-	 * Returns the Association object getted from the associations throught the id. 
+	 * @method
+	 * Returns the Association object getted from the associations throught the id.
 	 * Format: {id:xx, assyy}
-	 * 
+	 *
 	 * @param {String} id The identifier.
 	 */
-	, getAssociationById: function(id){	
+	, getAssociationById: function(id){
 		if (!Sbi.isValorized(this.associations)) return null;
 		for (var i=0; i<this.associations.length; i++){
 			var obj = this.associations[i];
@@ -343,15 +342,15 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * @method 
-	 * Returns the Association object getted from the AssociationsList throught the Association content. 
+	 * @method
+	 * Returns the Association object getted from the AssociationsList throught the Association content.
 	 * Format: {id:xx, description:yy}
-	 * 
+	 *
 	 * @param {String} ass The Association content.
 	 */
-	, getAssociationByAss: function(r){	
+	, getAssociationByAss: function(r){
 		if (this.associations == null) return null;
 		for (var i=0; i<this.associations.length; i++){
 			var obj = this.associations[i];
@@ -359,7 +358,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 				return obj;
 				break;
 			}
-		}	
+		}
 		return null;
 	}
 });

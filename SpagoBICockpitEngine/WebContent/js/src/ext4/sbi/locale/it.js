@@ -1,9 +1,9 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
+
 Ext.ns("Sbi.locale");
 
 Sbi.locale.ln = Sbi.locale.ln || new Array();
@@ -44,12 +44,12 @@ Sbi.locale.formats = {
     		//suffix: '',
     		nullValue: ''
 		},
-		
+
 		date: {
 			dateFormat: 'd/m/Y',
     		nullValue: ''
 		},
-		
+
 		boolean: {
 			trueSymbol: 'vero',
     		falseSymbol: 'false',
@@ -72,7 +72,7 @@ Sbi.locale.ln['sbi.generic.cancel'] = 'Annulla ';
 Sbi.locale.ln['sbi.generic.resultMsg'] = 'Operazione riuscita';
 
 //===================================================================
-//WIZARD 
+//WIZARD
 //===================================================================
 Sbi.locale.ln['sbi.ds.wizard.general']= 'Salva il dataset';
 Sbi.locale.ln['sbi.ds.wizard.detail']= 'Carica file';
@@ -96,13 +96,13 @@ Sbi.locale.ln['sbi.ds.moreRecent']= 'Recenti';
 
 
 //===================================================================
-//BROWSER 
+//BROWSER
 //===================================================================
 Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Cerca fra i dataset';
 Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Cerca per parola chiave...';
 
 //===================================================================
-//MYDATA 
+//MYDATA
 //===================================================================
 Sbi.locale.ln['sbi.mydata.useddataset'] = "Data Set in uso";
 Sbi.locale.ln['sbi.mydata.mydataset'] = "I Miei Data Set";

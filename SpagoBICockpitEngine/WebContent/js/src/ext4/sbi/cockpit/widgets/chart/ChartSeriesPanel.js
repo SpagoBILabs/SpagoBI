@@ -1,7 +1,7 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 Ext.ns("Sbi.cockpit.widgets.chart");
@@ -13,21 +13,21 @@ Sbi.cockpit.widgets.chart.ChartSeriesPanel = function(config) {
 		, frame: true
 		, emptyMsg: LN('sbi.cockpit.widgets.chartseriespanel.emptymsg')
 	};
-		
+
 	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.chart && Sbi.settings.cockpit.widgets.chart.chartSeriesPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.widgets.chart.chartSeriesPanel);
 	}
-	
+
 	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.designer && Sbi.settings.cockpit.designer.common) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.designer.common);
 	}
-	
+
 	var c = Ext.apply(defaultSettings, config || {});
-	
+
 	Ext.apply(this, c);
-	
+
 	this.init(c);
-	
+
 	c = Ext.apply(c, {
 		items: [
 		        this.emptyMsgPanel
@@ -44,19 +44,19 @@ Sbi.cockpit.widgets.chart.ChartSeriesPanel = function(config) {
 	  	      }
 		]
 	});
-	
+
 	// constructor
 	Sbi.cockpit.widgets.chart.ChartSeriesPanel.superclass.constructor.call(this, c);
-    
+
     this.on('render', this.initDropTarget, this);
     this.on('afterLayout', this.setActiveItem, this);
-    
+
     thisPanel = this;
-    
+
 };
 
 Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
-	
+
 	  emptyMsg : null
 	, emptyMsgPanel : null
 	, targetRow: null
@@ -67,7 +67,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 	, colorColumn : null
 	, validFields: null
 	, defaultAggregationFunction: 'SUM'
-	
+
 	// static members
 	, Record: Ext.data.Record.create([
 	      {name: 'id', type: 'string'}
@@ -81,7 +81,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 	      , {name: 'precision', type: 'int'}
 	      , {name: 'suffix', type: 'string'}
 	])
-	
+
 	, aggregationFunctionsStore:  new Ext.data.ArrayStore({
 		 fields: ['funzione', 'nome', 'descrizione'],
 	     data : [
@@ -91,16 +91,16 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 	        ['MIN', LN('sbi.qbe.selectgridpanel.aggfunc.name.min'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.min')],
 	        ['COUNT', LN('sbi.qbe.selectgridpanel.aggfunc.name.count'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')],
 	        ['COUNT_DISTINCT', LN('sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')]
-	     ] 
+	     ]
 	 })
-	
-	
+
+
 	, init: function(c) {
 		this.initEmptyMsgPanel();
 		this.initStore(c);
 		this.initGrid(c);
 	}
-	
+
 	, initEmptyMsgPanel: function() {
 		this.emptyMsgPanel = new Ext.Panel({
 			html: this.emptyMsg
@@ -113,9 +113,9 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'color', 'showcomma', 'precision', 'suffix', 'valid']
 		});
 	}
-	
+
 	, initGrid: function (c) {
-		
+
 		var serieNameColumn =  {
             	text: LN('sbi.cockpit.widgets.chartseriespanel.columns.seriename')
             	,dataIndex: 'seriename'
@@ -125,17 +125,17 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
              	, renderer : function(v, metadata, record) {
 
             	 if(record.data.valid != undefined && !record.data.valid){
-            		 metadata.attr = ' style="color:#ff0000; text-decoration:line-through;';	   	    		
+            		 metadata.attr = ' style="color:#ff0000; text-decoration:line-through;';
 
             	 }
             	 else{
-            		 metadata.attr = ' style="background:' + v + ';"';	   	    							
+            		 metadata.attr = ' style="background:' + v + ';"';
             	 }
 
-            	 return v; 
+            	 return v;
              	}
              };
-		
+
 		var fieldColumn = {
 		    	text: LN('sbi.cockpit.widgets.chartseriespanel.columns.queryfield')
 		    	, dataIndex: 'alias'
@@ -144,7 +144,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		        , scope: this
 
 		};
-		
+
 		var aggregatorColumn = {
 		    	 text: LN('sbi.qbe.selectgridpanel.headers.function')
 		         , dataIndex: 'funct'
@@ -159,37 +159,37 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			         triggerAction: 'all',
 			         autocomplete: 'off',
 			         emptyText: LN('sbi.qbe.selectgridpanel.aggfunc.name.none'),
-			         selectOnFocus: true			       
+			         selectOnFocus: true
 		         })
 			     , hideable: true
 			     , hidden: false
 			     , width: 50
 			     , sortable: false
 		    };
-		
+
 		this.colorColumn = {
 				text: LN('sbi.cockpit.widgets.chartseriespanel.columns.color')
 				, width: 60
 				, dataIndex: 'color'
-				, editor: new Ext.form.TextField({}) // only in order to make the column editable: the editor is built 
-				 									 // on the grid's beforeedit event 
+				, editor: new Ext.form.TextField({}) // only in order to make the column editable: the editor is built
+				 									 // on the grid's beforeedit event
 				, renderer : function(v, metadata, record) {
-					metadata.attr = ' style="background:' + v + ';"';	   	
-					return v;  
+					metadata.attr = ' style="background:' + v + ';"';
+					return v;
 		       }
 			};
-		
+
 		var showCommaCheckColumn = {
 				xtype: 'checkcolumn',
 	    		text: LN('sbi.cockpit.widgets.chartseriespanel.columns.showcomma')
 	    		, tooltip: LN('sbi.cockpit.widgets.chartseriespanel.columns.showcomma')
 	    		, dataIndex: 'showcomma'
 	    		, hideable: false
-	    		, hidden: false	
+	    		, hidden: false
 	    		, width: 30
 	    		, sortable: false
 	    	};
-	    
+
 	    var precisionColumn = {
 		    	text: LN('sbi.cockpit.widgets.chartseriespanel.columns.precision')
 		    	, tooltip: LN('sbi.cockpit.widgets.chartseriespanel.columns.precision')
@@ -203,7 +203,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		        	, maxValue: 10
 		        })
 		    };
-		
+
 	    var suffixColumn = {
 		    	text: LN('sbi.cockpit.widgets.chartseriespanel.columns.suffix')
 		    	, tooltip: LN('sbi.cockpit.widgets.chartseriespanel.columns.suffix')
@@ -213,8 +213,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		    	, width: 30
 		        , editor: new Ext.form.TextField({})
 		    };
-		 
-		
+
+
 		this.gridColumns = [serieNameColumn, fieldColumn, aggregatorColumn];
 		if (this.displayColorColumn)  {
 			this.gridColumns.push(this.colorColumn);
@@ -222,12 +222,12 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		this.gridColumns.push(showCommaCheckColumn);
 		this.gridColumns.push(precisionColumn);
 		this.gridColumns.push(suffixColumn);
-	    
+
 		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
 	        clicksToEdit: 1
 	    });
-		
-		
+
+
 		this.grid = new Ext.grid.Panel({
 			 store: this.store
 			 , border: false
@@ -241,7 +241,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 	                   'itemkeydown' : function(view, record, item, index, key) {
 	                       if (key.getKey() == 46) {//the delete button
 	                          thisPanel.removeSelectedMeasures();
-	                       }  
+	                       }
 	                   }
 	               }
 			 }
@@ -255,7 +255,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
  	        	    	if (t.field === 'color'){
  	 	        			this.currentRowRecordEdited = t.rowIdx;
  	 	        			var color = this.store.getAt(this.currentRowRecordEdited).data.color;
- 	 	        			
+
  	 	        			var colorFieldEditor = new Ext.ux.ColorField({ value: color, msgTarget: 'qtip', fallback: true});
  	 	        			colorFieldEditor.on('colorUpdate', function(f, val) {
  	 	        				var colorExe = (f.indexOf('#')>= 0) ? f: '#'+f;
@@ -282,7 +282,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
  	        	, refresh: {
  	          		fn: function(e, t) {
  	          			var gridView = this.grid.getView();
- 	          		
+
  	          		}
          			, scope: this
  	        	}
@@ -290,10 +290,10 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
  	        , type: 'measuresContainerPanel'
 
 		});
-		
-		
+
+
 	}
-	
+
 	, initDropTarget: function() {
 		this.removeListener('render', this.initDropTarget, this);
 		this.dropTarget = new Sbi.widgets.GenericDropTarget(this, {
@@ -309,11 +309,11 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		} else {
 			alert('Unknown drag source [' + ddSource.id + ']');
 		}
-		
+
 		Sbi.trace("[ChartSeriesPanel.onFieldDrop]: OUT");
 
 	}
-	
+
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
 		var rows = ddSource.dragData.records;
 		var i = 0;
@@ -340,21 +340,21 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 				return;
 			}
 			// if the measure is missing the aggregation function, user must select it
-			
+
 			var measure = Ext.apply({}, aRow) ;
-			
-			if(this.defaultAggregationFunction){					
-				measure.data.funct = this.defaultAggregationFunction;					
+
+			if(this.defaultAggregationFunction){
+				measure.data.funct = this.defaultAggregationFunction;
 			}else{
 				// if default aggregation function is missing, use the first occurrence of the arrayStore aggregationFunctionsStore
-				measure.data.funct = this.aggregationFunctionsStore.first().get('funzione');				
+				measure.data.funct = this.aggregationFunctionsStore.first().get('funzione');
 			}
-			
+
 			this.addMeasure(measure);
-			
+
 		}
 	}
-	
+
 	, notifyDropFromMeasuresContainerPanel: function(ddSource) {
 		// DD on the same MeasuresContainerPanel --> re-order the fields
 		var rows = ddSource.dragData.selections;
@@ -374,7 +374,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			if (rowIndex === undefined || rowIndex === false) {
 				rowIndex = undefined;
 			}
-	           
+
          	var rowData = this.store.getById(row.id);
         	this.store.remove(this.store.getById(row.id));
             if (rowIndex !== undefined) {
@@ -382,7 +382,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
             } else {
             	this.store.add(rowData);
             }
-	         
+
 	         this.grid.getView().refresh();
 		}
 	}
@@ -395,7 +395,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		}
 		return measures;
 	}
-	
+
 	, removeSelectedMeasures: function() {
         var sm = this.grid.getSelectionModel();
         var rows = sm.getSelections();
@@ -404,17 +404,17 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
         	this.getLayout().setActiveItem( 0 );
         }
 	}
-	
+
 	, addMeasure: function(record) {
 		var data = Ext.apply({}, record.data, {
 			seriename: record.data.alias
 			, color: Sbi.widgets.Colors.defaultColors[this.store.getCount()]
 			, showcomma: true
 			, precision: 2
-			, suffix: '' 
+			, suffix: ''
 		});
 		var theRecord = new this.Record(data);
-		// if the measure is already present, does not insert it 
+		// if the measure is already present, does not insert it
 		if (this.containsMeasure(theRecord)) {
 			Ext.Msg.show({
 				   title: LN('sbi.cockpit.widgets.chartseriespanel.cannotdrophere.title'),
@@ -427,7 +427,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			this.getLayout().setActiveItem( 1 );
 		}
 	}
-	
+
 	, containsMeasure: function(record) {
 		if (this.store.findBy(function(aRecord) {
             	return aRecord.get("alias") === record.get("alias") && aRecord.get("funct") === record.get("funct");
@@ -437,7 +437,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			return true;
 		}
 	}
-	
+
 	, removeAllMeasures: function() {
 		this.store.removeAll(false);
 		if (this.rendered) {
@@ -452,14 +452,14 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			for (; i < measures.length; i++) {
 	  			var measure = measures[i];
 	  			var record = new this.Record(measure);
-	  			this.store.add(record); 
+	  			this.store.add(record);
 	  		}
 			if (this.rendered) {
 				this.getLayout().setActiveItem( 1 );
 			}
 		}
 	}
-	
+
 	, setActiveItem: function() {
 		this.un('afterLayout', this.setActiveItem, this);
     	if (this.store.getCount() > 0) {
@@ -469,14 +469,14 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
     	}
 	}
 	, validate: function (validFields) {
-			
+
 		this.validFields = validFields;
 
 		var invalidFields = this.modifyStore(validFields);
-		
+
 		this.store.fireEvent("datachanged", this, null);
-		
-		return invalidFields;	
+
+		return invalidFields;
 	}
 	, modifyStore: function (validFields) {
 		var invalidFields = '';
@@ -497,12 +497,12 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		var i = 0;
 		for(; i<validFields.length && isValid == false; i++){
 			if(validFields[i].id == record.data.id){
-			isValid = true;	
+			isValid = true;
 			}
 		}
 		return isValid;
 	}
 
-	
-	
+
+
 });

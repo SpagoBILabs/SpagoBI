@@ -1,26 +1,26 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
+
 Ext.ns("Sbi.cockpit.widgets.linechart");
 
-Sbi.cockpit.widgets.linechart.LineChartWidget = function(config) {	
+Sbi.cockpit.widgets.linechart.LineChartWidget = function(config) {
 	Sbi.trace("[BarChartWidget.constructor]: IN");
 	var defaultSettings = {
-			
+
 	};
-	
+
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.linechart.LineChartWidget', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
-	
+
 	Sbi.cockpit.widgets.linechart.LineChartWidget.superclass.constructor.call(this, c);
 	this.init();
 
 	this.addEvents('selection');
-	
+
 	Sbi.trace("[BarChartWidget.constructor]: OUT");
 
 };
@@ -35,36 +35,36 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 	// =================================================================================================================
 	  chartDivId : null
 	, chart : null
-	, chartConfig : null 	
-	
+	, chartConfig : null
+
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	
+
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, redraw: function() {
-		Sbi.trace("[BarChartWidget.redraw]: IN");		
-		this.createChart();	
+		Sbi.trace("[BarChartWidget.redraw]: IN");
+		this.createChart();
 		Sbi.trace("[BarChartWidget.redraw]: OUT");
 	}
 
-    , refresh:  function() {  
+    , refresh:  function() {
     	Sbi.trace("[BarChartWidget.refresh]: IN");
-    	this.init();	
+    	this.init();
     	this.createChart();
 		Sbi.trace("[BarChartWidget.refresh]: OUT");
 	}
 
-    
+
 //    , createChart: function () {
-//		
+//
 //		var retriever = new Sbi.worksheet.runtime.DefaultChartDimensionRetrieverStrategy();
 //		var size = retriever.getChartDimension(this);
 //		this.update(' <div id="' + this.chartDivId + '" style="width: ' + size.width + '; height: ' + size.height + ';"></div>');
-//		
+//
 //		var storeObject = this.getJsonStoreLineExt3();
 //		var colors = null;
 //		if (this.chartConfig.groupingVariable != null) {
@@ -72,7 +72,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 //		} else {
 //			colors = this.getColors();
 //		}
-//		
+//
 //		var items = {
 //				//xtype: 'linechart',
 //				store: storeObject.store,
@@ -96,13 +96,13 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 //			});
 //			items.yAxis = axis;
 //		}
-//		
+//
 //		this.addChartConfExt3(items);
 //		items.region= 'center';
 //		var lineChartPanel = new Ext.chart.LineChart(items);
 //
 //		var thispanel = this;
-//		
+//
 //
 //		var exportChartPanel  = new Ext.Panel({
 //			border: false,
@@ -110,26 +110,26 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 //			height: 20,
 //			html: '<div style=\"padding-top: 5px; padding-bottom: 5px; font: 11px tahoma,arial,helvetica,sans-serif;\">'+LN('sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExport')+'</div>'
 //		});
-//		
+//
 //		var chartConf ={
 //			renderTo : this.chartDivId,
 //			border: false,
 //			items: [exportChartPanel, lineChartPanel]
 //		}
-//		
+//
 //		this.on('contentclick', function(event){
 //			this.byteArrays=new Array();
 //			try{
 //				this.byteArrays.push(lineChartPanel.exportPNG());
 //			}catch(e){}
-//			
+//
 //			exportChartPanel.update('');
 //			this.headerClickHandler(event,null,null,lineChartPanel, this.reloadJsonStoreExt3, this);
 //		}, this);
 //
 //		new Ext.Panel(chartConf);
 //	}
-    
+
 	, createChart: function () {
 
 		var retriever = new Sbi.cockpit.widgets.chart.DefaultChartDimensionRetrieverStrategy();
@@ -145,7 +145,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 				extraStyle: extraStyle,
 				style: 'height: 85%;',
 				hiddenseries: new Array(),
-				horizontal: this.chartConfig.orientation === 'horizontal'				
+				horizontal: this.chartConfig.orientation === 'horizontal'
 		};
 
 		//set the height if ie
@@ -173,22 +173,22 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
-	
+
 	//----- Ext 4 Implementation related functions ------------------------------------------
 	, getChart : function(horizontal, items, colors, percent){
-		
+
 		var chartDataStore = items.store;
-		
-		var chartType = 'line'; 
+
+		var chartType = 'line';
 		var isStacked = false;
 
-		//Chart Type is 'side-by-side-linechart'		
-		
+		//Chart Type is 'side-by-side-linechart'
+
 		//Create Axes Configuration
 		var chartAxes = this.createAxes(horizontal, items, percent);
 		//Create Series Configuration
 		var chartSeries = this.createSeries(horizontal, items, chartType, isStacked);
-		
+
 		//Legend visibility
 		var showlegend;
 		if (this.chartConfig.showlegend !== undefined){
@@ -196,7 +196,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 		} else {
 			showlegend = true;
 		}
-		
+
 		//Create theme for using custom defined colors
 		Ext.define('Ext.chart.theme.CustomTheme', {
 		    extend: 'Ext.chart.theme.Base',
@@ -207,7 +207,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 		        }, config)]);
 		    }
 		});
-		
+
 	    var chart = Ext.create("Ext.chart.Chart", {
 	        width: '100%',
 	    	height: '100%',
@@ -222,22 +222,22 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 	        shadow: true,
 	        legend: showlegend,
 	        axes: chartAxes,
-	        series: chartSeries	        
+	        series: chartSeries
 
 	    });
 
 	    return chart;
 	}
-	
+
 
 	/*
 	 * Create the Series object configuration
 	 */
-	, createSeries : function(horizontal,items, chartType, isStacked){		
+	, createSeries : function(horizontal,items, chartType, isStacked){
 		var thisPanel = this;
 		var axisPosition;
 		var series = [];
-		
+
 		if (horizontal){
 			//bar chart
 			axisPosition = 'bottom';
@@ -245,13 +245,13 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			//column chart
 			axisPosition = 'left';
 		}
-		
+
 		var seriesNames = [];
 		var displayNames = [];
-				
+
 		//Extract technical series names and corresponding name to display
 		for (var i=0; i< items.series.length; i++){
-			
+
 			var name;
 			if (horizontal){
 				name = items.series[i].xField;
@@ -261,12 +261,12 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			//seriesNames.push(name);
 			var displayName = items.series[i].displayName;
 			//displayNames.push(displayName);
-		
-		
+
+
 			var areaFill = this.chartConfig.colorarea;
-			
+
 			//Costruct the series object(s)
-			var aSerie = {			
+			var aSerie = {
 					fill: areaFill,
 	                type: chartType,
 	                highlight: {
@@ -277,7 +277,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 	                smooth: true,
 	                stacked: isStacked,
 	                xField: "categories",
-	                yField: name,	                
+	                yField: name,
 	                title: displayName,
 	    	        tips: {
 		            	  trackMouse: true,
@@ -286,7 +286,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 		            	  width: 'auto',
 		            	  minHeight: 28,
 		            	  renderer: function(storeItem, item) {
-		            		   //this.setTitle(String(item.value[0])+" : "+String(item.value[1]));	            		  
+		            		   //this.setTitle(String(item.value[0])+" : "+String(item.value[1]));
 		            		   var tooltipContent = thisPanel.getTooltip(storeItem, item);
 		            		   this.setTitle(tooltipContent);
 		            	  }
@@ -296,7 +296,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			  				var categoryField ;
 			  				var valueField ;
 			  				categoryField = obj.storeItem.data[obj.series.xField];
-			  				valueField = obj.storeItem.data[obj.series.xField];	  				
+			  				valueField = obj.storeItem.data[obj.series.xField];
 		  		    		var selections = {};
 			  				var values =  [];
 			  				selections[displayNames] = {};
@@ -305,19 +305,19 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 		  		    		thisPanel.fireEvent('selection', thisPanel, selections);
 			  			}
 				}
-	                
+
 	         };
-			
+
 			series.push(aSerie);
 		}
-		
+
 		return series;
 	}
 	/*
 	 * Create the Axes object configuration
 	 */
 	, createAxes : function(horizontal,items,percent){
-		var axes;	
+		var axes;
 		var positionNumeric;
 		var positionCategory;
 
@@ -330,9 +330,9 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			positionNumeric = 'left';
 			positionCategory = 'bottom';
 		}
-		
+
 		var seriesNames = [];
-		
+
 		for (var i=0; i< items.series.length; i++){
 			var name;
 			if (horizontal){
@@ -343,7 +343,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			seriesNames.push(name);
 		}
 
-		
+
 		axes = [{
 			type: "Numeric",
 			minimum: 0,
@@ -358,17 +358,17 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			fields: ["categories"]
 //			title: "Category"
 		}];
-		
+
 		//For the percent type chart set the axes scale maximum to 100
 		if (percent){
 			axes[0].maximum = 100;
 		}
-		
+
 		return axes;
 	}
-	
-	, getTooltip : function(record, item){	
-				
+
+	, getTooltip : function(record, item){
+
 		var chartType = this.chartConfig.designer;
 		var allRuntimeSeries = this.getRuntimeSeries();
 		var allDesignSeries = this.chartConfig.series;
@@ -376,14 +376,14 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 		var horizontal = this.chartConfig.orientation === 'horizontal';
 		var colors = this.getColors();
 		var series = item.series;
-		
+
 		var percent = ((this.chartConfig.type).indexOf('percent')>=0);
 		var storeObject = this.getJsonStore(percent);
-		
+
 		var selectedSerieName = series.yField;
-		
+
 		var selectedSerie;
-		
+
 		if(horizontal){
 			series = this.getChartSeries(storeObject.serieNames, colors, true);
 			for (var i =0; i<series.length;i++){
@@ -394,20 +394,20 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			}
 
 		}else{
-			series = this.getChartSeries(storeObject.serieNames, colors);			
+			series = this.getChartSeries(storeObject.serieNames, colors);
 			for (var i =0; i<series.length;i++){
 				if (series[i].yField == selectedSerieName){
-					selectedSerie = series[i];					
+					selectedSerie = series[i];
 					break;
 				}
 			}
 		}
 
-		
+
 		var valueObj = this.getFormattedValue(null, record, selectedSerie, chartType, allRuntimeSeries, allDesignSeries, type, horizontal);
-		
+
 		var tooltip = '';
-		
+
 		if (valueObj.measureName !== valueObj.serieName) {
 			tooltip = valueObj.serieName + '<br/>' + record.data.categories + '<br/>';
 			// in case the serie name is different from the measure name, put also the measure name
@@ -416,45 +416,45 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			tooltip =  record.data.categories + '<br/>' + selectedSerie.displayName + ' : ' ;
 		}
 		tooltip += valueObj.value;
-		
+
 		return tooltip;
 
 	}
-	
-	
+
+
 	///---------------------------------------------------------------------
-	
-	
+
+
 	, getChartSeries: function(serieNames, colors, horizontal){
 		var seriesForChart = new Array();
 		for(var i=0; i<serieNames.length; i++){
-			var serie = {	
+			var serie = {
 	                style: {}
 			};
-			
+
 //			if(this.chartConfig.type == 'percent-stacked-barchart'){
-//				serie.displayName =  (serieNames[i]);//if percent doesn't matter the scale 
+//				serie.displayName =  (serieNames[i]);//if percent doesn't matter the scale
 //			}else{
 				//serie.displayName =  this.formatLegendWithScale(serieNames[i]); //Commented by MC
 //			}
 			serie.displayName =  serieNames[i];
-			
+
 			if(horizontal){
 				serie.xField = 'series'+i;
 			}else{
 				serie.yField = 'series'+i;
 			}
-			
+
 			if(colors!=null){
 				serie.style.color= colors[i];
 			}
-			
+
 			seriesForChart.push(serie);
-		}		
+		}
 		return seriesForChart;
 	}
 
-	//used for tooltip	
+	//used for tooltip
 	, getFormattedValue: function (chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type, horizontal){
 		var theSerieName  = series.displayName;
 		var value ;
@@ -471,15 +471,15 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 		}else{
 			//value = Ext.util.Format.number(record.data[series.xField], '0.00');
 			if(horizontal){
-				value = record.data['seriesflatvalue'+series.xField.substring(series.xField.length-1)];		        
+				value = record.data['seriesflatvalue'+series.xField.substring(series.xField.length-1)];
 			}else{
 				value = record.data['seriesflatvalue'+series.yField.substring(series.yField.length-1)];
 			}
 		}
 		*/
-		
+
 		value = record.data[series.yField];
-		
+
 		// find the measure's name
 		var i = 0;
 		for (; i < allRuntimeSeries.length; i++) {
@@ -490,7 +490,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 				break;
 			}
 		}
-		
+
 		i = 0;
 		// find the serie's (design-time) definition
 		for (; i < allDesignSeries.length; i++) {
@@ -509,7 +509,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
     		currencySymbol: '',
     		nullValue: ''
 		});
-			
+
 		// add suffix
 		if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
 			value = value + ' ' + serieDefinition.suffix;
@@ -521,26 +521,26 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 		toReturn.measureName = measureName;
 		return toReturn;
 	}
-	
-	
+
+
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
-	, onRender: function(ct, position) {	
+	, onRender: function(ct, position) {
 		Sbi.trace("[BarChartWidget.onRender]: IN");
-		
+
 		this.msg = 'Sono un widget di tipo BarChart';
-		
-		Sbi.cockpit.widgets.linechart.LineChartWidget.superclass.onRender.call(this, ct, position);	
-		
+
+		Sbi.cockpit.widgets.linechart.LineChartWidget.superclass.onRender.call(this, ct, position);
+
 		Sbi.trace("[BarChartWidget.onRender]: OUT");
 	}
-	
+
 	, getByteArraysForExport: function(){
 		var byteArrays = new Array();
 		for(var i=0; i<this.charts; i++){
 			byteArrays.push((this.charts[i]).exportPNG());
-		}	
+		}
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -548,7 +548,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 	// -----------------------------------------------------------------------------------------------------------------
 	, init : function () {
 		this.chartConfig = this.wconf;
-		
+
 		this.loadChartData({
 			'rows':[this.chartConfig.category]
 			, 'measures': this.chartConfig.series

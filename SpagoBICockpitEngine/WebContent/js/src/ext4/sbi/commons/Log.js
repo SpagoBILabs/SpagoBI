@@ -1,15 +1,13 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
+
 Ext.ns("Sbi.logging");
 
 // in ie if the console is not open console object is undefined
-if (typeof console === "undefined") { 
+if (typeof console === "undefined") {
 	console = { log: function () { } ,
 				info: function () { },
 				trace: function() { },
@@ -30,7 +28,7 @@ Sbi.logging.levels = {
 };
 
 Sbi.log = function(level, msg) {
-	if(Sbi.logging.enabled 
+	if(Sbi.logging.enabled
 		&& Sbi.logging.levels[level] >= Sbi.logging.levels[Sbi.logging.level]) {
 		if(console) console.log('[' + level + '] : ' + msg);
 	}

@@ -1,20 +1,19 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
-
 
 Ext.define('Sbi.filters.FilterEditorWizard', {
 	extend: 'Ext.Window'
 	, layout:'fit'
-	, config:{title: LN('sbi.cockpit.filter.editor.wizard.title')				   
+	, config:{title: LN('sbi.cockpit.filter.editor.wizard.title')
 			  , width: 1000
 			  , height: 500
 			  , closable: true
-			  , closeAction: 'close' 
+			  , closeAction: 'close'
 //			  , plain: true
-			  , modal: true	
+			  , modal: true
 			  , storesList: null
 			  , filters: null
 	}
@@ -33,16 +32,16 @@ Ext.define('Sbi.filters.FilterEditorWizard', {
 		this.callParent(arguments);
 		Sbi.trace("[FilterEditorWizard.constructor]: OUT");
 	}
-	
+
 	, initComponent: function() {
-  
+
         Ext.apply(this, {
             items: [this.editorMainPanel]
         });
-        
+
         this.callParent();
     }
-	
+
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -50,7 +49,7 @@ Ext.define('Sbi.filters.FilterEditorWizard', {
 	, getFiltersEditorPage: function() {
 		return this.editorMainPanel.getFilterEditorPage();
 	}
-	
+
 
 	, getWizardState: function() {
 		return this.editorMainPanel.getWizardState();
@@ -62,29 +61,29 @@ Ext.define('Sbi.filters.FilterEditorWizard', {
 		this.editorMainPanel.setWizardState(editorState);
 		Sbi.trace("[FilterEditorWizard.setWizardState]: OUT");
 	}
-	
+
 	, resetWizardState: function() {
 		Sbi.trace("[FilterEditorWizard.resetWizardState]: IN");
 		this.editorMainPanel.resetWizardState();
 		Sbi.trace("[FilterEditorWizard.resetWizardState]: OUT");
 	}
-	
+
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(c){
-		Sbi.trace("[FilterEditorWizard.init]: IN");		
-		this.editorMainPanel = Ext.create('Sbi.filters.FilterEditorWizardPanel',{			
+		Sbi.trace("[FilterEditorWizard.init]: IN");
+		this.editorMainPanel = Ext.create('Sbi.filters.FilterEditorWizardPanel',{
 			storesList: c.storesList
 		  , filters: c.filters
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
 		this.editorMainPanel.on('submit', this.onSubmit, this);
-		
+
 		Sbi.trace("[FilterEditorWizard.init]: OUT");
 	}
-	
+
 	, initEvents: function() {
 		this.addEvents(
 			/**
@@ -107,20 +106,20 @@ Ext.define('Sbi.filters.FilterEditorWizard', {
 			, 'submit'
 		);
 	}
-	
-	
+
+
 	// -----------------------------------------------------------------------------------------------------------------
     // utility methods
 	// -----------------------------------------------------------------------------------------------------------------
-	
+
 	, onCancel: function(){
 		this.fireEvent("cancel", this);
 	}
-	
+
 	, onApply: function(){
 		this.fireEvent("apply", this);
 	}
-	
+
 	, onSubmit: function(editorPanel){
 		this.fireEvent("submit", this);
 	}
