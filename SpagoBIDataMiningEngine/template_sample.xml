@@ -28,6 +28,7 @@
                 <OUTPUT type="image" name="a" value="x"  function="plot" mode="auto" label="label Output 1"/>
                 <OUTPUT type="image" name="c" value="z,k"  function="biplot" mode="manual" label="label Output 2"/>
                 <OUTPUT type="script" name="d" value="scriptCCC"  mode="manual" label="label Output 3"/>
+                <!-- available functions for function attribute, if type="image" are: plot, biplot, hist -->
                 <OUTPUT type="text" name="b" value="y"  mode="manual" label="label Output 4"/>
             </OUTPUTS>
         </COMMAND>

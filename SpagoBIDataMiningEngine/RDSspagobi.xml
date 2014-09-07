@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <DATA_MINING>
-	<SCRIPT>
-		<![CDATA[
-str(spagobids);
-spagobids$time;
-time_plus<-spagobids$time+1;
-time_plus;
-		]]>
-	</SCRIPT>
-	<DATASETS>
-		<DATASET name="spagobids" spagobiLabel="spagobids1" readType="" type="spagobi_ds">	
+    <PARAMETERS>
+        <PARAMETER name="par1" />
+        <PARAMETER name="par2" />
+        <PARAMETER name="par3" />
+    </PARAMETERS> 
+	<SCRIPTS>  
+        <SCRIPT name="scriptroll" mode="auto" datasets="spagobids"  label="label scriptroll">
+			<![CDATA[
+	str(sbi);
+	sbi1<-sbi[,c(6,29)];
+	t<-tapply(sbi$ERROR, sbi$DOC_LABEL, FUN = function(x) sum(!is.na(x)) )
+			]]>
+		</SCRIPT>
+	</SCRIPTS>
+	<DATASETS>	
+		<DATASET name="spagobids" spagobiLabel="spagobids1" readType="" mode="auto" type="spagobi_ds" label="HISTOGRAM">	
 		</DATASET>
-	</DATASETS>	
-	<OUTPUTS>
-		<OUTPUT type="text" plotName="time_plus" value="time_plus" datatype=""/>
-	</OUTPUTS>
+	</DATASETS>
+	<COMMANDS>
+        <COMMAND name="command1" scriptName="scriptroll"  label="AUDIT" mode="auto">
+            <OUTPUTS>
+                <OUTPUT type="image" name="histogram" value="t" function="hist"  mode="auto" label="DATAMINING AUDIT"/>
+            </OUTPUTS>
+        </COMMAND>
+    </COMMANDS>
 </DATA_MINING>
