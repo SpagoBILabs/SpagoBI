@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
  */
@@ -71,9 +70,8 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static final String TAG_CONNECTIONSTRING = "CONNECTIONSTRING";
 	public static final String TAG_DRIVER = "DRIVER";
 	public static final String TAG_DIALECT = "DIALECT";
-	
-	public static final String STAD_ALONE_DS_LABEL = "STAD_ALONE_DS_LABEL";
 
+	public static final String STAD_ALONE_DS_LABEL = "STAD_ALONE_DS_LABEL";
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WhatIfXMLTemplateParser.class);
@@ -81,7 +79,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public WhatIfTemplate parse(Object template) {
 		Assert.assertNotNull(template, "Input parameter [template] cannot be null");
 		Assert.assertTrue(template instanceof SourceBean, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
-		return parse((SourceBean)template);
+		return parse((SourceBean) template);
 	}
 
 	private WhatIfTemplate parse(SourceBean template) {
@@ -93,40 +91,40 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 			toReturn = new WhatIfTemplate();
 
-			SourceBean cubeSB = (SourceBean) template.getAttribute( TAG_CUBE );
+			SourceBean cubeSB = (SourceBean) template.getAttribute(TAG_CUBE);
 			logger.debug(TAG_CUBE + ": " + cubeSB);
 			Assert.assertNotNull(cubeSB, "Template is missing " + TAG_CUBE + " tag");
 			String reference = (String) cubeSB.getAttribute(PROP_SCHEMA_REFERENCE);
 			logger.debug(PROP_SCHEMA_REFERENCE + ": " + reference);
 			toReturn.setMondrianSchema(reference);
 
-			SourceBean mdxSB = (SourceBean) template.getAttribute( TAG_MDX_QUERY );
+			SourceBean mdxSB = (SourceBean) template.getAttribute(TAG_MDX_QUERY);
 			logger.debug(TAG_MDX_QUERY + ": " + mdxSB);
 			Assert.assertNotNull(mdxSB, "Template is missing " + TAG_MDX_QUERY + " tag");
 			String mdxQuery = mdxSB.getCharacters();
 			toReturn.setMdxQuery(mdxQuery);
 
-			SourceBean mdxMondrianSB = (SourceBean) template.getAttribute( TAG_MDX_MONDRIAN_QUERY );
+			SourceBean mdxMondrianSB = (SourceBean) template.getAttribute(TAG_MDX_MONDRIAN_QUERY);
 			logger.debug(TAG_MDX_MONDRIAN_QUERY + ": " + mdxMondrianSB);
-			//Assert.assertNotNull(mdxMondrianSB, "Template is missing " + TAG_MDX_MONDRIAN_QUERY + " tag");
+			// Assert.assertNotNull(mdxMondrianSB, "Template is missing " +
+			// TAG_MDX_MONDRIAN_QUERY + " tag");
 			String mdxMondrianQuery = mdxMondrianSB.getCharacters();
 			toReturn.setMondrianMdxQuery(mdxMondrianQuery);
 
-			//add the scenario (writeback config & variables)
+			// add the scenario (writeback config & variables)
 			SbiScenario scenario = initScenario(template);
 			toReturn.setScenario(scenario);
-			
-			//add the model aliases
+
+			// add the model aliases
 			SbiAliases aliases = initAliases(template);
 			toReturn.setAliases(aliases);
 
-			//init the toolbar config
+			// init the toolbar config
 			initToolbar(template, toReturn);
 
-			//init stand alone configuration
+			// init stand alone configuration
 			initStandAlone(template, toReturn);
-			
-			
+
 			List<WhatIfTemplate.Parameter> parameters = new ArrayList<WhatIfTemplate.Parameter>();
 			List parametersSB = mdxSB.getAttributeAsList(TAG_PARAMETER);
 			Iterator it = parametersSB.iterator();
@@ -150,16 +148,16 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			logger.debug("Template parsed succesfully");
 		} catch (Exception e) {
 			logger.error("Impossible to parse template [" + template.toString() + "]", e);
-			throw new WhatIfTemplateParseException( e );
+			throw new WhatIfTemplateParseException(e);
 		} finally {
 			logger.debug("OUT");
-		}	
+		}
 
 		return toReturn;
 	}
 
 	private void setProfilingUserAttributes(SourceBean template, WhatIfTemplate toReturn) {
-		SourceBean dataAccessSB = (SourceBean) template.getAttribute( TAG_DATA_ACCESS );
+		SourceBean dataAccessSB = (SourceBean) template.getAttribute(TAG_DATA_ACCESS);
 		logger.debug(TAG_DATA_ACCESS + ": " + dataAccessSB);
 		List<String> attributes = new ArrayList<String>();
 		if (dataAccessSB != null) {
@@ -176,7 +174,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		toReturn.setProfilingUserAttributes(attributes);
 	}
 
-	public static void initToolbar(SourceBean template, WhatIfTemplate toReturn){
+	public static void initToolbar(SourceBean template, WhatIfTemplate toReturn) {
 		List<SourceBeanAttribute> toolbarButtons;
 		SourceBeanAttribute aToolbarButton;
 		String name;
@@ -186,65 +184,65 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 		logger.debug("IN. loading the toolbar config");
 		SourceBean toolbarSB = (SourceBean) template.getAttribute(TAG_TOOLBAR);
-		if(toolbarSB!=null){
-			
+		if (toolbarSB != null) {
+
 			List<String> toolbarVisibleButtons = new ArrayList<String>();
 			List<String> toolbarMenuButtons = new ArrayList<String>();
-			
+
 			logger.debug(TAG_TOOLBAR + ": " + toolbarSB);
-			toolbarButtons = (List)toolbarSB.getContainedAttributes();
-			if(toolbarButtons!=null){
-				for(int i=0; i<toolbarButtons.size(); i++){
+			toolbarButtons = toolbarSB.getContainedAttributes();
+			if (toolbarButtons != null) {
+				for (int i = 0; i < toolbarButtons.size(); i++) {
 					aToolbarButton = toolbarButtons.get(i);
 					name = aToolbarButton.getKey();
-					if(aToolbarButton.getValue()!=null){
-						value = (SourceBean)aToolbarButton.getValue();
-						visible = (String)value.getAttribute(TAG_VISIBLE);
-						menu = (String)value.getAttribute(TAG_MENU);
-						if(visible!=null && visible.equalsIgnoreCase(TRUE)){
-							if(menu!=null && menu.equalsIgnoreCase(TRUE)){
+					if (aToolbarButton.getValue() != null) {
+						value = (SourceBean) aToolbarButton.getValue();
+						visible = (String) value.getAttribute(TAG_VISIBLE);
+						menu = (String) value.getAttribute(TAG_MENU);
+						if (visible != null && visible.equalsIgnoreCase(TRUE)) {
+							if (menu != null && menu.equalsIgnoreCase(TRUE)) {
 								toolbarMenuButtons.add(name);
-							}else{
+							} else {
 								toolbarVisibleButtons.add(name);
 							}
 						}
 					}
 				}
-				
+
 				logger.debug("Updating the toolbar in the template");
 				toReturn.setToolbarMenuButtons(toolbarMenuButtons);
 				toReturn.setToolbarVisibleButtons(toolbarVisibleButtons);
 			}
-		}else{
+		} else {
 			logger.debug(TAG_TOOLBAR + ": no toolbar buttons defined in the template");
 		}
 
 	}
 
-	public static SbiScenario initScenario(SourceBean template){
+	public static SbiScenario initScenario(SourceBean template) {
 		logger.debug("IN. loading the scenario");
 		SourceBean scenarioSB = (SourceBean) template.getAttribute(TAG_SCENARIO);
-		if(scenarioSB!=null){
+		if (scenarioSB != null) {
 			logger.debug(TAG_SCENARIO + ": " + scenarioSB);
-			String scenarioName = (String)scenarioSB.getAttribute(PROP_NAME);
+			String scenarioName = (String) scenarioSB.getAttribute(PROP_NAME);
 			SbiScenario scenario = new SbiScenario(scenarioName);
 
 			initWriteBackConf(scenarioSB, scenario);
 			initScenarioVariables(scenarioSB, scenario);
 
-			logger.debug("Scenario with name "+ scenarioName+" successfully loaded");
+			logger.debug("Scenario with name " + scenarioName + " successfully loaded");
 			return scenario;
 
-		}else{
+		} else {
 			logger.debug(TAG_SCENARIO + ": no write back configuration found in the template");
 		}
 		return null;
 	}
-	
-	public static SbiAliases initAliases(SourceBean template){
+
+	public static SbiAliases initAliases(SourceBean template) {
 		logger.debug("IN. loading the aliases for the what-if model");
 		SourceBean aliasesSB = (SourceBean) template.getAttribute(TAG_ALIASES);
-		if(aliasesSB!=null){
+		if (aliasesSB != null) {
 			logger.debug(TAG_ALIASES + ": " + aliasesSB);
 			SbiAliases aliases = new SbiAliases();
 
@@ -253,120 +251,122 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			logger.debug("Aliases successfully loaded");
 			return aliases;
 
-		}else{
+		} else {
 			logger.debug(TAG_SCENARIO + ": no write back configuration found in the template");
 		}
 		return null;
 	}
 
-	private static void initWriteBackConf(SourceBean scenarioSB, SbiScenario scenario){
+	private static void initWriteBackConf(SourceBean scenarioSB, SbiScenario scenario) {
 		logger.debug("IN. loading the writeback config");
 		WriteBackEditConfig writeBackConfig = new WriteBackEditConfig();
-		String editCube = (String)scenarioSB.getAttribute(WhatIfXMLTemplateParser.EDIT_CUBE_ATTRIBUTE);
-		if(editCube==null || editCube.length()==0){
-			logger.error("In the writeback is enabled you must specify a cube to edit. Remove the "+WRITEBACK_TAG+" tag or specify a value for the attribute "+EDIT_CUBE_ATTRIBUTE );
-			throw new SpagoBIEngineRuntimeException("In the writeback is enabled you must specify a cube to edit. Remove the "+WRITEBACK_TAG+" tag or specify a value for the attribute "+EDIT_CUBE_ATTRIBUTE);
+		String editCube = (String) scenarioSB.getAttribute(WhatIfXMLTemplateParser.EDIT_CUBE_ATTRIBUTE);
+		if (editCube == null || editCube.length() == 0) {
+			logger.error("In the writeback is enabled you must specify a cube to edit. Remove the " + WRITEBACK_TAG + " tag or specify a value for the attribute "
+					+ EDIT_CUBE_ATTRIBUTE);
+			throw new SpagoBIEngineRuntimeException("In the writeback is enabled you must specify a cube to edit. Remove the " + WRITEBACK_TAG
+					+ " tag or specify a value for the attribute " + EDIT_CUBE_ATTRIBUTE);
 		}
-		
-		List<SourceBean> editableMeasuresBeans = (List<SourceBean>)scenarioSB.getAttributeAsList(WhatIfXMLTemplateParser.MEASURE_TAG);
-		if(editableMeasuresBeans!=null && editableMeasuresBeans.size()>0 ){
+
+		List<SourceBean> editableMeasuresBeans = scenarioSB.getAttributeAsList(WhatIfXMLTemplateParser.MEASURE_TAG);
+		if (editableMeasuresBeans != null && editableMeasuresBeans.size() > 0) {
 			List<String> editableMeasures = new ArrayList<String>();
-			for(int i=0; i<editableMeasuresBeans.size(); i++){
+			for (int i = 0; i < editableMeasuresBeans.size(); i++) {
 				editableMeasures.add(editableMeasuresBeans.get(i).getCharacters());
 			}
 			writeBackConfig.setEditableMeasures(editableMeasures);
-			logger.debug(TAG_SCENARIO + ":the editable measures are "+editableMeasures);
+			logger.debug(TAG_SCENARIO + ":the editable measures are " + editableMeasures);
 		}
-		
-		String initialVersion = (String)scenarioSB.getAttribute(WhatIfXMLTemplateParser.INITIAL_VERSION_ATTRIBUTE);
-		if(initialVersion!=null && initialVersion.length()>0){
+
+		String initialVersion = (String) scenarioSB.getAttribute(WhatIfXMLTemplateParser.INITIAL_VERSION_ATTRIBUTE);
+		if (initialVersion != null && initialVersion.length() > 0) {
 			try {
 				writeBackConfig.setInitialVersion(new Integer(initialVersion));
-				logger.error("The inital version is "+initialVersion);
+				logger.error("The inital version is " + initialVersion);
 			} catch (Exception e) {
-				logger.error("Error loading the inital version from the template "+initialVersion);
+				logger.error("Error loading the inital version from the template " + initialVersion);
 			}
 		}
-		
+
 		writeBackConfig.setEditCubeName(editCube);
-		logger.debug(TAG_SCENARIO + ":the edit cube is "+editCube);
+		logger.debug(TAG_SCENARIO + ":the edit cube is " + editCube);
 		scenario.setWritebackEditConfig(writeBackConfig);
 		logger.debug("OUT. Writeback config loaded");
 	}
 
-	private static void initScenarioVariables(SourceBean scenarioSB,  SbiScenario scenario){
+	private static void initScenarioVariables(SourceBean scenarioSB, SbiScenario scenario) {
 		logger.debug("IN. loading the scenario variables");
 		List<SbiScenarioVariable> variables = new ArrayList<SbiScenarioVariable>();
 
-		List<SourceBean> variablesBeans = (List<SourceBean>)scenarioSB.getAttributeAsList(VARIABLE_TAG);
-		if(variablesBeans!=null && variablesBeans.size()>0 ){
-			for(int i=0; i<variablesBeans.size(); i++){
-				String name = (String)variablesBeans.get(i).getAttribute(PROP_NAME);
-				String value = (String)variablesBeans.get(i).getAttribute(PROP_VALUE);
-				String type = (String)variablesBeans.get(i).getAttribute(PROP_TYPE);
+		List<SourceBean> variablesBeans = scenarioSB.getAttributeAsList(VARIABLE_TAG);
+		if (variablesBeans != null && variablesBeans.size() > 0) {
+			for (int i = 0; i < variablesBeans.size(); i++) {
+				String name = (String) variablesBeans.get(i).getAttribute(PROP_NAME);
+				String value = (String) variablesBeans.get(i).getAttribute(PROP_VALUE);
+				String type = (String) variablesBeans.get(i).getAttribute(PROP_TYPE);
 				variables.add(new SbiScenarioVariable(name, value, type));
 			}
 		}
 		scenario.setVariables(variables);
-		logger.debug("OUT. loaded "+variables.size()+" scenario variables");
+		logger.debug("OUT. loaded " + variables.size() + " scenario variables");
 	}
-	
-	private static void initModelAliases(SourceBean aliasesSB,  SbiAliases aliases){
+
+	private static void initModelAliases(SourceBean aliasesSB, SbiAliases aliases) {
 		logger.debug("IN. loading the aliases");
 		List<SbiAlias> aliasesFound = new ArrayList<SbiAlias>();
 
-		List<SourceBean> aliasesBeans = (List<SourceBean>)aliasesSB.getAttributeAsList(DIMENSION_TAG);
-		if(aliasesBeans!=null && aliasesBeans.size()>0 ){
-			for(int i=0; i<aliasesBeans.size(); i++){
-				String name = (String)aliasesBeans.get(i).getAttribute(PROP_NAME);
-				String alias = (String)aliasesBeans.get(i).getAttribute(PROP_ALIAS);
+		List<SourceBean> aliasesBeans = aliasesSB.getAttributeAsList(DIMENSION_TAG);
+		if (aliasesBeans != null && aliasesBeans.size() > 0) {
+			for (int i = 0; i < aliasesBeans.size(); i++) {
+				String name = (String) aliasesBeans.get(i).getAttribute(PROP_NAME);
+				String alias = (String) aliasesBeans.get(i).getAttribute(PROP_ALIAS);
 				String type = DIMENSION_TAG;
 				aliasesFound.add(new SbiAlias(name, alias, type));
 			}
 		}
-		
-		aliasesBeans = (List<SourceBean>)aliasesSB.getAttributeAsList(HIERARCHY_TAG);
-		if(aliasesBeans!=null && aliasesBeans.size()>0 ){
-			for(int i=0; i<aliasesBeans.size(); i++){
-				String name = (String)aliasesBeans.get(i).getAttribute(PROP_NAME);
-				String alias = (String)aliasesBeans.get(i).getAttribute(PROP_ALIAS);
+
+		aliasesBeans = aliasesSB.getAttributeAsList(HIERARCHY_TAG);
+		if (aliasesBeans != null && aliasesBeans.size() > 0) {
+			for (int i = 0; i < aliasesBeans.size(); i++) {
+				String name = (String) aliasesBeans.get(i).getAttribute(PROP_NAME);
+				String alias = (String) aliasesBeans.get(i).getAttribute(PROP_ALIAS);
 				String type = HIERARCHY_TAG;
 				aliasesFound.add(new SbiAlias(name, alias, type));
 			}
 		}
-		
-		//TODO add generic aliases
-		aliasesBeans = (List<SourceBean>)aliasesSB.getAttributeAsList(ALIAS_TAG);
-		if(aliasesBeans!=null && aliasesBeans.size()>0 ){
-			for(int i=0; i<aliasesBeans.size(); i++){
-				String name = (String)aliasesBeans.get(i).getAttribute(PROP_NAME);
-				String alias = (String)aliasesBeans.get(i).getAttribute(PROP_ALIAS);
+
+		// TODO add generic aliases
+		aliasesBeans = aliasesSB.getAttributeAsList(ALIAS_TAG);
+		if (aliasesBeans != null && aliasesBeans.size() > 0) {
+			for (int i = 0; i < aliasesBeans.size(); i++) {
+				String name = (String) aliasesBeans.get(i).getAttribute(PROP_NAME);
+				String alias = (String) aliasesBeans.get(i).getAttribute(PROP_ALIAS);
 				String type = ALIAS_TAG;
 				aliasesFound.add(new SbiAlias(name, alias, type));
 			}
 		}
-		
+
 		aliases.setAliases(aliasesFound);
-		logger.debug("OUT. loaded "+aliasesFound.size()+" aliases");
-	}	
-	
-	private static String getBeanValue(String tag, SourceBean bean){
-		String  field = null;
+		logger.debug("OUT. loaded " + aliasesFound.size() + " aliases");
+	}
+
+	private static String getBeanValue(String tag, SourceBean bean) {
+		String field = null;
 		SourceBean fieldBean = null;
-		fieldBean =(SourceBean)bean.getAttribute(tag);
-		if(fieldBean!=null){
+		fieldBean = (SourceBean) bean.getAttribute(tag);
+		if (fieldBean != null) {
 			field = fieldBean.getCharacters();
-			if(field==null){
+			if (field == null) {
 				field = "";
 			}
 		}
 		return field;
 	}
-	
-	private static void initStandAlone(SourceBean template, WhatIfTemplate toReturn){
+
+	private static void initStandAlone(SourceBean template, WhatIfTemplate toReturn) {
 		logger.debug("IN. loading the configuration for a stand alone execution");
 		SourceBean standAloneSB = (SourceBean) template.getAttribute(TAG_STAND_ALONE);
-		if(standAloneSB!=null){
+		if (standAloneSB != null) {
 			logger.debug("This is a stand alone execution");
 			logger.debug(TAG_STAND_ALONE + ": " + standAloneSB);
 			IDataSource ds = new DataSource();
@@ -385,7 +385,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			String catalog = getBeanValue(TAG_CATALOG, connectionProperties);
 			toReturn.setStandAloneConnection(ds);
 			toReturn.setMondrianSchema(catalog);
-		}else{
+		} else {
 			logger.debug("This is not a stand alone execution");
 		}
 	}

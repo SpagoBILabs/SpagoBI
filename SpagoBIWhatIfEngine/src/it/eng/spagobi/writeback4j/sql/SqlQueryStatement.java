@@ -19,56 +19,54 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Giulio Gavardi (giulio.gavardi@eng.it)
- *
+ * 
  */
 public class SqlQueryStatement {
 
-	private String sqlStatement;
+	private final String sqlStatement;
 
 	public static transient Logger logger = Logger.getLogger(SqlQueryStatement.class);
-	
+
 	public SqlQueryStatement(String sqlStatement) {
 		super();
 
 		this.sqlStatement = sqlStatement;
 	}
 
-	public Object  getSingleValue(Connection connection, String columnName) throws SpagoBIEngineException{
+	public Object getSingleValue(Connection connection, String columnName) throws SpagoBIEngineException {
 		Object toReturn = null;
 		ResultSet rs = null;
-		
-		try{
-			logger.debug("Executing query "+sqlStatement);
+
+		try {
+			logger.debug("Executing query " + sqlStatement);
 			Statement statement = connection.createStatement();
 			rs = statement.executeQuery(sqlStatement);
 			logger.debug("Query executed & getting the first value");
-			
+
 			if (rs.next()) {
-				toReturn= rs.getObject(columnName);
+				toReturn = rs.getObject(columnName);
 			}
 
-		}
-		catch (Exception e) {
-			logger.error("Error executing the query "+sqlStatement, e);
-			throw new SpagoBIEngineException("Error executing the query "+sqlStatement, e);
+		} catch (Exception e) {
+			logger.error("Error executing the query " + sqlStatement, e);
+			throw new SpagoBIEngineException("Error executing the query " + sqlStatement, e);
 		}
 
 		return toReturn;
 	}
 
-	public ResultSet getValues(Connection connection) throws SpagoBIEngineException{
+	public ResultSet getValues(Connection connection) throws SpagoBIEngineException {
 		ResultSet rs = null;
-		
-		try{
-			logger.debug("Executing query "+sqlStatement);
+
+		try {
+			logger.debug("Executing query " + sqlStatement);
 			Statement statement = connection.createStatement();
 			rs = statement.executeQuery(sqlStatement);
 			logger.debug("Query executed");
 
-		}
-		catch (Exception e) {
-			logger.error("Error executing the query "+sqlStatement, e);
-			throw new SpagoBIEngineException("Error executing the query "+sqlStatement, e);
+		} catch (Exception e) {
+			logger.error("Error executing the query " + sqlStatement, e);
+			throw new SpagoBIEngineException("Error executing the query " + sqlStatement, e);
 		}
 
 		return rs;

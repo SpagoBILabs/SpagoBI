@@ -11,12 +11,11 @@
 
 package it.eng.spagobi.engines.whatif.exception;
 
-import java.io.UnsupportedEncodingException;
-
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
-import javax.ws.rs.Produces;
+import java.io.UnsupportedEncodingException;
+
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -27,12 +26,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * 
  */
- @Provider
+@Provider
 public class RestExceptionMapper extends AbstractWhatIfEngineService implements ExceptionMapper<Throwable>
 {
 
@@ -48,11 +46,11 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 		String errorMessage = e.getMessage();
 		String errorService = "";
 
-		//logs the error
+		// logs the error
 		logger.error("Catched error", e);
 
-		if(e instanceof SpagoBIEngineServiceException){
-			SpagoBIEngineServiceException exception = (SpagoBIEngineServiceException)e;
+		if (e instanceof SpagoBIEngineServiceException) {
+			SpagoBIEngineServiceException exception = (SpagoBIEngineServiceException) e;
 			errorService = exception.getServiceName();
 		}
 
@@ -69,29 +67,25 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 
 			serializedMessages.put(ERROR_MESSAGES, errors);
 		} catch (JSONException e1) {
-			logger.debug("Error serializing the exception ",e1);
+			logger.debug("Error serializing the exception ", e1);
 		}
 
 		byte[] bytesResponse = null;
-		
+
 		try {
 			bytesResponse = serializedMessages.toString().getBytes("UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			logger.error("Error setting the encoding of the response", e1);
 			bytesResponse = serializedMessages.toString().getBytes();
 		}
-		
-		Response response =  Response.status(200)
+
+		Response response = Response.status(200)
 				.entity(bytesResponse)
-				.header(HttpHeaders.CONTENT_ENCODING,"UTF8" ).build();
+				.header(HttpHeaders.CONTENT_ENCODING, "UTF8").build();
 
 		logger.debug("RestExceptionMapper:toResponse OUT");
 
-		
 		return response;
 	}
-
-
-
 
 }

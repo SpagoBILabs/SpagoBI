@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Giulio Gavardi (giulio.gavardi@eng.it)
+ * @author Giulio Gavardi (giulio.gavardi@eng.it) 
  * 
  * @class DBWriteResource
  * 
@@ -36,13 +36,12 @@ public class VersionResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(VersionResource.class);
 
-	
 	private VersionManager versionManager;
 
 	private VersionManager getVersionBusiness() {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 
-		if(versionManager==null){
+		if (versionManager == null) {
 			versionManager = new VersionManager(ei);
 		}
 		return versionManager;
@@ -50,14 +49,15 @@ public class VersionResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Load the list of versions
+	 * 
 	 * @return the serialization of the versions
 	 */
 	@GET
-	public String getAllVersions(){
+	public String getAllVersions() {
 		logger.debug("IN");
-			
+
 		List<SbiVersion> versions = getVersionBusiness().getAllVersions();
-		
+
 		logger.debug("OUT");
 		String serializedVersions;
 		try {
@@ -66,22 +66,24 @@ public class VersionResource extends AbstractWhatIfEngineService {
 			logger.error("Error serializing versions");
 			throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e);
 		}
-		
+
 		return serializedVersions;
-		
-	
+
 	}
-	
+
 	/**
 	 * Delete the versions
-	 * @param versionsToDelete its the serialization of a list with the ids of the version to remove. Example. "1 , 2, 4"
+	 * 
+	 * @param versionsToDelete
+	 *            its the serialization of a list with the ids of the version to
+	 *            remove. Example. "1 , 2, 4"
 	 * @return
 	 */
 	@POST
 	@Path("/delete/{versionsToDelete}")
-	public String increaseVersion(@PathParam("versionsToDelete") String versionsToDelete){
+	public String increaseVersion(@PathParam("versionsToDelete") String versionsToDelete) {
 		logger.debug("IN");
-		getVersionBusiness().deleteVersions(versionsToDelete);	
+		getVersionBusiness().deleteVersions(versionsToDelete);
 		logger.debug("OUT");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();

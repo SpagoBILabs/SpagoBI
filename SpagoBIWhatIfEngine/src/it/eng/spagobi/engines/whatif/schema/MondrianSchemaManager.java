@@ -22,20 +22,21 @@ import org.apache.log4j.Logger;
 public class MondrianSchemaManager {
 
 	private static Logger logger = Logger.getLogger(MondrianSchemaManager.class);
-	
+
 	private static Map<Integer, File> cache = new HashMap<Integer, File>();
-	
+
 	private ArtifactServiceProxy proxy = null;
-	
+
 	public MondrianSchemaManager(ArtifactServiceProxy artifactProxy) {
 		this.proxy = artifactProxy;
 	}
-	
+
 	public String getMondrianSchemaURI(Integer contentId) {
 		File file = cache.get(contentId);
-		if ( file == null 								// if file is not in cache
-				||										// OR 
-				!file.isFile() || !file.exists())	{	// file in cache does not actually exists			 
+		if (file == null // if file is not in cache
+				|| // OR
+				!file.isFile() || !file.exists()) { // file in cache does not
+													// actually exists
 			file = this.storeContent(contentId);
 		}
 		cache.put(contentId, file);
@@ -51,16 +52,17 @@ public class MondrianSchemaManager {
 		try {
 			newFile = new File(this.getFilePath(contentId));
 			fos = new FileOutputStream(newFile);
-	        is = dh.getInputStream();
+			is = dh.getInputStream();
 			int c = 0;
 			byte[] b = new byte[1024];
 			while ((c = is.read(b)) != -1) {
-				if (c == 1024)
+				if (c == 1024) {
 					fos.write(b);
-				else
+				} else {
 					fos.write(b, 0, c);
+				}
 			}
-	        fos.flush();
+			fos.flush();
 		} catch (IOException e) {
 			logger.error("Error while storing Mondrian schema into a file", e);
 			throw new SpagoBIEngineRuntimeException("Error while storing Mondrian schema into a file", e);
@@ -78,13 +80,13 @@ public class MondrianSchemaManager {
 		}
 		return newFile;
 	}
-	
+
 	private void deletePreviousFile(Integer contentId) {
 		String path = this.getFilePath(contentId);
 		File file = new File(path);
 		if (file.exists()) {
 			boolean result = file.delete();
-			if ( !result ) {
+			if (!result) {
 				throw new SpagoBIEngineRuntimeException("Cannot delete previuos file [" + path + "]");
 			}
 		}
@@ -97,7 +99,7 @@ public class MondrianSchemaManager {
 		File fileDir = new File(path);
 		if (!fileDir.exists()) {
 			boolean result = fileDir.mkdirs();
-			if ( !result ) {
+			if (!result) {
 				throw new SpagoBIEngineRuntimeException("Cannot create repository path for Mondrian schemas [" + path + "]");
 			}
 		}
@@ -107,5 +109,5 @@ public class MondrianSchemaManager {
 	private String getFilePath(Integer contentId) {
 		return this.getRepositoryPath() + File.separator + contentId.toString() + ".xml";
 	}
-	
+
 }

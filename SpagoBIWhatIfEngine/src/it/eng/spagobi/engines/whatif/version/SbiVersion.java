@@ -27,30 +27,36 @@ public class SbiVersion {
 		this.description = description;
 		this.name = name;
 	}
+
 	public SbiVersion(Integer id) {
 		super();
 		this.id = id;
 		this.description = id.toString();
 		this.name = id.toString();
 	}
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
+
 }

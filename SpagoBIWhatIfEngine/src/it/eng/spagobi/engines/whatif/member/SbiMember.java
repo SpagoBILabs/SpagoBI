@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Alberto Ghedin (alberto.ghedin@eng.it) 
  * 
  */
 package it.eng.spagobi.engines.whatif.member;
@@ -18,9 +18,7 @@ import org.olap4j.metadata.Member;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
 public class SbiMember {
-	
 
 	private String name;
 	private String uniqueName;
@@ -29,26 +27,26 @@ public class SbiMember {
 	private boolean leaf;
 	private boolean visible;
 	private String qtip;
-	
-	
-	public SbiMember(){};
-	
-//	
-//	public SbiMember(Member member, boolean visible){
-//		this(member, visible, "");
-//	}
-	
-	public SbiMember(Member member, boolean visible, String description){
+
+	public SbiMember() {
+	};
+
+	//
+	// public SbiMember(Member member, boolean visible){
+	// this(member, visible, "");
+	// }
+
+	public SbiMember(Member member, boolean visible, String description) {
 
 		this.uniqueName = member.getUniqueName();
 		this.id = member.getUniqueName();
-		this.name = member.getCaption();		
-		this.text  = calculateText(member.getName(), member.getCaption());
+		this.name = member.getCaption();
+		this.text = calculateText(member.getName(), member.getCaption());
 
-		try{
-			this.leaf = member.getChildMemberCount()==0;
+		try {
+			this.leaf = member.getChildMemberCount() == 0;
 		} catch (OlapException e) {
-			throw new SpagoBIEngineRuntimeException("Error getting the childs count for the member "+member.getUniqueName(),e);
+			throw new SpagoBIEngineRuntimeException("Error getting the childs count for the member " + member.getUniqueName(), e);
 		}
 		this.visible = visible;
 		this.qtip = description;
@@ -74,7 +72,7 @@ public class SbiMember {
 	public Member getMember(Cube cube) throws OlapException {
 		return CubeUtilities.getMember(cube, uniqueName);
 	}
-	
+
 	public boolean isLeaf() {
 		return leaf;
 	}
@@ -106,12 +104,13 @@ public class SbiMember {
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
-	
-	public void setChecked(Object o) {}
-	
-	private String calculateText(String name, String caption){
-		if(caption!=null && !caption.equals(name)){
-			return name +"-"+ caption;
+
+	public void setChecked(Object o) {
+	}
+
+	private String calculateText(String name, String caption) {
+		if (caption != null && !caption.equals(name)) {
+			return name + "-" + caption;
 		}
 		return name;
 	}

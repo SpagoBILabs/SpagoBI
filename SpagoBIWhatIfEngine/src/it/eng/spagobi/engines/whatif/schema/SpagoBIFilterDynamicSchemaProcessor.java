@@ -16,14 +16,14 @@ import org.apache.log4j.Logger;
 
 import sun.misc.BASE64Decoder;
 
-
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  * 
- * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
- * 26/03/2013      Davide Zerbetto (davide.zerbetto@eng.it)		SpagoBIFilterDynamicSchemaProcessor now extends 
- * 				   Andrea Fantappie (andrea.fantappie@eng.it)	LocalizingDynamicSchemaProcessor (instead of FilterDynamicSchemaProcessor) 
- * 																to support i18n 
+ *         DATE CONTRIBUTOR/DEVELOPER NOTE 26/03/2013 Davide Zerbetto
+ *         (davide.zerbetto@eng.it) SpagoBIFilterDynamicSchemaProcessor now
+ *         extends Andrea Fantappie (andrea.fantappie@eng.it)
+ *         LocalizingDynamicSchemaProcessor (instead of
+ *         FilterDynamicSchemaProcessor) to support i18n
  */
 public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchemaProcessor
 {
@@ -33,6 +33,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 
 	Integer indexProgression = null;
 
+	@Override
 	public String filter(String schemaUrl, Util.PropertyList connectInfo, InputStream stream) throws Exception {
 		logger.debug("IN");
 		String originalSchema = super.filter(schemaUrl, connectInfo, stream);
@@ -64,6 +65,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 		return modifiedSchema;
 	}
 
+	@Override
 	public String processSchema(String schemaUrl, Util.PropertyList connectInfo) throws Exception {
 		logger.debug("IN: schemaUrl: " + schemaUrl);
 		try {

@@ -1,5 +1,5 @@
 /*
-	Lexer for What-if metalanguage
+	Lexer for What-if metalanguage 
 */
 
 /*

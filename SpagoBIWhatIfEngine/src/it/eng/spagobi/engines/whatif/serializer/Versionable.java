@@ -8,14 +8,13 @@
  * 
  * Intarface that those components that are explicitily versioned will implement.
  * 
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Alberto Ghedin (alberto.ghedin@eng.it) 
  *
  */
 package it.eng.spagobi.engines.whatif.serializer;
 
-
 public interface Versionable {
 
 	public String getVersion();
-	
+
 }

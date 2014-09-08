@@ -1,10 +1,10 @@
- /* SpagoBI, the Open Source Business Intelligence suite
+/* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Alberto Ghedin (alberto.ghedin@eng.it) 
  */
 package it.eng.spagobi.engines.whatif.model;
 
@@ -33,17 +33,15 @@ public class ModelConfig implements Serializable {
 	private Integer actualVersion = null;
 	private SbiScenario scenario = null;
 	private SbiAliases aliases = null;
-	
+
 	private Integer artifactId;
 	private String status;
 	private String locker;
-	
 
 	private List<String> toolbarVisibleButtons;
 	private List<String> toolbarMenuButtons;
 
 	private Map<String, String> dimensionHierarchyMap;
-
 
 	public ModelConfig() {
 		drillType = DrillDownCommand.MODE_POSITION;
@@ -53,7 +51,7 @@ public class ModelConfig implements Serializable {
 		suppressEmpty = false;
 		dimensionHierarchyMap = new HashMap<String, String>();
 	}
-	
+
 	public Boolean getSuppressEmpty() {
 		return suppressEmpty;
 	}
@@ -65,10 +63,11 @@ public class ModelConfig implements Serializable {
 	public Boolean getShowProperties() {
 		return showProperties;
 	}
+
 	public void setShowProperties(Boolean showProperties) {
 		this.showProperties = showProperties;
 	}
-	
+
 	public Boolean getHideSpans() {
 		return hideSpans;
 	}
@@ -76,6 +75,7 @@ public class ModelConfig implements Serializable {
 	public void setHideSpans(Boolean hideSpans) {
 		this.hideSpans = hideSpans;
 	}
+
 	public Boolean getShowParentMembers() {
 		return showParentMembers;
 	}
@@ -99,15 +99,16 @@ public class ModelConfig implements Serializable {
 	public void setDimensionHierarchyMap(Map<String, String> dimensionHierarchyMap) {
 		this.dimensionHierarchyMap = dimensionHierarchyMap;
 	}
-	
+
 	public void setDimensionHierarchy(String dimensionUniqueName, String hierarchyUniqueName) {
 		this.dimensionHierarchyMap.put(dimensionUniqueName, hierarchyUniqueName);
 	}
 
 	public Integer getActualVersion() {
-//		if(actualVersion==null && scenario!=null && scenario.getWritebackEditConfig()!=null ){
-//			return scenario.getWritebackEditConfig().getInitialVersion();
-//		}
+		// if(actualVersion==null && scenario!=null &&
+		// scenario.getWritebackEditConfig()!=null ){
+		// return scenario.getWritebackEditConfig().getInitialVersion();
+		// }
 		return actualVersion;
 	}
 
@@ -116,18 +117,18 @@ public class ModelConfig implements Serializable {
 	}
 
 	public WriteBackEditConfig getWriteBackConf() {
-		if(scenario==null){
+		if (scenario == null) {
 			return null;
 		}
 		return scenario.getWritebackEditConfig();
 	}
 
 	public void setWriteBackConf(WriteBackEditConfig writebackEditConfig) {
-		if(scenario!=null){
-			scenario.setWritebackEditConfig(writebackEditConfig);	
+		if (scenario != null) {
+			scenario.setWritebackEditConfig(writebackEditConfig);
 		}
 	}
-	
+
 	public void setScenario(SbiScenario scenario) {
 		this.scenario = scenario;
 	}
@@ -155,20 +156,20 @@ public class ModelConfig implements Serializable {
 
 	@JsonIgnore
 	public Object getVariableValue(String variableName) {
-		if(scenario==null){
+		if (scenario == null) {
 			return null;
 		}
-		SbiScenarioVariable var =  scenario.getVariable(variableName);
-		if (var != null){
+		SbiScenarioVariable var = scenario.getVariable(variableName);
+		if (var != null) {
 			String value = var.getValue();
 			return var.getType().getTypedType(value);
 		} else {
-			//if isn't a variable it could be a generic alias
+			// if isn't a variable it could be a generic alias
 			String value = aliases.getGenericNameFromAlias(variableName);
 			if (value != null) {
 				return value;
 			} else {
-				throw new SpagoBIEngineRuntimeException("Cannot calculate Value, Variable or Alias not found: "+variableName);
+				throw new SpagoBIEngineRuntimeException("Cannot calculate Value, Variable or Alias not found: " + variableName);
 			}
 		}
 
@@ -207,19 +208,20 @@ public class ModelConfig implements Serializable {
 	}
 
 	/**
-	 * @param aliases the aliases to set
+	 * @param aliases
+	 *            the aliases to set
 	 */
 	@JsonIgnore
 	public void setAliases(SbiAliases aliases) {
 		this.aliases = aliases;
 	}
-	
-	public boolean isWhatIfScenario(){
-		return this.scenario!=null;
+
+	public boolean isWhatIfScenario() {
+		return this.scenario != null;
 	}
-	
-	//for the deserializer
-	public void setWhatIfScenario(boolean bool){}
-	
-	
+
+	// for the deserializer
+	public void setWhatIfScenario(boolean bool) {
+	}
+
 }

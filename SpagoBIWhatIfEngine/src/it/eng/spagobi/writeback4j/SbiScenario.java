@@ -6,17 +6,16 @@
 
 package it.eng.spagobi.writeback4j;
 
-
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
-
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  * 
- * The scenario. It contains the editable measures, and the configuration for the writeback
- *
+ *         The scenario. It contains the editable measures, and the
+ *         configuration for the writeback
+ * 
  */
 public class SbiScenario implements Serializable {
 
@@ -29,9 +28,11 @@ public class SbiScenario implements Serializable {
 		super();
 		this.name = name;
 	}
+
 	public WriteBackEditConfig getWritebackEditConfig() {
 		return writebackEditConfig;
 	}
+
 	public void setWritebackEditConfig(WriteBackEditConfig writebackEditConfig) {
 		this.writebackEditConfig = writebackEditConfig;
 	}
@@ -39,26 +40,32 @@ public class SbiScenario implements Serializable {
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public List<SbiScenarioVariable> getVariables() {
 		return variables;
 	}
+
 	public void setVariables(List<SbiScenarioVariable> variables) {
 		this.variables = variables;
 	}
-	
+
 	/**
-	 * Get the value of the variable with name variableName. Return null if it can't find a variable with that name 
+	 * Get the value of the variable with name variableName. Return null if it
+	 * can't find a variable with that name
+	 * 
 	 * @param variableName
-	 * @return the value of the variable or null if it can't find a variable with that name 
+	 * @return the value of the variable or null if it can't find a variable
+	 *         with that name
 	 */
-	public SbiScenarioVariable getVariable(String variableName){
-		if(this.variables!=null){
+	public SbiScenarioVariable getVariable(String variableName) {
+		if (this.variables != null) {
 			for (Iterator<SbiScenarioVariable> iterator = variables.iterator(); iterator.hasNext();) {
-				SbiScenarioVariable aVariable = (SbiScenarioVariable) iterator.next();
-				if(aVariable.getName().equals(variableName)){
+				SbiScenarioVariable aVariable = iterator.next();
+				if (aVariable.getName().equals(variableName)) {
 					return aVariable;
 				}
 			}
@@ -67,36 +74,41 @@ public class SbiScenario implements Serializable {
 	}
 
 	/**
-	 * Get the value of the variable with name variableName. Return null if it can't find a variable with that name 
+	 * Get the value of the variable with name variableName. Return null if it
+	 * can't find a variable with that name
+	 * 
 	 * @param variableName
-	 * @return the value of the variable or null if it can't find a variable with that name 
+	 * @return the value of the variable or null if it can't find a variable
+	 *         with that name
 	 */
-	public Integer getIntVariableValue(String variableName){
-		if(this.variables!=null){
+	public Integer getIntVariableValue(String variableName) {
+		if (this.variables != null) {
 			for (Iterator<SbiScenarioVariable> iterator = variables.iterator(); iterator.hasNext();) {
-				SbiScenarioVariable aVariable = (SbiScenarioVariable) iterator.next();
-				if(aVariable.getName().equals(variableName)){
-					String o =  aVariable.getValue();
-					
+				SbiScenarioVariable aVariable = iterator.next();
+				if (aVariable.getName().equals(variableName)) {
+					String o = aVariable.getValue();
+
 				}
 			}
 		}
 		return null;
 	}
-	
-	
+
 	/**
-	 * Get the value of the variable with name variableName. Return null if it can't find a variable with that name 
+	 * Get the value of the variable with name variableName. Return null if it
+	 * can't find a variable with that name
+	 * 
 	 * @param variableName
-	 * @return the value of the variable or null if it can't find a variable with that name 
+	 * @return the value of the variable or null if it can't find a variable
+	 *         with that name
 	 */
-	public Double getDoubleVariableValue(String variableName){
-		if(this.variables!=null){
+	public Double getDoubleVariableValue(String variableName) {
+		if (this.variables != null) {
 			for (Iterator<SbiScenarioVariable> iterator = variables.iterator(); iterator.hasNext();) {
-				SbiScenarioVariable aVariable = (SbiScenarioVariable) iterator.next();
-				if(aVariable.getName().equals(variableName)){
-					String o =  aVariable.getValue();
-					
+				SbiScenarioVariable aVariable = iterator.next();
+				if (aVariable.getName().equals(variableName)) {
+					String o = aVariable.getValue();
+
 				}
 			}
 		}

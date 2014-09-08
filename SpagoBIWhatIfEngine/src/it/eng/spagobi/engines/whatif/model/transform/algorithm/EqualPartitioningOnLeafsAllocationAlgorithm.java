@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Alberto Ghedin (alberto.ghedin@eng.it) 
  */
 
 package it.eng.spagobi.engines.whatif.model.transform.algorithm;
@@ -61,7 +61,7 @@ public class EqualPartitioningOnLeafsAllocationAlgorithm extends AbstractAllocat
 	@Override
 	protected void persistInternal(SpagoBICellWrapper cell, Object oldValue, Object newValue, Connection connection, Integer version) throws Exception {
 		Double value = ((Number) newValue).doubleValue() / getCellLeafs(cell);
-		logger.debug("The value of the leafs is "+value);
+		logger.debug("The value of the leafs is " + value);
 		lastQuery = dataManager.executeUpdate(cell.getMembers(), value, connection, version);
 	}
 

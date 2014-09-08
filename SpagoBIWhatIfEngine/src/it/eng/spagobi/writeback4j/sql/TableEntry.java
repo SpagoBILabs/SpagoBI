@@ -1,4 +1,3 @@
-
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -11,53 +10,57 @@ import java.util.Map;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * 
  * @class a table
  */
-public class TableEntry{
+public class TableEntry {
 	String column;
 	String table;
 	boolean isCubeDimension;
-	
+
 	public TableEntry(String column, String table) {
 		super();
 		this.column = column;
 		this.table = table;
-		isCubeDimension= false;
+		isCubeDimension = false;
 	}
-	
+
 	public TableEntry(String column, String table, boolean isCubeDimension) {
 		super();
 		this.column = column;
 		this.table = table;
-		this.isCubeDimension= isCubeDimension;
+		this.isCubeDimension = isCubeDimension;
 	}
 
 	public String getColumn() {
 		return column;
 	}
+
 	public void setColumn(String column) {
 		this.column = column;
 	}
+
 	public String getTable() {
 		return table;
 	}
+
 	public void setTable(String table) {
 		this.table = table;
 	}
-	
 
-	public String toString(Map<String, String> table2Alias, AbstractSqlSchemaManager qb){
-		
-		return qb.getTableAlias(table2Alias, table)+"."+column;
+	public String toString(Map<String, String> table2Alias, AbstractSqlSchemaManager qb) {
+
+		return qb.getTableAlias(table2Alias, table) + "." + column;
 
 	}
-	public String toString(){
-		
-		if(table==null || column==null){
+
+	@Override
+	public String toString() {
+
+		if (table == null || column == null) {
 			return "";
-		}else{
-			return table+"."+column;
+		} else {
+			return table + "." + column;
 		}
 	}
 
@@ -73,26 +76,34 @@ public class TableEntry{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		TableEntry other = (TableEntry) obj;
 		if (column == null) {
-			if (other.column != null)
+			if (other.column != null) {
 				return false;
-		} else if (!column.equals(other.column))
+			}
+		} else if (!column.equals(other.column)) {
 			return false;
-		if (isCubeDimension != other.isCubeDimension)
+		}
+		if (isCubeDimension != other.isCubeDimension) {
 			return false;
+		}
 		if (table == null) {
-			if (other.table != null)
+			if (other.table != null) {
 				return false;
-		} else if (!table.equals(other.table))
+			}
+		} else if (!table.equals(other.table)) {
 			return false;
+		}
 		return true;
 	}
-	
+
 }

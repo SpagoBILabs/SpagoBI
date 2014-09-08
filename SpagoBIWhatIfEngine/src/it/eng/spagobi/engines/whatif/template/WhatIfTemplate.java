@@ -12,7 +12,6 @@ import it.eng.spagobi.writeback4j.SbiScenario;
 import java.util.HashMap;
 import java.util.List;
 
-
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
  */
@@ -21,7 +20,7 @@ public class WhatIfTemplate {
 	private String mondrianSchema;
 	private String mdxQuery;
 	private String mondrianMdxQuery;
-	private HashMap<String, Object> properties;
+	private final HashMap<String, Object> properties;
 	private SbiScenario scenario;
 	private SbiAliases aliases;
 	private List<Parameter> parameters;
@@ -30,7 +29,6 @@ public class WhatIfTemplate {
 	private List<String> toolbarMenuButtons;
 	private IDataSource standAloneConnection;
 
-	
 	public WhatIfTemplate() {
 		properties = new HashMap<String, Object>();
 	}
@@ -38,7 +36,7 @@ public class WhatIfTemplate {
 	public void setProperty(String pName, Object pValue) {
 		properties.put(pName, pValue);
 	}
-	
+
 	public Object getProperty(String pName) {
 		return properties.get(pName);
 	}
@@ -66,7 +64,7 @@ public class WhatIfTemplate {
 	public void setMondrianMdxQuery(String mondrianMdxQuery) {
 		this.mondrianMdxQuery = mondrianMdxQuery;
 	}
-	
+
 	public List<Parameter> getParameters() {
 		return parameters;
 	}
@@ -74,7 +72,7 @@ public class WhatIfTemplate {
 	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}
-	
+
 	public SbiScenario getScenario() {
 		return scenario;
 	}
@@ -82,7 +80,7 @@ public class WhatIfTemplate {
 	public void setScenario(SbiScenario scenario) {
 		this.scenario = scenario;
 	}
-	
+
 	/**
 	 * @return the aliases
 	 */
@@ -91,7 +89,8 @@ public class WhatIfTemplate {
 	}
 
 	/**
-	 * @param aliases the aliases to set
+	 * @param aliases
+	 *            the aliases to set
 	 */
 	public void setAliases(SbiAliases aliases) {
 		this.aliases = aliases;
@@ -129,27 +128,30 @@ public class WhatIfTemplate {
 		this.standAloneConnection = standAloneConnection;
 	}
 
-	public boolean isStandAlone(){
-		return this.standAloneConnection!=null;
+	public boolean isStandAlone() {
+		return this.standAloneConnection != null;
 	}
-	
+
 	public class Parameter {
 		private String name;
 		private String alias;
-		
+
 		public String getName() {
 			return name;
 		}
+
 		public void setName(String name) {
 			this.name = name;
 		}
+
 		public String getAlias() {
 			return alias;
 		}
+
 		public void setAlias(String alias) {
 			this.alias = alias;
 		}
-		
+
 	}
-	
+
 }

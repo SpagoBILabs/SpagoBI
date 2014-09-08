@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Alberto Ghedin (alberto.ghedin@eng.it) 
  */
 package it.eng.spagobi.engines.whatif.common;
 
@@ -28,30 +28,28 @@ import javax.ws.rs.core.Context;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-
 @Path("/start-standalone")
 public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineService {
-	
+
 	// INPUT PARAMETERS
 	public static final String LANGUAGE = "language";
 	public static final String COUNTRY = "country";
-	
+
 	// OUTPUT PARAMETERS
-	
-	// SESSION PARAMETRES	
+
+	// SESSION PARAMETRES
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
-	
+
 	// Defaults
 	public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-	
-	
+
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(WhatIfEngineStartAction.class);
-    
-    private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf.jsp";
-	
-    @GET
-    @Produces("text/html")
+	public static transient Logger logger = Logger.getLogger(WhatIfEngineStartAction.class);
+
+	private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf.jsp";
+
+	@GET
+	@Produces("text/html")
 	public void startAction(@Context HttpServletResponse response) {
 
 		logger.debug("IN");
@@ -59,13 +57,11 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 		try {
 
 			WhatIfEngineInstance whatIfEngineInstance = null;
-			
+
 			logger.debug("Creating engine instance ...");
 
-			
-			
 			try {
-				SourceBean template = SourceBean.fromXMLFile( WhatIfEngineConfig.getInstance().getTemplateFilePath());
+				SourceBean template = SourceBean.fromXMLFile(WhatIfEngineConfig.getInstance().getTemplateFilePath());
 				whatIfEngineInstance = WhatIfEngine.createInstance(template, getEnv());
 			} catch (Exception e) {
 				logger.error(
@@ -100,16 +96,17 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 			logger.debug("OUT");
 		}
 	}
-	
+
+	@Override
 	public Map getEnv() {
 		Map env = new HashMap();
 
 		env.put(EngineConstants.ENV_LOCALE, this.getLocale());
 
-
 		return env;
 	}
 
+	@Override
 	public Locale getLocale() {
 		logger.debug("IN");
 		Locale toReturn = null;
@@ -132,5 +129,5 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+
 }

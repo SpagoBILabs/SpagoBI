@@ -35,7 +35,8 @@ import sun.misc.BASE64Encoder;
 import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
 
 /**
- * @author ...
+ * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin
+ *         (alberto.ghedin@eng.it)
  */
 public class WhatIfEngineConfig {
 

@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Alberto Ghedin (alberto.ghedin@eng.it) 
  * 
  * @class ModelTransformer
  * 
@@ -148,15 +148,19 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		logger.debug("Resolving the allocation algorithm");
 		logger.debug("The name of the algorithm is [" + algorithm + "]");
 		IAllocationAlgorithm allocationAlgorithm;
-		
-//		try {
-//			Map<String, Object> properties = new HashMap<String, Object>();
-//			properties.put(DefaultWeightedAllocationAlgorithm.ENGINEINSTANCE_PROPERTY, ei);
-//			allocationAlgorithm = AllocationAlgorithmFactory.getAllocationAlgorithm(algorithm, ei, properties);
-//		} catch (SpagoBIEngineException e) {
-//			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.error", getLocale(), e);
-//		}
 
+		// try {
+		// Map<String, Object> properties = new HashMap<String, Object>();
+		// properties.put(DefaultWeightedAllocationAlgorithm.ENGINEINSTANCE_PROPERTY,
+		// ei);
+		// allocationAlgorithm =
+		// AllocationAlgorithmFactory.getAllocationAlgorithm(algorithm, ei,
+		// properties);
+		// } catch (SpagoBIEngineException e) {
+		// throw new
+		// SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.error",
+		// getLocale(), e);
+		// }
 
 		allocationAlgorithm = new DefaultWeightedAllocationAlgorithm(ei);// .getAllocationAlgorithm(algorithm,
 

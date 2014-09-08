@@ -16,34 +16,31 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * 
  */
 public class SqlUpdateStatement {
 
-
-	private String sqlStatement;
+	private final String sqlStatement;
 
 	public static transient Logger logger = Logger.getLogger(SqlUpdateStatement.class);
-	
+
 	public SqlUpdateStatement(String sqlStatement) {
 		super();
 		this.sqlStatement = sqlStatement;
 	}
-	
 
-	public void executeStatement(Connection connection) throws Exception{
-		logger.debug("Executing update query: "+sqlStatement);
-		
+	public void executeStatement(Connection connection) throws Exception {
+		logger.debug("Executing update query: " + sqlStatement);
+
 		try {
 			Statement statement = connection.createStatement();
 			statement.executeUpdate(sqlStatement);
 
 		} catch (Exception e) {
-			logger.error("Error executing the query "+sqlStatement, e);
+			logger.error("Error executing the query " + sqlStatement, e);
 			throw e;
-		} 
+		}
 		logger.debug("Query executed");
 	}
-	
-	
+
 }

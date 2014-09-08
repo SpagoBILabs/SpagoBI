@@ -7,7 +7,7 @@
  * 
  * Utilities class that provides some usefull method to access the informations of the cube
  * 
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Alberto Ghedin (alberto.ghedin@eng.it) 
  */
 package it.eng.spagobi.engines.whatif.cube;
 

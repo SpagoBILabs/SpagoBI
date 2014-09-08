@@ -40,20 +40,23 @@ import com.eyeq.pivot4j.util.CssWriter;
 public class WhatIfHTMLRenderer extends HtmlRenderer {
 
 	private boolean measureOnRows;
-	//cache that maps the row/column number and the name of the measure of that row/column (row if measures stay in the rows, column otherwise)
+	// cache that maps the row/column number and the name of the measure of that
+	// row/column (row if measures stay in the rows, column otherwise)
 	private Map<Integer, String> positionMeasureMap;
 	private boolean initialized = false;
-	
+
 	public static transient Logger logger = Logger.getLogger(HtmlRenderer.class);
 
-	public void render(PivotModel model){
+	@Override
+	public void render(PivotModel model) {
 		super.render(model);
 		initialized = false;
 	}
-	
+
 	public WhatIfHTMLRenderer(Writer writer) {
 		super(writer);
 	}
+
 	@Override
 	public void startCell(RenderContext context, List<CellCommand<?>> commands) {
 		boolean header;
@@ -73,18 +76,16 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 
 		getWriter().startElement(name, getCellAttributes(context));
 
+		if (commands != null && !commands.isEmpty()) {
 
-		if (commands != null && !commands.isEmpty()) {		
-			
 			startCommand(context, commands);
 		}
 	}
 
-
 	@Override
 	protected Map<String, String> getCellAttributes(RenderContext context) {
 		String styleClass = null;
-		
+
 		StringWriter writer = new StringWriter();
 		CssWriter cssWriter = new CssWriter(writer);
 
@@ -118,7 +119,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			break;
 		case None:
 			styleClass = getCornerStyleClass();
-			
+
 			break;
 		default:
 			assert false;
@@ -168,40 +169,40 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 		}
 
 		if (styleClass != null) {
-			//adds the proper style (depending if it was collapsed or expanded)
-			if(context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Value")){
+			// adds the proper style (depending if it was collapsed or expanded)
+			if (context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Value")) {
 
 				try {
 					int childrenNum = context.getMember().getChildMemberCount();
-					
-					if(childrenNum > 0){
-						if(getEnableRowDrillDown() || getEnableColumnDrillDown()){
+
+					if (childrenNum > 0) {
+						if (getEnableRowDrillDown() || getEnableColumnDrillDown()) {
 							styleClass += " " + "collapsed";
-						}else{
+						} else {
 							styleClass += " " + "expanded";
 						}
-					}					
+					}
 				} catch (OlapException e) {
 					logger.error(e);
 				}
-			}else if(context.getCellType() == CellType.Title){
-				styleClass = "dimension-title";			
-			}	
+			} else if (context.getCellType() == CellType.Title) {
+				styleClass = "dimension-title";
+			}
 			attributes.put("class", styleClass);
 		}
-		if(context.getCellType() == CellType.Value){
-			
+		if (context.getCellType() == CellType.Value) {
+
 			initializeInternal(context);
-			
-			//need the name of the measure to check if it's editable
+
+			// need the name of the measure to check if it's editable
 			String measureName = getMeasureName(context);
-			//attributes.put("contentEditable", "true");
+			// attributes.put("contentEditable", "true");
 			int colId = context.getColumnIndex();
 			int rowId = context.getRowIndex();
 			int positionId = context.getCell().getOrdinal();
-			//String memberUniqueName = context.getMember().getUniqueName();
-			String id= positionId+"!"+rowId+"!"+colId+"!"+System.currentTimeMillis()%1000;
-			attributes.put("ondblclick", "javascript:Sbi.olap.eventManager.makeEditable('"+id+"','"+measureName+"')");
+			// String memberUniqueName = context.getMember().getUniqueName();
+			String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
+			attributes.put("ondblclick", "javascript:Sbi.olap.eventManager.makeEditable('" + id + "','" + measureName + "')");
 			attributes.put("id", id);
 		}
 
@@ -223,40 +224,38 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			attributes.put("rowspan", Integer.toString(context.getRowSpan()));
 		}
 
-		
 		return attributes;
 	}
-	
-	private String getMeasureName(RenderContext context){
+
+	private String getMeasureName(RenderContext context) {
 		int coordinate;
-		if(this.measureOnRows){
+		if (this.measureOnRows) {
 			coordinate = context.getRowIndex();
-		}else{
+		} else {
 			coordinate = context.getColumnIndex();
 		}
 		String measureName = this.positionMeasureMap.get(coordinate);
-		
-		if(measureName==null){
-			measureName = ((SpagoBICellWrapper)context.getCell()).getMeasureName();
+
+		if (measureName == null) {
+			measureName = ((SpagoBICellWrapper) context.getCell()).getMeasureName();
 			this.positionMeasureMap.put(coordinate, measureName);
 		}
-		
+
 		return measureName;
-		
+
 	}
-	
-	
-	private void initializeInternal(RenderContext context){
-		if(!this.initialized){
+
+	private void initializeInternal(RenderContext context) {
+		if (!this.initialized) {
 			this.measureOnRows = true;
 			this.initialized = true;
 			this.positionMeasureMap = new HashMap<Integer, String>();
-			
-			//check if the measures are in the rows or in the columns
+
+			// check if the measures are in the rows or in the columns
 			List<Member> columnMembers = context.getColumnPosition().getMembers();
 			try {
-				if(columnMembers!=null){
-					for(int i=0; i<columnMembers.size(); i++){
+				if (columnMembers != null) {
+					for (int i = 0; i < columnMembers.size(); i++) {
 						Member member = columnMembers.get(i);
 						if (member.getDimension().getDimensionType().equals(Dimension.Type.MEASURE)) {
 							this.measureOnRows = false;
@@ -264,17 +263,16 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 					}
 				}
 			} catch (OlapException e) {
-				throw new SpagoBIEngineRuntimeException("Erro getting the measure of a rendered cell ",e);
-			}			
+				throw new SpagoBIEngineRuntimeException("Erro getting the measure of a rendered cell ", e);
+			}
 		}
 	}
-	
-	
+
 	@Override
 	public void cellContent(RenderContext context, String label) {
 
 		String link = null;
-	
+
 		PropertySupport properties = getProperties(context);
 
 		if (properties != null) {
@@ -284,47 +282,46 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 		if (link == null) {
 			Map<String, String> attributes = new TreeMap<String, String>();
 			String drillMode = this.getDrillDownMode();
-			if(context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")){
+			if (context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
 
-				List <CellCommand<?>> commands = getCommands(context);
-				
-				
+				List<CellCommand<?>> commands = getCommands(context);
+
 				if (commands != null && !commands.isEmpty()) {
 					for (CellCommand<?> command : commands) {
 						String cmd = command.getName();
 
-						///spagobi whatif engine 
+						// /spagobi whatif engine
 
 						int colIdx = context.getColumnIndex();
 						int rowIdx = context.getRowIndex();
 
-						int axis =0;
-						if(context.getAxis()!= null){
-							axis =context.getAxis().axisOrdinal();
+						int axis = 0;
+						if (context.getAxis() != null) {
+							axis = context.getAxis().axisOrdinal();
 						}
-						int memb =0;
-						if(context.getPosition()!= null){
-							memb =context.getPosition().getOrdinal();
+						int memb = 0;
+						if (context.getPosition() != null) {
+							memb = context.getPosition().getOrdinal();
 						}
-						int pos =0;
-						if(context.getAxis() == Axis.COLUMNS){
+						int pos = 0;
+						if (context.getAxis() == Axis.COLUMNS) {
 							pos = rowIdx;
-						}else{
+						} else {
 							pos = colIdx;
 						}
-						if(cmd != null){
+						if (cmd != null) {
 							CellParameters parameters = command.createParameters(context);
 
-							if((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember")) &&
-									(!drillMode.equals(DrillDownCommand.MODE_REPLACE ))){
+							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember")) &&
+									(!drillMode.equals(DrillDownCommand.MODE_REPLACE))) {
 								attributes.put("src", "../img/minus.gif");
-								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
-								getWriter().startElement("img", attributes);			
+								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp(" + axis + " , " + pos + " , " + memb + ")");
+								getWriter().startElement("img", attributes);
 								getWriter().endElement("img");
-							}else if((cmd.equalsIgnoreCase("expandPosition")  || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))){
+							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
 								attributes.put("src", "../img/plus.gif");
-								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown("+axis+" , "+pos+" , "+memb+")");
-								getWriter().startElement("img", attributes);			
+								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown(" + axis + " , " + pos + " , " + memb + ")");
+								getWriter().startElement("img", attributes);
 								getWriter().endElement("img");
 							}
 						}
@@ -332,62 +329,64 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 					}
 				} else {
 					if (context.getAxis() == Axis.ROWS) {
-						// adding a transparent image to get a higher indentation on rows headers
+						// adding a transparent image to get a higher
+						// indentation on rows headers
 						attributes.put("src", "../img/nodrill.png");
 						attributes.put("style", "padding : 2px");
-						getWriter().startElement("img", attributes);			
+						getWriter().startElement("img", attributes);
 						getWriter().endElement("img");
 					}
 				}
 
 			}
-			
-			if((context.getCellType() == CellType.Title) && !label.equalsIgnoreCase("Measures")){				
-				///spagobi whatif engine 
+
+			if ((context.getCellType() == CellType.Title) && !label.equalsIgnoreCase("Measures")) {
+				// /spagobi whatif engine
 
 				int colIdx = context.getColumnIndex();
 				int rowIdx = context.getRowIndex();
 
-				int axis =0;
-				if(context.getAxis()!= null){
-					axis =context.getAxis().axisOrdinal();
+				int axis = 0;
+				if (context.getAxis() != null) {
+					axis = context.getAxis().axisOrdinal();
 				}
-				int memb =0;
-				if(context.getPosition()!= null){
-					memb =context.getPosition().getOrdinal();
+				int memb = 0;
+				if (context.getPosition() != null) {
+					memb = context.getPosition().getOrdinal();
 				}
-				int pos =0;
-				if(context.getAxis() == Axis.COLUMNS){
+				int pos = 0;
+				if (context.getAxis() == Axis.COLUMNS) {
 					pos = rowIdx;
-				}else{
+				} else {
 					pos = colIdx;
 				}
 
-				if(drillMode.equals(DrillDownCommand.MODE_REPLACE ) && !this.getShowParentMembers() ){
+				if (drillMode.equals(DrillDownCommand.MODE_REPLACE) && !this.getShowParentMembers()) {
 					Hierarchy h = context.getHierarchy();
 					PlaceMembersOnAxes pm = context.getModel().getTransform(PlaceMembersOnAxes.class);
-					//PlaceHierarchiesOnAxes ph = context.getModel().getTransform(PlaceHierarchiesOnAxes.class);
+					// PlaceHierarchiesOnAxes ph =
+					// context.getModel().getTransform(PlaceHierarchiesOnAxes.class);
 					List<Member> visibleMembers = pm.findVisibleMembers(h);
 					int d = 0;
-					for(Member m : visibleMembers ){
+					for (Member m : visibleMembers) {
 						Level l = m.getLevel();
-						d = l.getDepth();	
-						if(d !=0){
+						d = l.getDepth();
+						if (d != 0) {
 							break;
 						}
 					}
-					if(d != 0 ){
+					if (d != 0) {
 						attributes.put("src", "../img/arrow-up.png");
-						attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
-						getWriter().startElement("img", attributes);			
+						attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp(" + axis + " , " + pos + " , " + memb + ")");
+						getWriter().startElement("img", attributes);
 						getWriter().endElement("img");
 					}
 					getWriter().writeContent(label);
-					
-				}else if (!drillMode.equals(DrillDownCommand.MODE_REPLACE ) ){
+
+				} else if (!drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
 					getWriter().writeContent(label);
 				}
-			}else{
+			} else {
 				getWriter().writeContent(label);
 			}
 		} else {
@@ -399,6 +398,5 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			getWriter().endElement("a");
 		}
 	}
-
 
 }

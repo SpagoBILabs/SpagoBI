@@ -3,6 +3,9 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/**
+ * @author Davide Zerbetto (davide.zerbetto@eng.it)
+ */
 package it.eng.spagobi.engines.whatif.parameters;
 
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
@@ -16,13 +19,13 @@ import org.apache.log4j.Logger;
 public class MDXParametersUtilities {
 
 	public static transient Logger logger = Logger.getLogger(MDXParametersUtilities.class);
-	
+
 	public static String substituteParametersInMDXQuery(String mdxQueryStr,
 			List<WhatIfTemplate.Parameter> parameters, Map env) {
 		String toReturn = mdxQueryStr;
 		if (parameters != null && parameters.size() > 0) {
 			for (int i = 0; i < parameters.size(); i++) {
-				WhatIfTemplate.Parameter parameter = (WhatIfTemplate.Parameter) parameters.get(i);
+				WhatIfTemplate.Parameter parameter = parameters.get(i);
 				String name = parameter.getName();
 				String alias = parameter.getAlias();
 
@@ -66,8 +69,9 @@ public class MDXParametersUtilities {
 			ptr = newQuery.indexOf("(", index);
 			String firstArg = newQuery.substring(
 					newQuery.indexOf("(", ptr) + 1, newQuery.indexOf(",", ptr));
-			if (!firstArg.trim().equalsIgnoreCase("\"" + pname + "\""))
+			if (!firstArg.trim().equalsIgnoreCase("\"" + pname + "\"")) {
 				continue;
+			}
 			ptr = newQuery.indexOf(",", ptr) + 1; // 2 arg
 			String secondArg = newQuery.substring(ptr,
 					newQuery.indexOf(",", ptr));
@@ -105,8 +109,9 @@ public class MDXParametersUtilities {
 			// filter
 			// conditions
 
-			if (!namePar.trim().equalsIgnoreCase(pname))
+			if (!namePar.trim().equalsIgnoreCase(pname)) {
 				continue;
+			}
 			newQuery = newQuery.substring(0, index) + pvalue
 					+ newQuery.substring(indexEnd + 1, newQuery.length());
 		}
