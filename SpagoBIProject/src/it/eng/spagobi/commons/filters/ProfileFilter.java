@@ -52,7 +52,7 @@ public class ProfileFilter implements Filter {
 	}
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		//logger.debug("IN");
+		// logger.debug("IN");
 		try {
 			if (request instanceof HttpServletRequest) {
 				HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -75,9 +75,9 @@ public class ProfileFilter implements Filter {
 				if (profile == null) {
 					// in case the profile does not exist, creates a new one
 					logger.debug("User profile not found in session, creating a new one and putting in session....");
-					
+
 					String userId = null;
-					
+
 					if (ChannelUtilities.isWebRunning() && !GeneralUtilities.isSSOEnabled()) {
 						// case of installation as web application without SSO
 						try {
@@ -88,19 +88,19 @@ public class ProfileFilter implements Filter {
 							return;
 						}
 					} else {
-						// case of installation as portlet application and/or with SSO
+						// case of installation as portlet application and/or
+						// with SSO
 						userId = getUserIdWithSSO(httpRequest);
 					}
 
 					logger.debug("User id = " + userId);
 					if (userId != null && !userId.trim().equals("")) {
 						profile = GeneralUtilities.createNewUserProfile(userId);
-						permanentSession.setAttribute(
-								IEngUserProfile.ENG_USER_PROFILE, profile);
+						permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 					} else {
 						logger.debug("User identifier not found.");
 					}
-					
+
 				} else {
 					// in case the profile is different, creates a new one
 					// and overwrites the existing
@@ -117,17 +117,18 @@ public class ProfileFilter implements Filter {
 					 * userId + "] already existing in session, ok"); }
 					 */
 				}
-				
+
 				if (profile != null) {
 					manageTenant(profile);
 				}
-				
+
 				chain.doFilter(request, response);
 			}
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
-			// since TenantManager uses a ThreadLocal, we must clean  after request processed in each case
+			// since TenantManager uses a ThreadLocal, we must clean after
+			// request processed in each case
 			TenantManager.unset();
 		}
 	}
@@ -144,6 +145,7 @@ public class ProfileFilter implements Filter {
 			try {
 				this.authenticate(credentials);
 				logger.debug("User authenticated");
+				httpRequest.getSession().setAttribute(SsoServiceInterface.SILENT_LOGIN, Boolean.TRUE);
 			} catch (Throwable t) {
 				logger.error("Authentication failed", t);
 				throw new SilentAuthenticationFailedException();
@@ -151,11 +153,11 @@ public class ProfileFilter implements Filter {
 		} else {
 			logger.debug("User credentials not found.");
 		}
-		
+
 		String userId = credentials != null ? credentials.getUserName() : null;
 		return userId;
 	}
-	
+
 	private void authenticate(UsernamePasswordCredentials credentials) throws Throwable {
 		logger.debug("IN: userId = " + credentials.getUserName());
 		try {
@@ -171,7 +173,7 @@ public class ProfileFilter implements Filter {
 		} finally {
 			logger.debug("OUT");
 		}
-		
+
 	}
 
 	private UsernamePasswordCredentials findUserCredentials(HttpServletRequest httpRequest) {
@@ -206,7 +208,7 @@ public class ProfileFilter implements Filter {
 		String tenantId = userProfile.getOrganization();
 		// putting tenant id on thread local
 		Tenant tenant = new Tenant(tenantId);
-        TenantManager.setTenant(tenant);
+		TenantManager.setTenant(tenant);
 	}
 
 	public void init(FilterConfig config) throws ServletException {
@@ -239,13 +241,13 @@ public class ProfileFilter implements Filter {
 		}
 		return userId;
 	}
-	
+
 	public class SilentAuthenticationFailedException extends RuntimeException {
-		
+
 	}
-	
+
 	public class InvalidMethodException extends RuntimeException {
-		
+
 	}
 
 }

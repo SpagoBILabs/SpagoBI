@@ -16,42 +16,50 @@ import javax.servlet.http.HttpSession;
 /**
  * 
  * Interface for read and validate a proxy ticket
- *
+ * 
  */
 public interface SsoServiceInterface {
-	
-	public static final String USER_ID="user_id";
+
+	public static final String USER_ID = "user_id";
 	public static final String USER_NAME_REQUEST_PARAMETER = "USERNAME";
 	public static final String PASSWORD_REQUEST_PARAMETER = "PASSWORD";
 	public static final String PASSWORD_MODE_REQUEST_PARAMETER = "PASSWORD_MODE";
 	public static final String PASSWORD_MODE_ENCRYPTED = "ENC";
+	public static final String SILENT_LOGIN = "SILENT_LOGIN";
 
-    /**
-     * 
-     * @param ticket String
-     * @param userId String
-     * @throws SecurityException String
-     */
-    void validateTicket(String ticket, String userId) throws SecurityException;
-    /**
-     * 
-     * @param session Http Session
-     * @return String
-     * @throws IOException
-     */
-    String readTicket(HttpSession session) throws IOException;
-    /**
-     * 
-     * @param request Http request
-     * @return
-     */
-    String readUserIdentifier(HttpServletRequest request);
-    
-    
-    /**
-     * 
-     * @param session Portlet Session
-     * @return
-     */
-    String readUserIdentifier(PortletSession session);
+	/**
+	 * 
+	 * @param ticket
+	 *            String
+	 * @param userId
+	 *            String
+	 * @throws SecurityException
+	 *             String
+	 */
+	void validateTicket(String ticket, String userId) throws SecurityException;
+
+	/**
+	 * 
+	 * @param session
+	 *            Http Session
+	 * @return String
+	 * @throws IOException
+	 */
+	String readTicket(HttpSession session) throws IOException;
+
+	/**
+	 * 
+	 * @param request
+	 *            Http request
+	 * @return
+	 */
+	String readUserIdentifier(HttpServletRequest request);
+
+	/**
+	 * 
+	 * @param session
+	 *            Portlet Session
+	 * @return
+	 */
+	String readUserIdentifier(PortletSession session);
 }

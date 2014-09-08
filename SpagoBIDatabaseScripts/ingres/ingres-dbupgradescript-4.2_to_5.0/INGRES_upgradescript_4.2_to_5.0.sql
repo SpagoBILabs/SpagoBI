@@ -37,3 +37,10 @@ commit;\p\g
 
 UPDATE SBI_ENGINES SET MAIN_URL = '/SpagoBICockpitEngine/api/1.0/pages/execute' WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.cockpit.CockpitDriver';\p\g
 COMMIT;\p\g
+
+INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALUE_TYPE_ID, CATEGORY, USER_IN, TIME_IN) VALUES 
+((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_CONFIG'), 
+'SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN', 'SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN', 'Show the logout button in case of silent login', true, 'true',
+(select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'NUM' AND DOMAIN_CD = 'PAR_TYPE'), 'GENERIC_CONFIGURATION', 'biadmin', current_timestamp);\p\g
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';\p\g
+commit;\p\g
