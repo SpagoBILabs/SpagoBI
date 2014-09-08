@@ -30,7 +30,8 @@ public class OutputExecutor {
 	private static final String OUTPUT_PLOT_EXTENSION = "jpg";
 	private static final String OUTPUT_PLOT_IMG = "jpeg";
 
-	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + DataMiningConstants.DATA_MINING_PATH_SUFFIX;
+	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath()
+			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 	private Rengine re;
 	DataMiningEngineInstance dataminingInstance;
 
@@ -59,13 +60,23 @@ public class OutputExecutor {
 														// comma separated
 			String plotName = out.getOutputName();
 			re.eval(getPlotFilePath(plotName));
+			String function = out.getOutputFunction();
 
-			re.eval(out.getOutputFunction() + "(" + out.getOutputValue() + ", col=4)");
+			if (function.equals("hist")) {
+				re.eval(function + "(" + out.getOutputValue() + ", col=4)");
+			} else if (function.equals("plot") || function.equals("biplot")) {
+				re.eval(function + "(" + out.getOutputValue() + ", col=3)");
+			} else {
+				re.eval("plot(" + out.getOutputValue() + ", col=4)");
+			}
+
 			re.eval("dev.off()");
 			res.setOutputType(out.getOutputType());
 			res.setResult(getPlotImageAsBase64(out.getOutputName()));
 			res.setPlotName(plotName);
-			scriptExecutor.deleteTemporarySourceScript(DATAMINING_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "." + OUTPUT_PLOT_EXTENSION);
+			// scriptExecutor.deleteTemporarySourceScript(DATAMINING_FILE_PATH +
+			// DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
+			// + OUTPUT_PLOT_EXTENSION);
 
 		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.TEXT_OUTPUT) && out.getOutputValue() != null && out.getOutputName() != null) {
 			res.setVariablename(out.getOutputValue());// could be multiple value

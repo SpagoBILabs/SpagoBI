@@ -58,35 +58,10 @@ Ext.define('Sbi.datamining.OutputPanel', {
 		Ext.apply(this, {
 			items: [this.uploadPanel, this.resultPanel, this.executeScriptBtn]
 		});
-	
-		//this.isResultReady();
+
 		this.callParent();
 	}
 
-//	, isResultReady: function(){
-//		
-//		var thisPanel = this;
-//		
-//		
-//		var service = Ext.create("Sbi.service.RestService",{
-//			url: "result"
-//			,subPath: "needsResultAtForstExec"
-//		});
-//		
-//		var functionSuccess = function(response){
-//
-//			
-//			if(response != null && response.responseText !== undefined && response.responseText !== null && response.responseText !== ''){
-//			
-//				var res = Ext.decode(response.responseText);
-//				if(res.result == Sbi.settings.datamining.execution.ok){
-//					this.resultPanel.getResult(Sbi.settings.datamining.execution.auto);
-//				}
-//				
-//			}
-//		};
-//		service.callService(this, functionSuccess);
-//	}
-//	
+
 	
 });
