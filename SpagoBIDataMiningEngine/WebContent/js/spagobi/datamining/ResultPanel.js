@@ -49,9 +49,7 @@ Ext.define('Sbi.datamining.ResultPanel', {
 
 	initComponent: function() {
 		this.callParent();
-		if(this.mode == 'auto'){
-			this.getResult();
-		}
+
 	}
 
 	

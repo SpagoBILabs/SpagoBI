@@ -64,7 +64,8 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 
 	public static String PROP_PARAMETER_NAME = "name";
 	public static String PROP_PARAMETER_ALIAS = "as";
-	public static String TAG_PARAMETER = "parameter";
+	public static String TAG_PARAMETERS = "PARAMETERS";
+	public static String TAG_PARAMETER = "PARAMETER";
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(DataMiningXMLTemplateParser.class);

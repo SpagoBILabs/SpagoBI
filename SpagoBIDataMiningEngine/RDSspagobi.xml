@@ -8,9 +8,9 @@
 	<SCRIPTS>  
         <SCRIPT name="scriptroll" mode="auto" datasets="spagobids"  label="label scriptroll">
 			<![CDATA[
-	str(sbi);
-	sbi1<-sbi[,c(6,29)];
-	t<-tapply(sbi$ERROR, sbi$DOC_LABEL, FUN = function(x) sum(!is.na(x)) )
+	str(spagobids);
+	sbi1<-spagobids[,c(6,29)];
+	t<-tapply(sbi1$ERROR, sbi1$DOC_LABEL, FUN = function(x) sum(!is.na(x)) )
 			]]>
 		</SCRIPT>
 	</SCRIPTS>
