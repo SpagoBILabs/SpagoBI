@@ -15,6 +15,7 @@ import integration.agorithms.DefaultWeightedAllocationAlgorithmTestCase;
 import integration.agorithms.EqualPartitioningOnLeafsAllocationAlgorithmTestCase;
 import integration.agorithms.LeafsNodesTestCase;
 import integration.output.WhatIfExportResult;
+import integration.versions.VersionManagerTestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import db.HSQLDBEnviromentSingleton;
@@ -42,7 +43,7 @@ public class WhatiIfTestCaseSuite extends AbstractWhatIfInMemoryTestCase {
 		suite.addTestSuite(LeafsNodesTestCase.class);
 		suite.addTestSuite(EqualPartitioningOnLeafsAllocationAlgorithmTestCase.class);
 		suite.addTestSuite(WhatIfExportResult.class);
-
+		suite.addTestSuite(VersionManagerTestCase.class);
 		return suite;
 	}
 
