@@ -12,7 +12,7 @@ Sbi.locale.formats = {
 			nullValue: ''
 		},
 		*/
-		
+
 		float: {
 			decimalSeparator: '.',
 			decimalPrecision: 2,
@@ -29,7 +29,7 @@ Sbi.locale.formats = {
 			//currencySymbol: '$',
 			nullValue: ''
 		},
-		
+
 		string: {
 			trim: true,
     		maxLength: null,
@@ -39,12 +39,12 @@ Sbi.locale.formats = {
     		//suffix: '',
     		nullValue: ''
 		},
-		
+
 		date: {
 			dateFormat: 'm/Y/d',
     		nullValue: ''
 		},
-		
+
 		boolean: {
 			trueSymbol: 'true',
     		falseSymbol: 'false',

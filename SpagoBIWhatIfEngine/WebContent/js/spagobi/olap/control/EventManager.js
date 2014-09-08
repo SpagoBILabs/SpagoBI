@@ -1,16 +1,16 @@
 /** SpagoBI, the Open Source Business Intelligence suite
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * 
+ *
  * This component manage all the events. The standard use case is: the view notify an event to the event manager,
  * the manager decorates it and calls a method of the controller.
  * The controller execute the request and return the result at the event manager that manage the response.<br>
  * It's a Singleton and all classes can notify an event directly to the component
- * 
- *     
+ *
+ *
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
@@ -30,7 +30,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 *  Panel that contains the pivot and the chart
 	 */
 	olapController: null,
-	
+
 	/**
 	 * @property {String} lastEditedFormula
 	 *  the last edited formula. To restore the formula
@@ -42,7 +42,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 *  the last edited formula. To restore the formula
 	 */
 	lastEditedCell: null,
-	
+
 	/**
 	 * @property {String} lockTypeEdit
 	 * A flag that block the editing of a cel. The String is the type of the lock
@@ -78,7 +78,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.on('executeService', this.executeService, this);
 		this.on('serviceExecuted', this.serviceExecuted, this);
 		this.on('serviceExecutedWithError',this.serviceExecutedWithError, this);
-		
+
 	},
 
 
@@ -100,7 +100,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 		var pivot = Ext.create('Sbi.olap.PivotModel', tableJson);
 		this.olapPanel.updateAfterMDXExecution(pivot, tableJson.modelConfig);
 		this.loadingMask.hide();
-		
+
 		if(!keepState){
 			this.cleanLastEditedFormula();
 		}
@@ -210,7 +210,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 			this.olapController.updateHierarchyOnDimension(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition);
 		}
 	},
-	
+
 	/**
 	 * Updates the value of the cell
 	 * @param id
@@ -225,12 +225,12 @@ Ext.define('Sbi.olap.control.EventManager', {
 		if ( value != startValue ) {
 			var position = "";
 			var unformattedValue = value;
-			
+
 			if ( id ) {
-				var endPositionIndex = id.indexOf("!"); 
+				var endPositionIndex = id.indexOf("!");
 				position= id.substring(0, endPositionIndex);
 			}
-			
+
 			try {
 				if ( !isNaN(value) ) {
 					//Value is a number
@@ -242,13 +242,13 @@ Ext.define('Sbi.olap.control.EventManager', {
 			} catch (err) {
 				Sbi.error("Error while trying to convert [" + value + "] to a Java double: " + err);
 			}
-			
+
 			//update the last edited values
 			this.lastEditedFormula = unformattedValue;
 			var separatorIndex = id.lastIndexOf('!');
 			this.lastEditedCell = id.substring(0,separatorIndex);
-			
-			this.olapController.setValue(position, unformattedValue);	
+
+			this.olapController.setValue(position, unformattedValue);
 		} else {
 			Sbi.debug("The new value is the same as the old one");
 			var cell = Ext.get(id);
@@ -258,18 +258,18 @@ Ext.define('Sbi.olap.control.EventManager', {
 	},
 
 	/**
-	 * Makes editable the dom element with the id equals to the passed id 
+	 * Makes editable the dom element with the id equals to the passed id
 	 * @param id the id of the dom element to make editable
 	 */
 	makeEditable: function(id, measureName){
 		var unformattedValue = "";
 		var modelStatus = null;
-		
+
 		//check the status of the lock
 		try {
 			modelStatus = this.olapPanel.executionPanel.olapToolbar.modelStatus;
 		}catch (e) {};
-		
+
 		if(modelStatus == 'locked_by_other' || modelStatus == 'unlocked'){
 			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.writeback.edit.no.locked'));
 			return;
@@ -277,14 +277,14 @@ Ext.define('Sbi.olap.control.EventManager', {
 
 		if(this.olapPanel && this.olapPanel.modelConfig && this.isMeasureEditable(measureName) && !this.lockTypeEdit){
 			var cell = Ext.get(id);
-			
+
 			//check if the user is editing the same cell twice. If so we present again the last formula
 			if(this.lastEditedFormula && this.lastEditedCell && Ext.String.startsWith( id,  this.lastEditedCell )){
 				unformattedValue = this.lastEditedFormula;
 			}else{
 				var type = "float";
 				var originalValue = "";
-				
+
 				try  {
 					originalValue = Ext.String.trim(cell.dom.childNodes[0].data);
 					if (originalValue == '') { // in case the cell was empty, we type 0
@@ -295,14 +295,14 @@ Ext.define('Sbi.olap.control.EventManager', {
 				} catch(err) {
 					Sbi.error("Error loading the value of the cell to edit" + err);
 				}
-				
+
 				//it's not possible to edit a cell with value 0
 				if(unformattedValue==0){
 					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.writeback.edit.no.zero'));
 					return;
-				}	
+				}
 			}
-			
+
 			var editor = Ext.create("Ext.Editor", {
 				updateEl: true,
 				field: {
@@ -320,12 +320,12 @@ Ext.define('Sbi.olap.control.EventManager', {
 
 			editor.startEdit(cell.el, unformattedValue);
 		}
-		
+
 		if(this.lockTypeEdit){
 			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.writeback.edit.lock.'+this.lockTypeEdit));
 		}
 	},
-	
+
 	/**
 	 * Checks if the measure is editable
 	 * @param measureName the name of the measure to check
@@ -349,44 +349,44 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 */
 	,
 	undo : function () {
-		this.olapController.undo();	
+		this.olapController.undo();
 	},
-	
+
 	/**
 	 * Cleans the mondrian cache
 	 */
 	cleanCache: function () {
-		this.olapController.cleanCache();	
+		this.olapController.cleanCache();
 	},
-	
+
 	/**
 	 * Persists the transformations in the db and cleans the stack
 	 */
 	persistTransformations: function () {
-		this.olapController.persistTransformations();	
+		this.olapController.persistTransformations();
 	},
-	
+
 	/**
-	 * Persists the transformations in the db 
+	 * Persists the transformations in the db
 	 * creating a new version and cleans the stack
 	 */
 	persistNewVersionTransformations: function (params) {
-		this.olapController.persistNewVersionTransformations(params);	
+		this.olapController.persistNewVersionTransformations(params);
 	}
 	,
 	/**
 	 * Call rest service to lock model
-	 * 
+	 *
 	 */
 	lockModel: function () {
-		this.olapController.lockModel();	
+		this.olapController.lockModel();
 	}
 	,
 	/**
 	 * Call rest service to unlock model
 	 */
 	unlockModel: function () {
-		this.olapController.unlockModel();	
+		this.olapController.unlockModel();
 	}
 
 	/**
@@ -396,15 +396,15 @@ Ext.define('Sbi.olap.control.EventManager', {
 		if(itemsToDelete && itemsToDelete.length>0){
 			this.olapController.deleteVersions(itemsToDelete);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Call the rest service to export the output
 	 */
 	,exportOutput: function(params){
 		this.olapController.exportOutput(params);
 	}
-	
+
 	,executeService: function(text){
 		if(!text){
 			text = LN("sbi.common.wait");
@@ -427,12 +427,12 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.lockTypeEdit = value;
 
 	}
-	
+
 	, cleanLastEditedFormula: function(){
 		this.lastEditedFormula = null;
 		this.lastEditedCell = null;
 	}
-	
+
 
 });
 

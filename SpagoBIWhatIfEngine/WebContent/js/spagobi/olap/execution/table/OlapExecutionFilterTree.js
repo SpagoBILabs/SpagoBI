@@ -1,12 +1,12 @@
 /** SpagoBI, the Open Source Business Intelligence suite
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * 
+ *
  * Panel with tree filter
- *  
+ *
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
@@ -23,19 +23,19 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
     	 * The dimension linked to the filter
     	 */
 		dimension: null,
-		
+
     	/**
     	 * @cfg {Sbi.olap.MemberModel} selectedMember
     	 * The value of the filter
     	 */
 		selectedMember: null,
-		
+
     	/**
     	 * @cfg {boolean} multiSelection
     	 * allows the multiselection. default to false
     	 */
 		multiSelection: false,
-		
+
 		title: '',
 		height: 500,
 		width: 400
@@ -46,9 +46,9 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 
 	constructor : function(config) {
 		this.initConfig(config);
-		
-		
-		
+
+
+
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionFilterTree) {
 			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionFilterTree);
 		}
@@ -57,7 +57,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 			url: "hierarchy",
 			pathParams: [this.dimension.get("selectedHierarchyUniqueName"), "filtertree", this.dimension.get("axis")]
 		});
-		
+
 		var treeStore =  new Ext.data.TreeStore({
 			proxy: {
 				type: 'ajax',
@@ -76,7 +76,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 				direction: 'ASC'
 			}]
 		});
-		
+
 		//Initialize the filter
 		this.tree = Ext.create("Ext.tree.Panel",{
 			title: this.dimension.raw.caption,
@@ -93,17 +93,17 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 
 
 		this.callParent(arguments);
-		
+
 		//select the selected node
 		this.tree.on("render",this.initializeMemberSelection,this);
 	},
-	
+
 
 	initComponent: function() {
 		var thisPanel = this;
 		Ext.apply(this,{
 			items:[this.tree],
-			tools: [  
+			tools: [
 			       {
 			    	   type: 'expand',
 			    	   tooltip: LN('sbi.olap.execution.table.filter.expand'),
@@ -133,7 +133,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 			            		 }else{
 			            			 selected = thisPanel.tree.getSelectionModel( ).getSelection();
 			            		 }
-			            		 
+
 
 			            		 thisPanel.fireEvent("select",thisPanel.getMembersData(selected));
 			            		 thisPanel.destroy();
@@ -142,7 +142,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 		});
 		this.callParent();
 	},
-	
+
     /**
      * @private
      * It looks for the this.selectedMember in the tree.
@@ -153,10 +153,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 			var root = this.tree.getRootNode();
 			root.on("expand",this.expandNode, this);
 			root.expand();
-			
+
 		}
 	},
-	
+
     /**
      * @private
      * It looks for the this.selectedMember in the subtree rooted in the passed node.
@@ -166,15 +166,15 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 	expandNode: function(node){
 		node.un("expand",this.expandNode, this);
 		var children = node.childNodes;
-		
+
 		var memberId = this.selectedMember.raw.uniqueName;
 		var nodeId = node.internalId;
-		
+
 		if(memberId == nodeId){
 			this.tree.getSelectionModel().select(node);
 			return;
 		}
-		
+
 		if(nodeId=="root"){
 			children[0].on("expand",this.expandNode, this);
 			children[0].expand();
@@ -193,7 +193,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 			}
 		}
 	},
-	
+
 
 	getMembersData: function(members){
 		var toReturn = new Array();

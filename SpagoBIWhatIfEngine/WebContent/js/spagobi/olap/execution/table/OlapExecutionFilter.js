@@ -1,10 +1,10 @@
 /** SpagoBI, the Open Source Business Intelligence suite
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * 
+ *
  * The filter member..
  * The panel contains 3 subpanels:
  * <ul>
@@ -13,7 +13,7 @@
  * <li>a panel with the funnel iconr</li>
  * </ul>
  *
- *     
+ *
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
@@ -94,11 +94,11 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 
 		var selectedValuePanelConfig = {
 				flex: 1,
-				html:"...", 
-				border: false, 
+				html:"...",
+				border: false,
 				bodyCls: "filter-value"};
-		
-		
+
+
 		var titlePanelConfig = {
 				flex: 1,
 				region: 'north',
@@ -106,20 +106,20 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 				border: true,
 				bodyCls: "filter-title "
 		};
-		
-		
+
+
 		this.initTitlePanel(titlePanelConfig);
 		this.initValuePanel(selectedValuePanelConfig);
 
 		this.selectedValuePanel = Ext.create("Ext.Panel",	selectedValuePanelConfig);
 
-		
-		
+
+
 		if(this.dimension.raw.hierarchies && this.dimension.raw.hierarchies.length>1){
 
 			titlePanelConfig.border= false;
 			titlePanelConfig.style = " margin-left: -5px!important";
-			
+
 			this.titlePanel = Ext.create("Ext.Panel", {
 				region: 'north',
 				layout: 'hbox',
@@ -128,15 +128,15 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 				style: " padding: 0px!important",
 				bodyStyle: " padding: 0px!important",
 				items: [this.buildMultiHierarchiesButton({style:"margin-left: 3px"}), titlePanelConfig]
-			});	
-			
+			});
+
 		}else{
-			this.titlePanel = Ext.create("Ext.Panel", titlePanelConfig);	
+			this.titlePanel = Ext.create("Ext.Panel", titlePanelConfig);
 		}
-		
-		
-		
-		
+
+
+
+
 
 
 
@@ -156,10 +156,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 			items:[
 			       this.selectedValuePanel,
 			       {
-			    	   width:20, 
-			    	   html:" ", 
+			    	   width:20,
+			    	   html:" ",
 			    	   cls:"filter-funnel-image",
-			    	   border: true, 
+			    	   border: true,
 			    	   bodyCls: "filter-funnel-body",
 
 			    	   listeners: {
@@ -187,7 +187,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 
 	/**
 	 * @private
-	 * Initializes the panel with the name of the dimension 
+	 * Initializes the panel with the name of the dimension
 	 */
 	initTitlePanel: function(config){
 
@@ -217,7 +217,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 							target: this.titlePanel.el,
 							html: dimensionNameTooltip
 						});
-					}, 
+					},
 					scope: thisPanel
 				}
 		};
@@ -227,7 +227,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 
 	/**
 	 * @private
-	 * Initializes the panel with the value of the slicer 
+	 * Initializes the panel with the value of the slicer
 	 */
 	initValuePanel: function(config){
 
@@ -271,9 +271,9 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 									html: dimensionValueTooltip
 								});
 								},
-							scope: this	
+							scope: this
 						}
-				
+
 				};
 
 				//if there is a slicer initialize the local variable this.selectedMember

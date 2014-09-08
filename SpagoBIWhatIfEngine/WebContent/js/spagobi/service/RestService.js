@@ -1,13 +1,13 @@
 /** SpagoBI, the Open Source Business Intelligence suite
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * 
+ *
  * Repository of all the services
- * 
- *     
+ *
+ *
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
@@ -42,7 +42,7 @@ Ext.define('Sbi.service.RestService', {
 	},
 
 	constructor : function(config) {
-		config = Ext.apply(config || {}, {baseParams : Sbi.config.ajaxBaseParams || {}});  // apply Sbi.config.ajaxBaseParams as base params in the constructor   
+		config = Ext.apply(config || {}, {baseParams : Sbi.config.ajaxBaseParams || {}});  // apply Sbi.config.ajaxBaseParams as base params in the constructor
 		this.initConfig(config);
 		this.callParent();
 		this.addEvents(
@@ -50,7 +50,7 @@ Ext.define('Sbi.service.RestService', {
 				 * @event executedAsync
 				 * This event is thrown when a asynchronous service is executed
 				 * @param {booelan} success true if the service returns with a success code, false otherwise
-				 * @param {Object} response     
+				 * @param {Object} response
 				 */
 				'executedAsync'
 		);
@@ -90,7 +90,7 @@ Ext.define('Sbi.service.RestService', {
 				}
 			}
 		}
-		
+
 		//add the request parameters
 		if(withRequestParams){
 			var first = true;
@@ -108,7 +108,7 @@ Ext.define('Sbi.service.RestService', {
 				}
 			}
 		}
-		
+
 		return url;
 	},
 
@@ -128,7 +128,7 @@ Ext.define('Sbi.service.RestService', {
 			}else{
 				Sbi.olap.eventManager.fireEvent('executeService');
 			}
-			
+
 		}
 
 		var thisPanel = this;
@@ -149,7 +149,7 @@ Ext.define('Sbi.service.RestService', {
 						Sbi.exception.ExceptionHandler.handleFailure(response);
 					}else{
 						Sbi.olap.eventManager.fireEvent('serviceExecuted', response, keepState);
-					}				
+					}
 				} else {
 					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
 				}

@@ -1,13 +1,13 @@
 /** SpagoBI, the Open Source Business Intelligence suite
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * 
- * Window that allows the management of versions 
- * 
- *     
+ *
+ * Window that allows the management of versions
+ *
+ *
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
@@ -22,7 +22,7 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
 		width: 300,
 		actualVersion: null,
 		autoScroll: true,
-		bodyStyle: "background-color: white", 
+		bodyStyle: "background-color: white",
 		title: LN("sbi.olap.toolbar.versionmanagerwindow.version.title")
 	},
 
@@ -31,7 +31,7 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
      *  The grid panel with the versions
      */
 	grid: null,
-	
+
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.toolbar && Sbi.settings.olap.toolbar.VersionManagerWindow) {
@@ -79,12 +79,12 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
 		            		 var selected = thisPanel.grid.getSelectionModel( ).getSelection();
 		            		 var itemsToDelete = "";
 		            		 if(selected && selected.length>0){
-		            			 
+
 		            			 if(selected.length == thisPanel.grid.getStore().getCount( )){
 		            				 Sbi.exception.ExceptionHandler.showWarningMessage(LN("sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all"));
 		            				 return;
 		            			 }
-		            			 
+
 		            			 for(var i=0; i<selected.length; i++){
 		            				 var id = selected[i].get("id");
 		            				 if(id==thisPanel.actualVersion){
@@ -99,7 +99,7 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
 		            			 itemsToDelete = itemsToDelete.substring(1);
 		            			 Sbi.olap.eventManager.deleteVersions(itemsToDelete);
 		            		 }
-		            		 
+
 		            		 thisPanel.destroy();
 		            	 }
 		             }];
