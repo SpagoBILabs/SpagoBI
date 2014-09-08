@@ -72,7 +72,7 @@
 			<FIELDS>
 				<FIELD name="userId" label="userId">
 					<VALIDATOR validatorName="MANDATORY"/>	
-					<VALIDATOR validatorName="REGEXP" arg0="^[a-zA-Z0-9_\x2D]*$"/>				
+					<VALIDATOR validatorName="REGEXP" arg0="^[a-zA-Z0-9_\\\x2D]*$"/>				
 					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
 				</FIELD>
 				<FIELD name="fullName" label="fullName">
