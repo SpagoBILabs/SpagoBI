@@ -69,6 +69,9 @@ public class SpagoBICacheConfiguration {
 		try {
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
+			if (dataSource == null){
+				throw new SpagoBIRuntimeException("Cannot configure cache: Data source for writing is not defined");
+			}
 			return dataSource;
 		} catch(Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache datasource", t);
