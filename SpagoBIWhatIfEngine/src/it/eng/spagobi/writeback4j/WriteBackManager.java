@@ -12,20 +12,19 @@ import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *
- * Manager of the writeback.. 
+ * 
+ *         Manager of the writeback..
  */
 public class WriteBackManager {
 	ISchemaRetriver retriver;
 
 	public WriteBackManager(String editCubeName, IXmlaDriver xmlaDriver) throws SpagoBIEngineException {
-		retriver = new MondrianSchemaRetriver( (MondrianDriver)xmlaDriver,  editCubeName);
-		
+		retriver = new MondrianSchemaRetriver((MondrianDriver) xmlaDriver, editCubeName);
+
 	}
 
 	public ISchemaRetriver getRetriver() {
 		return retriver;
 	}
-	
 
 }

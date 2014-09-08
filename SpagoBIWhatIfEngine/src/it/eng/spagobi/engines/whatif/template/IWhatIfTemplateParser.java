@@ -6,7 +6,7 @@
 package it.eng.spagobi.engines.whatif.template;
 
 /**
- * @author Zerbetto Davide (davide.zerbetto@eng.it)
+ * @author Zerbetto Davide (davide.zerbetto@eng.it )
  */
 public interface IWhatIfTemplateParser {
 	WhatIfTemplate parse(Object template);

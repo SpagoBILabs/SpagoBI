@@ -64,7 +64,6 @@ public abstract class AbstractSqlSchemaManager {
 				} else {
 					condition2Value.put(new TableEntry(aLevel.column, aLevel.table), lelvel2Member.get(aLevel).getName());
 				}
-
 			}
 		}
 

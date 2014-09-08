@@ -1,10 +1,10 @@
- /* SpagoBI, the Open Source Business Intelligence suite
+/* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Monica Franceschini (monica.franceschini@eng.it)
+ * @author Monica Franceschini (monica.franceschini@eng.it) 
  */
 package it.eng.spagobi.engines.whatif.api;
 
@@ -33,99 +33,99 @@ import com.eyeq.pivot4j.ui.command.DrillDownCommand;
 
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
-	
 
 	@GET
 	@Path("/drilldown/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
-	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos){
+	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
+			@PathParam("member") int memberPos) {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 		CellSet cellSet = model.getCellSet();
-		
-		//Axes of the resulting query.
+
+		// Axes of the resulting query.
 		List<CellSetAxis> axes = cellSet.getAxes();
 
-		//The ROWS axis
+		// The ROWS axis
 		CellSetAxis rowsOrColumns = axes.get(axisPos);
 
-		//Member positions of the ROWS axis.
+		// Member positions of the ROWS axis.
 		List<Position> positions = rowsOrColumns.getPositions();
 
 		Position p = positions.get(positionPos);
-		
 
 		List<Member> m = p.getMembers();
 		Member m2 = m.get(memberPos);
-		
-		String drillType=ei.getModelConfig().getDrillType(); 
-		
-		if(drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)){
+
+		String drillType = ei.getModelConfig().getDrillType();
+
+		if (drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)) {
 			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
-			if(transform.canExpand(p, m2)){
+			if (transform.canExpand(p, m2)) {
 				transform.expand(p, m2);
 			}
-		}else if(drillType != null && drillType.equals(DrillDownCommand.MODE_REPLACE)){
-			
+		} else if (drillType != null && drillType.equals(DrillDownCommand.MODE_REPLACE)) {
+
 			DrillReplace transform = model.getTransform(DrillReplace.class);
-			if(transform.canDrillDown(m2)){
+			if (transform.canDrillDown(m2)) {
 				transform.drillDown(m2);
 			}
-		}else if(drillType != null && drillType.equals(DrillDownCommand.MODE_MEMBER)){
+		} else if (drillType != null && drillType.equals(DrillDownCommand.MODE_MEMBER)) {
 			DrillExpandMember transform = model.getTransform(DrillExpandMember.class);
-			if(transform.canExpand(m2)){
+			if (transform.canExpand(m2)) {
 				transform.expand(m2);
 			}
-		}				
-		
+		}
+
 		return renderModel(model);
 	}
+
 	@GET
 	@Path("/drillup/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
-	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos){
+	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
+			@PathParam("member") int memberPos) {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 		CellSet cellSet = model.getCellSet();
 
-		//Axes of the resulting query.
+		// Axes of the resulting query.
 		List<CellSetAxis> axes = cellSet.getAxes();
 
-		//The ROWS axis
+		// The ROWS axis
 		CellSetAxis rowsOrColumns = axes.get(axisPos);
 
-		//Member positions of the ROWS axis.
+		// Member positions of the ROWS axis.
 		List<Position> positions = rowsOrColumns.getPositions();
 
 		Position p = positions.get(positionPos);
-		
 
 		List<Member> m = p.getMembers();
 		Member m2 = m.get(memberPos);
 		Hierarchy hierarchy = m.get(memberPos).getHierarchy();
-		
-		String drillType=ei.getModelConfig().getDrillType();  
-		
-		if(drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)){
+
+		String drillType = ei.getModelConfig().getDrillType();
+
+		if (drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)) {
 			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
-			if(transform.canCollapse(p, m2)){
+			if (transform.canCollapse(p, m2)) {
 				transform.collapse(p, m2);
 			}
-		}else if(drillType != null && drillType.equals(DrillDownCommand.MODE_REPLACE)){
+		} else if (drillType != null && drillType.equals(DrillDownCommand.MODE_REPLACE)) {
 			DrillReplace transform = model.getTransform(DrillReplace.class);
-			if(transform.canDrillUp(hierarchy)){
+			if (transform.canDrillUp(hierarchy)) {
 				transform.drillUp(hierarchy);
 			}
-		}else if(drillType != null && drillType.equals(DrillDownCommand.MODE_MEMBER)){
+		} else if (drillType != null && drillType.equals(DrillDownCommand.MODE_MEMBER)) {
 			DrillExpandMember transform = model.getTransform(DrillExpandMember.class);
-			if(transform.canCollapse(m2)){
+			if (transform.canCollapse(m2)) {
 				transform.collapse(m2);
 			}
 		}
-				
+
 		return renderModel(model);
 	}
-	
+
 }

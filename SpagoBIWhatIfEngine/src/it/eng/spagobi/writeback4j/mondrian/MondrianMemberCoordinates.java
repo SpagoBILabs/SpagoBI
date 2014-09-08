@@ -21,7 +21,7 @@ import mondrian.olap.MondrianDef.Hierarchy;
 import org.olap4j.metadata.Member;
 
 /**
- * @author ghedin
+ * @author Alberto Ghedin
  * 
  */
 public class MondrianMemberCoordinates implements IMemberCoordinates {

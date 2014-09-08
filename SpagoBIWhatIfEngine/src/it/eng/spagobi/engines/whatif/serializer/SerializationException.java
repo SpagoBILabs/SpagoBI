@@ -7,10 +7,9 @@ package it.eng.spagobi.engines.whatif.serializer;
 
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
-
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * 
  */
 public class SerializationException extends SpagoBIException {
 
@@ -22,7 +21,7 @@ public class SerializationException extends SpagoBIException {
 	public SerializationException(String message) {
 		super(message);
 	}
-	
+
 	public SerializationException(String message, Throwable e) {
 		super(message, e);
 	}

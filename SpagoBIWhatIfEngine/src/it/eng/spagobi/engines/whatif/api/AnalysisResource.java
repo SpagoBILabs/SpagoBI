@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Alberto Ghedin (alberto.ghedin@eng.it) 
  * 
  * @class AnalysisResource
  * 
@@ -41,15 +41,13 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(AnalysisResource.class);
 
-
 	private static final String EXPORT_FILE_NAME = "SpagoBIOlapExport";
 	private static final String CSV_ROWS_SEPARATOR = "\r\n";
-	
-	
+
 	@GET
 	@Path("/csv/{version}/{fieldDelimiter}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response exportEditTableCSV( @PathParam("version") int version,  @PathParam("fieldDelimiter") String fieldDelimiter){
+	public Response exportEditTableCSV(@PathParam("version") int version, @PathParam("fieldDelimiter") String fieldDelimiter) {
 
 		byte[] csv = null;
 		Connection connection;
@@ -57,88 +55,81 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 
 		PivotModel model = ei.getPivotModel();
 
-
 		logger.debug("Exporting in CSV..");
 
 		IDataSource dataSource = ei.getDataSource();
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection( null );
+			connection = dataSource.getConnection(null);
 		} catch (Exception e) {
-			logger.error("Error opening connection to datasource "+dataSource.getLabel());
-			throw new SpagoBIRuntimeException("Error opening connection to datasource "+dataSource.getLabel(), e);	
-		} 
+			logger.error("Error opening connection to datasource " + dataSource.getLabel());
+			throw new SpagoBIRuntimeException("Error opening connection to datasource " + dataSource.getLabel(), e);
+		}
 		try {
-			AnalysisExporter esporter = new AnalysisExporter( model, ei.getWriteBackManager().getRetriver());
-			csv =   esporter.exportCSV( connection,version, fieldDelimiter, CSV_ROWS_SEPARATOR);
+			AnalysisExporter esporter = new AnalysisExporter(model, ei.getWriteBackManager().getRetriver());
+			csv = esporter.exportCSV(connection, version, fieldDelimiter, CSV_ROWS_SEPARATOR);
 		} catch (Exception e) {
-			logger.debug("Error exporting the output tbale in csv",e);
+			logger.debug("Error exporting the output tbale in csv", e);
 			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.export.out.error", getLocale(), e);
-		}finally{
+		} finally {
 			logger.debug("Closing the connection used to export the output table");
 			try {
 				connection.close();
 			} catch (SQLException e) {
 				logger.error("Error closing the connection to the db");
-				throw new SpagoBIEngineRestServiceRuntimeException( getLocale(), e);
+				throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e);
 			}
 			logger.debug("Closed the connection used to export the output table");
 		}
 
+		String fileName = EXPORT_FILE_NAME + "-" + (new Date()).toLocaleString() + ".csv";
 
-        String fileName = EXPORT_FILE_NAME+"-"+(new Date()).toLocaleString()+".csv";
-        
-    	return Response
-                .ok(csv, MediaType.APPLICATION_OCTET_STREAM)
-                .header("content-disposition","attachment; filename = "+fileName)
-                .build();
+		return Response
+				.ok(csv, MediaType.APPLICATION_OCTET_STREAM)
+				.header("content-disposition", "attachment; filename = " + fileName)
+				.build();
 
 	}
-	
+
 	@GET
 	@Path("/table/{version}/{tableName}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public String exportEditTableTable( @PathParam("version") int version,  @PathParam("tableName") String tableName){
-
+	public String exportEditTableTable(@PathParam("version") int version, @PathParam("tableName") String tableName) {
 
 		Connection connection;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 
 		PivotModel model = ei.getPivotModel();
 
-
 		logger.debug("Exporting in an external table..");
 
 		IDataSource dataSource = ei.getDataSource();
 		try {
 			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection( null );
+			connection = dataSource.getConnection(null);
 		} catch (Exception e) {
-			logger.error("Error opening connection to datasource "+dataSource.getLabel());
-			throw new SpagoBIRuntimeException("Error opening connection to datasource "+dataSource.getLabel(), e);	
-		} 
+			logger.error("Error opening connection to datasource " + dataSource.getLabel());
+			throw new SpagoBIRuntimeException("Error opening connection to datasource " + dataSource.getLabel(), e);
+		}
 		try {
 			AnalysisExporter esporter = new AnalysisExporter(model, ei.getWriteBackManager().getRetriver());
-			esporter.exportTable( connection, ei.getDataSource(), ei.getDataSourceForWriting(),version, tableName);
+			esporter.exportTable(connection, ei.getDataSource(), ei.getDataSourceForWriting(), version, tableName);
 		} catch (Exception e) {
-			logger.debug("Error exporting the output table in an external table",e);
+			logger.debug("Error exporting the output table in an external table", e);
 			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.export.out.error", getLocale(), e);
-		}finally{
+		} finally {
 			logger.debug("Closing the connection used to export the output table");
 			try {
 				connection.close();
 			} catch (SQLException e) {
 				logger.error("Error closing the connection to the db");
-				throw new SpagoBIEngineRestServiceRuntimeException( getLocale(), e);
+				throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e);
 			}
 			logger.debug("Closed the connection used to export the output table");
 		}
 
-
-		
-    	return getJsonSuccess();
+		return getJsonSuccess();
 
 	}
-
 
 }

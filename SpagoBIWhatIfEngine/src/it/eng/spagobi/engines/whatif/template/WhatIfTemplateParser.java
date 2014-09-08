@@ -10,8 +10,6 @@ import it.eng.spago.base.SourceBean;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONObject;
-
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
  */

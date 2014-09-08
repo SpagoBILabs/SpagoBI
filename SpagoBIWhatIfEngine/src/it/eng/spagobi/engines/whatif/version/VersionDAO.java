@@ -25,196 +25,181 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-
 /**
- *  @author Giulio Gavardi (giulio.gavardi@eng.it)
- *
+ * @author Giulio Gavardi (giulio.gavardi@eng.it)
+ * 
  */
 public class VersionDAO {
 
-
-	private WhatIfEngineInstance instance;
-	private String editCubeTableName;
-	private IDbSchemaDescriptor descriptor;
-
-
+	private final WhatIfEngineInstance instance;
+	private final String editCubeTableName;
+	private final IDbSchemaDescriptor descriptor;
 
 	public static transient Logger logger = Logger.getLogger(VersionDAO.class);
 
-	public VersionDAO( WhatIfEngineInstance instance){
+	public VersionDAO(WhatIfEngineInstance instance) {
 		this.instance = instance;
 
 		editCubeTableName = instance.getWriteBackManager().getRetriver().getEditCubeTableName();
-		logger.debug("Edit table name is: "+editCubeTableName);
+		logger.debug("Edit table name is: " + editCubeTableName);
 
-		//defining the table descriptor
+		// defining the table descriptor
 		descriptor = new JdbcTableDescriptor();
 	}
 
-	public Integer getLastVersion(Connection connection) throws SpagoBIEngineException, NumberFormatException{
+	public Integer getLastVersion(Connection connection) throws SpagoBIEngineException, NumberFormatException {
 		logger.debug("IN");
 		logger.debug("get Last version");
 
 		Integer lastVersion;
 
 		try {
-			String sqlQuery = "select MAX("+getVersionColumnName()+") as "+getVersionColumnName()+" from "+getVersionTableName();
-			SqlQueryStatement queryStatement = new SqlQueryStatement(sqlQuery) ;
-			Object o= queryStatement.getSingleValue(connection, getVersionColumnName());
-			if(o != null){
-				logger.debug("Last version is "+o);	
+			String sqlQuery = "select MAX(" + getVersionColumnName() + ") as " + getVersionColumnName() + " from " + getVersionTableName();
+			SqlQueryStatement queryStatement = new SqlQueryStatement(sqlQuery);
+			Object o = queryStatement.getSingleValue(connection, getVersionColumnName());
+			if (o != null) {
+				logger.debug("Last version is " + o);
 
 				// Oracle case
-				if(o instanceof BigDecimal){
-					lastVersion = ((BigDecimal)o).intValue();
+				if (o instanceof BigDecimal) {
+					lastVersion = ((BigDecimal) o).intValue();
 				}
-				else{
+				else {
 					lastVersion = (Integer) o;
 				}
 			}
-			else{
+			else {
 				logger.debug("No last version found, it is assumed to be 0");
 				lastVersion = 0;
 			}
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			logger.error("Error in converting to Integer the version value: check your db settings for version column", e);
-			throw e;		
-		}
-		catch (SpagoBIEngineException e) {
+			throw e;
+		} catch (SpagoBIEngineException e) {
 			logger.error("Error when recovering last model version", e);
 			throw e;
-		}		
+		}
 		logger.debug("OUT");
 		return lastVersion;
 	}
 
-
-	public String increaseActualVersion(Connection connection, Integer lastVersion, Integer newVersion, String name, String descr) throws SpagoBIEngineException{
+	public String increaseActualVersion(Connection connection, Integer lastVersion, Integer newVersion, String name, String descr) throws SpagoBIEngineException {
 		logger.debug("IN");
 
-		if(descr==null){
-			name = ""+newVersion;
-			descr = ""+newVersion;
+		if (descr == null) {
+			name = "" + newVersion;
+			descr = "" + newVersion;
 		}
 
 		String sqlInsertIntoVirtual = null;
-		String insertIntoVersion = "insert into "+getVersionTableName()+" ( "+getVersionColumnName()+" , "+WhatIfConstants.WBVERSION_COLUMN_NAME+" , "+WhatIfConstants.WBVERSION_COLUMN_DESCRIPTION+") values ("+newVersion+",'"+name +"','"+descr +"')";
+		String insertIntoVersion = "insert into " + getVersionTableName() + " ( " + getVersionColumnName() + " , " + WhatIfConstants.WBVERSION_COLUMN_NAME + " , "
+				+ WhatIfConstants.WBVERSION_COLUMN_DESCRIPTION + ") values (" + newVersion + ",'" + name + "','" + descr + "')";
 
 		logger.debug("Data duplication");
 
 		try {
-			
+
 			long dateBefore = System.currentTimeMillis();
-			
+
 			logger.debug("Inserting the new version in the dimension table");
-			SqlInsertStatement insertStatement = new SqlInsertStatement(insertIntoVersion) ;
+			SqlInsertStatement insertStatement = new SqlInsertStatement(insertIntoVersion);
 			insertStatement.executeStatement(connection);
-			
-			
+
 			logger.debug("Inserting in the cube the new version");
-			sqlInsertIntoVirtual = buildInserttoDuplicateDataStatment(lastVersion, newVersion);	
-			logger.debug("The query for the new version is "+sqlInsertIntoVirtual);
-			insertStatement = new SqlInsertStatement(sqlInsertIntoVirtual) ;
+			sqlInsertIntoVirtual = buildInserttoDuplicateDataStatment(lastVersion, newVersion);
+			logger.debug("The query for the new version is " + sqlInsertIntoVirtual);
+			insertStatement = new SqlInsertStatement(sqlInsertIntoVirtual);
 			insertStatement.executeStatement(connection);
-			
-			
-			
+
 			long dateAfter = System.currentTimeMillis();
-			logger.debug("Time to insert the new version "+(dateAfter-dateBefore));
+			logger.debug("Time to insert the new version " + (dateAfter - dateBefore));
 		} catch (SpagoBIEngineException e) {
 			logger.error("Error in increasing version procedure: error when duplicating data and changing version", e);
 			throw e;
-		}	
+		}
 
 		logger.debug("OUT");
 		return sqlInsertIntoVirtual;
 	}
 
-	private String buildInserttoDuplicateDataStatment(Integer lastVersion, Integer newVersion){
+	private String buildInserttoDuplicateDataStatment(Integer lastVersion, Integer newVersion) {
 		logger.debug("IN");
 
-
-		String columnsListString="";
-		String columnsListStringVersionWritten="";
+		String columnsListString = "";
+		String columnsListStringVersionWritten = "";
 
 		for (Iterator<String> iterator = descriptor.getColumnNames(editCubeTableName, instance.getDataSource()).iterator(); iterator.hasNext();) {
-			String s = (String) iterator.next();
+			String s = iterator.next();
 
-			if(s.equalsIgnoreCase(getVersionColumnName())){
-				columnsListString+=" "+s+" ";
-				columnsListStringVersionWritten+=" "+(newVersion)+" ";
-
-			}
-			else{
-				columnsListString+=" "+s+" ";
-				columnsListStringVersionWritten+=" "+s+" ";
+			if (s.equalsIgnoreCase(getVersionColumnName())) {
+				columnsListString += " " + s + " ";
+				columnsListStringVersionWritten += " " + (newVersion) + " ";
 
 			}
+			else {
+				columnsListString += " " + s + " ";
+				columnsListStringVersionWritten += " " + s + " ";
 
+			}
 
-			if(iterator.hasNext()){
-				columnsListString+=",";
-				columnsListStringVersionWritten+=",";
+			if (iterator.hasNext()) {
+				columnsListString += ",";
+				columnsListStringVersionWritten += ",";
 			}
 		}
 
-		logger.debug("Columns of virtual table are: "+columnsListString);
-
+		logger.debug("Columns of virtual table are: " + columnsListString);
 
 		String statement = "";
 
-		statement = "insert into "+editCubeTableName+" ("+columnsListString+") "
-				+" select "+columnsListStringVersionWritten+" from "+editCubeTableName
-				+" where "+getVersionColumnName()+"="+(lastVersion);
+		statement = "insert into " + editCubeTableName + " (" + columnsListString + ") "
+				+ " select " + columnsListStringVersionWritten + " from " + editCubeTableName
+				+ " where " + getVersionColumnName() + "=" + (lastVersion);
 
-		logger.debug("Statement for duplicating data of last version: "+statement);
+		logger.debug("Statement for duplicating data of last version: " + statement);
 
 		logger.debug("OUT");
 		return statement;
 	}
 
-	public List<SbiVersion> getAllVersions(Connection connection) throws  SpagoBIEngineException, SQLException{
+	public List<SbiVersion> getAllVersions(Connection connection) throws SpagoBIEngineException, SQLException {
 		logger.debug("IN");
-		String sqlQuery = "select "+getVersionColumnName()+" as versionIdColumn, "+WhatIfConstants.WBVERSION_COLUMN_NAME+", "+WhatIfConstants.WBVERSION_COLUMN_DESCRIPTION+"  from "+getVersionTableName();
-		SqlQueryStatement queryStatement = new SqlQueryStatement(sqlQuery) ;
+		String sqlQuery = "select " + getVersionColumnName() + " as versionIdColumn, " + WhatIfConstants.WBVERSION_COLUMN_NAME + ", "
+				+ WhatIfConstants.WBVERSION_COLUMN_DESCRIPTION + "  from " + getVersionTableName();
+		SqlQueryStatement queryStatement = new SqlQueryStatement(sqlQuery);
 		ResultSet resulSet = queryStatement.getValues(connection);
-		 List<SbiVersion> versions = fromResultSetToSbiVersions(resulSet);
+		List<SbiVersion> versions = fromResultSetToSbiVersions(resulSet);
 		logger.debug("OUT");
 		return versions;
 	}
-	
-	
-	
-	public void deleteVersions(Connection connection, String versionIds) throws  Exception{
+
+	public void deleteVersions(Connection connection, String versionIds) throws Exception {
 		logger.debug("IN");
-		logger.debug("Deleting the versions "+versionIds+" from the cube");
-		String sqlQuery = "delete from "+editCubeTableName+" where "+getVersionColumnName()+" in ("+versionIds+")";
-		SqlUpdateStatement queryStatement = new SqlUpdateStatement(sqlQuery) ;
+		logger.debug("Deleting the versions " + versionIds + " from the cube");
+		String sqlQuery = "delete from " + editCubeTableName + " where " + getVersionColumnName() + " in (" + versionIds + ")";
+		SqlUpdateStatement queryStatement = new SqlUpdateStatement(sqlQuery);
 		queryStatement.executeStatement(connection);
-		
-		logger.debug("Deleting the versions "+versionIds+" from the version dimension");
-		sqlQuery = "delete from "+getVersionTableName()+" where "+getVersionColumnName()+" in ("+versionIds+")";
-		queryStatement = new SqlUpdateStatement(sqlQuery) ;
+
+		logger.debug("Deleting the versions " + versionIds + " from the version dimension");
+		sqlQuery = "delete from " + getVersionTableName() + " where " + getVersionColumnName() + " in (" + versionIds + ")";
+		queryStatement = new SqlUpdateStatement(sqlQuery);
 		queryStatement.executeStatement(connection);
-		
+
 		logger.debug("Version deleted");
 		logger.debug("OUT");
 	}
-	
-	private String getVersionColumnName(){
+
+	private String getVersionColumnName() {
 		return instance.getWriteBackManager().getRetriver().getVersionColumnName();
 	}
-	
-	private String getVersionTableName(){
+
+	private String getVersionTableName() {
 		return instance.getWriteBackManager().getRetriver().getVersionTableName();
 	}
-	
-	
-	
-	private List<SbiVersion> fromResultSetToSbiVersions(ResultSet resulSet) throws SQLException{
+
+	private List<SbiVersion> fromResultSetToSbiVersions(ResultSet resulSet) throws SQLException {
 		List<SbiVersion> versions = new ArrayList<SbiVersion>();
-		while(resulSet.next()){
+		while (resulSet.next()) {
 			Integer versionId = resulSet.getInt("versionIdColumn");
 			String versionName = resulSet.getString("version_name");
 			String versionDescr = resulSet.getString("version_descr");

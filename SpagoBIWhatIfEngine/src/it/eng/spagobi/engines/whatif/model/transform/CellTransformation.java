@@ -8,11 +8,10 @@
  * An instance of this class represents a transformation applied to a particular Cell in a CellSet
  * 
  * 
- * @author Zerbetto Davide (davide.zerbetto@eng.it)
+ * @author Zerbetto Davide (davide.zerbetto@eng.it) 
  */
 
 package it.eng.spagobi.engines.whatif.model.transform;
-
 
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
@@ -23,8 +22,8 @@ public class CellTransformation {
 	private IAllocationAlgorithm algorithm;
 	private Object newValue;
 	private Object oldValue;
-	
-	public CellTransformation (Object newValue, Object oldValue, SpagoBICellWrapper cell, IAllocationAlgorithm algorithm) {
+
+	public CellTransformation(Object newValue, Object oldValue, SpagoBICellWrapper cell, IAllocationAlgorithm algorithm) {
 		this.newValue = newValue;
 		this.cell = cell;
 		this.algorithm = algorithm;
@@ -68,7 +67,5 @@ public class CellTransformation {
 		return "CellTransformation [cell=" + cell + ", algorithm=" + algorithm.getName()
 				+ ", newValue=" + newValue + ", oldValue=" + oldValue + "]";
 	}
-	
-	
-	
+
 }

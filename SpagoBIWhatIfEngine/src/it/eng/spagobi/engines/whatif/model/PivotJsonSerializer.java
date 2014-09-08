@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * @authors Alberto Ghedin (alberto.ghedin@eng.it)
+ * @authors Alberto Ghedin (alberto.ghedin@eng.it) 
  *
  */
 package it.eng.spagobi.engines.whatif.model;
@@ -24,18 +24,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-
 public class PivotJsonSerializer implements ISerializer {
 
 	public static transient Logger logger = Logger.getLogger(PivotJsonSerializer.class);
 	private static final String mimeType = "application/json";
-	
+
 	ObjectMapper mapper;
 
 	public PivotJsonSerializer(OlapConnection connection, ModelConfig config) {
 		mapper = new ObjectMapper();
-		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
-		//simpleModule.addSerializer(Member.class, new MemberJsonSerializer());
+		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1, 0, 0, null));
+		// simpleModule.addSerializer(Member.class, new MemberJsonSerializer());
 		simpleModule.addSerializer(PivotModel.class, new PivotJsonHTMLSerializer(connection, config));
 		mapper.registerModule(simpleModule);
 	}
@@ -44,26 +43,26 @@ public class PivotJsonSerializer implements ISerializer {
 		try {
 			return mapper.writeValueAsString(object);
 		} catch (Exception e) {
-			logger.error("Error serializing the MemberEntry",e);
-			throw new SpagoBIRuntimeException("Error serializing the MemberEntry",e);
+			logger.error("Error serializing the MemberEntry", e);
+			throw new SpagoBIRuntimeException("Error serializing the MemberEntry", e);
 		}
 	}
-	
+
 	public Object deserialize(String toDeserialize, Class object) throws SerializationException {
 		try {
 			return mapper.readValue(toDeserialize, object);
 		} catch (Exception e) {
-			logger.error("Error deserializing the MemberEntry",e);
-			throw new SpagoBIRuntimeException("Error deserializing the MemberEntry",e);
+			logger.error("Error deserializing the MemberEntry", e);
+			throw new SpagoBIRuntimeException("Error deserializing the MemberEntry", e);
 		}
 	}
-	
+
 	public Object deserialize(String toDeserialize, TypeReference object) throws SerializationException {
 		try {
 			return mapper.readValue(toDeserialize, object);
 		} catch (Exception e) {
-			logger.error("Error deserializing the MemberEntry",e);
-			throw new SpagoBIRuntimeException("Error deserializing the MemberEntry",e);
+			logger.error("Error deserializing the MemberEntry", e);
+			throw new SpagoBIRuntimeException("Error deserializing the MemberEntry", e);
 		}
 	}
 
@@ -71,11 +70,14 @@ public class PivotJsonSerializer implements ISerializer {
 		return SerializationManager.DEFAULT_VERSION;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.engines.whatif.services.serializer.ISerializer#getFormat()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * it.eng.spagobi.engines.whatif.services.serializer.ISerializer#getFormat()
 	 */
 	public String getFormat() {
 		return mimeType;
-	}   
+	}
 
 }

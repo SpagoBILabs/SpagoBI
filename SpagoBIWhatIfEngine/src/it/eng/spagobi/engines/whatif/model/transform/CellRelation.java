@@ -7,14 +7,14 @@
 /**
  * Decribes the relationship between two cells.
  * 
- * @author Zerbetto Davide (davide.zerbetto@eng.it)
+ * @author Zerbetto Davide (davide.zerbetto@eng.it) 
  */
 
 package it.eng.spagobi.engines.whatif.model.transform;
 
 public enum CellRelation {
-    ABOVE,
-    EQUAL,
-    BELOW,
-    NONE
+	ABOVE,
+	EQUAL,
+	BELOW,
+	NONE
 }

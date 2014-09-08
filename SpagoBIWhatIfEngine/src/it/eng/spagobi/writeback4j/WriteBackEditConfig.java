@@ -9,12 +9,10 @@ package it.eng.spagobi.writeback4j;
 import java.io.Serializable;
 import java.util.List;
 
-
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *
- * @class WriteBackEditConfig
- * The configuration of the writeback..
+ * 
+ * @class WriteBackEditConfig The configuration of the writeback..
  */
 public class WriteBackEditConfig implements Serializable {
 
@@ -25,7 +23,7 @@ public class WriteBackEditConfig implements Serializable {
 	private List<String> editableMeasures;
 
 	private Integer initalVersion;
-	
+
 	public String getEditCubeName() {
 		return editCubeName;
 	}
@@ -43,7 +41,7 @@ public class WriteBackEditConfig implements Serializable {
 	}
 
 	public Integer getInitialVersion() {
-		if(initalVersion==null){
+		if (initalVersion == null) {
 			return 0;
 		}
 		return initalVersion;
@@ -53,5 +51,4 @@ public class WriteBackEditConfig implements Serializable {
 		this.initalVersion = defaultVersion;
 	}
 
-	
 }

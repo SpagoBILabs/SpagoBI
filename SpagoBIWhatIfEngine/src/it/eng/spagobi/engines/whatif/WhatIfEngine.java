@@ -16,29 +16,31 @@ import org.apache.log4j.Logger;
 import org.olap4j.OlapConnection;
 
 /**
- * @author ...
+ * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class WhatIfEngine {
-	
+
 	private static WhatIfEngineConfig engineConfig;
-	
+
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(WhatIfEngine.class);
-	
-    // init engine
-    static {
-    	engineConfig = WhatIfEngineConfig.getInstance();
-    }
-    
-    public static WhatIfEngineConfig getConfig() {
-    	return engineConfig;
-    }
-    
+	private static transient Logger logger = Logger.getLogger(WhatIfEngine.class);
+
+	// init engine
+	static {
+		engineConfig = WhatIfEngineConfig.getInstance();
+	}
+
+	public static WhatIfEngineConfig getConfig() {
+		return engineConfig;
+	}
+
 	/**
 	 * Creates the instance.
 	 * 
-	 * @param template the template
-	 * @param env the env
+	 * @param template
+	 *            the template
+	 * @param env
+	 *            the env
 	 * 
 	 * @return the WhatIf engine instance
 	 */
@@ -48,13 +50,10 @@ public class WhatIfEngine {
 		whatIfEngineInstance = new WhatIfEngineInstance(template, env);
 		initSerializers(whatIfEngineInstance.getOlapConnection(), whatIfEngineInstance.getModelConfig());
 		logger.debug("OUT");
-		
-		return whatIfEngineInstance;	
-	}
-	
 
-	
-	
+		return whatIfEngineInstance;
+	}
+
 	private static void initSerializers(OlapConnection connection, ModelConfig config) {
 		PivotJsonSerializer pjs = new PivotJsonSerializer(connection, config);
 		SerializationManager.registerSerializer(pjs.getFormat(), pjs);

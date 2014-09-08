@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * @author Zerbetto Davide (davide.zerbetto@eng.it)
+ * @author Zerbetto Davide (davide.zerbetto@eng.it) 
  */
 
 package it.eng.spagobi.pivot4j.mdx;
@@ -21,23 +21,26 @@ import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Member;
 
 public class MDXQueryBuilder {
-	
+
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(MDXQueryBuilder.class);
-	
+	public static transient Logger logger = Logger.getLogger(MDXQueryBuilder.class);
+
 	public String getMDXForTuple(Member[] members, Cube cube) {
 		logger.debug("IN: tuple = [" + members + "]");
 		String toReturn = null;
 		try {
-			
+
 			Member measure = null;
 			List<Member> dimensions = new ArrayList<Member>();
 			for (int i = 0; i < members.length; i++) {
 				Member member = members[i];
-				// if member is an all member or a formula, we skip it since we don'y need to put this into the MDX query
-				if (member.isAll())
+				// if member is an all member or a formula, we skip it since we
+				// don'y need to put this into the MDX query
+				if (member.isAll()) {
 					continue;
-				// TODO how to manage case when a dimension has 2 hierarchies both without the all member?
+				}
+				// TODO how to manage case when a dimension has 2 hierarchies
+				// both without the all member?
 				// we catch the member's measure
 				if (member.getHierarchy().getDimension().getDimensionType().equals(Dimension.Type.MEASURE)) {
 					measure = member;
@@ -45,8 +48,7 @@ public class MDXQueryBuilder {
 				}
 				dimensions.add(member);
 			}
-			
-			
+
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("SELECT ");
 			buffer.append(" {" + measure.getUniqueName() + "} ON COLUMNS, ");
@@ -58,9 +60,9 @@ public class MDXQueryBuilder {
 				}
 			}
 			buffer.append(" )} ON ROWS FROM " + cube.getUniqueName());
-			
+
 			toReturn = buffer.toString();
-			
+
 		} catch (Exception e) {
 			logger.error("Error while getting value for tuple [" + members + "]", e);
 			throw new SpagoBIEngineRuntimeException("Error while getting value for tuple [" + members + "]", e);

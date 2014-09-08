@@ -1,4 +1,3 @@
-
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -7,26 +6,27 @@
 
 package it.eng.spagobi.writeback4j.sql;
 
-
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * 
  */
 
-public class EquiJoin{
+public class EquiJoin {
 	TableEntry leftField;
 	TableEntry rightField;
+
 	public EquiJoin(TableEntry leftField, TableEntry rightField) {
 		super();
 		this.leftField = leftField;
 		this.rightField = rightField;
 	}
 
-	public String toString(){
-		if(leftField==null || rightField==null){
+	@Override
+	public String toString() {
+		if (leftField == null || rightField == null) {
 			return "";
 		}
-		return leftField.toString()+" = "+rightField.toString();
+		return leftField.toString() + " = " + rightField.toString();
 	}
 
 	@Override
@@ -42,25 +42,31 @@ public class EquiJoin{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		EquiJoin other = (EquiJoin) obj;
 		if (leftField == null) {
-			if (other.leftField != null)
+			if (other.leftField != null) {
 				return false;
-		} else if (!leftField.equals(other.leftField))
+			}
+		} else if (!leftField.equals(other.leftField)) {
 			return false;
+		}
 		if (rightField == null) {
-			if (other.rightField != null)
+			if (other.rightField != null) {
 				return false;
-		} else if (!rightField.equals(other.rightField))
+			}
+		} else if (!rightField.equals(other.rightField)) {
 			return false;
+		}
 		return true;
 	}
-	
-	
+
 }

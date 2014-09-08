@@ -8,13 +8,12 @@ package it.eng.spagobi.writeback4j.mondrian;
 
 import it.eng.spagobi.writeback4j.IXmlaDriver;
 
-
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * 
  */
 public class MondrianDriver implements IXmlaDriver {
-	
+
 	private String olapSchema;
 
 	public MondrianDriver(String olapSchema) {
@@ -29,7 +28,5 @@ public class MondrianDriver implements IXmlaDriver {
 	public void setOlapSchema(String olapSchema) {
 		this.olapSchema = olapSchema;
 	}
-	
-	
 
 }

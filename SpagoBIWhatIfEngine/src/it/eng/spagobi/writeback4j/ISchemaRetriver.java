@@ -1,4 +1,3 @@
-
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -14,17 +13,23 @@ import java.util.List;
 import org.olap4j.metadata.Member;
 
 /**
- *  @author Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * 
  */
 public interface ISchemaRetriver {
-	
+
 	public IMemberCoordinates getMemberCordinates(Member member);
+
 	public String getEditCubeTableName();
-	public String getMeasureColumn(Member member) throws SpagoBIEngineException ;
+
+	public String getMeasureColumn(Member member) throws SpagoBIEngineException;
+
 	public List<String> getColumnNamesList();
+
 	public String getVersionColumnName();
+
 	public String getVersionTableName();
+
 	public List<String> getMeasuresColumn();
 
 }

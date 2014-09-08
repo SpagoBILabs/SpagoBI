@@ -15,16 +15,15 @@ import org.apache.log4j.Logger;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
 
-
 public class CacheManager {
-	
+
 	public static transient Logger logger = Logger.getLogger(CacheManager.class);
-	
+
 	public static void flushCache(OlapDataSource olapDataSource) {
 		logger.debug("IN");
 		try {
 			Assert.assertNotNull(olapDataSource, "No OLAP datasource found");
-			OlapConnection connection = (OlapConnection) olapDataSource.getConnection();
+			OlapConnection connection = olapDataSource.getConnection();
 			logger.debug("Got OlapConnection");
 			RolapConnection rolapConnection = connection.unwrap(mondrian.rolap.RolapConnection.class);
 			logger.debug("Got RolapConnection");
@@ -36,7 +35,7 @@ public class CacheManager {
 			throw new SpagoBIEngineRuntimeException("An error occurred while flushing cache", e);
 		}
 		logger.debug("OUT");
-		
+
 	}
-	
+
 }

@@ -18,24 +18,26 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.writeback4j;
 
 import java.io.Serializable;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
- *
+ * 
  */
 public class SbiAlias implements Serializable {
 
-	private String name; //dimension/hierarchy name
-	private String alias;//corresponding alias
-	private String type;//type of alias (dimension,hierarchy...)
-	
+	private String name; // dimension/hierarchy name
+	private String alias;// corresponding alias
+	private String type;// type of alias (dimension,hierarchy...)
+
 	/**
-	 * @param name dimension/hierarchy Name
-	 * @param alias corresponding Alias
+	 * @param name
+	 *            dimension/hierarchy Name
+	 * @param alias
+	 *            corresponding Alias
 	 * @param type
 	 */
 	public SbiAlias(String name, String alias, String type) {
@@ -53,7 +55,8 @@ public class SbiAlias implements Serializable {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -67,7 +70,8 @@ public class SbiAlias implements Serializable {
 	}
 
 	/**
-	 * @param alias the alias to set
+	 * @param alias
+	 *            the alias to set
 	 */
 	public void setAlias(String alias) {
 		this.alias = alias;
@@ -81,15 +85,11 @@ public class SbiAlias implements Serializable {
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *            the type to set
 	 */
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	
-	
-	
-	
 
 }

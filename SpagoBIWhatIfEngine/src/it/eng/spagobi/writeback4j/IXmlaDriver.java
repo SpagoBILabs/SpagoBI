@@ -8,7 +8,7 @@ package it.eng.spagobi.writeback4j;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * 
  */
 public interface IXmlaDriver {
 
