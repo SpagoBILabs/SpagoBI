@@ -1,23 +1,23 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
- 
+
 /**
-  * Object name 
-  * 
+  * Object name
+  *
   * [description]
-  * 
-  * 
+  *
+  *
   * Public Functions
-  * 
+  *
   *  [list]
-  * 
-  * 
+  *
+  *
   * Authors
-  * 
+  *
   * - Andrea Gioia (adrea.gioia@eng.it)
   */
 
@@ -50,38 +50,38 @@ Sbi.whatif.commons.Format = function(){
       // even though only some strictly require it when inside of []
     , regex = RegExp('[' + specials.join('\\') + ']', 'g')
     ;
-	        	
-	
+
+
 	return {
 		/**
          * Cut and paste from Ext.util.Format
          */
         date : function(v, format){
-			
-		
-		
-		
+
+
+
+
 			format = format || "m/d/Y";
-			
+
 			if(typeof format === 'string') {
 				format = {
 					dateFormat: format,
 			    	nullValue: ''
 				};
 			}
-			
-			
+
+
             if(!v){
                 return format.nullValue;
             }
-            
+
             if(!(v instanceof Date)){
                 v = new Date(Date.parse(v));
             }
-          
-            
+
+
             v = v.dateFormat(format.dateFormat);
-         
+
             return v;
         }
 
@@ -93,13 +93,13 @@ Sbi.whatif.commons.Format = function(){
                 return Sbi.qbe.commons.Format.date(v, format);
             };
         }
-        
-        
+
+
         /**
          * thanks to Condor: http://www.extjs.com/forum/showthread.php?t=48600
          */
         , number : function(v, format)  {
-    		
+
         	format = Ext.apply({}, format || {}, {
 	    		decimalSeparator: '.',
 	    		decimalPrecision: 2,
@@ -107,13 +107,13 @@ Sbi.whatif.commons.Format = function(){
 	    		groupingSize: 3,
 	    		currencySymbol: '',
 	    		nullValue: ''
-	    		
+
     		});
 
         	if(v === undefined || v === null) {
         		 return format.nullValue;
         	}
-        	
+
         	if (typeof v !== 'number') {
     			v = String(v);
     			if (format.currencySymbol) {
@@ -150,10 +150,10 @@ Sbi.whatif.commons.Format = function(){
     			v = '-' + v;
     		}
     		return v;
-        }   
-        
+        }
+
         , cleanFormattedNumber : function(v, format)  {
-    		
+
         	format = Ext.apply({}, format || {}, {
 	    		decimalSeparator: '.',
 	    		decimalPrecision: 2,
@@ -161,13 +161,13 @@ Sbi.whatif.commons.Format = function(){
 	    		groupingSize: 3,
 	    		currencySymbol: '',
 	    		nullValue: ''
-	    		
+
     		});
 
         	if(v === undefined || v === null) {
         		 return format.nullValue;
         	}
-        	
+
         	if (typeof v !== 'number') {
     			v = String(v);
     			if (format.currencySymbol) {
@@ -180,20 +180,20 @@ Sbi.whatif.commons.Format = function(){
     				v = v.replace(format.decimalSeparator, '.');
     			}
     			v = parseFloat(v);
-    			
+
             	v = v+"";
-            	
-            	
+
+
     			if (format.decimalSeparator !== '.') {
     				v = v.replace('.', format.decimalSeparator);
     			}
     		}
-    		
+
     		return v;
-        }  
-        
+        }
+
         , formatInJavaDouble : function(v, format)  {
-    		
+
         	format = Ext.apply({}, format || {}, {
 	    		decimalSeparator: '.',
 	    		decimalPrecision: 2,
@@ -201,13 +201,13 @@ Sbi.whatif.commons.Format = function(){
 	    		groupingSize: 3,
 	    		currencySymbol: '',
 	    		nullValue: ''
-	    		
+
     		});
 
         	if(v === undefined || v === null) {
         		 return format.nullValue;
         	}
-        	
+
         	if (typeof v !== 'number') {
     			v = String(v);
     			if (format.currencySymbol) {
@@ -221,17 +221,17 @@ Sbi.whatif.commons.Format = function(){
     			}
     			v = parseFloat(v);
     		}
-        	
+
     		return v;
-        }  
-        
+        }
+
         , numberRenderer : function(format){
             return function(v){
             	return '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(v, format) + '</div>';
             };
         }
         , floatRenderer : function(format){
-        	
+
             return function(v){
             	if( typeof v === 'string'){
             		v = v.replace(',', '.');
@@ -250,12 +250,12 @@ Sbi.whatif.commons.Format = function(){
 	    		suffix: '',
 	    		nullValue: ''
     		});
-        	
+
         	if(!v){
                 return format.nullValue;
             }
-        	
-        	if(format.trim) v = Ext.util.Format.trim(v);
+
+        	if(format.trim){v = Ext.util.Format.trim(v);}
         	if(format.maxLength) {
         		if(format.ellipsis === true) {
         			v = Ext.util.Format.ellipsis(v, format.maxLength);
@@ -270,32 +270,32 @@ Sbi.whatif.commons.Format = function(){
         			v = Ext.util.Format.uppercase(v);
         		} else if(format.changeCase === 'lowercase') {
         			v = Ext.util.Format.lowercase(v);
-        		}        		
+        		}
         	}
-        	if(format.prefix) v = format.prefix+ v;
-        	if(format.suffix) v =  v + format.suffix;
-        	
+        	if(format.prefix){v = format.prefix+ v;}
+        	if(format.suffix){v =  v + format.suffix;}
+
         	return v;
         }
-        
+
         , stringRenderer : function(format){
             return function(v){
                 return Sbi.qbe.commons.Format.string(v, format);
             };
         }
-        
+
         , 'boolean' : function(v, format) {
-        	
+
         	if (typeof v === 'string') {
         		v = Sbi.qbe.commons.Format.stringToBoolean(v);
         	}
-        	
+
         	format = Ext.apply({}, format || {}, {
 	    		trueSymbol: 'true',
 	    		falseSymbol: 'false',
 	    		nullValue: ''
     		});
-        	
+
         	if(v === true){
         		 v = format.trueSymbol;
             } else if(v === false){
@@ -303,35 +303,35 @@ Sbi.whatif.commons.Format = function(){
             } else {
             	 v = format.nullValue;
             }
-        	
+
         	return v;
         }
-        
+
         , booleanRenderer : function(format){
             return function(v){
             	return Sbi.qbe.commons.Format['boolean'](v, format);
             };
         }
-        
+
         , html : function(v, format) {
         	// format is not used yet but it is reserve for future use
         	// ex. format.cls, format.style
         	v = Ext.util.Format.htmlDecode(v);
         	return v;
         }
-        
+
         , htmlRenderer : function(format){
             return function(v){
                 return Sbi.qbe.commons.Format.html(v, format);
             };
         }
-        
+
         , getFormatFromJavaPattern: function(pattern) {
         	var toReturn = {};
         	if (pattern === undefined || pattern === null || pattern.trim() === '') {
         		return toReturn;
         	}
-        	
+
         	var decimalSeparatorIndex = pattern.indexOf(".");
         	if (decimalSeparatorIndex !== -1) {
         		toReturn.decimalPrecision = (pattern.length - decimalSeparatorIndex) - 1;
@@ -339,18 +339,18 @@ Sbi.whatif.commons.Format = function(){
         		toReturn.decimalPrecision = 0;
         		decimalSeparatorIndex = pattern.length;
         	}
-        	
+
         	var groupingSeparatorIndex = pattern.lastIndexOf(",");
         	if (groupingSeparatorIndex !== -1) {
         		toReturn.groupingSize = (decimalSeparatorIndex - 1) - groupingSeparatorIndex;
         	} else {
         		toReturn.groupingSize = Number.MAX_VALUE;
         	}
-        	
+
         	return toReturn;
-        	
+
         }
-        
+
 
         , stringToBoolean : function(string) {
 			switch (string.toLowerCase()) {
@@ -367,17 +367,16 @@ Sbi.whatif.commons.Format = function(){
 					return Boolean(string);
 			}
         }
-        
+
 		,
 		escapeRegExp : function (str) {
 			return str.replace(regex, "\\$&");
 		}
-        
+
 	};
-	
+
 }();
 
 
 
 
-	

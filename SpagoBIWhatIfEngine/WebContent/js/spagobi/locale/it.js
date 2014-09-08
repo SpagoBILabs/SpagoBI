@@ -37,12 +37,12 @@ Sbi.locale.formats = {
     		//suffix: '',
     		nullValue: ''
 		},
-		
+
 		date: {
 			dateFormat: 'd/m/Y',
     		nullValue: ''
 		},
-		
+
 		boolean: {
 			trueSymbol: 'vero',
     		falseSymbol: 'false',
@@ -122,7 +122,7 @@ Sbi.locale.ln['sbi.olap.writeback.persist.error'] = 'Errore nel salvataggio dell
 Sbi.locale.ln['sbi.olap.writeback.edit.no.zero'] =  'Non \u00E9 possibile modificare questa cella!! L\'algoritmo di propagazione attualmente in uso mantiene inalterato il peso tra le celle figlie della cella modificata, ma questo non \u00E9 possibile se quest\'ultima \u00E9 vuota oppure se ha valore 0. Nelle prossime release saranno implementati altri algoritmi di propagazione.';
 Sbi.locale.ln['sbi.olap.writeback.edit.no.locked'] =  'Non \u00E9 possibile modificare il modello se non \u00E9 stato prima loccato dall\'utente corrente.';
 Sbi.locale.ln['sbi.olap.writeback.edit.lock.export.output'] = 'Non \u00E9 possibile modificare il modello mentre un processo di export \u00E9 in esecuzione.';
-	
+
 //===================================================================
 //LOCK
 //===================================================================

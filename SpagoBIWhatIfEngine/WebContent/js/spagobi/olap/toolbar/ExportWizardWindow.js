@@ -1,13 +1,13 @@
 /** SpagoBI, the Open Source Business Intelligence suite
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * 
- * Window that allows the management of versions 
- * 
- *     
+ *
+ * Window that allows the management of versions
+ *
+ *
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
@@ -79,7 +79,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 			    		   thisPanel.destroy();
 			    	   }
 			       }
-			       
+
 			       ],
 
 			       items: [this.selectExportTypePanel, this.selectExportTablePanel, this.selectExportCsvPanel]
@@ -88,7 +88,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 		this.addEvents(
 				/**
 				 * @event exportOutput
-				 * Thrown when the user wants to export the analysis 
+				 * Thrown when the user wants to export the analysis
 				 * @param {Object} configuration
 				 */
 				'exportOutput'
@@ -152,7 +152,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 		        }
 		    }]
 		});
-		
+
 
 
 		var formPanel = Ext.create('Ext.form.Panel', {
@@ -223,7 +223,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 //			        	fieldLabel: LN("sbi.olap.toolbar.export.wizard.type.csv.row.delimiter"),
 //			        	value: this.defCsvRowDelimiter
 //			        }
-			        
+
 			        ]
 		});
 		return formPanel;

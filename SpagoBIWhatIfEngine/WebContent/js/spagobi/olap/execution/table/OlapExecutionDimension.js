@@ -1,13 +1,13 @@
 /** SpagoBI, the Open Source Business Intelligence suite
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * 
+ *
  * The super class of the filters, rows and columns container
  *
- *     
+ *
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
@@ -16,7 +16,7 @@
 Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 	extend: 'Ext.panel.Panel',
 
-	config:{		
+	config:{
 		/**
 		 * @cfg {Sbi.olap.DimensionModel} dimension
 		 * The dimension represented by the column
@@ -41,25 +41,25 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionDimension) {
 			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionDimension);
 		}
-		
+
 		this.callParent(arguments);
 		this.addDragAndDrop();
 	},
-	
+
 
 	initComponent: function() {
-		
+
 		var items = this.buildItems();
-		
+
 	//	this.on('dimensionClick', function(dimension){alert("cklik");},this);
-		
+
 		Ext.apply(this, {
 			frame: true,
 			items: items}
 		);
 		this.callParent();
 	},
-	
+
 
 
 	/**
@@ -108,7 +108,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 			Ext.create('Ext.dd.DDTarget', thisPanel.pivotContainer.olapExecutionColumns.getId(), 'dimensionDDGroup');
 		},this);
 	},
-	
+
 	/**
 	 * Returns the name of the dimension
 	 * @returns
@@ -122,10 +122,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 //			var selectedHierarchyName = hierarchy.name;
 //			dimensionName = dimensionName+"(<i>"+selectedHierarchyName+"</i>)";
 //		}
-		
+
 		return  dimensionName;
 	},
-	
+
 	buildMultiHierarchiesButton: function(conf){
 		var config = {
 			style: "background-color: transparent !important",
@@ -141,7 +141,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 				}
 			}
 		};
-		
+
 		if(this.axisType=="column"){
 			Ext.apply(config,{width: 20, height: 15});
 		}else{
@@ -150,11 +150,11 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 		config = Ext.apply(config, conf||{});
 		return config;
 	},
-	
+
 	buildDimensionInfoPanel: function(target){
-		
+
 		var thisPanel = this;
-		
+
 		//Build the combo box for the hierarachy selection
 		var selectId = Ext.id()+"select";
 		var html = "";
@@ -166,21 +166,21 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 				LN('sbi.olap.execution.table.dimension.available.hierarchies')+
 				"</td><td>"+
 				"<select id = '"+selectId+"'>";
-			
+
 			for(var i=0; i<this.dimension.raw.hierarchies.length; i++){
 				html = html+"<option value='"+this.dimension.raw.hierarchies[i].uniqueName+"'";
 				if(this.dimension.raw.hierarchies[i].uniqueName ==thisPanel.dimension.raw.selectedHierarchyUniqueName){
 					html = html+" selected='selected' ";
 				}
-				
+
 				html = html+">"+this.dimension.raw.hierarchies[i].caption+"</option>";
 			}
-			
+
 			html = html+"</select></td></tr></table>";
 		}
 
 		//build the tooltip
-		var tool = Ext.create('Ext.tip.ToolTip',{        
+		var tool = Ext.create('Ext.tip.ToolTip',{
             title: thisPanel.dimension.raw.name,
             target: target.getEl(),
             anchor: 'left',
@@ -212,18 +212,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 //            	close: {
 //            		fn: function(){
 //
-//            			
+//
 //                	},
 //                	scope: thisPanel
-//                	
+//
 //            	}
 //            }
         });
-				
-		
+
+
 	},
-	
-	
+
+
 
 	updateHierarchyOnDimension: function(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition){
 		Sbi.olap.eventManager.updateHierarchyOnDimension(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition);

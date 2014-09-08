@@ -1,13 +1,13 @@
 /** SpagoBI, the Open Source Business Intelligence suite
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * 
+ *
  * container of the columns definition of the pivot table
  *
- *     
+ *
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
@@ -17,7 +17,7 @@
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 	extend: 'Ext.panel.Panel',
-			
+
 	config:{
 		/**
 	     * @cfg {Ext.data.Store} store
@@ -48,8 +48,8 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 //		},
 	    //cls: "empty-member"
     },
-	
-    
+
+
 	constructor : function(config) {
 		this.initConfig(config);
 		this.store = Ext.create('Ext.data.Store', {
@@ -60,12 +60,12 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 		}
 		this.callParent(arguments);
 	},
-    
+
 	initComponent: function() {
 		var items;
-		
+
 		if(this.store && this.store.getCount()>0){
-		 
+
 			items = this.getRefreshedItems();
 			Ext.apply(this, {items: items});
 //			this.removeCls("empty-member");
@@ -73,7 +73,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 		Ext.apply(this, {frame: true});
 		this.callParent();
 	},
-	
+
     /**
      * Adds the Dimension from in Dimension container
      * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the Dimension to add
@@ -85,7 +85,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 		this.store.add(dimension.dimension);
 		this.refreshItems();
 	},
-	
+
     /**
      * Removes the dimension from the dimension container
      * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the dimension to remove
@@ -97,7 +97,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 //			this.addCls("empty-member");
 //		}
 	},
-	
+
     /**
      * Adds the Dimension from in Dimension container
      * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the Dimension to add
@@ -111,10 +111,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 		}else{
 			Sbi.olap.eventManager.moveDimensionToOtherAxis(dimension.dimension.get("selectedHierarchyUniqueName"), originalAxis, this.axisOrdinalPosition);
 		}
-		
+
 	},
-	
-	
+
+
 	/**
      * Moves up the dimension
      * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the dimension to move
@@ -122,8 +122,8 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 	moveUpDimension: function(dimension){
 		this.move(dimension, -1);
 	},
-	
-	
+
+
 	/**
      * Moves down the member
      * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the dimension to move
@@ -135,16 +135,16 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 	/**
      * Moves the model of pos positions
      * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the dimension to remove
-	 * @param pos the positions 
+	 * @param pos the positions
 	 */
 	move: function(dimension, pos){
 		var index = this.store.indexOf(dimension.dimension);
-		
+
 		if((pos+index)>=0 && (pos+index)<this.store.getCount( )){
 			Sbi.olap.eventManager.moveDimension(dimension.dimension, index+pos, pos);
 		}
 	},
-	
+
     /**
      * Refresh content
      */
@@ -157,15 +157,15 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 				this.add(items[i]);
 			}
 		}
-		
+
 	},
-	
+
     /**
      * Get the refreshed items: builds all the dimensions starting from the store
      */
 	getRefreshedItems: function(){
 		var items = new Array();
-		
+
 		if(this.store && this.store.getCount()>0){
 			var dimensionsCount = this.store.getCount( );
 			for(var i=0; i<dimensionsCount; i++) {
@@ -183,10 +183,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 
 			}
 		}
-		
+
 		return items;
 	},
-	
+
 	/**
 	 * Builds the central panel with the name of the dimension
 	 */
@@ -235,7 +235,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 			}
 		});
 	},
-	
+
 	/**
 	 * Updates the visualization after the execution of a a mdx query
 	 * @param pivotModel {Array} the list of dimensions to add
@@ -251,21 +251,21 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 		}
 		this.refreshItems();
 	},
-	
+
 	/**
 	 * Returns true if this is the  container
 	 */
 	isRowDimensions: function(){
 		return this.dimensionClassName == 'Sbi.olap.execution.table.OlapExecutionRow';
 	},
-	
+
 	/**
 	 * Returns true if this is the columns container
 	 */
 	isColumnDimensions: function(){
 		return this.dimensionClassName == 'Sbi.olap.execution.table.OlapExecutionColumn';
 	},
-	
+
 	/**
 	 * Updates the content of the panel.. It is useful when the region (for example filters container) is empty, so we should
 	 * show a message. It should be implemented by the subclasses

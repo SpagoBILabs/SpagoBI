@@ -1,13 +1,13 @@
 /** SpagoBI, the Open Source Business Intelligence suite
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * 
+ *
  * The super class of the rows and columns container
  *
- *     
+ *
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
@@ -16,7 +16,7 @@
 Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 	extend: 'Sbi.olap.execution.table.OlapExecutionDimension',
 
-	config:{		
+	config:{
 		/**
 		 * @cfg {boolean} firstDimension
 		 * Is this Dimension the first one
@@ -42,7 +42,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 	 * central panel with the name of the Dimension
 	 */
 	dimensionPanel:null,
-	
+
 	subPanelLayout: null,
 
 	constructor : function(config) {
@@ -53,7 +53,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		this.buildDimensionPanel();
 
 		this.callParent(arguments);
-		
+
 		this.addEvents(
 		        /**
 		         * @event dimensionClick
@@ -62,7 +62,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		         */
 		        'dimensionClick'
 				);
-		
+
 	},
 
 
@@ -72,17 +72,17 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		}
 		);
 		this.callParent();
-		
+
 	},
-	
+
 	buildItems: function(){
 		var items = [];
 
 		if(this.dimension.raw.hierarchies && this.dimension.raw.hierarchies.length>1){
 			items.push(this.buildMultiHierarchiesButton());
 		}
-		
-		
+
+
 		items.push( this.dimensionPanel);
 
 		items.push(this.buildFilterButton());
@@ -91,7 +91,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		return items;
 	},
 
-	
+
 	buildFilterButton: function(){
 		var thisPanel = this;
 		var config = {
@@ -120,17 +120,17 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 				}
 			}
 		};
-		
+
 		if(this.axisType=="column"){
 			Ext.apply(config,{width: 20, height: 15});
 		}else{
 			Ext.apply(config,{height: 20});
 		}
-		
+
 		return config;
 	},
-	
-	
+
+
 	/**
 	 * Manage the visibility of the members in the axis
 	 * @param members
@@ -140,10 +140,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 			Sbi.olap.eventManager.placeMembersOnAxis(this.dimension, members);
 		}
 	}
-	
 
 
-	
+
+
 
 
 });
