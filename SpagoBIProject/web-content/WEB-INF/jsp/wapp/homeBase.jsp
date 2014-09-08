@@ -47,7 +47,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	//	lstMenu = (List)moduleResponse.getAttribute(MenuUtilities.LIST_MENU);
 	//}
 	List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
-	MenuListJSONSerializer serializer = new MenuListJSONSerializer(userProfile);
+	MenuListJSONSerializer serializer = new MenuListJSONSerializer(userProfile, session);
 	JSONArray jsonMenuList = (JSONArray) serializer.serialize(filteredMenuList,locale);
 	//System.out.println(jsonMenuList);
 %>
