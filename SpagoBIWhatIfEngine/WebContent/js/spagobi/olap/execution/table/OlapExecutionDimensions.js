@@ -39,14 +39,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 	     * The position of the axis
 	     */
 		axisOrdinalPosition: -1
-//		,style: {
-//			backgroundColor: "transparent",
-//			border: "none"
-//		},
-//		bodyStyle: {
-//			backgroundColor: "transparent"
-//		},
-	    //cls: "empty-member"
     },
 
 
@@ -68,7 +60,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 
 			items = this.getRefreshedItems();
 			Ext.apply(this, {items: items});
-//			this.removeCls("empty-member");
 		}
 		Ext.apply(this, {frame: true});
 		this.callParent();
@@ -79,9 +70,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
      * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the Dimension to add
      */
 	addDimension: function(dimension){
-//		if(this.store.getCount()==0){
-//			this.removeCls("empty-member");
-//		}
 		this.store.add(dimension.dimension);
 		this.refreshItems();
 	},
@@ -93,9 +81,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 	removeDimension: function(dimension){
 		this.store.remove(dimension.dimension);
 		this.refreshItems();
-//		if(this.store.getCount()==0){
-//			this.addCls("empty-member");
-//		}
 	},
 
     /**
