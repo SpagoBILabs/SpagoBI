@@ -792,6 +792,7 @@ public class Lexer implements java_cup.runtime.Scanner {
 			case 15:
 				break;
 			case 2: { /* just skip what was found, do nothing */
+				break;
 			}
 			case 16:
 				break;
