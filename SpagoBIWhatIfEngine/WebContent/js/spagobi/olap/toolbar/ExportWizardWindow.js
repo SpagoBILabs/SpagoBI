@@ -217,12 +217,6 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 			        	fieldLabel: LN("sbi.olap.toolbar.export.wizard.type.csv.filter.delimiter"),
 			        	value: this.defCsvFieldDelimiter
 			        }
-//			        , {
-//			        	xtype: 'textfield',
-//			        	name: 'csvRowDelimiter',
-//			        	fieldLabel: LN("sbi.olap.toolbar.export.wizard.type.csv.row.delimiter"),
-//			        	value: this.defCsvRowDelimiter
-//			        }
 
 			        ]
 		});

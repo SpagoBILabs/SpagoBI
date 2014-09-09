@@ -36,8 +36,6 @@ Sbi.service.ServiceRegistry = function(config) {
 	this.defaultAbsolute = config.defaultAbsolute !== undefined?  config.defaultAbsolute: false;
 	this.defaultServiceType = config.defaultServiceType !== undefined?  config.defaultServiceType: 'action';
 
-	//this.addEvents();
-
 	// constructor
     Sbi.service.ServiceRegistry.superclass.constructor.call(this);
 };
@@ -50,8 +48,6 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
 	, defaultAbsolute: null
 	, defaultServiceType: null
 
-
-    // public methods
 
     , setBaseUrl : function(url) {
        Ext.apply(this.baseUrl, url);

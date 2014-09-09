@@ -69,10 +69,6 @@ Ext.define('Sbi.olap.OlapPanel', {
 
 	constructor : function(config) {
 		this.initConfig(config||{});
-//		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.OlapPanel) {
-//			Ext.apply(this, Sbi.settings.olap.OlapPanel);
-//		}
-
 
 		this.definitionTools = Ext.create('Sbi.olap.tools.OlapViewDefinitionTools', {region:"west",width: '15%'});
 		this.executionPanel = Ext.create('Sbi.olap.execution.OlapExecutionPanel', {region:"center",width: '45%'});

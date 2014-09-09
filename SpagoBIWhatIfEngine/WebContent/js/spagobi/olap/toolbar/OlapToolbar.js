@@ -199,14 +199,11 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.menuButtons = Ext.create('Ext.button.Split', {
 			reorderable: false,
 			renderTo: Ext.getBody(),
-			//text: LN('sbi.olap.execution.menu.buttonMenu'),
 			iconCls: 'context-menu-icon',
-			//width: 30,
 			// handle a click on the button itself
 			handler: function() {
 			},
 			menu: new Ext.menu.Menu({
-				//width: 20,
 				items: [
 				        // these will render as dropdown menu items when the arrow is clicked:
 				        {text: '', handler: function(){ }}
@@ -563,7 +560,6 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				this.setLockByOtherState(resOb.locker);
 			}
 
-			//alert('not unlocked');
 		}
 		this.modelStatus = resOb.status;
 		this.modelLocker = resOb.locker;
@@ -685,7 +681,6 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.buttonsContainer[buttonCreated.label] = buttonCreated;
 
 			// add particular pressed logic depending on button
-			//this.setPressedMemory();
 			if(inMenu == true){
 				buttonCreated.text = buttonCreated.tooltip;
 				this.menuButtons.menu.add(buttonCreated);

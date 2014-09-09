@@ -2,16 +2,6 @@ Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
 Sbi.locale.formats = {
-		/*
-		number: {
-			decimalSeparator: '.',
-			decimalPrecision: 2,
-			groupingSeparator: ',',
-			groupingSize: 3,
-			//currencySymbol: '$',
-			nullValue: ''
-		},
-		*/
 
 		float: {
 			decimalSeparator: '.',
@@ -147,7 +137,6 @@ Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current']
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Select the version to delete';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 'Warning: this operation could take some minutes.';
 Sbi.locale.ln['sbi.olap.control.controller.delete.version.ok'] = 'Versions correctly deleted.';
-//Sbi.locale.ln['sbi.olap.control.controller.delete.version.error'] = 'Error deleting the versions.';
 
 //===================================================================
 //OUTPUT

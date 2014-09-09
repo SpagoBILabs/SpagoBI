@@ -80,19 +80,14 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 
 					if(thisPanel.containerPanel.getId()!= targetElId && (thisPanel.pivotContainer.olapExecutionFilters.getId()== targetElId || thisPanel.pivotContainer.olapExecutionRows.getId()== targetElId || thisPanel.pivotContainer.olapExecutionColumns.getId()== targetElId)){
 
-						//thisPanel.containerPanel.removeDimension(thisPanel);
-
 						if(thisPanel.pivotContainer.olapExecutionFilters.getId()== targetElId){
 							thisPanel.pivotContainer.olapExecutionFilters.moveDimensionToOtherAxis(thisPanel);
-							//	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionFilters;
 						}
 						if(thisPanel.pivotContainer.olapExecutionRows.getId()== targetElId){
 							thisPanel.pivotContainer.olapExecutionRows.moveDimensionToOtherAxis(thisPanel);
-							//	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionRows;
 						}
 						if(thisPanel.pivotContainer.olapExecutionColumns.getId()== targetElId){
 							thisPanel.pivotContainer.olapExecutionColumns.moveDimensionToOtherAxis(thisPanel);
-							//	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionColumns;
 						}
 					}
 
@@ -115,14 +110,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 	 */
 	getDimensionName: function(){
 		var dimensionName = this.dimension.raw.caption;
-//		var hierarchies =  this.dimension.get("hierarchies");
-//		if(hierarchies.length>1){
-//			var selectedHierarchyPosition = this.dimension.get("selectedHierarchyPosition");
-//			var hierarchy = hierarchies[selectedHierarchyPosition];
-//			var selectedHierarchyName = hierarchy.name;
-//			dimensionName = dimensionName+"(<i>"+selectedHierarchyName+"</i>)";
-//		}
-
 		return  dimensionName;
 	},
 
@@ -208,16 +195,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 		            			 tool.close();
 		            	 }
 		             }]
-//            listeners:{
-//            	close: {
-//            		fn: function(){
-//
-//
-//                	},
-//                	scope: thisPanel
-//
-//            	}
-//            }
         });
 
 

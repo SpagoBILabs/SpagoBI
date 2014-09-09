@@ -35,7 +35,7 @@ Ext.ns("Sbi.widgets");
 Sbi.widgets.PagingToolbar = function(config) {
 
 	// constructor
-	Sbi.widgets.PagingToolbar.superclass.constructor.call(this, config)
+	Sbi.widgets.PagingToolbar.superclass.constructor.call(this, config);
 };
 
 Ext.extend(Sbi.widgets.PagingToolbar, Ext.PagingToolbar, {
@@ -46,11 +46,11 @@ Ext.extend(Sbi.widgets.PagingToolbar, Ext.PagingToolbar, {
 		 var pn = this.paramNames;
 		 if(o.params[pn.start] === undefined && o.params[pn.limit] === undefined) {
 			 // load has been forced not by paging toolbar
-			 o.params[pn.start] = 0; //this.cursor;
-			 o.params[pn.limit] = this.pageSize
+			 o.params[pn.start] = 0;
+			 o.params[pn.limit] = this.pageSize;
 		 }
 
-		// alert('PAGING_TOOLBAR\n' +  o.params.toSource());
+
 
 		 return true;
 	}

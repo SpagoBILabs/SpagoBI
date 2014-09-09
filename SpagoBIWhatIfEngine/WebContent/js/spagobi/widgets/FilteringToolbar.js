@@ -198,20 +198,15 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 
 	, onClick: function() {
 		if(this.state === this.EDITING) {
-			//alert('applyFilter');
 			this.unfilterButton.enable();
 			this.disableEditing();
 
 			this.state = this.FILTERING;
 			this.doLoad();
 		} else if(this.state === this.FILTERING) {
-			//alert('editFilter');
 			this.enableEditing();
 			this.state = this.EDITING;
 		}
-
-
-		 //alert(this.store.baseParams.toSource());
 	}
 
 	, onUnfilter: function() {
@@ -236,8 +231,6 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 		} else if(this.state === this.UNFILTERING) {
 			if(o.params.FILTERS !== undefined){alert('ERROR: While UNFILTERING filters parameter cannot be valorized');}
 		}
-
-		//alert('FILTERING_TOOLBAR\n' +  o.params.toSource());
 
 		return true;
 	}
@@ -271,7 +264,6 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 		store.on('metachange', this.onMetaChange , this);
 	    store.on('beforeload', this.boforeLoad , this);
 	    store.on("load", this.onLoad, this);
-        //store.on("loadexception", this.onLoadError, this);
 	    this.store = store;
 	}
 
@@ -280,7 +272,6 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
         store.un('metachange', this.onMetaChange , this);
 	    store.un('beforeload', this.boforeLoad , this);
         store.un("load", this.onLoad, this);
-        //store.un("loadexception", this.onLoadError, this);
         this.store = undefined;
     }
 

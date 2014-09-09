@@ -25,9 +25,7 @@ Ext.ns("Sbi.whatif.commons");
 
 Sbi.whatif.commons.Utils = function(){
 
-    // private variables
 
-    // public space
 	return {
 
 		unimplementedFunction: function(fnName) {
@@ -80,10 +78,6 @@ Ext.namespace('it.eng.spagobi.engines.qbe.commons');
 it.eng.spagobi.engines.qbe.commons = function(){
 	// do NOT access DOM from here; elements don't exist yet
 
-    // private variables
-
-
-    // public space
 	return {
 
 		init : function() {
