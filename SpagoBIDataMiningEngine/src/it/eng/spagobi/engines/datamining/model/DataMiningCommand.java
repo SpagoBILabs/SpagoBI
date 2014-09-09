@@ -21,6 +21,15 @@ public class DataMiningCommand implements Serializable {
 	private String label;
 	private List<Output> outputs;
 	private String action;
+	private Boolean executed;
+
+	public Boolean getExecuted() {
+		return executed;
+	}
+
+	public void setExecuted(Boolean executed) {
+		this.executed = executed;
+	}
 
 	public String getAction() {
 		return action;
