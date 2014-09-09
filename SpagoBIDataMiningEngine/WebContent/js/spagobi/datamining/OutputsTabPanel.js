@@ -72,8 +72,9 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 						
 						thisPanel.add(outputTab);
 						if(outputMode == 'auto'){
-							thisPanel.tosetactive = i;
-							thisPanel.setAutoMode(outputName, i);
+//							thisPanel.tosetactive = i;
+//							thisPanel.setOutputAutoMode(outputName, i);
+							this.setActiveTab(i);
 						}
 					}	
 				}
@@ -83,7 +84,7 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 		};
 		service.callService(this, functionSuccess);
 	}
-	, setAutoMode: function(output){
+	, setOutputAutoMode: function(output){
 		var thisPanel = this;
 		
 		var service = Ext.create("Sbi.service.RestService",{

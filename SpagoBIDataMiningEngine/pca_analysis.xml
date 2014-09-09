@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <DATA_MINING>
     <PARAMETERS>
-    </PARAMETERS>  
+    </PARAMETERS>
+    
     <DATASETS>
         <DATASET name="dataset" readType="csv" type="file" label="Wine quality red">  
             <![CDATA[header = TRUE, sep = ";", quote = "\"'", na.strings="",encoding="latin1",]]>
@@ -10,8 +11,9 @@
     <SCRIPTS>  
         <SCRIPT name="pcaLogic" mode="auto" datasets="dataset" label="winequality-red">
             <![CDATA[
-install.packages("D:/progetti/RIntegration/install/vegan_2.0-10.tar.gz", repos = NULL, type="source")
-install.packages("D:/progetti/RIntegration/install/ellipse_0.3-8.tar.gz", repos = NULL, type="source")
+install.packages('vegan', repos='http://cran.stat.unipd.it')
+install.packages('ellipse', repos='http://cran.stat.unipd.it')
+
 library(vegan)
 library(ellipse)
 

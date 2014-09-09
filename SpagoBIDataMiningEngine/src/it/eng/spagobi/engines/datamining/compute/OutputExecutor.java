@@ -27,8 +27,8 @@ import org.rosuda.JRI.Rengine;
 public class OutputExecutor {
 	static private Logger logger = Logger.getLogger(OutputExecutor.class);
 
-	private static final String OUTPUT_PLOT_EXTENSION = "jpg";
-	private static final String OUTPUT_PLOT_IMG = "jpeg";
+	private static final String OUTPUT_PLOT_EXTENSION = "png";
+	private static final String OUTPUT_PLOT_IMG = "png";
 
 	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath()
 			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
