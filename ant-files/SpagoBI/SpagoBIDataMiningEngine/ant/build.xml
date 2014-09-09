@@ -62,11 +62,9 @@
         <delete>
             <fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.dao*.jar" />
         </delete>
-
         <!-- copies the newly created jar file -->
         <copy file="${sbi.dao.dir}/dist/sbi.dao-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
-
-    </target>   
+    </target>      
 	
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   COMPILAZIONE							                                                  -->
