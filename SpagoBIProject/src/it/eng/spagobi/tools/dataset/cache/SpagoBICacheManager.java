@@ -66,7 +66,7 @@ public class SpagoBICacheManager {
 		try {		
 			ICacheConfiguration cacheConfiguration = SpagoBICacheConfiguration.getInstance();
 			if(cacheConfiguration.getCacheDataSource() == null) {
-				logger.warn("Impossible to initialize cache because there are no datasource defined as defualt write datasource");
+				logger.error("Impossible to initialize cache because there are no datasource defined as default write datasource");
 			} else {
 				CacheFactory cacheFactory = new CacheFactory();
 				cache = cacheFactory.getCache( cacheConfiguration );
