@@ -19,7 +19,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	plugins : Ext.create('Ext.ux.BoxReorderer', {
 		listeners: {
 			Drop: {
-				fn: function(plugin, container, button, oldPos, newPos ){
+				fn: function(plugin, container ){
 					Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsToolbar',Ext.JSON.encode(container.getToolbarReordableItems()));
 				}
 			}
@@ -109,7 +109,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			// After the component has been rendered, disable the default browser context menu
 			Ext.getBody().on("contextmenu", Ext.emptyFn, null, {preventDefault: true});
 		},
-		contextmenu: function(e) {
+		contextmenu: function() {
 		}
 	},
 
@@ -186,11 +186,11 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 		//var pressedBtn = this.config.toolbarConfig.drillType;
 		var pressedBtn = this.toolbarConfig.drillType;
-		if(pressedBtn == 'position'){
+		if(pressedBtn === 'position'){
 			this.drillMode.items.items[0].pressed = true;
-		}else if(pressedBtn == 'member'){
+		}else if(pressedBtn === 'member'){
 			this.drillMode.items.items[1].pressed = true;
-		}else if(pressedBtn == 'replace'){
+		}else if(pressedBtn === 'replace'){
 			this.drillMode.items.items[2].pressed = true;
 		}
 
@@ -251,7 +251,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 		// if we are in standalone mode save and save new are always shown, if in spagobi mode not because model must be locked
 		var saveHidden= true;
-		if(Sbi.config.isStandalone == true){
+		if(Sbi.config.isStandalone === true){
 			saveHidden = false;
 		}
 
@@ -305,7 +305,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		});
 		this.lockOtherModel.setVisible(false);
 
-		if(Sbi.config.isStandalone == false){
+		if(Sbi.config.isStandalone === false){
 			this.lockArray = new Array(this.lockModel, this.unlockModel, this.lockOtherModel);
 		}
 
@@ -328,7 +328,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		var firstExecution = false;
 
 		// first execution loads model config
-		if(this.modelConfig==null){
+		if(this.modelConfig===null){
 			firstExecution = true;
 			this.modelConfig = modelConfig;
 
@@ -344,7 +344,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 
 			//if no button is configured use all buttons
-			if(toolbarVisibleButtons.length == 0 && toolbarVisibleMenu.length==0){
+			if(toolbarVisibleButtons.length === 0 && toolbarVisibleMenu.length===0){
 				toolbarVisibleButtons = Ext.Array.merge(toolbarVisibleButtons, this.olapButtons, this.olapToggleButtons, this.whatIfButtons );
 			}
 
@@ -394,7 +394,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.setLockerConfiguration(firstExecution, this.modelConfig);
 
 		// undo button is present only in what if scenario
-		if(this.modelConfig.whatIfScenario != undefined && this.modelConfig.whatIfScenario == true){
+		if(this.modelConfig.whatIfScenario != undefined && this.modelConfig.whatIfScenario === true){
 			var undoButton = this.buttonsContainer["BUTTON_UNDO"];
 			if(undoButton != undefined){
 				undoButton.setDisabled( !pivot.get("hasPendingTransformations") );
@@ -425,11 +425,11 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		// if result contains info that model was locked
 		var resOb = Ext.JSON.decode(result.responseText);
 
-		if(resOb.status == 'locked_by_user'){
+		if(resOb.status === 'locked_by_user'){
 			this.setLockByUserState();
 		}
 		else{
-			if(resOb.status == 'unlocked'){
+			if(resOb.status === 'unlocked'){
 				this.setUnlockState();
 				Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.artifact.lock.error"));
 			}
@@ -470,11 +470,11 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.drillMode.items.items[1].toggle(false);
 		this.drillMode.items.items[2].toggle(false);
 
-		if(pressedBtn == 'position'){
+		if(pressedBtn === 'position'){
 			this.drillMode.items.items[0].toggle(true);
-		}else if(pressedBtn == 'member'){
+		}else if(pressedBtn === 'member'){
 			this.drillMode.items.items[1].toggle(true);
-		}else if(pressedBtn == 'replace'){
+		}else if(pressedBtn === 'replace'){
 			this.drillMode.items.items[2].toggle(true);
 		}
 	},
@@ -501,7 +501,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.addToolbarFixedButtons();
 
 		// lock buttons only in what if scenario, lock button is before custom button
-		if(modelConfig.whatIfScenario != undefined && modelConfig.whatIfScenario==true){
+		if(modelConfig.whatIfScenario != undefined && modelConfig.whatIfScenario===true){
 			this.addLockModel();
 		}
 
@@ -533,7 +533,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 	, cleanButtonsIfNotWhatIfScenario: function(isWhatIf){
 		//following buttons must not be present if scenario is not what if BUTTON_SAVE, BUTTON_SAVE_NEW
-		if(isWhatIf == undefined || isWhatIf == false){
+		if(isWhatIf === undefined || isWhatIf === false){
 			for(var i=0; i<this.whatIfButtons.length; i++){
 				Ext.Array.remove(this.labelsMenu, this.whatIfButtons[i]);
 				Ext.Array.remove(this.labelsToolbar, this.whatIfButtons[i]);
@@ -547,11 +547,11 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	, renderUnlockModel: function(result){
 		var resOb = Ext.JSON.decode(result.responseText);
 		// check if model was really unlocked
-		if(resOb.status == 'unlocked'){
+		if(resOb.status === 'unlocked'){
 			this.setUnlockState();
 		}
 		else{
-			if(resOb.status == 'locked_by_user'){
+			if(resOb.status === 'locked_by_user'){
 				this.setLockByUserState();
 				Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.artifact.unlock.error"));
 			}
@@ -566,7 +566,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 	}
 
-	, setLockByUserState: function(locker){
+	, setLockByUserState: function(){
 
 		for(var i=0; i<this.unlockedButtons.length;i++){
 			if(this.buttonsContainer[this.unlockedButtons[i]]){
@@ -605,18 +605,18 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 	, setLockerConfiguration: function(firstExecution, modelConfig){
 		// if it is first Execution take information from model config, else from global variables
-		if(firstExecution==true){
+		if(firstExecution===true){
 			this.modelStatus = modelConfig.status;
 			this.modelLocker = modelConfig.locker;
 		}
 
-		if(this.modelStatus == 'locked_by_user'){
+		if(this.modelStatus === 'locked_by_user'){
 			this.setLockByUserState(this.modelLocker);
 		}
-		else if(this.modelStatus == 'locked_by_other'){
+		else if(this.modelStatus === 'locked_by_other'){
 			this.setLockByOtherState(this.modelLocker);
 		}
-		else if(this.modelStatus == 'unlocked'){
+		else if(this.modelStatus === 'unlocked'){
 			this.setUnlockState();
 		}
 
@@ -659,7 +659,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			alreadyPresent = true;
 		}
 
-		if(alreadyPresent==true){
+		if(alreadyPresent===true){
 			presentPressed = this.buttonsContainer[label].pressed;
 			presentDisabled = this.buttonsContainer[label].disabled;
 			this.buttonsContainer[label].destroy();
@@ -673,7 +673,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.addContextMenuListener(buttonCreated, inMenu);
 
 			// recreate
-			if(alreadyPresent==true){
+			if(alreadyPresent===true){
 				buttonCreated.pressed = presentPressed;
 				buttonCreated.disabled = presentDisabled;
 			}
@@ -681,7 +681,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.buttonsContainer[buttonCreated.label] = buttonCreated;
 
 			// add particular pressed logic depending on button
-			if(inMenu == true){
+			if(inMenu === true){
 				buttonCreated.text = buttonCreated.tooltip;
 				this.menuButtons.menu.add(buttonCreated);
 				if(!Ext.Array.contains(this.labelsMenu, label)){
@@ -706,7 +706,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	, moveButton: function(button, inMenu){
 
 		// if is in menu must insert in toolbar and viceversa
-		if(inMenu==true){
+		if(inMenu===true){
 
 			// in moving button from menu to toolbar the menu must be removed and re-added
 			this.remove(this.menuButtons, false);
@@ -763,17 +763,17 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	, addContextMenuListener: function(butt, isMenu){
 		// add context menu listener
 		var msg = null;
-		if(isMenu == true){
+		if(isMenu === true){
 			msg = 'add to toolbar';
 		}
-		else if(isMenu == false){
+		else if(isMenu === false){
 			msg = 'add to menu';
 		}
 
 		var thisPanel = this;
 		butt.on('render', function(button){
 			this.getEl().addListener('contextmenu',
-					function(e, el){
+					function(){
 				var m = Ext.create('Ext.menu.Menu', {
 					width: 100,
 					height: 30,
@@ -784,10 +784,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 							click: {
 								fn: function(){
 									var where = this.isButtonInMenuOrToolbar(button.label);
-									if(where == 'toolbar'){
+									if(where === 'toolbar'){
 										this.moveButton(button, false);
 									}
-									else if(where == 'menu'){
+									else if(where === 'menu'){
 										this.moveButton(button, true);
 									} else {
 										return;
@@ -817,7 +817,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			var buttonConfig = this.buttonsConfigContainer[this.olapToggleButtons[i]];
 			if(buttonConfig != undefined){
 				var isValue= this.modelConfig[this.label2PropertyMap[this.olapToggleButtons[i]]];
-				if(isValue == true){
+				if(isValue === true){
 					buttonConfig.pressed = true;
 				}else{
 					buttonConfig.pressed = false;
