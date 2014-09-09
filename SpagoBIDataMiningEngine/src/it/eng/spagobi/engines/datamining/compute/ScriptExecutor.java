@@ -42,20 +42,27 @@ public class ScriptExecutor {
 
 	protected void evalScript(DataMiningCommand command) throws IOException {
 
-		// command-->script name --> execute script without output
-		String scriptToExecute = getScriptCodeToEval(command);
+		// checks whether executed before
+		if (command.getExecuted() == null || !command.getExecuted()) {
+			// command-->script name --> execute script without output
+			String scriptToExecute = getScriptCodeToEval(command);
 
-		// loading libraries, preprocessing, functions definition in main "auto"
-		// script
-		String ret = createTemporarySourceScript(scriptToExecute);
-		re.eval("source(\"" + ret + "\")");
-		// detects action to execute from command --> used to call functions
-		String action = command.getAction();
-		if (action != null) {
-			re.eval(action);
+			// loading libraries, preprocessing, functions definition in main
+			// "auto"
+			// script
+			String ret = createTemporarySourceScript(scriptToExecute);
+			re.eval("source(\"" + ret + "\")");
+			// detects action to execute from command --> used to call functions
+			String action = command.getAction();
+			if (action != null) {
+				re.eval(action);
+			}
+			command.setExecuted(true);
+			deleteTemporarySourceScript(ret);
+		} else {
+			// everithing in user workspace
+			logger.debug("Command " + command.getName() + " script " + command.getScriptName() + " already executed");
 		}
-
-		deleteTemporarySourceScript(ret);
 
 	}
 
