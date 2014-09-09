@@ -43,6 +43,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	public static String COMMAND_ATTRIBUTE_OUTPUTS = "outputs";
 	public static String COMMAND_ATTRIBUTE_LABEL = "label";
 	public static String COMMAND_ATTRIBUTE_MODE = "mode";
+	public static String COMMAND_ATTRIBUTE_ACTION = "action";
 
 	public static String DATASET_ATTRIBUTE_READTYPE = "readType";
 	public static String DATASET_ATTRIBUTE_NAME = "name";
@@ -188,6 +189,10 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 						if (scriptName != null) {
 							command.setScriptName(scriptName);
 						}
+						String commandAction = (String) commandSB.getAttribute(COMMAND_ATTRIBUTE_ACTION);
+						if (commandAction != null && !commandAction.equals("")) {
+							command.setAction(commandAction);
+						}
 						SourceBean outputsSB = (SourceBean) commandSB.getAttribute(TAG_OUTPUTS);
 						if (outputsSB != null) {
 
@@ -224,22 +229,24 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 			}
 
 			List<DataMiningTemplate.Parameter> parameters = new ArrayList<DataMiningTemplate.Parameter>();
-			List parametersSB = template.getAttributeAsList(TAG_PARAMETER);
-			if (parametersSB != null && !parametersSB.isEmpty()) {
-				Iterator it = parametersSB.iterator();
-				while (it.hasNext()) {
-					SourceBean parameterSB = (SourceBean) it.next();
-					logger.debug("Found " + TAG_PARAMETER + " definition :" + parameterSB);
-					String name = (String) parameterSB.getAttribute(PROP_PARAMETER_NAME);
-					String alias = (String) parameterSB.getAttribute(PROP_PARAMETER_ALIAS);
-					Assert.assertNotNull(name, "Missing parameter's " + PROP_PARAMETER_NAME + " attribute");
-					Assert.assertNotNull(alias, "Missing parameter's " + PROP_PARAMETER_ALIAS + " attribute");
-					DataMiningTemplate.Parameter parameter = toReturn.new Parameter();
-					parameter.setName(name);
-					parameter.setAlias(alias);
-					parameters.add(parameter);
+			SourceBean parametersSB = (SourceBean) template.getAttribute(TAG_PARAMETERS);
+			if (parametersSB != null) {
+
+				List<SourceBean> parListSB = parametersSB.getAttributeAsList(TAG_PARAMETER);
+				if (parListSB != null && parListSB.size() != 0) {
+					for (Iterator iterator = parListSB.iterator(); iterator.hasNext();) {
+						SourceBean parameterSB = (SourceBean) iterator.next();
+						logger.debug("Found " + TAG_PARAMETER + " definition :" + parameterSB);
+						String name = (String) parameterSB.getAttribute(PROP_PARAMETER_NAME);
+						String alias = (String) parameterSB.getAttribute(PROP_PARAMETER_ALIAS);
+
+						DataMiningTemplate.Parameter parameter = toReturn.new Parameter();
+						parameter.setName(name);
+						parameter.setAlias(alias);
+						parameters.add(parameter);
+					}
+					toReturn.setParameters(parameters);
 				}
-				toReturn.setParameters(parameters);
 			}
 			// read user profile for profiled data access
 			// setProfilingUserAttributes(template, toReturn);

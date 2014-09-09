@@ -43,8 +43,8 @@ Ext.define('Sbi.datamining.UploadPanel', {
 	
 	},
 	
-	uploadFiles: function(formPanelN, fName, posItem){
-        var form = formPanelN.items.items[posItem].getForm();
+	uploadFiles: function(form, fName, posItem){
+       // var form = formPanelN.items.items[posItem].getForm();
         var thisPanel = this;
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "dataset"
@@ -131,8 +131,6 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						if(dataset.type == Sbi.settings.datamining.execution.fileDataset){
 							var fieldLbl = dataset.name;
 							
-
-							
 							if(dataset.fileName !== undefined && dataset.fileName != null){
 								fieldLbl = dataset.name +' ('+dataset.fileName+')';
 							}
@@ -151,7 +149,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						    });
 							
 							
-							var fileFormN = Ext.create('Ext.form.Panel', {
+							this.fileFormN = Ext.create('Ext.form.Panel', {
 							    fileUpload: true,
 							    bodyPadding: 5,
 							    width: 500,
@@ -178,9 +176,14 @@ Ext.define('Sbi.datamining.UploadPanel', {
 							        disabled: true,	
 							        scale: 'small',
 							        iconCls:'upload',
-							        handler:  Ext.Function.pass(this.uploadFiles, [this, dataset.name, i]),
-							        scope: thisPanel
+							        //handler:  Ext.Function.pass(this.uploadFiles, [this, dataset.name, i]),
+							        handler: function() {
+							        	this.uploadFiles(this.fileFormN.getForm(),dataset.name, i)
+	
+							        },
+							        scope: this
 							    }]
+							    , scope: this
 							});
 							
 						    var uploadWin = Ext.create('Ext.Window', {
@@ -194,7 +197,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						        headerPosition: 'right',
 						        closeAction:'hide',
 						        layout: 'fit',
-						        items: [fileFormN]
+						        items: [this.fileFormN]
 						    });
 						    
 							var addDsFile= Ext.create('Ext.button.Button', {

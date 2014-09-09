@@ -20,6 +20,15 @@ public class DataMiningCommand implements Serializable {
 	private String mode;
 	private String label;
 	private List<Output> outputs;
+	private String action;
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
 
 	public String getLabel() {
 		return label;
