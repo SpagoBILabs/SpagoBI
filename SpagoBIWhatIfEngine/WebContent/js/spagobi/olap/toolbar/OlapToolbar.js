@@ -41,7 +41,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		whatIfButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER','BUTTON_EXPORT_OUTPUT'],
 		unlockedButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER'],
 		olapToggleButtons:  ['BUTTON_FATHER_MEMBERS','BUTTON_HIDE_SPANS','BUTTON_HIDE_EMPTY' ],
-		olapButtons: ['BUTTON_MDX','BUTTON_FLUSH_CACHE'],
+		olapButtons: ['BUTTON_MDX','BUTTON_EDIT_MDX','BUTTON_FLUSH_CACHE'],
 		lockButtons:['BUTTON_LOCK','BUTTON_UNLOCK','BUTTON_LOCK_OTHER']
 	},
 
@@ -85,6 +85,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 		this.buttonHandlersMap = {
 				'BUTTON_MDX': this.showMdxWindow,
+				'BUTTON_EDIT_MDX': this.editMdxWindow,
 				'BUTTON_FLUSH_CACHE': function(){
 					Sbi.olap.eventManager.cleanCache();
 				},
@@ -902,6 +903,14 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		}
 		this.mdxContainerPanel.update(this.mdx);
 		this.mdxWindow.show();
+	},
+
+	/**
+	 * Open the mdx window
+	 */
+	editMdxWindow: function(){
+		var editMdxContainerPanel = Ext.create('Sbi.olap.toolbar.EditMdxWindow', {});
+		editMdxContainerPanel.show();
 	}
 
 

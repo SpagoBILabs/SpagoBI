@@ -3,26 +3,23 @@
 	<cube reference="Mondrian_what_if_mysql"/>
 	
 	<MDXquery>
-		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])
+		WITH MEMBER [Product].[gIVEN] AS '[Product].[Drink]-[Product].[Food]' MEMBER  [Product].[Food].[Dairy].[2Dairy] AS '[Product].[Food].[Dairy].[Dairy]*3'  SELECT         {[Measures].[Store Cost],         [Measures].[Store Sales]}             ON COLUMNS,             Hierarchize(     Union     ( Union ( Union ( Union ({[Product].[Drink], [Product].[Food]}, [Product].[Food].Children), [Product].[Food].[Dairy].Children), [Product].[Food].[Dairy].[Dairy].Children), [Product].[Food].[Dairy].[2Dairy])) ON ROWS FROM [Sales_V]
 	</MDXquery>
 	<MDXMondrianQuery>
-		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])
+		WITH MEMBER [Product].[gIVEN] AS '[Product].[Drink]-[Product].[Food]' MEMBER  [Product].[Food].[Dairy].[2Dairy] AS '[Product].[Food].[Dairy].[Dairy]*3'  SELECT         {[Measures].[Store Cost],         [Measures].[Store Sales]}             ON COLUMNS,             Hierarchize(     Union     ( Union ( Union ( Union ({[Product].[Drink], [Product].[Food]},  [Product].[Food].[Dairy].[2Dairy]), [Product].[Food].[Dairy].Children), [Product].[Food].[Dairy].[Dairy].Children),  [Product].[Food].Children  )) ON ROWS FROM [Sales_V]
 	</MDXMondrianQuery>
 	
 	
 	<STANDALONE>
 		<CONNECTION>
-			<!--
-			<USR>root</USR>
-			<PWD></PWD>
-			<CONNECTIONSTRING>jdbc:mysql://localhost:3306/foodmart_new</CONNECTIONSTRING>
-			<DRIVER>com.mysql.jdbc.Driver</DRIVER>
-			-->
-			<JNDI_NAME>java:comp/env/jdbc/foodmart</JNDI_NAME>
-			<CATALOG>/Olap/FoodMartMySQL.xml</CATALOG>
-			<DIALECT>MySQL</DIALECT>
+		<USR>sa</USR>
+		<PWD></PWD>
+		<CATALOG>Olap\FoodMart.xml</CATALOG>
+		<CONNECTIONSTRING>jdbc:hsqldb:hsql://localhost:9001/foodmart</CONNECTIONSTRING>
+		<DRIVER>org.hsqldb.jdbcDriver</DRIVER>
+		<DIALECT>org.hsqldb.jdbcDriver</DIALECT>
 		</CONNECTION>
-	</STANDALONE>
+	</STANDALONE>>
 	
 	
 	
@@ -34,7 +31,8 @@
 	</SCENARIO>
 	
 	<TOOLBAR>
-		<BUTTON_MDX visible="true" menu="true" />                            
+		<BUTTON_MDX visible="true" menu="true" />
+		<BUTTON_EDIT_MDX visible="true" menu="true" />                                        
 		<BUTTON_FATHER_MEMBERS visible="true" menu="true"/>                  
 		<BUTTON_HIDE_SPANS visible="true" menu="true"/>                     
 		<BUTTON_SHOW_PROPERTIES visible="true" menu="true"/>               
