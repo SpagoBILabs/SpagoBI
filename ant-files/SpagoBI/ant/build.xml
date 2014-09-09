@@ -203,10 +203,10 @@
 		<unzip src="../../../SpagoBITalendEngine/dist/SpagoBITalendEngine.war" dest="${tomcat.home}/webapps/SpagoBITalendEngine" />
 	</target>
 
-	<target name="create.SpagoBIDataMiningEngine.war" depends="create.sbi.utils.jar,create.sbi.dao.jar">
+	<target name="create.SpagoBIDataMiningEngine.war" depends="create.sbi.utils.jar">
 		<ant dir="../SpagoBIDataMiningEngine/ant" />
 	</target>
-	<target name="deploy.SpagoBIDataMiningEngine.war" depends="create.sbi.utils.jar,create.sbi.dao.jar,create.SpagoBIDataMiningEngine.war">
+	<target name="deploy.SpagoBIDataMiningEngine.war" depends="create.sbi.utils.jar,create.SpagoBIDataMiningEngine.war">
 		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIDataMiningEngine" />
 		<delete dir="${tomcat.home}/webapps/SpagoBIDataMiningEngine" />
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIDataMiningEngine" />
