@@ -18,6 +18,7 @@ import java.util.Iterator;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
+import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
 public class ScriptExecutor {
@@ -45,33 +46,43 @@ public class ScriptExecutor {
 		// command-->script name --> execute script without output
 		String scriptToExecute = getScriptCodeToEval(command);
 
+		// loading libraries, preprocessing, functions definition in main "auto"
+		// script
 		String ret = createTemporarySourceScript(scriptToExecute);
 		re.eval("source(\"" + ret + "\")");
+		// detects action to execute from command --> used to call functions
+		String action = command.getAction();
+		if (action != null) {
+			re.eval(action);
+		}
+		REXP print = re.eval("explained_variance_print()");
+		REXP r = re.eval("ret");
 		deleteTemporarySourceScript(ret);
 
 	}
 
-	protected void evalScript(DataMiningScript script) throws IOException {
+	// protected void evalScript(DataMiningScript script) throws IOException {
+	//
+	// // command-->script name --> execute script without output
+	// String scriptToExecute = getScriptCodeToEval(script.getName());
+	//
+	// String ret = createTemporarySourceScript(scriptToExecute);
+	// re.eval("source(\"" + ret + "\")");
+	//
+	// deleteTemporarySourceScript(ret);
+	//
+	// }
 
-		// command-->script name --> execute script without output
-		String scriptToExecute = getScriptCodeToEval(script.getName());
-
-		String ret = createTemporarySourceScript(scriptToExecute);
-		re.eval("source(\"" + ret + "\")");
-		deleteTemporarySourceScript(ret);
-
-	}
-
-	protected void evalScript(String scriptName) throws IOException {
-
-		// command-->script name --> execute script without output
-		String scriptToExecute = getScriptCodeToEval(scriptName);
-
-		String ret = createTemporarySourceScript(scriptToExecute);
-		re.eval("source(\"" + ret + "\")");
-		deleteTemporarySourceScript(ret);
-
-	}
+	// protected void evalScript(String scriptName) throws IOException {
+	//
+	// // command-->script name --> execute script without output
+	// String scriptToExecute = getScriptCodeToEval(scriptName);
+	//
+	// String ret = createTemporarySourceScript(scriptToExecute);
+	// re.eval("source(\"" + ret + "\")");
+	// deleteTemporarySourceScript(ret);
+	//
+	// }
 
 	protected void deleteTemporarySourceScript(String path) {
 		boolean success = (new File(path)).delete();

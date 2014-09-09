@@ -63,20 +63,23 @@ public class OutputExecutor {
 			String function = out.getOutputFunction();
 
 			if (function.equals("hist")) {
+				// predefined Histogram function
 				re.eval(function + "(" + out.getOutputValue() + ", col=4)");
 			} else if (function.equals("plot") || function.equals("biplot")) {
-				re.eval(function + "(" + out.getOutputValue() + ", col=3)");
+				// predefined plot/biplot functions
+				re.eval(function + "(" + out.getOutputValue() + ", col=2)");
 			} else {
-				re.eval("plot(" + out.getOutputValue() + ", col=4)");
+				// function recalling a function inside the main script (auto)
+				// to produce an image result
+				re.eval(function + "(" + out.getOutputValue() + ")");
 			}
 
 			re.eval("dev.off()");
 			res.setOutputType(out.getOutputType());
 			res.setResult(getPlotImageAsBase64(out.getOutputName()));
 			res.setPlotName(plotName);
-			// scriptExecutor.deleteTemporarySourceScript(DATAMINING_FILE_PATH +
-			// DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
-			// + OUTPUT_PLOT_EXTENSION);
+			scriptExecutor.deleteTemporarySourceScript(DATAMINING_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
+					+ OUTPUT_PLOT_EXTENSION);
 
 		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.TEXT_OUTPUT) && out.getOutputValue() != null && out.getOutputName() != null) {
 			res.setVariablename(out.getOutputValue());// could be multiple value
@@ -90,20 +93,6 @@ public class OutputExecutor {
 				res.setResult("No result");
 			}
 
-		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.SCRIPT_OUTPUT) && out.getOutputValue() != null && out.getOutputName() != null) {
-			// looks up for the script if needed!
-			// ex : type="script" name="d" value="scriptC"
-			String scriptName = out.getOutputValue();// in this case contains
-														// the script
-			String plotName = out.getOutputName();
-			re.eval(getPlotFilePath(plotName));
-
-			scriptExecutor.evalScript(scriptName);
-
-			re.eval("dev.off()");
-			res.setOutputType(out.getOutputType());
-			res.setResult(getPlotImageAsBase64(out.getOutputName()));
-			res.setPlotName(plotName);
 		}
 		return res;
 	}

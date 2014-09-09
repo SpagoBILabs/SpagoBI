@@ -32,7 +32,8 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class DataMiningDatasetUtils {
 	static private Logger logger = Logger.getLogger(DataMiningDatasetUtils.class);
 
-	public static final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + DataMiningConstants.DATA_MINING_PATH_SUFFIX;
+	public static final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath()
+			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 
 	public static Boolean areDatasetsProvided(DataMiningEngineInstance dataminingInstance) {
 		Boolean areProvided = true;
@@ -64,10 +65,13 @@ public class DataMiningDatasetUtils {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
 			IDataSet spagobiDataset = dataSetDao.loadDataSetByLabel(ds.getSpagobiLabel());
+
+			// dataminingInstance.spagobiDataset.setParamsMap(params);
 			spagobiDataset.loadData();
 			DataStore dataStore = (DataStore) spagobiDataset.getDataStore();
 
-			filePath = UPLOADED_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + ds.getName() + "\\" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
+			filePath = UPLOADED_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + ds.getName() + "\\" + ds.getSpagobiLabel()
+					+ DataMiningConstants.CSV_FILE_FORMAT;
 			File csvFile = new File(filePath);
 			csvFile.createNewFile();
 

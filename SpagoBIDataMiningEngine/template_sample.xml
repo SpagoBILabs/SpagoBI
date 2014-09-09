@@ -32,9 +32,9 @@
                 <OUTPUT type="text" name="b" value="y"  mode="manual" label="label Output 4"/>
             </OUTPUTS>
         </COMMAND>
-        <COMMAND name="command2" scriptName="scriptBBB" label="label Command 2" mode="manual">
+        <COMMAND name="command2" scriptName="scriptBBB" label="label Command 2" mode="manual" action="function1(x)">
             <OUTPUTS>
-                <OUTPUT type="text" name="c" value="z"  mode="manual" label="label Output 1"/>
+                <OUTPUT type="text" name="c" value="z" function="function2(y,z)" mode="manual" label="label Output 1"/>
             </OUTPUTS>
         </COMMAND>
         <COMMAND name="command3" scriptName="scriptAAA" label="label Command 3" mode="manual">

@@ -21,12 +21,13 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 		border: 0
 		
 	},
+	dmMask: null,
 	command: null,
 	constructor : function(config) {
 		this.initConfig(config||{});		
 		
 		this.command= config.commandName;
-		
+	
 		this.callParent(arguments);
 		
 	},
@@ -103,6 +104,7 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 						var outpanel = items[i];
 						if((outpanel.command == thisPanel.command) &&(outpanel.output == output)){
 							//found the one to activete
+							outpanel.dmMask.show();
 							outpanel.resultPanel.getResult();
 							thisPanel.setActiveTab(i);
 
