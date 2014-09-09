@@ -18,7 +18,6 @@ import java.util.Iterator;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
-import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
 public class ScriptExecutor {
@@ -55,8 +54,7 @@ public class ScriptExecutor {
 		if (action != null) {
 			re.eval(action);
 		}
-		REXP print = re.eval("explained_variance_print()");
-		REXP r = re.eval("ret");
+
 		deleteTemporarySourceScript(ret);
 
 	}

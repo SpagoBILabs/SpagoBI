@@ -79,7 +79,8 @@ Ext.define('Sbi.datamining.ResultPanel', {
 					var plotName = output.plotName;
 					
 					if(type == Sbi.settings.datamining.execution.typeImage){
-						html+='<div style="'+this.resultTitleStyle+'">'+plotName+' : </div><br/><p style="'+this.plotStyle+'"><img alt="Result for '+plotName+'" src="data:image/jpg;base64,'+result+'" /></p><br/><br/><br/>';
+						html+='<div style="'+this.resultTitleStyle+'">'+plotName+' : </div><br/><p style="'+this.plotStyle+'"><img width="480px" height="480px" style="image-resolution: 72dpi;" alt="Result for '+plotName+'" src="data:image/png;base64,'+result+'" /></p><br/><br/><br/>';
+						
 					}else{
 						html+='<div style="'+this.resultTitleStyle+'">'+varName+' : </div><br/><p style="'+this.videoStyle+'">'+result+'</p><br/><br/><br/>';
 					}
@@ -89,7 +90,7 @@ Ext.define('Sbi.datamining.ResultPanel', {
 				thisPanel.update(html);
 			}
 			
-			thisPanel.dataminingParentPanel.uploadPanel.refreshUploadButtons();
+			thisPanel.outputPanel.uploadPanel.refreshUploadButtons();
 		};
 		
 		
