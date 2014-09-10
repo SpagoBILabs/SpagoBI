@@ -154,7 +154,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 		if(this.store && this.store.getCount()>0){
 			var dimensionsCount = this.store.getCount( );
 			for(var i=0; i<dimensionsCount; i++) {
-				var dimension = Ext.create(this.dimensionClassName,{dimension: this.store.getAt(i), pivotContainer: this.pivotContainer, containerPanel: this, firstDimension: (i==0), lastDimension: (i==dimensionsCount-1) });
+				var dimension = Ext.create(this.dimensionClassName,{dimension: this.store.getAt(i), pivotContainer: this.pivotContainer, containerPanel: this, firstDimension: (i ==0), lastDimension: (i ==dimensionsCount-1) });
 				dimension.on("moveUp",this.moveUpDimension,this);
 				dimension.on("moveDown",this.moveDownDimension,this);
 				items.push(dimension);
@@ -187,7 +187,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 			listeners: {
 				el: {
 					click: {
-						fn: function (event, html, eOpts) {
+						fn: function () {
 							this.fireEvent("moveDown",this);
 						},
 						scope: dimension
@@ -211,7 +211,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 			listeners: {
 				el: {
 					click: {
-						fn: function (event, html, eOpts) {
+						fn: function () {
 							this.fireEvent("moveDown",this);
 						},
 						scope: dimension
@@ -241,14 +241,14 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 	 * Returns true if this is the  container
 	 */
 	isRowDimensions: function(){
-		return this.dimensionClassName == 'Sbi.olap.execution.table.OlapExecutionRow';
+		return this.dimensionClassName  == 'Sbi.olap.execution.table.OlapExecutionRow';
 	},
 
 	/**
 	 * Returns true if this is the columns container
 	 */
 	isColumnDimensions: function(){
-		return this.dimensionClassName == 'Sbi.olap.execution.table.OlapExecutionColumn';
+		return this.dimensionClassName  == 'Sbi.olap.execution.table.OlapExecutionColumn';
 	},
 
 	/**

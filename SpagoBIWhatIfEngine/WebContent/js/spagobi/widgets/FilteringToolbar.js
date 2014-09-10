@@ -169,7 +169,7 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 		filterBarState.typeFilter = this.filterCombo.getValue();
 		filterBarState.valueFilter = this.inputField.getValue();
 
-		if(asObject !== undefined && asObject === false) {
+		if(asObject != undefined && asObject  == false) {
 			filterBarState = Ext.util.JSON.encode(filterBarState);
 		}
 		return filterBarState;
@@ -197,13 +197,13 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 	}
 
 	, onClick: function() {
-		if(this.state === this.EDITING) {
+		if(this.state  == this.EDITING) {
 			this.unfilterButton.enable();
 			this.disableEditing();
 
 			this.state = this.FILTERING;
 			this.doLoad();
-		} else if(this.state === this.FILTERING) {
+		} else if(this.state  == this.FILTERING) {
 			this.enableEditing();
 			this.state = this.EDITING;
 		}
@@ -225,18 +225,18 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 
 	, boforeLoad: function(store, o) {
 
-		if(this.state === this.FILTERING) {
+		if(this.state  == this.FILTERING) {
 			var p = this.getFilterBarState(false);
 			o.params.FILTERS = p;
-		} else if(this.state === this.UNFILTERING) {
-			if(o.params.FILTERS !== undefined){alert('ERROR: While UNFILTERING filters parameter cannot be valorized');}
+		} else if(this.state  == this.UNFILTERING) {
+			if(o.params.FILTERS != undefined){alert('ERROR: While UNFILTERING filters parameter cannot be valorized');}
 		}
 
 		return true;
 	}
 
 	, onLoad: function() {
-		if(this.state === this.UNFILTERING) {
+		if(this.state  == this.UNFILTERING) {
 			this.state = this.EDITING;
 		}
 	}

@@ -100,7 +100,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 
 	navigate: function(panel, direction){
 		//send the event and close
-		if(direction=="ok"){
+		if(direction =="ok"){
 			this.fireEvent('exportOutput',this.getFormValues());
 			this.destroy();
 		}else{
@@ -112,7 +112,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 				layout[direction]();
 			}
 
-			if(direction == "prev"){
+			if(direction  == "prev"){
 				Ext.getCmp('out-move-prev').setDisabled(true);
 				Ext.getCmp('out-move-next').setDisabled(false);
 				Ext.getCmp('out-move-ok').setDisabled(true);
@@ -144,7 +144,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 		            var rank1 = o1.getId();
 		            var rank2 = o2.getId();
 
-		            if (rank1 === rank2) {
+		            if (rank1  == rank2) {
 		                return 0;
 		            }
 
@@ -172,7 +172,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 			        	xtype: 'radiofield',
 			        	name: 'exportType',
 			        	inputValue: 'csv',
-			        	checked: this.defType=="csv",
+			        	checked: this.defType =="csv",
 			        	fieldLabel: LN("sbi.olap.toolbar.export.wizard.type"),
 			        	boxLabel: LN("sbi.olap.toolbar.export.wizard.type.csv")
 			        }, {
@@ -182,7 +182,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 			        	fieldLabel: '',
 			        	labelSeparator: '',
 			        	hideEmptyLabel: false,
-			        	checked: this.defType=="table",
+			        	checked: this.defType =="table",
 			        	boxLabel: LN("sbi.olap.toolbar.export.wizard.type.table")
 			        }, {
 			        	xtype: 'combo',
@@ -248,7 +248,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 	},
 
 	isCsvExport: function(){
-		return (this.selectExportTypePanel && this.selectExportTypePanel.getForm().getValues()["exportType"]=='csv');
+		return (this.selectExportTypePanel && this.selectExportTypePanel.getForm().getValues()["exportType"] =='csv');
 	},
 
 	getFormValues: function(){
@@ -258,7 +258,7 @@ Ext.define('Sbi.olap.toolbar.ExportWizardWindow', {
 		if(this.selectExportTypePanel && this.selectExportTypePanel.getForm()){
 			values = this.selectExportTypePanel.getForm().getValues();
 		}
-		if(values.exportType=="csv"){
+		if(values.exportType =="csv"){
 			Ext.apply(values, this.selectExportCsvPanel.getValues());
 		}else{
 			Ext.apply(values, this.selectExportTablePanel.getValues());

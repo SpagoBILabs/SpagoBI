@@ -86,7 +86,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 
 		if(this.multiSelection){
 			treeStore.on("beforeappend",function( store, node, eOpts ){
-				node.raw.checked = (node.raw.visible!=null && node.raw.visible!=undefined && (node.raw.visible=="true" || node.raw.visible==true) );
+				node.raw.checked = (node.raw.visible!=null && node.raw.visible!=undefined && (node.raw.visible =="true" || node.raw.visible ==true) );
 				node.data.checked = node.raw.checked;
 			},this);
 		}
@@ -170,22 +170,22 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 		var memberId = this.selectedMember.raw.uniqueName;
 		var nodeId = node.internalId;
 
-		if(memberId == nodeId){
+		if(memberId  == nodeId){
 			this.tree.getSelectionModel().select(node);
 			return;
 		}
 
-		if(nodeId=="root"){
+		if(nodeId =="root"){
 			children[0].on("expand",this.expandNode, this);
 			children[0].expand();
 		}else if(children){
 			for(var i=0; i<children.length; i++){
 				var childId = children[i].internalId;
-				if(memberId == childId){
+				if(memberId  == childId){
 					this.tree.getSelectionModel().select(children[i]);
 					return;
 				}
-				if(memberId.indexOf(childId)==0){
+				if(memberId.indexOf(childId) ==0){
 					children[i].on("expand",this.expandNode, this);
 					children[i].expand();
 					break;

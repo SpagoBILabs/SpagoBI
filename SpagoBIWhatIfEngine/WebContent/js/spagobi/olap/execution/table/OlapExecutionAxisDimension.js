@@ -121,7 +121,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 			}
 		};
 
-		if(this.axisType=="column"){
+		if(this.axisType =="column"){
 			Ext.apply(config,{width: 20, height: 15});
 		}else{
 			Ext.apply(config,{height: 20});
