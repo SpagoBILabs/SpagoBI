@@ -6,6 +6,10 @@ Sbi.locale.ln['sbi.browser.documentstree.root']  = 'Ra\u00edz';
 
 Sbi.locale.ln['sbi.general.yes'] = 'S\u00ed';
 Sbi.locale.ln['sbi.general.No'] = 'No';
+Sbi.locale.ln['sbi.general.cancel'] = 'Cancelar';
+Sbi.locale.ln['sbi.general.continue'] = 'Continuar';
+Sbi.locale.ln['sbi.general.sessionexpired.title'] = 'La sesión ha expirado !';
+Sbi.locale.ln['sbi.general.sessionexpired.message'] = 'La sesión ha caducado, por favor iniciar sesión de nuevo ';
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Nodo Gen\u00e9rico';
 Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Ra\u00edz Gen\u00e9rico';
@@ -36,6 +40,10 @@ Sbi.locale.ln['sbi.generic.document'] = 'Documento';
 Sbi.locale.ln['sbi.generic.map'] = 'Mapa';
 Sbi.locale.ln['sbi.generic.maps'] = 'Mapas';
 Sbi.locale.ln['sbi.generic.all'] = 'Todo';
+Sbi.locale.ln['sbi.generic.document.add.adhocGeoReport'] = 'Geo Report';
+Sbi.locale.ln['sbi.generic.document.add.adhocCockpit'] = 'Cockpit';
+Sbi.locale.ln['sbi.generic.document.add.traditional SpagoBI'] = 'Otros';
+
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Nombre';
 Sbi.locale.ln['sbi.generic.descr'] = 'Descripci\u00f3n';
@@ -221,7 +229,7 @@ Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Document cloned succesfu
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Antes de guardar el documento complete Nombre y Etiqueta y seleccione al menos una carpeta d\u00f3nde colocarla';
 Sbi.locale.ln['sbi.document.saveWarning2']  = 'Antes de guardar el documento complete Nombre del documento';
 
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'Rellene el formulario y Guardela el documento';
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Complete el formulario y guarde su documento ';
 Sbi.locale.ln['sbi.browser.defaultRole.title']  = 'Seleccione un rol predeterminado';
 Sbi.locale.ln['sbi.browser.defaultRole.role']  = 'Rol: ';
 Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']  = 'Ning\u00fan rol predeterminado';
@@ -255,9 +263,17 @@ Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserM
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']  = 'Rellene el siguiente formulario y haga clic en el bot\u00f3n Actualizar en la barra de herramientas para volver a ejecutar el documento';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Haga clic en el bot\u00f3n Actualizar de la barra de herramientas para volver a ejecutar el documento';
 
+Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.message'] = 'Ejecutar';
+Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.tooltip'] = 'Completar el siguiente formulario y haga clic aquí para ejecutar el documento';
+
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Volver a la p\u00e1gina de selecci\u00f3n par\u00e1metros';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Volver a la p\u00e1gina de selecci\u00f3n documentos';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Recargar ejecuci\u00f3n documento';
+
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'La selección de Parámetros 'fue cambiada; ¿Deseas ejecutar el documento con la selección anterior o la actual? ';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.usecurrentselection'] = 'Usar actual;
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.usepreviousselection'] = 'Usar previo';
+
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Vote este documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.print'] = 'Imprimir';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.send'] = 'Enviar';
@@ -582,6 +598,26 @@ Sbi.locale.ln['sbi.ds.metadata.column.column']='Columna';
 Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Atributos';
 Sbi.locale.ln['sbi.ds.metadata.column.value']='Valor';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Dataset Metadata';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.column']='Columna jerarquía';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.level']='Nivel jerarquía';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.clear']='Limpiar';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.expert']='Modo experto;
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.simple']='Modo simple';
+
+
+//Multitenant
+Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant correctly saved. \n The administrator of the the tenant has been created too and his username and password is ';
+Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant correctly deleted';
+Sbi.locale.ln['sbi.multitenant.delete.title']= '¿Eliminar Tenant?';
+Sbi.locale.ln['sbi.multitenant.delete.msg']= '¿Estas seguro de querer eliminar el Tenant y todos los datos relacionados?';
+Sbi.locale.ln['sbi.multitenant.validation.error']= 'There are error(s) in the tenant configuration. Check the marked fields.';
+Sbi.locale.ln["error.mesage.name.multitenant.cannot.be.null"]= "The tenant name can not be null";
+Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Impossible to delete the tenant because it is in use";
+Sbi.locale.ln["error.mesage.multitenant.saving.duplicated"]="Impossible to save the tenant because there is another one with the same name";
+Sbi.locale.ln['sbi.multitenant.theme']= 'Theme';
+Sbi.locale.ln['sbi.multitenant.id'] = 'Identifier';
+Sbi.locale.ln['multitenant.error.association'] = 'Impossible to modify the association. Check the dependencies of ';
+
 
 // DATASOURCE
 Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ': El datasource es de escritura por defecto: \u00bfQuieres sustituirlo por acutal?';
