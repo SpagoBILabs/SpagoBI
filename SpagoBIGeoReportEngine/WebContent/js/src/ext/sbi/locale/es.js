@@ -107,8 +107,7 @@ Sbi.locale.ln['sbi.geo.controlpanel.savewin.previewfile'] = 'Vista previa de arc
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Communidad';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Alcance';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Antes de guardar el documento, es necesario insertar el nombre del mapa y seleccionar al menos una carpeta.';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = ' ';
-
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = ' Seleccionar la carpeta en a cual pulicar el mapa. Guardar como [public] si todo el mundo verá el mapa. Guardar como [private] si sólo los usuarios registrados podrán ver el mapa.';
 
 //===================================================================
 // MAP PANEL
