@@ -364,6 +364,7 @@ Sbi.locale.ln['sbi.roles.result'] = 'Resultado';
 Sbi.locale.ln['sbi.roles.rolesSynchronization'] = 'Sincronizar';
 Sbi.locale.ln['sbi.roles.businessModels'] = 'Modelos de Negocio';
 Sbi.locale.ln['sbi.roles.createSocialAnalysis'] = 'Create analysis on social networks';
+Sbi.locale.ln['sbi.roles.hierarchiesManagement'] = 'Hierarchies editor';
 
 Sbi.locale.ln['sbi.users.fullName'] = 'Nombre Completo';
 Sbi.locale.ln['sbi.users.userId'] = 'ID de usuario';
