@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.api;
 
-import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
@@ -45,7 +44,6 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 public class DatasetResource extends AbstractDataMiningEngineService {
 
 	public static transient Logger logger = Logger.getLogger(DatasetResource.class);
-	private final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath() + DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 
 	@GET
 	@Path("/{commandName}")
@@ -69,14 +67,20 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 			for (Iterator dsIt = dataMiningEngineInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
 				if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_FILE) && datasetNames.contains(ds.getName())) {
-					File fileDSDir = new File(DataMiningDatasetUtils.UPLOADED_FILE_PATH + ds.getName());
-					// /find file in dir
-					File[] dsfiles = fileDSDir.listFiles();
-					if (dsfiles != null && dsfiles.length != 0) {
-						String fileName = dsfiles[0].getName();
-						ds.setFileName(fileName);
+					File fileDSDir;
+					try {
+						fileDSDir = new File(DataMiningDatasetUtils.getUserResourcesPath(getUserProfile()) + ds.getName());
+						// /find file in dir
+						File[] dsfiles = fileDSDir.listFiles();
+						if (dsfiles != null && dsfiles.length != 0) {
+							String fileName = dsfiles[0].getName();
+							ds.setFileName(fileName);
+						}
+						datasetsToReturn.add(ds);
+					} catch (IOException e) {
+						throw new SpagoBIEngineRuntimeException("Error getting dataset", e);
 					}
-					datasetsToReturn.add(ds);
+
 				}
 
 			}
@@ -111,9 +115,11 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 				if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_FILE) && ds.getName().equals(dsName)) {
 					ds.setFileName(fileName);
 					// and update its content in R workspace!
-					DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance);
+					DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance, getUserProfile());
 					try {
 						executor.updateDatasetInWorkspace(ds, getUserProfile());
+						setCommandExecutable(dataMiningEngineInstance);
+
 					} catch (IOException e) {
 						throw new SpagoBIEngineRuntimeException("Error updating file dataset", e);
 					}
@@ -130,6 +136,18 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 
 		logger.debug("OUT");
 		return getJsonSuccess();
+	}
+
+	private void setCommandExecutable(DataMiningEngineInstance dataminingInstance) {
+		if (dataminingInstance.getCommands() != null && !dataminingInstance.getCommands().isEmpty()) {
+			for (Iterator it = dataminingInstance.getCommands().iterator(); it.hasNext();) {
+				DataMiningCommand command = (DataMiningCommand) it.next();
+				if (command.getMode().equals(DataMiningConstants.EXECUTION_TYPE_AUTO)) {
+					command.setExecuted(false);// in order to be riexecuted
+												// script
+				}
+			}
+		}
 	}
 
 	@POST
@@ -156,13 +174,13 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 
 				byte[] bytes = IOUtils.toByteArray(inputStream);
 
-				File dirToSaveDS = new File(UPLOADED_FILE_PATH + fieldName);// remember
-																			// to
-																			// create
-																			// datamining
-																			// folder
-																			// inside
-																			// resources
+				File dirToSaveDS = new File(DataMiningDatasetUtils.getUserResourcesPath(getUserProfile()) + fieldName);// remember
+				// to
+				// create
+				// datamining
+				// folder
+				// inside
+				// resources
 				dirToSaveDS.mkdir();
 				// leave just une file per dataset
 				File[] dsfiles = dirToSaveDS.listFiles();

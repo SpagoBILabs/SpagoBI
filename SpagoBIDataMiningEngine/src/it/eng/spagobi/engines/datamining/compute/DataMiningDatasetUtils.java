@@ -21,9 +21,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -35,13 +33,13 @@ public class DataMiningDatasetUtils {
 	public static final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath()
 			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 
-	public static Boolean areDatasetsProvided(DataMiningEngineInstance dataminingInstance) {
+	public static Boolean areDatasetsProvided(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) throws IOException {
 		Boolean areProvided = true;
 
 		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
 			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
-				File fileDSDir = new File(UPLOADED_FILE_PATH + ds.getName());
+				File fileDSDir = new File(getUserResourcesPath(profile) + ds.getName());
 				if (fileDSDir != null) {
 					File[] dsfiles = fileDSDir.listFiles();
 					if (dsfiles == null || dsfiles.length == 0) {
@@ -70,7 +68,7 @@ public class DataMiningDatasetUtils {
 			spagobiDataset.loadData();
 			DataStore dataStore = (DataStore) spagobiDataset.getDataStore();
 
-			filePath = UPLOADED_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + ds.getName() + "\\" + ds.getSpagobiLabel()
+			filePath = getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + ds.getName() + "\\" + ds.getSpagobiLabel()
 					+ DataMiningConstants.CSV_FILE_FORMAT;
 			File csvFile = new File(filePath);
 			csvFile.createNewFile();
@@ -101,7 +99,6 @@ public class DataMiningDatasetUtils {
 	public static void writeColumns(DataStore dataStore, CSVWriter writer) {
 		logger.debug("IN");
 		String col = "";
-		List<String> fieldsList = new ArrayList<String>();
 
 		for (int j = 0; j < dataStore.getMetaData().getFieldCount(); j++) {
 			IFieldMetaData fieldMetaData = dataStore.getMetaData().getFieldMeta(j);
@@ -131,5 +128,22 @@ public class DataMiningDatasetUtils {
 			writer.writeNext(row.split(DataMiningConstants.CSV_SEPARATOR));
 		}
 		logger.debug("OUT");
+	}
+
+	public static String getUserResourcesPath(IEngUserProfile profile) throws IOException {
+		String userResourcePath = UPLOADED_FILE_PATH + profile.getUserUniqueIdentifier() + "\\";
+		File userPathFile = new File(userResourcePath);
+		return userResourcePath;
+	}
+
+	public static void createUserResourcesPath(IEngUserProfile profile) throws IOException {
+		String userResourcePath = UPLOADED_FILE_PATH + profile.getUserUniqueIdentifier() + "\\";
+		File userPathFile = new File(userResourcePath);
+		// if it doesn't exist create it
+		if (!userPathFile.exists()) {
+			userPathFile.mkdir();
+			File temp = new File(userPathFile, DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX);
+			temp.mkdir();
+		}
 	}
 }
