@@ -6,9 +6,7 @@
 package it.eng.spagobi.engines.datamining.compute;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
-import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 
 import java.io.File;
@@ -22,14 +20,15 @@ import org.rosuda.JRI.Rengine;
 public class DatasetsExecutor {
 
 	static private Logger logger = Logger.getLogger(DatasetsExecutor.class);
-	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath()
-			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
+
 	private Rengine re;
 
 	DataMiningEngineInstance dataminingInstance;
+	IEngUserProfile profile;
 
-	public DatasetsExecutor(DataMiningEngineInstance dataminingInstance) {
+	public DatasetsExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		this.dataminingInstance = dataminingInstance;
+		this.profile = profile;
 	}
 
 	public Rengine getRe() {
@@ -40,7 +39,7 @@ public class DatasetsExecutor {
 		this.re = re;
 	}
 
-	protected void evalDatasets(IEngUserProfile profile) throws IOException {
+	protected void evalDatasets() throws IOException {
 		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
 			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
@@ -48,7 +47,7 @@ public class DatasetsExecutor {
 					// tries to get it from user workspace
 					REXP datasetNameInR = re.eval(ds.getName());
 					if (datasetNameInR == null) {
-						File fileDSDir = new File(DATAMINING_FILE_PATH + ds.getName());
+						File fileDSDir = new File(DataMiningDatasetUtils.getUserResourcesPath(profile) + ds.getName());
 						// /find file in dir
 						File[] dsfiles = fileDSDir.listFiles();
 						String fileDSPath = dsfiles[0].getPath();
@@ -81,7 +80,7 @@ public class DatasetsExecutor {
 		}
 	}
 
-	protected void evalDatasetsNeeded(IEngUserProfile profile) throws IOException {
+	protected void evalDatasetsNeeded() throws IOException {
 		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
 			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
@@ -93,7 +92,7 @@ public class DatasetsExecutor {
 					// tries to get it from user workspace
 					REXP datasetNameInR = re.eval(ds.getName());
 					if (datasetNameInR == null) {
-						File fileDSDir = new File(DATAMINING_FILE_PATH + ds.getName());
+						File fileDSDir = new File(DataMiningDatasetUtils.getUserResourcesPath(profile) + ds.getName());
 						// /find file in dir
 						File[] dsfiles = fileDSDir.listFiles();
 						if (dsfiles != null && dsfiles.length != 0) {
@@ -128,11 +127,12 @@ public class DatasetsExecutor {
 		}
 	}
 
-	protected void updateDataset(DataMiningDataset ds, IEngUserProfile profile) throws IOException {
+	protected void updateDataset(DataMiningDataset ds) throws IOException {
 
-		File fileDSDir = new File(DATAMINING_FILE_PATH + ds.getName());
+		File fileDSDir = new File(DataMiningDatasetUtils.getUserResourcesPath(profile) + ds.getName());
 		// /find file in dir
 		File[] dsfiles = fileDSDir.listFiles();
+
 		String fileDSPath = dsfiles[0].getPath();
 
 		fileDSPath = fileDSPath.replaceAll("\\\\", "/");

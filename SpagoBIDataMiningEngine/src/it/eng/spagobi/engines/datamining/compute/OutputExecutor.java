@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.compute;
 
-import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
@@ -30,13 +30,13 @@ public class OutputExecutor {
 	private static final String OUTPUT_PLOT_EXTENSION = "png";
 	private static final String OUTPUT_PLOT_IMG = "png";
 
-	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath()
-			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 	private Rengine re;
 	DataMiningEngineInstance dataminingInstance;
+	IEngUserProfile profile;
 
-	public OutputExecutor(DataMiningEngineInstance dataminingInstance) {
+	public OutputExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		this.dataminingInstance = dataminingInstance;
+		this.profile = profile;
 	}
 
 	public Rengine getRe() {
@@ -78,8 +78,8 @@ public class OutputExecutor {
 			res.setOutputType(out.getOutputType());
 			res.setResult(getPlotImageAsBase64(out.getOutputName()));
 			res.setPlotName(plotName);
-			scriptExecutor.deleteTemporarySourceScript(DATAMINING_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
-					+ OUTPUT_PLOT_EXTENSION);
+			scriptExecutor.deleteTemporarySourceScript(DataMiningDatasetUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX
+					+ plotName + "." + OUTPUT_PLOT_EXTENSION);
 
 		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.TEXT_OUTPUT) && out.getOutputValue() != null && out.getOutputName() != null) {
 			res.setVariablename(out.getOutputValue());// could be multiple value
@@ -97,17 +97,18 @@ public class OutputExecutor {
 		return res;
 	}
 
-	private String getPlotFilePath(String plotName) {
+	private String getPlotFilePath(String plotName) throws IOException {
 		String path = null;
 		if (plotName != null && !plotName.equals("")) {
-			String filePath = DATAMINING_FILE_PATH.replaceAll("\\\\", "/");
+			String filePath = DataMiningDatasetUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/");
 			path = OUTPUT_PLOT_IMG + "(\"" + filePath + DataMiningConstants.DATA_MINING_TEMP_FOR_SCRIPT + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
 		}
 		return path;
 	}
 
 	public String getPlotImageAsBase64(String plotName) throws IOException {
-		String fileImg = DATAMINING_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "." + OUTPUT_PLOT_EXTENSION;
+		String fileImg = DataMiningDatasetUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
+				+ OUTPUT_PLOT_EXTENSION;
 		BufferedImage img = null;
 		String imgstr = null;
 		img = ImageIO.read(new File(fileImg));

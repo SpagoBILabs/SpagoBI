@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.compute;
 
-import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
@@ -23,13 +23,14 @@ import org.rosuda.JRI.Rengine;
 public class ScriptExecutor {
 
 	static private Logger logger = Logger.getLogger(ScriptExecutor.class);
-	private final String DATAMINING_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath()
-			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
+
 	private Rengine re;
 	DataMiningEngineInstance dataminingInstance;
+	IEngUserProfile profile;
 
-	public ScriptExecutor(DataMiningEngineInstance dataminingInstance) {
+	public ScriptExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		this.dataminingInstance = dataminingInstance;
+		this.profile = profile;
 	}
 
 	public Rengine getRe() {
@@ -57,6 +58,7 @@ public class ScriptExecutor {
 			if (action != null) {
 				re.eval(action);
 			}
+
 			command.setExecuted(true);
 			deleteTemporarySourceScript(ret);
 		} else {
@@ -65,29 +67,6 @@ public class ScriptExecutor {
 		}
 
 	}
-
-	// protected void evalScript(DataMiningScript script) throws IOException {
-	//
-	// // command-->script name --> execute script without output
-	// String scriptToExecute = getScriptCodeToEval(script.getName());
-	//
-	// String ret = createTemporarySourceScript(scriptToExecute);
-	// re.eval("source(\"" + ret + "\")");
-	//
-	// deleteTemporarySourceScript(ret);
-	//
-	// }
-
-	// protected void evalScript(String scriptName) throws IOException {
-	//
-	// // command-->script name --> execute script without output
-	// String scriptToExecute = getScriptCodeToEval(scriptName);
-	//
-	// String ret = createTemporarySourceScript(scriptToExecute);
-	// re.eval("source(\"" + ret + "\")");
-	// deleteTemporarySourceScript(ret);
-	//
-	// }
 
 	protected void deleteTemporarySourceScript(String path) {
 		boolean success = (new File(path)).delete();
@@ -109,7 +88,7 @@ public class ScriptExecutor {
 
 	private String createTemporarySourceScript(String code) throws IOException {
 		String name = RandomStringUtils.randomAlphabetic(10);
-		File temporarySource = new File(DATAMINING_FILE_PATH + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + name + ".R");
+		File temporarySource = new File(DataMiningDatasetUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + name + ".R");
 		FileWriter fw = null;
 		String ret = "";
 		try {
