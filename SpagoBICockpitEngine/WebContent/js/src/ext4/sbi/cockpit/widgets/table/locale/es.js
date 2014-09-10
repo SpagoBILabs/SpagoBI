@@ -55,3 +55,46 @@ Sbi.locale.ln['sbi.qbe.datastorepanel.grid.lasttext'] = 'Ãºltima PÃ¡gina';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.refreshtext'] = 'Refrescar';
 
 Sbi.locale.ln['sbi.qbe.datastorepanel.button.tt.exportto'] = 'Exportar a';
+
+
+//===================================================================
+//Sbi.worksheet.designer.ChartSeriesPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.title'] = 'Series';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.emptymsg'] = 'Arrastre y suelte aquí algunas medidas de la consulta como series';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.queryfield'] = 'Campo';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.seriename'] = 'Nombre';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.color'] = 'Color';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.showcomma'] = 'Mostrar separador de agrupación';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.precision'] = 'Precisión';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.suffix'] = 'Sufijo';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.title'] = 'Drop no permitido';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.measurealreadypresent'] = 'La medida ya está presente';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'] = 'No puede arrastrar dentro de las series del chart';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.postlinecalculated'] = 'No se puede utilizar campos calculados basados en scripts dentro de las series del chart';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['Remove all'];
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.none'] = 'ninguno';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.sum'] = 'suma';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.avg'] = 'media';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.max'] = 'máximo';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.min'] = 'mínimo';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.count'] = 'count';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'] = 'count distinct';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.function'] = 'Function';
+
+//===================================================================
+//Sbi.worksheet.designer.SeriesGroupingPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.seriesgroupingpanel.title'] = 'Variable de agrupación de las series';
+
+
+//===================================================================
+//Sbi.worksheet.designer.ChartCategoryPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.title'] = 'Categoría';
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.emptymsg'] = 'Arrastre y suelte aquí un atributo de consulta como una categoría';
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.title'] = 'Drop no permitido';
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.unknownsource'] = 'Fuente desconocida';
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.measures'] = 'No es posible soltar las medidas aquí';
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.postlinecalculated'] = 'No puedes soltar los campos calculados basados en script aquí';
+
