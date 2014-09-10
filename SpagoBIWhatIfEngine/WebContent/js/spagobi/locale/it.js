@@ -41,16 +41,16 @@ Sbi.locale.formats = {
 		}
 };
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //HELP
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.execution.table.filter.dimension.help.content'] = 'Selezionare i membri da visualizzare per la dimensione. I membri saranno inseriti nella clausola select della query mdx';
 Sbi.locale.ln['sbi.olap.help.title'] = 'Help';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.cannotchangehierarchy'] = 'Non puoi cambiare la gerarchia dal momento che ci sono delle modifiche pendenti sui dati: devi prima persistere le modifiche.';
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //COMMONS
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.common.cancel'] = 'Annulla';
 Sbi.locale.ln['sbi.common.close'] = 'Chiudi';
 Sbi.locale.ln['sbi.common.ok'] = 'Ok';
@@ -63,9 +63,9 @@ Sbi.locale.ln['sbi.common.wait.long'] = 'Attendere prego.. Questa operazione pot
 Sbi.locale.ln['sbi.common.name'] = 'Nome';
 Sbi.locale.ln['sbi.common.description'] = 'Descrizione';
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //TOOLBAR
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_MDX'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Tipi di Drill';
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_UNDO'] = 'Undo';
@@ -85,9 +85,9 @@ Sbi.locale.ln['sbi.olap.toolbar.save.as.description'] = "Inserire il nome e la d
 Sbi.locale.ln['sbi.olap.toolbar.save.as.version.name'] = "Nome versione";
 Sbi.locale.ln['sbi.olap.toolbar.save.as.version.description'] = "Descrizione versione";
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //FILTERS
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 
 Sbi.locale.ln['sbi.olap.execution.table.filter.collapse'] = 'Chiudi tutti';
 Sbi.locale.ln['sbi.olap.execution.table.filter.expand'] = 'Espandi tutti';
@@ -96,9 +96,9 @@ Sbi.locale.ln['sbi.olap.execution.table.filter.dimension.title'] = 'Seleziona i 
 Sbi.locale.ln['sbi.olap.execution.table.filter.no.measure'] = 'Non \u00e8 possibile mettere le misure tra i filtri';
 Sbi.locale.ln['sbi.olap.execution.table.filter.empty'] = 'Draggare il membro in questa sezione per usarlo come slicer';
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //DIMENSIONS
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy'] = 'La gerarchia selezionata \u00e8 ';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy.2'] = ' Puoi cambiare la gerarchia selezionando il valore tramite il seguente form.';
@@ -106,31 +106,31 @@ Sbi.locale.ln['sbi.olap.execution.table.dimension.available.hierarchies'] = 'Ger
 Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'Ci deve esserre almeno una dimensione sia nelle righe che nelle colonne';
 
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //WRITEBACK
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.writeback.persist.error'] = 'Errore nel salvataggio delle modifiche';
 Sbi.locale.ln['sbi.olap.writeback.edit.no.zero'] =  'Non \u00E9 possibile modificare questa cella!! L\'algoritmo di propagazione attualmente in uso mantiene inalterato il peso tra le celle figlie della cella modificata, ma questo non \u00E9 possibile se quest\'ultima \u00E9 vuota oppure se ha valore 0. Nelle prossime release saranno implementati altri algoritmi di propagazione.';
 Sbi.locale.ln['sbi.olap.writeback.edit.no.locked'] =  'Non \u00E9 possibile modificare il modello se non \u00E9 stato prima loccato dall\'utente corrente.';
 Sbi.locale.ln['sbi.olap.writeback.edit.lock.export.output'] = 'Non \u00E9 possibile modificare il modello mentre un processo di export \u00E9 in esecuzione.';
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //LOCK
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.artifact.lock.error'] = 'Operazione di blocco non riusciata, il modello \u00E9 ancora sbloccato.';
 Sbi.locale.ln['sbi.olap.artifact.unlock.error'] = 'Operazione di sblocco non riusciata, il modello \u00E9 ancora bloccato.';
 Sbi.locale.ln['sbi.olap.artifact.unlock.errorOther'] = 'Operazione di sblocco non riusciata, il modello \u00E9 ancora bloccato dall\'utente ';
 
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //MENU
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.execution.menu.buttonMenu'] = 'Menu';
 Sbi.locale.ln['sbi.olap.execution.menu.addToMenu'] = 'Add to menu';
 Sbi.locale.ln['sbi.olap.execution.menu.addToToolbar'] = 'Add to toolbar';
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //VERSION MANAGER
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'Non \u00E9 possibile cancellare tutte le versioni';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'Non \u00E9 possibile cancellare la versione attuale';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Selezionare le version da cancellare';
@@ -138,9 +138,9 @@ Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 
 Sbi.locale.ln['sbi.olap.control.controller.delete.version.ok'] = 'Le versioni sono state eliminate correttamente.';
 
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //OUTPUT
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.table.name'] = "Nome tabella";
 Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.table.description'] = "Inserire il nome della tabella di output";
 Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.csv.row.delimiter'] = "Delimitatore di riga";

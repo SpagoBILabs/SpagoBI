@@ -43,16 +43,16 @@ Sbi.locale.formats = {
 };
 
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //HELP
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.execution.table.filter.dimension.help.content'] = 'Select the visible members for the selected dimanesion. These members will be included in the select staement of the MDX query';
 Sbi.locale.ln['sbi.olap.help.title'] = 'Help';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.cannotchangehierarchy'] = 'You cannot change the hierarchy since there are some pending modifications on the data; you must firstly persist the modifications.';
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //COMMONS
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.common.cancel'] = 'Cancel';
 Sbi.locale.ln['sbi.common.close'] = 'Close';
 Sbi.locale.ln['sbi.common.ok'] = 'Ok';
@@ -65,9 +65,9 @@ Sbi.locale.ln['sbi.common.wait.long'] = 'This operation can take some minutes. P
 Sbi.locale.ln['sbi.common.name'] = 'Name';
 Sbi.locale.ln['sbi.common.description'] = 'Description';
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 // TOOLBAR
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_MDX'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Drill mode';
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_UNDO'] = 'Undo';
@@ -87,9 +87,9 @@ Sbi.locale.ln['sbi.olap.toolbar.save.as.description'] = "Type the name of the ne
 Sbi.locale.ln['sbi.olap.toolbar.save.as.version.name'] = "Version name";
 Sbi.locale.ln['sbi.olap.toolbar.save.as.version.description'] = "Version description";
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //FILTERS
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 
 Sbi.locale.ln['sbi.olap.execution.table.filter.collapse'] = 'Collapse all';
 Sbi.locale.ln['sbi.olap.execution.table.filter.expand'] = 'Expand all';
@@ -99,48 +99,48 @@ Sbi.locale.ln['sbi.olap.execution.table.filter.no.measure'] = 'A measure can not
 Sbi.locale.ln['sbi.olap.execution.table.filter.empty'] = 'Drag the member here if you want to use it as a slicer';
 
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //DIMENSIONS
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy'] = 'The selected hierarchy is ';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy.2'] = ' You can chage it acting on the form below.';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.available.hierarchies'] = 'Available hierarchies: ';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'There must be at least one dimension in the columns and in the rows';
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //WRITEBACK
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.writeback.persist.error'] = 'Error saving the modifications';
 Sbi.locale.ln['sbi.olap.writeback.edit.no.zero'] =  'It\'s not possible to edit this cell!! The current propagation algorithm preserves the weight between siblings cells; when editing a blank or zero-value cell, this constraint will be broken on children cells. In the next release we\'ll provide more propagation algorithms.';
 Sbi.locale.ln['sbi.olap.writeback.edit.no.locked'] =  'It\'s not possible to edit a model if you have not set a lock on it.';
 Sbi.locale.ln['sbi.olap.writeback.edit.lock.export.output'] =  'It\'s not possible to edit a model while an export process is executing.';
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //LOCK
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.artifact.lock.error'] = 'The lock operation did not work, the model is still unlocked';
 Sbi.locale.ln['sbi.olap.artifact.unlock.error'] = 'The unlock operation did not work, the model is still locked';
 Sbi.locale.ln['sbi.olap.artifact.unlock.errorOther'] = 'The unlock operation did not work, the model is locked by user ';
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //MENU
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.execution.menu.buttonMenu'] = 'Buttons Menu';
 Sbi.locale.ln['sbi.olap.execution.menu.addToMenu'] = 'Add to menu';
 Sbi.locale.ln['sbi.olap.execution.menu.addToToolbar'] = 'Add to toolbar';
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //VERSION MANAGER
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'You can\'t delete all the versions';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'You can\'t delete the current versions';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Select the version to delete';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 'Warning: this operation could take some minutes.';
 Sbi.locale.ln['sbi.olap.control.controller.delete.version.ok'] = 'Versions correctly deleted.';
 
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 //OUTPUT
-//===================================================================
+// == == == == == == == == == == == == == == == == == == == == == == == == ==
 Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.table.name'] = "Table name";
 Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.table.description'] = "What is the name of the table for the output process?";
 Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.csv.row.delimiter'] = "Row delimiter";
