@@ -2086,7 +2086,7 @@ CREATE TABLE SBI_ARTIFACTS (
        DESCR                VARCHAR2(500) NULL,
        TYPE                 VARCHAR2(50) NULL,
        MODEL_LOCKED         SMALLINT NULL,
-       MODEL_LOCKER         VARCHAR2(100) NULL;
+       MODEL_LOCKER         VARCHAR2(100) NULL,
        USER_IN              VARCHAR2(100) NOT NULL,
        USER_UP              VARCHAR2(100),
        USER_DE              VARCHAR2(100),
