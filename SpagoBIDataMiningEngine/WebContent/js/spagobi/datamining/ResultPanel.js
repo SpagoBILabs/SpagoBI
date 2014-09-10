@@ -90,7 +90,7 @@ Ext.define('Sbi.datamining.ResultPanel', {
 				thisPanel.update(html);
 			}
 			
-			thisPanel.outputPanel.uploadPanel.refreshUploadButtons();
+			//thisPanel.outputPanel.uploadPanel.refreshUploadButtons();
 		};
 		
 		
