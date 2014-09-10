@@ -80,14 +80,14 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
 		            		 var itemsToDelete = "";
 		            		 if(selected && selected.length>0){
 
-		            			 if(selected.length == thisPanel.grid.getStore().getCount( )){
+		            			 if(selected.length  == thisPanel.grid.getStore().getCount( )){
 		            				 Sbi.exception.ExceptionHandler.showWarningMessage(LN("sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all"));
 		            				 return;
 		            			 }
 
 		            			 for(var i=0; i<selected.length; i++){
 		            				 var id = selected[i].get("id");
-		            				 if(id==thisPanel.actualVersion){
+		            				 if(id ==thisPanel.actualVersion){
 		            					 Sbi.exception.ExceptionHandler.showWarningMessage(LN("sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current"));
 		            					 return;
 		            				 }

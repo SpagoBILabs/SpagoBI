@@ -33,8 +33,8 @@ Sbi.service.ServiceRegistry = function(config) {
 
 	});
 
-	this.defaultAbsolute = config.defaultAbsolute !== undefined?  config.defaultAbsolute: false;
-	this.defaultServiceType = config.defaultServiceType !== undefined?  config.defaultServiceType: 'action';
+	this.defaultAbsolute = config.defaultAbsolute != undefined?  config.defaultAbsolute: false;
+	this.defaultServiceType = config.defaultServiceType != undefined?  config.defaultServiceType: 'action';
 
 	// constructor
     Sbi.service.ServiceRegistry.superclass.constructor.call(this);
@@ -68,9 +68,9 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
 
         serviceUrl = this.getBaseUrlStr(s);
 
-        if (s.baseParams.standardUrl !== undefined && s.baseParams.standardUrl == true){
+        if (s.baseParams.standardUrl != undefined && s.baseParams.standardUrl == true){
         	serviceUrl += '?';
-	        serviceUrl += (serviceType === 'action')? 'ACTION_NAME': 'PAGE';
+	        serviceUrl += (serviceType  == 'action')? 'ACTION_NAME': 'PAGE';
 	        serviceUrl += '=';
 	        serviceUrl += s.serviceName;
         }else{
@@ -80,7 +80,7 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
 
 
         for(var p in params){
-        	if(params[p] !== null) {
+        	if(params[p] != null) {
         		serviceUrl += '&' + p + '=' + params[p];
         	}
         }
@@ -91,7 +91,7 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
     , getBaseUrlStr: function(s) {
     	var baseUrlStr;
 
-    	if (this.baseUrl.completeUrl !== undefined) {
+    	if (this.baseUrl.completeUrl != undefined) {
     		baseUrlStr = this.baseUrl.completeUrl;
     	} else {
         	var isAbsolute = s.isAbsolute || this.defaultAbsolute;
@@ -143,7 +143,7 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
 
 
 		for(var p in params){
-			if(params[p] !== null) {
+			if(params[p] != null) {
 				paramsString += '&' + p + '=' + params[p];
 			}
 		}

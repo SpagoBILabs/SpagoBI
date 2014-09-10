@@ -78,15 +78,15 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 
 				onDragDrop : function(evtObj, targetElId) {
 
-					if(thisPanel.containerPanel.getId()!= targetElId && (thisPanel.pivotContainer.olapExecutionFilters.getId()== targetElId || thisPanel.pivotContainer.olapExecutionRows.getId()== targetElId || thisPanel.pivotContainer.olapExecutionColumns.getId()== targetElId)){
+					if(thisPanel.containerPanel.getId()!= targetElId && (thisPanel.pivotContainer.olapExecutionFilters.getId() == targetElId || thisPanel.pivotContainer.olapExecutionRows.getId() == targetElId || thisPanel.pivotContainer.olapExecutionColumns.getId() == targetElId)){
 
-						if(thisPanel.pivotContainer.olapExecutionFilters.getId()== targetElId){
+						if(thisPanel.pivotContainer.olapExecutionFilters.getId() == targetElId){
 							thisPanel.pivotContainer.olapExecutionFilters.moveDimensionToOtherAxis(thisPanel);
 						}
-						if(thisPanel.pivotContainer.olapExecutionRows.getId()== targetElId){
+						if(thisPanel.pivotContainer.olapExecutionRows.getId() == targetElId){
 							thisPanel.pivotContainer.olapExecutionRows.moveDimensionToOtherAxis(thisPanel);
 						}
-						if(thisPanel.pivotContainer.olapExecutionColumns.getId()== targetElId){
+						if(thisPanel.pivotContainer.olapExecutionColumns.getId() == targetElId){
 							thisPanel.pivotContainer.olapExecutionColumns.moveDimensionToOtherAxis(thisPanel);
 						}
 					}
@@ -129,7 +129,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 			}
 		};
 
-		if(this.axisType=="column"){
+		if(this.axisType =="column"){
 			Ext.apply(config,{width: 20, height: 15});
 		}else{
 			Ext.apply(config,{height: 20});
@@ -156,7 +156,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 
 			for(var i=0; i<this.dimension.raw.hierarchies.length; i++){
 				html = html+"<option value='"+this.dimension.raw.hierarchies[i].uniqueName+"'";
-				if(this.dimension.raw.hierarchies[i].uniqueName ==thisPanel.dimension.raw.selectedHierarchyUniqueName){
+				if(this.dimension.raw.hierarchies[i].uniqueName  ==thisPanel.dimension.raw.selectedHierarchyUniqueName){
 					html = html+" selected='selected' ";
 				}
 

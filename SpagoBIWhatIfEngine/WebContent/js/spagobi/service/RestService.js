@@ -137,7 +137,7 @@ Ext.define('Sbi.service.RestService', {
 
 			mySuccessCallBack = function(response, options) {
 				var withError = false;
-				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
+				if(response != undefined && response.statusText != undefined && response.responseText!=null && response.responseText!=undefined) {
 					if(response.responseText.length>21 && response.responseText.substring(0,13)=='{"errors":[{"'){
 						withError = true;
 					}
@@ -187,8 +187,20 @@ Ext.define('Sbi.service.RestService', {
 		}
 
 		Ext.Ajax.request(ajaxConf);
-	}
+	},
 
+	//TODO:osmosit
+	callCalculatedMemberService: function(){
+		Ext.Ajax.request({
+			url: this.getRestUrlWithParameters(),
+			params: this.getRequestParams(),
+			success: function(response){
+				debugger;
+				Sbi.olap.eventManager.fireEvent('serviceExecuted', response, false);
+
+			}
+		});
+	}
 
 });
 
