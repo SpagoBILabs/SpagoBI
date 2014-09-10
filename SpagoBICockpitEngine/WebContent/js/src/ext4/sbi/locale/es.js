@@ -99,38 +99,42 @@ Sbi.locale.ln['sbi.ds.moreRecent']= 'Recent';
 //===================================================================
 //BROWSER
 //===================================================================
-Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Search for datasets';
-Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Search by keyword...';
+Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Búsqueda por datasets';
+Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Búsqueda por palabra clave...';
 
 //===================================================================
 //MYDATA
 //===================================================================
-Sbi.locale.ln['sbi.mydata.useddataset'] = "Used Data Set";
-Sbi.locale.ln['sbi.mydata.mydataset'] = "My Data Set";
+Sbi.locale.ln['sbi.mydata.useddataset'] = "Data Set usado";
+Sbi.locale.ln['sbi.mydata.mydataset'] = "Mi Data Set";
 Sbi.locale.ln['sbi.mydata.enterprisedataset'] = "Enterprise Data Set";
-Sbi.locale.ln['sbi.mydata.shareddataset'] = "Shared Data Set";
-Sbi.locale.ln['sbi.mydata.alldataset'] = "All Data Set";
-Sbi.locale.ln['sbi.mydata.sharedataset'] = "Share Data Set";
-Sbi.locale.ln['sbi.mydata.unsharedataset'] = "Unshare Data Set";
+Sbi.locale.ln['sbi.mydata.shareddataset'] = "Data Set compartido";
+Sbi.locale.ln['sbi.mydata.alldataset'] = "Todos Data Set";
+Sbi.locale.ln['sbi.mydata.sharedataset'] = "Compartir Data Set";
+Sbi.locale.ln['sbi.mydata.unsharedataset'] = "Dejar de compartir Data Set";
 
 //===================================================================
 //CONTROL PANEL - SAVE WINDOW
 //===================================================================
-Sbi.locale.ln['sbi.savewin.title'] = 'Insert more details and save your document... ';
-Sbi.locale.ln['sbi.savewin.name'] = 'Name';
-Sbi.locale.ln['sbi.savewin.description'] = 'Description';
-Sbi.locale.ln['sbi.savewin.previewfile'] = 'Preview file';
-Sbi.locale.ln['sbi.savewin.saveWarning']  = 'Insert the name before save document';
+Sbi.locale.ln['sbi.savewin.title'] = 'Introducir más detalles y guardar el documento ... ';
+Sbi.locale.ln['sbi.savewin.name'] = 'Nombre';
+Sbi.locale.ln['sbi.savewin.description'] = 'Descripción';
+Sbi.locale.ln['sbi.savewin.previewfile'] = 'Vista previa de archivos';
+Sbi.locale.ln['sbi.savewin.saveWarning']  = 'Insertar el nombre antes de salvar el documento';
 
 //===================================================================
 //COCKPIT
 //===================================================================
 
-Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorcustomconfpanel.emptymsg'] = 'Drag & drop here a widget from the palette';
-Sbi.locale.ln['sbi.cockpit.core.WidgetDesigner.title'] = 'Flat table designer';
-Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 'Visible fields';
-Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Drag & drop here attribute as the series\' that you want view in the table';
-Sbi.locale.ln['sbi.cockpit.queryfieldspanel.title'] = 'Selected fields';
+Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditormainpanel.emptymsg'] = 'Arrastre y suelte aquí un widget de la paleta ';
+Sbi.locale.ln['sbi.cockpit.core.WidgetDesigner.title'] = 'Diseñador tabla plana';
+Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 'Campos visibles';
+Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Arrastre y suelte aquí los atributos como las series que quieres ver en la tabla';
+Sbi.locale.ln['sbi.cockpit.queryfieldspanel.title'] = 'Campos seleccionados';
+
+
+Sbi.locale.ln['sbi.qbe.savedatasetwindow.title'] = "Completar los detalles del dataset y haga clic en guardar";
+
 
 
 //===================================================================

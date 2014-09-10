@@ -8,23 +8,21 @@ Ext.ns("Sbi.locale");
 
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
-Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.side-by-side'] = 'Side-by-side';
-Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.stacked'] = 'Stacked';
-Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.percent-stacked'] = 'Percent stacked';
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.side-by-side'] = 'De lado a lado';
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.stacked'] = 'Apilado';
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.type.tooltip.percent-stacked'] = 'Porcentaje apilado';
 
+Sbi.locale.ln['sbi.widget.designer.validation.invalidFields'] = 'Los siguientes campos no se pueden recuperar';
+Sbi.locale.ln['sbi.widget.designer.chartValidation.noCategory'] = 'Utilizar un atributo como la categoría ';
+Sbi.locale.ln['sbi.widget.designer.chartValidation.noSeries'] = 'Usar al menos una medida como serie';
 
-Sbi.locale.ln['sbi.widget.designer.validation.invalidFields'] = 'Following fields are no more retrieved: ';
-Sbi.locale.ln['sbi.widget.designer.chartValidation.noCategory'] = 'Use one attribute as category';
-Sbi.locale.ln['sbi.widget.designer.chartValidation.noSeries'] = 'Use at least one measure as serie';
-
-Sbi.locale.ln['sbi.widget.attributescontainerpanel.cannotdrophere.title'] = 'Drop not allowed';
-Sbi.locale.ln['sbi.widget.attributescontainerpanel.cannotdrophere.attributealreadypresent'] = 'The attribute is already present';
+Sbi.locale.ln['sbi.widget.attributescontainerpanel.cannotdrophere.title'] = 'Drop no permitido';
+Sbi.locale.ln['sbi.widget.attributescontainerpanel.cannotdrophere.attributealreadypresent'] = 'El atributo está ya presente';
 
 
 Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.colorarea.title'] = 'Color area';
-Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showvalues.title'] = 'Show values';
-Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showlegend.title'] = 'Show legend';
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showvalues.title'] = 'Mostrar valores';
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showlegend.title'] = 'Mostrar leyenda';
 
 
-Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.title'] = 'Line chart designer';
-;
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.title'] = 'Diseñador grñafico de línea';
