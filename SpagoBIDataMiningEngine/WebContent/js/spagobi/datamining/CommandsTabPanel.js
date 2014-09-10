@@ -75,8 +75,6 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 						
 						thisPanel.add(outputsTab);
 						if(mode == 'auto'){
-//							thisPanel.setCommandAutoMode(name, i);
-//							thisPanel.tosetactive=i;
 							this.setActiveTab(i);
 						}
 					}	
@@ -104,6 +102,7 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 				if(res != null && res !== undefined){
 					var autooutput = res.outputName;
 					this.setActiveTab(activetab);
+
 				}
 			}
 

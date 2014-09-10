@@ -20,7 +20,7 @@ Ext.define('Sbi.datamining.OutputPanel', {
 	config:{
 		border: 0
 	},
-	executeScriptBtn: null,
+	
 	dmMask: null,
 	command: null,
 	output: null,
@@ -36,27 +36,14 @@ Ext.define('Sbi.datamining.OutputPanel', {
 		this.resultPanel = Ext.create('Sbi.datamining.ResultPanel',{itsParent: this, command: this.command, output: this.output, mode: this.mode}); 
 		this.uploadPanel = Ext.create('Sbi.datamining.UploadPanel',{itsParent: this, command: this.command});
 		
-
-		
 		this.dmMask = new Ext.LoadMask(Ext.getBody(), {msg:LN('sbi.dm.execution.loading')});
-		
-		this.executeScriptBtn = Ext.create('Ext.Button', {
-		    text: LN('sbi.dm.execution.run.text'),
-		    scope: this,
-		    iconCls: 'run',
-		    scale: 'medium',		    
-		    handler: function() {
-		    	this.dmMask.show();
-		        this.resultPanel.getResult();
-		    }
-		});
 		
 		this.callParent(arguments);
 	},
 
 	initComponent: function() {
 		Ext.apply(this, {
-			items: [this.uploadPanel, this.resultPanel, this.executeScriptBtn]
+			items: [this.uploadPanel, this.resultPanel]
 		});
 
 		this.callParent();

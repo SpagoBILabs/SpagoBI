@@ -54,7 +54,6 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 				
 				if(res && Array.isArray(res)){
 
-
 					for (var i=0; i< res.length; i++){						
 						var output = res[i];
 						var outputName= output.outputName;
@@ -71,9 +70,7 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 					    });
 						
 						thisPanel.add(outputTab);
-						if(outputMode == 'auto'){
-//							thisPanel.tosetactive = i;
-//							thisPanel.setOutputAutoMode(outputName, i);
+						if(outputMode == 'auto' || res.length == 1){
 							this.setActiveTab(i);
 						}
 					}	
