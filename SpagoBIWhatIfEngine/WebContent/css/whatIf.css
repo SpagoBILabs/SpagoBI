@@ -264,6 +264,9 @@ td[contenteditable="true"]:focus {
 .context-menu-icon{
     background-image: url(../img/menu16.png);
 }
+.BUTTON_CALCULATED_MEMBERS{
+background-image: url(../img/cubesmall.png);
+}
 
 
 /*------------------*/
