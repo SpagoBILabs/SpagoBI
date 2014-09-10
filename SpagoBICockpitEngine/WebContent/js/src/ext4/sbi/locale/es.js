@@ -163,8 +163,9 @@ Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.tools.tt.removeall'] = ['Rem
 //===================================================================
 //Sbi.cockpit.widgets.ChartSeriesPanel
 //===================================================================
-Sbi.locale.ln['sbi.cockpit.widgets.seriesgroupingpanel.emptymsg'] = 'Drag & drop here a query attribute as the series\' grouping variable';
-Sbi.locale.ln['sbi.cockpit.widgets.seriesgroupingpanel.title'] = 'Series\' grouping variable';
+Sbi.locale.ln['sbi.cockpit.widgets.seriesgroupingpanel.emptymsg'] = 'Arrastrar y soltar aquí un atributo de query como variable de agrupación de las series.';
+Sbi.locale.ln['sbi.cockpit.widgets.seriesgroupingpanel.title'] = 'Variable de agrupación de las series';
+
 
 
 //column headers
