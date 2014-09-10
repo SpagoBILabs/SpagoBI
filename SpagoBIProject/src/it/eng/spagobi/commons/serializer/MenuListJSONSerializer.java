@@ -71,6 +71,7 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_LOGIN = "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
 	private static final String HREF_LOGOUT = "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
 	private static final String HREF_SOCIAL_ANALYSIS = "/SpagoBITwitterAnalysisWeb";
+	private static final String HREF_HIERARCHIES_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp";
 
 	public String contextName = "";
 	public String defaultThemePath = "/themes/sbi_default";
@@ -253,6 +254,17 @@ public class MenuListJSONSerializer implements Serializer {
 			socialAnalysis.put(TARGET, "_self");
 			socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "');");
 			tempMenuList.put(socialAnalysis);
+		}
+
+		if (isAbleTo(SpagoBIConstants.HIERARCHIES_MANAGEMENT, funcs)) {
+			JSONObject hierarchiesManagement = new JSONObject();
+			hierarchiesManagement.put(ICON_CLS, "hierarchies_management");
+			hierarchiesManagement.put(TOOLTIP, messageBuilder.getMessage("menu.HierarchiesManagement", locale));
+			hierarchiesManagement.put(ICON_ALIGN, "top");
+			hierarchiesManagement.put(SCALE, "large");
+			hierarchiesManagement.put(TARGET, "_self");
+			hierarchiesManagement.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_HIERARCHIES_MANAGEMENT + "');");
+			tempMenuList.put(hierarchiesManagement);
 		}
 
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
