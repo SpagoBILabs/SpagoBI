@@ -270,7 +270,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 			modelStatus = this.olapPanel.executionPanel.olapToolbar.modelStatus;
 		}catch (e) {};
 
-		if(modelStatus == 'locked_by_other' || modelStatus == 'unlocked'){
+		if(modelStatus  == 'locked_by_other' || modelStatus  == 'unlocked'){
 			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.writeback.edit.no.locked'));
 			return;
 		}
@@ -287,7 +287,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 
 				try  {
 					originalValue = Ext.String.trim(cell.dom.childNodes[0].data);
-					if (originalValue == '') { // in case the cell was empty, we type 0
+					if (originalValue  == '') { // in case the cell was empty, we type 0
 						unformattedValue = 0;
 					} else {
 						unformattedValue = Sbi.whatif.commons.Format.cleanFormattedNumber(originalValue, Sbi.locale.formats[type]);
@@ -297,7 +297,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 				}
 
 				//it's not possible to edit a cell with value 0
-				if(unformattedValue==0){
+				if(unformattedValue ==0){
 					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.writeback.edit.no.zero'));
 					return;
 				}
@@ -333,7 +333,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 */
 	isMeasureEditable: function(measureName){
 		if(this.olapPanel.modelConfig && this.olapPanel.modelConfig.writeBackConf){
-			if(this.olapPanel.modelConfig.writeBackConf.editableMeasures == null || this.olapPanel.modelConfig.writeBackConf.editableMeasures.length==0){
+			if(this.olapPanel.modelConfig.writeBackConf.editableMeasures  == null || this.olapPanel.modelConfig.writeBackConf.editableMeasures.length ==0){
 				return true;
 			}else{
 				var measures = (this.olapPanel.modelConfig.writeBackConf.editableMeasures);
@@ -433,6 +433,13 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.lastEditedCell = null;
 	}
 
+	/**
+	 * Call the rest service to show the Calculated Member Output
+	 */
+	//author: Maria Katia Russo from Osmosit
+	,executeCalculatedMemberExpression: function(expression){
+		this.olapController.executeCalculatedMemberExpression(expression);
+	}
 
 });
 

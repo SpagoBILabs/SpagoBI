@@ -20,9 +20,9 @@ Ext.define('Sbi.olap.control.Controller', {
 	extend: 'Object',
 
 	/**
-     * @property {Sbi.olap.control.EventManager} executionPanel
-     *  Panel that contains the pivot and the chart
-     */
+	 * @property {Sbi.olap.control.EventManager} executionPanel
+	 *  Panel that contains the pivot and the chart
+	 */
 	eventManager: null,
 
 
@@ -224,17 +224,17 @@ Ext.define('Sbi.olap.control.Controller', {
 		});
 
 //		service.on("executedAsync", function(status, response){
-//			if(status){
-//				Sbi.exception.ExceptionHandler.showInfoMessage('sbi.olap.control.controller.delete.version.ok');
-//			}else{
-//				Sbi.exception.ExceptionHandler.showErrorMessage('sbi.olap.control.controller.delete.version.error');
-//			}
+//		if(status){
+//		Sbi.exception.ExceptionHandler.showInfoMessage('sbi.olap.control.controller.delete.version.ok');
+//		}else{
+//		Sbi.exception.ExceptionHandler.showErrorMessage('sbi.olap.control.controller.delete.version.error');
+//		}
 //		}, this);
 
 
 		var mySuccessCallBack = function(response, options) {
-			if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
-				if(response.responseText.length>21 && response.responseText.substring(0,13)=='{"errors":[{"'){
+			if(response != undefined && response.statusText != undefined && response.responseText!=null && response.responseText!=undefined) {
+				if(response.responseText.length>21 && response.responseText.substring(0,13) =='{"errors":[{"'){
 					Sbi.olap.eventManager.fireEvent('serviceExecutedWithError', response);
 					Sbi.exception.ExceptionHandler.handleFailure(response);
 				}else{
@@ -253,7 +253,7 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var pathParams = [params.exportType, params.version];
 
-		if(params.exportType=="csv"){
+		if(params.exportType =="csv"){
 			pathParams.push(params.csvFieldDelimiter);
 			//pathParams.push(params.csvRowDelimiter);
 		}else{
@@ -279,7 +279,7 @@ Ext.define('Sbi.olap.control.Controller', {
 
 
 
-		if(params.exportType=="csv"){
+		if(params.exportType =="csv"){
 			var exportationUrl = service.getRestUrlWithParameters(true);
 			window.open(exportationUrl,'exportOutput','resizable=1,height=550,width=700');//.document.write(['<html><head></head><body>'+LN('sbi.olap.toolbar.exportoutput.csv.window')+'</body></html>']);
 		}else{
@@ -308,10 +308,10 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		service.callService(olapToolbar,
 				function(result){
-					olapToolbar.renderLockModel(result);
-					Sbi.olap.eventManager.hideLoadingMask();
-				}
-				);
+			olapToolbar.renderLockModel(result);
+			Sbi.olap.eventManager.hideLoadingMask();
+		}
+		);
 	}
 	,unlockModel: function() {
 
@@ -332,13 +332,27 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		service.callService(olapToolbar,
 				function(result){
-					olapToolbar.renderUnlockModel(result);
-					Sbi.olap.eventManager.hideLoadingMask();
-				}
-				);
+			olapToolbar.renderUnlockModel(result);
+			Sbi.olap.eventManager.hideLoadingMask();
+		}
+		);
 	}
 
+	//author: Maria Katia Russo from Osmosit
+	,executeCalculatedMemberExpression: function(expression){
+		var service = Ext.create("Sbi.service.RestService", {
+			url: "calculatedmembers",
+			method: 'POST',
+			longExecution: true,
+			pathParams: ["execute",expression],
+			jsonData: expression
+		});
 
+		service.callCalculatedMemberService();
+
+
+
+	}
 
 
 });
