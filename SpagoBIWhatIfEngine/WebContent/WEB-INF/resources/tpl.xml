@@ -32,6 +32,7 @@
 	
 	<TOOLBAR>
 		<BUTTON_MDX visible="true" menu="true" />
+		<BUTTON_CALCULATED_MEMBERS visible="true" menu="true" />
 		<BUTTON_EDIT_MDX visible="true" menu="true" />                                        
 		<BUTTON_FATHER_MEMBERS visible="true" menu="true"/>                  
 		<BUTTON_HIDE_SPANS visible="true" menu="true"/>                     
