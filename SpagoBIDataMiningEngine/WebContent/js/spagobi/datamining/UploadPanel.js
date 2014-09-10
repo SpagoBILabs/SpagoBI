@@ -55,6 +55,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 
 	initComponent: function() {
 		this.callParent();
+		Ext.tip.QuickTipManager.init();
 		this.executeScriptBtn.hide();
 		this.add(this.executeScriptBtn);
 		this.getUploadButtons();
@@ -74,7 +75,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 		service.callService(this);
 		
 		var functionSuccess = function(response){
-			var thisPanel = this;
+
 			if(response != null && response.responseText !== undefined && response.responseText !== null && response.responseText !== ''){
 				var res = Ext.decode(response.responseText);
 				if(res.result != null && res.result == Sbi.settings.datamining.execution.ok){
@@ -111,6 +112,8 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						//file datasets
 						if(dataset.type == Sbi.settings.datamining.execution.fileDataset){
 							var fieldLbl = dataset.name;
+							var readType = dataset.readType;
+							
 							
 							if(dataset.fileName !== undefined && dataset.fileName != null){
 								fieldLbl = dataset.name +' ('+dataset.fileName+')';
@@ -143,6 +146,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 							    border: 0,
 							    // The fields
 							    defaultType: 'fileuploadfield',
+							    readType: readType,
 							    items: [fileField],
 
 							    // Reset and Submit buttons
@@ -193,6 +197,8 @@ Ext.define('Sbi.datamining.UploadPanel', {
 					            iconCls: 'file_import',
 					            text: dataset.name,
 					            scale: 'medium',
+					            //tooltip: readType,
+					            tooltip: '<p style="color: red;">Read type is <b>'+readType+'</b></p>',
 					            handler: function() {
 					            	this.uploadWin.show();
 							    },
@@ -226,7 +232,31 @@ Ext.define('Sbi.datamining.UploadPanel', {
 	},
 	
 	uploadFiles: function(form, fName, posItem){
-
+//		//check file type
+//		if(form != null && form.readType != null){
+//			var fileExtension='';
+//			if(form.readType == table){
+//				if(fName.indexOf('txt', fName.length - 'txt'.length) == -1){
+//							Ext.Msg.show({
+//			     				title : LN('sbi.dm.execution.msg'),
+//			   				   msg: 'File must be of tipe csv or tsv',
+//			   				   buttons: Ext.Msg.OK
+//			   				});
+//							return;
+//						}
+//			}else if(form.readType =='csv' || form.readType =='csv2'){
+//				if(fName.indexOf('csv', fName.length - 'csv'.length) == -1||
+//				fName.indexOf('tsv', fName.length - 'tsv'.length) == -1){
+//					Ext.Msg.show({
+//	     				title : LN('sbi.dm.execution.msg'),
+//	   				   msg: 'File must be of tipe csv or tsv',
+//	   				   buttons: Ext.Msg.OK
+//	   				});
+//					return;
+//				}
+//				
+//			}
+//		}
         var thisPanel = this;
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "dataset"
