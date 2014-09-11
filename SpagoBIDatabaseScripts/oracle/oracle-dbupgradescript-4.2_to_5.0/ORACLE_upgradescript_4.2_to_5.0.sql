@@ -44,3 +44,9 @@ INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, V
 (select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'NUM' AND DOMAIN_CD = 'PAR_TYPE'), 'GENERIC_CONFIGURATION', 'biadmin', current_timestamp);
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
 commit;
+
+INSERT INTO SBI_DOMAINS (VALUE_ID,VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS,USER_IN,TIME_IN,SBI_VERSION_IN) VALUES (
+(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'), 'org.hibernate.dialect.MongoDialect', 'sbidomains.nm.mongo',
+'DIALECT_HIB', 'Predefined hibernate dialect', 'sbidomains.ds.mongo', 'biadmin',  current_timestamp,  '5.0');
+update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+commit;
