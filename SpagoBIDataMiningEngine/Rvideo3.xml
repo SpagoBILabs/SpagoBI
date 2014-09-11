@@ -6,7 +6,7 @@
         <PARAMETER name="par3" />
     </PARAMETERS> 
 	<SCRIPTS>  
-        <SCRIPT name="timescript1" mode="auto" datasets="datasetA" label="timeplus 1">
+        <SCRIPT name="timescript1" mode="auto" datasets="datasetA,datasetB" label="timeplus 1">
 			<![CDATA[
 str(datasetA);
 datasetA$time;

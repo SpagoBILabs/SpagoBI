@@ -32,7 +32,7 @@ Ext.define('Sbi.datamining.DataMiningPanel', {
 			listeners: {
 	            'tabchange': function (tabPanel, tab) {
 
-	               tabPanel.setAutoMode(tab.commandName);
+	               tabPanel.setCommandAutoMode(tab.commandName);
 	               //tab.setActive();
 	            }
 	        }
