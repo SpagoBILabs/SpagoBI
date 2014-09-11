@@ -113,15 +113,19 @@ function showEngField(docType) {
 
 		engineSource = new Array();
 		engineSet= new Array();
+		engineDriver= new Array();
 		
 	<%for (int i = 0; i < listEngines.size(); i++) {
 				Engine en = (Engine) listEngines.get(i);
 				String labelEng = en.getLabel();
 				Integer idEng = en.getId();
 				boolean useDataSource = en.getUseDataSource();
-				boolean useDataSet = en.getUseDataSet();%>
+				boolean useDataSet = en.getUseDataSet();
+				String driver = en.getDriverName();
+				%>
 		engineSource[<%=idEng%>]=<%=useDataSource%>;
 		engineSet[<%=idEng%>]=<%=useDataSet%>;
+		engineDriver[<%=idEng%>]="<%=driver%>";
 
 	<%}%>
 		
@@ -155,12 +159,19 @@ function checkSourceVisibility(engineName) {
 	
  }
 
-function checkFormVisibility(docType) {
+function checkFormVisibility(docType, engineValue) {
+	if(!docType){
+		docType = document.getElementById('doc_type').options[pos].value;
+	}
+	if(!engineValue){
+		engineValue=document.getElementById('doc_engine').value;
+	}
+		
 	var ind = docType.indexOf(",");
 	var type = docType.substring(ind+1);
 	// hide template dynamic creation button for dossier and olap document 
 	var divLinkConf = document.getElementById("link_obj_conf");
-	if(type=="OLAP" || type=="DOSSIER" || type=="SMART_FILTER") {
+	if((type=="OLAP" && !(engineDriver[engineValue].toLowerCase().indexOf("what")>-1))|| type=="DOSSIER" || type=="SMART_FILTER") {
 		divLinkConf.style.display="inline";
 	} else {
 		divLinkConf.style.display="none";
@@ -379,7 +390,7 @@ function saveDocument(goBack) {
 			
 				<div class='div_detail_form'>
 		      		<select class='portlet-form-input-field' style='width:230px;' 
-							name="engine" id="doc_engine" onchange = 'javascript:checkSourceVisibility(this.value);' >
+							name="engine" id="doc_engine" onchange = 'javascript:checkSourceVisibility(this.value);javascript:checkFormVisibility(null,this.value);' >
 					<%
 						boolean initialUseDataSet = false;
 						boolean initialUseDataSource = false;
@@ -841,8 +852,9 @@ function saveDocument(goBack) {
 				<%
 					String styleDivLinkConf = " ";
 					String BIobjTypecode = obj.getBiObjectTypeCode();
+					String EngineDriverClass = obj.getEngine().getDriverName();
 					if (BIobjTypecode.equalsIgnoreCase("DOSSIER")
-							|| BIobjTypecode.equalsIgnoreCase("OLAP")
+							|| (BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
 							|| BIobjTypecode.equalsIgnoreCase("SMART_FILTER"))
 						styleDivLinkConf = " style='display:inline' ";
 					else
@@ -917,8 +929,9 @@ function saveDocument(goBack) {
 	        	var pos = document.getElementById('doc_type').selectedIndex;
 	        	typeValue = document.getElementById('doc_type').options[pos].value;
 				showEngField(typeValue);
-	        	checkFormVisibility(typeValue);
-	        	engineValue=document.getElementById('doc_engine').value;
+				engineValue=document.getElementById('doc_engine').value;
+	        	checkFormVisibility(typeValue, engineValue);
+	        	
 	        	checkSourceVisibility(engineValue);	 						
 			</script>
 			
