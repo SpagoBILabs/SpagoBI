@@ -162,17 +162,6 @@
 	<target name="create-debug" depends="delete-debug">
 		<concat destfile="${build}/${webapp_name}/js/spagobi/datamining-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
-
-
-				<script type="text/javascript" src='../js/spagobi/datamining/ResultPanel.js'></script>
-				<script type="text/javascript" src='../js/spagobi/datamining/UploadPanel.js'></script>
-				<script type="text/javascript" src='../js/spagobi/datamining/OutputPanel.js'></script>
-				<script type="text/javascript" src='../js/spagobi/datamining/OutputsTabPanel.js'></script>
-				<script type="text/javascript" src='../js/spagobi/datamining/CommandsTabPanel.js'></script>
-				<script type="text/javascript" src='../js/spagobi/datamining/DataMiningPanel.js'></script>
-				
-				
-				
 				
 				<file name='./spagobi/service/ServiceRegistry.js' />
 				<file name='./spagobi/service/RestService.js' />
