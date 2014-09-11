@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.compute;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
@@ -17,9 +18,11 @@ import org.rosuda.JRI.Rengine;
 public class CommandsExecutor {
 	private Rengine re;
 	DataMiningEngineInstance dataminingInstance;
+	IEngUserProfile profile;
 
-	public CommandsExecutor(DataMiningEngineInstance dataminingInstance) {
+	public CommandsExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		this.dataminingInstance = dataminingInstance;
+		this.profile = profile;
 	}
 
 	public Rengine getRe() {

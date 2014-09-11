@@ -35,6 +35,8 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -47,7 +49,11 @@ import org.apache.log4j.Logger;
 public class DataMiningEngineInstance extends AbstractEngineInstance {
 
 	private final List<String> includes;
-
+	// ENVIRONMENT VARIABLES
+	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
+			"SBI_HOST", "country", "language", "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES",
+			"DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
+			"DOCUMENT_VERSION", };
 	private final List<DataMiningCommand> commands;
 	private List<DataMiningDataset> datasets;
 	private final List<DataMiningScript> scripts;
@@ -126,4 +132,35 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 		this.datasets = datasets;
 	}
 
+	public Map getAnalyticalDrivers() {
+		Map toReturn = new HashMap();
+		Iterator it = getEnv().keySet().iterator();
+		while (it.hasNext()) {
+			String parameterName = (String) it.next();
+			Object parameterValue = getEnv().get(parameterName);
+
+			if (parameterValue != null && parameterValue.getClass().getName().equals("java.lang.String") && // test
+																											// necessary
+																											// for
+																											// don't
+																											// pass
+																											// complex
+																											// objects
+																											// like
+																											// proxy,...
+					isAnalyticalDriver(parameterName)) {
+				toReturn.put(parameterName, parameterValue);
+			}
+		}
+		return toReturn;
+	}
+
+	private boolean isAnalyticalDriver(String parName) {
+		for (int i = 0; i < lstEnvVariables.length; i++) {
+			if (lstEnvVariables[i].equalsIgnoreCase(parName)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

@@ -20,7 +20,7 @@ Ext.define('Sbi.datamining.OutputPanel', {
 	config:{
 		border: 0
 	},
-	executeScriptBtn: null,
+	
 	dmMask: null,
 	command: null,
 	output: null,
@@ -36,57 +36,19 @@ Ext.define('Sbi.datamining.OutputPanel', {
 		this.resultPanel = Ext.create('Sbi.datamining.ResultPanel',{itsParent: this, command: this.command, output: this.output, mode: this.mode}); 
 		this.uploadPanel = Ext.create('Sbi.datamining.UploadPanel',{itsParent: this, command: this.command});
 		
-
-		
 		this.dmMask = new Ext.LoadMask(Ext.getBody(), {msg:LN('sbi.dm.execution.loading')});
-		
-		this.executeScriptBtn = Ext.create('Ext.Button', {
-		    text: LN('sbi.dm.execution.run.text'),
-		    scope: this,
-		    iconCls: 'run',
-		    scale: 'medium',		    
-		    handler: function() {
-		    	this.dmMask.show();
-		        this.resultPanel.getResult();
-		    }
-		});
 		
 		this.callParent(arguments);
 	},
 
 	initComponent: function() {
 		Ext.apply(this, {
-			items: [this.uploadPanel, this.resultPanel, this.executeScriptBtn]
+			items: [this.uploadPanel, this.resultPanel]
 		});
-	
-		//this.isResultReady();
+
 		this.callParent();
 	}
 
-//	, isResultReady: function(){
-//		
-//		var thisPanel = this;
-//		
-//		
-//		var service = Ext.create("Sbi.service.RestService",{
-//			url: "result"
-//			,subPath: "needsResultAtForstExec"
-//		});
-//		
-//		var functionSuccess = function(response){
-//
-//			
-//			if(response != null && response.responseText !== undefined && response.responseText !== null && response.responseText !== ''){
-//			
-//				var res = Ext.decode(response.responseText);
-//				if(res.result == Sbi.settings.datamining.execution.ok){
-//					this.resultPanel.getResult(Sbi.settings.datamining.execution.auto);
-//				}
-//				
-//			}
-//		};
-//		service.callService(this, functionSuccess);
-//	}
-//	
+
 	
 });

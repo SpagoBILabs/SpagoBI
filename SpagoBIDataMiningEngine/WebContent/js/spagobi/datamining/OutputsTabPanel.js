@@ -21,12 +21,13 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 		border: 0
 		
 	},
+	dmMask: null,
 	command: null,
 	constructor : function(config) {
 		this.initConfig(config||{});		
 		
 		this.command= config.commandName;
-		
+	
 		this.callParent(arguments);
 		
 	},
@@ -53,7 +54,6 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 				
 				if(res && Array.isArray(res)){
 
-
 					for (var i=0; i< res.length; i++){						
 						var output = res[i];
 						var outputName= output.outputName;
@@ -70,9 +70,8 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 					    });
 						
 						thisPanel.add(outputTab);
-						if(outputMode == 'auto'){
-							thisPanel.tosetactive = i;
-							thisPanel.setAutoMode(outputName, i);
+						if(outputMode == 'auto' || res.length == 1){
+							this.setActiveTab(i);
 						}
 					}	
 				}
@@ -82,7 +81,7 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 		};
 		service.callService(this, functionSuccess);
 	}
-	, setAutoMode: function(output){
+	, setOutputAutoMode: function(output){
 		var thisPanel = this;
 		
 		var service = Ext.create("Sbi.service.RestService",{
@@ -103,6 +102,7 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 						var outpanel = items[i];
 						if((outpanel.command == thisPanel.command) &&(outpanel.output == output)){
 							//found the one to activete
+							outpanel.dmMask.show();
 							outpanel.resultPanel.getResult();
 							thisPanel.setActiveTab(i);
 

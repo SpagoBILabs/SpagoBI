@@ -45,7 +45,7 @@ public class ResultResource extends AbstractDataMiningEngineService {
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 		String outputOfExecution = null;
 
-		DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance);
+		DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance, getUserProfile());
 
 		List<DataMiningCommand> commands = null;
 		if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
@@ -89,18 +89,20 @@ public class ResultResource extends AbstractDataMiningEngineService {
 	}
 
 	/**
-	 * Checks whether the result panel has to be displyed ad first execution
+	 * Checks whether the result panel has to be displayed ad first execution
+	 * 
+	 * @throws IOException
 	 * 
 	 */
 	@GET
 	@Path("/needsResultAtForstExec")
 	@Produces("text/html; charset=UTF-8")
-	public String needsResultAtForstExec() {
+	public String needsResultAtForstExec() throws IOException {
 		logger.debug("IN");
 		Boolean resNeeded = true;
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 
-		resNeeded = DataMiningDatasetUtils.areDatasetsProvided(dataMiningEngineInstance);
+		resNeeded = DataMiningDatasetUtils.areDatasetsProvided(dataMiningEngineInstance, getUserProfile());
 		if (!resNeeded) {
 			return getJsonKo();
 		}

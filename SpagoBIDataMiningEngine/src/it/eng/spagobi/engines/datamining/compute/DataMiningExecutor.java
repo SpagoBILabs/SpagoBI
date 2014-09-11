@@ -30,12 +30,12 @@ public class DataMiningExecutor {
 	private final OutputExecutor outputExecutor;
 	private final ScriptExecutor scriptExecutor;
 
-	public DataMiningExecutor(DataMiningEngineInstance dataminingInstance) {
+	public DataMiningExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		super();
-		commandsExecutor = new CommandsExecutor(dataminingInstance);
-		datasetsExecutor = new DatasetsExecutor(dataminingInstance);
-		outputExecutor = new OutputExecutor(dataminingInstance);
-		scriptExecutor = new ScriptExecutor(dataminingInstance);
+		commandsExecutor = new CommandsExecutor(dataminingInstance, profile);
+		datasetsExecutor = new DatasetsExecutor(dataminingInstance, profile);
+		outputExecutor = new OutputExecutor(dataminingInstance, profile);
+		scriptExecutor = new ScriptExecutor(dataminingInstance, profile);
 	}
 
 	/**
@@ -69,6 +69,8 @@ public class DataMiningExecutor {
 		datasetsExecutor.setRe(re);
 		outputExecutor.setRe(re);
 		scriptExecutor.setRe(re);
+
+		DataMiningDatasetUtils.createUserResourcesPath(profile);
 		// get user R workspace
 		loadUserWorkSpace();
 	}
@@ -94,13 +96,13 @@ public class DataMiningExecutor {
 		setupEnvonment(userProfile);
 
 		// datasets preparation
-		datasetsExecutor.evalDatasetsNeeded(profile);// only
-														// those
-														// needed
-														// by
-														// command
-														// and
-														// output
+		datasetsExecutor.evalDatasetsNeeded();// only
+												// those
+												// needed
+												// by
+												// command
+												// and
+												// output
 
 		// evaluates script code
 		scriptExecutor.evalScript(command);
@@ -121,7 +123,7 @@ public class DataMiningExecutor {
 		setupEnvonment(userProfile);
 
 		// datasets preparation
-		datasetsExecutor.updateDataset(ds, profile);
+		datasetsExecutor.updateDataset(ds);
 
 		// save result of script computation objects and datasets to
 		// user workspace

@@ -6,17 +6,17 @@
         <PARAMETER name="par3" />
     </PARAMETERS> 
 	<SCRIPTS>  
-        <SCRIPT name="scriptroll" mode="auto" datasets="dataset" label="label timeplus">
+        <SCRIPT name="scriptroll" mode="auto" datasets="ds1" label="label timeplus">
 			<![CDATA[
-				str(dataset);
-				dataset$time;
-				time_plus<-dataset$time+1;
+				str(ds1);
+				ds1$time;
+				time_plus<-ds1$time+1;
 				time_plus;
 			]]>
 		</SCRIPT>
 	</SCRIPTS>	
 	<DATASETS>
-		<DATASET name="dataset" readType="table" type="file" label="label Data set 1">	
+		<DATASET name="ds1" readType="table" type="file" label="label Data set 1">	
 			<![CDATA[header = TRUE]]>
 		</DATASET>
 	</DATASETS>	

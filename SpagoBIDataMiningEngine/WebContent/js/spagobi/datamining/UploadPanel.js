@@ -13,8 +13,12 @@
   
 Ext.define('Sbi.datamining.UploadPanel', {
 	extend: 'Ext.panel.Panel',
-	layout: {
-		type: 'vbox'
+    layout: {
+        type: 'hbox',
+        padding:'5',
+        margin:5,
+        pack:'start',
+        align:'middle'
     },
     config:{
 		minWidth: 600
@@ -26,6 +30,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 	datasetFiles : [],
 	itsParent: null,
 	command: null,
+	uploadWin: null, 
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
@@ -33,53 +38,30 @@ Ext.define('Sbi.datamining.UploadPanel', {
 		this.itsParent = config.itsParent;
 		this.command = config.command;
 		
+		this.executeScriptBtn = Ext.create('Ext.Button', {
+		    text: LN('sbi.dm.execution.run.text'),
+		    scope: this,
+		    iconCls: 'run',
+		    scale: 'medium',	
+		    margin: 5,
+		    handler: function() {
+		    	this.itsParent.dmMask.show();
+		        this.itsParent.resultPanel.getResult();
+		    }
+		});
+		
 		this.callParent(arguments);
 	},
 
 	initComponent: function() {
 		this.callParent();
-		
+		Ext.tip.QuickTipManager.init();
+		this.executeScriptBtn.hide();
+		this.add(this.executeScriptBtn);
 		this.getUploadButtons();
-	
+		
 	},
 	
-	uploadFiles: function(formPanelN, fName, posItem){
-        var form = formPanelN.items.items[posItem].getForm();
-        var thisPanel = this;
-		var service = Ext.create("Sbi.service.RestService",{
-			url: "dataset"
-			,method: "POST"
-			,subPath: "loadDataset"
-			,pathParams: [fName]
-		});
-        
-             form.submit({
-                 url: service.getRestUrlWithParameters(), // a multipart form cannot contain parameters on its main URL;
-                 												   // they must POST parameters
-                 waitMsg: LN('sbi.dm.execution.load.dataset.wait'),
-                 success: function(form, action) {
-         			Ext.Msg.show({
-      				   title : LN('sbi.dm.execution.msg'),
-      				   msg: LN('sbi.dm.execution.load.dataset.ok'),
-      				   buttons: Ext.Msg.OK
-      				});
-
-         			var file=form.owner.items.items[0].value;
-         			file = file.substring(file.lastIndexOf('\\')+1);
-
-         			thisPanel.updateDatasetFile(fName, file);
-                 },
-                 failure : function (form, action) {
-         			Ext.Msg.show({
-         				title : LN('sbi.dm.execution.msg'),
-       				   msg: action.result.msg,
-       				   buttons: Ext.Msg.OK
-       				});
-                 },
-                 scope : this
-             });
-
-	},
 	
 	updateDatasetFile: function(dsName, fileName){
 		var thisPanel = this;
@@ -93,7 +75,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 		service.callService(this);
 		
 		var functionSuccess = function(response){
-			var thisPanel = this;
+
 			if(response != null && response.responseText !== undefined && response.responseText !== null && response.responseText !== ''){
 				var res = Ext.decode(response.responseText);
 				if(res.result != null && res.result == Sbi.settings.datamining.execution.ok){
@@ -130,8 +112,8 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						//file datasets
 						if(dataset.type == Sbi.settings.datamining.execution.fileDataset){
 							var fieldLbl = dataset.name;
+							var readType = dataset.readType;
 							
-
 							
 							if(dataset.fileName !== undefined && dataset.fileName != null){
 								fieldLbl = dataset.name +' ('+dataset.fileName+')';
@@ -151,7 +133,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						    });
 							
 							
-							var fileFormN = Ext.create('Ext.form.Panel', {
+							this.fileFormN = Ext.create('Ext.form.Panel', {
 							    fileUpload: true,
 							    bodyPadding: 5,
 							    width: 500,
@@ -164,6 +146,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 							    border: 0,
 							    // The fields
 							    defaultType: 'fileuploadfield',
+							    readType: readType,
 							    items: [fileField],
 
 							    // Reset and Submit buttons
@@ -178,12 +161,24 @@ Ext.define('Sbi.datamining.UploadPanel', {
 							        disabled: true,	
 							        scale: 'small',
 							        iconCls:'upload',
-							        handler:  Ext.Function.pass(this.uploadFiles, [this, dataset.name, i]),
-							        scope: thisPanel
+							        //handler:  Ext.Function.pass(this.uploadFiles, [this, dataset.name, i]),
+							        handler: function() {
+							        	this.uploadFiles(this.fileFormN.getForm(),dataset.name, i)
+							        	
+							        },
+							        listeners:{
+							        	click:{
+							        		fn: function(){
+							        			this.refreshUploadButtons();								        			
+							        		}
+							        	},scope: this
+							        },
+							        scope: this
 							    }]
+							    , scope: this
 							});
 							
-						    var uploadWin = Ext.create('Ext.Window', {
+						    this.uploadWin = Ext.create('Ext.Window', {
 						        title: dataset.name,
 						        width: 500,
 						        height: 100,
@@ -194,7 +189,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						        headerPosition: 'right',
 						        closeAction:'hide',
 						        layout: 'fit',
-						        items: [fileFormN]
+						        items: [this.fileFormN]
 						    });
 						    
 							var addDsFile= Ext.create('Ext.button.Button', {
@@ -202,9 +197,12 @@ Ext.define('Sbi.datamining.UploadPanel', {
 					            iconCls: 'file_import',
 					            text: dataset.name,
 					            scale: 'medium',
+					            //tooltip: readType,
+					            tooltip: '<p style="color: red;">Read type is <b>'+readType+'</b></p>',
 					            handler: function() {
-					            	uploadWin.show();
-							    }
+					            	this.uploadWin.show();
+							    },
+							    scope: this
 					        });
 							
 							thisPanel.add(addDsFile);
@@ -227,17 +225,78 @@ Ext.define('Sbi.datamining.UploadPanel', {
 					
 				}
 			
-			}else{			
-				//hides the execution button
-				thisPanel.itsParent.executeScriptBtn.hide();
-				
 			}
 		};
 		
 		service.callService(this, functionSuccess);
+	},
+	
+	uploadFiles: function(form, fName, posItem){
+//		//check file type
+//		if(form != null && form.readType != null){
+//			var fileExtension='';
+//			if(form.readType == table){
+//				if(fName.indexOf('txt', fName.length - 'txt'.length) == -1){
+//							Ext.Msg.show({
+//			     				title : LN('sbi.dm.execution.msg'),
+//			   				   msg: 'File must be of tipe csv or tsv',
+//			   				   buttons: Ext.Msg.OK
+//			   				});
+//							return;
+//						}
+//			}else if(form.readType =='csv' || form.readType =='csv2'){
+//				if(fName.indexOf('csv', fName.length - 'csv'.length) == -1||
+//				fName.indexOf('tsv', fName.length - 'tsv'.length) == -1){
+//					Ext.Msg.show({
+//	     				title : LN('sbi.dm.execution.msg'),
+//	   				   msg: 'File must be of tipe csv or tsv',
+//	   				   buttons: Ext.Msg.OK
+//	   				});
+//					return;
+//				}
+//				
+//			}
+//		}
+        var thisPanel = this;
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "dataset"
+			,method: "POST"
+			,subPath: "loadDataset"
+			,pathParams: [fName]
+		});
+        
+         form.submit({
+             url: service.getRestUrlWithParameters(), // a multipart form cannot contain parameters on its main URL;
+             												   // they must POST parameters
+             waitMsg: LN('sbi.dm.execution.load.dataset.wait'),
+             success: function(form, action) {
+     			Ext.Msg.show({
+  				   title : LN('sbi.dm.execution.msg'),
+  				   msg: LN('sbi.dm.execution.load.dataset.ok'),
+  				   buttons: Ext.Msg.OK
+  				});
+
+     			var file=form.owner.items.items[0].value;
+     			file = file.substring(file.lastIndexOf('\\')+1);
+
+     			thisPanel.updateDatasetFile(fName, file);
+     			
+             },
+             failure : function (form, action) {
+     			Ext.Msg.show({
+     				title : LN('sbi.dm.execution.msg'),
+   				   msg: action.result.msg,
+   				   buttons: Ext.Msg.OK
+   				});
+             },
+             scope : this
+         });
+
 	}
+	
 	,refreshUploadButtons: function(){
-		this.doLayout();
+		this.executeScriptBtn.show();
+		this.uploadWin.close();
 	}
 	
 });
