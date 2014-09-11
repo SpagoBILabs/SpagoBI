@@ -6,15 +6,28 @@
 
 package it.eng.spagobi.engines.drivers.datamining;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
-import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
-import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.engines.drivers.generic.GenericDriver;
+import it.eng.spagobi.engines.drivers.whatif.WhatIfDriver;
+import it.eng.spagobi.tools.catalogue.bo.Artifact;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -26,176 +39,53 @@ import org.apache.log4j.Logger;
 
 
 /**
- * Driver Implementation (IEngineDriver Interface) for DataMining Engine. 
+ * Driver Implementation for DataMining Engine. 
  */
-public class DataMiningDriver extends AbstractDriver implements IEngineDriver {
+public class DataMiningDriver extends GenericDriver {
 
 	
     static private Logger logger = Logger.getLogger(DataMiningDriver.class);
-	
-	/**
-	 * Returns a map of parameters which will be send in the request to the
-	 * engine application.
-	 * 
-	 * @param profile Profile of the user
-	 * @param roleName the name of the execution role
-	 * @param biobject the biobject
-	 * 
-	 * @return Map The map of the execution call parameters
-	 */
-	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName) {
-		
-		logger.debug("IN");
-		
-		Map map = new Hashtable();
-		try{
-			BIObject biobj = (BIObject)biobject;
-			map = getMap(biobj, profile);
-		} catch (ClassCastException cce) {
-			logger.error("The parameter is not a BIObject type", cce);
+
+
+	protected ObjTemplate getTemplate(Object biobject) {
+		ObjTemplate template = null;
+		try {
+			BIObject biobj = (BIObject) biobject;
+			template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(biobj.getId());
+			if (template == null)
+				throw new Exception("Active Template null");
+		} catch (Exception e) {
+			throw new RuntimeException("Error while getting document's template", e);
 		}
-		
-		map = applySecurity(map, profile);
-		
-		logger.debug("OUT");
-		
-		return map;
+		return template;
 	}
 
-
-    /**
-     * Returns a map of parameters which will be send in the request to the
-     * engine application.
-     * 
-     * @param subObject SubObject to execute
-     * @param profile Profile of the user
-     * @param roleName the name of the execution role
-     * @param object the object
-     * 
-     * @return Map The map of the execution call parameters
-     */
-	public Map getParameterMap(Object object, Object subObject, IEngUserProfile profile, String roleName) {
-		logger.debug("IN");
-		Map map = new Hashtable();
-		try{
-			BIObject biobj = (BIObject)object;
-			map = getMap(biobj, profile);
-		} catch (ClassCastException e) {
-			logger.error("The parameter is not a BIObject type",e);
-		} 
-		map = applySecurity(map, profile);
-		logger.debug("OUT");
-		return map;
-	}
-	
-	
-	
-	/**
-     * Starting from a BIObject extracts from it the map of the paramaeters for the
-     * execution call
-     * @param biobj BIObject to execute
-     * @return Map The map of the execution call parameters
-     */    
-	private Map getMap(BIObject biobj, IEngUserProfile profile) {
-		logger.debug("IN");
-		
-		Map pars = new Hashtable();
-		
-		String documentId = biobj.getId().toString();
-		pars.put("document", documentId);
-		logger.debug("Add document parameter:" + documentId);
-		
-		pars.put("documentLabel", biobj.getLabel());
-		logger.debug("Add document parameter:" + biobj.getLabel());
-		
-		// adding date format parameter
-		SingletonConfig config = SingletonConfig.getInstance();
-		String formatSB = config.getConfigValue("SPAGOBI.DATE-FORMAT.format");
-		String format = (formatSB == null) ? "DD-MM-YYYY" : formatSB;
-		pars.put("dateformat", format);
-		
-    
-        Map biobjParameters = findBIParameters(biobj);
-        addBIParameterDescriptions(biobj, biobjParameters);
-        pars.putAll(biobjParameters);
-        
-        logger.debug("OUT");
-        
-        return pars;
-	} 
- 
-	
-	
-
-	
-    /**
-     * Returns the BIObject parameters map
-     * @param biobj BIOBject to be executed
-     * @return Map The map of the BIObject parameters
-     */
-	private Map findBIParameters(BIObject biobj) {
-		logger.debug("IN");
-		Map pars = new HashMap();
-		if (biobj==null) {
-			logger.warn("BIObject null");
-			return pars;
+	protected byte[] getTemplateAsByteArray(Object biobject) {
+		ObjTemplate template = this.getTemplate(biobject);
+		byte[] bytes;
+		try {
+			bytes = template.getContent();
+		} catch (Exception e) {
+			throw new RuntimeException("Error while getting document's template", e);
 		}
-		if (biobj.getBiObjectParameters() != null){
-			BIObjectParameter biobjPar = null;
-			String value = null;
-			ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
-			for (Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();) {
-				try {
-					biobjPar = (BIObjectParameter)it.next();
-					
-					value = parValuesEncoder.encode(biobjPar);
-					pars.put(biobjPar.getParameterUrlName(), value);
-					
-					/*
-					value = (String)biobjPar.getParameterValues().get(0);
-					pars.put(biobjPar.getParameterUrlName(), value);
-					*/
-				} catch (Exception e) {
-					logger.warn("Error while processing a BIParameter",e);
-				}
-			}
-		}
-		logger.debug("OUT");
-  		return pars;
+		if (bytes == null)
+			throw new RuntimeException("Content of the Active template null");
+		return bytes;
 	}
 
-	
 
-	
-	/**
-	 * Function not implemented. Thid method should not be called
-	 * 
-	 * @param biobject The BIOBject to edit
-	 * @param profile the profile
-	 * 
-	 * @return the edits the document template build url
-	 * 
-	 * @throws InvalidOperationRequest the invalid operation request
-	 */
-	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
-        logger.error("Function not implemented");
-		throw new InvalidOperationRequest();
+	@Override
+	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject,
+			IEngUserProfile profile) throws InvalidOperationRequest {
+		return super.getEditDocumentTemplateBuildUrl(biobject, profile);
 	}
 
-	/**
-	 * Function not implemented. Thid method should not be called
-	 * 
-	 * @param biobject The BIOBject to edit
-	 * @param profile the profile
-	 * 
-	 * @return the new document template build url
-	 * 
-	 * @throws InvalidOperationRequest the invalid operation request
-	 */
-	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
-        logger.error("Function not implemented");
-		throw new InvalidOperationRequest();
+	@Override
+	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject,
+			IEngUserProfile profile) throws InvalidOperationRequest {
+		return super.getNewDocumentTemplateBuildUrl(biobject, profile);
 	}
+
 
 }
 
