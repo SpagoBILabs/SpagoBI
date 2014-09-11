@@ -6,8 +6,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
  
   
 
-<%@page import="it.eng.spagobi.commons.bo.Role"%>
-<%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse"%>
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
 <%@ page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject,it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter,it.eng.spagobi.analiticalmodel.document.service.DetailBIObjectModule,it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO,it.eng.spagobi.commons.dao.DAOFactory,it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter,java.util.List,it.eng.spagobi.commons.constants.ObjectsTreeConstants,it.eng.spagobi.commons.constants.AdmintoolsConstants,it.eng.spagobi.commons.bo.Domain,java.util.Iterator,it.eng.spagobi.engines.config.bo.Engine,it.eng.spagobi.commons.utilities.SpagoBITracer,it.eng.spago.navigation.LightNavigationManager,it.eng.spago.base.SourceBean,java.util.TreeMap,java.util.Collection,java.util.ArrayList,java.util.Date,it.eng.spagobi.commons.utilities.GeneralUtilities,it.eng.spagobi.commons.utilities.ChannelUtilities,java.util.Map,java.util.HashMap,it.eng.spagobi.commons.bo.Subreport,it.eng.spago.security.IEngUserProfile" %>
@@ -113,15 +111,19 @@ function showEngField(docType) {
 
 		engineSource = new Array();
 		engineSet= new Array();
+		engineDriver= new Array();
 		
 	<%for (int i = 0; i < listEngines.size(); i++) {
 				Engine en = (Engine) listEngines.get(i);
 				String labelEng = en.getLabel();
 				Integer idEng = en.getId();
 				boolean useDataSource = en.getUseDataSource();
-				boolean useDataSet = en.getUseDataSet();%>
+				boolean useDataSet = en.getUseDataSet();
+				String driver = en.getDriverName();
+				%>
 		engineSource[<%=idEng%>]=<%=useDataSource%>;
 		engineSet[<%=idEng%>]=<%=useDataSet%>;
+		engineDriver[<%=idEng%>]="<%=driver%>";
 
 	<%}%>
 		
@@ -155,12 +157,19 @@ function checkSourceVisibility(engineName) {
 	
  }
 
-function checkFormVisibility(docType) {
+function checkFormVisibility(docType, engineValue) {
+	if(!docType){
+		docType = document.getElementById('doc_type').options[pos].value;
+	}
+	if(!engineValue){
+		engineValue=document.getElementById('doc_engine').value;
+	}
+		
 	var ind = docType.indexOf(",");
 	var type = docType.substring(ind+1);
 	// hide template dynamic creation button for dossier and olap document 
 	var divLinkConf = document.getElementById("link_obj_conf");
-	if(type=="OLAP" || type=="DOSSIER" || type=="SMART_FILTER") {
+	if((type=="OLAP" && !(engineDriver[engineValue].toLowerCase().indexOf("what")>-1))|| type=="DOSSIER" || type=="SMART_FILTER") {
 		divLinkConf.style.display="inline";
 	} else {
 		divLinkConf.style.display="none";
@@ -379,7 +388,7 @@ function saveDocument(goBack) {
 			
 				<div class='div_detail_form'>
 		      		<select class='portlet-form-input-field' style='width:230px;' 
-							name="engine" id="doc_engine" onchange = 'javascript:checkSourceVisibility(this.value);' >
+							name="engine" id="doc_engine" onchange = 'javascript:checkSourceVisibility(this.value);javascript:checkFormVisibility(null,this.value);' >
 					<%
 						boolean initialUseDataSet = false;
 						boolean initialUseDataSource = false;
@@ -841,8 +850,9 @@ function saveDocument(goBack) {
 				<%
 					String styleDivLinkConf = " ";
 					String BIobjTypecode = obj.getBiObjectTypeCode();
+					String EngineDriverClass = obj.getEngine().getDriverName();
 					if (BIobjTypecode.equalsIgnoreCase("DOSSIER")
-							|| BIobjTypecode.equalsIgnoreCase("OLAP")
+							|| (BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
 							|| BIobjTypecode.equalsIgnoreCase("SMART_FILTER"))
 						styleDivLinkConf = " style='display:inline' ";
 					else
@@ -917,8 +927,9 @@ function saveDocument(goBack) {
 	        	var pos = document.getElementById('doc_type').selectedIndex;
 	        	typeValue = document.getElementById('doc_type').options[pos].value;
 				showEngField(typeValue);
-	        	checkFormVisibility(typeValue);
-	        	engineValue=document.getElementById('doc_engine').value;
+				engineValue=document.getElementById('doc_engine').value;
+	        	checkFormVisibility(typeValue, engineValue);
+	        	
 	        	checkSourceVisibility(engineValue);	 						
 			</script>
 			
@@ -1263,8 +1274,7 @@ function isBIParameterFormChanged () {
 	var par_Id = document.getElementById('par_Id').value;
 	var parurl_nm = document.getElementById('parurl_nm').value;
 	var view_fl = document.getElementById('view_fl').checked ? 1 : 0;
-
-	
+			
 	if ((objParLabel != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
 						.escapeHtml(initialBIObjectParameter.getLabel()))%>')
 		|| (par_Id != '<%=(initialBIObjectParameter.getParID() == null || initialBIObjectParameter
@@ -1273,8 +1283,7 @@ function isBIParameterFormChanged () {
 		|| (parurl_nm != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
 						.escapeHtml(initialBIObjectParameter
 								.getParameterUrlName()))%>') 
-		|| (view_fl != '<%=initialBIObjectParameter.getVisible()%>') 
-	)
+		|| (view_fl != '<%=initialBIObjectParameter.getVisible()%>') )
 	{
 		biobjParFormModified = 'true';
 	}
@@ -1656,64 +1665,6 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 				}%> >False</input>
 	</div>
 	
-<% 
-// if parameters is of type slider two more settings are proposed to user
-
-
-
-ParameterUse parUse = null;
-boolean isSlider = false;
-
-// in case of new Bi Obj parameter is not slider
-if(objPar.getParID() == -1)  isSlider = false;
-else{
-   for(int i = 0; i<userProfile.getRoles().size() && isSlider == false; i++){
-    String role = (String)((ArrayList)userProfile.getRoles()).get(i);
-    // check if adding slider configurations
-    
-   ParameterUse use = DAOFactory.getParameterUseDAO().loadByParameterIdandRole(objPar.getParID(), role);
-   if(use != null){
-       String selType = use.getSelectionType();
-       if(selType != null && selType.equalsIgnoreCase("SLIDER") ){
-    	    isSlider = true;
-
-    	    }
-       }
-   }
-}
-
-if(isSlider){
-    ArrayList roles = (ArrayList)userProfile.getRoles();
-    Integer colspan = objPar.getColSpan() != null ? objPar.getColSpan() : 1;
-    Integer thickPerc = objPar.getThickPerc() != null ? objPar.getThickPerc() : 0;
-%>
-<div class='div_detail_form'>
-<span class='portlet-form-field-label' style='line-height: 20px'>
-<spagobi:message key = "SBIDev.docConf.docDet.colSpan" />
-</span>
-<select class='portlet-form-input-field' style='width:130px;' name="colspan" id="doc_colspan">
-
-<option value = "1" <%if (colspan == 1) out.print(" selected='selected' ");%>> 1 </option>
-<option value = "2" <%if (colspan == 2) out.print(" selected='selected' ");%>> 2 </option>    
-<option value = "3" <%if (colspan == 3) out.print(" selected='selected' ");%>> 3 </option>    
-
-</select>   
-</div>
-<div class='div_detail_form'>
-<span class='portlet-form-field-label' style='line-height: 20px'>
-<spagobi:message key = "SBIDev.docConf.docDet.thickPerc" />
-</span>
-<input type="text" value="<%=thickPerc%>" style="width:130px;"  name="thickPerc" id="doc_thickPerc" />
-</div>
-<% 
-}
-
-// END SLIDER CONFIGURATION
-%>
-
-
-
-
 	<!-- deprecati ... -->
 	<div class='div_detail_label' style='display:none;'>
 		<span class='portlet-form-field-label'>
