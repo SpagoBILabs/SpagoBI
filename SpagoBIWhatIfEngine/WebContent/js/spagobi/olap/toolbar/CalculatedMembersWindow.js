@@ -52,48 +52,16 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 				reader: {
 		             type: 'json'
 		         }
-
-		/*       afterRequest: function(request, success) {
-		        	 debugger;
-
-		        	 var htmlContent = request.responseText;
-
-		             console.log(htmlContent);
-		         },
-		         listeners: {
-		             exception: function(proxy, response, options) {
-		               debugger;
-		               console.log(proxy, response, options);
-		             }
-		         }*/
 			}
 		});
 
-		//calculatedStore.load();
 		calculatedStore.load({
-	/*	    params: {
-		        group: 3,
-		        type: 'user'
-		    },*/
+
 
 			callback: function(datastore, records, successful, eOpts ){
-		    	debugger;
-		    	//thisPanel.update(records.response.responseText);
 		    },
 		    scope: this
 		});
-
-
-/*		Ext.apply(this,{
-			bbar:[
-			      '->',    {
-			    	  text: LN('sbi.common.ok'),
-			    	  handler: function(){
-			    		  thisPanel.fireCalculatedMemberOutputEvent();
-			    	  },
-			    	  scope: this
-			      }]
-			});*/
 
 
 
@@ -131,72 +99,15 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 		});
 
 
-		/*var form=Ext.create('Ext.form.FormPanel', {
-	        title: 'Insert your expression',
-	        width: 400,
-	        bodyPadding: 5,
-	        renderTo: Ext.getBody(),
-	        items: [{
-	            xtype: 'textareafield',
-	            grow: true,
-	            name: 'message',
-	            //fieldLabel: 'Message',
-	            anchor: '90%'
-	        }],
 
-	        buttons: [{
-	            text: 'Submit',
-	            handler: function() {
-	                // The getForm() method returns the Ext.form.Basic instance:
-	                var form = this.up('form').getForm();
-	                if (form.isValid()) {
-	                    // Submit the Ajax request and handle the response
-	                	thisPanel.sendExpression();
-	                    form.submit({
-	                        success: function(form, action) {
-	                        	debugger;
-	                           Ext.Msg.alert('Success', action.result.message);
-	                        },
-	                        failure: function(form, action) {
-	                        	debugger;
-	                            Ext.Msg.alert('Failed', action.result ? action.result.message : 'No response');
-	                        }
-	                    });
-	                }
-	            }
-	        }]
-
-	    });*/
-
-		//this.items= [this.grid, form];
 		this.items= [elPanel];
-		/*this.bbar = [
-		             '->',    {
-		            	 text: LN('sbi.common.ok'),
-		            	 handler: function(){
-
-		            		 thisPanel.fireCalculatedMemberOutputEvent();
-		            	 }
-		             }];*/
-/*		this.addEvents(
-
-				'showCalculatedMemberOutput'
-		);*/
-
 
 		this.callParent(arguments);
 	},
 
-	//fireCalculatedMemberOutputEvent: function(){
-	//	Sbi.olap.eventManager.showCalculatedMemberOutput();
-		//this.fireEvent('showCalculatedMemberOutput');
-		//this.destroy();
-	//},
-
 	sendExpression: function(name, formula){
 		debugger;
 		Sbi.olap.eventManager.executeCalculatedMemberExpression(name, formula);
-		//this.fireEvent('showCalculatedMemberOutput');
 		this.destroy();
 	}
 
