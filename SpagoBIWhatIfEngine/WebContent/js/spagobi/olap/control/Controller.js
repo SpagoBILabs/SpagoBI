@@ -339,18 +339,15 @@ Ext.define('Sbi.olap.control.Controller', {
 	}
 
 	//author: Maria Katia Russo from Osmosit
-	,executeCalculatedMemberExpression: function(expression){
+	,executeCalculatedMemberExpression: function(name,expression,ccParentUniqueName,ccAxis){
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "calculatedmembers",
 			method: 'POST',
 			longExecution: true,
-			pathParams: ["execute",expression],
-			jsonData: expression
+			pathParams: ["execute",name, expression,ccParentUniqueName,ccAxis]
 		});
 
-		service.callCalculatedMemberService();
-
-
+		service.callService(this);
 
 	}
 

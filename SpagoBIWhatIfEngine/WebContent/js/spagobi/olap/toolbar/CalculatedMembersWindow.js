@@ -1,13 +1,13 @@
 /** SpagoBI, the Open Source Business Intelligence suite
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * 
- * Window that performs calculated members operation 
- * 
- *     
+ *
+ * Window that performs calculated members operation
+ *
+ *
  */
 
 Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
@@ -17,11 +17,11 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 		width: 400,
 		actualVersion: null,
 		autoScroll: true,
-		bodyStyle: "background-color: white", 
+		bodyStyle: "background-color: white",
 		title: LN("sbi.olap.toolbar.calculatedmemberswindow.title")
-		
+
 	},
-	
+
 	grid: null,
 	constructor : function(config) {
 		debugger;
@@ -39,9 +39,9 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 		    extend: 'Ext.data.Model',
 		    fields: ['id', 'name']
 		});
-		
-		var calculatedStore = Ext.create('Ext.data.Store', {		
-			
+
+		var calculatedStore = Ext.create('Ext.data.Store', {
+
 			model: user,
 			//autoLoad: true,
 		    autoSync: true,
@@ -50,41 +50,41 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 				url: service.getRestUrlWithParameters(),
 				extraParams: service.getRequestParams(),
 				reader: {
-		             type: 'json'		           
+		             type: 'json'
 		         }
-	
+
 		/*       afterRequest: function(request, success) {
 		        	 debugger;
-		        	
+
 		        	 var htmlContent = request.responseText;
 
-		             console.log(htmlContent); 
+		             console.log(htmlContent);
 		         },
-		         listeners: { 
+		         listeners: {
 		             exception: function(proxy, response, options) {
 		               debugger;
-		               console.log(proxy, response, options); 
+		               console.log(proxy, response, options);
 		             }
 		         }*/
 			}
 		});
-		
+
 		//calculatedStore.load();
 		calculatedStore.load({
 	/*	    params: {
 		        group: 3,
 		        type: 'user'
 		    },*/
-		 
+
 			callback: function(datastore, records, successful, eOpts ){
-		    	debugger;	
+		    	debugger;
 		    	//thisPanel.update(records.response.responseText);
 		    },
 		    scope: this
 		});
-		
-		
-/*		Ext.apply(this,{			
+
+
+/*		Ext.apply(this,{
 			bbar:[
 			      '->',    {
 			    	  text: LN('sbi.common.ok'),
@@ -96,38 +96,41 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 			});*/
 
 
-		
-		
+
+
 		this.grid = Ext.create('Ext.grid.Panel', {
 			store: calculatedStore,
 			columns: [
 			          { text: 'Name',  dataIndex: 'name', flex:1 }
 			          ]
 		});
-		var editor = Ext.create('Ext.form.field.TextArea', {
-			height: 200,
-			width: 300
+		var editorName = Ext.create('Ext.form.field.TextArea', {
+			flex: 2
 		});
-		
+
+		var editorFormula = Ext.create('Ext.form.field.TextArea', {
+			flex: 2
+		});
+
 		var button = Ext.create('Ext.Button', {
 		    text: 'Submit expression',
-		    renderTo: Ext.getBody(),
+		    flex: 1,
 		    handler: function() {
 		    	debugger;
-		    	console.log(editor.getValue());    	
-		    	//Sbi.olap.eventManager.showCalculatedMemberOutput();
-		    	thisPanel.sendExpression(editor.getValue());		    
+		    	thisPanel.sendExpression(editorName.getValue(), editorFormula.getValue());
 		    }
 		});
 		var elPanel = Ext.create('Ext.panel.Panel', {
 			frame: false,
-			layout: 'fit',
-			autoScroll: true,
-			html: "" ,
-		   items: [editor, button]
+			layout: {
+				align : 'stretch',
+				type: 'vbox',
+			},
+			height: 300,
+		   items: [editorName, editorFormula, button]
 		});
-		
-		
+
+
 		/*var form=Ext.create('Ext.form.FormPanel', {
 	        title: 'Insert your expression',
 	        width: 400,
@@ -140,7 +143,7 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 	            //fieldLabel: 'Message',
 	            anchor: '90%'
 	        }],
-	        
+
 	        buttons: [{
 	            text: 'Submit',
 	            handler: function() {
@@ -162,39 +165,39 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 	                }
 	            }
 	        }]
-	        
+
 	    });*/
 
 		//this.items= [this.grid, form];
-		this.items= [this.grid, elPanel];
+		this.items= [elPanel];
 		/*this.bbar = [
 		             '->',    {
 		            	 text: LN('sbi.common.ok'),
 		            	 handler: function(){
-		            		
+
 		            		 thisPanel.fireCalculatedMemberOutputEvent();
 		            	 }
 		             }];*/
 /*		this.addEvents(
-				
+
 				'showCalculatedMemberOutput'
 		);*/
-	    
-	
+
+
 		this.callParent(arguments);
 	},
-	
-	//fireCalculatedMemberOutputEvent: function(){	
+
+	//fireCalculatedMemberOutputEvent: function(){
 	//	Sbi.olap.eventManager.showCalculatedMemberOutput();
 		//this.fireEvent('showCalculatedMemberOutput');
 		//this.destroy();
 	//},
-	
-	sendExpression: function(exp){	
+
+	sendExpression: function(name, formula){
 		debugger;
-		Sbi.olap.eventManager.executeCalculatedMemberExpression(exp);
+		Sbi.olap.eventManager.executeCalculatedMemberExpression(name, formula);
 		//this.fireEvent('showCalculatedMemberOutput');
 		this.destroy();
 	}
-	
+
 });
