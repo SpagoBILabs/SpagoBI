@@ -25,9 +25,57 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
     }
 
 	, constructor: function(config) {
-		this.services =[]; //services to initialize
+		this.initServices();
 		
 		//*******************
+		//Automatic Hierarchies Combos
+		
+		this.dimensionsStore = this.createDimensionsStore();
+		
+		this.comboDimensions = new Ext.form.ComboBox({
+			id: 'dimensionsCombo',
+			fieldLabel: LN('sbi.hierarchies.dimensions'),
+			store :this.dimensionsStore,
+			displayField : 'DIMENSION_NM',
+			valueField :  'DIMENSION_NM',
+			width : 300,
+			typeAhead : true, forceSelection : true,
+			mode : 'local',
+			triggerAction : 'all',
+			selectOnFocus : true, 
+			editable : false,
+			style:'padding:5px',
+			listeners: {
+				//TODO
+			}
+		});
+		
+		this.comboHierarchies = new Ext.form.ComboBox({
+			id: 'hierarchiesCombo',
+			fieldLabel: LN('sbi.hierarchies.hierarchies'),
+			store : [],
+			displayField : 'HIERARCHY_NM',
+			valueField :  'HIERARCHY_NM',
+			width : 300,
+			typeAhead : true, forceSelection : true,
+			mode : 'local',
+			triggerAction : 'all',
+			selectOnFocus : true, 
+			editable : false,
+			style:'padding:5px',
+			listeners: {
+				//TODO
+			}
+		});
+		
+		
+		this.automaticHierarchiesComboPanel =  Ext.create('Ext.panel.Panel', {
+			items:[this.comboDimensions,this.comboHierarchies]
+		});
+		
+		
+		//*******************
+		//Trees
 		this.store1 = new Ext.data.TreeStore({
 	        model: 'Item',
 	        root: {
@@ -170,7 +218,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		this.leftPanel =  Ext.create('Ext.panel.Panel', {
 		    bodyPadding: 5,  
 			title: 'Gerarchie Automatiche',
-			items: [this.treePanelLeft]
+			items: [this.automaticHierarchiesComboPanel,this.treePanelLeft]
 		});
 		
 		this.rightPanel =  Ext.create('Ext.panel.Panel', {
@@ -183,6 +231,44 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		this.callParent(arguments);
 
 	}
+	
+	//Initializations
+	, createDimensionsStore: function(){
+		Ext.define("DimensionsModel", {
+    		extend: 'Ext.data.Model',
+            fields: ["DIMENSION_NM","DIMENSION_DS"]
+    	});
+    	
+    	var dimensionsStore=  Ext.create('Ext.data.Store',{
+    		model: "DimensionsModel",
+    		proxy: {
+    			type: 'ajax',
+    			url:  this.services['getDimensions'],
+    			reader: {
+    				type:"json"
+    			}
+    		}
+    	});
+    	dimensionsStore.load();
+    	
+    	return dimensionsStore;
+	}
+	
+	
+	//REST services for Ajax calls
+	,initServices : function(baseParams) {
+		this.services = [];
+		
+		if(baseParams == undefined){
+			baseParams ={};
+		}
+		
+		this.services["getDimensions"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'hierarchies/dimensions',
+			baseParams: baseParams
+		});
+		
+	}	
 	
 	//Private methods
 	
