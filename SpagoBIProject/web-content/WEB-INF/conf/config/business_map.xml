@@ -74,7 +74,17 @@
 		<MAP_REST_SERVICE serviceUrl="/scheduler/executeTrigger" businessProcess="SchedulerManagement" /> 							
 		<MAP_REST_SERVICE serviceUrl="/scheduler/pauseTrigger" businessProcess="SchedulerManagement" /> 							
 		<MAP_REST_SERVICE serviceUrl="/scheduler/resumeTrigger" businessProcess="SchedulerManagement" /> 	
-		<MAP_REST_SERVICE serviceUrl="/scheduler/getTriggerSaveOptions" businessProcess="SchedulerManagement" /> 						 						
+		<MAP_REST_SERVICE serviceUrl="/scheduler/getTriggerSaveOptions" businessProcess="SchedulerManagement" />
+		
+		<MAP_REST_SERVICE serviceUrl="/hierarchies" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/dimensions" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/hierarchiesOfDimension" businessProcess="publicFunctionality" />		
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getAutomaticHierarchyTree" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchies" businessProcess="publicFunctionality" />	
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchyTree" businessProcess="publicFunctionality" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/saveCustomHierarchy" businessProcess="publicFunctionality" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteCustomHierarchy" businessProcess="publicFunctionality" />				 						 						
+					 						 						
 		
 	</MAP_REST_SERVICES>
 	
