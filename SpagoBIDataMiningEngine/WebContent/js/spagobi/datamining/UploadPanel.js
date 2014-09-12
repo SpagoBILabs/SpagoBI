@@ -111,12 +111,12 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						
 						//file datasets
 						if(dataset.type == Sbi.settings.datamining.execution.fileDataset){
-							var fieldLbl = dataset.name;
+							var fieldLbl = dataset.label;
 							var readType = dataset.readType;
 							
 							
 							if(dataset.fileName !== undefined && dataset.fileName != null){
-								fieldLbl = dataset.name +' ('+dataset.fileName+')';
+								fieldLbl = dataset.label +' ('+dataset.fileName+')';
 							}
 							var fileField= Ext.create("Ext.form.field.File",{
 						        xtype: 'fileuploadfield',
@@ -179,7 +179,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 							});
 							
 						    this.uploadWin = Ext.create('Ext.Window', {
-						        title: dataset.name,
+						        title: dataset.label,
 						        width: 500,
 						        height: 100,
 						        x: 10,
@@ -195,7 +195,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 							var addDsFile= Ext.create('Ext.button.Button', {
 					            xtype: 'button',
 					            iconCls: 'file_import',
-					            text: dataset.name,
+					            text: dataset.label,
 					            scale: 'medium',
 					            //tooltip: readType,
 					            tooltip: '<p style="color: red;">Read type is <b>'+readType+'</b></p>',
@@ -214,7 +214,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						        fieldLabel: 'SpagoBI Dataset label',
 						        labelStyle: 'font-weight: bold; color: #28596A;',
 						        labelWidth: 150,
-						        name: dataset.spagobiLabel,
+						        name: dataset.label,
 						        value: dataset.spagobiLabel
 						    });
 							thisPanel.add(datasetField);

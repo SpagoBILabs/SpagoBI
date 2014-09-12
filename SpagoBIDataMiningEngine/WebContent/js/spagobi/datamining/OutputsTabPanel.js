@@ -66,6 +66,9 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 	                        bodyStyle: 'padding:10px;',
 	                        command: thisPanel.command,
 	                        output: outputName,
+	                        autoScroll: true,
+	                        scroll: 'vertical',
+	                        sort: true,
 	                        mode: outputMode
 					    });
 						
