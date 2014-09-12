@@ -28,7 +28,6 @@ import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplateParser;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -89,9 +88,10 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 		return scripts;
 	}
 
-	public IDataSource getDataSource() {
-		return (IDataSource) this.getEnv().get(EngineConstants.ENV_DATASOURCE);
-	}
+	//
+	// public IDataSource getDataSource() {
+	// return (IDataSource) this.getEnv().get(EngineConstants.ENV_DATASOURCE);
+	// }
 
 	public IDataSet getDataSet() {
 		return (IDataSet) this.getEnv().get(EngineConstants.ENV_DATASET);
