@@ -71,7 +71,13 @@ public class OutputExecutor {
 			} else {
 				// function recalling a function inside the main script (auto)
 				// to produce an image result
-				re.eval(function + "(" + out.getOutputValue() + ")");
+				String outVal = out.getOutputValue();
+				if (outVal == null || outVal.equals("")) {
+					re.eval(function);
+				} else {
+					re.eval(function + "(" + outVal + ")");
+				}
+
 			}
 
 			re.eval("dev.off()");
@@ -84,7 +90,19 @@ public class OutputExecutor {
 		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.TEXT_OUTPUT) && out.getOutputValue() != null && out.getOutputName() != null) {
 			res.setVariablename(out.getOutputValue());// could be multiple value
 														// comma separated
-			REXP rexp = re.eval(out.getOutputValue());
+			String function = out.getOutputFunction();
+			REXP rexp = null;
+			if (function != null) {
+				String outVal = out.getOutputValue();
+				if (outVal == null || outVal.equals("")) {
+					rexp = re.eval(function);
+				} else {
+					rexp = re.eval(function + "(" + outVal + ")");
+				}
+
+			} else {
+				rexp = re.eval(out.getOutputValue());
+			}
 			if (rexp != null) {
 				res.setOutputType(out.getOutputType());
 				res.setResult(getResultAsString(rexp));

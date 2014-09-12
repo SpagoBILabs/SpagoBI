@@ -509,6 +509,7 @@ action_pca<-function(scaling_type){
             <OUTPUTS>
                 <OUTPUT type="image" name="explained_variance_plot" value=""  function="explained_variance_plot()" mode="auto" label="explained variance"/>
                 <OUTPUT type="image" name="loadings_plot" value=""  function="loadings_plot()" mode="manual" label="loadings plot"/>
+                <OUTPUT type="text" name="explained_variance_print" value=""  function="explained_variance_print()" mode="manual" label="explained var print"/>
             </OUTPUTS>
         </COMMAND>
     </COMMANDS>

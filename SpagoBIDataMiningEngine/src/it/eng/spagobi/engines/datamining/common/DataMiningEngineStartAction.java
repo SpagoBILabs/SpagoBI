@@ -10,7 +10,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.datamining.DataMiningEngine;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplateParseException;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -103,8 +102,8 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				servletRequest.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 			} catch (Exception e) {
 				logger.error("Error starting the Data Mining engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL,
-						e);
+				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while forwarding the execution to the jsp "
+						+ SUCCESS_REQUEST_DISPATCHER_URL, e);
 			}
 
 			if (getAuditServiceProxy() != null) {
@@ -124,8 +123,8 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				servletRequest.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 			} catch (Exception ex) {
 				logger.error("Error starting the Data Mining engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL,
-						ex);
+				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while forwarding the execution to the jsp "
+						+ FAILURE_REQUEST_DISPATCHER_URL, ex);
 			}
 		} finally {
 			logger.debug("OUT");
@@ -156,10 +155,6 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 	@Override
 	public Map getEnv() {
 		Map env = new HashMap();
-
-		IDataSource ds = this.getDataSource();
-
-		env.put(EngineConstants.ENV_DATASOURCE, ds);
 
 		env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
 		env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
