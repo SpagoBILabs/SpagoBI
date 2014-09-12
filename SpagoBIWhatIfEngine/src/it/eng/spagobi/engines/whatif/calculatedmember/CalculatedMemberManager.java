@@ -45,9 +45,6 @@ public class CalculatedMemberManager {
 
 		ParseTreeNode expression = p.parseExpression(calculateFieldFormula);
 
-		// IdentifierNode nodoCalcolato = new
-		// IdentifierNode(getParentSegments(parentMember, calculateFieldName));
-
 		IdentifierNode nodoCalcolato = new IdentifierNode(getParentSegments(parentMember, calculateFieldName));
 
 		WithMemberNode withMemberNode = new WithMemberNode(null, nodoCalcolato, expression, Collections.<PropertyValueNode> emptyList());
@@ -145,9 +142,9 @@ public class CalculatedMemberManager {
 				}
 			}
 		} else if (parseNode instanceof DimensionNode) {
-			DimensionNode node = (DimensionNode) parseNode;
+
 		} else if (parseNode instanceof HierarchyNode) {
-			HierarchyNode node = (HierarchyNode) parseNode;
+
 		} else if (parseNode instanceof IdentifierNode) {
 			IdentifierNode node = (IdentifierNode) parseNode;
 			String name = getIdentifierUniqueName(node);
@@ -156,9 +153,9 @@ public class CalculatedMemberManager {
 				return true;
 			}
 		} else if (parseNode instanceof LevelNode) {
-			LevelNode node = (LevelNode) parseNode;
+
 		} else if (parseNode instanceof MemberNode) {
-			MemberNode node = (MemberNode) parseNode;
+
 		}
 		return false;
 
