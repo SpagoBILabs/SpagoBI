@@ -1363,6 +1363,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var p = baseConfig.parameter;
 		
+		if(!p.colspan) p.colspan = 1;
+		var comboWidth = 200 * p.colspan;
+		baseConfig.width  = comboWidth;
+		
 		var store = this.createCompleteStore(p, executionInstance, 'simple');
 		
 		//on the load event, adds an empty value for the reset at the first 

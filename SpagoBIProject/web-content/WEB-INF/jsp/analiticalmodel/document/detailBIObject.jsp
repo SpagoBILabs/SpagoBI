@@ -1670,32 +1670,40 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 	</div>
 	
 <% 
-// if parameters is of type slider two more settings are proposed to user
+// if parameters is of type slider or combo two more settings are proposed to user
 
 
 
 ParameterUse parUse = null;
 boolean isSlider = false;
+boolean isCombo = false;
 
 // in case of new Bi Obj parameter is not slider
-if(objPar.getParID() == -1)  isSlider = false;
+if(objPar.getParID() == -1)  {
+	isSlider = false;
+    isCombo = false;
+}
 else{
-   for(int i = 0; i<userProfile.getRoles().size() && isSlider == false; i++){
+   for(int i = 0; i<userProfile.getRoles().size() && (isSlider == false || isCombo == false); i++){
     String role = (String)((ArrayList)userProfile.getRoles()).get(i);
     // check if adding slider configurations
     
    ParameterUse use = DAOFactory.getParameterUseDAO().loadByParameterIdandRole(objPar.getParID(), role);
    if(use != null){
        String selType = use.getSelectionType();
-       if(selType != null && selType.equalsIgnoreCase("SLIDER") ){
+       if(selType != null && (selType.equalsIgnoreCase("SLIDER")) ){
     	    isSlider = true;
-
     	    }
-       }
+       if(selType != null && (selType.equalsIgnoreCase("COMBOBOX")) ){
+           isCombo = true;
+           }
+
+    }
    }
 }
 
-if(isSlider){
+// For slider and combo
+if(isSlider || isCombo){
     ArrayList roles = (ArrayList)userProfile.getRoles();
     Integer colspan = objPar.getColSpan() != null ? objPar.getColSpan() : 1;
     Integer thickPerc = objPar.getThickPerc() != null ? objPar.getThickPerc() : 0;
@@ -1712,6 +1720,9 @@ if(isSlider){
 
 </select>   
 </div>
+<% // only for slider
+if(isSlider){
+%>
 <div class='div_detail_form'>
 <span class='portlet-form-field-label' style='line-height: 20px'>
 <spagobi:message key = "SBIDev.docConf.docDet.thickPerc" />
@@ -1719,7 +1730,9 @@ if(isSlider){
 <input type="text" value="<%=thickPerc%>" style="width:130px;"  name="thickPerc" id="doc_thickPerc" />
 </div>
 <% 
-}
+} // END SLIDER CASE
+
+} // END SLIDER OR COMBO CASE
 
 // END SLIDER CONFIGURATION
 %>
