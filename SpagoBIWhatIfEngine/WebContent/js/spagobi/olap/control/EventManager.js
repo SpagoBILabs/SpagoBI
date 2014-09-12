@@ -437,8 +437,13 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * Call the rest service to show the Calculated Member Output
 	 */
 	//author: Maria Katia Russo from Osmosit
-	,executeCalculatedMemberExpression: function(expression){
-		this.olapController.executeCalculatedMemberExpression(expression);
+	,executeCalculatedMemberExpression: function(name, expression){
+		this.olapController.executeCalculatedMemberExpression(name,expression,this.ccParentUniqueName,this.ccAxis);
+	}
+
+	,setCalculatedFieldParent: function(uniqueName, axis){
+		this.ccParentUniqueName = uniqueName;
+		this.ccAxis = axis;
 	}
 
 });

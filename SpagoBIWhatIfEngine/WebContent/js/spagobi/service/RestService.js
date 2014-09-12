@@ -187,20 +187,20 @@ Ext.define('Sbi.service.RestService', {
 		}
 
 		Ext.Ajax.request(ajaxConf);
-	},
-
-	//TODO:osmosit
-	callCalculatedMemberService: function(){
-		Ext.Ajax.request({
-			url: this.getRestUrlWithParameters(),
-			params: this.getRequestParams(),
-			success: function(response){
-				debugger;
-				Sbi.olap.eventManager.fireEvent('serviceExecuted', response, false);
-
-			}
-		});
 	}
+
+//	//TODO:osmosit
+//	callCalculatedMemberService: function(){
+//		Ext.Ajax.request({
+//			url: this.getRestUrlWithParameters(),
+//			params: this.getRequestParams(),
+//			success: function(response){
+//				debugger;
+//				Sbi.olap.eventManager.fireEvent('serviceExecuted', response, false);
+//
+//			}
+//		});
+//	}
 
 });
 

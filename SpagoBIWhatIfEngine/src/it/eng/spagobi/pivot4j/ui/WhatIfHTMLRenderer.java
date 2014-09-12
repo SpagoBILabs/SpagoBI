@@ -204,6 +204,11 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
 			attributes.put("ondblclick", "javascript:Sbi.olap.eventManager.makeEditable('" + id + "','" + measureName + "')");
 			attributes.put("id", id);
+		} else if (context.getCellType() == CellType.Header) {
+			String uniqueName = context.getMember().getUniqueName();
+			int axis = context.getAxis().axisOrdinal();
+			attributes.put("ondblclick", "javascript:Sbi.olap.eventManager.setCalculatedFieldParent('" + uniqueName + "','" + axis + "')");
+
 		}
 
 		writer.flush();
@@ -397,6 +402,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			getWriter().writeContent(label);
 			getWriter().endElement("a");
 		}
+
 	}
 
 }
