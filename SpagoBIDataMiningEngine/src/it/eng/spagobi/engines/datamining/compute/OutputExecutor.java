@@ -88,13 +88,13 @@ public class OutputExecutor {
 					+ plotName + "." + OUTPUT_PLOT_EXTENSION);
 
 		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.TEXT_OUTPUT) && out.getOutputValue() != null && out.getOutputName() != null) {
-			res.setVariablename(out.getOutputValue());// could be multiple value
-														// comma separated
+
 			String function = out.getOutputFunction();
 			REXP rexp = null;
+			String outVal = out.getOutputValue();
 			if (function != null) {
-				String outVal = out.getOutputValue();
 				if (outVal == null || outVal.equals("")) {
+					outVal = out.getOuputLabel();
 					rexp = re.eval(function);
 				} else {
 					rexp = re.eval(function + "(" + outVal + ")");
@@ -103,6 +103,8 @@ public class OutputExecutor {
 			} else {
 				rexp = re.eval(out.getOutputValue());
 			}
+			res.setVariablename(outVal);// could be multiple value
+			// comma separated
 			if (rexp != null) {
 				res.setOutputType(out.getOutputType());
 				res.setResult(getResultAsString(rexp));
