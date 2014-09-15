@@ -21,7 +21,7 @@ UPDATE SBI_ARTIFACTS SET MODEL_LOCKED = 0 WHERE MODEL_LOCKED IS NULL;
 
 ALTER TABLE SBI_OBJECTS ADD  PARAMETERS_REGION VARCHAR2(20);
 
-UPDATE SBI_ENGINES SET LABEL = 'SpagoBIDataMiningEngine', NAME = 'Data-Mining Engine', DESCR = 'Data-Mining Engine', MAIN_URL = '/SpagoBIDataMiningEngine/WekaServlet', DRIVER_NM = 'it.eng.spagobi.engines.drivers.datamining.DataMiningDriver' WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.weka.WekaDriver';
+UPDATE SBI_ENGINES SET LABEL = 'SpagoBIDataMiningEngine', NAME = 'Data-Mining Engine', DESCR = 'Data-Mining Engine', MAIN_URL = '/SpagoBIDataMiningEngine/restful-services/start', DRIVER_NM = 'it.eng.spagobi.engines.drivers.datamining.DataMiningDriver', USE_DATASET=0, USE_DATASOURCE=0 WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.weka.WekaDriver';
 COMMIT;
 
 ALTER TABLE SBI_OBJ_PAR ADD  COL_SPAN INTEGER NULL;
@@ -43,4 +43,10 @@ INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, V
 'SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN', 'SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN', 'Show the logout button in case of silent login', 1, 'true',
 (select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'NUM' AND DOMAIN_CD = 'PAR_TYPE'), 'GENERIC_CONFIGURATION', 'biadmin', current_timestamp);
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
+commit;
+
+INSERT INTO SBI_DOMAINS (VALUE_ID,VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS,USER_IN,TIME_IN,SBI_VERSION_IN) VALUES (
+(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'), 'org.hibernate.dialect.MongoDialect', 'sbidomains.nm.mongo',
+'DIALECT_HIB', 'Predefined hibernate dialect', 'sbidomains.ds.mongo', 'biadmin',  current_timestamp,  '5.0');
+update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
 commit;
