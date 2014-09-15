@@ -852,7 +852,10 @@ function saveDocument(goBack) {
 				<%
 					String styleDivLinkConf = " ";
 					String BIobjTypecode = obj.getBiObjectTypeCode();
-					String EngineDriverClass = obj.getEngine().getDriverName();
+					String EngineDriverClass = null;
+					if(obj!=null && obj.getEngine()!=null){
+						EngineDriverClass = obj.getEngine().getDriverName()
+					}
 					if (BIobjTypecode.equalsIgnoreCase("DOSSIER")
 							|| (BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
 							|| BIobjTypecode.equalsIgnoreCase("SMART_FILTER"))
