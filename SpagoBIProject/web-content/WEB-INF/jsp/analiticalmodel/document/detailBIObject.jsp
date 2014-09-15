@@ -849,17 +849,20 @@ function saveDocument(goBack) {
 				
 				
 			    <!-- TEMPLATE LABEL AND BUTTONS FOR DOSSIER AND OLAP -->
-				<%
-					String styleDivLinkConf = " ";
-					String BIobjTypecode = obj.getBiObjectTypeCode();
-					String EngineDriverClass = obj.getEngine().getDriverName();
-					if (BIobjTypecode.equalsIgnoreCase("DOSSIER")
-							|| (BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
-							|| BIobjTypecode.equalsIgnoreCase("SMART_FILTER"))
-						styleDivLinkConf = " style='display:inline' ";
-					else
-						styleDivLinkConf = " style='display:none' ";
-				%>	
+			    <%
+			     String styleDivLinkConf = " ";
+			     String BIobjTypecode = obj.getBiObjectTypeCode();
+			     String EngineDriverClass = null;
+			     if(obj!=null && obj.getEngine()!=null){
+			     	EngineDriverClass = obj.getEngine().getDriverName()
+			     }
+			     if (BIobjTypecode.equalsIgnoreCase("DOSSIER")
+			       || (BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
+			       || BIobjTypecode.equalsIgnoreCase("SMART_FILTER"))
+			     	styleDivLinkConf = " style='display:inline' ";
+			     else
+			     	styleDivLinkConf = " style='display:none' ";
+			    %> 	
 			    <!-- LINK FOR OBJECT CONFIGURATION -->
 			    <div id="link_obj_conf" <%=styleDivLinkConf%>>
 					<div class='div_detail_label'>
