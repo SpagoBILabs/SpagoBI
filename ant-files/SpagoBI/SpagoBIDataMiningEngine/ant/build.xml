@@ -250,7 +250,7 @@
 	<target name="create-bin.war" depends="init,copy.artifacts">
 		<antcall target="${sso}" />
 		<antcall target="${specific.ant.task}" />
-		<antcall target="${ext.deploy}" />
+		<!--antcall target="${ext.deploy}" /-->
 		<antcall target="upgrade.mf" />
 
 		<mkdir dir="${dist}" />
