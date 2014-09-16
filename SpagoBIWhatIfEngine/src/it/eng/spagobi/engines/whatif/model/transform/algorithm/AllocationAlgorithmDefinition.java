@@ -15,14 +15,15 @@ public class AllocationAlgorithmDefinition {
 	private final String className;
 	private final boolean inMemory;
 	private final boolean persistent;
-	private boolean defaultAlgorithm;
+	private final boolean defaultAlgorithm;
 
-	public AllocationAlgorithmDefinition(String name, String className, boolean inMemory, boolean persistent) {
+	public AllocationAlgorithmDefinition(String name, String className, boolean inMemory, boolean persistent, boolean defaultAlgorithm) {
 		super();
 		this.name = name;
 		this.className = className;
 		this.inMemory = inMemory;
 		this.persistent = persistent;
+		this.defaultAlgorithm = defaultAlgorithm;
 	}
 
 	public String getName() {
@@ -43,10 +44,6 @@ public class AllocationAlgorithmDefinition {
 
 	public boolean isDefaultAlgorithm() {
 		return defaultAlgorithm;
-	}
-
-	public void setDefaultAlgorithm(boolean defaultAlgorithm) {
-		this.defaultAlgorithm = defaultAlgorithm;
 	}
 
 }

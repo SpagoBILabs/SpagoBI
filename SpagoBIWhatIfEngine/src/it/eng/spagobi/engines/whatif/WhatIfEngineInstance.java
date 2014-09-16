@@ -14,6 +14,8 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.NoAllocationAlgorithmFoundException;
 import it.eng.spagobi.engines.whatif.parameters.MDXParametersUtilities;
 import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
@@ -61,6 +63,9 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	private WriteBackManager writeBackManager;
 	private boolean standalone = false;
 	private IDataSource dataSourceForWriting;
+	private String algorithmInUse = null;// the allocation algorithm used
+
+	// to spread the edited value
 
 	protected WhatIfEngineInstance(Object template, Map env) {
 		this(WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null, env);
@@ -162,7 +167,14 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 			} catch (SpagoBIEngineException e) {
 				logger.debug("Exception creating the whatif component", e);
 				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(), "Exception creating the whatif component", e);
-
+			}
+			// init the default algorithm
+			try {
+				String algorithmInUse = AllocationAlgorithmSingleton.getInstance().getDefaultAllocationAlgorithm().getClassName();
+				setAlgorithmInUse(algorithmInUse);
+			} catch (NoAllocationAlgorithmFoundException e) {
+				logger.error("No allocatio algorithm found", e);
+				throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.no.found.error", getLocale(), e);
 			}
 		}
 
@@ -372,6 +384,14 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 			return getDataSource();
 		}
 		return dataSourceForWriting;
+	}
+
+	public String getAlgorithmInUse() {
+		return algorithmInUse;
+	}
+
+	public void setAlgorithmInUse(String algorithmInUse) {
+		this.algorithmInUse = algorithmInUse;
 	}
 
 }

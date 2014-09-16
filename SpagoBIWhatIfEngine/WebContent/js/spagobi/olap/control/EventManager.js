@@ -446,6 +446,10 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.ccAxis = axis;
 	}
 
+	, setAllocationAlgorithm: function(className){
+		this.olapController.setAllocationAlgorithm(className);
+	}
+
 });
 
 

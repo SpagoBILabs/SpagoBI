@@ -100,6 +100,7 @@ public class WhatIfEngineConfig {
 	private final static String CLASS_ATTRIBUTE = "class";
 	private final static String INMEMORY_ATTRIBUTE = "inMemory";
 	private final static String PERSISTENT_ATTRIBUTE = "persistent";
+	private final static String DEFAULT_ATTRIBUTE = "default";
 
 	public String getTemplateFilePath() {
 		String templatePath = "";
@@ -290,7 +291,7 @@ public class WhatIfEngineConfig {
 							String className = (String) algorithmBean.getAttribute(CLASS_ATTRIBUTE);
 							String inMemoryString = (String) algorithmBean.getAttribute(INMEMORY_ATTRIBUTE);
 							String persistentString = (String) algorithmBean.getAttribute(PERSISTENT_ATTRIBUTE);
-
+							String deafultString = (String) algorithmBean.getAttribute(DEFAULT_ATTRIBUTE);
 							Boolean inMemory = true;
 							if (inMemoryString != null) {
 								try {
@@ -309,7 +310,16 @@ public class WhatIfEngineConfig {
 								}
 							}
 
-							algorithmsDefinitionMap.put(name, new AllocationAlgorithmDefinition(name, className, inMemory, persistent));
+							Boolean defaultBoolean = false;
+							if (deafultString != null) {
+								try {
+									defaultBoolean = new Boolean(deafultString);
+								} catch (Exception e) {
+									logger.error("persistent attribute is a boolean, so the admissible values are [true, false] not [" + deafultString + "]");
+								}
+							}
+
+							algorithmsDefinitionMap.put(name, new AllocationAlgorithmDefinition(name, className, inMemory, persistent, defaultBoolean));
 
 						}
 					}

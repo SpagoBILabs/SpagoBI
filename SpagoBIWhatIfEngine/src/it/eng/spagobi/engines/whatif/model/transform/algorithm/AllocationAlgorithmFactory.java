@@ -9,7 +9,6 @@
  */
 package it.eng.spagobi.engines.whatif.model.transform.algorithm;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
@@ -34,7 +33,7 @@ public class AllocationAlgorithmFactory {
 	 * @throws SpagoBIEngineException
 	 */
 	public static IAllocationAlgorithm getAllocationAlgorithm(String algorithmName, WhatIfEngineInstance ei, Map<String, Object> properties) throws SpagoBIEngineException {
-		Map<String, AllocationAlgorithmDefinition> allocationAlgorithms = WhatIfEngineConfig.getInstance().getAllocationAlgorithms();
+		Map<String, AllocationAlgorithmDefinition> allocationAlgorithms = AllocationAlgorithmSingleton.getInstance().getAllocationAlgorithms();
 		IAllocationAlgorithm algorithm;
 
 		logger.debug("Creating the IAllocationAlgorithm with name " + algorithmName);

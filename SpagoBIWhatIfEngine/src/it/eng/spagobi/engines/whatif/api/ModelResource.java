@@ -24,12 +24,14 @@ import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.parser.Lexer;
 import it.eng.spagobi.engines.whatif.parser.parser;
 import it.eng.spagobi.engines.whatif.version.VersionManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -41,6 +43,7 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -114,7 +117,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/setValue/{algorithm}/{ordinal}")
 	@Produces("text/html; charset=UTF-8")
-	public String setValue(@PathParam("ordinal") int ordinal, @PathParam("algorithm") String algorithm) {
+	public String setValue(@PathParam("ordinal") int ordinal) {
 		logger.debug("IN : ordinal = [" + ordinal + "]");
 		logOperation("Set value");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -143,26 +146,20 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);
 		}
 
-		algorithm = "equalPartitionOnLeafs";
-
+		String algorithm = ei.getAlgorithmInUse();
 		logger.debug("Resolving the allocation algorithm");
-		logger.debug("The name of the algorithm is [" + algorithm + "]");
+		logger.debug("The class of the algorithm is [" + algorithm + "]");
 		IAllocationAlgorithm allocationAlgorithm;
 
-		// try {
-		// Map<String, Object> properties = new HashMap<String, Object>();
-		// properties.put(DefaultWeightedAllocationAlgorithm.ENGINEINSTANCE_PROPERTY,
-		// ei);
-		// allocationAlgorithm =
-		// AllocationAlgorithmFactory.getAllocationAlgorithm(algorithm, ei,
-		// properties);
-		// } catch (SpagoBIEngineException e) {
-		// throw new
-		// SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.error",
-		// getLocale(), e);
-		// }
-
-		allocationAlgorithm = new DefaultWeightedAllocationAlgorithm(ei);// .getAllocationAlgorithm(algorithm,
+		try {
+			Map<String, Object> properties = new HashMap<String, Object>();
+			properties.put(DefaultWeightedAllocationAlgorithm.ENGINEINSTANCE_PROPERTY, ei);
+			allocationAlgorithm = AllocationAlgorithmFactory.getAllocationAlgorithm(algorithm, ei, properties);
+		} catch (SpagoBIEngineException e) {
+			logger.error(e);
+			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.error",
+					getLocale(), e);
+		}
 
 		CellTransformation transformation = new CellTransformation(value, cellWrapper.getValue(), cellWrapper, allocationAlgorithm);
 		cellSetWrapper.applyTranformation(transformation);
