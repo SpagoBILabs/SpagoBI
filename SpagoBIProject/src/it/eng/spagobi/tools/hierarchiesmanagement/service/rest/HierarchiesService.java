@@ -356,7 +356,10 @@ public class HierarchiesService {
 			HierarchyTreeNodeData rootData = (HierarchyTreeNodeData) root.getObject();
 			rootJSONObject.put("text", rootData.getNodeName());
 			rootJSONObject.put("id", rootData.getNodeCode());
-			rootJSONObject.put("root", true);
+			// rootJSONObject.put("root", true);
+			rootJSONObject.put("expanded", true);
+			rootJSONObject.put("leaf", false);
+
 			JSONArray childrenJSONArray = new JSONArray();
 
 			for (int i = 0; i < root.getChildCount(); i++) {
@@ -369,7 +372,10 @@ public class HierarchiesService {
 
 			JSONObject mainObject = new JSONObject();
 			mainObject.put("text", "root");
+			mainObject.put("root", true);
 			mainObject.put("children", rootJSONObject);
+			mainObject.put("leaf", false);
+			mainObject.put("expanded", true);
 
 			return mainObject;
 
@@ -401,6 +407,8 @@ public class HierarchiesService {
 					childrenJSONArray.put(subTree);
 				}
 				nodeJSONObject.put("children", childrenJSONArray);
+				nodeJSONObject.put("leaf", false);
+				nodeJSONObject.put("expanded", true);
 				return nodeJSONObject;
 
 			} else {

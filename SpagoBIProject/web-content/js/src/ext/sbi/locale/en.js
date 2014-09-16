@@ -1185,3 +1185,11 @@ Sbi.locale.ln['sbi.myanalysis.noEngines']= 'In this installation are missing dri
 //Sbi.execution.SaveDocumentWindow
 //===================================================================
 Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'The document was saved correclty, it is available on "My Analysis" section';
+//===================================================================
+//Hierarchies Editor
+//===================================================================
+Sbi.locale.ln['sbi.hierarchies.dimensions']= 'Dimensions';			
+Sbi.locale.ln['sbi.hierarchies.hierarchies']= 'Hierarchies';			
+Sbi.locale.ln['sbi.hierarchies.editor']= 'Hierarchies Editor';		
+Sbi.locale.ln['sbi.hierarchies.automatic']= 'Automatic Hierarchies';		
+Sbi.locale.ln['sbi.hierarchies.custom']= 'Custom Hierarchies';		
