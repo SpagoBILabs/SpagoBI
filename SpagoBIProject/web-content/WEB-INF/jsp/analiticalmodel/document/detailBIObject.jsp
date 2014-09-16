@@ -854,13 +854,12 @@ function saveDocument(goBack) {
 					String BIobjTypecode = obj.getBiObjectTypeCode();
 					String EngineDriverClass = null;
 					if(obj!=null && obj.getEngine()!=null){
-					EngineDriverClass = obj.getEngine().getDriverName()
+						EngineDriverClass = obj.getEngine().getDriverName();
 					}
-					if (BIobjTypecode.equalsIgnoreCase("DOSSIER")
-					|| (BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
-					|| BIobjTypecode.equalsIgnoreCase("SMART_FILTER"))
+					if (BIobjTypecode.equalsIgnoreCase("DOSSIER") || (BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
+						|| BIobjTypecode.equalsIgnoreCase("SMART_FILTER"))
 					styleDivLinkConf = " style='display:inline' ";
-					else
+						else
 					styleDivLinkConf = " style='display:none' ";
 					%>
 					<!-- LINK FOR OBJECT CONFIGURATION -->
