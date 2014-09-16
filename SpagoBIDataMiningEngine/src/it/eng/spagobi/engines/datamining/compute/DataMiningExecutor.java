@@ -14,6 +14,7 @@ import it.eng.spagobi.engines.datamining.model.Output;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -89,20 +90,20 @@ public class DataMiningExecutor {
 	 * @return DataMiningResult
 	 * @throws IOException
 	 */
-	public DataMiningResult execute(DataMiningCommand command, Output output, IEngUserProfile userProfile) throws IOException {
+	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile) throws IOException {
 
 		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
 
 		setupEnvonment(userProfile);
 
 		// datasets preparation
-		datasetsExecutor.evalDatasetsNeeded();// only
-												// those
-												// needed
-												// by
-												// command
-												// and
-												// output
+		datasetsExecutor.evalDatasetsNeeded(params);// only
+		// those
+		// needed
+		// by
+		// command
+		// and
+		// output
 
 		// evaluates script code
 		scriptExecutor.evalScript(command);

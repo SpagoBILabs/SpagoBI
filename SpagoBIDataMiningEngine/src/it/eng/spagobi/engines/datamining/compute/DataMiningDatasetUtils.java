@@ -21,6 +21,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
@@ -54,7 +55,7 @@ public class DataMiningDatasetUtils {
 		return areProvided;
 	}
 
-	public static String getFileFromSpagoBIDataset(DataMiningDataset ds, IEngUserProfile profile) throws IOException {
+	public static String getFileFromSpagoBIDataset(HashMap params, DataMiningDataset ds, IEngUserProfile profile) throws IOException {
 		logger.debug("IN");
 		String filePath = "";
 		IDataSetDAO dataSetDao;
@@ -64,12 +65,18 @@ public class DataMiningDatasetUtils {
 			dataSetDao.setUserProfile(profile);
 			IDataSet spagobiDataset = dataSetDao.loadDataSetByLabel(ds.getSpagobiLabel());
 
-			// dataminingInstance.spagobiDataset.setParamsMap(params);
+			spagobiDataset.setParamsMap(params);
 			spagobiDataset.loadData();
 			DataStore dataStore = (DataStore) spagobiDataset.getDataStore();
-
-			filePath = getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + ds.getName() + "\\" + ds.getSpagobiLabel()
-					+ DataMiningConstants.CSV_FILE_FORMAT;
+			filePath = getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + ds.getName();
+			
+			
+			File csvdir = new File(filePath);
+			if(!csvdir.exists()){
+				csvdir.mkdir();
+			}
+			
+			filePath +=  "\\" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
 			File csvFile = new File(filePath);
 			csvFile.createNewFile();
 

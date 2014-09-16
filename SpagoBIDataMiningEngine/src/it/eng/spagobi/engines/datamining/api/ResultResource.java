@@ -16,6 +16,7 @@ import it.eng.spagobi.engines.datamining.serializer.SerializationException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -60,7 +61,9 @@ public class ResultResource extends AbstractDataMiningEngineService {
 							if (output.getOutputName().equals(outputName)) {
 								// and starts execution!
 								try {
-									DataMiningResult result = executor.execute(cmd, output, getUserProfile());
+									HashMap params = (HashMap) dataMiningEngineInstance.getAnalyticalDrivers();
+
+									DataMiningResult result = executor.execute(params, cmd, output, getUserProfile());
 									outputOfExecution = serialize(result);
 								} catch (SerializationException e) {
 									logger.error("Error serializing the result", e);
