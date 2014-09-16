@@ -343,13 +343,23 @@ Ext.define('Sbi.olap.control.Controller', {
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "calculatedmembers",
 			method: 'POST',
-			longExecution: true,
 			pathParams: ["execute",name, expression,ccParentUniqueName,ccAxis]
 		});
 
 		service.callService(this);
 
 	}
+
+	, setAllocationAlgorithm: function(className){
+		var service = Ext.create("Sbi.service.RestService", {
+			url: "allocationalgorithm",
+			method: 'POST',
+			pathParams: [className]
+		});
+
+		service.callService(this, function(){Sbi.olap.eventManager.hideLoadingMask()});
+	}
+
 
 
 });

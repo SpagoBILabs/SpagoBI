@@ -38,8 +38,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			'BUTTON_HIDE_SPANS':'hideSpans',
 			'BUTTON_FATHER_MEMBERS':'showParentMembers'
 		},
-		whatIfButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER','BUTTON_EXPORT_OUTPUT','BUTTON_CALCULATED_MEMBERS'],
-		unlockedButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER'],
+		whatIfButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER','BUTTON_EXPORT_OUTPUT','BUTTON_CALCULATED_MEMBERS','BUTTON_ALGORITHMS'],
+		unlockedButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER','BUTTON_ALGORITHMS'],
 		olapToggleButtons:  ['BUTTON_FATHER_MEMBERS','BUTTON_HIDE_SPANS','BUTTON_HIDE_EMPTY' ],
 		olapButtons: ['BUTTON_MDX','BUTTON_EDIT_MDX','BUTTON_FLUSH_CACHE'],
 		lockButtons:['BUTTON_LOCK','BUTTON_UNLOCK','BUTTON_LOCK_OTHER']
@@ -267,6 +267,48 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				handler: this.buttonHandlersMap[buttonLabel]
 			}, sharedConfig);
 		}
+
+
+		var algorithmsService = Ext.create("Sbi.service.RestService",{
+			url: "allocationalgorithm"
+		});
+
+		var algorithmsStore = Ext.create('Ext.data.Store', {
+			model: 'Sbi.olap.AllocationAlgorithmModel',
+			proxy: {
+				type: 'rest',
+				url: algorithmsService.getRestUrlWithParameters(),
+				extraParams: algorithmsService.getRequestParams()
+			},
+			autoLoad: true
+		});
+
+
+		// Combo with the allocation algorithms
+		this.buttonsConfigContainer['BUTTON_ALGORITHMS'] = {
+			extType: 'Ext.form.field.ComboBox',
+			tooltip: LN('sbi.olap.toolbar.BUTTON_ALGORITHMS'),
+			iconCls: 'BUTTON_ALGORITHMS',
+	        hideLabel: true,
+	        store: algorithmsStore,
+	        displayField: 'name',
+	        valueField: 'className',
+	        typeAhead: true,
+	        queryMode: 'local',
+	        triggerAction: 'all',
+	        emptyText: LN('BUTTON_ALGORITHMS'),
+	        selectOnFocus: true,
+	        width: 135,
+	        indent: true,
+	        listeners:{
+				select:{
+					fn: function( combo, records ){
+						Sbi.olap.eventManager.setAllocationAlgorithm(records[0].data.name);
+					}
+				}
+			}
+		};
+
 
 		// LOCK BUTTON CREATION
 
@@ -751,11 +793,18 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		} else {
 			return 'none';
 		}
-
 	}
 
 	, createButton: function(config){
-		var button = Ext.create('Ext.Button', config);
+
+		var button = null;
+
+		if(config.extType){
+			button = Ext.create(config.extType, config);
+		} else {
+			button = Ext.create('Ext.Button', config);
+		}
+
 		this.buttonsContainer[button.label] = button;
 		button.setVisible(true);
 		return button;

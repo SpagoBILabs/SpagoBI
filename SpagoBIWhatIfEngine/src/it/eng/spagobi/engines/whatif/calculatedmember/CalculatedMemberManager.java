@@ -142,9 +142,9 @@ public class CalculatedMemberManager {
 				}
 			}
 		} else if (parseNode instanceof DimensionNode) {
-
+		
 		} else if (parseNode instanceof HierarchyNode) {
-
+			
 		} else if (parseNode instanceof IdentifierNode) {
 			IdentifierNode node = (IdentifierNode) parseNode;
 			String name = getIdentifierUniqueName(node);
@@ -153,9 +153,9 @@ public class CalculatedMemberManager {
 				return true;
 			}
 		} else if (parseNode instanceof LevelNode) {
-
+			
 		} else if (parseNode instanceof MemberNode) {
-
+			
 		}
 		return false;
 
