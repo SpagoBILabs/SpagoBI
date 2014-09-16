@@ -163,17 +163,6 @@
 		<concat destfile="${build}/${webapp_name}/js/spagobi/datamining-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 
-
-				<script type="text/javascript" src='../js/spagobi/datamining/ResultPanel.js'></script>
-				<script type="text/javascript" src='../js/spagobi/datamining/UploadPanel.js'></script>
-				<script type="text/javascript" src='../js/spagobi/datamining/OutputPanel.js'></script>
-				<script type="text/javascript" src='../js/spagobi/datamining/OutputsTabPanel.js'></script>
-				<script type="text/javascript" src='../js/spagobi/datamining/CommandsTabPanel.js'></script>
-				<script type="text/javascript" src='../js/spagobi/datamining/DataMiningPanel.js'></script>
-				
-				
-				
-				
 				<file name='./spagobi/service/ServiceRegistry.js' />
 				<file name='./spagobi/service/RestService.js' />
 
@@ -261,7 +250,7 @@
 	<target name="create-bin.war" depends="init,copy.artifacts">
 		<antcall target="${sso}" />
 		<antcall target="${specific.ant.task}" />
-		<antcall target="${ext.deploy}" />
+		<!--antcall target="${ext.deploy}" /-->
 		<antcall target="upgrade.mf" />
 
 		<mkdir dir="${dist}" />
