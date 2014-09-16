@@ -13,7 +13,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/locale/<%=locale.getLanguage()%>.js'/></script>
 
 
-<!-- START-DEBUG -->
+
 
 <script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
 <script type="text/javascript" src='../js/spagobi/service/RestService.js'/></script>
@@ -33,8 +33,4 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/datamining/CommandsTabPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/datamining/DataMiningPanel.js'></script>
 
-<!-- END-DEBUG -->
- 
-<!-- START-PRODUCTION
-<script type="text/javascript" src='../js/spagobi/datamining-all.js'></script>
- END-PRODUCTION -->
+
