@@ -1165,3 +1165,12 @@ Sbi.locale.ln['sbi.myanalysis.noEngines']= 'Nell\'installazione in uso non sono 
 //Sbi.execution.SaveDocumentWindow
 //===================================================================
 Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'Il documento è stato salvato correttamente; è disponibile nella sezione "Le mie analisi"';
+//===================================================================
+//Hierarchies Editor
+//===================================================================
+Sbi.locale.ln['sbi.hierarchies.dimensions']= 'Dimensioni';			
+Sbi.locale.ln['sbi.hierarchies.hierarchies']= 'Gerarchie';			
+Sbi.locale.ln['sbi.hierarchies.editor']= 'Editor Gerarchie';		
+Sbi.locale.ln['sbi.hierarchies.automatic']= 'Gerarchie Automatiche';		
+Sbi.locale.ln['sbi.hierarchies.custom']= 'Gerarchie Custom';		
+	
