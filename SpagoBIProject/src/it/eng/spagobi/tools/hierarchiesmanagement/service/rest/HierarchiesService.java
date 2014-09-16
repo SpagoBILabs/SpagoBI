@@ -33,7 +33,6 @@ import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNode;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNodeData;
-import it.eng.spagobi.tools.hierarchiesmanagement.TreeString;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.Iterator;
@@ -144,11 +143,13 @@ public class HierarchiesService {
 		return hierarchiesJSONArray.toString();
 	}
 
+	// get automatic hierarchy structure for tree visualization
 	@GET
 	@Path("/getAutomaticHierarchyTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getAutomaticHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("hierarchy") String hierarchy) {
-		// TODO: get automatic hierarchy structure for tree visualization
+		HierarchyTreeNode hierarchyTree;
+		JSONObject treeJSONObject;
 		try {
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 
@@ -166,13 +167,15 @@ public class HierarchiesService {
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 			// 4 - Create ADT for Tree from datastore
-			HierarchyTreeNode hierarchyTree = createHierarchyTreeStructure(dataStore);
+			hierarchyTree = createHierarchyTreeStructure(dataStore);
+
+			treeJSONObject = convertHierarchyTreeAsJSON(hierarchyTree);
 
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchy structure", t);
 		}
 
-		return "{\"response\":\"automaticHierarchyTree\"}";
+		return treeJSONObject.toString();
 
 	}
 
@@ -219,7 +222,7 @@ public class HierarchiesService {
 	/** 
 	 * Create query for extracting automatic hierarchy rows
 	 */
-	public String createQueryAutomaticHierarchy(IDataSource dataSource, String hierarchyPrefix, String hierarchyName) {
+	private String createQueryAutomaticHierarchy(IDataSource dataSource, String hierarchyPrefix, String hierarchyName) {
 
 		String tableName = "HIER_" + hierarchyPrefix;
 
@@ -248,10 +251,15 @@ public class HierarchiesService {
 	/**
 	 * Create HierarchyTreeNode tree from datastore with leafs informations
 	 */
-	public HierarchyTreeNode createHierarchyTreeStructure(IDataStore dataStore) {
+	private HierarchyTreeNode createHierarchyTreeStructure(IDataStore dataStore) {
 		HierarchyTreeNode root = null;
 
+		// contains the code of the last level node (not null) inserted in the
+		// tree
+
 		for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
+			String lastLevelFound = null;
+
 			IRecord record = (IRecord) iterator.next();
 			List<IField> recordFields = record.getFields();
 			int fieldsCount = recordFields.size();
@@ -267,35 +275,37 @@ public class HierarchiesService {
 					String nodeName = (String) nameField.getValue();
 					HierarchyTreeNodeData data = new HierarchyTreeNodeData(nodeCode, nodeName);
 
-					// TODO: here I will contruct the nodes of the tree
+					// Here I will contruct the nodes of the tree
 					switch (i) {
 					case 0:
 						// first level (root)
 						if (root == null) {
 							root = new HierarchyTreeNode(data, nodeCode);
 						}
+						lastLevelFound = nodeCode;
 						break;
 					case 2:
+						// second level (root's childrens)
 						if (!root.getChildrensKeys().contains(nodeCode)) {
 							// node not already attached to the root
 							HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
 							root.add(aNode, nodeCode);
 						}
+						lastLevelFound = nodeCode;
 						break;
 					case 4:
-						// TODO
-						break;
 					case 6:
-						// TODO
-						break;
 					case 8:
-						// TODO
-						break;
 					case 10:
-						// TODO
+					case 12:
+					case 14:
+					case 16:
+					case 18:
+					case 20:
+						attachNodeToLevel(root, nodeCode, lastLevelFound, data);
+						lastLevelFound = nodeCode;
 						// leaf level
 						break;
-
 					}
 				}
 
@@ -303,10 +313,109 @@ public class HierarchiesService {
 
 		}
 
-		// TODO: to remove
-		System.out.println(TreeString.toString(root));
+		// System.out.println(TreeString.toString(root));
 
 		return root;
+
+	}
+
+	/**
+	 * Attach a node as a child of another node (with key lastLevelFound)
+	 */
+	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, HierarchyTreeNodeData data) {
+		HierarchyTreeNode treeNode = null;
+		// first search parent node
+		for (Iterator<HierarchyTreeNode> treeIterator = root.iterator(); treeIterator.hasNext();) {
+			treeNode = treeIterator.next();
+			if (treeNode.getKey().equals(lastLevelFound)) {
+				// parent node found
+				break;
+			}
+		}
+		// then check if node was already added as a child of this parent
+
+		if (!treeNode.getChildrensKeys().contains(nodeCode)) {
+			// node not already attached to the level
+
+			HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
+			treeNode.add(aNode, nodeCode);
+
+		}
+	}
+
+	/**
+	 * Serialize HierarchyTreeNode to JSON
+	 * 
+	 * @param root
+	 *            the root of the tree structure
+	 * @return a JSONObject representing the tree
+	 */
+	private JSONObject convertHierarchyTreeAsJSON(HierarchyTreeNode root) {
+		JSONObject rootJSONObject = new JSONObject();
+		try {
+			HierarchyTreeNodeData rootData = (HierarchyTreeNodeData) root.getObject();
+			rootJSONObject.put("text", rootData.getNodeName());
+			rootJSONObject.put("id", rootData.getNodeCode());
+			rootJSONObject.put("root", true);
+			JSONArray childrenJSONArray = new JSONArray();
+
+			for (int i = 0; i < root.getChildCount(); i++) {
+				HierarchyTreeNode childNode = root.getChild(i);
+				JSONObject subTreeJSONObject = getSubTreeJSONObject(childNode);
+				childrenJSONArray.put(subTreeJSONObject);
+			}
+
+			rootJSONObject.put("children", childrenJSONArray);
+
+			JSONObject mainObject = new JSONObject();
+			mainObject.put("text", "root");
+			mainObject.put("children", rootJSONObject);
+
+			return mainObject;
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchy structure", t);
+		}
+
+	}
+
+	/**
+	 * get the JSONObject representing the tree having the passed node as a root
+	 * 
+	 * @param node
+	 *            the root of the subtree
+	 * @return JSONObject representing the subtree
+	 */
+	private JSONObject getSubTreeJSONObject(HierarchyTreeNode node) {
+		try {
+			if (node.getChildCount() > 0) {
+				JSONObject nodeJSONObject = new JSONObject();
+				HierarchyTreeNodeData nodeData = (HierarchyTreeNodeData) node.getObject();
+				nodeJSONObject.put("text", nodeData.getNodeName());
+				nodeJSONObject.put("id", nodeData.getNodeCode());
+				JSONArray childrenJSONArray = new JSONArray();
+
+				for (int i = 0; i < node.getChildCount(); i++) {
+					HierarchyTreeNode childNode = node.getChild(i);
+					JSONObject subTree = getSubTreeJSONObject(childNode);
+					childrenJSONArray.put(subTree);
+				}
+				nodeJSONObject.put("children", childrenJSONArray);
+				return nodeJSONObject;
+
+			} else {
+				HierarchyTreeNodeData nodeData = (HierarchyTreeNodeData) node.getObject();
+				JSONObject nodeJSONObject = new JSONObject();
+
+				nodeJSONObject.put("text", nodeData.getNodeName());
+				nodeJSONObject.put("id", nodeData.getNodeCode());
+				nodeJSONObject.put("leaf", true);
+				return nodeJSONObject;
+
+			}
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while serializing hierarchy structure to JSON", t);
+		}
 
 	}
 

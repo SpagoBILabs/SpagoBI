@@ -23,7 +23,7 @@ package it.eng.spagobi.tools.hierarchiesmanagement;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
- *
+ * @author Yifan Peng (original code modified)
  */
 
 import java.io.UnsupportedEncodingException;
@@ -42,14 +42,13 @@ import java.util.Iterator;
  *   └ d
  * </pre>
  * 
- * @author Yifan Peng
  */
 public class TreeString {
 
 	public static String toString(HierarchyTreeNode tree) {
 		StringBuffer sb = new StringBuffer();
 
-		Iterator<HierarchyTreeNode> itr = tree.iterator();
+		Iterator<HierarchyTreeNode> itr = tree.getPreorderIterator();
 
 		while (itr.hasNext()) {
 			HierarchyTreeNode tn = itr.next();
@@ -70,8 +69,9 @@ public class TreeString {
 			} else {
 				sb.append(END + " ");
 			}
-			sb.append(tn.getObject() + "\n");
-
+			// sb.append(tn.getObject() + "\n");
+			HierarchyTreeNodeData nodeData = (HierarchyTreeNodeData) tn.getObject();
+			sb.append(nodeData.getNodeName() + "\n");
 		}
 
 		return sb.toString();

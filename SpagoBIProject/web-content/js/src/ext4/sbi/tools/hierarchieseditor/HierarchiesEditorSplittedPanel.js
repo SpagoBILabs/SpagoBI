@@ -76,6 +76,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		
 		//*******************
 		//Trees
+		/*
 		this.store1 = new Ext.data.TreeStore({
 	        model: 'Item',
 	        root: {
@@ -129,7 +130,21 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	            }
 	          }
 	    });
-		
+		*/
+		this.store1 = new Ext.data.TreeStore({
+	       // model:'Item',
+			proxy: {
+	            type: 'ajax',
+	            url: 'http://localhost:8080/SpagoBI/restful-services/hierarchies/getAutomaticHierarchyTree?dimension=CDC&hierarchy=Ricerca e Sviluppo',
+	            reader: {
+		              type: 'json'
+		        }
+	        }
+	        ,root: {
+	           expanded:true
+	        }
+	        ,autoload:true
+	    });
 	   this.store2 = new Ext.data.TreeStore({
 	        model: 'Item',
 	        root: {
@@ -160,7 +175,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        id: 'firstTreePanel',
 	        layout: 'fit',
 	        store: this.store1,
-	        rootVisible: true,
+	        rootVisible: false,
 	        frame: false,
 	        border:false,
 	        bodyStyle: {border:0},

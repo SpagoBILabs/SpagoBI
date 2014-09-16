@@ -27,11 +27,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Stack;
 import java.util.Vector;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
- * 
+ * @author Yifan Peng (original code modified)
  */
 public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
@@ -70,6 +71,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 		}
 		int childIndex = getChildCount();
 		children.add(childIndex, newChild);
+		childrenKeys.add(key);
 	}
 
 	public void remove(HierarchyTreeNode aChild) {
@@ -83,16 +85,6 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 		remove(indexOf(aChild)); // linear search
 	}
 
-	/**
-	 * Removes the child at the specified index from this node's children and
-	 * sets that node's parent to null. The child node to remove must be a
-	 * <code>MutableTreeNode</code>.
-	 * 
-	 * @param childIndex
-	 *            the index in this node's child array of the child to remove
-	 * @exception ArrayIndexOutOfBoundsException
-	 *                if <code>childIndex</code> is out of bounds
-	 */
 	public void remove(int childIndex) {
 		HierarchyTreeNode child = getChild(childIndex);
 		removeChildrenKey(child.getKey());
@@ -104,15 +96,6 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 		this.childrenKeys.remove(Key);
 	}
 
-	/**
-	 * Returns the child at the specified index in this node's child array.
-	 * 
-	 * @param index
-	 *            an index into this node's child array
-	 * @exception ArrayIndexOutOfBoundsException
-	 *                if <code>index</code> is out of bounds
-	 * @return the TreeNode in this node's child array at the specified index
-	 */
 	public HierarchyTreeNode getChild(int index) {
 		if (children == null) {
 			throw new ArrayIndexOutOfBoundsException("node has no children");
@@ -124,7 +107,6 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	 * Returns the number of levels above this node -- the distance from the
 	 * root to this node. If this node is the root, returns 0.
 	 * 
-	 * @see #getDepth
 	 * @return the number of levels above this node
 	 */
 	public int getLevel() {
@@ -138,15 +120,6 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 		return levels;
 	}
 
-	/**
-	 * Sets this node's parent to <code>newParent</code> but does not change the
-	 * parent's child array. This method is called from <code>insert()</code>
-	 * and <code>remove()</code> to reassign a child's parent, it should not be
-	 * messaged from anywhere else.
-	 * 
-	 * @param newParent
-	 *            this node's new parent
-	 */
 	public void setParent(HierarchyTreeNode newParent) {
 		parent = newParent;
 	}
@@ -237,13 +210,6 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	 * This method performs a linear search and is O(n) where n is the number of
 	 * children.
 	 * 
-	 * @param aChild
-	 *            the TreeNode to search for among this node's children
-	 * @exception IllegalArgumentException
-	 *                if <code>aChild</code> is null
-	 * @return an int giving the index of the node in this node's child array,
-	 *         or <code>-1</code> if the specified node is a not a child of this
-	 *         node
 	 */
 	public int indexOf(HierarchyTreeNode aChild) {
 		if (aChild == null) {
@@ -273,46 +239,14 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 		}
 	}
 
-	/*********************************************************************
-	 * Internal class for iterator
-	 *********************************************************************/
-
-	final class BreadthFirstIterator implements Iterator<HierarchyTreeNode> {
-
-		protected Queue<Iterator<HierarchyTreeNode>> queue;
-
-		public BreadthFirstIterator(HierarchyTreeNode rootNode) {
-			super();
-			Vector<HierarchyTreeNode> v = new Vector<HierarchyTreeNode>(1);
-			v.addElement(rootNode); // PENDING: don't really need a vector
-			queue = new LinkedList<Iterator<HierarchyTreeNode>>();
-			queue.offer(v.iterator());
-		}
-
-		public boolean hasNext() {
-			return (!queue.isEmpty() && queue.peek().hasNext());
-		}
-
-		public HierarchyTreeNode next() {
-			Iterator<HierarchyTreeNode> enumer = queue.peek();
-			HierarchyTreeNode node = enumer.next();
-			Iterator<HierarchyTreeNode> children = node.childrenIterator();
-
-			if (!enumer.hasNext()) {
-				queue.poll();
-			}
-			if (children.hasNext()) {
-				queue.offer(children);
-			}
-			return node;
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException("remove() is not supported.");
-		}
+	public Iterator<HierarchyTreeNode> getPreorderIterator() {
+		return new PreorderIterator(this);
 	}
 
-	// from here used for print -------------------
+	/*
+	 * ------------------------------------------------------- Utilities Methods
+	 * -------------------------------------------------------
+	 */
 
 	public List<HierarchyTreeNode> getPathFromRoot() {
 		List<HierarchyTreeNode> elderList = getPathToRoot();
@@ -385,5 +319,83 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 		}
 
 		return retval;
+	}
+
+	/*********************************************************************
+	 * Internal class for BreadthFirstIterator
+	 *********************************************************************/
+
+	final class BreadthFirstIterator implements Iterator<HierarchyTreeNode> {
+
+		protected Queue<Iterator<HierarchyTreeNode>> queue;
+
+		public BreadthFirstIterator(HierarchyTreeNode rootNode) {
+			super();
+			Vector<HierarchyTreeNode> v = new Vector<HierarchyTreeNode>(1);
+			v.addElement(rootNode); // PENDING: don't really need a vector
+			queue = new LinkedList<Iterator<HierarchyTreeNode>>();
+			queue.offer(v.iterator());
+		}
+
+		public boolean hasNext() {
+			return (!queue.isEmpty() && queue.peek().hasNext());
+		}
+
+		public HierarchyTreeNode next() {
+			Iterator<HierarchyTreeNode> enumer = queue.peek();
+			HierarchyTreeNode node = enumer.next();
+			Iterator<HierarchyTreeNode> children = node.childrenIterator();
+
+			if (!enumer.hasNext()) {
+				queue.poll();
+			}
+			if (children.hasNext()) {
+				queue.offer(children);
+			}
+			return node;
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException("remove() is not supported.");
+		}
+	}
+
+	/*********************************************************************
+	 * Internal class for PreorderIterator
+	 *********************************************************************/
+
+	private final class PreorderIterator implements Iterator<HierarchyTreeNode> {
+
+		private final Stack<Iterator<HierarchyTreeNode>> stack = new Stack<Iterator<HierarchyTreeNode>>();
+
+		PreorderIterator(HierarchyTreeNode rootNode) {
+			super();
+			List<HierarchyTreeNode> l = new Vector<HierarchyTreeNode>(1);
+			l.add(rootNode); // PENDING: don't really need a vector
+			stack.push(l.iterator());
+		}
+
+		public boolean hasNext() {
+			return (!stack.empty() && stack.peek().hasNext());
+		}
+
+		public HierarchyTreeNode next() {
+			Iterator<HierarchyTreeNode> itr = stack.peek();
+			HierarchyTreeNode node = itr.next();
+			Iterator<HierarchyTreeNode> childrenItr = node.childrenIterator();
+
+			if (!itr.hasNext()) {
+				stack.pop();
+			}
+			if (childrenItr.hasNext()) {
+				stack.push(childrenItr);
+			}
+			return node;
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException("remove() is not supported.");
+		}
+
 	}
 }
