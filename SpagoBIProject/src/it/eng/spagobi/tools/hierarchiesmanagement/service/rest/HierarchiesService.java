@@ -125,8 +125,11 @@ public class HierarchiesService {
 			}
 			// 3- execute query to get hierarchies names
 			String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+			String typeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
+
 			String tableName = "HIER_" + hierarchyPrefix;
-			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyNameColumn + ") FROM " + tableName, 0, 0);
+			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyNameColumn + ") FROM " + tableName + " WHERE " + typeColumn
+					+ "=\"AUTO\"", 0, 0);
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 				IRecord record = (IRecord) iterator.next();
 				IField field = record.getFieldAt(0);
@@ -138,7 +141,7 @@ public class HierarchiesService {
 			}
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", t);
+			throw new SpagoBIServiceException("An unexpected error occured while retriving automatic hierarchies names", t);
 		}
 		return hierarchiesJSONArray.toString();
 	}
@@ -179,12 +182,51 @@ public class HierarchiesService {
 
 	}
 
+	// get custom hierarchies names
 	@GET
 	@Path("/getCustomHierarchies")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getCustomHierarchies(@Context HttpServletRequest req) {
-		// TODO: get custom hierarchies names
-		return "{\"response\":\"customHierarchies\"}";
+	public String getCustomHierarchies(@QueryParam("dimension") String dimension) {
+		JSONArray hierarchiesJSONArray = new JSONArray();
+
+		try {
+
+			// 1 - get hierarchy table postfix(ex: _CDC)
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			// 2 - get datasource label name
+			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
+			if (dataSource == null) {
+				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
+			}
+			// 3- execute query to get hierarchies names
+			String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+			String typeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
+
+			String tableName = "HIER_" + hierarchyPrefix;
+			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyNameColumn + ")," + typeColumn + " FROM " + tableName + " WHERE "
+					+ typeColumn + "=\"MANUAL\" OR " + typeColumn + "=\"SEMIMANUAL\" ", 0, 0);
+			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
+				IRecord record = (IRecord) iterator.next();
+				IField field = record.getFieldAt(0);
+				String hierarchyName = (String) field.getValue();
+				field = record.getFieldAt(1);
+				String hierarchyType = (String) field.getValue();
+				JSONObject hierarchy = new JSONObject();
+				hierarchy.put("HIERARCHY_NM", hierarchyName);
+				hierarchy.put("HIERARCHY_TP", hierarchyType);
+				hierarchiesJSONArray.put(hierarchy);
+
+			}
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while retriving custom hierarchies names", t);
+		}
+		return hierarchiesJSONArray.toString();
+
+		// return "{\"response\":\"customHierarchies\"}";
 
 	}
 
