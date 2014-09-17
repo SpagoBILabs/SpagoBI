@@ -289,26 +289,7 @@ public class WhatIfEngineConfig {
 							SourceBean algorithmBean = algorithmsListBean.get(i);
 							String name = (String) algorithmBean.getAttribute(NAME_ATTRIBUTE);
 							String className = (String) algorithmBean.getAttribute(CLASS_ATTRIBUTE);
-							String inMemoryString = (String) algorithmBean.getAttribute(INMEMORY_ATTRIBUTE);
-							String persistentString = (String) algorithmBean.getAttribute(PERSISTENT_ATTRIBUTE);
 							String deafultString = (String) algorithmBean.getAttribute(DEFAULT_ATTRIBUTE);
-							Boolean inMemory = true;
-							if (inMemoryString != null) {
-								try {
-									inMemory = new Boolean(inMemoryString);
-								} catch (Exception e) {
-									logger.error("inMemory attribute is a boolean, so the admissible values are [true, false] not [" + inMemoryString + "]");
-								}
-							}
-
-							Boolean persistent = true;
-							if (persistentString != null) {
-								try {
-									persistent = new Boolean(persistentString);
-								} catch (Exception e) {
-									logger.error("persistent attribute is a boolean, so the admissible values are [true, false] not [" + persistentString + "]");
-								}
-							}
 
 							Boolean defaultBoolean = false;
 							if (deafultString != null) {
@@ -319,7 +300,7 @@ public class WhatIfEngineConfig {
 								}
 							}
 
-							algorithmsDefinitionMap.put(name, new AllocationAlgorithmDefinition(name, className, inMemory, persistent, defaultBoolean));
+							algorithmsDefinitionMap.put(name, new AllocationAlgorithmDefinition(name, className, defaultBoolean));
 
 						}
 					}

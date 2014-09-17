@@ -92,4 +92,16 @@ public class DefaultWeightedAllocationAlgorithm extends AbstractAllocationAlgori
 		return "SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm";
 	}
 
+	public boolean canOverridePrevious() {
+		return false;
+	}
+
+	public boolean isInMemory() {
+		return true;
+	}
+
+	public boolean isPersistent() {
+		return true;
+	}
+
 }

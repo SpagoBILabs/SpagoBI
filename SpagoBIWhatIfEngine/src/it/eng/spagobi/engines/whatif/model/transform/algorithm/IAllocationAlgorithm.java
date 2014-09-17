@@ -60,4 +60,23 @@ public interface IAllocationAlgorithm {
 	 */
 	public void setProperties(Map<String, Object> properties);
 
+	/**
+	 * If a cell has been edited with this algorithm, it override the previous
+	 * modification. So it's not mandatory to persist the previous modifications
+	 * 
+	 * @return
+	 */
+	public boolean canOverridePrevious();
+
+	/**
+	 * @return true if it's possible to spare the modification in memory (no
+	 *         need to persist the data)
+	 */
+	public boolean isInMemory();
+
+	/**
+	 * @return true if it's possible to save the modifications into the db
+	 */
+	public boolean isPersistent();
+
 }

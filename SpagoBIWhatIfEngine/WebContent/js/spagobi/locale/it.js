@@ -66,6 +66,7 @@ Sbi.locale.ln['sbi.common.description'] = 'Descrizione';
 // == == == == == == == == == == == == == == == == == == == == == == == == ==
 //TOOLBAR
 // == == == == == == == == == == == == == == == == == == == == == == == == ==
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_ALGORITHMS'] = 'Selezionare un algoritmo...';
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_MDX'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Tipi di Drill';
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_UNDO'] = 'Undo';
