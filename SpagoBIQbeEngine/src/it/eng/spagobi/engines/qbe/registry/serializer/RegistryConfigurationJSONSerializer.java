@@ -23,8 +23,7 @@ import org.json.JSONObject;
  */
 public class RegistryConfigurationJSONSerializer {
 
-	public static transient Logger logger = Logger
-			.getLogger(RegistryConfigurationJSONSerializer.class);
+	public static transient Logger logger = Logger.getLogger(RegistryConfigurationJSONSerializer.class);
 
 	public static String ENTITY = "entity";
 	public static String FILTERS = "filters";
@@ -37,7 +36,7 @@ public class RegistryConfigurationJSONSerializer {
 
 	public static String NAME = "name";
 	public static String VALUE = "value";
-	
+
 	public static String EDITABLE = "editable";
 	public static String VISIBLE = "visible";
 	public static String EDITOR_TYPE = "editor";
@@ -52,7 +51,9 @@ public class RegistryConfigurationJSONSerializer {
 	public static String TYPE = "type";
 	public static String ORDER_BY = "orderBy";
 	public static String INFO_COLUMN = "infoColumn";
-	
+	public static String DEPENDSFROM = "dependsFrom";
+	public static String DEPENDSFROM_ENTITY = "dependsFromEntity";
+
 	public static String PAGINATION = "pagination";
 
 	public JSONObject serialize(RegistryConfiguration conf) {
@@ -68,10 +69,10 @@ public class RegistryConfigurationJSONSerializer {
 			toReturn.put(COLUMNS, columnsJSON);
 			JSONArray configurationsJSON = serializeConfigurations(conf);
 			toReturn.put(CONFIGURATIONS, configurationsJSON);
-			
+
 			toReturn.put(PAGINATION, Boolean.valueOf(conf.isPagination()).toString());
 			toReturn.put(SUMMARY_COLOR, conf.getSummaryColor());
-			
+
 		} catch (Exception e) {
 			throw new SerializationException("Error while serializating RegistryConfiguration", e);
 		} finally {
@@ -79,7 +80,6 @@ public class RegistryConfigurationJSONSerializer {
 		}
 		return toReturn;
 	}
-
 
 	private JSONArray serializeFilters(RegistryConfiguration conf) throws JSONException {
 		List<RegistryConfiguration.Filter> filters = conf.getFilters();
@@ -111,13 +111,16 @@ public class RegistryConfigurationJSONSerializer {
 			String foreignKey = column.getForeignKey();
 			boolean isEditable = column.isEditable();
 			boolean isVisible = column.isVisible();
-			String type= column.getType();			
+			String type = column.getType();
 			String format = column.getFormat();
 			String color = column.getColor();
 			String editorType = column.getEditorType();
 			String summaryFunction = column.getSummaryFunction();
 			String orderBy = column.getOrderBy();
 			boolean infoColumn = column.isInfoColumn();
+			String title = column.getTitle();
+			String dependences = column.getDependences();
+			String dependencesEntity = column.getDependencesEntity();
 
 			columnJSON.put(FIELD, field);
 			if (subentity != null) {
@@ -133,40 +136,41 @@ public class RegistryConfigurationJSONSerializer {
 			columnJSON.put(SUMMARY_FUNCTION, summaryFunction);
 			columnJSON.put(ORDER_BY, orderBy);
 			columnJSON.put(INFO_COLUMN, infoColumn);
-			
+			columnJSON.put(TITLE, title);
 
 			String mandatoryCol = column.getMandatoryColumn();
-			if(mandatoryCol != null){
+			if (mandatoryCol != null) {
 				columnJSON.put(MANDATORY_COLUMN, mandatoryCol);
 			}
 			String mandatoryVal = column.getMandatoryValue();
-			if(mandatoryVal != null){
+			if (mandatoryVal != null) {
 				columnJSON.put(MANDATORY_VALUE, mandatoryVal);
 			}
 			columnJSON.put(EDITOR_TYPE, editorType);
+			columnJSON.put(DEPENDSFROM, dependences);
+			columnJSON.put(DEPENDSFROM_ENTITY, dependencesEntity);
 			columnsJSON.put(columnJSON);
 		}
 		return columnsJSON;
 	}
-	
+
 	private JSONArray serializeConfigurations(RegistryConfiguration conf) throws JSONException {
 		List<RegistryConfiguration.Configuration> configurations = conf.getConfigurations();
 		JSONArray configurationsJSON = new JSONArray();
-		if(configurations != null){
-		Iterator<RegistryConfiguration.Configuration> it = configurations.iterator();
-		while (it.hasNext()) {
-			RegistryConfiguration.Configuration configuration = it.next();
-			JSONObject configurationJSON = new JSONObject();
-			String name = configuration.getName();
-			String value = configuration.getValue();
-			
-			configurationJSON.put(NAME, name);
-			configurationJSON.put(VALUE, value);
-			configurationsJSON.put(configurationJSON);
-		}
+		if (configurations != null) {
+			Iterator<RegistryConfiguration.Configuration> it = configurations.iterator();
+			while (it.hasNext()) {
+				RegistryConfiguration.Configuration configuration = it.next();
+				JSONObject configurationJSON = new JSONObject();
+				String name = configuration.getName();
+				String value = configuration.getValue();
+
+				configurationJSON.put(NAME, name);
+				configurationJSON.put(VALUE, value);
+				configurationsJSON.put(configurationJSON);
+			}
 		}
 		return configurationsJSON;
 	}
-	
-	
+
 }

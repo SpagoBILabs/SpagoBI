@@ -24,3 +24,6 @@ Sbi.locale.ln['sbi.registry.registryeditorgridpanel.saveconfirm.message']= 'Donn
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.saveconfirm.message.ko']= 'L\'op\u00e9ration a \u00e9chou\u00e9';
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.validation']= 'Erreur de validation: champ num\u00e9rique';
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.validation.unsigned']= 'Erreur de validation: les valeurs sign\u00e9es ne sont pas admises';
+
+Sbi.locale.ln['sbi.registry.registryeditorgridpanel.warningDependences.1']= 'Some fields like '; 
+Sbi.locale.ln['sbi.registry.registryeditorgridpanel.warningDependences.2']= 'depend from this value. Please check them and set correct values !';
