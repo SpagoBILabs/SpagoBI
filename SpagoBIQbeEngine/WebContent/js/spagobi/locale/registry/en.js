@@ -24,3 +24,6 @@ Sbi.locale.ln['sbi.registry.registryeditorgridpanel.saveconfirm.message']= 'Data
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.saveconfirm.message.ko']= 'Operation failed';
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.validation']= 'Validation error: numeric field';
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.validation.unsigned']= 'Validation error: signed values not allowed';
+
+Sbi.locale.ln['sbi.registry.registryeditorgridpanel.warningDependences.1']= 'Some fields like '; 
+Sbi.locale.ln['sbi.registry.registryeditorgridpanel.warningDependences.2']= 'depend from this value. Please check them and set correct values !';

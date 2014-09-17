@@ -24,3 +24,6 @@ Sbi.locale.ln['sbi.registry.registryeditorgridpanel.saveconfirm.message']= 'Dati
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.saveconfirm.message.ko']= 'Operazione fallita';
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.validation']= 'Errore di validazione: campo numerico';
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.validation.unsigned']= 'Errore di validazione: ammessi solo valori positivi';
+
+Sbi.locale.ln['sbi.registry.registryeditorgridpanel.warningDependences.1']= 'Alcuni campi come '; 
+Sbi.locale.ln['sbi.registry.registryeditorgridpanel.warningDependences.2']= 'dipendono da questo valore. Controllate le dipendenze ed impostate il valore corretto !';

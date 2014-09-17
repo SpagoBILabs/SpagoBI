@@ -24,3 +24,6 @@ Sbi.locale.ln['sbi.registry.registryeditorgridpanel.saveconfirm.message']= 'Dato
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.saveconfirm.message.ko']= 'Error en la operaci\u00F3n';
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.validation']= 'Error de validaci\u00F3n: campo num\u00E9érico';
 Sbi.locale.ln['sbi.registry.registryeditorgridpanel.validation.unsigned']= 'Error de validaci\u00F3n: No se admiten valores con signo';
+
+Sbi.locale.ln['sbi.registry.registryeditorgridpanel.warningDependences.1']= 'Some fields like '; 
+Sbi.locale.ln['sbi.registry.registryeditorgridpanel.warningDependences.2']= 'depend from this value. Please check them and set correct values !';

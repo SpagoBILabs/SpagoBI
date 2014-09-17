@@ -74,37 +74,37 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
 
 	if(this.registryConfiguration != undefined && this.registryConfiguration.pagination != 'false')
 	{
-	this.pagingTBar = new Ext.PagingToolbar({
-        pageSize: this.pageSize,
-        store: this.store,
-        displayInfo: true,
-//        displayMsg: LN('sbi.qbe.datastorepanel.grid.displaymsg'),
-//        emptyMsg: LN('sbi.qbe.datastorepanel.grid.emptymsg'),
-//        beforePageText: LN('sbi.qbe.datastorepanel.grid.beforepagetext'),
-//        afterPageText: LN('sbi.qbe.datastorepanel.grid.afterpagetext'),
-//        firstText: LN('sbi.qbe.datastorepanel.grid.firsttext'),
-//        prevText: LN('sbi.qbe.datastorepanel.grid.prevtext'),
-//        nextText: LN('sbi.qbe.datastorepanel.grid.nexttext'),
-//        lastText: LN('sbi.qbe.datastorepanel.grid.lasttext'),
-//        refreshText: LN('sbi.qbe.datastorepanel.grid.refreshtext'),
-        prependButtons: true
-    });
-	this.pagingTBar.on('render', function() {
-	}, this);
-	
-	this.pagingTBar.on('beforechange', function(cont, params) {
-		var filtersValuesObject = this.getFiltersValues();
+		this.pagingTBar = new Ext.PagingToolbar({
+	        pageSize: this.pageSize,
+	        store: this.store,
+	        displayInfo: true,
+	//        displayMsg: LN('sbi.qbe.datastorepanel.grid.displaymsg'),
+	//        emptyMsg: LN('sbi.qbe.datastorepanel.grid.emptymsg'),
+	//        beforePageText: LN('sbi.qbe.datastorepanel.grid.beforepagetext'),
+	//        afterPageText: LN('sbi.qbe.datastorepanel.grid.afterpagetext'),
+	//        firstText: LN('sbi.qbe.datastorepanel.grid.firsttext'),
+	//        prevText: LN('sbi.qbe.datastorepanel.grid.prevtext'),
+	//        nextText: LN('sbi.qbe.datastorepanel.grid.nexttext'),
+	//        lastText: LN('sbi.qbe.datastorepanel.grid.lasttext'),
+	//        refreshText: LN('sbi.qbe.datastorepanel.grid.refreshtext'),
+	        prependButtons: true
+	    });
+		this.pagingTBar.on('render', function() {
+		}, this);
 		
-		this.start = params.start;
-		this.limit = params.limit;
-	
-		Ext.apply(params, filtersValuesObject);
-	}, this);
+		this.pagingTBar.on('beforechange', function(cont, params) {
+			var filtersValuesObject = this.getFiltersValues();
+			
+			this.start = params.start;
+			this.limit = params.limit;
+		
+			Ext.apply(params, filtersValuesObject);
+		}, this);
 	}
 	else 
-		{
+	{
 		this.pageSize = null;
-		}
+	}
 	
 	
 	var initialColumnModel = new Ext.grid.ColumnModel({
@@ -189,7 +189,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	, previousValueEdit : null
 	, saveMask: null
 	, numberColumnIndex:null
-    
+    , lstMasterDependences: []
+
 	// ---------------------------------------------------------------------------------------------------
     // public methods
 	// ---------------------------------------------------------------------------------------------------
@@ -661,7 +662,6 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   meta.fields[i].sortable = true;
 				   }
 			   }
-
 			   // set right editor
 			   var editor = this.getEditor(meta.fields[i].name, meta.fields[i].type);   // not the header but the name
 			   if (editor != null) {
@@ -941,22 +941,6 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		   
 		}, this);
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 
 	}
 
@@ -1135,6 +1119,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		if (aFilter.presentation != undefined && aFilter.presentation == "COMBO") {
 			filterField = this.createFieldCombo(aFilter.field);
 			filterField.type = "COMBO";
+			filterField.section = "FILTER";
 			//filterField.on('change', this.filterMainStore, this);
 		} 
 		else		
@@ -1193,7 +1178,29 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				orderBy = temp + "::" + column.subEntity + "(" + column.foreignKey + ")" + ":" + column.orderBy;				
 					}
 			else{
-				 entityId = temp + ':' + column.orderBy;
+				entityId = temp + ':' + column.orderBy;
+			}
+		}
+		//if there are some dependences get columns informations about linked entity
+		lstDependsFromRef = [];		
+		if (column.dependsFrom){			
+			var lstDependsFrom = column.dependsFrom.split(",");
+			var lstDependsFromEntity = (column.dependsFromEntity)?column.dependsFromEntity.split(","):[];
+			for (var i=0; i<lstDependsFrom.length; i++){					
+				var name = (lstDependsFromEntity && lstDependsFromEntity[i] != null && lstDependsFromEntity[i] !== '')?lstDependsFromEntity[i]:temp;										
+				var columnDepends = this.getColumnConfiguration(lstDependsFrom[i].trim());				 
+				if (columnDepends && columnDepends.subEntity) {
+					name +=  "::" + columnDepends.subEntity + "(" + columnDepends.foreignKey + ")" + ":" + lstDependsFrom[i].trim();				
+				}
+				else{
+					 name += ':' + lstDependsFrom[i].trim();
+				}
+				var tmpFieldRef = {};
+				tmpFieldRef.field = lstDependsFrom[i].trim();
+				tmpFieldRef.entity = name;
+				tmpFieldRef.title = column.title;
+				lstDependsFromRef.push(tmpFieldRef);
+				this.lstMasterDependences[column.field] = tmpFieldRef; //list of all dependences by master side				
 			}
 		}
 		
@@ -1210,6 +1217,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			Sbi.exception.ExceptionHandler.handleFailure(response, options);
 		});
 		
+		
 		var combo = new Ext.form.ComboBox({
 			name: field
             , editable : false
@@ -1217,8 +1225,65 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	        , displayField: 'column_1'
 	        , valueField: 'column_1'
 	        , triggerAction: 'all'
+	        , lstDependsFromRef: lstDependsFromRef
         });
 		
+		var thisPanel = this;
+		combo.on('change', function(el, newValue, oldValue){
+			if (!el.section) {
+				var isMasterField = false;
+				var lstDependences = '';
+				if (thisPanel.lstMasterDependences){
+					for (el in thisPanel.lstMasterDependences){						
+						var tmpRef = thisPanel.lstMasterDependences[el];
+						if (tmpRef.field == column.field.trim()){
+							isMasterField = true;
+							lstDependences += tmpRef.title + '  ';
+						}
+					}
+				}	
+				if (isMasterField && oldValue != '' && oldValue != newValue){				
+				   alert(LN('sbi.registry.registryeditorgridpanel.warningDependences.1') +'\'' + lstDependences + '\' ' +
+						 LN('sbi.registry.registryeditorgridpanel.warningDependences.2') );
+				}
+			}
+		});
+		
+		if (column.dependsFrom){
+			combo.on('focus', function(el){				
+				var lstDependsFrom = column.dependsFrom.split(",");
+				dependences = '';
+				for (var i=0; i<el.lstDependsFromRef.length; i++){		
+					var name = '';
+					var comma = (i < lstDependsFrom.length-1)?',':'';
+					var filterValue;
+					for (var j=0; j<el.lstDependsFromRef.length; j++){
+						var tmpRef = el.lstDependsFromRef[j];
+						if (tmpRef.field == lstDependsFrom[i].trim()){
+							name = tmpRef.entity;
+							for(var k=0; k < thisPanel.filters.length; k++){
+								if (thisPanel.filters[k].name == tmpRef.field){
+									filterValue = thisPanel.filters[k].value;			
+									break;
+								}
+							}
+							break;
+						}
+					}
+					if (el.section  && el.section === "FILTER") {								
+						dependences += (filterValue != undefined && filterValue !== "") ? name + '=' + filterValue + comma : "";
+					}else{			
+						dependences += (this.gridEditor.record.data[lstDependsFrom[i].trim()] != "")? name + '=' + this.gridEditor.record.data[lstDependsFrom[i].trim()] + comma : "";
+					}						
+				}
+//				alert('dependences: '  + dependences);
+				delete combo.store.baseParams.DEPENDENCES;
+				combo.store.on('beforeload', function(s) {
+					s.setBaseParam('DEPENDENCES', dependences);
+				});
+				combo.store.load();
+			});
+		}
 		return combo;
 	}	
 	
@@ -1861,13 +1926,16 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	
 });
 function isInteger(s) {
-	  return (s.search(/^-?[0-9]+$/) == 0);
+	if (s.search) return (s.search(/^-?[0-9]+$/) == 0);
+	else return  true;
 }
 function isUnsignedInteger(s) {
-	  return (s.search(/^[0-9]+$/) == 0);
+	if (s.search) return (s.search(/^[0-9]+$/) == 0);
+	else return  true;
 }
 function isFloat(s){
-	return (s.search(/^[0-9]*[.][0-9]+$/) == 0);
+	if (s.search) return (s.search(/^-?[0-9]*[.][0-9]+$/) == 0);
+	else return  true;
 }
 
 
