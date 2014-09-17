@@ -13,16 +13,12 @@ package it.eng.spagobi.engines.whatif.model.transform.algorithm;
 public class AllocationAlgorithmDefinition {
 	private final String name;
 	private final String className;
-	private final boolean inMemory;
-	private final boolean persistent;
 	private final boolean defaultAlgorithm;
 
-	public AllocationAlgorithmDefinition(String name, String className, boolean inMemory, boolean persistent, boolean defaultAlgorithm) {
+	public AllocationAlgorithmDefinition(String name, String className, boolean defaultAlgorithm) {
 		super();
 		this.name = name;
 		this.className = className;
-		this.inMemory = inMemory;
-		this.persistent = persistent;
 		this.defaultAlgorithm = defaultAlgorithm;
 	}
 
@@ -32,14 +28,6 @@ public class AllocationAlgorithmDefinition {
 
 	public String getClassName() {
 		return className;
-	}
-
-	public boolean isInMemory() {
-		return inMemory;
-	}
-
-	public boolean isPersistent() {
-		return persistent;
 	}
 
 	public boolean isDefaultAlgorithm() {

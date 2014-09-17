@@ -15,9 +15,6 @@ Ext.define('Sbi.olap.AllocationAlgorithmModel', {
 	idProperty: 'name',
 	fields: [
 	         {name: 'name'},
-	         {name: 'className'},
-	         {name: 'inMemory'},
-	         {name: 'persistent'},
-	         {name: 'selected'}
+	         {name: 'className'}
 	]
 });

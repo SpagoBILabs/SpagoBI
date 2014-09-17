@@ -96,4 +96,16 @@ public class EqualPartitioningOnLeafsAllocationAlgorithm extends AbstractAllocat
 		return dataManager;
 	}
 
+	public boolean canOverridePrevious() {
+		return true;
+	}
+
+	public boolean isInMemory() {
+		return true;
+	}
+
+	public boolean isPersistent() {
+		return true;
+	}
+
 }

@@ -296,9 +296,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	        typeAhead: true,
 	        queryMode: 'local',
 	        triggerAction: 'all',
-	        emptyText: LN('BUTTON_ALGORITHMS'),
+	        emptyText: LN('sbi.olap.toolbar.BUTTON_ALGORITHMS'),
 	        selectOnFocus: true,
-	        width: 135,
+	        width: 160,
 	        indent: true,
 	        listeners:{
 				select:{
