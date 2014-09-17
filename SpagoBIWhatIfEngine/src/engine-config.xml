@@ -39,9 +39,9 @@
 	
 	<WRITEBACK proportionalAlgorithmPersistQueryWhereClause="in">
 		<ALGORITHMS>
-			<ALGORITHM name="Proportional" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm" inMemory="true" persistent="true" default="true"/>
-			<ALGORITHM name="Equal partition on leafs" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.EqualPartitioningOnLeafsAllocationAlgorithm" inMemory="true" persistent="true"/>
-			<ALGORITHM name="Fix values" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.FakeAllocatyionAlg" inMemory="true" persistent="true"/>
+			<ALGORITHM name="Proportional" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm" default="true"/>
+			<ALGORITHM name="Equal partition on leafs" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.EqualPartitioningOnLeafsAllocationAlgorithm"/>
+			<ALGORITHM name="Fix values" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.FakeAllocatyionAlg"/>
 		</ALGORITHMS>
 	</WRITEBACK>
 
