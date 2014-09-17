@@ -9,7 +9,6 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -21,7 +20,6 @@ import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
-import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -30,7 +28,6 @@ import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.SpagoBIAccessUtils;
 import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,7 +35,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -62,21 +58,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.eclipse.birt.data.engine.core.DataException;
 import org.eclipse.birt.report.IBirtConstants;
-import org.eclipse.birt.report.engine.api.DataExtractionOption;
 import org.eclipse.birt.report.engine.api.HTMLActionHandler;
 import org.eclipse.birt.report.engine.api.HTMLRenderOption;
 import org.eclipse.birt.report.engine.api.HTMLServerImageHandler;
 import org.eclipse.birt.report.engine.api.IDataExtractionTask;
-import org.eclipse.birt.report.engine.api.IDataIterator;
-import org.eclipse.birt.report.engine.api.IExtractionResults;
 import org.eclipse.birt.report.engine.api.IGetParameterDefinitionTask;
 import org.eclipse.birt.report.engine.api.IRenderOption;
 import org.eclipse.birt.report.engine.api.IReportDocument;
 import org.eclipse.birt.report.engine.api.IReportEngine;
 import org.eclipse.birt.report.engine.api.IReportRunnable;
-import org.eclipse.birt.report.engine.api.IResultMetaData;
 import org.eclipse.birt.report.engine.api.IResultSetItem;
 import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.IRunTask;
@@ -84,8 +75,6 @@ import org.eclipse.birt.report.engine.api.IScalarParameterDefn;
 import org.eclipse.birt.report.engine.api.PDFRenderOption;
 import org.eclipse.birt.report.engine.dataextraction.CSVDataExtractionOption;
 import org.eclipse.birt.report.engine.dataextraction.ICSVDataExtractionOption;
-
-
 import org.eclipse.birt.report.utility.BirtUtility;
 import org.eclipse.birt.report.utility.DataExtractionParameterUtil;
 import org.safehaus.uuid.UUID;
@@ -97,8 +86,8 @@ import sun.misc.BASE64Decoder;
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
  * 
- * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
- * 02-10-2008      Zerbetto Davide/Julien Decreuse (Smile)		Upgrade to Birt 2.3.0 API
+ *         DATE CONTRIBUTOR/DEVELOPER NOTE 02-10-2008 Zerbetto Davide/Julien
+ *         Decreuse (Smile) Upgrade to Birt 2.3.0 API
  **/
 public class BirtReportServlet extends HttpServlet {
 
@@ -111,9 +100,12 @@ public class BirtReportServlet extends HttpServlet {
 	public static final String predefinedGroovyScriptFileName = "predefinedGroovyScript.groovy";
 	public static final String predefinedJsScriptFileName = "predefinedJavascriptScript.js";
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
 	 */
+	@Override
 	public void init(ServletConfig servletConfig) throws ServletException {
 		super.init(servletConfig);
 		logger.debug("Initializing SpagoBI BirtReport Engine...");
@@ -121,17 +113,25 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug(":init:Inizialization of SpagoBI BirtReport Engine ended succesfully");
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.servlet.GenericServlet#destroy()
 	 */
+	@Override
 	public void destroy() {
 		super.destroy();
 		BirtEngine.destroyBirtEngine();
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest
+	 * , javax.servlet.http.HttpServletResponse)
 	 */
+	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
 		logger.debug("Start processing a new request...");
@@ -139,8 +139,8 @@ public class BirtReportServlet extends HttpServlet {
 		// USER PROFILE
 		HttpSession session = request.getSession();
 		IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		String documentId = (String) request.getParameter("document");
-		//String userId = (String) ((UserProfile)profile).getUserId();
+		String documentId = request.getParameter("document");
+		// String userId = (String) ((UserProfile)profile).getUserId();
 		String userId = (String) profile.getUserUniqueIdentifier();
 
 		logger.debug("userId=" + userId);
@@ -152,16 +152,14 @@ public class BirtReportServlet extends HttpServlet {
 		AuditAccessUtils auditAccessUtils = (AuditAccessUtils) request.getSession().getAttribute("SPAGOBI_AUDIT_UTILS");
 		if (auditId != null) {
 			if (auditAccessUtils != null)
-				auditAccessUtils.updateAudit(session, userId, auditId, new Long(System.currentTimeMillis()), null,
-						"EXECUTION_STARTED", null, null);
+				auditAccessUtils.updateAudit(session, userId, auditId, new Long(System.currentTimeMillis()), null, "EXECUTION_STARTED", null, null);
 		}
 		try {
 			runReport(request, response);
 			// AUDIT UPDATE
 			if (auditId != null) {
 				if (auditAccessUtils != null)
-					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()),
-							"EXECUTION_PERFORMED", null, null);
+					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_PERFORMED", null, null);
 			}
 		} catch (ConnectionDefinitionException e) {
 			logger.error("Error during report production \n\n " + e);
@@ -173,16 +171,16 @@ public class BirtReportServlet extends HttpServlet {
 			// AUDIT UPDATE
 			if (auditId != null) {
 				if (auditAccessUtils != null)
-					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()),
-							"EXECUTION_FAILED", e.getDescription(), null);
+					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_FAILED", e.getDescription(),
+							null);
 			}
 		} catch (Exception e) {
-			logger.error( "Error during report production \n\n ", e);
+			logger.error("Error during report production \n\n ", e);
 			// AUDIT UPDATE
 			if (auditId != null) {
 				if (auditAccessUtils != null)
-					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()),
-							"EXECUTION_FAILED", e.getMessage(), null);
+					auditAccessUtils
+							.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_FAILED", e.getMessage(), null);
 			}
 		}
 
@@ -211,8 +209,7 @@ public class BirtReportServlet extends HttpServlet {
 		}
 	}
 
-	protected HTMLRenderOption prepareHtmlRenderOption(ServletContext servletContext, HttpServletRequest servletRequest)
-	throws Exception {
+	protected HTMLRenderOption prepareHtmlRenderOption(ServletContext servletContext, HttpServletRequest servletRequest) throws Exception {
 		logger.debug("IN");
 		String tmpDir = System.getProperty("java.io.tmpdir");
 		String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
@@ -233,21 +230,20 @@ public class BirtReportServlet extends HttpServlet {
 
 	}
 
-
-	private InputStream getTemplateContent(HttpServletRequest servletRequest,ServletContext servletContext) throws IOException {
+	private InputStream getTemplateContent(HttpServletRequest servletRequest, ServletContext servletContext) throws IOException {
 		logger.debug("IN");
 		HttpSession session = servletRequest.getSession();
 		IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		String documentId = (String) servletRequest.getParameter("document");
+		String documentId = servletRequest.getParameter("document");
 		String userId = (String) profile.getUserUniqueIdentifier();
-		//String userId = (String)((UserProfile) profile).getUserId();
+		// String userId = (String)((UserProfile) profile).getUserId();
 		logger.debug("userId=" + userId);
 		logger.debug("documentId=" + documentId);
 
 		ContentServiceProxy contentProxy = new ContentServiceProxy(userId, servletRequest.getSession());
 
 		HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(servletRequest);
-		Content template = contentProxy.readTemplate(documentId,requestParameters);
+		Content template = contentProxy.readTemplate(documentId, requestParameters);
 		logger.debug("Read the template=" + template.getFileName());
 
 		InputStream is = null;
@@ -256,26 +252,26 @@ public class BirtReportServlet extends HttpServlet {
 			BASE64Decoder bASE64Decoder = new BASE64Decoder();
 			templateContent = bASE64Decoder.decodeBuffer(template.getContent());
 			is = new java.io.ByteArrayInputStream(templateContent);
-		}catch (Throwable t){
-			logger.warn("Error on decompile",t); 
+		} catch (Throwable t) {
+			logger.warn("Error on decompile", t);
 		}
 
 		String flgTemplateStandard = "true";
 		if (template.getFileName().indexOf(".zip") > -1) {
 			flgTemplateStandard = "false";
-		}else{
+		} else {
 			flgTemplateStandard = "true";
 		}
 
 		SpagoBIAccessUtils util = new SpagoBIAccessUtils();
-		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 		UUID uuid_local = uuidGen.generateTimeBasedUUID();
 		String executionId = uuid_local.toString();
 		executionId = executionId.replaceAll("-", "");
-		boolean propertiesLoaded=false;
+		boolean propertiesLoaded = false;
 		if (flgTemplateStandard.equalsIgnoreCase("false")) {
 			logger.debug("The template is a .ZIP file");
-			File fileZip = new File(getJRTempDir(servletContext,executionId), JS_FILE_ZIP + JS_EXT_ZIP);
+			File fileZip = new File(getJRTempDir(servletContext, executionId), JS_FILE_ZIP + JS_EXT_ZIP);
 			FileOutputStream foZip = new FileOutputStream(fileZip);
 			foZip.write(templateContent);
 			foZip.close();
@@ -286,59 +282,56 @@ public class BirtReportServlet extends HttpServlet {
 			while (totalZipEntries.hasMoreElements()) {
 				ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
 				if (entry.getName().endsWith(".jar")) {
-					jarFile = new File(getJRTempDirName(servletContext,executionId)+ entry.getName());
+					jarFile = new File(getJRTempDirName(servletContext, executionId) + entry.getName());
 					// set classloader with jar
 					ClassLoader previous = Thread.currentThread().getContextClassLoader();
 					DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
 					Thread.currentThread().setContextClassLoader(dcl);
-				}
-				else if (entry.getName().endsWith(".rptdesign")) {
+				} else if (entry.getName().endsWith(".rptdesign")) {
 					// set InputStream with report
-					File birtFile = new File(getJRTempDirName(servletContext, executionId)+ entry.getName());
+					File birtFile = new File(getJRTempDirName(servletContext, executionId) + entry.getName());
 					InputStream isBirt = new FileInputStream(birtFile);
 					byte[] templateRptDesign = new byte[0];
 					templateRptDesign = util.getByteArrayFromInputStream(isBirt);
 					is = new java.io.ByteArrayInputStream(templateRptDesign);
 				}
 				if (entry.getName().endsWith(".properties")) {
-					propertiesLoaded=true;
-				}					
+					propertiesLoaded = true;
+				}
 			}
-			String resourcePath = getJRTempDirName(servletContext,executionId);
-			if(resourcePath!=null){
+			String resourcePath = getJRTempDirName(servletContext, executionId);
+			if (resourcePath != null) {
 				this.birtReportEngine.getConfig().setResourcePath(resourcePath);
 			}
 
-		}else{
+		} else {
 
-			SourceBean engineConfig=null;
-			if (getClass().getResource("/engine-config.xml")!=null){
-				InputSource source=new InputSource(getClass().getResourceAsStream("/engine-config.xml"));
+			SourceBean engineConfig = null;
+			if (getClass().getResource("/engine-config.xml") != null) {
+				InputSource source = new InputSource(getClass().getResourceAsStream("/engine-config.xml"));
 				try {
 					engineConfig = SourceBean.fromXMLStream(source);
 				} catch (SourceBeanException e) {
-					logger.error("SourceBean exception for engine config",e);
+					logger.error("SourceBean exception for engine config", e);
 					e.printStackTrace();
-				}   
+				}
 			}
 
-			SourceBean sb = (SourceBean)engineConfig.getAttribute("RESOURCE_PATH_JNDI_NAME");
-			String path = (String) sb.getCharacters();
-			String resPath= SpagoBIUtilities.readJndiResource(path);			
-			resPath+="/birt_messages/";
+			SourceBean sb = (SourceBean) engineConfig.getAttribute("RESOURCE_PATH_JNDI_NAME");
+			String path = sb.getCharacters();
+			String resPath = SpagoBIUtilities.readJndiResource(path);
+			resPath += "/birt_messages/";
 
-			if(resPath!=null){
+			if (resPath != null) {
 				this.birtReportEngine.getConfig().setResourcePath(resPath);
 			}
 		}
-
 
 		logger.debug("OUT");
 		return is;
 	}
 
-	protected Map findReportParams(HttpServletRequest request, IReportRunnable design)
-	throws ConnectionDefinitionException {
+	protected Map findReportParams(HttpServletRequest request, IReportRunnable design) throws ConnectionDefinitionException {
 		logger.debug("IN");
 		String dateformat = request.getParameter("dateformat");
 		if (dateformat != null) {
@@ -358,12 +351,12 @@ public class BirtReportServlet extends HttpServlet {
 			paramValueString = decodeParameter(paramValueString);
 
 			if (paramValueString == null || paramValueString.trim().equals("")) {
-				logger.debug(this.getClass().getName() + "findReportParams() The report parameter " + paramName
-						+ " has no values set.");
+				logger.debug(this.getClass().getName() + "findReportParams() The report parameter " + paramName + " has no values set.");
 				continue;
-				//logger.debug(this.getClass().getName() + "findReportParams() The report parameter " + paramName
-				//		+ " has no values set. Gets default value.");
-				//paramValueString = param.getDefaultValue();
+				// logger.debug(this.getClass().getName() +
+				// "findReportParams() The report parameter " + paramName
+				// + " has no values set. Gets default value.");
+				// paramValueString = param.getDefaultValue();
 			}
 
 			int paramType = param.getDataType();
@@ -378,32 +371,30 @@ public class BirtReportServlet extends HttpServlet {
 				paramValue = paramValueString;
 
 			toReturn.put(paramName, paramValue);
-			logger.debug("PUT "+paramName+"/"+paramValueString);
+			logger.debug("PUT " + paramName + "/" + paramValueString);
 
 		}
 		logger.debug("OUT");
 		return toReturn;
 	}
 
-
-	private String getJRTempDirName(ServletContext servletContext, String executionId) {	
+	private String getJRTempDirName(ServletContext servletContext, String executionId) {
 		logger.debug("IN");
-		String jrTempDir = servletContext.getRealPath("tmpdir") + System.getProperty("file.separator") +
-		"reports" +  System.getProperty("file.separator") +
-		"JS_dir_" + executionId + System.getProperty("file.separator");
+		String jrTempDir = servletContext.getRealPath("tmpdir") + System.getProperty("file.separator") + "reports" + System.getProperty("file.separator")
+				+ "JS_dir_" + executionId + System.getProperty("file.separator");
 		logger.debug("OUT");
-		return jrTempDir;		
+		return jrTempDir;
 	}
 
 	private File getJRTempDir(ServletContext servletContext, String executionId) {
 		logger.debug("IN");
-		File jrTempDir = null;		
+		File jrTempDir = null;
 
 		String jrTempDirStr = getJRTempDirName(servletContext, executionId);
-		jrTempDir = new File(jrTempDirStr.substring(0, jrTempDirStr.length()-1));
+		jrTempDir = new File(jrTempDirStr.substring(0, jrTempDirStr.length() - 1));
 		jrTempDir.mkdirs();
 		logger.debug("OUT");
-		return jrTempDir;		
+		return jrTempDir;
 	}
 
 	/**
@@ -412,7 +403,7 @@ public class BirtReportServlet extends HttpServlet {
 	 * @param parValue
 	 */
 	private void addParToParMap(Map params, String parName, String parValue) {
-		logger.debug("IN.parName:"+parName+" /parValue:"+parValue);
+		logger.debug("IN.parName:" + parName + " /parValue:" + parValue);
 		String newParValue;
 
 		ParametersDecoder decoder = new ParametersDecoder();
@@ -438,25 +429,24 @@ public class BirtReportServlet extends HttpServlet {
 	 * @return jndi connection
 	 * @throws ConnectionDefinitionException
 	 */
-	private IDataSource findDataSource(HttpSession session, String userId, String documentId,String requestConnectionName)
-	throws ConnectionDefinitionException {
+	private IDataSource findDataSource(HttpSession session, String userId, String documentId, String requestConnectionName)
+			throws ConnectionDefinitionException {
 		logger.debug("IN");
 		if (documentId == null) {
 			logger.error("Document identifier NOT found. Returning null.");
-			throw new ConnectionParameterNotValidException("No default connection defined in "
-					+ "engine-config.xml file.");
+			throw new ConnectionParameterNotValidException("No default connection defined in " + "engine-config.xml file.");
 		}
 		DataSourceServiceProxy proxyDS = new DataSourceServiceProxy(userId, session);
 		IDataSource ds = null;
-		if (requestConnectionName!=null){
-			ds =proxyDS.getDataSourceByLabel(requestConnectionName);
-		}else{
-			ds =proxyDS.getDataSource(documentId);
+		if (requestConnectionName != null) {
+			ds = proxyDS.getDataSourceByLabel(requestConnectionName);
+		} else {
+			ds = proxyDS.getDataSource(documentId);
 		}
-		if (ds==null) {
+		if (ds == null) {
 			logger.warn("Data Source IS NULL. There are problems reading DataSource informations");
 			return null;
-		}	
+		}
 		logger.debug("OUT");
 		return ds;
 	}
@@ -466,15 +456,15 @@ public class BirtReportServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		String userId = (String) profile.getUserUniqueIdentifier();
-		logger.debug("userId="+userId);
-		String documentId = (String) request.getParameter("document");
+		logger.debug("userId=" + userId);
+		String documentId = request.getParameter("document");
 		logger.debug("documentId=" + documentId);
 
 		ServletContext servletContext = getServletContext();
 		this.birtReportEngine = BirtEngine.getBirtEngine(request, servletContext);
 		IReportRunnable design = null;
-		InputStream is = getTemplateContent(request,servletContext);
-		logger.debug( "runReport(): template document retrieved.");
+		InputStream is = getTemplateContent(request, servletContext);
+		logger.debug("runReport(): template document retrieved.");
 		// Open the report design
 		design = birtReportEngine.openReportDesign(is);
 
@@ -487,73 +477,72 @@ public class BirtReportServlet extends HttpServlet {
 			parName = (String) enumer.nextElement();
 			parValue = request.getParameter(parName);
 			addParToParMap(params, parName, parValue);
-			logger.debug("Read parameter [" + parName + "] with value ["+ parValue + "] from request");
+			logger.debug("Read parameter [" + parName + "] with value [" + parValue + "] from request");
 		}
 		logger.debug("Request parameters read sucesfully" + params);
 
 		SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
 		String token = proxyService.readTicket(session);
 
-		String kpiUrl = EnginConf.getInstance().getSpagoBiServerUrl()+"/publicjsp/kpiValueXml.jsp?SECURITY_TOKEN="+token+"&USERID="+userId;
-		//String kpiUrl = EnginConf.getInstance().getSpagoBiServerUrl()+"/testXml.jsp?"+"USERID="+userId;
+		String kpiUrl = EnginConf.getInstance().getSpagoBiServerUrl() + "/publicjsp/kpiValueXml.jsp?SECURITY_TOKEN=" + token + "&USERID=" + userId;
+		// String kpiUrl =
+		// EnginConf.getInstance().getSpagoBiServerUrl()+"/testXml.jsp?"+"USERID="+userId;
 
 		Locale locale = null;
 
-		String language=null;
-		String country=null;
+		String language = null;
+		String country = null;
 
 		String languageOverride = request.getParameter("LanguageOverride");
-		if (languageOverride != null){
+		if (languageOverride != null) {
 			language = languageOverride;
-		}else{
-			language=request.getParameter("SBI_LANGUAGE");
+		} else {
+			language = request.getParameter("SBI_LANGUAGE");
 		}
 		String countryOverride = request.getParameter("CountryOverride");
-		if (countryOverride != null){
+		if (countryOverride != null) {
 			country = countryOverride;
-		}else{
-			country=request.getParameter("SBI_COUNTRY");
+		} else {
+			country = request.getParameter("SBI_COUNTRY");
 		}
 
-
-		if(language!=null && country!=null){
-			locale=new Locale(language,country,"");
+		if (language != null && country != null) {
+			locale = new Locale(language, country, "");
+		} else {
+			locale = Locale.ENGLISH;
 		}
-		else{
-			locale=Locale.ENGLISH;
-		}
-		String outputFormat = request.getParameter("outputType");		
+		String outputFormat = request.getParameter("outputType");
 		logger.debug("outputType -- [" + outputFormat + "]");
 
-		logger.debug( "runReport(): report design opened successfully.");
+		logger.debug("runReport(): report design opened successfully.");
 		// Create task to run and render the report,
 		IRunAndRenderTask task = birtReportEngine.createRunAndRenderTask(design);
 		task.setLocale(locale);
-		logger.debug( "runReport(): RunAndRenderTask created successfully.");
+		logger.debug("runReport(): RunAndRenderTask created successfully.");
 		// Set parameters for the report
 		Map reportParams = findReportParams(request, design);
 
-		String requestConnectionName = (String) request.getParameter(CONNECTION_NAME);
+		String requestConnectionName = request.getParameter(CONNECTION_NAME);
 		logger.debug("requestConnectionName:" + requestConnectionName);
-		IDataSource ds = findDataSource(request.getSession(), userId, documentId,requestConnectionName);
+		IDataSource ds = findDataSource(request.getSession(), userId, documentId, requestConnectionName);
 		if (ds != null) {
 			logger.debug("DataSource founded.");
 
-			if (ds.checkIsJndi() ) {
+			if (ds.checkIsJndi()) {
 
-				if (ds.checkIsMultiSchema()){
-					String schema=null;
+				if (ds.checkIsMultiSchema()) {
+					String schema = null;
 					try {
-						String attrname=ds.getSchemaAttribute();
-						if (attrname!=null) schema = (String)profile.getUserAttribute(attrname);						
+						String attrname = ds.getSchemaAttribute();
+						if (attrname != null)
+							schema = (String) profile.getUserAttribute(attrname);
 					} catch (EMFInternalError e) {
 						logger.error("Cannot retrive ENTE", e);
 					}
-					reportParams.put("connectionName", ds.getJndi()+schema);
-				}else{
+					reportParams.put("connectionName", ds.getJndi() + schema);
+				} else {
 					reportParams.put("connectionName", ds.getJndi());
 				}
-
 
 			} else {
 				reportParams.put("driver", ds.getDriver());
@@ -566,15 +555,15 @@ public class BirtReportServlet extends HttpServlet {
 
 		reportParams.put("KpiDSXmlUrl", kpiUrl);
 
-		//gets static resources with SBI_RESOURCE_PATH system's parameter
+		// gets static resources with SBI_RESOURCE_PATH system's parameter
 		String resPathJNDI = EnginConf.getInstance().getResourcePath();
-		String resourcePath = resPathJNDI+"/img/";
-		String entity=(String)reportParams.get(SpagoBIConstants.SBI_ENTITY);
-		// IF exist an ENTITY  parameter concat to resourcePath
-		if (entity!=null && entity.length()>0){
-			resourcePath=resourcePath.concat(entity+"/");
+		String resourcePath = resPathJNDI + "/img/";
+		String entity = (String) reportParams.get(SpagoBIConstants.SBI_ENTITY);
+		// IF exist an ENTITY parameter concat to resourcePath
+		if (entity != null && entity.length() > 0) {
+			resourcePath = resourcePath.concat(entity + "/");
 		}
-		logger.debug("SetUp resourcePath:"+resourcePath);
+		logger.debug("SetUp resourcePath:" + resourcePath);
 		reportParams.put("SBI_RESOURCE_PATH", resourcePath);
 
 		task.setParameterValues(reportParams);
@@ -584,14 +573,14 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug("templateFileName -- [" + templateFileName + "]");
 		if (templateFileName == null || templateFileName.trim().equals(""))
 			templateFileName = "report";
-		IRenderOption renderOption = null; 
+		IRenderOption renderOption = null;
 
 		if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.PDF_RENDER_FORMAT)) {
 			renderOption = new PDFRenderOption();
 			renderOption.setOutputFormat(IBirtConstants.PDF_RENDER_FORMAT);
-			//renderOption.setSupportedImageFormats("JPG;jpg;PNG;png;BMP;bmp;SVG;svg;GIF;gif");
+			// renderOption.setSupportedImageFormats("JPG;jpg;PNG;png;BMP;bmp;SVG;svg;GIF;gif");
 			response.setContentType("application/pdf");
-			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".pdf");			
+			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".pdf");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) {
 			renderOption = prepareHtmlRenderOption(servletContext, request);
 			renderOption.setOutputFormat(IBirtConstants.HTML_RENDER_FORMAT);
@@ -613,10 +602,10 @@ public class BirtReportServlet extends HttpServlet {
 			// change emitter according to engine config.xml
 			SourceBean engineConfig = EnginConf.getInstance().getConfig();
 			String emitter = null;
-			if(engineConfig!=null){
+			if (engineConfig != null) {
 				SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute("XLS_EMITTER");
-				if(sourceBeanConf != null){
-					emitter = (String) sourceBeanConf.getCharacters();
+				if (sourceBeanConf != null) {
+					emitter = sourceBeanConf.getCharacters();
 					renderOption.setOption(IRenderOption.EMITTER_ID, emitter);
 				}
 			}
@@ -625,26 +614,29 @@ public class BirtReportServlet extends HttpServlet {
 			// renderOption.setOutputFileName(templateFileName + ".xls");
 			response.setContentType("application/vnd.ms-excel");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xls");
-} 
-//			else if (outputFormat != null && outputFormat.equalsIgnoreCase("xlsx")) {
-//			renderOption = prepareHtmlRenderOption(servletContext, request);
-//			// change emitter according to engine config.xml
-//			SourceBean engineConfig = EnginConf.getInstance().getConfig();
-//			String emitter = null;
-//			if(engineConfig!=null){
-//				SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute("XLS_EMITTER");
-//				if(sourceBeanConf != null){
-//					emitter = (String) sourceBeanConf.getCharacters();
-//					renderOption.setOption(IRenderOption.EMITTER_ID, emitter);
-//				}
-//			}
-//			// render
-//			renderOption.setOutputFormat("xlsx");
-//			// renderOption.setOutputFileName(templateFileName + ".xls");
-//			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-//			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xlsx");
-//
-//		}
+		}
+		// else if (outputFormat != null &&
+		// outputFormat.equalsIgnoreCase("xlsx")) {
+		// renderOption = prepareHtmlRenderOption(servletContext, request);
+		// // change emitter according to engine config.xml
+		// SourceBean engineConfig = EnginConf.getInstance().getConfig();
+		// String emitter = null;
+		// if(engineConfig!=null){
+		// SourceBean sourceBeanConf = (SourceBean)
+		// engineConfig.getAttribute("XLS_EMITTER");
+		// if(sourceBeanConf != null){
+		// emitter = (String) sourceBeanConf.getCharacters();
+		// renderOption.setOption(IRenderOption.EMITTER_ID, emitter);
+		// }
+		// }
+		// // render
+		// renderOption.setOutputFormat("xlsx");
+		// // renderOption.setOutputFileName(templateFileName + ".xls");
+		// response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		// response.setHeader("Content-disposition", "inline; filename=" +
+		// templateFileName + ".xlsx");
+		//
+		// }
 		else if (outputFormat != null && outputFormat.equalsIgnoreCase("ppt")) {
 			renderOption = prepareHtmlRenderOption(servletContext, request);
 			renderOption.setOutputFormat("ppt");
@@ -661,7 +653,7 @@ public class BirtReportServlet extends HttpServlet {
 			prepareCSVRender(reportParams, request, design, userId, documentId, profile, kpiUrl, response);
 			return;
 
-		}else {
+		} else {
 			logger.debug(" Output format parameter not set or not valid. Using default output format: HTML.");
 			outputFormat = IBirtConstants.HTML_RENDER_FORMAT;
 			renderOption = prepareHtmlRenderOption(servletContext, request);
@@ -670,35 +662,36 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-Type", "text/html");
 		}
 
-		Map userProfileAttrs = UserProfileUtils.getProfileAttributes( profile );
-		Map context = getTaskContext(userId, params, request, resPathJNDI, userProfileAttrs); 
-		//Map context = BirtUtility.getAppContext(request);
+		Map userProfileAttrs = UserProfileUtils.getProfileAttributes(profile);
+		Map context = getTaskContext(userId, params, request, resPathJNDI, userProfileAttrs);
+		// Map context = BirtUtility.getAppContext(request);
 		task.setAppContext(context);
-		renderOption.setOutputStream((OutputStream) response.getOutputStream());
+		renderOption.setOutputStream(response.getOutputStream());
 		task.setRenderOption(renderOption);
 
-		// setting HTML header if output format is HTML: this is necessary in order to inject the document.domain directive
-		// commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library
+		// setting HTML header if output format is HTML: this is necessary in
+		// order to inject the document.domain directive
+		// commented by Davide Zerbetto on 12/10/2009: there are problems with
+		// MIF (Ext ManagedIFrame library) library
 		/*
-		if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) {
-			((HTMLRenderOption) renderOption).setEmbeddable(true);
-			injectHTMLHeader(response);
-		}
+		 * if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT))
+		 * { ((HTMLRenderOption) renderOption).setEmbeddable(true);
+		 * injectHTMLHeader(response); }
 		 */
 
 		try {
 			task.run();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Error while running the report: " + e);
 			e.printStackTrace();
 		}
 		task.close();
 
-		// commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library
+		// commented by Davide Zerbetto on 12/10/2009: there are problems with
+		// MIF (Ext ManagedIFrame library) library
 		/*
-		if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) {
-			injectHTMLFooter(response);
-		}
+		 * if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT))
+		 * { injectHTMLFooter(response); }
 		 */
 
 		logger.debug("OUT");
@@ -711,32 +704,32 @@ public class BirtReportServlet extends HttpServlet {
 		String pass = EnginConf.getInstance().getPass();
 		String spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
 		HttpSession session = request.getSession();
-		String secureAttributes = (String)session.getAttribute( "isBackend" );
+		String secureAttributes = (String) session.getAttribute("isBackend");
 		String serviceUrlStr = null;
 		SourceBean engineConfig = EnginConf.getInstance().getConfig();
-		if(engineConfig!=null){
+		if (engineConfig != null) {
 			SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute("DataSetServiceProxy_URL");
-			serviceUrlStr = (String) sourceBeanConf.getCharacters();
+			serviceUrlStr = sourceBeanConf.getCharacters();
 		}
 		String token = null;
 		boolean isSecure = true;
-		if (secureAttributes!=null && secureAttributes.equals("true")){
+		if (secureAttributes != null && secureAttributes.equals("true")) {
 			isSecure = false;
 		}
 
-		if (!isSecure){
+		if (!isSecure) {
 			token = pass;
 		}
-		if ( ! UserProfile.isSchedulerUser(userId) ) {
+		if (!UserProfile.isSchedulerUser(userId)) {
 			SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
 			token = proxyService.readTicket(session);
-		}else{
+		} else {
 			token = "";
 		}
 
 		context.put("RESOURCE_PATH_JNDI_NAME", resourcePath);
-		context.put("SBI_BIRT_RUNTIME_IS_RUNTIME", "true"); 
-		context.put("SBI_BIRT_RUNTIME_USER_ID", userId); 
+		context.put("SBI_BIRT_RUNTIME_IS_RUNTIME", "true");
+		context.put("SBI_BIRT_RUNTIME_USER_ID", userId);
 		context.put("SBI_BIRT_RUNTIME_SECURE_ATTRS", secureAttributes);
 		context.put("SBI_BIRT_RUNTIME_SERVICE_URL", serviceUrlStr);
 		context.put("SBI_BIRT_RUNTIME_SERVER_URL", spagoBiServerURL);
@@ -751,240 +744,241 @@ public class BirtReportServlet extends HttpServlet {
 	}
 
 	/**
-	 * This method injects the HTML header into the report HTML output.
-	 * This is necessary in order to inject the document.domain javascript directive
+	 * This method injects the HTML header into the report HTML output. This is
+	 * necessary in order to inject the document.domain javascript directive
 	 */
-	/* commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library
-	protected void injectHTMLHeader(HttpServletResponse response) throws IOException {
-		logger.debug("IN");
-		String header = null;
-		try {
-			SourceBean config = EnginConf.getInstance().getConfig();
-			SourceBean htmlHeaderSb = (SourceBean) config.getAttribute("HTML_HEADER");
-			header = htmlHeaderSb.getCharacters();
-			if (header == null || header.trim().equals("")) {
-				throw new Exception("HTML_HEADER not configured");
-			}
-			header = header.replaceAll("\\$\\{SBI_DOMAIN\\}", EnginConf.getInstance().getSpagoBiDomain());
-		} catch (Exception e) {
-			logger.error("Error while retrieving HTML_HEADER from engine configuration.", e);
-			logger.info("Using default HTML header", e);
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
-			buffer.append("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></meta>");
-			buffer.append("  <script type=\"text/javascript\">");
-			buffer.append("    document.domain='" + EnginConf.getInstance().getSpagoBiDomain() + "';");
-			buffer.append("  </script>");
-			buffer.append("</head><body>");
-			header = buffer.toString();
-		}
-		response.getOutputStream().write(header.getBytes());
-		logger.debug("OUT");
-	}
+	/*
+	 * commented by Davide Zerbetto on 12/10/2009: there are problems with MIF
+	 * (Ext ManagedIFrame library) library protected void
+	 * injectHTMLHeader(HttpServletResponse response) throws IOException {
+	 * logger.debug("IN"); String header = null; try { SourceBean config =
+	 * EnginConf.getInstance().getConfig(); SourceBean htmlHeaderSb =
+	 * (SourceBean) config.getAttribute("HTML_HEADER"); header =
+	 * htmlHeaderSb.getCharacters(); if (header == null ||
+	 * header.trim().equals("")) { throw new
+	 * Exception("HTML_HEADER not configured"); } header =
+	 * header.replaceAll("\\$\\{SBI_DOMAIN\\}",
+	 * EnginConf.getInstance().getSpagoBiDomain()); } catch (Exception e) {
+	 * logger
+	 * .error("Error while retrieving HTML_HEADER from engine configuration.",
+	 * e); logger.info("Using default HTML header", e); StringBuffer buffer =
+	 * new StringBuffer(); buffer.append(
+	 * "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">"
+	 * ); buffer.append(
+	 * "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></meta>"
+	 * ); buffer.append("  <script type=\"text/javascript\">");
+	 * buffer.append("    document.domain='" +
+	 * EnginConf.getInstance().getSpagoBiDomain() + "';");
+	 * buffer.append("  </script>"); buffer.append("</head><body>"); header =
+	 * buffer.toString(); } response.getOutputStream().write(header.getBytes());
+	 * logger.debug("OUT"); }
 	 */
 
 	/**
-	 * This method injects the HTML footer into the report HTML output.
-	 * See injectHTMLHeader method
+	 * This method injects the HTML footer into the report HTML output. See
+	 * injectHTMLHeader method
 	 */
-	/* commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library
-	protected void injectHTMLFooter(HttpServletResponse response) throws IOException {
-		logger.debug("IN");
-		String footer = null;
-		try {
-			SourceBean config = EnginConf.getInstance().getConfig();
-			SourceBean htmlHeaderSb = (SourceBean) config.getAttribute("HTML_FOOTER");
-			footer = htmlHeaderSb.getCharacters();
-			if (footer == null || footer.trim().equals("")) {
-				throw new Exception("HTML_FOOTER not configured");
-			}
-		} catch (Exception e) {
-			logger.error("Error while retrieving HTML_FOOTER from engine configuration.", e);
-			logger.info("Using default HTML footer", e);
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("</body></html>");
-			footer = buffer.toString();
-		}
-		response.getOutputStream().write(footer.getBytes());
-		logger.debug("OUT");
-	}
+	/*
+	 * commented by Davide Zerbetto on 12/10/2009: there are problems with MIF
+	 * (Ext ManagedIFrame library) library protected void
+	 * injectHTMLFooter(HttpServletResponse response) throws IOException {
+	 * logger.debug("IN"); String footer = null; try { SourceBean config =
+	 * EnginConf.getInstance().getConfig(); SourceBean htmlHeaderSb =
+	 * (SourceBean) config.getAttribute("HTML_FOOTER"); footer =
+	 * htmlHeaderSb.getCharacters(); if (footer == null ||
+	 * footer.trim().equals("")) { throw new
+	 * Exception("HTML_FOOTER not configured"); } } catch (Exception e) {
+	 * logger.
+	 * error("Error while retrieving HTML_FOOTER from engine configuration.",
+	 * e); logger.info("Using default HTML footer", e); StringBuffer buffer =
+	 * new StringBuffer(); buffer.append("</body></html>"); footer =
+	 * buffer.toString(); } response.getOutputStream().write(footer.getBytes());
+	 * logger.debug("OUT"); }
 	 */
 
-	private void prepareCSVRender (Map reportParams, HttpServletRequest request, IReportRunnable design, String userId, String documentId, IEngUserProfile profile, String kpiUrl, HttpServletResponse response) throws Exception {
+	private void prepareCSVRender(Map reportParams, HttpServletRequest request, IReportRunnable design, String userId, String documentId,
+			IEngUserProfile profile, String kpiUrl, HttpServletResponse response) throws Exception {
 		logger.debug("IN");
 
-		//Create task to run the report 
+		// Create task to run the report
 		logger.debug("design: " + design.getReportName());
-		IRunTask CSVtask = birtReportEngine.createRunTask(design); 
+		IRunTask CSVtask = birtReportEngine.createRunTask(design);
 
-		//**** Set parameters for the report ****	
+		// **** Set parameters for the report ****
 
 		CSVtask.setParameterValues(reportParams);
 		CSVtask.validateParameters();
 
-		//************************************
+		// ************************************
 
-		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 		UUID uuid_local = uuidGen.generateTimeBasedUUID();
 		String executionId = uuid_local.toString();
 		executionId = executionId.replaceAll("-", "");
 
-		String nameFile = getJRTempDirName(getServletContext(), executionId)+ "csvreport.rptdocument";
+		String nameFile = getJRTempDirName(getServletContext(), executionId) + "csvreport.rptdocument";
 
 		Map context = BirtUtility.getAppContext(request);
 		CSVtask.setAppContext(context);
 
-		//Run the report and create the rptdocument
+		// Run the report and create the rptdocument
 		CSVtask.run(nameFile);
 
-		//Open the rptdocument
-		IReportDocument rptdoc = birtReportEngine.openReportDocument(nameFile); 
+		// Open the rptdocument
+		IReportDocument rptdoc = birtReportEngine.openReportDocument(nameFile);
 
 		logger.debug(rptdoc.getPageCount());
 
-
-		//*** Create the data extraction task ****
+		// *** Create the data extraction task ****
 		IDataExtractionTask iDataExtract = birtReportEngine.createDataExtractionTask(rptdoc);
-		ArrayList resultSetList = (ArrayList)iDataExtract.getResultSetList( );
+		ArrayList resultSetList = (ArrayList) iDataExtract.getResultSetList();
 
 		ICSVDataExtractionOption extractionOptions = new CSVDataExtractionOption();
+
+		// change csv encoding according to engine config.xml
+		SourceBean engineConfig = EnginConf.getInstance().getConfig();
+		if (engineConfig != null) {
+			SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute("CSV_EMITTER_ENCODING");
+			if (sourceBeanConf != null && !sourceBeanConf.getCharacters().trim().equalsIgnoreCase("")) {
+				String encoding = sourceBeanConf.getCharacters();
+				extractionOptions.setEncoding(encoding);
+			}
+		}
+
 		OutputStream responseOut = response.getOutputStream();
 
 		extractionOptions.setOutputFormat("csv");
 		extractionOptions.setSeparator(";");
 
-		//flag for exportdata found
+		// flag for exportdata found
 		boolean ed_found = false;
 
+		// check if there is the ExportData element
+		for (int j = 0; j < resultSetList.size(); j++) {
 
-		//check if there is the ExportData element
-		for (int j=0; j<resultSetList.size();j++){
+			// get an item
+			IResultSetItem resultItem = (IResultSetItem) resultSetList.get(j);
 
-			//get an item
-			IResultSetItem resultItem = (IResultSetItem)resultSetList.get(j);
-
-			//get the name of the resultSet
+			// get the name of the resultSet
 			String dispName = resultItem.getResultSetName();
 
-			if (dispName.equalsIgnoreCase("exportdata")){
+			if (dispName.equalsIgnoreCase("exportdata")) {
 				logger.debug("Found ExportData Element in report ");
 				ed_found = true;
 
-				//output directly on the response OutputStream
+				// output directly on the response OutputStream
 				extractionOptions.setOutputStream(responseOut);
 
-				//Set the HTTP response
+				// Set the HTTP response
 				response.setContentType("text/csv");
 				response.setHeader("Content-disposition", "inline; filename=reportcsv.csv");
-				iDataExtract.selectResultSet( dispName );
+				iDataExtract.selectResultSet(dispName);
 				iDataExtract.extract(extractionOptions);
-				logger.debug("Extraction successfull "+dispName);
+				logger.debug("Extraction successfull " + dispName);
 				break;
 			}
 		}
 
-		if (ed_found){
+		if (ed_found) {
 
-			//close the extract
+			// close the extract
 			iDataExtract.close();
 
-			//close the task
+			// close the task
 			CSVtask.close();
 
 			logger.debug("Finished");
 			logger.debug("OUT");
 		}
 
-
-		//ExtractData element not found, search all element to export
+		// ExtractData element not found, search all element to export
 		if (!ed_found) {
-			//check if there is only a result set and generate one CSV file
-			if (resultSetList.size() <= 1){
+			// check if there is only a result set and generate one CSV file
+			if (resultSetList.size() <= 1) {
 
-				//output directly on the response OutputStream
+				// output directly on the response OutputStream
 				extractionOptions.setOutputStream(responseOut);
 
-				//Set the HTTP response
+				// Set the HTTP response
 				response.setContentType("text/csv");
 				response.setHeader("Content-disposition", "inline; filename=reportcsv.csv");
 
-				IResultSetItem resultItem = (IResultSetItem)resultSetList.get(0);
+				IResultSetItem resultItem = (IResultSetItem) resultSetList.get(0);
 
-				//Set the name of the element you want to retrieve.
-				String dispName = resultItem.getResultSetName( );
-				iDataExtract.selectResultSet( dispName );
+				// Set the name of the element you want to retrieve.
+				String dispName = resultItem.getResultSetName();
+				iDataExtract.selectResultSet(dispName);
 				iDataExtract.extract(extractionOptions);
-				logger.debug("Extraction successfull "+dispName);
-			}
-			else {
-				//with more resultSet generate a zip file containing more CSV file
+				logger.debug("Extraction successfull " + dispName);
+			} else {
+				// with more resultSet generate a zip file containing more CSV
+				// file
 				try {
-					//Set the HTTP response
+					// Set the HTTP response
 					response.setContentType("application/zip");
 					response.setHeader("Content-disposition", "attachment; filename=reportcsv.zip");
 
-					//ZipOutputStream directly on the response OutputStream
-					ZipOutputStream outZip = new ZipOutputStream(responseOut); 
+					// ZipOutputStream directly on the response OutputStream
+					ZipOutputStream outZip = new ZipOutputStream(responseOut);
 
-					//temporary output buffer that contain a single csv
+					// temporary output buffer that contain a single csv
 					OutputStream tempOut = new ByteArrayOutputStream();
 
-					//temporary input buffer
+					// temporary input buffer
 					InputStream tempIn;
 
-					// Create a buffer for reading the files 
-					byte[] buf = new byte[1024]; 
+					// Create a buffer for reading the files
+					byte[] buf = new byte[1024];
 
-					//extracted csv is writed on the temp buffer 
+					// extracted csv is writed on the temp buffer
 					extractionOptions.setOutputStream(tempOut);
 
-					//iterate the resultSetList
-					for (int i=0; i<resultSetList.size();i++){
+					// iterate the resultSetList
+					for (int i = 0; i < resultSetList.size(); i++) {
 
-						//get an item
-						IResultSetItem resultItem = (IResultSetItem)resultSetList.get(i);
+						// get an item
+						IResultSetItem resultItem = (IResultSetItem) resultSetList.get(i);
 
-						//Set the name of the element you want to retrieve.
-						String dispName = resultItem.getResultSetName( );
-						iDataExtract.selectResultSet( dispName );
+						// Set the name of the element you want to retrieve.
+						String dispName = resultItem.getResultSetName();
+						iDataExtract.selectResultSet(dispName);
 						iDataExtract.extract(extractionOptions);
-						logger.debug("Extraction successfull "+dispName);
+						logger.debug("Extraction successfull " + dispName);
 
 						// Add ZIP entry to ZIP output stream
-						outZip.putNextEntry(new ZipEntry("reportcsv"+i+".csv"));
+						outZip.putNextEntry(new ZipEntry("reportcsv" + i + ".csv"));
 
-						//convert temp outputStream to InputStream
-						tempIn = new ByteArrayInputStream (((ByteArrayOutputStream) tempOut).toByteArray());
+						// convert temp outputStream to InputStream
+						tempIn = new ByteArrayInputStream(((ByteArrayOutputStream) tempOut).toByteArray());
 
-						// Transfer bytes from the temp buffer to the ZIP file 
-						int len; 
-						while ((len = tempIn.read(buf)) > 0) { 
-							outZip.write(buf, 0, len); 
-						} 
+						// Transfer bytes from the temp buffer to the ZIP file
+						int len;
+						while ((len = tempIn.read(buf)) > 0) {
+							outZip.write(buf, 0, len);
+						}
 
-						// Complete the entry 
+						// Complete the entry
 						outZip.closeEntry();
-						tempIn.close(); 
+						tempIn.close();
 
-						//reset the temp output buffer
-						((ByteArrayOutputStream)tempOut).reset();
+						// reset the temp output buffer
+						((ByteArrayOutputStream) tempOut).reset();
 					}
-					//**************************
+					// **************************
 
 					// Complete the ZIP file
-					outZip.close();  
+					outZip.close();
 
-				}
-				catch (IOException e){
+				} catch (IOException e) {
 					logger.error("Error while generating csv zip file: " + e);
 				}
 
 			}
 
-			//close the extract
+			// close the extract
 			iDataExtract.close();
 
-			//close the task
+			// close the task
 			CSVtask.close();
 
 			logger.debug("Finished");

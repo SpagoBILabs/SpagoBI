@@ -29,4 +29,6 @@
 <!-- 		<XLS_EMITTER>org.eclipse.birt.report.engine.emitter.prototype.excel</XLS_EMITTER>  -->
 <!--  tribix  emitter -->
  <XLS_EMITTER>org.uguess.birt.report.engine.emitter.xls</XLS_EMITTER>  
+ <!--  <CSV_EMITTER_ENCODING>UTF-8</CSV_EMITTER_ENCODING> -->
+ 
 </ENGINE-CONFIGURATION>
