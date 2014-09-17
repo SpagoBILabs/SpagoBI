@@ -13,28 +13,23 @@ import org.apache.log4j.Logger;
 /**
  * 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- *
+ * 
  */
 public class RegistryConfiguration {
 
 	public static transient Logger logger = Logger.getLogger(RegistryConfiguration.class);
-	
+
 	private String keyField = null;
 	private boolean pagination = true;
 	private String summaryColor = null;
-	
-	
+
 	private List<Filter> filters = null;
 	private List<Column> columns = null;
 	private List<Configuration> configurations = null;
 
 	private String entity = null;
 	private String columnsMaxSize = null;
-	
 
-	
-
-	
 	public boolean isPagination() {
 		return pagination;
 	}
@@ -42,7 +37,7 @@ public class RegistryConfiguration {
 	public void setPagination(boolean pagination) {
 		this.pagination = pagination;
 	}
-	
+
 	public String getSummaryColor() {
 		return summaryColor;
 	}
@@ -71,11 +66,10 @@ public class RegistryConfiguration {
 		return filters;
 	}
 
-
 	public void setFilters(List<Filter> filters) {
 		this.filters = filters;
 	}
-	
+
 	public List<Column> getColumns() {
 		return columns;
 	}
@@ -83,9 +77,7 @@ public class RegistryConfiguration {
 	public void setColumns(List<Column> columns) {
 		this.columns = columns;
 	}
-	
-	
-	
+
 	public List<Configuration> getConfigurations() {
 		return configurations;
 	}
@@ -117,43 +109,36 @@ public class RegistryConfiguration {
 		logger.warn("Column for field " + fieldName + " not found");
 		return null;
 	}
-	
-	
-	
+
 	public String getConfiguration(String name) {
 		String toReturn = null;
 		boolean found = false;
 		for (Iterator iterator = configurations.iterator(); iterator.hasNext() && !found;) {
 			Configuration conf = (Configuration) iterator.next();
-			if(conf.getName().equalsIgnoreCase(name)){
+			if (conf.getName().equalsIgnoreCase(name)) {
 				found = true;
 				toReturn = conf.getValue();
 			}
 		}
 		return toReturn;
 	}
-	
-	
-	
 
 	public class Filter {
-		
+
 		public static final String PRESENTATION_TYPE_MANUAL = "MANUAL";
-		
+
 		public static final String PRESENTATION_TYPE_COMBO = "COMBO";
 
 		public static final String PRESENTATION_TYPE_DRIVER = "DRIVER";
 
-		
 		private String title = null;
 
 		private String presentationType = PRESENTATION_TYPE_MANUAL;
-		
+
 		private String field = null;
-		
+
 		private String driverName = null;
-		
-		
+
 		public String getTitle() {
 			return title;
 		}
@@ -186,19 +171,17 @@ public class RegistryConfiguration {
 			this.driverName = driverName;
 		}
 
-		
 	}
-	
+
 	public class Configuration {
-		
-		public static final String  ENABLE_BUTTONs= "enableButtons";
-		
+
+		public static final String ENABLE_BUTTONs = "enableButtons";
+
 		public static final String IS_PK_AUTO_LOAD = "isPkAutoLoad";
 
 		public static final String TABLE_FOR_PK_MAX = "tableForPKMax";
 		public static final String COLUMN_FOR_PK_MAX = "columnForPKMax";
 
-		
 		private String name = null;
 
 		private String value = null;
@@ -218,57 +201,68 @@ public class RegistryConfiguration {
 		public void setValue(String value) {
 			this.value = value;
 		}
-		
+
 	}
-	
-	
-	
+
 	public class Column {
-		
+
 		public static final String EDITOR_TYPE_TEXT = "TEXT";
-		
+
 		public static final String EDITOR_TYPE_COMBO = "COMBO";
-		
+
 		public static final String EDITOR_TYPE_PICKER = "PICKER";
-		
+
 		private String field = null;
-		
+
 		private String subEntity = null;
-		
+
 		private String foreignKey = null;
 
 		private String editorType = EDITOR_TYPE_TEXT;
 
 		private boolean isEditable = true;
-		
+
 		private String color = "#FFFFFF";
 
 		private String summaryFunction = null;
 
 		private String title = null;
-		
-		// this is the entity (table::column) on which to order in case of referring to other table
+
+		// this is the entity (table::column) on which to order in case of
+		// referring to other table
 		private String orderBy = null;
 
-		// a column that in update must not be considered, for example because it is a collumn referred from another tablethat is not its natural key
+		// a column that in update must not be considered, for example because
+		// it is a column referred from another table that is not its natural
+		// key
 		private boolean infoColumn = false;
-		
+
 		private boolean isVisible = true;
-		//mandatory depending on another column value
+		// mandatory depending on another column value
 		private String mandatoryColumn = null;
-		//sets the column width
+		// sets the column width
 		private Integer size = null;
-		//sets if the result set is ordered by this column and can assume values "asc" or "desc"
+		// sets if the result set is ordered by this column and can assume
+		// values "asc" or "desc"
 		private String sorter = null;
-		//sets if the column of type number must be signed or unsigned (only positive numbers) by false or true values
+		// sets if the column of type number must be signed or unsigned (only
+		// positive numbers) by false or true values
 		private boolean unsigned = false;
+
 		private String format = null;
+
 		// sets if cells in column must be merged
-		
-		private String type = null; // optional, can be merge, measure 
+		private String type = null; // optional, can be merge, measure
 		public static final String COLUMN_TYPE_MERGE = "merge";
 		public static final String COLUMN_TYPE_MEASURE = "measure";
 
+		// sets if the column is correlated to other columns (one or more)
+		// visualized before (pre-requisite)
+		// optional, can be a simple value or a list:
+		// dependsFrom="field1,field2"
+		private String dependences = null;
+
+		private String dependencesEntity = null;
 
 		public String getTitle() {
 			return title;
@@ -317,7 +311,7 @@ public class RegistryConfiguration {
 		public void setSorter(String sorter) {
 			this.sorter = sorter;
 		}
-		
+
 		public String getColor() {
 			return color;
 		}
@@ -326,7 +320,6 @@ public class RegistryConfiguration {
 			this.color = color;
 		}
 
-		
 		public String getSummaryFunction() {
 			return summaryFunction;
 		}
@@ -334,7 +327,6 @@ public class RegistryConfiguration {
 		public void setSummaryFunction(String summaryFunction) {
 			this.summaryFunction = summaryFunction;
 		}
-		
 
 		public String getMandatoryColumn() {
 			return mandatoryColumn;
@@ -353,7 +345,7 @@ public class RegistryConfiguration {
 		}
 
 		private String mandatoryValue = null;
-		
+
 		public String getField() {
 			return field;
 		}
@@ -385,7 +377,7 @@ public class RegistryConfiguration {
 		public void setVisible(boolean isVisible) {
 			this.isVisible = isVisible;
 		}
-		
+
 		public String getSubEntity() {
 			return subEntity;
 		}
@@ -393,7 +385,7 @@ public class RegistryConfiguration {
 		public void setSubEntity(String subEntity) {
 			this.subEntity = subEntity;
 		}
-		
+
 		public String getForeignKey() {
 			return foreignKey;
 		}
@@ -402,11 +394,11 @@ public class RegistryConfiguration {
 			this.foreignKey = foreignKey;
 		}
 
-		public boolean isMerge(){
+		public boolean isMerge() {
 			return (type != null && type.equalsIgnoreCase(COLUMN_TYPE_MERGE));
 		}
 
-		public boolean isMeasure(){
+		public boolean isMeasure() {
 			return (type != null && type.equalsIgnoreCase(COLUMN_TYPE_MEASURE));
 		}
 
@@ -425,9 +417,23 @@ public class RegistryConfiguration {
 		public void setInfoColumn(boolean infoColumn) {
 			this.infoColumn = infoColumn;
 		}
-		
+
+		public String getDependences() {
+			return dependences;
+		}
+
+		public void setDependences(String dependences) {
+			this.dependences = dependences;
+		}
+
+		public String getDependencesEntity() {
+			return dependencesEntity;
+		}
+
+		public void setDependencesEntity(String dependencesEntity) {
+			this.dependencesEntity = dependencesEntity;
+		}
+
 	}
-	
-	
-		
+
 }
