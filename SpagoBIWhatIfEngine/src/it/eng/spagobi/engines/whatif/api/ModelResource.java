@@ -123,6 +123,10 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 		String expression = null;
+
+		// check if a version has been selected in the cube
+		((SpagoBIPivotModel) ei.getPivotModel()).getActualVersionSlicer(ei.getModelConfig());
+
 		try {
 			JSONObject json = RestUtilities.readBodyAsJSONObject(getServletRequest());
 			expression = json.getString(EXPRESSION);
