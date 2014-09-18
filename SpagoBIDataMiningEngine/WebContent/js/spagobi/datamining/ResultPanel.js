@@ -48,11 +48,11 @@ Ext.define('Sbi.datamining.ResultPanel', {
 	},
 
 	initComponent: function() {
+
 		this.callParent();
 
 	}
 
-	
 	, getResult: function(){
 		
 		var thisPanel = this;
@@ -92,13 +92,9 @@ Ext.define('Sbi.datamining.ResultPanel', {
 				}
 				thisPanel.update(html);
 			}
-			
-			//thisPanel.outputPanel.uploadPanel.refreshUploadButtons();
 		};
-		
-		
 		
 		service.callService(this, functionSuccess);
 	}
-	
+
 });
