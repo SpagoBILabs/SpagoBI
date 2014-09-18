@@ -11,18 +11,18 @@ import java.util.StringTokenizer;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * 
  */
-public class StatementTockenizer extends StringTokenizer{
+public class StatementTockenizer extends StringTokenizer {
 
-	private String satement;
-	private String currentToken;
+	private final String satement;
+	private final String currentToken;
 	private List<String> tockens;
 	private int tockenCount;
-	
+
 	private static final String DELIMITERS = "+-|*/()<>=!,";
-	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = {"distinct", " like ", "case when", " when ", " then ", "else", " end ", "not in ", " in ", " between", "is not null ", "is null ", "is not empty " , "is empty ", "not member of", "member of", " and ", " or "};
-	
+	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = { " as ", "distinct", " like ", "case when", " when ", " then ", "else",
+			" end ", "not in ", " in ", " between", "is not null ", "is null ", "is not empty ", "is empty ", "not member of", "member of", " and ", " or " };
 
 	/**
 	 * @param str
@@ -32,58 +32,59 @@ public class StatementTockenizer extends StringTokenizer{
 		satement = str;
 		currentToken = null;
 		getAllTockens();
-		tockenCount=0;
+		tockenCount = 0;
 	}
-	
-	private void getAllTockens(){
+
+	private void getAllTockens() {
 		tockens = new ArrayList<String>();
-		while(super.hasMoreTokens()){
-			parseTocken( super.nextToken());
+		while (super.hasMoreTokens()) {
+			parseTocken(super.nextToken());
 		}
 	}
-	
-	private void parseTocken(String tocken){
-		int position =0;
-		while(tocken.length()>0){
+
+	private void parseTocken(String tocken) {
+		int position = 0;
+		while (tocken.length() > 0) {
 			boolean foundAdditional = false;
-			for(int i=0; i<ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS.length; i++){
+			for (int i = 0; i < ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS.length; i++) {
 				position = tocken.toLowerCase().indexOf(ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS[i]);
-				if(position>=0){
-					if(position>0){
-						tockens.add(tocken.substring(0,position));
+				if (position >= 0) {
+					if (position > 0) {
+						tockens.add(tocken.substring(0, position));
 					}
-					tocken = tocken.substring(position+ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS[i].length() );
+					tocken = tocken.substring(position + ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS[i].length());
 					foundAdditional = true;
 					break;
 				}
 			}
-			if(!foundAdditional){
+			if (!foundAdditional) {
 				tockens.add(tocken);
 				break;
 			}
 
 		}
 	}
-	
-	public String nextTokenInStatement(){
+
+	public String nextTokenInStatement() {
 		String nextToken;
-		
+
 		nextToken = null;
 		try {
-			nextToken=tockens.get(tockenCount);
+			nextToken = tockens.get(tockenCount);
 			nextToken = nextToken.trim();
 			tockenCount++;
 
-		} catch(Throwable t) {
-			throw new RuntimeException("An unexpected error occured during tokenization of statement [" + satement + "] (current token: [" + currentToken + "]; next: token: [" + nextToken + "])", t);
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured during tokenization of statement [" + satement + "] (current token: [" + currentToken
+					+ "]; next: token: [" + nextToken + "])", t);
 		}
-		
+
 		return nextToken;
 	}
-	
-	public boolean hasMoreTokens(){
-		return tockenCount<tockens.size();
+
+	@Override
+	public boolean hasMoreTokens() {
+		return tockenCount < tockens.size();
 	}
-	
 
 }
