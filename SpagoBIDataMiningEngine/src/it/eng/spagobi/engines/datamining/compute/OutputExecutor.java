@@ -10,12 +10,14 @@ import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.engines.datamining.model.Variable;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -47,31 +49,43 @@ public class OutputExecutor {
 		this.re = re;
 	}
 
-	protected DataMiningResult evalOutput(Output out, ScriptExecutor scriptExecutor) throws IOException {
+	protected DataMiningResult evalOutput(Output out, ScriptExecutor scriptExecutor) throws Exception {
 
 		// output -->if image and function --> execute function then prepare
 		// output
 		// output -->if script --> execute script then prepare output
 
 		DataMiningResult res = new DataMiningResult();
-
+		
+		List<Variable> variables = out.getVariables();		
+		//replace in function and in value attributes 
+		String function = out.getOutputFunction();
+		if(function != null && variables!= null && !variables.isEmpty()){
+			function = DataMiningUtils.replaceVariables(variables, function);
+		}
+		String outVal = out.getOutputValue();
+		if(outVal != null && variables!= null && !variables.isEmpty()){
+			outVal = DataMiningUtils.replaceVariables(variables, outVal);
+		}
+		
+		
 		if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.IMAGE_OUTPUT) && out.getOutputName() != null) {
-			res.setVariablename(out.getOutputValue());// could be multiple value
+			res.setVariablename(outVal);// could be multiple value
 														// comma separated
 			String plotName = out.getOutputName();
 			re.eval(getPlotFilePath(plotName));
-			String function = out.getOutputFunction();
+			
 
 			if (function.equals("hist")) {
 				// predefined Histogram function
-				re.eval(function + "(" + out.getOutputValue() + ", col=4)");
+				re.eval(function + "(" + outVal + ", col=4)");
 			} else if (function.equals("plot") || function.equals("biplot")) {
 				// predefined plot/biplot functions
-				re.eval(function + "(" + out.getOutputValue() + ", col=2)");
+				re.eval(function + "(" + outVal + ", col=2)");
 			} else {
 				// function recalling a function inside the main script (auto)
 				// to produce an image result
-				String outVal = out.getOutputValue();
+				
 				if (outVal == null || outVal.equals("")) {
 					re.eval(function);
 				} else {
@@ -84,14 +98,14 @@ public class OutputExecutor {
 			res.setOutputType(out.getOutputType());
 			res.setResult(getPlotImageAsBase64(out.getOutputName()));
 			res.setPlotName(plotName);
-			scriptExecutor.deleteTemporarySourceScript(DataMiningDatasetUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX
+			scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX
 					+ plotName + "." + OUTPUT_PLOT_EXTENSION);
 
-		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.TEXT_OUTPUT) && out.getOutputValue() != null && out.getOutputName() != null) {
+		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.TEXT_OUTPUT) && outVal != null && out.getOutputName() != null) {
 
-			String function = out.getOutputFunction();
+
 			REXP rexp = null;
-			String outVal = out.getOutputValue();
+
 			if (function != null) {
 				if (outVal == null || outVal.equals("")) {
 					outVal = out.getOuputLabel();
@@ -101,7 +115,7 @@ public class OutputExecutor {
 				}
 
 			} else {
-				rexp = re.eval(out.getOutputValue());
+				rexp = re.eval(outVal);
 			}
 			res.setVariablename(outVal);// could be multiple value
 			// comma separated
@@ -120,14 +134,14 @@ public class OutputExecutor {
 	private String getPlotFilePath(String plotName) throws IOException {
 		String path = null;
 		if (plotName != null && !plotName.equals("")) {
-			String filePath = DataMiningDatasetUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/");
+			String filePath = DataMiningUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/");
 			path = OUTPUT_PLOT_IMG + "(\"" + filePath + DataMiningConstants.DATA_MINING_TEMP_FOR_SCRIPT + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
 		}
 		return path;
 	}
 
 	public String getPlotImageAsBase64(String plotName) throws IOException {
-		String fileImg = DataMiningDatasetUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
+		String fileImg = DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
 				+ OUTPUT_PLOT_EXTENSION;
 		BufferedImage img = null;
 		String imgstr = null;

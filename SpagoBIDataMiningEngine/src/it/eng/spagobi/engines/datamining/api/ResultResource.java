@@ -8,7 +8,7 @@ package it.eng.spagobi.engines.datamining.api;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
-import it.eng.spagobi.engines.datamining.compute.DataMiningDatasetUtils;
+import it.eng.spagobi.engines.datamining.compute.DataMiningUtils;
 import it.eng.spagobi.engines.datamining.compute.DataMiningExecutor;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.Output;
@@ -71,6 +71,9 @@ public class ResultResource extends AbstractDataMiningEngineService {
 								} catch (IOException e) {
 									logger.error("Error executing script", e);
 									throw new SpagoBIEngineRuntimeException("Error executing script", e);
+								} catch (Exception e) {
+									logger.error("Error in script code generation", e);
+									throw new SpagoBIEngineRuntimeException("Error in script code generation", e);
 								}
 							}
 						}
@@ -105,7 +108,7 @@ public class ResultResource extends AbstractDataMiningEngineService {
 		Boolean resNeeded = true;
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 
-		resNeeded = DataMiningDatasetUtils.areDatasetsProvided(dataMiningEngineInstance, getUserProfile());
+		resNeeded = DataMiningUtils.areDatasetsProvided(dataMiningEngineInstance, getUserProfile());
 		if (!resNeeded) {
 			return getJsonKo();
 		}

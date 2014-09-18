@@ -20,8 +20,17 @@ public class DataMiningCommand implements Serializable {
 	private String mode;
 	private String label;
 	private List<Output> outputs;
+	private List<Variable> variables;
 	private String action;
 	private Boolean executed;
+
+	public List<Variable> getVariables() {
+		return variables;
+	}
+
+	public void setVariables(List<Variable> variables) {
+		this.variables = variables;
+	}
 
 	public Boolean getExecuted() {
 		return executed;

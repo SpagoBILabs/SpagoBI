@@ -71,7 +71,7 @@ public class DataMiningExecutor {
 		outputExecutor.setRe(re);
 		scriptExecutor.setRe(re);
 
-		DataMiningDatasetUtils.createUserResourcesPath(profile);
+		DataMiningUtils.createUserResourcesPath(profile);
 		// get user R workspace
 		loadUserWorkSpace();
 	}
@@ -88,9 +88,9 @@ public class DataMiningExecutor {
 	 * @param userProfile
 	 * @param executionType
 	 * @return DataMiningResult
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile) throws IOException {
+	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile) throws Exception {
 
 		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
 

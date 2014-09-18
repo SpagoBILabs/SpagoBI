@@ -90,4 +90,44 @@ public class OutputsResource extends AbstractDataMiningEngineService {
 		logger.debug("OUT");
 		return getJsonSuccess();
 	}
+	@GET
+	@Path("/getVariables/{output}")
+	@Produces("text/html; charset=UTF-8")
+	public String getVariables(@PathParam("output") String outputName) {
+		logger.debug("IN");
+
+		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
+		String variablesJson = "";
+		List<DataMiningCommand> commands = null;
+		if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
+			commands = dataMiningEngineInstance.getCommands();
+			if(commands != null){
+				for (Iterator it = commands.iterator(); it.hasNext();) {
+					DataMiningCommand cmd = (DataMiningCommand) it.next();
+					List<Output> outputs = cmd.getOutputs();
+					if (outputs != null && !outputs.isEmpty()) {
+						for (Iterator it2 = outputs.iterator(); it2.hasNext();) {
+							Output output = (Output) it2.next();
+							if (output.getOutputName().equals(outputName)) {
+								List variables = output.getVariables();
+								variablesJson = serializeList(variables);
+							}
+						}
+					}
+					
+					List variables = cmd.getVariables();
+					variablesJson = serializeList(variables);
+				}
+			}
+		}
+
+		if (!isNullOrEmpty(variablesJson)) {
+			logger.debug("Returning variables list");
+		} else {
+			logger.debug("No variables list found");
+		}
+
+		logger.debug("OUT");
+		return variablesJson;
+	}
 }

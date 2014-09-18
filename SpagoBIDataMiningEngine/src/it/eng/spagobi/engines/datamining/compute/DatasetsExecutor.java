@@ -51,7 +51,7 @@ public class DatasetsExecutor {
 	// REXP datasetNameInR = re.eval(ds.getName());
 	// if (datasetNameInR == null) {
 	// File fileDSDir = new
-	// File(DataMiningDatasetUtils.getUserResourcesPath(profile) +
+	// File(DataMiningUtils.getUserResourcesPath(profile) +
 	// ds.getName());
 	// // /find file in dir
 	// File[] dsfiles = fileDSDir.listFiles();
@@ -74,7 +74,7 @@ public class DatasetsExecutor {
 	// try {
 	//
 	// String csvToEval =
-	// DataMiningDatasetUtils.getFileFromSpagoBIDataset(paramsFilled, ds,
+	// DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds,
 	// profile);
 	// String stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval +
 	// "\",header = TRUE, sep = \",\");";
@@ -102,7 +102,7 @@ public class DatasetsExecutor {
 					// tries to get it from user workspace
 					REXP datasetNameInR = re.eval(ds.getName());
 					if (datasetNameInR == null) {
-						File fileDSDir = new File(DataMiningDatasetUtils.getUserResourcesPath(profile) + ds.getName());
+						File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
 						// /find file in dir
 						File[] dsfiles = fileDSDir.listFiles();
 						if (dsfiles != null && dsfiles.length != 0) {
@@ -123,7 +123,7 @@ public class DatasetsExecutor {
 					// the engine, so it must be recalculated every time
 					try {
 
-						String csvToEval = DataMiningDatasetUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
+						String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
 						String stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
 						re.eval(stringToEval);
 
@@ -139,7 +139,7 @@ public class DatasetsExecutor {
 
 	protected void updateDataset(DataMiningDataset ds) throws IOException {
 
-		File fileDSDir = new File(DataMiningDatasetUtils.getUserResourcesPath(profile) + ds.getName());
+		File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
 		// /find file in dir
 		File[] dsfiles = fileDSDir.listFiles();
 
