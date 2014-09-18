@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.model;
 
+import java.util.List;
+
 public class Output {
 	/**
 	 * outputType: possible values image,text or script
@@ -33,8 +35,18 @@ public class Output {
 	/**
 	 * outputFunction: used by image outputType for simple functions as plot,
 	 * biplot ecc
-	 */
+	 */	
 	private String outputFunction;
+	
+	private List<Variable> variables;
+
+	public List<Variable> getVariables() {
+		return variables;
+	}
+
+	public void setVariables(List<Variable> variables) {
+		this.variables = variables;
+	}
 
 	public String getOutputFunction() {
 		return outputFunction;

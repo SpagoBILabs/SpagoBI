@@ -10,6 +10,7 @@ import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
 import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.engines.datamining.model.Variable;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -67,6 +68,11 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	public static String PROP_PARAMETER_ALIAS = "as";
 	public static String TAG_PARAMETERS = "PARAMETERS";
 	public static String TAG_PARAMETER = "PARAMETER";
+	
+	public static String TAG_VARIABLES = "VARIABLES";
+	public static String TAG_VARIABLE = "VARIABLE";
+	public static String VARIABLE_ATTRIBUTE_NAME = "name";
+	public static String VARIABLE_ATTRIBUTE_DEFAULT = "default";
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(DataMiningXMLTemplateParser.class);
@@ -216,9 +222,49 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 									out.setOuputLabel(outputLabel);
 									String outputFunction = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_FUNCTION);
 									out.setOutputFunction(outputFunction);
+									
+									SourceBean varSB = (SourceBean) outputSB.getAttribute(TAG_VARIABLES);
+									if (varSB != null) {
+
+										List<Variable> variables = new ArrayList<Variable>();
+										List<SourceBean> variablesListSB = varSB.getAttributeAsList(TAG_VARIABLE);
+										if (variablesListSB != null && variablesListSB.size() != 0) {
+											for (Iterator iterator3 = variablesListSB.iterator(); iterator3.hasNext();) {
+												SourceBean variableSB = (SourceBean) iterator3.next();
+												Variable var= new Variable();
+												String name = (String) variableSB.getAttribute(VARIABLE_ATTRIBUTE_NAME);
+												var.setName(name);
+												String def = (String) variableSB.getAttribute(VARIABLE_ATTRIBUTE_DEFAULT);
+												var.setDefaultVal(def);
+
+												variables.add(var);
+											}
+											out.setVariables(variables);
+										}
+									}
 									outputs.add(out);
 								}
 								command.setOutputs(outputs);
+							}
+						}
+
+						SourceBean varSB = (SourceBean) commandSB.getAttribute(TAG_VARIABLES);
+						if (varSB != null) {
+
+							List<Variable> variables = new ArrayList<Variable>();
+							List<SourceBean> variablesListSB = varSB.getAttributeAsList(TAG_VARIABLE);
+							if (variablesListSB != null && variablesListSB.size() != 0) {
+								for (Iterator iterator2 = variablesListSB.iterator(); iterator2.hasNext();) {
+									SourceBean variableSB = (SourceBean) iterator2.next();
+									Variable var= new Variable();
+									String name = (String) variableSB.getAttribute(VARIABLE_ATTRIBUTE_NAME);
+									var.setName(name);
+									String def = (String) variableSB.getAttribute(VARIABLE_ATTRIBUTE_DEFAULT);
+									var.setDefaultVal(def);
+
+									variables.add(var);
+								}
+								command.setVariables(variables);
 							}
 						}
 						commands.add(command);

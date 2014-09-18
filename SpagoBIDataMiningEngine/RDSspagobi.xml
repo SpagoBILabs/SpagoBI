@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <DATA_MINING>
     <PARAMETERS>
-        <PARAMETER name="par1" />
-        <PARAMETER name="par2" />
-        <PARAMETER name="par3" />
+        <PARAMETER name="par1" alias="par1"/>
     </PARAMETERS> 
 	<SCRIPTS>  
         <SCRIPT name="scriptroll" mode="auto" datasets="spagobids"  label="label scriptroll">

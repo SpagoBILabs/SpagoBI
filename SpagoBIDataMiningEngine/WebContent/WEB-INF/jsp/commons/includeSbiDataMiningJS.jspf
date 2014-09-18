@@ -25,6 +25,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
 
+<script type="text/javascript" src='../js/spagobi/datamining/FillVariablesPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/datamining/ResultPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/datamining/UploadPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/datamining/OutputPanel.js'></script>

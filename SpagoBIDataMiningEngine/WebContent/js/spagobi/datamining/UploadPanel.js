@@ -232,31 +232,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 	},
 	
 	uploadFiles: function(form, fName, posItem){
-//		//check file type
-//		if(form != null && form.readType != null){
-//			var fileExtension='';
-//			if(form.readType == table){
-//				if(fName.indexOf('txt', fName.length - 'txt'.length) == -1){
-//							Ext.Msg.show({
-//			     				title : LN('sbi.dm.execution.msg'),
-//			   				   msg: 'File must be of tipe csv or tsv',
-//			   				   buttons: Ext.Msg.OK
-//			   				});
-//							return;
-//						}
-//			}else if(form.readType =='csv' || form.readType =='csv2'){
-//				if(fName.indexOf('csv', fName.length - 'csv'.length) == -1||
-//				fName.indexOf('tsv', fName.length - 'tsv'.length) == -1){
-//					Ext.Msg.show({
-//	     				title : LN('sbi.dm.execution.msg'),
-//	   				   msg: 'File must be of tipe csv or tsv',
-//	   				   buttons: Ext.Msg.OK
-//	   				});
-//					return;
-//				}
-//				
-//			}
-//		}
+
         var thisPanel = this;
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "dataset"

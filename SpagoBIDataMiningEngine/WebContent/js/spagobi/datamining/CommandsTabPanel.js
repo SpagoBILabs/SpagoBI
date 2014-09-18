@@ -19,15 +19,27 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 	//title: 'Data Mining Engine',
     activeTab: 0,
     tosetactive:0,
+    fillVarPanel: null,
    
 	config:{
 		border: 0
-
 	},
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
 		
+		this.varWin = Ext.create('Ext.Window', {
+	        width: 500,
+	        height: 100,
+	        x: 10,
+	        y: 100,
+	        plain: true,
+	        autoDestroy: false,
+	        headerPosition: 'right',
+	        closeAction:'hide',
+	        layout: 'fit',
+	        items: []
+	    });
 		this.callParent(arguments);
 	},
 
@@ -109,5 +121,9 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 		};
 		service.callService(this, functionSuccess);
 	}
-	
+	, addVariables: function(commandName){
+		this.fillVarPanel = Ext.create('Sbi.datamining.FillVariablesPanel',{callerName : commandName});
+		this.varWin.add(this.fillVarPanel);
+		this.varWin.show();
+	}
 });

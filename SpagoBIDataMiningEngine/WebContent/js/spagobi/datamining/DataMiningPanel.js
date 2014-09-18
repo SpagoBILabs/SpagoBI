@@ -33,7 +33,7 @@ Ext.define('Sbi.datamining.DataMiningPanel', {
 	            'tabchange': function (tabPanel, tab) {
 
 	               tabPanel.setCommandAutoMode(tab.commandName);
-	               //tab.setActive();
+	               //tabPanel.addVariables(tab.commandName);
 	            }
 	        }
 			
@@ -49,8 +49,6 @@ Ext.define('Sbi.datamining.DataMiningPanel', {
 
 		this.callParent();
 	}
-
-	
 	
 	
 });

@@ -7,10 +7,12 @@ package it.eng.spagobi.engines.datamining.compute;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.datamining.DataMiningEngineConfig;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.engines.datamining.model.Variable;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -23,13 +25,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-public class DataMiningDatasetUtils {
-	static private Logger logger = Logger.getLogger(DataMiningDatasetUtils.class);
+public class DataMiningUtils {
+	static private Logger logger = Logger.getLogger(DataMiningUtils.class);
 
 	public static final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath()
 			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
@@ -152,5 +155,22 @@ public class DataMiningDatasetUtils {
 			File temp = new File(userPathFile, DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX);
 			temp.mkdir();
 		}
+	}
+	protected static String replaceVariables(List<Variable> variables, String code) throws Exception{
+		HashMap parameters = new HashMap<String, Object>();
+		if(variables != null && !variables.isEmpty()){
+			for (Iterator it = variables.iterator(); it.hasNext();) {
+				Variable var = (Variable)it.next();
+				Object val = var.getValue();
+				if(val == null){
+					val = var.getDefaultVal();
+				}
+				parameters.put(var.getName(), val);
+			}
+			if(code != null && !code.equals("")){
+				code = StringUtilities.substituteParametersInString(code, parameters, null, false);
+			}
+		}
+		return code;
 	}
 }

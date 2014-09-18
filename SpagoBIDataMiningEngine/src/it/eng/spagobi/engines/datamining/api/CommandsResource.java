@@ -10,6 +10,7 @@ import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.engines.datamining.model.Variable;
 import it.eng.spagobi.engines.datamining.serializer.SerializationException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -61,28 +62,61 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 		List<DataMiningCommand> commands = null;
 		if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
 			commands = dataMiningEngineInstance.getCommands();
-			for (Iterator it = commands.iterator(); it.hasNext();) {
-				DataMiningCommand cmd = (DataMiningCommand) it.next();
-				if (cmd.getName().equals(commandName)) {
-					cmd.setMode(DataMiningConstants.EXECUTION_TYPE_AUTO);
-					if (cmd.getOutputs() != null && !cmd.getOutputs().isEmpty()) {
-						for (Iterator it2 = cmd.getOutputs().iterator(); it2.hasNext();) {
-							Output output = (Output) it2.next();
-							if (output.getOutputMode().equals(DataMiningConstants.EXECUTION_TYPE_AUTO)) {
-								try {
-									autoOutputJson = serialize(output);
-								} catch (SerializationException e) {
-									throw new SpagoBIEngineRuntimeException("Error serializing output", e);
+			if(commands != null){
+				for (Iterator it = commands.iterator(); it.hasNext();) {
+					DataMiningCommand cmd = (DataMiningCommand) it.next();
+					if (cmd.getName().equals(commandName)) {
+						cmd.setMode(DataMiningConstants.EXECUTION_TYPE_AUTO);
+						if (cmd.getOutputs() != null && !cmd.getOutputs().isEmpty()) {
+							for (Iterator it2 = cmd.getOutputs().iterator(); it2.hasNext();) {
+								Output output = (Output) it2.next();
+								if (output.getOutputMode().equals(DataMiningConstants.EXECUTION_TYPE_AUTO)) {
+									try {
+										autoOutputJson = serialize(output);
+									} catch (SerializationException e) {
+										throw new SpagoBIEngineRuntimeException("Error serializing output", e);
+									}
 								}
 							}
 						}
+					} else {
+						cmd.setMode(DataMiningConstants.EXECUTION_TYPE_MANUAL);
 					}
-				} else {
-					cmd.setMode(DataMiningConstants.EXECUTION_TYPE_MANUAL);
 				}
 			}
 		}
 		logger.debug("OUT");
 		return autoOutputJson;
+	}
+	@GET
+	@Path("/getVariables/{command}")
+	@Produces("text/html; charset=UTF-8")
+	public String getVariables(@PathParam("command") String commandName) {
+		logger.debug("IN");
+
+		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
+		String variablesJson = "";
+		List<DataMiningCommand> commands = null;
+		if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
+			commands = dataMiningEngineInstance.getCommands();
+			if(commands != null){
+				for (Iterator it = commands.iterator(); it.hasNext();) {
+					DataMiningCommand cmd = (DataMiningCommand) it.next();
+					if(cmd.getName().equals(commandName)){
+						List variables = cmd.getVariables();
+						variablesJson = serializeList(variables);
+					}
+				}
+			}
+		}
+
+		if (!isNullOrEmpty(variablesJson)) {
+			logger.debug("Returning variables list");
+		} else {
+			logger.debug("No variables list found");
+		}
+
+		logger.debug("OUT");
+		return variablesJson;
 	}
 }

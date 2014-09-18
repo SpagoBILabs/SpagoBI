@@ -6,15 +6,19 @@
 package it.eng.spagobi.engines.datamining.compute;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
+import it.eng.spagobi.engines.datamining.model.Variable;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
@@ -41,7 +45,7 @@ public class ScriptExecutor {
 		this.re = re;
 	}
 
-	protected void evalScript(DataMiningCommand command) throws IOException {
+	protected void evalScript(DataMiningCommand command) throws Exception {
 
 		// checks whether executed before
 		if (command.getExecuted() == null || !command.getExecuted()) {
@@ -72,23 +76,27 @@ public class ScriptExecutor {
 		boolean success = (new File(path)).delete();
 	}
 
-	private String getScriptCodeToEval(DataMiningCommand command) {
+	private String getScriptCodeToEval(DataMiningCommand command) throws Exception {
 		String code = "";
 		String scriptName = command.getScriptName();
 		if (dataminingInstance.getScripts() != null && !dataminingInstance.getScripts().isEmpty()) {
 			for (Iterator it = dataminingInstance.getScripts().iterator(); it.hasNext();) {
 				DataMiningScript script = (DataMiningScript) it.next();
 				if (script.getName().equals(scriptName)) {
-					code = script.getCode();
+					
+					code = DataMiningUtils.replaceVariables(command.getVariables(), script.getCode());
+
+					
 				}
 			}
 		}
 		return code;
 	}
 
+
 	private String createTemporarySourceScript(String code) throws IOException {
 		String name = RandomStringUtils.randomAlphabetic(10);
-		File temporarySource = new File(DataMiningDatasetUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + name + ".R");
+		File temporarySource = new File(DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + name + ".R");
 		FileWriter fw = null;
 		String ret = "";
 		try {

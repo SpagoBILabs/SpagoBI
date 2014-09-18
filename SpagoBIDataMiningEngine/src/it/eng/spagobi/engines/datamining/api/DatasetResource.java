@@ -8,7 +8,7 @@ package it.eng.spagobi.engines.datamining.api;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
-import it.eng.spagobi.engines.datamining.compute.DataMiningDatasetUtils;
+import it.eng.spagobi.engines.datamining.compute.DataMiningUtils;
 import it.eng.spagobi.engines.datamining.compute.DataMiningExecutor;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
@@ -69,7 +69,7 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 				if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_FILE) && datasetNames.contains(ds.getName())) {
 					File fileDSDir;
 					try {
-						fileDSDir = new File(DataMiningDatasetUtils.getUserResourcesPath(getUserProfile()) + ds.getName());
+						fileDSDir = new File(DataMiningUtils.getUserResourcesPath(getUserProfile()) + ds.getName());
 						// /find file in dir
 						File[] dsfiles = fileDSDir.listFiles();
 						if (dsfiles != null && dsfiles.length != 0) {
@@ -174,7 +174,7 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 
 				byte[] bytes = IOUtils.toByteArray(inputStream);
 
-				File dirToSaveDS = new File(DataMiningDatasetUtils.getUserResourcesPath(getUserProfile()) + fieldName);// remember
+				File dirToSaveDS = new File(DataMiningUtils.getUserResourcesPath(getUserProfile()) + fieldName);// remember
 				// to
 				// create
 				// datamining
