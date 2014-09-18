@@ -84,7 +84,7 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 		Ext.apply(this, {
 			items: [this.variablesForm]
 		});
-
+		this.getVariablesFileds();
 		this.callParent();
 	}
 	,getVariablesFileds: function(){
