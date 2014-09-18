@@ -114,9 +114,6 @@ public class OutputsResource extends AbstractDataMiningEngineService {
 							}
 						}
 					}
-					
-					List variables = cmd.getVariables();
-					variablesJson = serializeList(variables);
 				}
 			}
 		}

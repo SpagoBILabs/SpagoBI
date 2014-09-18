@@ -25,6 +25,7 @@ Ext.define('Sbi.datamining.OutputPanel', {
 	command: null,
 	output: null,
 	mode: 'manual',
+	fillVarPanel: null,
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
@@ -45,10 +46,17 @@ Ext.define('Sbi.datamining.OutputPanel', {
 		Ext.apply(this, {
 			items: [this.uploadPanel, this.resultPanel]
 		});
-
+		
 		this.callParent();
+		this.addVariables();
 	}
 
-
+	, addVariables: function(){
+		this.fillVarPanel = Ext.create('Sbi.datamining.FillVariablesPanel',{
+										callerName : this.output, 
+										caller: 'output'});
+		this.insert(0,this.fillVarPanel);	
+		this.doLayout();
+	}
 	
 });

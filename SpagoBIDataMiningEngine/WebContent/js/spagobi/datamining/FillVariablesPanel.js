@@ -30,22 +30,22 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 		this.initConfig(config||{});
 		this.caller = config.caller;
 		this.callerName = config.callerName;
-		
+		var border= 0;
+		if(this.caller == 'output'){
+			border=1;
+		}
 		this.variablesForm = Ext.create('Ext.form.Panel', {
 		    bodyPadding: 5,
 		    width: 500,
 		    // Fields will be arranged vertically, stretched to full width
 		    layout: 'anchor',
 		    defaults: {
-		        anchor: '100%'
-		        
+		        anchor: '100%'		        
 		    },
-		    border: 0,
+		    border: border,
 		    // The fields
 		    defaultType: 'textfield',
-
 		    items: [],
-
 		    // Reset and Submit buttons
 		    buttons: [{
 		        text: LN('sbi.dm.execution.reset.btn'),
@@ -60,8 +60,7 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 		        iconCls:'variables_ok',
 
 		        handler: function() {
-		        	//this.setVariables(this.variablesForm.getForm(),dataset.name, i)
-		        	
+		        	//this.setVariables(this.variablesForm.getForm(),dataset.name, i)		        	
 		        },
 		        listeners:{
 		        	click:{
@@ -120,6 +119,18 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 					        border: 0
 					    });
 						this.variablesForm.add(varField);
+					}
+				}else{
+					if(this.caller =='command'){
+						var emptyField =Ext.create("Ext.form.field.Display", {
+					        xtype: 'displayfield',
+					        fieldLabel: 'SpagoBI Dataset label',
+					        labelStyle: 'font-weight: bold; color: #28596A;',
+					        labelWidth: 150,
+					        name: dataset.label,
+					        value: 'no variables to display'
+					    });
+						this.variablesForm.add(emptyField);
 					}
 				}
 			}
