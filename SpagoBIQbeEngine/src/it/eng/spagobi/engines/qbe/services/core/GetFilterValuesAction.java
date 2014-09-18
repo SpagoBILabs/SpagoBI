@@ -44,8 +44,7 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 /**
- * @authors Davide Zerbetto (davide.zerbetto@eng.it) Andrea Gioia
- *          (andrea.gioia@eng.it)
+ * @authors Davide Zerbetto (davide.zerbetto@eng.it) Andrea Gioia (andrea.gioia@eng.it)
  */
 public class GetFilterValuesAction extends AbstractQbeEngineAction {
 
@@ -126,7 +125,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 
 			// if order entity is different select entity cannot apply distinct
 			// filter
-			boolean setDistinctClause = orderEntity.equalsIgnoreCase(entityId) ? true : false;
+			boolean setDistinctClause = StringUtilities.isEmpty(orderEntity) || orderEntity.equalsIgnoreCase(entityId) ? true : false;
 
 			if (queryType.equalsIgnoreCase("standard")) {
 				query = buildQuery(entityId, orderEntity, orderType, queryRootEntity, setDistinctClause, dependences);
