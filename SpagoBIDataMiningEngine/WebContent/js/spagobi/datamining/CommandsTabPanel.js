@@ -12,6 +12,7 @@
   
 Ext.define('Sbi.datamining.CommandsTabPanel', {
 	extend: 'Ext.tab.Panel',
+	
 	layout: {
         type: 'fit'
     },
@@ -23,16 +24,19 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
    
 	config:{
 		border: 0
+
 	},
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
+
 		
 		this.varWin = Ext.create('Ext.Window', {
-	        width: 500,
-	        height: 100,
+	        width: 600,
+	        height: 200,
 	        x: 10,
 	        y: 100,
+	        autoScroll: true,
 	        plain: true,
 	        autoDestroy: false,
 	        headerPosition: 'right',
@@ -48,7 +52,7 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 		this.getCommands();
 		this.setActiveTab(this.tosetactive);
 	}
-	
+
 	, getCommands: function(){
 		
 		var thisPanel = this;
@@ -77,6 +81,7 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 					        title: '<span style="color: #28596A;">'+label+'</span>',
 					        iconCls: 'tab-icon',
 					        tabPosition: 'left',
+					        xtype: 'tab',
 							listeners: {
 					            'tabchange': function (tabPanel, tab) {
 					               tabPanel.setOutputAutoMode(tab.output);
@@ -86,9 +91,15 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 					    });
 						
 						thisPanel.add(outputsTab);
+
 						if(mode == 'auto'){
 							this.setActiveTab(i);
 						}
+						var tabElem = thisPanel.dockedItems.items[0].items.items[i].getEl();
+						
+						Ext.get(tabElem).on('click', function(e, t) {
+							thisPanel.addVariables();
+				        });
 					}	
 				}
 
@@ -121,9 +132,12 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 		};
 		service.callService(this, functionSuccess);
 	}
-	, addVariables: function(commandName){
-		this.fillVarPanel = Ext.create('Sbi.datamining.FillVariablesPanel',{callerName : commandName});
+	, addVariables: function(){
+		var commandName = this.getActiveTab().commandName;
+		this.fillVarPanel = Ext.create('Sbi.datamining.FillVariablesPanel',{callerName : commandName, caller: 'command'});
 		this.varWin.add(this.fillVarPanel);
 		this.varWin.show();
 	}
+
+	
 });

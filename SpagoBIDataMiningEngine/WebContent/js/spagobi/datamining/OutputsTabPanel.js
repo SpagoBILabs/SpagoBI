@@ -76,6 +76,12 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 						if(outputMode == 'auto' || res.length == 1){
 							this.setActiveTab(i);
 						}
+						var tabElem = thisPanel.dockedItems.items[0].items.items[i].getEl();
+						tabElem.set({"output":name});
+						Ext.get(tabElem).on('click', function(e, t) {
+				            alert(t.output);
+				          //tabPanel.addVariables(tab.commandName);
+				        });
 					}	
 				}
 

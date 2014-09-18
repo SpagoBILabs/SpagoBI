@@ -22,6 +22,7 @@ Ext.define('Sbi.datamining.DataMiningPanel', {
 		, border: 0
 	},
 	
+	
 	commandsTabPanel: null,
 	
 	constructor : function(config) {
@@ -33,10 +34,10 @@ Ext.define('Sbi.datamining.DataMiningPanel', {
 	            'tabchange': function (tabPanel, tab) {
 
 	               tabPanel.setCommandAutoMode(tab.commandName);
-	               //tabPanel.addVariables(tab.commandName);
+	               
 	            }
 	        }
-			
+
 		}); 
 		
 		this.callParent(arguments);
