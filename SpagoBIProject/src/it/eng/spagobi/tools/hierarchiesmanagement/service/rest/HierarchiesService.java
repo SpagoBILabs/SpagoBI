@@ -233,9 +233,36 @@ public class HierarchiesService {
 	@GET
 	@Path("/getCustomHierarchyTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getCustomHierarchyTree(@Context HttpServletRequest req) {
-		// TODO: get custom hierarchy structure for tree visualization
-		return "{\"response\":\"customHierarchyTree\"}";
+	public String getCustomHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("hierarchy") String hierarchy) {
+		// get custom hierarchy structure for tree visualization
+		HierarchyTreeNode hierarchyTree;
+		JSONObject treeJSONObject;
+		try {
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+
+			// 1 - get datasource label name
+			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
+			if (dataSource == null) {
+				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
+			}
+			// 2 -get hierarchy table postfix
+			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			// 3 - execute query to get hierarchies leafs
+			String queryText = this.createQueryCustomHierarchy(dataSource, hierarchyPrefix, hierarchy);
+			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+
+			// 4 - Create ADT for Tree from datastore
+			hierarchyTree = createHierarchyTreeStructure(dataStore);
+
+			treeJSONObject = convertHierarchyTreeAsJSON(hierarchyTree);
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while retriving custom hierarchy structure", t);
+		}
+
+		return treeJSONObject.toString();
 
 	}
 
@@ -286,6 +313,35 @@ public class HierarchiesService {
 
 		String query = "SELECT " + selectClause + " FROM " + tableName + " WHERE " + hierNameColumn + " = \"" + hierarchyName + "\" AND " + hierTypeColumn
 				+ " = \"AUTO\" ";
+
+		return query;
+	}
+
+	/**
+	 * Create query for extracting automatic hierarchy rows
+	 */
+	private String createQueryCustomHierarchy(IDataSource dataSource, String hierarchyPrefix, String hierarchyName) {
+
+		String tableName = "HIER_" + hierarchyPrefix;
+
+		// select
+		StringBuffer selectClauseBuffer = new StringBuffer(" ");
+		for (int i = 1; i < 11; i++) {
+			String CD_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEV" + i, dataSource);
+			String NM_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEV" + i, dataSource);
+			selectClauseBuffer.append(CD_LEV + "," + NM_LEV + ",");
+		}
+		String CD_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEAF", dataSource);
+		String NM_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEAF", dataSource);
+		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + " ");
+		String selectClause = selectClauseBuffer.toString();
+
+		// where
+		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
+
+		String query = "SELECT " + selectClause + " FROM " + tableName + " WHERE " + hierNameColumn + " = \"" + hierarchyName + "\" AND (" + hierTypeColumn
+				+ "=\"MANUAL\" OR " + hierTypeColumn + "=\"SEMIMANUAL\" )";
 
 		return query;
 	}

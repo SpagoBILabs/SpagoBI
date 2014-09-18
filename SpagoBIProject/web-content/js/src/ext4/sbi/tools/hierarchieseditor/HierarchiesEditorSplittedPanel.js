@@ -25,6 +25,11 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
     }
 
 	, constructor: function(config) {
+		thisPanel = this;
+		
+		Ext.tip.QuickTipManager.init();
+
+		
 		this.initServices();
 		
 		//*******************
@@ -49,10 +54,24 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			listeners: {
 				select:{
 		               fn:function(combo, value) {
+		            	   //populate hierarchies combo
 		            	   this.comboHierarchies.setDisabled(false);
 		            	   this.comboHierarchies.clearValue();
-		            	   this.hierarchiesStore = this.createHierarchiesComboStore(value[0].get('DIMENSION_NM'));
+		            	   var dimensionName = value[0].get('DIMENSION_NM');
+		            	   this.hierarchiesStore = this.createHierarchiesComboStore(dimensionName);
 		            	   this.comboHierarchies.bindStore(this.hierarchiesStore);
+		            	   //delete existing trees rendered
+		            	   if ((Ext.getCmp('automaticTreePanel') != null) & (Ext.getCmp('automaticTreePanel') != undefined)){
+			            	   this.leftPanel.remove(Ext.getCmp('automaticTreePanel'));
+		            	   }
+		            	   if ((Ext.getCmp('customTreePanel') != null) & (Ext.getCmp('customTreePanel') != undefined)){
+			             	  	this.rightPanel.remove(Ext.getCmp('customTreePanel'));
+		            	   }
+
+		            	   //populate customHierarchies grid 
+		            	   this.customHierarchiesGridStore = this.createCustomHierarchiesGridStore(dimensionName);
+		            	   this.customHierarchiesGrid.reconfigure(this.customHierarchiesGridStore);
+		            	   this.customHierarchiesGrid.setTitle("Custom Hierarchies for: "+dimensionName);
 		               }
 		           }
 		        ,scope:this   
@@ -97,51 +116,59 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		
 		//*******************
 		//Custom Hierarchies Grid
+		
+		//empty store only for initialization
 		this.customHierarchiesGridStore = new Ext.data.Store({
-	        storeId: 'simpsonsStore',
-	        fields: ['name', 'email', 'phone'],
-	        data: {
-	            'items': [{
-	                'name': 'Lisa',
-	                "email": "lisa@simpsons.com",
-	                "phone": "555-111-1224"
-	            }, {
-	                'name': 'Bart',
-	                "email": "bart@simpsons.com",
-	                "phone": "555-222-1234"
-	            }, {
-	                'name': 'Homer',
-	                "email": "home@simpsons.com",
-	                "phone": "555-222-1244"
-	            }, {
-	                'name': 'Marge',
-	                "email": "marge@simpsons.com",
-	                "phone": "555-222-1254"
-	            }]
-	        },
-	        proxy: {
-	            type: 'memory',
-	            reader: {
-	                type: 'json',
-	                root: 'items'
-	            }
-	        }
+	        storeId: 'customHierarchiesStore',
+	        fields: ['HIERARCHY_NM', 'HIERARCHY_TP']
+
 	    });
 		
 		this.customHierarchiesGrid = new Ext.grid.Panel( {
 	        title: 'Custom Hierarchies',
-	        store: Ext.data.StoreManager.lookup('simpsonsStore'),
+	        store: Ext.data.StoreManager.lookup('customHierarchiesStore'),
 	        columns: [{
 	            header: 'Name',
-	            dataIndex: 'name'
-	        }, {
-	            header: 'Email',
-	            dataIndex: 'email',
+	            dataIndex: 'HIERARCHY_NM',
 	            flex: 1
 	        }, {
-	            header: 'Phone',
-	            dataIndex: 'phone'
-	        }],
+	            header: 'Type',
+	            dataIndex: 'HIERARCHY_TP',
+	            width: 100
+	        }, {
+				//SHOW TREE BUTTON
+	        	menuDisabled: true,
+				sortable: false,
+				xtype: 'actioncolumn',
+				width: 20,
+				columnType: "decorated",
+				items: [{
+					tooltip: 'Show Hierarchy tree',
+					iconCls   : 'button-detail',  
+					handler: function(grid, rowIndex, colIndex) {
+						var selectedRecord =  grid.store.getAt(rowIndex);
+						thisPanel.onShowCustomHierarchyTree(selectedRecord);
+					}
+				}]
+			}
+	        , {
+				//DELETE BUTTON
+	        	menuDisabled: true,
+				sortable: false,
+				xtype: 'actioncolumn',
+				width: 20,
+				columnType: "decorated",
+				items: [{
+					tooltip: 'Delete custom Hierarchy',
+					iconCls   : 'button-remove',  
+					handler: function(grid, rowIndex, colIndex) {								
+						var selectedRecord =  grid.store.getAt(rowIndex);
+						alert("TODO: to implement");
+						//thisPanel.onDeleteSchedulation(selectedRecord);
+					}
+				}]
+			}
+	        ],
 	        height: 150,
 	        width: '100%',
 	    })
@@ -236,7 +263,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	    });
 
 	   this.treePanelRight = Ext.create('Ext.tree.Panel', {
-	        id: 'secondTreePanel',
+	        id: 'customTreePanel',
 	        layout: 'fit',
 	        store: this.store2,
 	        rootVisible: true,
@@ -292,7 +319,37 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 
 	}
 	
-	//Initializations
+	/******************************
+	 * Initializations
+	 *******************************/
+	, createCustomHierarchiesGridStore: function(dimension){
+		var baseParams = {}
+		baseParams.dimension = dimension;
+		
+		
+		this.services["getCustomHierarchies"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'hierarchies/getCustomHierarchies',
+			baseParams: baseParams
+		});
+		
+		var gridStore = new Ext.data.Store({
+	        storeId: 'customHierarchiesStore',
+	        fields: ['HIERARCHY_NM', 'HIERARCHY_TP'],
+	        proxy: {
+	            type: 'ajax',
+	            url: this.services["getCustomHierarchies"],
+	            reader: {
+	                type: 'json'
+	            }
+	        }
+	        
+	    });
+		
+		gridStore.load();
+		
+		return gridStore;
+	}
+	
 	, createDimensionsStore: function(){
 		Ext.define("DimensionsModel", {
     		extend: 'Ext.data.Model',
@@ -370,8 +427,37 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		
 	}	
 	
+	, createCustomHierarchyTreeStore: function(dimension, hierarchy){
+		var baseParams = {}
+		baseParams.dimension = dimension;
+		baseParams.hierarchy = hierarchy;
+
+		
+		this.services["getCustomHierarchyTree"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'hierarchies/getCustomHierarchyTree',
+			baseParams: baseParams
+		});
+
+		var customHierarchyTreeStore = new Ext.data.TreeStore({
+			model:'Item',
+			proxy: {
+				type: 'ajax',
+				url: this.services["getCustomHierarchyTree"],
+				reader: {
+					type: 'json'
+				}
+			}
+			,autoload:true
+			
+		});
+		return customHierarchyTreeStore;
+		
+	}	
 	
-	//REST services for Ajax calls
+	
+	/***********************************
+	 * REST services for Ajax calls
+	 ***********************************/
 	,initServices : function(baseParams) {
 		this.services = [];
 		
@@ -394,12 +480,77 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			baseParams: baseParams //must specify a dimension and hierarchy parameters
 		});
 		
+		this.services["getCustomHierarchies"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'hierarchies/getCustomHierarchies',
+			baseParams: baseParams //must specify a dimension parameter
+		});
+		
+		this.services["getCustomHierarchyTree"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'hierarchies/getCustomHierarchyTree',
+			baseParams: baseParams //must specify a dimension and hierarchy parameters
+		});
+		
 		
 	}	
 	
-	/*
+	/**************************************
 	 * Private methods
-	 */
+	 **************************************/
+	 
+	, onShowCustomHierarchyTree: function(selectedRecord){
+		var hierarchyName = selectedRecord.get('HIERARCHY_NM');
+		var dimensionName = this.comboDimensions.getValue();
+		
+		var customTreeStore = this.createCustomHierarchyTreeStore(dimensionName,hierarchyName)
+  	  	this.rightPanel.remove(Ext.getCmp('customTreePanel'));
+		var customTreePanel = this.createCustomTreePanel(customTreeStore);
+		this.rightPanel.add(customTreePanel);
+		customTreePanel.expandAll();
+		
+		
+	}
+	
+	, createCustomTreePanel: function(store){
+		return new Ext.tree.Panel({
+	        id: 'customTreePanel',
+	        layout: 'fit',
+	        store: store,
+	        rootVisible: false,
+	        frame: false,
+	        border:false,
+	        bodyStyle: {border:0},
+	        bodyStyle:'padding:20px',
+	        viewConfig: {
+	         plugins: {
+	               ptype: 'treeviewdragdrop',
+	               ddGroup: 'DDhierarchiesTrees',
+	               enableDrag: true,
+	               enableDrop: true
+	            }
+            ,listeners: {
+            	
+            	//TODO: listener per gestione drag drop
+            	
+            	/*
+                nodedragover: function(targetNode, position, dragData){
+                	alert("on drag over");
+                    var rec = dragData.records[0],
+                        isFirst = targetNode.isFirst(),
+                        canDropFirst = rec.get('canDropOnFirst'),
+                        canDropSecond = rec.get('canDropOnSecond');
+                        
+                    return isFirst ? canDropFirst : canDropSecond;
+                }
+	            , beforedrop: {
+	                fn: this.onBeforeDropRightTree,
+	                scope: this
+	            }
+	            */
+            }	        
+	        }
+	    });
+			
+	}
 	
 	, createTreePanel: function(store){
 		return new Ext.tree.Panel({
