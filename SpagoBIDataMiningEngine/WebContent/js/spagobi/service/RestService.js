@@ -116,7 +116,25 @@ Ext.define('Sbi.service.RestService', {
 		return Ext.apply(this.params, this.baseParams );
 	},
 
-	callService:function(scope, successCallBack, failureCallBack, keepState, keepStateIfFails){
+	getParameters: function(url) {
+		var parameters = {};
+		var queryPart = this.getQueryPart(url); 
+		if(queryPart) {
+			queryPart = queryPart.replace(/\+/g, " ");
+			parameters = Ext.Object.fromQueryString(queryPart);
+		}
+	    
+	    return parameters;
+	}
+	, getQueryPart: function(url) {
+		var queryPart = null;
+		if(url && url.indexOf('?') > 0) {
+			var urlParts = url.split('?');
+			queryPart = urlParts[1];
+		}
+	    return queryPart;
+	}
+	, callService:function(scope, successCallBack, failureCallBack, keepState, keepStateIfFails){
 
 		var mySuccessCallBack= successCallBack;
 		var myFailureCallBack= failureCallBack;
