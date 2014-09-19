@@ -54,9 +54,12 @@ Ext.define('Sbi.datamining.OutputPanel', {
 		    iconCls: 'run',
 		    scale: 'medium',	
 		    margin: 5,
+		    style: {
+	            background: '#fff0aa;'
+	        },
 		    handler: function() {
 		    	this.dmMask.show();
-		        this.resultPanel.getResult();
+		        this.resultPanel.getResult(true);
 		    }
 		});
 		

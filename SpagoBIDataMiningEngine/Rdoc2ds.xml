@@ -6,25 +6,24 @@
         <PARAMETER name="par3" />
     </PARAMETERS> 
 	<SCRIPTS>  
-        <SCRIPT name="timescript1" mode="auto" datasets="datasetA,datasetB" label="timeplus 1">
+        <SCRIPT name="salaries" mode="auto" datasets="salaries" label="Salaries">
 			<![CDATA[
-str(datasetA);
-datasetA$time;
-time_plus<-datasetA$time+1;
-time_plus;
+team<-subset(salaries, select = 'salary', subset = teamID =='$P{team}')
+colMean <-colMeans(team)
+rowMean <-rowMeans(team)
+
 			]]>
 		</SCRIPT>
 		<SCRIPT name="timescript2" mode="manual" datasets="datasetB" label="timeplus 2">
 			<![CDATA[
 str(datasetB);
 datasetB$time;
-time_plus2<-datasetB$time+5;
-time_plus2;
+poison<-datasetB$time;
 			]]>
 		</SCRIPT>
 	</SCRIPTS>	
 	<DATASETS>
-		<DATASET name="datasetA" readType="table" type="file" label="Data set 1">	
+		<DATASET name="salaries" readType="table" type="file" label="salaries">	
 			<![CDATA[header = TRUE, sep = ",", quote = "\""]]>
 		</DATASET>
 		<DATASET name="datasetB" readType="csv" type="file" label="Data set 2">
@@ -32,14 +31,21 @@ time_plus2;
 		</DATASET>
 	</DATASETS>	
 	<COMMANDS>
-        <COMMAND name="command1" scriptName="timescript1"  label="Command1" mode="auto">
+        <COMMAND name="team_salaries" scriptName="salaries"  label="Salary for Team" mode="auto">
+        	<VARIABLES>
+        		<VARIABLE name="team" default="DET"/>
+        	</VARIABLES>
             <OUTPUTS>
-                <OUTPUT type="text" name="time_plus" value="time_plus"  mode="auto" label="Time plus"/>
+                <OUTPUT type="text" name="teamMean" value="$P{meanType}"  mode="auto" label="Team Mean">
+	                <VARIABLES>
+		        		<VARIABLE name="meanType" default="colMean"/>
+		        	</VARIABLES>
+                </OUTPUT>
             </OUTPUTS>
         </COMMAND>
         <COMMAND name="command2" scriptName="timescript2"  label="Command2" mode="manual">
             <OUTPUTS>
-                <OUTPUT type="text" name="time_plus2" value="time_plus2"  mode="manual" label="Time plus + 5"/>
+                <OUTPUT type="text" name="poison" value="poison"  mode="manual" label="Poison"/>
             </OUTPUTS>
         </COMMAND>
     </COMMANDS>
