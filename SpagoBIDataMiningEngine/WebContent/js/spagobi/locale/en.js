@@ -76,4 +76,4 @@ Sbi.locale.ln['sbi.dm.execution.reset.btn'] = 'Reset';
 Sbi.locale.ln['sbi.dm.execution.loading'] = 'Operation in progress...';
 Sbi.locale.ln['sbi.dm.execution.save.btn'] = 'Save';
 Sbi.locale.ln['sbi.dm.execution.wait'] = 'Uploading your file...';
-Sbi.locale.ln['sbi.dm.execution.load.dataset.ok'] = 'Operation succeded';
+Sbi.locale.ln['sbi.dm.execution.ok'] = 'Operation succeded';

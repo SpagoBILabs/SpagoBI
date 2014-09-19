@@ -193,7 +193,7 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
             success: function(form, action) {
     			Ext.Msg.show({
  				   title : LN('sbi.dm.execution.msg'),
- 				   msg: LN('sbi.dm.execution.load.dataset.ok'),
+ 				   msg: LN('sbi.dm.execution.ok'),
  				   buttons: Ext.Msg.OK
  				});
 

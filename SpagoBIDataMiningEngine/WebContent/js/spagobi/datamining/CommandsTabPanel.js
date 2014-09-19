@@ -29,7 +29,6 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
-
 		
 		this.varWin = Ext.create('Ext.Window', {
 	        width: 600,
@@ -96,11 +95,30 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 						if(mode == 'auto'){
 							this.setActiveTab(i);
 						}
-						var tabElem = thisPanel.dockedItems.items[0].items.items[i].getEl();
 						
-						Ext.get(tabElem).on('click', function(e, t) {
+						var tab = thisPanel.dockedItems.items[0].items.items[i];
+						var tabElem = tab.getEl();
+						
+						Ext.get(tabElem).on('dblclick', function(e, t) {
 							thisPanel.addVariables();
 				        });
+//						tab.on('mouseover', function(e, t) {
+//							tabElem.setStyle('color: #fff0aa;');
+//				        });
+						var tip = Ext.create('Ext.tip.ToolTip', {
+						    // The overall target element.
+						    target: tabElem,
+						    showDelay: 200,
+						    // Render immediately so that tip.body can be referenced prior to the first show.
+						    renderTo: Ext.getBody(),
+						    listeners: {
+						        // Change content dynamically depending on which element triggered the show.
+						        beforeshow: function updateTipBody(tip) {
+						            tip.update('Double click to set command '+name+' variables');
+						        }
+						    }
+						});
+						
 					}	
 				}
 
@@ -141,7 +159,7 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 		
 		this.fillVarPanel.on('hasVariables',  function(hasVars) {
 			if(hasVars){
-				//this.varWin.removeAll();
+				this.varWin.removeAll();
 				this.varWin.add(this.fillVarPanel);
 				this.varWin.show();			
 			}

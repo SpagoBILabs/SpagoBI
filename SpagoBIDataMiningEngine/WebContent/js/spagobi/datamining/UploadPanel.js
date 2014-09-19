@@ -184,7 +184,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 					            text: dataset.label,
 					            scale: 'medium',
 					            //tooltip: readType,
-					            tooltip: '<p style="color: red;">Read type is <b>'+readType+'</b></p>',
+					            tooltip: '<p style="color: #28596A;">Read type is <b>'+readType+'</b></p>',
 					            handler: function() {
 					            	this.uploadWin.show();
 							    },
