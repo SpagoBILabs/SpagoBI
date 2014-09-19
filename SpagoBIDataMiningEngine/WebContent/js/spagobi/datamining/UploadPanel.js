@@ -257,6 +257,8 @@ Ext.define('Sbi.datamining.UploadPanel', {
 	}
 	
 	,refreshUploadButtons: function(){
+//		this.itsParent.dmMask.show();
+//        this.itsParent.resultPanel.getResult(true);
 		this.itsParent.executeScriptBtn.show();
 		this.uploadWin.close();
 	}

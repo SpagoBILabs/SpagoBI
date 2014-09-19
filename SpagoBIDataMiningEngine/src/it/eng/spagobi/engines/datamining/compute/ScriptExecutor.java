@@ -45,10 +45,10 @@ public class ScriptExecutor {
 		this.re = re;
 	}
 
-	protected void evalScript(DataMiningCommand command) throws Exception {
+	protected void evalScript(DataMiningCommand command, Boolean rerun) throws Exception {
 
 		// checks whether executed before
-		if (command.getExecuted() == null || !command.getExecuted()) {
+		if (rerun || command.getExecuted() == null || !command.getExecuted()) {
 			// command-->script name --> execute script without output
 			String scriptToExecute = getScriptCodeToEval(command);
 

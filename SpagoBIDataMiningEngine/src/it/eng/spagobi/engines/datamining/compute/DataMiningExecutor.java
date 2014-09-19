@@ -90,7 +90,7 @@ public class DataMiningExecutor {
 	 * @return DataMiningResult
 	 * @throws Exception 
 	 */
-	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile) throws Exception {
+	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile, Boolean rerun) throws Exception {
 
 		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
 
@@ -106,7 +106,7 @@ public class DataMiningExecutor {
 		// output
 
 		// evaluates script code
-		scriptExecutor.evalScript(command);
+		scriptExecutor.evalScript(command, rerun);
 
 		// create output
 		DataMiningResult result = outputExecutor.evalOutput(output, scriptExecutor);

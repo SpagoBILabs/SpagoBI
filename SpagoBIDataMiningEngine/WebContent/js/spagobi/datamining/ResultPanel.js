@@ -53,13 +53,15 @@ Ext.define('Sbi.datamining.ResultPanel', {
 
 	}
 
-	, getResult: function(){
+	, getResult: function(rerun){
 		
 		var thisPanel = this;
-		
+		if(rerun == undefined || rerun === undefined || rerun == null){
+			rerun = false;
+		}
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "result"
-			,pathParams: [this.command, this.output]
+			,pathParams: [this.command, this.output, rerun]
 		});
 		
 		var functionSuccess = function(response){

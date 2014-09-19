@@ -38,9 +38,9 @@ public class ResultResource extends AbstractDataMiningEngineService {
 	 * 
 	 */
 	@GET
-	@Path("/{command}/{output}")
+	@Path("/{command}/{output}/{rerun}")
 	@Produces("text/html; charset=UTF-8")
-	public String getResult(@PathParam("command") String commandName, @PathParam("output") String outputName) {
+	public String getResult(@PathParam("command") String commandName, @PathParam("output") String outputName, @PathParam("rerun") Boolean rerun) {
 		logger.debug("IN");
 
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
@@ -63,7 +63,7 @@ public class ResultResource extends AbstractDataMiningEngineService {
 								try {
 									HashMap params = (HashMap) dataMiningEngineInstance.getAnalyticalDrivers();
 
-									DataMiningResult result = executor.execute(params, cmd, output, getUserProfile());
+									DataMiningResult result = executor.execute(params, cmd, output, getUserProfile(), rerun);
 									outputOfExecution = serialize(result);
 								} catch (SerializationException e) {
 									logger.error("Error serializing the result", e);

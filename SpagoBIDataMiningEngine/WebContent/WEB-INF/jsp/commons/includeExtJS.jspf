@@ -9,6 +9,6 @@
 
 <script type="text/javascript">
 	Ext.Ajax.timeout = 300000;
-	Ext.BLANK_IMAGE_URL = '../js/lib/extjs-4/resources/images/default/s.gif';
+	Ext.BLANK_IMAGE_URL = '../js/lib/extjs-4/resources/ext-theme-gray/images/s.gif';
 </script>
 	      

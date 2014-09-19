@@ -208,9 +208,15 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
             },
             scope : this
         });
-		service.callService(this, functionSuccess);
+		//service.callService(this);
 	}
 	,refreshParentPanelActions: function(){
-		this.itsParent.executeScriptBtn.show();
+		if(this.caller == 'command'){
+			this.itsParent.getActiveTab().getActiveTab().executeScriptBtn.show();
+			this.itsParent.varWin.hide();	
+		}else{
+			this.itsParent.executeScriptBtn.show();
+		}
+		
 	}
 });

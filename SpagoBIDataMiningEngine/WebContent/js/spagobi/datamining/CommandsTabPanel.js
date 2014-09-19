@@ -135,9 +135,13 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 	}
 	, addVariables: function(){
 		var commandName = this.getActiveTab().commandName;
-		this.fillVarPanel = Ext.create('Sbi.datamining.FillVariablesPanel',{callerName : [commandName], caller: 'command'});
+		this.fillVarPanel = Ext.create('Sbi.datamining.FillVariablesPanel',{callerName : [commandName], 
+																					caller: 'command',
+																					itsParent: this});
+		
 		this.fillVarPanel.on('hasVariables',  function(hasVars) {
 			if(hasVars){
+				//this.varWin.removeAll();
 				this.varWin.add(this.fillVarPanel);
 				this.varWin.show();			
 			}
