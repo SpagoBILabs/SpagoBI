@@ -19,7 +19,7 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
     tosetactive:0,
 	config:{
 		border: 0
-		
+		,animation: 'slide'
 	},
 	dmMask: null,
 	command: null,
