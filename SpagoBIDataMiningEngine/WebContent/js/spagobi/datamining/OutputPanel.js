@@ -55,8 +55,12 @@ Ext.define('Sbi.datamining.OutputPanel', {
 		this.fillVarPanel = Ext.create('Sbi.datamining.FillVariablesPanel',{
 										callerName : this.output, 
 										caller: 'output'});
-		this.insert(0,this.fillVarPanel);	
-		this.doLayout();
+		this.fillVarPanel.on('hasVariables',  function(hasVars) {
+			if(hasVars){
+				this.insert(0,this.fillVarPanel);	
+				this.doLayout();
+			}
+		}, this);
 	}
 	
 });

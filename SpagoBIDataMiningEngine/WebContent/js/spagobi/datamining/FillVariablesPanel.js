@@ -27,55 +27,62 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 	callerName: null,
 	
 	constructor : function(config) {
+		
 		this.initConfig(config||{});
 		this.caller = config.caller;
 		this.callerName = config.callerName;
-		var border= 0;
+		var buttonAlign = 'bottom';
+		var wd = 500;
 		if(this.caller == 'output'){
-			border=1;
+			this.border=1;
+			this.style="background: #fff0aa;";
+			buttonAlign = 'right';
+			wd = 800;
 		}
+		
 		this.variablesForm = Ext.create('Ext.form.Panel', {
 		    bodyPadding: 5,
-		    width: 500,
+		    width: wd,
 		    // Fields will be arranged vertically, stretched to full width
 		    layout: 'anchor',
 		    defaults: {
 		        anchor: '100%'		        
 		    },
-		    border: border,
+		    border: 0,
 		    // The fields
 		    defaultType: 'textfield',
 		    items: [],
-		    // Reset and Submit buttons
-		    buttons: [{
-		        text: LN('sbi.dm.execution.reset.btn'),
-		        handler: function() {
-		            this.up('form').getForm().reset();
-		        }
-		    }, {
-		        text: LN('sbi.dm.execution.load.btn'),
-		        formBind: true, //only enabled once the form is valid
-		        disabled: true,	
-		        scale: 'medium',
-		        iconCls:'variables_ok',
+		    dockedItems: [{
+		        xtype: 'toolbar',
+		        dock: 'top',
+		        items:  [{
+			        text: LN('sbi.dm.execution.reset.btn'),
+			        handler: function() {
+			            this.up('form').getForm().reset();
+			        }
+			    }, {
+			        text: LN('sbi.dm.execution.load.btn'),
+			        formBind: true, //only enabled once the form is valid
+			        disabled: true,	
+			        scale: 'medium',
+			        iconCls:'variables_ok',
 
-		        handler: function() {
-		        	//this.setVariables(this.variablesForm.getForm(),dataset.name, i)		        	
-		        },
-		        listeners:{
-		        	click:{
-		        		fn: function(){
-		        			//this.refreshUploadButtons();								        			
-		        		}
-		        	},scope: this
-		        },
-		        scope: this
-		    }]
-		    , scope: this
+			        handler: function() {
+			        	//this.setVariables(this.variablesForm.getForm(),dataset.name, i)		        	
+			        },
+			        listeners:{
+			        	click:{
+			        		fn: function(){
+			        			//this.refreshUploadButtons();								        			
+			        		}
+			        	},scope: this
+			        },
+			        scope: this
+			    }]
+		    }],
+            scope: this
 		});
-		
-
-		
+		this.addEvents('hasVariables');
 		this.callParent(arguments);
 	},
 
@@ -83,7 +90,7 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 		Ext.apply(this, {
 			items: [this.variablesForm]
 		});
-		this.getVariablesFileds();
+		this.getVariablesFileds();		
 		this.callParent();
 	}
 	,getVariablesFileds: function(){
@@ -104,7 +111,7 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 				var res = Ext.decode(response.responseText);
 				
 				if(res && Array.isArray(res)){
-					
+
 					for (var i=0; i< res.length; i++){
 						var variable = res[i];
 						
@@ -120,20 +127,24 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 					    });
 						this.variablesForm.add(varField);
 					}
-				}else{
-					if(this.caller =='command'){
-						var emptyField =Ext.create("Ext.form.field.Display", {
-					        xtype: 'displayfield',
-					        fieldLabel: 'SpagoBI Dataset label',
-					        labelStyle: 'font-weight: bold; color: #28596A;',
-					        labelWidth: 150,
-					        name: dataset.label,
-					        value: 'no variables to display'
-					    });
-						this.variablesForm.add(emptyField);
-					}
+					this.fireEvent('hasVariables', true);
 				}
 			}
+			else{
+				if(this.caller =='command'){
+					var emptyField =Ext.create("Ext.form.field.Display", {
+				        xtype: 'displayfield',
+				        fieldLabel: 'SpagoBI Dataset label',
+				        labelStyle: 'font-weight: bold; color: #28596A;',
+				        labelWidth: 150,
+				        name: dataset.label,
+				        value: 'no variables to display'
+				    });
+					this.variablesForm.add(emptyField);
+					this.add(this.variablesForm);
+				}
+			}
+			
 		};
 		service.callService(this, functionSuccess);
 	}

@@ -24,7 +24,7 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
    
 	config:{
 		border: 0
-
+		,animation: 'slide'
 	},
 	
 	constructor : function(config) {
@@ -51,6 +51,7 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 		this.callParent();
 		this.getCommands();
 		this.setActiveTab(this.tosetactive);
+		
 	}
 
 	, getCommands: function(){
@@ -135,8 +136,14 @@ Ext.define('Sbi.datamining.CommandsTabPanel', {
 	, addVariables: function(){
 		var commandName = this.getActiveTab().commandName;
 		this.fillVarPanel = Ext.create('Sbi.datamining.FillVariablesPanel',{callerName : commandName, caller: 'command'});
-		this.varWin.add(this.fillVarPanel);
-		this.varWin.show();
+		this.fillVarPanel.on('hasVariables',  function(hasVars) {
+			if(hasVars){
+				this.varWin.add(this.fillVarPanel);
+				this.varWin.show();			
+			}
+	
+		}, this);
+
 	}
 
 	
