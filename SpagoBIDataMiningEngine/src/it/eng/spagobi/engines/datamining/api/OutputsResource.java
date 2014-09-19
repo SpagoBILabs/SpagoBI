@@ -10,14 +10,19 @@ import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.engines.datamining.model.Variable;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
 
@@ -91,9 +96,9 @@ public class OutputsResource extends AbstractDataMiningEngineService {
 		return getJsonSuccess();
 	}
 	@GET
-	@Path("/getVariables/{output}")
+	@Path("/getVariables/{command}/{output}")
 	@Produces("text/html; charset=UTF-8")
-	public String getVariables(@PathParam("output") String outputName) {
+	public String getVariables(@PathParam("command") String commandName, @PathParam("output") String outputName) {
 		logger.debug("IN");
 
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
@@ -104,13 +109,15 @@ public class OutputsResource extends AbstractDataMiningEngineService {
 			if(commands != null){
 				for (Iterator it = commands.iterator(); it.hasNext();) {
 					DataMiningCommand cmd = (DataMiningCommand) it.next();
-					List<Output> outputs = cmd.getOutputs();
-					if (outputs != null && !outputs.isEmpty()) {
-						for (Iterator it2 = outputs.iterator(); it2.hasNext();) {
-							Output output = (Output) it2.next();
-							if (output.getOutputName().equals(outputName)) {
-								List variables = output.getVariables();
-								variablesJson = serializeList(variables);
+					if(cmd.getName().equals(commandName)){
+						List<Output> outputs = cmd.getOutputs();
+						if (outputs != null && !outputs.isEmpty()) {
+							for (Iterator it2 = outputs.iterator(); it2.hasNext();) {
+								Output output = (Output) it2.next();
+								if (output.getOutputName().equals(outputName)) {
+									List variables = output.getVariables();
+									variablesJson = serializeList(variables);
+								}
 							}
 						}
 					}
@@ -126,5 +133,53 @@ public class OutputsResource extends AbstractDataMiningEngineService {
 
 		logger.debug("OUT");
 		return variablesJson;
+	}
+	@POST
+	@Path("/setVariables/{command}/{output}")
+	@Produces("text/html; charset=UTF-8")
+	public String setVariables(@Context HttpServletRequest request, @PathParam("command") String commandName, @PathParam("output") String outputName) {
+		logger.debug("IN");
+		Map parameters = request.getParameterMap();
+		if(parameters != null && !parameters.isEmpty()){
+			
+			DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
+			
+			List<DataMiningCommand> commands = null;
+			if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
+				commands = dataMiningEngineInstance.getCommands();
+				if(commands != null){
+					for (Iterator it = commands.iterator(); it.hasNext();) {
+						DataMiningCommand cmd = (DataMiningCommand) it.next();
+						if(cmd.getName().equals(commandName)){
+							List<Output> outputs = cmd.getOutputs();
+							if (outputs != null && !outputs.isEmpty()) {
+								for (Iterator it2 = outputs.iterator(); it2.hasNext();) {
+									Output output = (Output) it2.next();
+									if (output.getOutputName().equals(outputName)) {
+										List variables = output.getVariables();
+										if(variables != null){
+											for(int i =0; i <variables.size(); i++){
+												Variable var = (Variable)variables.get(i);
+												//get the value from parameters
+												if(request.getParameterMap().containsKey(var.getName())){
+													String paramVal = (String)request.getParameter(var.getName());
+													if(paramVal != null){
+														var.setValue(paramVal);
+													}
+												}
+											}
+				
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+	
+			}
+		}
+		logger.debug("OUT");
+		return getJsonSuccess();
 	}
 }

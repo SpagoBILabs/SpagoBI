@@ -25,13 +25,15 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 	variablesForm: null,
 	caller: 'command',
 	callerName: null,
+	itsParent: null,
 	
 	constructor : function(config) {
 		
 		this.initConfig(config||{});
 		this.caller = config.caller;
 		this.callerName = config.callerName;
-		var buttonAlign = 'bottom';
+		this.itsParent = config.itsParent;
+
 		var wd = 500;
 		if(this.caller == 'output'){
 			this.border=1;
@@ -39,6 +41,14 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 			buttonAlign = 'right';
 			wd = 800;
 		}
+		var service = Ext.create("Sbi.service.RestService",{
+			url: this.caller
+			,method: "POST"
+			,subPath: "setVariables"
+			,pathParams: this.callerName
+		});
+		
+
 		
 		this.variablesForm = Ext.create('Ext.form.Panel', {
 		    bodyPadding: 5,
@@ -61,19 +71,19 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 			            this.up('form').getForm().reset();
 			        }
 			    }, {
-			        text: LN('sbi.dm.execution.load.btn'),
+			        text: LN('sbi.dm.execution.save.btn'),
 			        formBind: true, //only enabled once the form is valid
 			        disabled: true,	
 			        scale: 'medium',
 			        iconCls:'variables_ok',
 
 			        handler: function() {
-			        	//this.setVariables(this.variablesForm.getForm(),dataset.name, i)		        	
+			        	this.setVariables(this.variablesForm.getForm())	;	        	
 			        },
 			        listeners:{
 			        	click:{
 			        		fn: function(){
-			        			//this.refreshUploadButtons();								        			
+			        			this.refreshParentPanelActions();								        			
 			        		}
 			        	},scope: this
 			        },
@@ -82,6 +92,19 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 		    }],
             scope: this
 		});
+		
+		var url = service.getRestUrlWithParameters(true);
+		var urlParams = service.getParameters(url);
+		for (var key in urlParams){
+			var hiddenInput4Param = Ext.create('Ext.form.field.Hidden',{
+			        xtype: 'hiddenfield',
+			        name: key,
+			        value: urlParams[key]
+			});
+			this.variablesForm.add(hiddenInput4Param);
+		}
+		
+		
 		this.addEvents('hasVariables');
 		this.callParent(arguments);
 	},
@@ -93,17 +116,19 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 		this.getVariablesFileds();		
 		this.callParent();
 	}
+	
+
+	
+	
 	,getVariablesFileds: function(){
 		
 		var thisPanel = this;
 		
 		var service = Ext.create("Sbi.service.RestService",{
-			url: this.caller
+			url: this.caller			
 			,subPath: "getVariables"
-			,pathParams: [this.callerName]
+			,pathParams: this.callerName
 		});
-		
-		service.callService(this);
 		
 		var functionSuccess = function(response){
 			var thisPanel = this;
@@ -114,9 +139,12 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 
 					for (var i=0; i< res.length; i++){
 						var variable = res[i];
-						
+						var valueOfVar = variable.value;
+						if(valueOfVar == undefined || valueOfVar == null){
+							valueOfVar = variable.defaultVal
+						}
 						var varField= Ext.create("Ext.form.field.Text",{
-					        value: variable.defaultVal,
+					        value: valueOfVar,
 					        name: variable.name,
 					        fieldLabel: variable.name,
 					        labelWidth: 150,
@@ -148,5 +176,41 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 		};
 		service.callService(this, functionSuccess);
 	}
-	
+	, setVariables : function(form){
+		var thisPanel = this;
+		
+		var service = Ext.create("Sbi.service.RestService",{
+			url: this.caller
+			,method: "POST"
+			,subPath: "setVariables"
+			,pathParams: this.callerName
+		});
+		
+        form.submit({
+            url: service.getRestUrlWithParameters(), // a multipart form cannot contain parameters on its main URL;
+            												   // they must POST parameters
+            waitMsg: LN('sbi.dm.execution.loading'),
+            success: function(form, action) {
+    			Ext.Msg.show({
+ 				   title : LN('sbi.dm.execution.msg'),
+ 				   msg: LN('sbi.dm.execution.load.dataset.ok'),
+ 				   buttons: Ext.Msg.OK
+ 				});
+
+ 			
+            },
+            failure : function (form, action) {
+    			Ext.Msg.show({
+    				title : LN('sbi.dm.execution.msg'),
+  				   msg: action.result.msg,
+  				   buttons: Ext.Msg.OK
+  				});
+            },
+            scope : this
+        });
+		service.callService(this, functionSuccess);
+	}
+	,refreshParentPanelActions: function(){
+		this.itsParent.executeScriptBtn.show();
+	}
 });

@@ -26,7 +26,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 		, border:0
 		, style: 'margin-bottom: 10px;'
 	},
-	executeScriptBtn: null,
+//	executeScriptBtn: null,
 	datasetFiles : [],
 	itsParent: null,
 	command: null,
@@ -38,26 +38,12 @@ Ext.define('Sbi.datamining.UploadPanel', {
 		this.itsParent = config.itsParent;
 		this.command = config.command;
 		
-		this.executeScriptBtn = Ext.create('Ext.Button', {
-		    text: LN('sbi.dm.execution.run.text'),
-		    scope: this,
-		    iconCls: 'run',
-		    scale: 'medium',	
-		    margin: 5,
-		    handler: function() {
-		    	this.itsParent.dmMask.show();
-		        this.itsParent.resultPanel.getResult();
-		    }
-		});
-		
 		this.callParent(arguments);
 	},
 
 	initComponent: function() {
 		this.callParent();
 		Ext.tip.QuickTipManager.init();
-		this.executeScriptBtn.hide();
-		this.add(this.executeScriptBtn);
 		this.getUploadButtons();
 		
 	},
@@ -161,7 +147,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 							        disabled: true,	
 							        scale: 'small',
 							        iconCls:'upload',
-							        //handler:  Ext.Function.pass(this.uploadFiles, [this, dataset.name, i]),
+
 							        handler: function() {
 							        	this.uploadFiles(this.fileFormN.getForm(),dataset.name, i)
 							        	
@@ -271,7 +257,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 	}
 	
 	,refreshUploadButtons: function(){
-		this.executeScriptBtn.show();
+		this.itsParent.executeScriptBtn.show();
 		this.uploadWin.close();
 	}
 	

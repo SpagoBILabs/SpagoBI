@@ -16,11 +16,15 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
 
@@ -88,10 +92,11 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 		logger.debug("OUT");
 		return autoOutputJson;
 	}
+
 	@GET
 	@Path("/getVariables/{command}")
 	@Produces("text/html; charset=UTF-8")
-	public String getVariables(@PathParam("command") String commandName) {
+	public String getVariables( @PathParam("command") String commandName) {
 		logger.debug("IN");
 
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
@@ -118,5 +123,43 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 
 		logger.debug("OUT");
 		return variablesJson;
+	}
+	@POST
+	@Path("/setVariables/{command}")
+	@Produces("text/html; charset=UTF-8")
+	public String setVariables(@Context HttpServletRequest request, @PathParam("command") String commandName) {
+		logger.debug("IN");
+		Map parameters = request.getParameterMap();
+		if(parameters != null && !parameters.isEmpty()){
+			DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
+			List<DataMiningCommand> commands = null;
+			if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
+				commands = dataMiningEngineInstance.getCommands();
+				if(commands != null){
+					for (Iterator it = commands.iterator(); it.hasNext();) {
+						DataMiningCommand cmd = (DataMiningCommand) it.next();
+						if(cmd.getName().equals(commandName)){
+							List variables = cmd.getVariables();
+							if(variables != null){
+								for(int i =0; i <variables.size(); i++){
+									Variable var = (Variable)variables.get(i);
+									//get the value from parameters
+									if(request.getParameterMap().containsKey(var.getName())){
+										String paramVal = (String)request.getParameter(var.getName());
+										if(paramVal != null){
+											var.setValue(paramVal);
+										}
+									}
+								}
+	
+							}
+						}
+					}
+				}
+	
+			}
+		}
+		logger.debug("OUT");
+		return getJsonSuccess();
 	}
 }
