@@ -44,6 +44,8 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 	// row/column (row if measures stay in the rows, column otherwise)
 	private Map<Integer, String> positionMeasureMap;
 	private boolean initialized = false;
+	private String evenColumnStyleClass = "";
+	private String oddColumnStyleClass = "";
 
 	public static transient Logger logger = Logger.getLogger(HtmlRenderer.class);
 
@@ -116,6 +118,24 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			break;
 		case Value:
 			styleClass = getCellStyleClass();
+
+			//add the style to odd and even columns
+			
+			int index = context.getColumnIndex() - context.getRowHeaderCount();
+			if (index < 0) {
+				index = context.getColumnIndex();
+			}
+
+			boolean even = index % 2 == 0;
+
+			if (even && evenColumnStyleClass != null) {
+				styleClass = styleClass + " " + getEvenColumnStyleClass();
+			}
+
+			if (!even && oddColumnStyleClass != null) {
+				styleClass = styleClass + " " + getOddColumnStyleClass();
+			}
+
 			break;
 		case None:
 			styleClass = getCornerStyleClass();
@@ -403,6 +423,22 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			getWriter().endElement("a");
 		}
 
+	}
+
+	public String getEvenColumnStyleClass() {
+		return evenColumnStyleClass;
+	}
+
+	public void setEvenColumnStyleClass(String evenColumnStyleClass) {
+		this.evenColumnStyleClass = evenColumnStyleClass;
+	}
+
+	public String getOddColumnStyleClass() {
+		return oddColumnStyleClass;
+	}
+
+	public void setOddColumnStyleClass(String oddColumnStyleClass) {
+		this.oddColumnStyleClass = oddColumnStyleClass;
 	}
 
 }
