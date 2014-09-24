@@ -19,6 +19,15 @@ public class DataMiningScript implements Serializable {
 	private String datasets;
 	private String code;
 	private String label;
+	private String libraries;
+
+	public String getLibraries() {
+		return libraries;
+	}
+
+	public void setLibraries(String libraries) {
+		this.libraries = libraries;
+	}
 
 	public String getMode() {
 		return mode;

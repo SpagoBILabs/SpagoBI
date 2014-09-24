@@ -38,6 +38,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	public static String SCRIPT_ATTRIBUTE_NAME = "name";
 	public static String SCRIPT_ATTRIBUTE_DATASETS = "datasets";
 	public static String SCRIPT_ATTRIBUTE_LABEL = "label";
+	public static String SCRIPT_ATTRIBUTE_LIBRARIES = "libraries";
 
 	public static String COMMAND_ATTRIBUTE_SCRIPTNAME = "scriptName";
 	public static String COMMAND_ATTRIBUTE_NAME = "name";
@@ -110,6 +111,10 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 						String ds = (String) scriptSB.getAttribute(SCRIPT_ATTRIBUTE_DATASETS);
 						if (ds != null) {
 							script.setDatasets(ds);
+						}
+						String libraries = (String) scriptSB.getAttribute(SCRIPT_ATTRIBUTE_LIBRARIES);
+						if (libraries != null) {
+							script.setLibraries(libraries);
 						}
 						String mode = (String) scriptSB.getAttribute(SCRIPT_ATTRIBUTE_MODE);
 						if (mode != null) {
