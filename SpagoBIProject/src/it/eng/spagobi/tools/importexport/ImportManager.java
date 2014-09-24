@@ -79,7 +79,6 @@ import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeaturesId;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
-import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
 import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
@@ -299,7 +298,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		metaLog.log("-------Engines-----");
 		importEngines();
 		metaLog.log("-------Functionalities-----");
-		importFunctionalities();
+		importFunctionalities(overwrite);
 		metaLog.log("-------Checks-----");
 		importChecks();
 		metaLog.log("-------Lov-----");
@@ -1418,13 +1417,12 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		}
 	}
 	
-	
 	/**
 	 * Imports exported functionalities
 	 * 
 	 * @throws EMFUserError
 	 */
-	private void importFunctionalities() throws EMFUserError {
+	private void importFunctionalities(boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
 		SbiFunctions functToInsert = null;
 		try {
@@ -1452,71 +1450,87 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 				logger.info("Insert the Funtionality (Path):" + functToInsert.getPath());
 
+				Integer existingFunctionId = null;
+
 				// insert function
 				Integer expId = functToInsert.getFunctId();
 				Map functIdAss = metaAss.getFunctIDAssociation();
 				Set functIdAssSet = functIdAss.keySet();
 				// if the functionality is present skip the insert
-				if (functIdAssSet.contains(expId)) {
+				if (functIdAssSet.contains(expId) && !overwrite) {
 					logger.debug("Exported functionality " + functToInsert.getName() + " not inserted"
 							+ " because it has the same label (and the same path) of an existing functionality");
 					metaLog.log("Exported functionality " + functToInsert.getName() + " not inserted"
 							+ " because it has the same label (and the same path) of an existing functionality");
 					continue;
+				} else if (functIdAssSet.contains(expId)) {
+					existingFunctionId = (Integer) functIdAss.get(expId);
 				}
-				SbiFunctions newFunct = importUtilities.makeNew(functToInsert);
-				String functCd = functToInsert.getFunctTypeCd();
-				Map unique = new HashMap();
-				unique.put("valuecd", functCd);
-				unique.put("domaincd", "FUNCT_TYPE");
-				SbiDomains existDom = (SbiDomains) importer.checkExistence(unique, sessionCurrDB, new SbiDomains());
-				if (existDom != null) {
-					newFunct.setFunctType(existDom);
-					newFunct.setFunctTypeCd(existDom.getValueCd());
-				}
-				String path = newFunct.getPath();
-				String parentPath = path.substring(0, path.lastIndexOf('/'));
-				Query hibQuery = sessionCurrDB.createQuery(" from SbiFunctions where path = '" + parentPath + "'");
-				SbiFunctions functParent = (SbiFunctions) hibQuery.uniqueResult();
-				if (functParent != null) {
-					newFunct.setParentFunct(functParent);
-				}
-				// manages prog column that determines the folders order
-				if (functParent == null)
-					newFunct.setProg(new Integer(1));
-				else {
-					// loads sub functionalities
-					Query query = sessionCurrDB
-					.createQuery("select max(s.prog) from SbiFunctions s where s.parentFunct.functId = "
-							+ functParent.getFunctId());
-					Integer maxProg = (Integer) query.uniqueResult();
-					if (maxProg != null)
-						newFunct.setProg(new Integer(maxProg.intValue() + 1));
-					else
+
+				if (existingFunctionId != null) {
+
+					logger.debug("The functions with code:[" + funct.getCode() + "] t present. It will be updated.");
+					metaLog.log("The functions with code:[" + funct.getCode() + "] t present. It will be updated.");
+					SbiFunctions existingFunc = importUtilities.modifyExisting(funct, existingFunctionId, sessionCurrDB);
+					this.updateSbiCommonInfo4Update(existingFunc);
+					sessionCurrDB.update(existingFunc);
+					sessionCurrDB.flush();
+
+				} else {
+
+					SbiFunctions newFunct = importUtilities.makeNew(functToInsert);
+					String functCd = functToInsert.getFunctTypeCd();
+					Map unique = new HashMap();
+					unique.put("valuecd", functCd);
+					unique.put("domaincd", "FUNCT_TYPE");
+					SbiDomains existDom = (SbiDomains) importer.checkExistence(unique, sessionCurrDB, new SbiDomains());
+					if (existDom != null) {
+						newFunct.setFunctType(existDom);
+						newFunct.setFunctTypeCd(existDom.getValueCd());
+					}
+					String path = newFunct.getPath();
+					String parentPath = path.substring(0, path.lastIndexOf('/'));
+					Query hibQuery = sessionCurrDB.createQuery(" from SbiFunctions where path = '" + parentPath + "'");
+					SbiFunctions functParent = (SbiFunctions) hibQuery.uniqueResult();
+					if (functParent != null) {
+						newFunct.setParentFunct(functParent);
+					}
+					// manages prog column that determines the folders order
+					if (functParent == null)
 						newFunct.setProg(new Integer(1));
+					else {
+						// loads sub functionalities
+						Query query = sessionCurrDB.createQuery("select max(s.prog) from SbiFunctions s where s.parentFunct.functId = "
+								+ functParent.getFunctId());
+						Integer maxProg = (Integer) query.uniqueResult();
+						if (maxProg != null)
+							newFunct.setProg(new Integer(maxProg.intValue() + 1));
+						else
+							newFunct.setProg(new Integer(1));
+					}
+					this.updateSbiCommonInfo4Insert(newFunct);
+					sessionCurrDB.save(newFunct);
+					sessionCurrDB.flush();
+					logger.debug("Inserted new functionality " + newFunct.getName() + " with path " + newFunct.getPath());
+					metaLog.log("Inserted new functionality " + newFunct.getName() + " with path " + newFunct.getPath());
+					Integer newId = newFunct.getFunctId();
+					metaAss.insertCoupleFunct(expId, newId);
 				}
-				this.updateSbiCommonInfo4Insert(newFunct);
-				sessionCurrDB.save(newFunct);
-				sessionCurrDB.flush();
-				logger.debug("Inserted new functionality " + newFunct.getName() + " with path " + newFunct.getPath());
-				metaLog.log("Inserted new functionality " + newFunct.getName() + " with path " + newFunct.getPath());
-				Integer newId = newFunct.getFunctId();
-				metaAss.insertCoupleFunct(expId, newId);
 
 			}
-		}  
-		catch (EMFUserError he) {
+		} catch (EMFUserError he) {
 			throw he;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (functToInsert != null) {
 				logger.error("Error while importing exported functionality with path [" + functToInsert.getPath() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("Sbi_functions");
-			if(functToInsert != null)params.add(functToInsert.getPath());
-			else params.add("");
+			if (functToInsert != null)
+				params.add(functToInsert.getPath());
+			else
+				params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
