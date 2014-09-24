@@ -106,8 +106,12 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		renderer.setCellStyleClass("x-grid-cell x-grid-td x-grid-cell-gridcolumn-1014 x-unselectable x-grid-cell-inner  x-grid-row-alt x-grid-data-row x-grid-with-col-lines x-grid-cell x-pivot-cell");
 		renderer.setTableStyleClass("x-panel-body x-grid-body x-panel-body-default x-box-layout-ct x-panel-body-default x-pivot-table");
 		renderer.setRowStyleClass(" generic-row-style ");
+
 		renderer.setEvenRowStyleClass(" even-row ");
 		renderer.setOddRowStyleClass(" odd-row ");
+
+		renderer.setEvenColumnStyleClass(" even-column ");
+		renderer.setOddColumnStyleClass(" odd-column ");
 
 		String drillDownModeValue = modelConfig.getDrillType();
 

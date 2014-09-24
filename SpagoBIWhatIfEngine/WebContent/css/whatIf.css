@@ -124,11 +124,17 @@ td[contenteditable="true"]:focus {
 	background-color: #FFF !important;
 }
 
+.odd-column{
+	background-color: transparent;
+}
+.even-column{
+	background-color: transparent;
+}
+
 .x-pivot-table thead tr:first-child {
 
     background-color: #FFF;
 } 
-
 
 .dimension-title{
 	border-top: 1px solid #D0D0D0;
