@@ -40,55 +40,6 @@ public class DatasetsExecutor {
 		this.re = re;
 	}
 
-	// protected void evalDatasets(HashMap paramsFilled) throws IOException {
-	// if (dataminingInstance.getDatasets() != null &&
-	// !dataminingInstance.getDatasets().isEmpty()) {
-	// for (Iterator dsIt = dataminingInstance.getDatasets().iterator();
-	// dsIt.hasNext();) {
-	// DataMiningDataset ds = (DataMiningDataset) dsIt.next();
-	// if (ds.getType().equalsIgnoreCase("file")) {
-	// // tries to get it from user workspace
-	// REXP datasetNameInR = re.eval(ds.getName());
-	// if (datasetNameInR == null) {
-	// File fileDSDir = new
-	// File(DataMiningUtils.getUserResourcesPath(profile) +
-	// ds.getName());
-	// // /find file in dir
-	// File[] dsfiles = fileDSDir.listFiles();
-	// String fileDSPath = dsfiles[0].getPath();
-	//
-	// fileDSPath = fileDSPath.replaceAll("\\\\", "/");
-	//
-	// String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\""
-	// + fileDSPath + "\"," + ds.getOptions() + ");";
-	// re.eval(stringToEval);
-	// REXP dataframe = re.eval(ds.getName());
-	// } else {
-	// // use it!
-	// logger.debug("dataset " + ds.getName() +
-	// " already loaded in user workspace!");
-	// }
-	// } else if (ds.getType().equalsIgnoreCase("spagobi_ds")) {
-	// // spagobi dataset content could change independently from
-	// // the engine, so it must be recalculated every time
-	// try {
-	//
-	// String csvToEval =
-	// DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds,
-	// profile);
-	// String stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval +
-	// "\",header = TRUE, sep = \",\");";
-	// re.eval(stringToEval);
-	//
-	// } catch (IOException e) {
-	// logger.error(e.getMessage());
-	// throw e;
-	// }
-	//
-	// }
-	// }
-	// }
-	// }
 
 	protected void evalDatasetsNeeded(HashMap paramsFilled) throws IOException {
 		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {

@@ -12,6 +12,7 @@ import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.Output;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,6 +133,7 @@ public class DataMiningExecutor {
 
 	}
 
+	
 	protected void loadUserWorkSpace() throws IOException {
 		/*
 		 * example usage > save.image(file = 'D:/script/.Rdata', safe = TRUE) >

@@ -6,22 +6,19 @@
 package it.eng.spagobi.engines.datamining.compute;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
-import it.eng.spagobi.engines.datamining.model.Variable;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
+import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
 public class ScriptExecutor {
@@ -49,6 +46,9 @@ public class ScriptExecutor {
 
 		// checks whether executed before
 		if (rerun || command.getExecuted() == null || !command.getExecuted()) {
+			
+			//load libraries from local dir (if needed)
+			loadLibrariesFromRLocal(command);
 			// command-->script name --> execute script without output
 			String scriptToExecute = getScriptCodeToEval(command);
 
@@ -78,21 +78,41 @@ public class ScriptExecutor {
 
 	private String getScriptCodeToEval(DataMiningCommand command) throws Exception {
 		String code = "";
+
+		DataMiningScript script = getScript(command);
+		if (script != null) {			
+			code = DataMiningUtils.replaceVariables(command.getVariables(), script.getCode());
+		}
+		return code;
+	}
+	private void loadLibrariesFromRLocal(DataMiningCommand command){
+		DataMiningScript script = getScript(command);
+		if (script != null) {
+			REXP rHome = re.eval("libdir<-paste(R.home(),\"library\", sep=\"/\")");
+			if(rHome != null){
+				
+				String libraryNames = script.getLibraries();
+				String[] libs = libraryNames.split(",");
+				for (int i = 0; i < libs.length; i++) {
+					String lib = libs[i].trim();
+					re.eval("library("+lib+",lib.loc=libdir)");
+				}
+			}
+		}
+	}
+	private DataMiningScript getScript(DataMiningCommand command){
 		String scriptName = command.getScriptName();
 		if (dataminingInstance.getScripts() != null && !dataminingInstance.getScripts().isEmpty()) {
 			for (Iterator it = dataminingInstance.getScripts().iterator(); it.hasNext();) {
 				DataMiningScript script = (DataMiningScript) it.next();
-				if (script.getName().equals(scriptName)) {
-					
-					code = DataMiningUtils.replaceVariables(command.getVariables(), script.getCode());
-
-					
+				if (script.getName().equals(scriptName)) {					
+					return script;
 				}
 			}
 		}
-		return code;
+		return null;
 	}
-
+	
 
 	private String createTemporarySourceScript(String code) throws IOException {
 		String name = RandomStringUtils.randomAlphabetic(10);
@@ -119,15 +139,4 @@ public class ScriptExecutor {
 
 	}
 
-	private String getScriptCodeToEval(String scriptName) {
-		if (dataminingInstance.getScripts() != null && !dataminingInstance.getScripts().isEmpty()) {
-			for (Iterator it = dataminingInstance.getScripts().iterator(); it.hasNext();) {
-				DataMiningScript script = (DataMiningScript) it.next();
-				if (script.getName().equals(scriptName)) {
-					return script.getCode();
-				}
-			}
-		}
-		return "";
-	}
 }
