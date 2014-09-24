@@ -192,7 +192,7 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 				}
 
 				// // constructs upload file path
-				fileName = dirToSaveDS.getPath() + "\\" + fileName;
+				fileName = dirToSaveDS.getPath() + "/" + fileName;
 
 				writeFile(bytes, fileName);
 
