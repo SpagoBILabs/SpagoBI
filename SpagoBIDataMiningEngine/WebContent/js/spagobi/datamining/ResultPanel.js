@@ -66,8 +66,8 @@ Ext.define('Sbi.datamining.ResultPanel', {
 		
 		var functionSuccess = function(response){
 			
-			if(thisPanel.outputPanel.dmMask !== undefined && thisPanel.outputPanel.dmMask != null){
-				thisPanel.outputPanel.dmMask.hide();
+			if(thisPanel.outputPanel.itsParent.dmMask !== undefined && thisPanel.outputPanel.itsParent.dmMask != null){
+				thisPanel.outputPanel.itsParent.dmMask.hide();
 			}
 			if(response != null && response.responseText !== undefined && response.responseText !== null && response.responseText !== ''){
 			

@@ -21,12 +21,13 @@ Ext.define('Sbi.datamining.OutputPanel', {
 		border: 0
 	},
 	
-	dmMask: null,
+
 	command: null,
 	output: null,
 	mode: 'manual',
 	fillVarPanel: null,
 	executeScriptBtn: null,
+	itsParent: null,
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
@@ -34,20 +35,10 @@ Ext.define('Sbi.datamining.OutputPanel', {
 		this.command = config.command;
 		this.output = config.output;
 		this.mode = config.mode;
+		this.itsParent = config.itsParent;
 		
-		this.actionsPanel = Ext.create('Ext.panel.Panel',{itsParent: this, 
-														command: this.command, 
-														output: this.output, 
-														mode: this.mode,
-														border: 0,
-														layout: {
-													        type: 'hbox'
-													    }
-														}); 
 		this.resultPanel = Ext.create('Sbi.datamining.ResultPanel',{itsParent: this, command: this.command, output: this.output, mode: this.mode}); 
-		this.uploadPanel = Ext.create('Sbi.datamining.UploadPanel',{itsParent: this, command: this.command});
-		
-		
+
 		this.executeScriptBtn = Ext.create('Ext.Button', {
 		    text: LN('sbi.dm.execution.run.text'),
 		    scope: this,
@@ -58,23 +49,19 @@ Ext.define('Sbi.datamining.OutputPanel', {
 	            background: '#fff0aa;'
 	        },
 		    handler: function() {
-		    	this.dmMask.show();
 		        this.resultPanel.getResult(true);
 		    }
 		});
 		
-		this.dmMask = new Ext.LoadMask(Ext.getBody(), {msg:LN('sbi.dm.execution.loading')});
+		
 		
 		this.callParent(arguments);
 	},
 
 	initComponent: function() {
-		
-		this.executeScriptBtn.hide();
-		this.actionsPanel.add(this.executeScriptBtn, this.uploadPanel);
-		
+
 		Ext.apply(this, {
-			items: [this.actionsPanel, this.resultPanel]
+			items: [this.resultPanel]
 		});
 		
 		this.callParent();
