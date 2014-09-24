@@ -27,14 +27,44 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 		this.initConfig(config||{});		
 		
 		this.command= config.commandName;
-	
+		this.actionsPanel = Ext.create('Ext.panel.Panel',{itsParent: this, 
+			command: this.command, 
+			//output: this.output, 
+			mode: this.mode,
+			border: 0,
+			layout: {
+		        type: 'hbox'
+		    }
+			});
+		this.executeScriptBtn = Ext.create('Ext.Button', {
+		    text: LN('sbi.dm.execution.run.text'),
+		    scope: this,
+		    iconCls: 'run',
+		    scale: 'medium',	
+		    margin: 5,
+		    style: {
+	            background: '#fff0aa;'
+	        },
+		    handler: function() {
+		    	this.dmMask.show();
+		        this.getActiveTab().resultPanel.getResult(true);
+		    }
+		});
+		this.dmMask = new Ext.LoadMask(Ext.getBody(), {msg:LN('sbi.dm.execution.loading')});
+		this.uploadPanel = Ext.create('Sbi.datamining.UploadPanel',{itsParent: this, command: this.command});
+		
 		this.callParent(arguments);
 		
 	},
 
 	initComponent: function() {
 		this.callParent();		
-		this.getOuputs();		
+		this.getOuputs();	
+		
+		
+		this.executeScriptBtn.hide();
+		this.actionsPanel.add(this.executeScriptBtn, this.uploadPanel);
+		this.addDocked(this.actionsPanel);
 		this.setActiveTab(this.tosetactive);
 		
 	}
@@ -69,6 +99,7 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 	                        autoScroll: true,
 	                        scroll: 'vertical',
 	                        sort: true,
+	                        itsParent: thisPanel,
 	                        mode: outputMode
 					    });
 						
@@ -107,7 +138,7 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 						var outpanel = items[i];
 						if((outpanel.command == thisPanel.command) &&(outpanel.output == output)){
 							//found the one to activate
-							outpanel.dmMask.show();
+							this.dmMask.show();
 							outpanel.resultPanel.getResult();
 							thisPanel.setActiveTab(i);
 

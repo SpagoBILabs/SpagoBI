@@ -26,7 +26,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 		, border:0
 		, style: 'margin-bottom: 10px;'
 	},
-//	executeScriptBtn: null,
+
 	datasetFiles : [],
 	itsParent: null,
 	command: null,
@@ -257,8 +257,7 @@ Ext.define('Sbi.datamining.UploadPanel', {
 	}
 	
 	,refreshUploadButtons: function(){
-//		this.itsParent.dmMask.show();
-//        this.itsParent.resultPanel.getResult(true);
+
 		this.itsParent.executeScriptBtn.show();
 		this.uploadWin.close();
 	}
