@@ -38,17 +38,16 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
-import it.eng.spagobi.kpi.config.bo.KpiRel;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
@@ -72,8 +71,6 @@ import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
@@ -109,8 +106,6 @@ import org.hibernate.cfg.Configuration;
 import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
-
-import com.lowagie.text.Meta;
 
 public class ImportUtilities {
 
@@ -394,6 +389,23 @@ MetadataLogger metaLog;
 		return newFunct;
 	}
 
+	
+	
+	public SbiFunctions modifyExisting(SbiFunctions exportedFunction, Integer existingFunctionId, Session sessionCurrDB)
+			throws EMFUserError {
+		logger.debug("IN");
+		
+		SbiFunctions existingFunction = (SbiFunctions) sessionCurrDB.load(SbiFunctions.class, existingFunctionId);
+		
+		existingFunction.setCode(exportedFunction.getCode());
+		existingFunction.setName(exportedFunction.getName());
+		existingFunction.setDescr(exportedFunction.getDescr());
+		existingFunction.setPath(exportedFunction.getPath());
+		logger.debug("OUT");
+		return existingFunction;
+	}
+	
+	
 
 	/**
 	 * Creates a new hibernate lov object.
