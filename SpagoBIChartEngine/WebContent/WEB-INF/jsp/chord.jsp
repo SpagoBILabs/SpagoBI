@@ -8,8 +8,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="org.json.JSONObject"%>
 <%@page import="org.json.JSONArray"%>
 <%@ page language="java" 
-	     contentType="text/html; charset=ISO-8859-1" 
-	     pageEncoding="ISO-8859-1"%>	
+	     contentType="text/html; charset=UTF-8" 
+	     pageEncoding="UTF-8"%>	
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -371,7 +371,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	.attr("y2", "0")
 	.style("stroke", "#000");
 
- //aggiunge le label unit‡ di misura
+ //aggiunge le label unit√† di misura
  ticks.append("svg:text")
 	.attr("x", "8")
 	.attr("dy", ".35em")

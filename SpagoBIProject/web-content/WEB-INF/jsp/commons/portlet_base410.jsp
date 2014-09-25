@@ -5,8 +5,8 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
 
 <%@ page language="java"
-         contentType="text/html; charset=ISO-8859-1"
-         pageEncoding="ISO-8859-1"
+         
+         pageEncoding="utf-8"
          session="true" 
 %>
 
@@ -205,6 +205,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			<title>SpagoBI</title>
 			<% if (forceIE8Compatibility == true){ %> 
 			<meta http-equiv="X-UA-Compatible" content="IE=8" />
+			<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+			
 			<%} %>
 			<link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
 		</head>

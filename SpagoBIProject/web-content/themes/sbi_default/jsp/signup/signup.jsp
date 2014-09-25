@@ -1,7 +1,7 @@
 <%@ page language="java"
          extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
-         contentType="text/html; charset=ISO-8859-1"
-         pageEncoding="ISO-8859-1"
+         contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"
          session="true" 
          import="it.eng.spago.base.*,
                  it.eng.spagobi.commons.constants.SpagoBIConstants"
@@ -307,7 +307,7 @@ a:hover{
 								</tr>
 								<tr class='header-row-portlet-section'>
 									<td class='login-label' width="90px" align="left">*
-										 <%=defaultUsername%>:</td>
+										Â <%=defaultUsername%>:</td>
 									<td width="25px"></td>
 									<td class='login-label'>*&nbsp;<%=defaultEmail%>:</td>
 

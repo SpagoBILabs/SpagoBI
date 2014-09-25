@@ -6,7 +6,7 @@
  You can obtain one at http://mozilla.org/MPL/2.0/. --%>
  
 
-<%@ page contentType="text/html; charset=ISO-8859-1"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page language="java" %>
 
 <%@ page import="java.util.*"%>

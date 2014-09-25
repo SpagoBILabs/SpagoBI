@@ -7,8 +7,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="java.util.HashMap"%>
 <%@page import="org.json.JSONObject"%>
 <%@ page language="java" 
-	     contentType="text/html; charset=ISO-8859-1" 
-	     pageEncoding="ISO-8859-1"%>	
+	     contentType="text/html; charset=UTF-8" 
+	     pageEncoding="UTF-8"%>	
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -305,11 +305,11 @@ d3.json("<%=urlProva %>", function(root) {
   }
 
   // Compute the treemap layout recursively such that each group of siblings
-  // uses the same size (1×1) rather than the dimensions of the parent cell.
+  // uses the same size (1Ã—1) rather than the dimensions of the parent cell.
   // This optimizes the layout for the current zoom state. Note that a wrapper
   // object is created for the parent node for each group of siblings so that
   // the parent's dimensions are not discarded as we recurse. Since each group
-  // of sibling was laid out in 1×1, we must rescale to fit using absolute
+  // of sibling was laid out in 1Ã—1, we must rescale to fit using absolute
   // coordinates. This lets us use a viewport to zoom.
   function layout(d) {
     if (d._children) {
