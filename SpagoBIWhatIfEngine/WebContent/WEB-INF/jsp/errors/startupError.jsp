@@ -7,8 +7,8 @@
  
 <%@page import="it.eng.spagobi.commons.utilities.StringUtilities"%>
 <%@ page language="java" 
-	     contentType="text/html; charset=ISO-8859-1" 
-	     pageEncoding="ISO-8859-1"%>
+	     contentType="text/html; charset=UTF-8" 
+	     pageEncoding="UTF-8"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>

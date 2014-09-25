@@ -6,7 +6,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 <%@page import="org.json.JSONObject"%>
 <%@page language="java" 
-	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"
+	pageEncoding="utf-8"
 		import="it.eng.spago.base.*,
                  java.util.List,
                  java.util.ArrayList,

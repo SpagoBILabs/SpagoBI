@@ -16,8 +16,8 @@ authors: Monica Franceschini
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@ page language="java" 
-	     contentType="text/html; charset=ISO-8859-1" 
-	     pageEncoding="ISO-8859-1"
+	     contentType="text/html; charset=UTF-8" 
+	     pageEncoding="UTF-8"
 	     import="it.eng.spagobi.commons.SingletonConfig"%>
 
 <%

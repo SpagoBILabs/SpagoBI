@@ -7,8 +7,8 @@
  
  <%@ page language="java"
 		 extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPage"
-		 contentType="text/html; charset=ISO-8859-1"
-		 pageEncoding="ISO-8859-1"
+		 contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"
 		 session="true"
 		 errorPage="/jsp/errors/error.jsp"
 %>

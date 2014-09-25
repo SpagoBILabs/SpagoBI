@@ -7,8 +7,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
   
 
 <%@ page language="java"
-         contentType="text/json; charset=ISO-8859-1"
-         pageEncoding="ISO-8859-1"
+         contentType="text/json; charset=UTF-8"
+         pageEncoding="UTF-8"
          session="true" %>
 
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>

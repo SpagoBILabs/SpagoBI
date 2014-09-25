@@ -69,10 +69,15 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	//gets the json template
 	JSONObject template = (JSONObject)sbModuleResponse.getAttribute("template");
 	String docLabel = (String)sbModuleResponse.getAttribute("documentLabel");
-	
-	//only for test... delete with production
-	//System.out.println("template in jsp: " + template.toString());
-	//System.out.println("dsPars in jsp: " + dsPars.toString());
+	String templateString = null;
+	try{
+		String s = template.toString();
+		templateString = s;
+
+	} catch (Exception e){
+		
+	}
+
 %>
 
 
@@ -87,7 +92,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	<!-- defines the export method only for the highcharts docs -->
 	<script type="text/javascript">
 		var chartPanel = {};
-		var template =  <%= template.toString()  %>;
+		var template =  <%= templateString%>;
 		Sbi.config = {};
 
 		var url = {
@@ -164,7 +169,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				});
           }          
           // putting the chart data into hidden input
-          //form.elements[0].value = Ext.encode(svg);
+          //form.elements[0].value = Ext.encode(svg);       
+          debugger;
           form.elements[0].value = svg;
           form.action = urlExporter;
           form.target = '_blank'; // result into a new browser tab
@@ -174,7 +180,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		Ext.onReady(function() { 	
 			Ext.QuickTips.init();		
 			
-			var config = <%=template%>;
+			var config = <%=templateString%>;
 			config.dsId = <%=dsId%>;
 			config.dsLabel = "<%=dsLabel%>";
 			config.dsTypeCd = "<%=dsTypeCd%>";

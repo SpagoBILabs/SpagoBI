@@ -7,8 +7,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
   
 
 <%@ page language="java" 
-		 contentType="text/html; charset=ISO-8859-1"
-    	 pageEncoding="ISO-8859-1"
+		 contentType="text/html; charset=UTF-8"
+    	 pageEncoding="UTF-8"
     	 import="it.eng.spago.base.*,
     	 		 javax.portlet.*"%>
     
