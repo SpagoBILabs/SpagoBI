@@ -12,7 +12,7 @@ Sbi.locale.formats = {
 			nullValue: ''
 		},
 		*/
-		
+
 		float: {
 			decimalSeparator: '.',
 			decimalPrecision: 2,
@@ -29,7 +29,7 @@ Sbi.locale.formats = {
 			//currencySymbol: '$',
 			nullValue: ''
 		},
-		
+
 		string: {
 			trim: true,
     		maxLength: null,
@@ -39,12 +39,12 @@ Sbi.locale.formats = {
     		//suffix: '',
     		nullValue: ''
 		},
-		
+
 		date: {
 			dateFormat: 'm/Y/d',
     		nullValue: ''
 		},
-		
+
 		boolean: {
 			trueSymbol: 'true',
     		falseSymbol: 'false',
@@ -80,7 +80,7 @@ Sbi.locale.ln['sbi.common.wait.long'] = 'Esta operación puede tomar algunos minu
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_MDX'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Modo Drill';
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_UNDO'] = 'deshacer';
-Sbi.locale.ln['sbi.olap.toolbar.BUTTON_FLUSH_CACHE'] = 'Modelo Actualizar;
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_FLUSH_CACHE'] = 'Modelo Actualizar';
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_FATHER_MEMBERS'] = 'Mostrar miembros padres';
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_HIDE_SPANS'] = 'Ocultar spans';
 Sbi.locale.ln['sbi.olap.toolbar.BUTTON_SHOW_PROPERTIES'] = 'Mostrar propiedades';
@@ -138,7 +138,7 @@ Sbi.locale.ln['sbi.olap.execution.menu.addToToolbar'] = 'Añadir a la barra de he
 //===================================================================
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'No es posible eliminar todas las versiones ';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'Puedes eliminar la versión actual';
-Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Seleccionar la versión a eliminar;
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Seleccionar la versión a eliminar';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 'Advertencia: esta operación podría durar algunos minutos. ';
 Sbi.locale.ln['sbi.olap.control.controller.delete.version.ok'] = 'Versiones eliminadas correctamente.';
 //Sbi.locale.ln['sbi.olap.control.controller.delete.version.error'] = 'Error al eliminar las versiones .';
