@@ -24,52 +24,50 @@ import org.apache.log4j.Logger;
 
 import sun.misc.BASE64Decoder;
 
-
-
-
 /**
  * The Class ExportHighChartsAction.
  * 
  * @author Antonella Giachino (antonella.giachino@eng.it)
  */
-public class ExportHighChartsAction extends AbstractEngineAction {	
-	
+public class ExportHighChartsAction extends AbstractEngineAction {
+
 	// INPUT PARAMETERS
 	public static String SVG = "svg";
 	public static String OUTPUT_FORMAT = "type";
- 
 
 	public static String OUTPUT_FORMAT_PNG = "PNG";
 	public static String OUTPUT_FORMAT_JPEG = "JPG";
 	public static String OUTPUT_FORMAT_PDF = "PDF";
 	public static String OUTPUT_FORMAT_SVG = "SVG+XML";
 
-	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(ExportHighChartsAction.class);
-    private static final BASE64Decoder DECODER = new BASE64Decoder();
-    
-    public static final String ENGINE_NAME = "SpagoBIChartEngine";
-		
-    public void service(SourceBean request, SourceBean response) {
-    	
-    	logger.debug("IN");
-    	InputStream inputStream = null;
-    	OutputStream outputStream = null;
-    	
-    	try {
+	private static transient Logger logger = Logger.getLogger(ExportHighChartsAction.class);
+	private static final BASE64Decoder DECODER = new BASE64Decoder();
+
+	public static final String ENGINE_NAME = "SpagoBIChartEngine";
+
+	@Override
+	public void service(SourceBean request, SourceBean response) {
+
+		logger.debug("IN");
+		InputStream inputStream = null;
+		OutputStream outputStream = null;
+
+		try {
 			super.service(request, response);
-			
+
 			freezeHttpResponse();
-			
+
 			String svg = this.getAttributeAsString(SVG);
-			inputStream = new ByteArrayInputStream(svg.getBytes("UTF-8"));
+
+			// inputStream = new ByteArrayInputStream(svg.getBytes("UTF-8"));
+			inputStream = new ByteArrayInputStream(svg.getBytes("ISO-8859-1"));
 			String outputType = this.getAttributeAsString(OUTPUT_FORMAT);
 			if (outputType == null || outputType.trim().equals("")) {
 				logger.debug("Output format not specified, default is " + OUTPUT_FORMAT_JPEG);
 				outputType = OUTPUT_FORMAT_JPEG;
 			}
-			
+
 			File exportFile = null;
 			String ext = null;
 			if (outputType.equalsIgnoreCase(OUTPUT_FORMAT_PNG)) {
@@ -95,16 +93,16 @@ public class ExportHighChartsAction extends AbstractEngineAction {
 			} else {
 				throw new SpagoBIEngineRuntimeException("Output format [" + outputType + "] not supperted");
 			}
-			
+
 			String mimetype = MimeUtils.getMimeType(exportFile);
-			
+
 			try {
 				writeBackToClient(exportFile, null, false, exportFile.getName(), mimetype);
 			} catch (IOException e) {
 				String message = "Impossible to write back the responce to the client";
 				throw new SpagoBIEngineServiceException(getActionName(), message, e);
 			}
-			
+
 		} catch (Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
@@ -121,9 +119,9 @@ public class ExportHighChartsAction extends AbstractEngineAction {
 				} catch (IOException e) {
 					logger.error(e);
 				}
-			} 
+			}
 			logger.debug("OUT");
-		}		
+		}
 
 	}
 }
