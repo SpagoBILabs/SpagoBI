@@ -115,7 +115,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	}
 
 	@POST
-	@Path("/setValue/{algorithm}/{ordinal}")
+	@Path("/setValue/{ordinal}")
 	@Produces("text/html; charset=UTF-8")
 	public String setValue(@PathParam("ordinal") int ordinal) {
 		logger.debug("IN : ordinal = [" + ordinal + "]");
