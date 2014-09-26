@@ -219,7 +219,6 @@ Sbi.whatif.commons.Format = function(){
     			if (format.decimalSeparator !== '.') {
     				v = v.replace(format.decimalSeparator, '.');
     			}
-    			v = parseFloat(v);
     		}
 
     		return v;
