@@ -146,7 +146,7 @@ Ext.define('Sbi.olap.control.Controller', {
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "model",
 			method: 'POST',
-			pathParams: ["setValue", "proportional" ,ordinal],
+			pathParams: ["setValue" ,ordinal],
 			jsonData: { "expression" : expression }
 		});
 
