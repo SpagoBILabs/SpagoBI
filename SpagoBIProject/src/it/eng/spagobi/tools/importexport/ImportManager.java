@@ -838,7 +838,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 							List<SbiOrganizationEngine> orgDs = DAOFactory.getTenantsDAO().loadSelectedEngines(getTenant());
 							for (Iterator iterator = orgDs.iterator(); iterator.hasNext() && !engineFound;) {
 								SbiOrganizationEngine sbiOrganizationEngine = (SbiOrganizationEngine) iterator.next();
-								if(sbiOrganizationEngine.getSbiEngines().getEngineId() == engIdAss.get(oldId))
+								if(sbiOrganizationEngine.getSbiEngines().getEngineId().equals(engIdAss.get(oldId))) 
 									engineFound = true;
 							}
 							if(engineFound == false){
@@ -1467,16 +1467,22 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					existingFunctionId = (Integer) functIdAss.get(expId);
 				}
 
-				if (existingFunctionId != null) {
+				if (functIdAssSet.contains(expId)){
 
-					logger.debug("The functions with code:[" + funct.getCode() + "] t present. It will be updated.");
-					metaLog.log("The functions with code:[" + funct.getCode() + "] t present. It will be updated.");
-					SbiFunctions existingFunc = importUtilities.modifyExisting(funct, existingFunctionId, sessionCurrDB);
-					this.updateSbiCommonInfo4Update(existingFunc);
+					Integer existingId = (Integer)functIdAss.get(expId);
+					SbiFunctions existingFunc = (SbiFunctions) sessionCurrDB.load(SbiFunctions.class, existingId);
+					existingFunc.setName(funct.getName());
+					existingFunc.setDescr(funct.getDescr());
+					existingFunc.setPath(funct.getPath());
+					this.updateSbiCommonInfo4Insert(existingFunc);
 					sessionCurrDB.update(existingFunc);
 					sessionCurrDB.flush();
+					logger.debug("Update new functionality " + existingFunc.getName() + " with path " + existingFunc.getPath());
+					metaLog.log("Update new functionality " + existingFunc.getName() + " with path " + existingFunc.getPath());
 
-				} else {
+
+				}
+				else {
 
 					SbiFunctions newFunct = importUtilities.makeNew(functToInsert);
 					String functCd = functToInsert.getFunctTypeCd();
