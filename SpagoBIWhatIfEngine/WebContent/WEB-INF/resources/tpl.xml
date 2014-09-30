@@ -27,7 +27,6 @@
 	
 	<SCENARIO name="scenario" editCube="Sales_Edit">
 		<MEASURE>Store Sales</MEASURE>
-		<MEASURE>Store Cost</MEASURE>
 		<VARIABLE name="var" value="5"/>
 		<VARIABLE name="PD" value="[Product].[Drink.Dairy]" type="string"/>
 	</SCENARIO>
