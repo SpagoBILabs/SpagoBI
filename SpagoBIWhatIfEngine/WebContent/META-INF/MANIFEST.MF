@@ -3,4 +3,4 @@ Manifest-Version: 1.0
 Name: SpagoBIXxxSpagoEngine.war
 Implementation-Title: SpagoBIXxxSpagoEngine
 Implementation-Version: 5.0.0
-
+Mondrian-Version: 3.6.1
