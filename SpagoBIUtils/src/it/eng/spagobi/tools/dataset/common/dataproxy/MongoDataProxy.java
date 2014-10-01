@@ -23,7 +23,7 @@ public class MongoDataProxy extends AbstractDataProxy {
 	CommandResult result;
 
 	private static final String SINGLE_RESULT = "SINGLE_DOCUMENT_QUERY";
-	private static final String LIST_RESULT = "LIST_DOCUMENT_QUERY";
+	private static final String LIST_RESULT = "LIST_DOCUMENTS_QUERY";
 
 	private static transient Logger logger = Logger.getLogger(MongoDataProxy.class);
 	/**
@@ -180,9 +180,9 @@ public class MongoDataProxy extends AbstractDataProxy {
 		}
 
 		/**
-		 * The result is a single document so return it
+		 * The result is not a cursor (a document or a list of documents)
 		 */
-		else if (isSingleDocumentQuery()) {
+		else if (isSingleDocumentQuery() || isAggregatedQuery()) {
 			decored = " function(){ " + overridenToJSONObject.toString() + " " + this.statement + " return query};";
 		}
 
@@ -210,8 +210,8 @@ public class MongoDataProxy extends AbstractDataProxy {
 	 * @return
 	 */
 	private boolean isSingleDocumentQuery() {
-		if (this.statement != null) {
-			if (this.statement.contains(SINGLE_RESULT) || this.statement.contains("findOne") || this.statement.contains("aggregate")) {
+		if (this.statement != null && !this.statement.contains(LIST_RESULT)) {
+			if (this.statement.contains(SINGLE_RESULT) || this.statement.contains("findOne")) {
 				return true;
 			}
 		}
