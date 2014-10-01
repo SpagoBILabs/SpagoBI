@@ -43,6 +43,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 			, isBlocking: false
 		}
 		, fieldsSelectionEnabled: true
+		, cls : "tableWidget"
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.table.TableWidget', defaultSettings);
@@ -351,7 +352,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 //		    sm : new Ext.grid.RowSelectionModel( {
 //				singleSelect : true
 //			})
-		    selModel: {selType: 'rowmodel', mode: 'MULTI', allowDeselect: true}
+//		    selModel: {selType: 'cellmodel', mode: 'SINGLE', allowDeselect: true}
 		};
 		if(this.enableExport === true) {
 			this.initExportToolbar();
@@ -367,7 +368,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 		// create the Grid
 	    this.grid = new Ext.grid.GridPanel(gridConf);
-	    this.grid.on('selectionchange', this.onSelectionChange, this);
+	    //this.grid.on('selectionchange', this.onSelectionChange, this);
+	    this.grid.on('cellclick', this.onCellclick, this);
 	    this.grid.on('columnresize', this.onColumnResize, this);
 	    this.grid.on('columnmove', this.onColumnMove, this);
 	    this.grid.on('afterlayout', this.onAfterLayout, this);
@@ -443,6 +445,68 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		Sbi.trace("[TableWidget.onColumnMove]: OUT");
 	}
 
+	,
+	onCellclick : function ( thisGrid, td, cellIndex, record, tr, rowIndex, e, eOpts ) {
+
+		if (this.fireSelectionEvent === false) {
+			//alert("onSelectionChange disabled");
+			return;
+		} else {
+			//alert("onSelectionChange enabled");
+		}
+
+		// get previous selections
+		var selections = this.getWidgetManager().getWidgetSelections(this.getId()) || {};
+		// get new selection
+		var selection = this.extractSelectionsFromRecord(cellIndex, record);
+		if (selection != null) { // selection may be null, see extractSelectionsFromRecord
+			// merge previous-new selections
+			var fieldHeader = selection.header;
+			var value = selection.value;
+			selections[fieldHeader] = selections[fieldHeader] || {values: []};
+			Ext.Array.include(selections[fieldHeader].values, value);
+
+			this.fireEvent('selection', this, selections);
+		}
+
+	}
+
+	,
+	extractSelectionsFromRecord : function (cellIndex, record) {
+    	var selection = {};
+
+    	var meta = Sbi.storeManager.getRecordMeta(record);
+
+    	var field = record.fields.getAt(cellIndex + 1);
+    	var fieldName = field.name;
+
+		if (fieldName === 'id' || fieldName === 'recNo') {
+			Sbi.warn("[TableWidget.extractSelectionsFromRecord]: column [" + fieldName + "] is id or recNo so its selection will be ignored");
+			return null;
+		}
+
+		var fieldHeader = Sbi.storeManager.getFieldHeaderByName(meta, fieldName);
+		//alert(fieldHeader + " = " + meta[fieldHeader].type.type + " - " + (meta[fieldHeader].type.type === 'float'));
+		if(meta[fieldHeader].type.type === 'float') {
+			// Ignoriamo le colonne di tipo float perchè applicando un filtro di uguaglianza su di esse
+			// in alcuni database (ex. mysql)non si hanno risultati per via di errori di approssimmazione
+			// @see http://stackoverflow.com/questions/5921584/cannot-achieve-a-where-clause-on-a-float-value
+			// TODO possibile soluzione pulita: quando si persiste la tabella in cache per i database problematici
+			// evitare di usare il tipo float. Usare solo decimal con precisione fissata. Il numero reale dovrebbe
+			// poi essere arrotondato a tale precisione.
+			Sbi.warn("[TableWidget.extractSelectionsFromRecord]: column [" + fieldHeader + "] is of type [float] so its selection will be ignored");
+			return null;
+		}
+		var fieldValue = record.data[fieldName];
+
+		selection.header = fieldHeader;
+		selection.value = fieldValue;
+
+    	return selection;
+	}
+
+
+	/*
 	, onSelectionChange: function( sm,selected,opt){
 
 		if(this.fireSelectionEvent === false) {
@@ -465,7 +529,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
         }
 		this.fireEvent('selection', this, selections);
 	}
+	*/
 
+	/*
 	, extractSelectionsFromRecord: function(record) {
     	var selections = {};
 
@@ -496,6 +562,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
     	return selections;
     }
+    */
 
 	, initColumns: function() {
 		var columns = [
