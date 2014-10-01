@@ -736,6 +736,11 @@
     font:bold 11px tahoma,arial,verdana,sans-serif; 			
     background-color: #D1D1D1; 			
     padding-right:0px; 			
-} 
+}
+
+
+.tableWidget .x-grid-cell:hover {
+    background-color: #D1D1D1;
+}
 	
 } /* END MEDIA SCREEN*/		
