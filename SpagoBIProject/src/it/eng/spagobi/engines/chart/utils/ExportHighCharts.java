@@ -31,6 +31,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import com.lowagie.text.ImgTemplate;
 import com.lowagie.text.PageSize;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
@@ -58,13 +59,29 @@ public class ExportHighCharts {
 	public static final String ENGINE_NAME = "SpagoBIChartEngine";
 
 	public static void transformSVGIntoPDF(InputStream inputStream, OutputStream outputStream) throws IOException, DocumentException {
-		Document document = new Document(PageSize.A4.rotate());
+
+		Rectangle pageSize = PageSize.A4.rotate();
+		Document document = new Document(pageSize);
+		int orientation = PageFormat.LANDSCAPE;
 		try {
 			PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 			document.open();
 
-			int width = Math.round(PageSize.A4.getWidth() + 1000);
-			int height = Math.round(PageSize.A4.getHeight() + 1000);
+			double a4WidthInch = 8.26771654; // Equals 210mm
+			double a4HeightInch = 11.6929134; // Equals 297mm
+
+			Paper paper = new Paper();
+			// 72 DPI
+			paper.setSize((a4WidthInch * 72), (a4HeightInch * 72));
+			// 1 inch margins
+			paper.setImageableArea(72, 72, (a4WidthInch * 72 - 144), (a4HeightInch * 72 - 144));
+			PageFormat pageFormat = new PageFormat();
+			pageFormat.setPaper(paper);
+			pageFormat.setOrientation(orientation);
+
+			float width = ((float) pageFormat.getWidth());
+			float height = ((float) pageFormat.getHeight());
+
 			PdfContentByte cb = writer.getDirectContent();
 			PdfTemplate template = cb.createTemplate(width, height);
 			Graphics2D g2 = template.createGraphics(width, height);
@@ -73,15 +90,13 @@ public class ExportHighCharts {
 			TranscoderInput ti = new TranscoderInput(inputStream);
 			prm.transcode(ti, null);
 
-			PageFormat pg = new PageFormat();
-			Paper pp = new Paper();
-			pp.setSize(width, height);
-			pp.setImageableArea(0, 0, width, height);
-			pg.setPaper(pp);
-			prm.print(g2, pg, 0);
+			prm.print(g2, pageFormat, 0);
 			g2.dispose();
 
 			ImgTemplate img = new ImgTemplate(template);
+			img.setWidthPercentage(100);
+			img.setAlignment(Image.ALIGN_CENTER);
+
 			document.add(img);
 
 		} catch (DocumentException e) {
