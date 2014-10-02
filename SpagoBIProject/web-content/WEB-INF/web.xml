@@ -5,6 +5,21 @@
         This application is a portlet. It can not be used outside a portal.
 	</description>
 
+
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
+         <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    
+        <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    </filter-mapping>
+
 	<filter>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<filter-class>it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter</filter-class>
