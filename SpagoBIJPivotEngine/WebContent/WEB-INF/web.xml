@@ -29,6 +29,12 @@
 			manager';
 		</param-value>
 	</context-param>
+	
+	  <context-param>
+        <param-name>PARAMETER_ENCODING</param-name>
+        <param-value>UTF-8</param-value>
+       </context-param>
+	
 
 	<!-- optional
 		<context-param>
@@ -36,6 +42,25 @@
 		<param-value>/path/to/chartServlet</param-value>
 		</context-param>
 	-->
+	
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
+         <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/JPivotServlet/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
 	
 	<filter>
 		<filter-name>EngineCheckSessionFilter</filter-name>
