@@ -12,7 +12,12 @@
 	
 
 	
-	    <filter>
+	
+	<!--  ============================================================================ -->
+	<!--  FILTERS								 									   -->
+	<!--  ============================================================================ -->
+
+        <filter>
         <filter-name>EncodingFilter</filter-name>
         <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
          <init-param>
@@ -25,11 +30,6 @@
         <filter-name>EncodingFilter</filter-name>
        <url-pattern>/restful-services/*</url-pattern>
     </filter-mapping>
-	
-	
-	<!--  ============================================================================ -->
-	<!--  FILTERS								 									   -->
-	<!--  ============================================================================ -->
 	
 	<filter>
 		<filter-name>EngineCheckSessionFilter</filter-name>
