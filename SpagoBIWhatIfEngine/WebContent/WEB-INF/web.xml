@@ -12,6 +12,21 @@
 	
 
 	
+	    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
+         <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    
+        <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+       <url-pattern>/restful-services/*</url-pattern>
+    </filter-mapping>
+	
+	
 	<!--  ============================================================================ -->
 	<!--  FILTERS								 									   -->
 	<!--  ============================================================================ -->
