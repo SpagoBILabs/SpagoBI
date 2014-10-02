@@ -10,6 +10,21 @@
 		Spago BI - SpagoBIXXXEngine Example Web Version
 	</description>
 	
+	
+	    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
+         <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    
+        <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/XXXEngineService1/*</url-pattern>
+    </filter-mapping>
+	
 <!-- START-CAS
 <filter>
   <filter-name>CAS Authentication Filter</filter-name>
