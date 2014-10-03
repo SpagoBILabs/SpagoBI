@@ -183,7 +183,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, getColors : function () {
-		Sbi.trace("[AbstractCartesianChartWidgetRuntime.init]: IN");
+		Sbi.trace("[AbstractChartWidgetRuntime.init]: IN");
 		var colors = [];
 		if (this.wconf !== undefined && this.wconf.groupingVariable != null) {
 			colors = Sbi.widgets.Colors.defaultColors;
@@ -195,7 +195,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 				}
 			}
 		}
-		Sbi.trace("[AbstractCartesianChartWidgetRuntime.init]: IN");
+		Sbi.trace("[AbstractChartWidgetRuntime.init]: IN");
 		return colors;
 	}
 
@@ -316,7 +316,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 
 	, getFieldHeaderByName: function(fieldName) {
 		var fieldMeta = this.getFieldMetaByName(fieldName);
-		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getFieldHeaderByName]: " + Sbi.toSource(fieldMeta));
+		Sbi.trace("[AbstractChartWidgetRuntime.getFieldHeaderByName]: " + Sbi.toSource(fieldMeta));
 		return fieldMeta!=null?fieldMeta.header: null;
 	}
 
@@ -325,13 +325,13 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, onItemMouseDown: function(item) {
-		Sbi.trace("[AbstractCartesianChartWidgetRuntime.onItemMouseDown]: IN");
+		Sbi.trace("[AbstractChartWidgetRuntime.onItemMouseDown]: IN");
 		var itemMeta = this.getItemMeta(item);
 	    var selections = {};
 		selections[itemMeta.categoryFieldHeaders[0]] = {values: []};
 	    Ext.Array.include(selections[itemMeta.categoryFieldHeaders].values, itemMeta.categoryValues[0]);
 	    this.fireEvent('selection', this, selections);
-	    Sbi.trace("[AbstractCartesianChartWidgetRuntime.onItemMouseDown]: OUT");
+	    Sbi.trace("[AbstractChartWidgetRuntime.onItemMouseDown]: OUT");
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
