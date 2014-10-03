@@ -345,21 +345,7 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 	            		   this.setTitle(tooltipContent);
 	            	  }
     	        },
-    	        showInLegend: showLegend,
-    	        listeners: {
-    		  			itemmousedown:function(obj) {
-    		  				var categoryField ;
-    		  				var valueField ;
-    		  				categoryField = obj.storeItem.data[obj.series.label.field];
-    		  				valueField =categoryField;
-    		  				var selections = {};
-    		  				var values =  [];
-    		  				selections[displayName] = {};
-		  		    		selections[displayName].values = values; //manage multi-selection!
-		  		    		Ext.Array.include(selections[displayName].values, valueField);
-		  		    		thisPanel.fireEvent('selection', thisPanel, selections);
-    		  			}
-    			}
+    	        showInLegend: showLegend
          };
 		series.push(aSerie);
 
@@ -367,9 +353,9 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 	}
 
 	, refresh:  function() {
-		Sbi.trace("[LineChartWidgetRuntime.refresh]: IN");
+		Sbi.trace("[PieChartWidgetRuntime.refresh]: IN");
 		Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime.superclass.refresh.call(this);
-		Sbi.trace("[LineChartWidgetRuntime.refresh]: OUT");
+		Sbi.trace("[PieChartWidgetRuntime.refresh]: OUT");
 	}
 
 	, redraw: function() {
@@ -383,6 +369,14 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 
 		var store = this.getStore();
 		store.sort(categoriesConfig.fields[0], 'ASC');
+
+		var config = this.getConfiguration();
+		var incomingevensenabled = config.wgeneric.incomingevensenabled !== undefined ? config.wgeneric.incomingevensenabled : true;
+		if (!incomingevensenabled) {
+	     	var clone = Sbi.storeManager.cloneStore(this.getStore());
+	     	store = clone;
+	     	this.unboundStore();
+		}
 
 		this.chartPanel =  Ext.create('Ext.chart.Chart', {
             store: store,
@@ -451,6 +445,8 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 	//----- Ext 4 Implementation related functions ------------------------------------------
 	, getChart : function(items, colors){
 
+		Sbi.trace("[PieChartWidgetRuntime.getChart]: IN");
+
 		var chartDataStore = items.store;
 
 		//Legend visibility
@@ -494,6 +490,8 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 			config.legend = {position: positionLegend};
 		}
 		var chart = Ext.create("Ext.chart.Chart", config);
+
+		Sbi.trace("[PieChartWidgetRuntime.getChart]: OUT");
 
 	    return chart;
 	}

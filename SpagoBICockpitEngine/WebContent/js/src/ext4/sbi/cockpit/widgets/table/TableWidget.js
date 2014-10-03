@@ -193,6 +193,15 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		Sbi.trace("[TableWidget.onStoreLoad][" + this.getId() + "]: IN");
 		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreLoad.call(this, this.getStore());
      	this.refreshWarningMessage();
+
+		var config = this.getConfiguration();
+		var incomingevensenabled = config.wgeneric.incomingevensenabled !== undefined ? config.wgeneric.incomingevensenabled : true;
+		if (!incomingevensenabled) {
+	     	var clone = Sbi.storeManager.cloneStore(this.getStore());
+	     	this.grid.reconfigure(clone);
+	     	this.unboundStore();
+		}
+
      	Sbi.trace("[TableWidget.onStoreLoad]: OUT");
 	}
 
