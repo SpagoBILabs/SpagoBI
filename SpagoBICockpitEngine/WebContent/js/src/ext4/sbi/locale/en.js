@@ -244,3 +244,10 @@ Sbi.locale.ln['sbi.cockpit.core.selections.list.items'] = 'Items';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.editor'] = 'Edit';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.refresh'] = 'Refresh';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.clone'] = 'Clone';
+
+
+//===================================================================
+//Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingevensenabled.label'] = 'Updateable';
+Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingevensenabled.description'] = 'if checked, the widget will update on user interactions';

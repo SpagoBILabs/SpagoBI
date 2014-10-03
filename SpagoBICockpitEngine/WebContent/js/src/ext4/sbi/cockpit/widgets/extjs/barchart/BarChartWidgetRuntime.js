@@ -182,6 +182,14 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 
 		store.sort(categoriesConfig.fields[0], 'ASC');
 
+		var config = this.getConfiguration();
+		var incomingevensenabled = config.wgeneric.incomingevensenabled !== undefined ? config.wgeneric.incomingevensenabled : true;
+		if (!incomingevensenabled) {
+	     	var clone = Sbi.storeManager.cloneStore(this.getStore());
+	     	store = clone;
+	     	this.unboundStore();
+		}
+
 		//Create theme for using custom defined colors
 		Ext.define('Ext.chart.theme.CustomTheme', {
 		    extend: 'Ext.chart.theme.CustomBlue',
