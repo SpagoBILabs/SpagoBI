@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <TECHNICAL_USER_MENU>
-	
+	 
 	<ITEM	code="resources" 
 			title="#menu.Resources"
 			iconCls="cogwheels">
@@ -13,7 +13,7 @@
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagement.jsp" 
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
 		    <ITEM	title="#menu.EngMan"
-					functionality="TenantManagement"
+					functionality="EnginesManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListEnginesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/engines16.png" />	
 			<ITEM	title="#menu.DataSourceMan"
