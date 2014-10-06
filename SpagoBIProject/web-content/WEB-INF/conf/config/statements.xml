@@ -10,22 +10,22 @@
              query="DELETE FROM SBI_CHECKS WHERE CHECK_ID = ?"/>
     
   <STATEMENT name="SELECT_LIST_ENGINE" 
-             query="SELECT 	E.ENGINE_ID AS ID, 
-                       			E.DESCR AS DESCRIPTION,
-                       			E.NAME AS NAME,
-                       			E.LABEL AS LABEL  
+             query="SELECT 	E.ENGINE_ID, 
+							E.DESCR,
+							E.NAME AS NAME,
+							E.LABEL AS LABEL  
                        FROM SBI_ENGINES E 
                        WHERE E.ORGANIZATION = ? "/>
                        
   <STATEMENT name="SELECT_LIST_PARAMETERS" 
-             query="SELECT P.PAR_ID AS ID,
+             query="SELECT P.PAR_ID,
 						P.DESCR AS DESCR,
 						P.LENGTH AS LENGTH,
 						P.LABEL AS LABEL,
 						P.NAME AS NAME,
-						P.PAR_TYPE_CD AS TYPE,
+						P.PAR_TYPE_CD,
 						P.MASK AS MASK,
-						P.PAR_TYPE_ID AS TYPE_ID,
+						P.PAR_TYPE_ID,
 						COUNT(DISTINCT(U.USE_ID)) as NUM_USES, COUNT(DISTINCT(O.BIOBJ_ID)) as NUM_BIOBJECTS
 						FROM SBI_PARAMETERS P LEFT JOIN SBI_PARUSE U ON U.PAR_ID = P.PAR_ID
 						LEFT JOIN SBI_OBJ_PAR O ON O.PAR_ID = P.PAR_ID
@@ -33,11 +33,11 @@
 						group by P.PAR_ID, P.DESCR, P.LENGTH,P.LABEL,P.NAME,P.PAR_TYPE_CD,P.MASK, P.PAR_TYPE_ID "/>
   
   <STATEMENT name="SELECT_LIST_MODALITIES_VALUE" 
-  	         query="SELECT T.LOV_ID AS ID,
+  	         query="SELECT T.LOV_ID,
 					T.LABEL AS LABEL,
 					T.NAME AS NAME,
 					T.DESCR AS DESCR,
-					T.INPUT_TYPE_CD AS TYPE,
+					T.INPUT_TYPE_CD AS INPUT_TYPE_CD,
 					COUNT(DISTINCT(P.PAR_ID)) AS N_OF_PARAMETERS
 					FROM SBI_LOV T LEFT JOIN SBI_PARUSE P ON T.LOV_ID=P.LOV_ID
 					WHERE T.ORGANIZATION = ? 
@@ -54,8 +54,8 @@
   	         query="SELECT PAR_ID AS PAR_ID,
                   LABEL AS LABEL,
   	              NAME AS NAME,
-  	              DESCR AS DESCRIPTION,
-  	              PAR_TYPE_CD AS TYPE
+  	              DESCR AS DESCR,
+  	              PAR_TYPE_CD 
   	       FROM SBI_PARAMETERS 
   	       WHERE ORGANIZATION = ?  "/>
 		   
@@ -68,11 +68,11 @@
 			WHERE ORGANIZATION = ? "/>
  
   <STATEMENT name="SELECT_PREDEFINED_CHECKS" 
-  	          query="SELECT T.CHECK_ID AS ID,
+  	          query="SELECT T.CHECK_ID,
        		T.LABEL AS LABEL,
        		T.NAME AS NAME,
-       		T.DESCR AS DESCRIPTION,
-       		T.VALUE_TYPE_CD AS CONTROLTYPE
+       		T.DESCR AS DESCR,
+       		T.VALUE_TYPE_CD
 			FROM SBI_CHECKS T,
      		SBI_DOMAINS D
 				WHERE D.DOMAIN_CD='PRED_CHECK'
@@ -81,11 +81,11 @@
 				
 				
  	<STATEMENT name="SELECT_LIST_MODALITIES_CHECKS" 
-  	query="SELECT T.CHECK_ID AS ID,
+  	query="SELECT T.CHECK_ID,
        		T.LABEL AS LABEL,
        		T.NAME AS NAME,
-       		T.DESCR AS DESCRIPTION,
-       		T.VALUE_TYPE_CD AS CONTROLTYPE
+       		T.DESCR AS DESCR,
+       		T.VALUE_TYPE_CD
 			FROM SBI_CHECKS T,
      		SBI_DOMAINS D
 				WHERE D.DOMAIN_CD='CHECK'
@@ -101,7 +101,7 @@
        						ROLE_TYPE_ID,
        						ROLE_TYPE_CD
 					FROM SBI_EXT_ROLES "/>
-	 -->
+	 
 	 
 	<STATEMENT name="SELECT_ALL_DS" 
                query="SELECT DS_ID as ID,         						 
@@ -114,7 +114,7 @@
                              DRIVER
 					  FROM SBI_DATA_SOURCE 
 					  WHERE ORGANIZATION = ? "/>
-
+-->
 	<STATEMENT name="SELECT_ALL_DATASET" 
                query="SELECT S.DS_ID as ID, S.DESCR, S.LABEL, S.NAME, COUNT(O.BIOBJ_ID) as NUM_BIOBJECTS 
 					FROM SBI_DATA_SET S LEFT OUTER JOIN SBI_OBJECTS O ON O.DATA_SET_ID=S.DS_ID
@@ -153,11 +153,11 @@
 					GROUP BY s.NAME, s.DESCR,  s.DL_ID"/>	
 					
 	<STATEMENT name="SELECT_ALL_OBJMETADATA" 
-               query="SELECT M.OBJ_META_ID AS ID, M.DESCRIPTION AS DESCR, M.LABEL, M.NAME, D.VALUE_NM AS TYPE, 
+               query="SELECT M.OBJ_META_ID, M.DESCR, M.LABEL, M.NAME, D.VALUE_NM, 
 					         COUNT(C.BIOBJ_ID) as NUM_OBJ, COUNT(C.SUBOBJ_ID) as NUM_SUBOBJ 
 					 FROM SBI_OBJ_METADATA M LEFT OUTER JOIN SBI_OBJ_METACONTENTS C ON C.OBJMETA_ID=M.OBJ_META_ID
                                              LEFT OUTER JOIN SBI_DOMAINS D ON M.DATA_TYPE_ID=D.VALUE_ID
                      WHERE M.ORGANIZATION = ?                
-					 GROUP BY  M.OBJ_META_ID , M.DESCRIPTION, M.LABEL, M.NAME, D.VALUE_NM  "/>
+					 GROUP BY  M.OBJ_META_ID , M.DESCR, M.LABEL, M.NAME, D.VALUE_NM  "/>
 					  	  			   
 </STATEMENTS>

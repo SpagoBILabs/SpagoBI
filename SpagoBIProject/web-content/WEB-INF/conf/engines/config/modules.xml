@@ -13,23 +13,23 @@
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
 	        </SELECT_QUERY>
 	        <DELETE_QUERY statement="DELETE_REPORT_ENGINE">
-	          <PARAMETER scope="SERVICE_REQUEST" type="RELATIVE" value="id"/>
+	          <PARAMETER scope="SERVICE_REQUEST" type="RELATIVE" value="ENGINE_ID"/>
 	        </DELETE_QUERY>
 	      </QUERIES>
 	      <COLUMNS>
-	        <COLUMN label="ID" name="ID" hidden="true" />
+	        <COLUMN label="ENGINE_ID" name="ENGINE_ID" hidden="true" />
 	        <COLUMN label="SBISet.ListEngine.columnLabel" name="LABEL" />
 	        <COLUMN label="SBISet.ListEngine.columnName" name="NAME" />
-	        <COLUMN label="SBISet.ListEngine.columnDesc" name="DESCRIPTION"/>
+	        <COLUMN label="SBISet.ListEngine.columnDesc" name="DESCR"/>
 	      </COLUMNS>
 	      <CAPTIONS>
 	        <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBISet.ListEngine.selectCaption">
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="detailEnginePage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
-	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ENGINE_ID"/>
 	        </SELECT_CAPTION>
 	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBISet.ListEngine.deleteCaption">
-	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ENGINE_ID"/>
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="detailEnginePage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
 	        </DELETE_CAPTION>

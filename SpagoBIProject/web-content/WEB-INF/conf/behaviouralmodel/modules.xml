@@ -79,7 +79,7 @@
 	        </SELECT_QUERY>
 	      </QUERIES>
 	      <COLUMNS>
-	        <COLUMN label="ID" name="ID" hidden="true" />
+	        <COLUMN label="PAR_ID" name="PAR_ID" hidden="true" />
 	        <COLUMN label="SBIDev.ListParam.columnLabel" name="LABEL"/>
 	        <COLUMN label="SBIDev.ListParam.columnName" name="NAME"/>
 	        <COLUMN label="SBIDev.ListParam.columnDesc" name="DESCR"/>
@@ -91,7 +91,7 @@
 	        <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIDev.ListParam.selectCaption">
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailParameterPage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
-	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="PAR_ID"/>
 	        </SELECT_CAPTION>
 	        <!--MODALITY_CAPTION confirm="FALSE" image="/img/modality.gif" label="SBIDev.ListParam.parUseCaption">
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ListParameterUsesPage"/>
@@ -101,7 +101,7 @@
 	          <CONDITIONS>
 		      		<PARAMETER user_functionality='ParameterManagement' /> 
 			  </CONDITIONS>
-	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="PAR_ID"/>
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailParameterPage"/>        
               <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
               <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>	        
@@ -192,11 +192,11 @@
          	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
         </SELECT_QUERY>
         <DELETE_QUERY statement="DELETE_CHECKS">
-          <PARAMETER scope="SERVICE_REQUEST" type="RELATIVE" value="id"/>
+          <PARAMETER scope="SERVICE_REQUEST" type="RELATIVE" value="CHECK_ID"/>
         </DELETE_QUERY>
       </QUERIES>
       <COLUMNS>
-        <COLUMN label="ID" name="ID" hidden="true" />
+        <COLUMN label="CHECK_ID" name="CHECK_ID" hidden="true" />
         <COLUMN label="SBIDev.ListConfConst.columnLabel" name="LABEL"/>
         <COLUMN label="SBIDev.ListConfConst.columnName" name="NAME"/>
         <COLUMN label="SBIDev.ListConfConst.columnDescr" name="DESCRIPTION"/>
@@ -206,13 +206,13 @@
         <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIDev.ListConfConst.detailCaption">
           	  <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesChecksPage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
-	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="CHECK_ID"/>
         </SELECT_CAPTION>
         <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBIDev.ListConfConst.deleteCaption">
         	  <CONDITIONS>
 		      		<PARAMETER user_functionality='ConstraintManagement' /> 
 			  </CONDITIONS>
-              <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+              <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="CHECK_ID"/>
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesChecksPage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
         </DELETE_CAPTION>
@@ -244,7 +244,7 @@
         </SELECT_QUERY>
       </QUERIES>
       <COLUMNS>
-        <COLUMN label="ID" name="ID" hidden="true" />
+        <COLUMN label="CHECK_ID" name="CHECK_ID" hidden="true" />
         <COLUMN label="SBIDev.ListConfConst.columnLabel" name="LABEL"/>
         <COLUMN label="SBIDev.ListPredConst.columnName" name="NAME"/>
         <COLUMN label="SBIDev.ListPredConst.columnDescr" name="DESCRIPTION"/>
@@ -278,14 +278,14 @@
 	      </QUERIES>
 	      <CAPTIONS>
 	        <SELECT_CAPTION confirm="FALSE" image="/img/button_ok.png" label="SBIDev.ListParamUse.ListLookupLov.selectCaption">
-	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="LOV_ID"/>
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailParameterPage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="RETURN_FROM_LOOKUP"/>
 	          <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>
 	          <!-- <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />-->
 	        </SELECT_CAPTION>
 	        <CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIDev.predLovList.detailCaption">
-	          <PARAMETER name="id" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="id" scope="LOCAL" type="RELATIVE" value="LOV_ID"/>
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesValuePage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
 	          <!-- <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>-->		          
@@ -294,14 +294,14 @@
 	          <CONDITIONS>
 		      		<PARAMETER user_functionality='LovsManagement' /> 
 			  </CONDITIONS>
-	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="LOV_ID"/>
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesValuePage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
 	          <!-- <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>-->
 	        </DELETE_CAPTION>
 	     </CAPTIONS>
 	      <COLUMNS>
-	        <COLUMN label="ID" name="ID" hidden="true" />
+	        <COLUMN label="LOV_ID" name="LOV_ID" hidden="true" />
 	        <COLUMN label="SBIDev.predLovList.columnLabel" name="LABEL" />
 	        <COLUMN label="SBIDev.predLovList.columnName" name="NAME" />
 	        <COLUMN label="SBIDev.predLovList.columnDesc" name="DESCR"/>
@@ -353,14 +353,14 @@
         <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIDev.predLovList.detailCaption">
           <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesValuePage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
-	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="LOV_ID"/>
 	          <!--  <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/> -->
         </SELECT_CAPTION>
         <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBIDev.predLovList.deleteCaption" userRoleType="">
         <CONDITIONS>
 		      <PARAMETER user_functionality='LovsManagement' /> 
 		</CONDITIONS>
-              <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+              <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="LOV_ID"/>
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesValuePage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
 	          <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>	

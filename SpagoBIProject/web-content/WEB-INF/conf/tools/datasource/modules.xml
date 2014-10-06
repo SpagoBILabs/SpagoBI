@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <MODULES>
-    
+    <!--
 	<MODULE class="it.eng.spagobi.tools.datasource.service.ListDataSourceModule" name="ListDataSourceModule">
 	    <CONFIG pool="spagobi" rows="20" title="SBISet.ListDataSource.title" >
 	      <QUERIES>
@@ -46,6 +46,7 @@
     <MODULE class="it.eng.spagobi.tools.datasource.service.DetailDataSourceModule" name="DetailDataSourceModule">
      	<CONFIG/>
     </MODULE>
+	-->
 </MODULES>
 
 

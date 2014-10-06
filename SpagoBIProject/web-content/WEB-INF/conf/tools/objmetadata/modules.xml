@@ -11,7 +11,7 @@
 	        </SELECT_QUERY>
 	      </QUERIES>
 	      <COLUMNS>
-	        <COLUMN label="ID" name="ID" hidden="true" />
+	        <COLUMN label="OBJ_META_ID" name="OBJ_META_ID" hidden="true" />
 	        <COLUMN label="metadata.metaLabel" name="LABEL" />
 	        <COLUMN label="metadata.metaName" name="NAME" />	        
 	        <COLUMN label="metadata.metaDescr" name="DESCR" />
@@ -23,10 +23,10 @@
 	      	<SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="metadata.detailCaption">
 	          	  <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailObjMetadataPage"/>
 		          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
-		          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+		          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="OBJ_META_ID"/>
 	        </SELECT_CAPTION>
 	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="metadata.deleteButton">
-	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="OBJ_META_ID"/>
 	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailObjMetadataPage"/>
 	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
 	        </DELETE_CAPTION>
