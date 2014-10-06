@@ -34,9 +34,7 @@ Ext.define('Sbi.widgets.compositepannel.SplittedPanel', {
 	, constructor: function(config) {
 		this.initConfig(config);
 		this.layout = 'border';
-		
-		//TODO: scommentare quando l'implementazione sarà completa
-		
+				
 		if( !this.leftPanel ) {
 			alert('The leftPanel must be defined');
 			throw "The leftPanel must be defined";
@@ -49,61 +47,27 @@ Ext.define('Sbi.widgets.compositepannel.SplittedPanel', {
 		
 		
 		Ext.apply(this,config||{});
-		/*
-		this.grid = Ext.create('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered', fixedGridPanelConf);
-		
 
-		this.grid.region = "west";
-		this.grid.width = "35%";
-		this.detailPanel.region = "center";
-		*/
-		
 		this.leftPanel.region = "west";
 		this.leftPanel.width = "50%";
 
 		this.rightPanel.region = "center"; 
 		this.rightPanel.width = "50%";
 
-		
-		//TODO: prendere i pannelli passati in input
-		/*
-		this.items = [
-		              {
-		            	   xtype: 'toolbar',
-		            	   region: 'north',
-		            	   height: 30,
-		            	   html: '<b>Toolbar</b>',
-		            	  },       
-		       {
-			   xtype: 'panel',
-			   region: 'west',
-			   html: 'Western Region',
-			   width: '50%',
-			   title: 'Western Region'
-			   //collapseDirection: 'left',
-			   //collapsible: true,
-			   //split: true
-			  },
-			  {
-			   xtype: 'panel',
-			   width: '50%',
-			   itemId: 'centerregion',
-			   region: 'center',
-			   title: 'Center region',
-			   html: 'Center region'
-			  }];
-		*/
-		this.items = [{
-     	   xtype: 'toolbar',
-    	   region: 'north',
-    	   height: 30,
-    	   html: '<b>'+this.mainTitle+'</b>',
-    	  }, this.leftPanel,this.rightPanel];
 		this.callParent(arguments);
-		
-
 	}
 	
+    , initComponent: function() {
+        Ext.apply(this, {
+            items: [{
+          	   xtype: 'toolbar',
+        	   region: 'north',
+        	   height: 30,
+        	   html: '<b>'+this.mainTitle+'</b>',
+        	  }, this.leftPanel,this.rightPanel]
+        });
+        this.callParent();
+    } 
 
 	
 

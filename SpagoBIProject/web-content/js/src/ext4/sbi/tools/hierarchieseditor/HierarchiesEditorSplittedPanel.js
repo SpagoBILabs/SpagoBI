@@ -177,69 +177,13 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		//*******************
 		//Trees
 		
-		/*
-		this.store1 = new Ext.data.TreeStore({
-	        model: 'Item',
-	        root: {
-	            text: 'Root 1',
-	            expanded: true,
-	            children: [{
-	                text: 'Child 1',
-	                id: 'Child 1',
-	                canDropOnFirst: true,
-	                canDropOnSecond: true,
-	                leaf: true
-	            }, {
-	                text: 'Child 2',
-	                id: 'Child 2',
-	                canDropOnFirst: true,
-	                canDropOnSecond: false,
-	                leaf: true
-	            }, {
-	                text: 'Child 3',
-	                id: 'Child 3',	                
-	                canDropOnFirst: false,
-	                canDropOnSecond: true,
-	                leaf: true
-	            }, {
-	                text: 'Child 4',
-	                id: 'Child 4',	                	                
-	                canDropOnFirst: false,
-	                canDropOnSecond: false,
-	                leaf: true
-	            },
-	            {
-	                text: 'Folder 5',
-	                id: 'Folder 5',	                
-	                canDropOnFirst: false,
-	                canDropOnSecond: false,
-	                children: [{
-		                text: 'Child 51',
-		                id: 'Child 51',		                
-		                leaf: true
-		            }, {
-		                text: 'Child 52',
-		                id: 'Child 52',
-		                leaf: true
-		            }]
-	            }]
-	        },
-	        proxy: {
-	            type: 'memory',
-	            reader: {
-	              type: 'json'
-	            }
-	          }
-	    });
-		*/
-		
 		this.automaticHierarchiesTreeStore;
 		
 
 	   this.store2 = new Ext.data.TreeStore({
 	        model: 'Item',
 	        root: {
-	            text: 'Root 2',
+	           /* text: 'Root 2',
 	            expanded: true,
 	            children: [{
 	                text: 'Folder 1',
@@ -251,7 +195,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	                id: 'Folder 2',	                
 	                children: [],
 	                expanded: true
-	            }]
+	            }]*/
 	        },
 	        proxy: {
 	            type: 'memory',
@@ -261,15 +205,73 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	          }
 	   
 	    });
+	   
+	   Ext.define('myPanelDropTarget', {
+		   extend: 'Ext.dd.DropTarget',
 
+		   notifyEnter : function(source, e, data) {
+			   console.log('enter');
+			   return this.callParent(arguments);
+		   },                
+		   notifyOut : function(source, e, data) {
+			   console.log('out');
+			   return this.callParent(arguments);
+		   },
+
+		   notifyOver : function(source, e, data) {
+			   console.log('over');
+			   return this.callParent(arguments);
+		   },                
+		   notifyDrop : function(source, e, data) {
+			   var me = this;
+			   console.log('drop');
+
+			   var text = data.records[0].get('text');
+
+			   var d3ComponentEl = me.panel.down('#d3Component').getEl();
+
+			   d3ComponentEl.insertHtml('beforeEnd', text + '<br />');                
+
+			   return true;
+		   }                    	    
+	   });
+
+	   //TreePanel initialized as simple panel for tree creation
+	   this.treePanelRight = Ext.create('Ext.panel.Panel', {
+	       id: 'customTreePanel',
+		   layout: 'fit',
+	        frame: false,
+	        border:true,
+	        height: 200,
+           items: [
+               {
+                 xtype: 'component',
+                 id: 'd3Component',
+                 autoEl: {
+                     tag: 'div',
+                     html: 'Drag here the root of the new hierarchy'
+                 }
+               }
+           ],
+           listeners: {
+               'afterrender': function () {
+            	   thisPanel.treePanelRight.dropZone = Ext.create('myPanelDropTarget', thisPanel.treePanelRight.getEl(), {
+                   	ddGroup: 'DDhierarchiesTrees',
+                       panel: thisPanel.treePanelRight
+                   });                    
+               }
+           }            
+       });
+	   /*
 	   this.treePanelRight = Ext.create('Ext.tree.Panel', {
 	        id: 'customTreePanel',
 	        layout: 'fit',
 	        store: this.store2,
 	        rootVisible: true,
 	        frame: false,
-	        border:false,
-	        bodyStyle: {border:0},
+	        border:true,
+	        height: 200,
+	        //bodyStyle: {border:0},
             viewConfig: {
                plugins: {
                   ptype: 'treeviewdragdrop',
@@ -294,12 +296,13 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
             }	        
            }
 	    });
-		
+		*/
 		
 		//**********************
 		
 		
 		//Main Objects **************************************
+	   
 		this.mainTitle = LN('sbi.hierarchies.editor');
 		
 		this.leftPanel =  Ext.create('Ext.panel.Panel', {
@@ -313,11 +316,20 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			title: LN('sbi.hierarchies.custom'),
 			items: [this.customHierarchiesGrid,this.treePanelRight]
 		});
+		
 		//***************************************************
+		
+		
+		//TO REMOVE: just for test
+		this.automaticHierarchiesTreeStore = this.createAutomaticHierarchyTreeStore("CDC", "Engineering Nord Italia");
+   	  	this.leftPanel.remove(Ext.getCmp('automaticTreePanel'));
+   	  	var myTreePanel = this.createTreePanel(this.automaticHierarchiesTreeStore);
+   	  	this.leftPanel.add(myTreePanel);
 		
 		this.callParent(arguments);
 
 	}
+
 	
 	/******************************
 	 * Initializations
