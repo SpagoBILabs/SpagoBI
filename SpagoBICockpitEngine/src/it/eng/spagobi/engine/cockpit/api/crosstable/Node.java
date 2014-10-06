@@ -9,7 +9,9 @@ import it.eng.spagobi.engine.cockpit.api.crosstable.CrossTab.CellType;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +41,8 @@ public class Node implements Cloneable, Comparable<Node> {
 												// equals to the value of this
 												// node)
 	private Node fatherNode; // != from null only if we need the value
+
+	private Integer distanceFromRoot;
 
 	public Node(String value) {
 		this.value = value;
@@ -188,11 +192,14 @@ public class Node implements Cloneable, Comparable<Node> {
 	 *         depth 1 and so on...
 	 */
 	public int getDistanceFromRoot() {
-		if (this.fatherNode == null) {
-			return 0;
-		} else {
-			return this.fatherNode.getDistanceFromRoot() + 1;
+		if (this.distanceFromRoot == null) {
+			if (this.fatherNode == null) {
+				distanceFromRoot = 0;
+			} else {
+				distanceFromRoot = this.fatherNode.getDistanceFromRoot() + 1;
+			}
 		}
+		return this.distanceFromRoot;
 	}
 
 	/**
@@ -333,18 +340,23 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Node other = (Node) obj;
 		if (value == null) {
-			if (other.value != null)
+			if (other.value != null) {
 				return false;
-		} else if (!value.equals(other.value))
+			}
+		} else if (!value.equals(other.value)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -376,12 +388,21 @@ public class Node implements Cloneable, Comparable<Node> {
 		}
 	}
 
-	public void orderedSubtree() {
+	public void orderedSubtree(Map<Integer, Comparator<Node>> sortKeys) {
 		if (childs != null) {
-			Collections.sort(childs);
+			Comparator<Node> comparator = null;
+			if (sortKeys != null) {
+				comparator = sortKeys.get(this.getDistanceFromRoot());
+			}
+			if (comparator != null) {
+				Collections.sort(childs, comparator);
+			} else {
+				Collections.sort(childs);
+			}
+
 		}
 		for (int i = 0; i < childs.size(); i++) {
-			childs.get(i).orderedSubtree();
+			childs.get(i).orderedSubtree(sortKeys);
 		}
 	}
 

@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -117,8 +118,9 @@ public class CrossTab {
 	 * @param calculateFields
 	 *            : array of JSONObjects the CF
 	 */
-	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray calculateFields) throws JSONException {
-		this(dataStore, crosstabDefinition);
+	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray calculateFields, Map<Integer, Comparator<Node>> columnsSortKeysMap,
+			Map<Integer, Comparator<Node>> rowsSortKeysMap) throws JSONException {
+		this(dataStore, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap);
 
 		rowsSum = getTotalsOnRows(measuresOnRow);
 		columnsSum = getTotalsOnColumns(measuresOnRow);
@@ -147,7 +149,8 @@ public class CrossTab {
 	 * @param crosstabDefinition
 	 *            : the definition of the crossTab
 	 */
-	public CrossTab(IDataStore valuesDataStore, CrosstabDefinition crosstabDefinition) throws JSONException {
+	public CrossTab(IDataStore valuesDataStore, CrosstabDefinition crosstabDefinition, Map<Integer, Comparator<Node>> columnsSortKeysMap,
+			Map<Integer, Comparator<Node>> rowsSortKeysMap) throws JSONException {
 		IRecord valueRecord;
 		String rowPath;
 		String columnPath;
@@ -191,8 +194,11 @@ public class CrossTab {
 			cellCount = actualRows * actualColumns * measuresCount;
 		}
 
-		columnsRoot.orderedSubtree();
-		rowsRoot.orderedSubtree();
+		columnsRoot.updateFathers();
+		rowsRoot.updateFathers();
+
+		columnsRoot.orderedSubtree(columnsSortKeysMap);
+		rowsRoot.orderedSubtree(rowsSortKeysMap);
 
 		if (index < valuesDataStore.getRecordsCount()) {
 			logger.debug("Crosstab cells number limit exceeded");

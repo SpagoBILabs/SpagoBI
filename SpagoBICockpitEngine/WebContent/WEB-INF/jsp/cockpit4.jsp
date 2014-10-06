@@ -280,6 +280,13 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			, resourcePath: 'crosstab'
 			, method: 'GET'
 		}, 'cockpitServiceConf');
+		
+		Sbi.config.serviceReg.registerService('setCrosstabSort', {
+			name: 'setCrosstabSort'
+			, description: 'Get the crosstab in HTML'
+			, resourcePath: 'crosstab/sort'
+			, method: 'POST'
+		}, 'cockpitServiceConf');
 	
 		/*
 		var testUrl = service.getServiceUrl({pathParams: {datasetLabel: 'ds__405004519'}, queryParams: {frutto: "mela"}});
