@@ -30,6 +30,7 @@ public class CrossTabHTMLSerializer {
 	private static String CLASS_ATTRIBUTE = "class";
 	private static String ROWSPAN_ATTRIBUTE = "rowspan";
 	private static String COLSPAN_ATTRIBUTE = "colspan";
+	private static final String ON_CLICK_ATTRIBUTE = "onClick";
 
 	private static String EMPTY_CLASS = "empty";
 	private static String MEMBER_CLASS = "member";
@@ -182,7 +183,10 @@ public class CrossTabHTMLSerializer {
 					SourceBean aColumn = new SourceBean(COLUMN_TAG);
 					// odd levels are levels (except the last one, since it
 					// contains measures' names)
-					String className = ((i + 1) % 2 == 0 || (i + 1) == levels) ? MEMBER_CLASS : LEVEL_CLASS;
+					boolean isLevel = !((i + 1) % 2 == 0 || (i + 1) == levels);
+
+					String className = !isLevel ? MEMBER_CLASS : LEVEL_CLASS;
+
 					aColumn.setAttribute(CLASS_ATTRIBUTE, className);
 
 					String text = null;
@@ -191,6 +195,10 @@ public class CrossTabHTMLSerializer {
 						text = MeasureScaleFactorOption.getScaledName(measureAlias, crossTab.getMeasureScaleFactor(measureAlias), this.locale);
 					} else {
 						text = aNode.getDescription();
+					}
+
+					if (isLevel) {
+						aColumn.setAttribute(ON_CLICK_ATTRIBUTE, "javascript:Sbi.cockpit.widgets.crosstab.HTMLCrossTab.sort('" + aNode.getValue() + "','columns')");
 					}
 
 					aColumn.setCharacters(text);
@@ -336,6 +344,8 @@ public class CrossTabHTMLSerializer {
 			aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
 			aColumn.setCharacters(aRowDef.getAlias());
 			aRow.setAttribute(aColumn);
+			aColumn.setAttribute(ON_CLICK_ATTRIBUTE, "javascript:Sbi.cockpit.widgets.crosstab.HTMLCrossTab.sort('" + aRowDef.getAlias() + "','columns')");
+
 		}
 		if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
 			SourceBean aColumn = new SourceBean(COLUMN_TAG);
