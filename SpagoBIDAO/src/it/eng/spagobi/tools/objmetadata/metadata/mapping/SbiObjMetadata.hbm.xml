@@ -55,7 +55,7 @@
             <column name="NAME" length="40" not-null="true" />
         </property>
         <property name="description" type="string">
-            <column name="DESCRIPTION" length="100" />
+            <column name="DESCR" length="100" />
         </property>
         <property name="creationDate" type="timestamp">
             <column name="CREATION_DATE" length="19" not-null="true" />
