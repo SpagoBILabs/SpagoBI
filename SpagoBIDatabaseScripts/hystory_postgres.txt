@@ -2489,3 +2489,6 @@ commit;
 --11/09/2014 Monica udate data mining engine
 UPDATE SBI_ENGINES SET LABEL = 'SpagoBIDataMiningEngine', NAME = 'Data-Mining Engine', DESCR = 'Data-Mining Engine', MAIN_URL = '/SpagoBIDataMiningEngine/restful-services/start', DRIVER_NM = 'it.eng.spagobi.engines.drivers.datamining.DataMiningDriver', USE_DATASET=false, USE_DATASOURCE=false WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.weka.WekaDriver';
 COMMIT;
+
+--3/10/2014 Antonella change column name for mariadb & spago compatibility
+ALTER TABLE SBI_OBJ_METADATA RENAME COLUMN DESCRIPTION TO DESCR;
