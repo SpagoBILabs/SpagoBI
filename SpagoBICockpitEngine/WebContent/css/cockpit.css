@@ -738,9 +738,13 @@
     padding-right:0px; 			
 }
 
-
 .tableWidget .x-grid-cell:hover {
     background-color: #D1D1D1;
 }
+
+.widget-crosstab{
+	padding: 2px;
+}
+
 	
 } /* END MEDIA SCREEN*/		

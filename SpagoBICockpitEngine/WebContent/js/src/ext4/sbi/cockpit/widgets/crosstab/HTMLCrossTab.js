@@ -66,27 +66,30 @@
 //         |rowHeaderPanel   |    datapanel        |
 //         -----------------------------------------
 
-Ext.ns("Sbi.cockpit.widgets.crosstab");
+Ext.define('Sbi.cockpit.widgets.crosstab.HTMLCrossTab', {
+	extend: 'Ext.panel.Panel',
 
-Sbi.cockpit.widgets.crosstab.HTMLCrossTab = function(config) {
+	statics: {
+		sort: function(column, order){
+			alert(column);
+		}
+	},
 
-	var defaultSettings = {
-	};
-
-	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.crosstab.HTMLCrossTab', defaultSettings);
-
-	var c = Ext.apply(settings, config || {});
-
-	c = Ext.apply(c, {
-  		html : c.htmlData
-  		, border: false
+	config:{
+  		 border: false
   		, autoWidth: true
-  		, autoScroll: true
-	});
+  		, cls: "widget-crosstab"
 
-	Sbi.cockpit.widgets.crosstab.HTMLCrossTab.superclass.constructor.call(this, c);
-};
+	},
 
-Ext.extend(Sbi.cockpit.widgets.crosstab.HTMLCrossTab, Ext.Panel, {
+	constructor : function(config) {
+		this.initConfig(config||{});
+		this.layout= 'fit';
+		var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.crosstab.HTMLCrossTab');
+		Ext.apply(this, settings);
+		this.html = config.htmlData;
+		this.callParent(arguments);
+
+	}
 
 });

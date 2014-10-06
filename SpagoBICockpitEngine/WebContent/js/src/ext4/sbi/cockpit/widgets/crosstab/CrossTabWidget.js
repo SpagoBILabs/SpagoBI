@@ -42,6 +42,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	, crosstab: null
 	, calculatedFields: null
 	, loadMask: null
+	, autoScroll: true
 
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
@@ -90,7 +91,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 
 	, refreshCrossTab: function(serviceResponseText) {
 
-		this.crosstab = new Sbi.cockpit.widgets.crosstab.HTMLCrossTab({
+		this.crosstab = Ext.create("Sbi.cockpit.widgets.crosstab.HTMLCrossTab",{
 			htmlData : serviceResponseText
 			, bodyCssClass : 'crosstab'
 		});
