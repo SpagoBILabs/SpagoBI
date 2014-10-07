@@ -137,10 +137,12 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		
 		this.automaticHierarchiesComboPanel =  Ext.create('Ext.panel.Panel', {
 	        bodyStyle:'padding:20px',
-	        height: 150,
+	        height: 185,
 			items:[this.comboDimensions,this.comboHierarchies]
 		});		
 	}
+	
+	//----------------------------------------------------
 	
 	, createCustomHierarchiesPanel: function(){
 		//New Custom Hierarchy Panel
@@ -177,6 +179,40 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        listeners: {
 	            click: function() {
 	            	this.createCustomHierarchyEmptyPanel();
+	            	this.disableGUIElements();
+	            	this.saveCustomHierarchyButton.setDisabled(false);
+	            	this.cancelCustomHierarchyButton.setDisabled(false);
+	            }
+				,scope:this 
+	        }
+	    })
+		
+		
+		this.saveCustomHierarchyButton = new Ext.Button({
+	        text: 'Save',
+            margin: '0 0 0 10',
+            disabled: true,
+	        listeners: {
+	            click: function() {
+	            	this.saveCustomHierarchy();
+	            	this.enableGUIElements();
+	            	this.saveCustomHierarchyButton.setDisabled(true);
+	            	this.cancelCustomHierarchyButton.setDisabled(true);
+	            }
+				,scope:this 
+	        }
+	    })
+		
+		this.cancelCustomHierarchyButton = new Ext.Button({
+	        text: 'Cancel',
+            margin: '0 0 0 10',
+            disabled: true,
+	        listeners: {
+	            click: function() {
+	            	this.cancelCustomHierarchy();
+	            	this.enableGUIElements();
+	            	this.saveCustomHierarchyButton.setDisabled(true);
+	            	this.cancelCustomHierarchyButton.setDisabled(true);	            	
 	            }
 				,scope:this 
 	        }
@@ -186,9 +222,9 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        bodyStyle:'padding:3px',
 			layout:'table',
 			layoutConfig: {
-		        columns: 3
+		        columns: 5
 		    },
-			items:[this.newCustomHierarchyTypeCombo,this.newCustomHierarchyButton]
+			items:[this.newCustomHierarchyTypeCombo,this.newCustomHierarchyButton,this.saveCustomHierarchyButton,this.cancelCustomHierarchyButton]
 		});	
 		
 		
@@ -389,56 +425,44 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	 * Private methods
 	 **************************************/
 	
+	, disableGUIElements: function(){
+		//Disable some GUI elements when editing a custom hierarchy to prevent inconsistency
+		this.comboHierarchies.setDisabled(true);
+		this.comboDimensions.setDisabled(true);
+		this.newCustomHierarchyTypeCombo.setDisabled(true);
+		this.newCustomHierarchyButton.setDisabled(true);
+	}
+	
+	, enableGUIElements: function(){
+		//Enable some GUI elements after custom hierarchy save or cancel
+		this.comboHierarchies.setDisabled(false);
+		this.comboDimensions.setDisabled(false);
+		this.newCustomHierarchyTypeCombo.setDisabled(false);
+		this.newCustomHierarchyButton.setDisabled(false);
+
+	}
+	
+	, saveCustomHierarchy: function(){
+		alert("TODO: save current hierarchy process");
+	}
+	
+	, cancelCustomHierarchy: function(){
+		alert("TODO: cancel current hierarchy editing process");
+	}
+	
 	, createCustomHierarchyEmptyPanel: function(){
-		   Ext.define('myPanelDropTarget', {
-			   extend: 'Ext.dd.DropTarget',
-
-			   notifyEnter : function(source, e, data) {
-				   console.log('enter');
-				   return this.callParent(arguments);
-			   },                
-			   notifyOut : function(source, e, data) {
-				   console.log('out');
-				   return this.callParent(arguments);
-			   },
-
-			   notifyOver : function(source, e, data) {
-				   console.log('over');
-			   
-				   return this.callParent(arguments);
-			   },                
-			   notifyDrop : function(source, e, data) {
-				   console.log('drop');
-				   thisPanel.rightPanel.remove(Ext.getCmp('customTreePanel'));
-				   var store = new Ext.data.TreeStore();
-				   var nodeClone = thisPanel.cloneNode(data.records[0]); 
-  
-				   store.setRootNode(nodeClone);
-				   var customTreePanel = thisPanel.createCustomTreePanel(store,true);
-				   thisPanel.rightPanel.add(customTreePanel);	
-				   
-				   
-				   thisPanel.removeRecord = data.records[0];
-				   alert("TODO: risolvere problema rimozione nodi draggati");
-				   //data.records[0].destroy(true);
-				   //automaticHierarchiesTreeStore.load();
-				   //automaticHierarchyTreeStore.sync();
-				   return false;
-			   }
-			   , onContainerDrop : function( source, e, data ){
-				   console.log('onContainerDrop');
-				   return true;
-			   }
-
-		   });
 		   
 		   if ((Ext.getCmp('customTreePanel') != null) & (Ext.getCmp('customTreePanel') != undefined)){
         	  	this.rightPanel.remove(Ext.getCmp('customTreePanel'));
 		   }
+		   
+		   if ((Ext.getCmp('customTreePanelTemp') != null) & (Ext.getCmp('customTreePanelTemp') != undefined)){
+       	  	this.rightPanel.remove(Ext.getCmp('customTreePanelTemp'));
+		   }
 
 		   //TreePanel initialized as simple panel for tree creation
 		   this.treePanelRight = Ext.create('Ext.panel.Panel', {
-			   id: 'customTreePanel',
+			   id: 'customTreePanelTemp',
 			   layout: 'fit',
 			   frame: false,
 			   border:true,
@@ -452,16 +476,40 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			        		   html: 'Drag here the root of the new hierarchy'
 			        	   }
 			           }
-			           ],
-			           listeners: {
+			           ]
+			           ,listeners: {
 			        	   'afterrender': function () {
-			        		   thisPanel.treePanelRight.dropZone = Ext.create('myPanelDropTarget', thisPanel.treePanelRight.getEl(), {
-			        			   ddGroup: 'DDhierarchiesTrees',
-			        			   panel: thisPanel.treePanelRight
-			        		   });                    
+			        		   var customTreePanelTempDropTarget = new Ext.dd.DropTarget(thisPanel.treePanelRight.getEl(), {
+			        			   ddGroup    : 'DDhierarchiesTrees',
+			        			   copy       : false,
+			        			   notifyDrop : function(ddSource, e, data){
+			        				   console.log('drop');
+			        				   var droppedNode = data.records[0];
+			        				   if (!droppedNode.isLeaf()){
+				        				   var store = new Ext.data.TreeStore();
+				        				   var nodeClone = thisPanel.cloneNode(droppedNode); 
+
+				        				   store.setRootNode(nodeClone);
+				        				   var customTreePanel = thisPanel.createCustomTreePanel(store,true);
+				        				   thisPanel.rightPanel.add(customTreePanel);	
+				        				   //remove nodes from the original tree source (avoid duplicates)
+				        				   data.records[0].remove(); 
+				        				   Ext.getCmp('customTreePanelTemp').setVisible(false);
+				        				   return true;
+			        				   } else {
+			        					   Ext.Msg.alert('Wrong Action', 'Cannot use a leaf node as a new root');
+			        				   }
+			        				   
+			        				   return false;
+
+			        			   }
+			        		   }); 
+
 			        	   }
-			           }            
+			           }           
 		   });		
+		   
+
 		   
 		   this.rightPanel.add(this.treePanelRight);
 	}
@@ -475,8 +523,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		var customTreePanel = this.createCustomTreePanel(customTreeStore,false);
 		this.rightPanel.add(customTreePanel);
 		customTreePanel.expandAll();
-		
-		
+
 	}
 	
 	, createCustomTreePanel: function(store,rootVisible){
@@ -495,38 +542,44 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	               ddGroup: 'DDhierarchiesTrees',
 	               enableDrag: true,
 	               enableDrop: true
-	            }
-            ,listeners: {
-            	
-            	//TODO: listener per gestione drag drop
-            	
-            	/*
-                nodedragover: function(targetNode, position, dragData){
-                	alert("on drag over");
-                    var rec = dragData.records[0],
-                        isFirst = targetNode.isFirst(),
-                        canDropFirst = rec.get('canDropOnFirst'),
-                        canDropSecond = rec.get('canDropOnSecond');
-                        
-                    return isFirst ? canDropFirst : canDropSecond;
-                }
-	            , beforedrop: {
+	         }
+	        ,listeners: {           	
+	        	//listeners for drag & drop management           	
+	        	viewready: function (tree) {                   
+	        		tree.plugins[0].dropZone.notifyDrop = function(dd, e, data){
+	        			var customHierarchyType = thisPanel.newCustomHierarchyTypeCombo.getValue();
+	        			var isLeafNode = data.records[0].isLeaf();
+	        			if ((customHierarchyType != "SEMIMANUAL") || (!isLeafNode) ){
+	        				if(this.lastOverNode){
+	        					this.onNodeOut(this.lastOverNode, dd, e, data);
+	        					this.lastOverNode = null;
+	        				}
+	        				var n = this.getTargetFromEvent(e);
+	        				return n ?
+	        						this.onNodeDrop(n, dd, e, data) :
+	        							this.onContainerDrop(dd, e, data);
+	        			} else {
+	        				Ext.Msg.alert('Wrong Action', 'Cannot drop a leaf node');
+	        				return false;
+	        			}
+	        		}	
+	        	},
+	        	beforedrop: function(node, data, overModel, dropPosition, dropFunction, options) {
+	        		alert("BeforeDrop!");
+	        	}/*
+                , beforedrop: {
 	                fn: this.onBeforeDropRightTree,
-	            	
+
 	                scope: this
-	            }
-	            */
-            	beforedrop: function(node, data, overModel, dropPosition, dropFunction, options) {
-            		alert("BeforeDrop!");
-            	}
-            }	        
+	            }*/
+	        }	        
 	        }
-	    });
+		});
 			
 	}
 	
 	, createTreePanel: function(store){
-		return new Ext.tree.Panel({
+		var automaticTree = new Ext.tree.Panel({
 	        id: 'automaticTreePanel',
 	        layout: 'fit',
 	        store: store,
@@ -540,10 +593,12 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	               ptype: 'treeviewdragdrop',
 	               ddGroup: 'DDhierarchiesTrees',
 	               enableDrag: true,
-	               enableDrop: false
+	               enableDrop: false,
+	               copy: false
 	            }
 	        }
 	    });
+		return automaticTree;
 			
 	}
 	
