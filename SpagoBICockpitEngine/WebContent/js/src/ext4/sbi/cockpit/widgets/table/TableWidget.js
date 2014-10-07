@@ -356,8 +356,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		var columns = this.initColumns();
 
 		var gridConf = {
-			store: this.getStore(),
-		    columns: columns,
+			store: this.getStore()
+		    , columns: columns
 //		    sm : new Ext.grid.RowSelectionModel( {
 //				singleSelect : true
 //			})
@@ -473,6 +473,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			var fieldHeader = selection.header;
 			var value = selection.value;
 			selections[fieldHeader] = selections[fieldHeader] || {values: []};
+			//selections[fieldHeader] = {values: []};
 			Ext.Array.include(selections[fieldHeader].values, value);
 
 			this.fireEvent('selection', this, selections);
