@@ -19,62 +19,67 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RestUtilities {
-	
+
 	/**
 	 * Reads the body of a request and return it as a string
-	 * @param request the HttpServletRequest request
+	 * 
+	 * @param request
+	 *            the HttpServletRequest request
 	 * @return the body
 	 * @throws IOException
 	 */
-	public static String readBody( HttpServletRequest request) throws IOException{
-		
+	public static String readBody(HttpServletRequest request) throws IOException {
+
 		StringBuilder stringBuilder = new StringBuilder();
 		BufferedReader bufferedReader = null;
 		try {
-		    InputStream inputStream = request.getInputStream();
-		    if (inputStream != null) {
-		        bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-		        char[] charBuffer = new char[128];
-		        int bytesRead = -1;
-		        while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-		            stringBuilder.append(charBuffer, 0, bytesRead);
-		        }
-		    } else {
-		        stringBuilder.append("");
-		    }
+			InputStream inputStream = request.getInputStream();
+			if (inputStream != null) {
+				bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+				char[] charBuffer = new char[128];
+				int bytesRead = -1;
+				while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+					stringBuilder.append(charBuffer, 0, bytesRead);
+				}
+			} else {
+				stringBuilder.append("");
+			}
 		} finally {
-		    if (bufferedReader != null) {
-	            bufferedReader.close();
-		    }
+			if (bufferedReader != null) {
+				bufferedReader.close();
+			}
 		}
 		return stringBuilder.toString();
 	}
-	
+
 	/**
 	 * 
 	 * Reads the body of a request and return it as a JSONObject
-	 * @param request the HttpServletRequest request
+	 * 
+	 * @param request
+	 *            the HttpServletRequest request
 	 * @return
 	 * @throws IOException
 	 * @throws JSONException
 	 */
-	public static JSONObject readBodyAsJSONObject( HttpServletRequest request) throws IOException, JSONException{
+	public static JSONObject readBodyAsJSONObject(HttpServletRequest request) throws IOException, JSONException {
 		String requestBody = RestUtilities.readBody(request);
 		return JSONUtils.toJSONObject(requestBody);
 	}
-	
+
 	/**
 	 * 
 	 * Reads the body of a request and return it as a JSONOArray
-	 * @param request the HttpServletRequest request
+	 * 
+	 * @param request
+	 *            the HttpServletRequest request
 	 * @return
 	 * @throws IOException
 	 * @throws JSONException
 	 */
-	public static JSONArray readBodyAsJSONArray( HttpServletRequest request) throws IOException, JSONException{
+	public static JSONArray readBodyAsJSONArray(HttpServletRequest request) throws IOException, JSONException {
 		String requestBody = RestUtilities.readBody(request);
 		return JSONUtils.toJSONArray(requestBody);
 	}
-	
 
 }
