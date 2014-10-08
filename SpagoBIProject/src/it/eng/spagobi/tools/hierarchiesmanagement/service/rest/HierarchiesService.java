@@ -23,6 +23,7 @@ package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -35,11 +36,15 @@ import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNode;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNodeData;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -48,6 +53,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -67,11 +73,11 @@ public class HierarchiesService {
 	private static String DATASOURCE = "DATASOURCE";
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON)
 	public String test(@Context HttpServletRequest req) {
 		// TODO: to remove, just for testing rest service
 
-		return "{\"response\":\"hierarchyREST\"}";
+		return "{\"response\":\"ok\"}";
 	}
 
 	@GET
@@ -165,8 +171,9 @@ public class HierarchiesService {
 			}
 			// 2 -get hierarchy table postfix
 			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
 			// 3 - execute query to get hierarchies leafs
-			String queryText = this.createQueryAutomaticHierarchy(dataSource, hierarchyPrefix, hierarchy);
+			String queryText = this.createQueryAutomaticHierarchy(dataSource, hierarchyFK, hierarchyPrefix, hierarchy);
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 			// 4 - Create ADT for Tree from datastore
@@ -249,8 +256,10 @@ public class HierarchiesService {
 			}
 			// 2 -get hierarchy table postfix
 			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
+
 			// 3 - execute query to get hierarchies leafs
-			String queryText = this.createQueryCustomHierarchy(dataSource, hierarchyPrefix, hierarchy);
+			String queryText = this.createQueryCustomHierarchy(dataSource, hierarchyFK, hierarchyPrefix, hierarchy);
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 			// 4 - Create ADT for Tree from datastore
@@ -266,11 +275,25 @@ public class HierarchiesService {
 
 	}
 
-	@GET
+	@POST
 	@Path("/saveCustomHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String saveCustomHierarchy(@Context HttpServletRequest req) {
 		// TODO: get custom hierarchy structure for tree visualization
+
+		String root = req.getParameter("root");
+		JSONObject rootJSONObject = ObjectUtils.toJSONObject(root);
+		String hierarchyName = req.getParameter("name");
+		String hierarchyScope = req.getParameter("scope");
+
+		Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject);
+		for (List<HierarchyTreeNodeData> path : paths) {
+			for (HierarchyTreeNodeData node : path) {
+				System.out.print(node.getNodeName() + "->");
+			}
+			System.out.println("\n -------");
+		}
+
 		return "{\"response\":\"saveCustomHierarchy\"}";
 
 	}
@@ -288,10 +311,51 @@ public class HierarchiesService {
 	 * Utilities functions
 	 *----------------------------------------------/
 	
-	/** 
+	/*
+	 * Find all paths from root to leaves
+	 */
+	private Collection<List<HierarchyTreeNodeData>> findRootToLeavesPaths(JSONObject node) {
+		Collection<List<HierarchyTreeNodeData>> collectionOfPaths = new HashSet<List<HierarchyTreeNodeData>>();
+		try {
+			String nodeName = node.getString("text");
+			String nodeCode = node.getString("id");
+			String nodeLeafId = node.getString("leafId");
+			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId);
+
+			// current node is a leaf?
+			boolean isLeaf = node.getBoolean("leaf");
+			if (isLeaf) {
+				List<HierarchyTreeNodeData> aPath = new ArrayList<HierarchyTreeNodeData>();
+
+				aPath.add(nodeData);
+				collectionOfPaths.add(aPath);
+				return collectionOfPaths;
+			} else {
+				// node has children
+				JSONArray childs = node.getJSONArray("children");
+				for (int i = 0; i < childs.length(); i++) {
+					JSONObject child = childs.getJSONObject(i);
+					Collection<List<HierarchyTreeNodeData>> childPaths = findRootToLeavesPaths(child);
+					for (List<HierarchyTreeNodeData> path : childPaths) {
+						// add this node to start of the path
+						path.add(0, nodeData);
+						collectionOfPaths.add(path);
+					}
+				}
+
+			}
+			return collectionOfPaths;
+		} catch (JSONException je) {
+			logger.error("An unexpected error occured while retriving custom hierarchy root-leafs paths");
+			throw new SpagoBIServiceException("An unexpected error occured while retriving custom hierarchy root-leafs paths", je);
+		}
+
+	}
+
+	/**
 	 * Create query for extracting automatic hierarchy rows
 	 */
-	private String createQueryAutomaticHierarchy(IDataSource dataSource, String hierarchyPrefix, String hierarchyName) {
+	private String createQueryAutomaticHierarchy(IDataSource dataSource, String hierarchyFK, String hierarchyPrefix, String hierarchyName) {
 
 		String tableName = "HIER_" + hierarchyPrefix;
 
@@ -304,7 +368,9 @@ public class HierarchiesService {
 		}
 		String CD_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEAF", dataSource);
 		String NM_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEAF", dataSource);
-		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + " ");
+		String LEAF_ID = AbstractJDBCDataset.encapsulateColumnName(hierarchyFK, dataSource);
+
+		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + " ");
 		String selectClause = selectClauseBuffer.toString();
 
 		// where
@@ -320,7 +386,7 @@ public class HierarchiesService {
 	/**
 	 * Create query for extracting automatic hierarchy rows
 	 */
-	private String createQueryCustomHierarchy(IDataSource dataSource, String hierarchyPrefix, String hierarchyName) {
+	private String createQueryCustomHierarchy(IDataSource dataSource, String hierarchyFK, String hierarchyPrefix, String hierarchyName) {
 
 		String tableName = "HIER_" + hierarchyPrefix;
 
@@ -333,7 +399,9 @@ public class HierarchiesService {
 		}
 		String CD_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEAF", dataSource);
 		String NM_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEAF", dataSource);
-		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + " ");
+		String LEAF_ID = AbstractJDBCDataset.encapsulateColumnName(hierarchyFK, dataSource);
+
+		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + " ");
 		String selectClause = selectClauseBuffer.toString();
 
 		// where
@@ -362,7 +430,7 @@ public class HierarchiesService {
 			List<IField> recordFields = record.getFields();
 			int fieldsCount = recordFields.size();
 
-			for (int i = 0; i < fieldsCount; i = i + 2) {
+			for (int i = 0; i < fieldsCount - 1; i = i + 2) {
 				IField codeField = record.getFieldAt(i); // NODE CODE
 				IField nameField = record.getFieldAt(i + 1); // NODE NAME
 
@@ -400,6 +468,12 @@ public class HierarchiesService {
 					case 16:
 					case 18:
 					case 20:
+						// inject leafID into node
+						IField leafIdField = record.getFieldAt(i + 2);
+						Long leafId = (Long) leafIdField.getValue();
+						String leafIdString = String.valueOf(leafId);
+						data.setLeafId(leafIdString);
+
 						attachNodeToLevel(root, nodeCode, lastLevelFound, data);
 						lastLevelFound = nodeCode;
 						// leaf level
@@ -467,7 +541,7 @@ public class HierarchiesService {
 			}
 
 			rootJSONObject.put("children", childrenJSONArray);
-
+			// fake root
 			JSONObject mainObject = new JSONObject();
 			mainObject.put("text", "root");
 			mainObject.put("root", true);
@@ -497,6 +571,8 @@ public class HierarchiesService {
 				HierarchyTreeNodeData nodeData = (HierarchyTreeNodeData) node.getObject();
 				nodeJSONObject.put("text", nodeData.getNodeName());
 				nodeJSONObject.put("id", nodeData.getNodeCode());
+				nodeJSONObject.put("leafId", nodeData.getLeafId());
+
 				JSONArray childrenJSONArray = new JSONArray();
 
 				for (int i = 0; i < node.getChildCount(); i++) {
@@ -515,6 +591,7 @@ public class HierarchiesService {
 
 				nodeJSONObject.put("text", nodeData.getNodeName());
 				nodeJSONObject.put("id", nodeData.getNodeCode());
+				nodeJSONObject.put("leafId", nodeData.getLeafId());
 				nodeJSONObject.put("leaf", true);
 				return nodeJSONObject;
 
