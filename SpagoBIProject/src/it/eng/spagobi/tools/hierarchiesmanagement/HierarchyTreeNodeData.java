@@ -29,15 +29,21 @@ public class HierarchyTreeNodeData {
 
 	String nodeCode;
 	String nodeName;
+	String leafId;
 
 	/**
 	 * @param nodeCode
 	 * @param nodeName
 	 */
 	public HierarchyTreeNodeData(String nodeCode, String nodeName) {
+		this(nodeCode, nodeName, "");
+	}
+
+	public HierarchyTreeNodeData(String nodeCode, String nodeName, String leafId) {
 		super();
 		this.nodeCode = nodeCode;
 		this.nodeName = nodeName;
+		this.leafId = leafId;
 	}
 
 	/**
@@ -68,6 +74,21 @@ public class HierarchyTreeNodeData {
 	 */
 	public void setNodeName(String nodeName) {
 		this.nodeName = nodeName;
+	}
+
+	/**
+	 * @return the leafId
+	 */
+	public String getLeafId() {
+		return leafId;
+	}
+
+	/**
+	 * @param leafId
+	 *            the leafId to set
+	 */
+	public void setLeafId(String leafId) {
+		this.leafId = leafId;
 	}
 
 }

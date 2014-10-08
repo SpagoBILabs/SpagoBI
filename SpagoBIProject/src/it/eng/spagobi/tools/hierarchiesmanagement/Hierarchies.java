@@ -55,6 +55,7 @@ public class Hierarchies {
 	private static String DIMENSION = "DIMENSION";
 	private static String NAME = "NAME";
 	private static String HIERARCHY_PREFIX = "HIERARCHY_PREFIX";
+	private static String HIERARCHY_FK = "HIERARCHY_FK";
 	private static String DATASOURCE = "DATASOURCE";
 	private SourceBean template;
 
@@ -118,6 +119,30 @@ public class Hierarchies {
 			String dimensionName = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
 			if (dimensionName.equalsIgnoreCase(dimension)) {
 				SourceBean sbHierarchyPrefix = (SourceBean) sbRow.getAttribute(HIERARCHY_PREFIX);
+				String hierarchyPrefix = sbHierarchyPrefix.getAttribute(NAME) != null ? sbHierarchyPrefix.getAttribute(NAME).toString() : null;
+				return hierarchyPrefix;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the hierarchy table foreign key name of the passed dimension
+	 * 
+	 * @param dimension
+	 *            the dimension name
+	 * @return the foreign key name of the table that contains hierarchies
+	 */
+	public String getHierarchyTableForeignKeyName(String dimension) {
+		SourceBean sb = getTemplate();
+		SourceBean dimensions = (SourceBean) sb.getAttribute(DIMENSIONS);
+
+		List lst = dimensions.getAttributeAsList(DIMENSION);
+		for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
+			SourceBean sbRow = (SourceBean) iterator.next();
+			String dimensionName = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
+			if (dimensionName.equalsIgnoreCase(dimension)) {
+				SourceBean sbHierarchyPrefix = (SourceBean) sbRow.getAttribute(HIERARCHY_FK);
 				String hierarchyPrefix = sbHierarchyPrefix.getAttribute(NAME) != null ? sbHierarchyPrefix.getAttribute(NAME).toString() : null;
 				return hierarchyPrefix;
 			}
