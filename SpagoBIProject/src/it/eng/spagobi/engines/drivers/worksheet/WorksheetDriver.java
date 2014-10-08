@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.drivers.worksheet;
 
@@ -19,6 +19,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.execution.service.GetMetadataAction;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
@@ -47,7 +48,7 @@ import org.json.JSONObject;
 
 
 /**
- * Driver Implementation (IEngineDriver Interface) for Worksheet External Engine. 
+ * Driver Implementation (IEngineDriver Interface) for Worksheet External Engine.
  */
 public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 
@@ -59,7 +60,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	public final static String MASSIVE_EXPORT_PARAM_ACTION_NAME = "MASSIVE_EXPORT_WORKSHEET_ENGINE_START_ACTION";
 	public final static String PARAM_ACTION_NAME = "WORKSHEET_ENGINE_START_ACTION";
 
-	
+
 	public final static String METADATA_AND_METACONTENT = "METADATA_AND_METACONTENT";
 	public final static String PARAMETERS = "PARAMETERS";
 
@@ -75,14 +76,18 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	public final static String TAG_QBE_COMPOSITE = "COMPOSITE-QBE";
 	public final static String TAG_SMART_FILTER = EngineConstants.SMART_FILTER_TAG;
 
+	public static final String MIME_TYPE = "MIME_TYPE";
+	public final static String EXPORT_MIME_TYPE_XLS = 	"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	public final static String EXPORT_MIME_TYPE_PDF = 	"application/pdf";
+
 	/**
 	 * Returns a map of parameters which will be send in the request to the
 	 * engine application.
-	 * 
+	 *
 	 * @param profile Profile of the user
 	 * @param roleName the name of the execution role
 	 * @param analyticalDocument the biobject
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	public Map getParameterMap(Object analyticalDocument, IEngUserProfile profile, String roleName) {
@@ -100,7 +105,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			parameters = new Hashtable();
 			parameters = getRequestParameters(biObject);
 			parameters = applySecurity(parameters, profile);
-			parameters = applyService(parameters, biObject);
+			parameters = applyService(parameters, biObject, profile);
 			parameters = applyDatasourceForWriting(parameters, biObject);
 		} finally {
 			logger.debug("OUT");
@@ -128,12 +133,12 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	/**
 	 * Returns a map of parameters which will be send in the request to the
 	 * engine application.
-	 * 
+	 *
 	 * @param analyticalDocumentSubObject SubObject to execute
 	 * @param profile Profile of the user
 	 * @param roleName the name of the execution role
 	 * @param analyticalDocument the object
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	public Map getParameterMap(Object analyticalDocument, Object analyticalDocumentSubObject, IEngUserProfile profile, String roleName) {
@@ -152,7 +157,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			if(analyticalDocumentSubObject == null) {
 				logger.warn("Input parameter [subObject] is null");
 				return getParameterMap(analyticalDocument, profile, roleName);
-			}				
+			}
 			Assert.assertTrue((analyticalDocumentSubObject instanceof SubObject), "Input parameter [subObjectDetail] cannot be an instance of [" + analyticalDocumentSubObject.getClass().getName()+ "]");
 			subObject = (SubObject) analyticalDocumentSubObject;
 
@@ -164,7 +169,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			parameters.put("subobjectId", subObject.getId());
 
 			parameters = applySecurity(parameters, profile);
-			parameters = applyService(parameters, biObject);
+			parameters = applyService(parameters, biObject, profile);
 			parameters = applyDatasourceForWriting(parameters, biObject);
 			parameters.put("isFromCross", "false");
 
@@ -180,7 +185,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	 * execution call
 	 * @param biObject BIObject to execute
 	 * @return Map The map of the execution call parameters
-	 */    
+	 */
 	private Map getRequestParameters(BIObject biObject) {
 		logger.debug("IN");
 
@@ -193,7 +198,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 
 		parameters = null;
 
-		try {		
+		try {
 			parameters = new Hashtable();
 			template = this.getTemplate(biObject);
 
@@ -201,7 +206,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 				contentDAO = DAOFactory.getBinContentDAO();
 				Assert.assertNotNull(contentDAO, "Impossible to instantiate contentDAO");
 
-				content = contentDAO.getBinContent(template.getBinId());		    
+				content = contentDAO.getBinContent(template.getBinId());
 				Assert.assertNotNull(content, "Template content cannot be null");
 			} catch (Throwable t){
 				throw new RuntimeException("Impossible to load template content for document [" + biObject.getLabel()+ "]", t);
@@ -218,21 +223,21 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		}
 
 		return parameters;
-	} 
+	}
 
 
 
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
 	 * @param biobj BIOBject to execute
-	 * @param pars Map of the parameters for the execution call  
+	 * @param pars Map of the parameters for the execution call
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map appendAnalyticalDriversToRequestParameters(BIObject biobj, Map pars) {
 		logger.debug("IN");
 
 		if(biobj==null) {
-			logger.warn("BIObject parameter null");	    
+			logger.warn("BIObject parameter null");
 			return pars;
 		}
 
@@ -241,7 +246,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			BIObjectParameter biobjPar = null;
 			for(Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();){
 				try {
-					biobjPar = (BIObjectParameter)it.next();									
+					biobjPar = (BIObjectParameter)it.next();
 					String value = parValuesEncoder.encode(biobjPar);
 					pars.put(biobjPar.getParameterUrlName(), value);
 					logger.debug("Add parameter:"+biobjPar.getParameterUrlName()+"/"+value);
@@ -257,12 +262,12 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject The BIOBject to edit
 	 * @param profile the profile
-	 * 
+	 *
 	 * @return the edits the document template build url
-	 * 
+	 *
 	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
@@ -273,12 +278,12 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject  The BIOBject to edit
 	 * @param profile the profile
-	 * 
+	 *
 	 * @return the new document template build url
-	 * 
+	 *
 	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
@@ -294,8 +299,8 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		templateSB.setAttribute(ATTRIBUTE_VERSION, CURRENT_VERSION);
 		SourceBean previous = SourceBean.fromXMLString( originalWorksheetTempl );
 
-		// from version 0 to version 1 worksheet change compensation: on version 0 the 
-		// worksheet definition was inside QBE tag; on version 1 the QBE tag is inside 
+		// from version 0 to version 1 worksheet change compensation: on version 0 the
+		// worksheet definition was inside QBE tag; on version 1 the QBE tag is inside
 		// WORKSHEET tag
 		if (previous.getName().equalsIgnoreCase(TAG_QBE)
 				|| previous.getName().equalsIgnoreCase(TAG_QBE_COMPOSITE)
@@ -324,7 +329,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		} else {
 
 			SourceBean qbeSB = null;
-			
+
 			if (previous.containsAttribute(TAG_QBE)) {
 				qbeSB = (SourceBean) previous.getAttribute(TAG_QBE);
 			} else if (previous.containsAttribute(TAG_QBE_COMPOSITE)) {
@@ -332,7 +337,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			} else if (previous.containsAttribute(TAG_SMART_FILTER)) {
 				qbeSB = (SourceBean) previous.getAttribute(TAG_SMART_FILTER);
 			}
-			
+
 			if (qbeSB != null) {
 				templateSB.setAttribute(qbeSB);
 			}
@@ -357,7 +362,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 
 
 
-		String template = templateSB.toXML(false);	
+		String template = templateSB.toXML(false);
 		return template;
 	}
 
@@ -365,8 +370,8 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		SourceBean templateSB = new SourceBean(TAG_WORKSHEET);
 		templateSB.setAttribute(ATTRIBUTE_VERSION, CURRENT_VERSION);
 		SourceBean confSB = SourceBean.fromXMLString( originalQbeTempl );
-		// from version 0 to version 1 worksheet change compensation: on version 0 the 
-		// worksheet definition was inside QBE tag; on version 1 the QBE tag is inside 
+		// from version 0 to version 1 worksheet change compensation: on version 0 the
+		// worksheet definition was inside QBE tag; on version 1 the QBE tag is inside
 		// WORKSHEET tag
 		if (confSB.getName().equalsIgnoreCase(TAG_QBE)
 				|| confSB.getName().equalsIgnoreCase(TAG_QBE_COMPOSITE)
@@ -395,7 +400,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		} else {
 
 			SourceBean qbeSB = null;
-			
+
 			if (confSB.containsAttribute(TAG_QBE)) {
 				qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE);
 			} else if (confSB.containsAttribute(TAG_QBE_COMPOSITE)) {
@@ -403,7 +408,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			} else if (confSB.containsAttribute(TAG_SMART_FILTER)) {
 				qbeSB = (SourceBean) confSB.getAttribute(TAG_SMART_FILTER);
 			}
-			
+
 			if (qbeSB != null) {
 				templateSB.setAttribute(qbeSB);
 				if(workSheetQuery!=null && !workSheetQuery.equals("") ){
@@ -424,7 +429,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			templateSB.setAttribute(wk_def_sb);
 		}
 
-		String template = templateSB.toXML(false);	
+		String template = templateSB.toXML(false);
 		return template;
 	}
 
@@ -452,17 +457,44 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			qbeSB.setAttribute(queryDefinitionSB);
 			templateSB.setAttribute(qbeSB);
 		}
-		String template = templateSB.toXML(false);	
+		String template = templateSB.toXML(false);
 		return template;
 	}
 
-	private Map applyService(Map parameters, BIObject biObject) {
+
+	private Map applyService(Map parameters, BIObject biObject, IEngUserProfile profile) {
+
 		logger.debug("IN");
 
 		try {
 			Assert.assertNotNull(parameters, "Input [parameters] cannot be null");
 
-			parameters.put(PARAM_SERVICE_NAME, PARAM_ACTION_NAME);
+			String userId=(String)profile.getUserUniqueIdentifier();
+			if(((UserProfile)profile).isSchedulerUser(userId)){
+
+
+				// if among parameters there is outputType parameter set MIME type that is required by export Action
+				if(parameters.get("outputType") != null){
+					String mimeType = EXPORT_MIME_TYPE_XLS;
+					String outputType = parameters.get("outputType").toString();
+					logger.debug("Export in "+outputType);
+					if(outputType.equalsIgnoreCase("PDF")) mimeType = EXPORT_MIME_TYPE_PDF;
+					else if(outputType.equalsIgnoreCase("XLS")) mimeType = EXPORT_MIME_TYPE_XLS;
+					else { // default is XLS
+					}
+					logger.debug("Mime type to export is "+mimeType);
+					parameters.put(MIME_TYPE, mimeType);
+				}
+				else{
+					logger.debug("Mime type to export is defalt application/xls");
+					parameters.put(MIME_TYPE, EXPORT_MIME_TYPE_XLS);
+				}
+
+				parameters.put(PARAM_SERVICE_NAME, MASSIVE_EXPORT_PARAM_ACTION_NAME);
+			}
+			else{
+				parameters.put(PARAM_SERVICE_NAME, PARAM_ACTION_NAME);
+			}
 			parameters.put(PARAM_NEW_SESSION, "TRUE");
 
 		} catch(Throwable t) {
@@ -472,7 +504,10 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		}
 
 		return parameters;
+
+
 	}
+
 
 	private ObjTemplate getTemplate(BIObject biObject) {
 		ObjTemplate template;
@@ -487,7 +522,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			Assert.assertNotNull(templateDAO, "Impossible to instantiate templateDAO");
 
 			template = templateDAO.getBIObjectActiveTemplate( biObject.getId() );
-			Assert.assertNotNull(template, "Loaded template cannot be null");	
+			Assert.assertNotNull(template, "Loaded template cannot be null");
 
 			logger.debug("Active template [" + template.getName() + "] of document [" + biObject.getLabel() + "] loaded succesfully");
 		} catch(Throwable t) {
@@ -511,7 +546,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 //		if(biobj.getBiObjectParameters() != null){
 //			ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
 //			for(Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();){
-//				BIObjectParameter biobjPar = (BIObjectParameter)it.next();									
+//				BIObjectParameter biobjPar = (BIObjectParameter)it.next();
 //				try {
 //					String name = biobjPar.getLabel();
 //					String value = parValuesEncoder.encode(biobjPar);
@@ -542,42 +577,42 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 				MetadataJSONSerializer jsonSerializer = new MetadataJSONSerializer();
 				JSONArray metaArray = new JSONArray();
 				Locale locale = getLocale();
-		
+
 				Domain typeDom = DAOFactory.getDomainDAO().loadDomainById(biObject.getBiObjectTypeID());
 				MessageBuilder msgBuild = new MessageBuilder();
 				// fill thecnical metadata
-				
+
 				JSONObject labelJSON = new JSONObject();
-				String label = msgBuild.getMessage(GetMetadataAction.LABEL, locale);	
+				String label = msgBuild.getMessage(GetMetadataAction.LABEL, locale);
 				labelJSON.put("meta_name", label);
 				labelJSON.put("meta_content", biObject.getLabel());
 				labelJSON.put("meta_type", "GENERAL_META");
-				
+
 				JSONObject nameJSON = new JSONObject();
-				String name = msgBuild.getMessage(GetMetadataAction.NAME, locale);	
+				String name = msgBuild.getMessage(GetMetadataAction.NAME, locale);
 				nameJSON.put("meta_name", name);
 				nameJSON.put("meta_content", biObject.getName());
 				nameJSON.put("meta_type", "GENERAL_META");
-				
+
 				JSONObject typeJSON = new JSONObject();
 				String typeL = msgBuild.getMessage(GetMetadataAction.TYPE, locale);
 				String valueType = msgBuild.getMessage(typeDom.getValueName(), locale);
 				typeJSON.put("meta_name", typeL);
 				typeJSON.put("meta_content", valueType);
 				typeJSON.put("meta_type", "GENERAL_META");
-				
+
 				JSONObject engineJSON = new JSONObject();
 				String engine = msgBuild.getMessage(GetMetadataAction.ENG_NAME, locale);
 				engineJSON.put("meta_name", engine);
 				engineJSON.put("meta_content", biObject.getEngine().getName());
 				engineJSON.put("meta_type", "GENERAL_META");
-				
+
 				metaArray.put(labelJSON);
 				metaArray.put(nameJSON);
 				metaArray.put(typeJSON);
 				metaArray.put(engineJSON);
-				
-				
+
+
 				for (Iterator iterator = biObject.getObjMetaDataAndContents().iterator(); iterator.hasNext();) {
 					DocumentMetadataProperty type = (DocumentMetadataProperty) iterator.next();
 					Object o = jsonSerializer.serialize(type, locale);
@@ -590,9 +625,9 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			else{
 				logger.debug("no meta and metacontent defined");
 			}
-		
-		
-		
+
+
+
 		}
 		catch (Exception e) {
 			logger.error("Impossibile to serialize metadata and metacontent for object with label "+biObject.getLabel(), e);
@@ -602,24 +637,35 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		logger.debug("OUT");
 	}
 
+
+
+
+
 	private Locale getLocale() {
-		logger.debug("IN");
-		try {
-			Locale locale = null;
+	logger.debug("IN");
+	try {
+		Locale locale = null;
+
+		if(RequestContainer.getRequestContainer() != null){
 			RequestContainer requestContainer = RequestContainer.getRequestContainer();
 			SessionContainer permanentSession = requestContainer.getSessionContainer().getPermanentContainer();
 			String language = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
 			String country = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
 			logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
 			locale = new Locale(language, country);
-			return locale;
-		} catch (Exception e) {
-			logger.error("Error while getting locale; using default one", e);
-			return GeneralUtilities.getDefaultLocale();
-		} finally  {
-			logger.debug("OUT");
-		}	
+		}
+		else{
+			locale = GeneralUtilities.getDefaultLocale();
+		}
+		return locale;
+	} catch (Exception e) {
+		logger.error("Error while getting locale; using default one", e);
+		return GeneralUtilities.getDefaultLocale();
+	} finally  {
+		logger.debug("OUT");
 	}
+}
+
 
 
 }
