@@ -36,6 +36,10 @@ import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNode;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNodeData;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -279,31 +283,80 @@ public class HierarchiesService {
 	@Path("/saveCustomHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String saveCustomHierarchy(@Context HttpServletRequest req) {
-		// TODO: get custom hierarchy structure for tree visualization
+		// Save hierarchy structure
+		try {
+			String root = req.getParameter("root");
+			JSONObject rootJSONObject = ObjectUtils.toJSONObject(root);
+			String hierarchyName = req.getParameter("name");
+			String hierarchyDescription = req.getParameter("description");
+			String hierarchyScope = req.getParameter("scope");
+			String hierarchyType = req.getParameter("type");
 
-		String root = req.getParameter("root");
-		JSONObject rootJSONObject = ObjectUtils.toJSONObject(root);
-		String hierarchyName = req.getParameter("name");
-		String hierarchyScope = req.getParameter("scope");
+			String dimension = req.getParameter("dimension");
 
-		Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject);
-		for (List<HierarchyTreeNodeData> path : paths) {
-			for (HierarchyTreeNodeData node : path) {
-				System.out.print(node.getNodeName() + "->");
+			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject);
+
+			// Information for persistence
+			// 1 - get hierarchy table postfix(ex: _CDC)
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
+			// 2 - get datasource label name
+			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
+			if (dataSource == null) {
+				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy", "No datasource found for saving hierarchy");
 			}
-			System.out.println("\n -------");
-		}
 
-		return "{\"response\":\"saveCustomHierarchy\"}";
+			for (List<HierarchyTreeNodeData> path : paths) {
+				persistCustomHierarchyPath(hierarchyName, hierarchyDescription, hierarchyScope, hierarchyType, dataSource, hierarchyPrefix, hierarchyFK, path);
+			}
+
+			return "{\"response\":\"ok\"}";
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while retriving custom hierarchy structure", t);
+		}
 
 	}
 
-	@GET
+	@POST
 	@Path("/deleteCustomHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String deleteCustomHierarchy(@Context HttpServletRequest req) {
-		// TODO: get custom hierarchy structure for tree visualization
-		return "{\"response\":\"deleteCustomHierarchy\"}";
+	public String deleteCustomHierarchy(@Context HttpServletRequest req) throws SQLException {
+		// delete hierarchy
+		Connection connection = null;
+		try {
+			String dimension = req.getParameter("dimension");
+			String hierarchyName = req.getParameter("name");
+
+			// 1 - get hierarchy table postfix(ex: _CDC)
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+
+			// 2 - get datasource label name
+			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
+
+			// 3 - create query text
+			String hierarchyNameCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+			String tableName = "HIER_" + hierarchyPrefix;
+			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyNameCol + "=\"" + hierarchyName + "\" ";
+
+			// 4 - Execute DELETE statement
+			connection = dataSource.getConnection();
+			Statement statement = connection.createStatement();
+			statement.executeUpdate(queryText);
+			statement.close();
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while deleting custom hierarchy", t);
+		} finally {
+			connection.close();
+		}
+
+		return "{\"response\":\"ok\"}";
 
 	}
 
@@ -311,7 +364,103 @@ public class HierarchiesService {
 	 * Utilities functions
 	 *----------------------------------------------/
 	
-	/*
+	
+	/**
+	 * Persist custom hierarchy paths to database
+	 */
+	private void persistCustomHierarchyPath(String hierarchyName, String hierarchyDescription, String hierarchyScope, String hierarchyType,
+			IDataSource dataSource, String hierarchyPrefix, String hierarchyFK, List<HierarchyTreeNodeData> path) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = dataSource.getConnection();
+			// connection.setAutoCommit(false);
+
+			// Insert prepared statement construction
+			// ------------------------------------------
+			String insertQuery = createInsertStatement(hierarchyPrefix, hierarchyFK, dataSource);
+			PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
+
+			// Valorization of prepared statement placeholder
+			// -----------------------------------------------
+			final int COLUMNSNUMBER = 27;
+			// HIER_NM column
+			preparedStatement.setString(1, hierarchyName);
+			// HIER_DS column
+			preparedStatement.setString(2, hierarchyDescription);
+			// HIER_TP column
+			preparedStatement.setString(3, hierarchyType);
+			// SCOPE column
+			preparedStatement.setString(4, hierarchyScope);
+			// set all level column to null by default
+			for (int i = 5; i < COLUMNSNUMBER + 1; i++) {
+				preparedStatement.setNull(i, java.sql.Types.VARCHAR);
+			}
+
+			// explore the path and set the corresponding columns
+			// keeps the column number
+			int colIndex = 5;
+			for (int i = 0; i < path.size(); i++) {
+				HierarchyTreeNodeData node = path.get(i);
+
+				if (i == path.size() - 1) {
+					// last node is a leaf
+					preparedStatement.setString(COLUMNSNUMBER - 2, node.getNodeCode());
+					preparedStatement.setString(COLUMNSNUMBER - 1, node.getNodeName());
+					preparedStatement.setLong(COLUMNSNUMBER, Long.valueOf(node.getLeafId()));
+				} else {
+					// not-leaf node
+					preparedStatement.setString(colIndex, node.getNodeCode());
+					preparedStatement.setString(colIndex + 1, node.getNodeName());
+				}
+				colIndex = colIndex + 2;
+			}
+
+			// Execution of prepared statement
+			// ----------------------------------------
+			preparedStatement.executeUpdate();
+			preparedStatement.close();
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure", t);
+		} finally {
+			if (connection != null && !connection.isClosed()) {
+				connection.close();
+			}
+		}
+	}
+
+	/**
+	 * Create insert statement for hierarchy path persistence
+	 * 
+	 * @param hierarchyPrefix
+	 * @param hierarchyFK
+	 * @param dataSource
+	 * @return
+	 */
+	private String createInsertStatement(String hierarchyPrefix, String hierarchyFK, IDataSource dataSource) {
+		String tableName = "HIER_" + hierarchyPrefix;
+		String hierarchyNameCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+		String hierarchyDescriptionCol = AbstractJDBCDataset.encapsulateColumnName("HIER_DS", dataSource);
+		String hierarchyTypeCol = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
+		String hierarchyScopeCol = AbstractJDBCDataset.encapsulateColumnName("SCOPE", dataSource);
+		StringBuffer columns = new StringBuffer(hierarchyNameCol + "," + hierarchyDescriptionCol + "," + hierarchyTypeCol + "," + hierarchyScopeCol + ",");
+
+		for (int i = 1; i < 11; i++) {
+			String CD_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEV" + i, dataSource);
+			String NM_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEV" + i, dataSource);
+			columns.append(CD_LEV + "," + NM_LEV + ",");
+		}
+		String CD_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEAF", dataSource);
+		String NM_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEAF", dataSource);
+		String LEAF_ID = AbstractJDBCDataset.encapsulateColumnName(hierarchyFK, dataSource);
+		columns.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + " ");
+
+		String insertQuery = "insert into " + tableName + "(" + columns.toString() + ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+		return insertQuery;
+	}
+
+	/**
 	 * Find all paths from root to leaves
 	 */
 	private Collection<List<HierarchyTreeNodeData>> findRootToLeavesPaths(JSONObject node) {
