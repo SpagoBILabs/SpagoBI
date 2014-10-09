@@ -28,6 +28,19 @@ Sbi.cockpit.widgets.crosstab.CrossTabWidget = function(config) {
 
 //	this.addEvents('selection');
 
+
+	//create the configuration in a global variable. we must act in this way because we should manage the clicks on the table and from the table
+	//we can access only global variables
+
+	if(!Sbi.cockpit.widgets.crosstab.globalConfigs){
+		Sbi.cockpit.widgets.crosstab.globalConfigs = new Array();
+	}
+
+	this.myGlobalId = Sbi.cockpit.widgets.crosstab.globalConfigs.length;
+	Sbi.cockpit.widgets.crosstab.globalConfigs.push(this);
+	this.sortOptions = {};
+	this.sortOptions.myGlobalId = this.myGlobalId;
+
 	Sbi.trace("[CrossTabWidget.constructor]: OUT");
 };
 
@@ -43,6 +56,9 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	, calculatedFields: null
 	, loadMask: null
 	, autoScroll: true
+	, sortOptions: null
+	, myGlobalId: null
+	, crosstabDefinition: null
 
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
@@ -65,25 +81,31 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 		if(filters!=undefined && filters!=null){
 			this.requestParameters.FILTERS = Ext.util.JSON.encode(filters);
 		}
-
-		this.loadCrosstabAjaxRequest.defer(100, this,[crosstabDefinitionEncoded]);
+		this.crosstabDefinition = crosstabDefinitionEncoded;
+		this.loadCrosstabAjaxRequest.defer(100, this,[]);
 
 		Sbi.trace("[CrossTabWidget.load]: OUT");
 	}
 
-	, loadCrosstabAjaxRequest: function(crosstabDefinition){
+	, loadCrosstabAjaxRequest: function(){
+
+		crosstabDefinition = this.crosstabDefinition;
+
+		this.showLoadingMask();
 
 		Ext.Ajax.request({
 			url: Sbi.config.serviceReg.getServiceUrl('getCrosstab', {
 			}),
-			method: 'GET',
+			method: 'POST',
 			params: this.requestParameters,
 	        success : function(response, opts) {
+	        	this.hideLoadingMask();
 	        	this.refreshCrossTab(response.responseText);
 	        },
 	        scope: this,
+	        jsonData: Ext.encode(this.sortOptions),
 			failure: function(response, options) {
-//				this.refreshCrossTab(response.responseText);
+				this.hideLoadingMask();
 				Sbi.exception.ExceptionHandler.handleFailure(response, options);
 			}
 		});
@@ -94,7 +116,9 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 		this.crosstab = Ext.create("Sbi.cockpit.widgets.crosstab.HTMLCrossTab",{
 			htmlData : serviceResponseText
 			, bodyCssClass : 'crosstab'
+			, widgetContainer: this
 		});
+		this.removeAll();
 		this.add(this.crosstab);
 		this.hideMask();
 		this.doLayout();

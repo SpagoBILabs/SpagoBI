@@ -70,8 +70,30 @@ Ext.define('Sbi.cockpit.widgets.crosstab.HTMLCrossTab', {
 	extend: 'Ext.panel.Panel',
 
 	statics: {
-		sort: function(column, order){
-			alert(column);
+		sort: function(column, axis, globalId){
+			var config = Sbi.cockpit.widgets.crosstab.globalConfigs[globalId].sortOptions;
+			var axisConfig;
+			if(axis==1){
+				if(!config.columnsSortKeys){
+					config.columnsSortKeys={};
+				}
+				axisConfig = config.columnsSortKeys;
+			}else{
+				if(!config.rowsSortKeys){
+					config.rowsSortKeys={};
+				}
+				axisConfig = config.rowsSortKeys;
+			}
+
+			var direction = axisConfig[column];
+			if(!direction){
+				direction = 1;
+			}
+			direction = direction*(-1);
+
+			axisConfig[column] = direction;
+
+			Sbi.cockpit.widgets.crosstab.globalConfigs[globalId].loadCrosstabAjaxRequest();
 		}
 	},
 
@@ -79,6 +101,7 @@ Ext.define('Sbi.cockpit.widgets.crosstab.HTMLCrossTab', {
   		 border: false
   		, autoWidth: true
   		, cls: "widget-crosstab"
+  		, widgetContainer: null
 
 	},
 
@@ -89,7 +112,10 @@ Ext.define('Sbi.cockpit.widgets.crosstab.HTMLCrossTab', {
 		Ext.apply(this, settings);
 		this.html = config.htmlData;
 		this.callParent(arguments);
+	},
 
+	sort: function(column, order){
+		alert(column);
 	}
 
 });

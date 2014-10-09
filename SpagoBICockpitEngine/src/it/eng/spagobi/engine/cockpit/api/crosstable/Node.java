@@ -388,7 +388,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		}
 	}
 
-	public void orderedSubtree(Map<Integer, Comparator<Node>> sortKeys) {
+	public void orderedSubtree(Map<Integer, NodeComparator> sortKeys) {
 		if (childs != null) {
 			Comparator<Node> comparator = null;
 			if (sortKeys != null) {
