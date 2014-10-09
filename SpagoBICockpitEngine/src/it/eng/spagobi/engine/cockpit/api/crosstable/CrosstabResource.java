@@ -45,7 +45,6 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -53,7 +52,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -100,33 +98,23 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		return profile;
 	}
 
-	@GET
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getCrosstab(@QueryParam("crosstabDefinition") String crosstabDefinition, @QueryParam("datasetLabel") String datasetLabel) {
-		logger.debug("IN");
-		try {
-			return createCrossTable(crosstabDefinition, datasetLabel, null, null);
-		} catch (Exception e) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
 	@POST
-	@Path("/sort")
+	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getSortedCrosstab(@QueryParam("crosstabDefinition") String crosstabDefinition, @QueryParam("datasetLabel") String datasetLabel) {
 		logger.debug("IN");
-
+		
+		//the sort options
 		Map<String, Object> columnsSortKeys;
 		Map<String, Object> rowsSortKeys;
+		//the id of the crosstab in the client configuration array
+		Integer myGlobalId;
 
 		try {
 			JSONObject object = RestUtilities.readBodyAsJSONObject(servletRequest);
 			JSONObject columnsSortKeysJo = object.optJSONObject("columnsSortKeys");
 			JSONObject rowsSortKeysJo = object.optJSONObject("rowsSortKeys");
+			myGlobalId = object.optInt("myGlobalId");
 			columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
 			rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
 		} catch (Exception e) {
@@ -134,11 +122,11 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		}
 
-		Map<Integer, Comparator<Node>> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
-		Map<Integer, Comparator<Node>> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
+		Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
+		Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
 
 		try {
-			return createCrossTable(crosstabDefinition, datasetLabel, columnsSortKeysMap, rowsSortKeysMap);
+			return createCrossTable(crosstabDefinition, datasetLabel, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		} finally {
@@ -146,8 +134,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		}
 	}
 
-	private Map<Integer, Comparator<Node>> toComparatorMap(Map<String, Object> sortKeyMap) {
-		Map<Integer, Comparator<Node>> sortKeys = new HashMap<Integer, Comparator<Node>>();
+	private Map<Integer, NodeComparator> toComparatorMap(Map<String, Object> sortKeyMap) {
+		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
 
 		Iterator<String> mapIter = sortKeyMap.keySet().iterator();
 
@@ -164,7 +152,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		return sortKeys;
 	}
 
-	private String createCrossTable(String jsonData, String datasetLabel, Map<Integer, Comparator<Node>> columnsSortKeysMap, Map<Integer, Comparator<Node>> rowsSortKeysMap) {
+	private String createCrossTable(String jsonData, String datasetLabel, Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap,
+			Integer myGlobalId) {
 
 		CrossTab crossTab;
 		IDataStore valuesDataStore = null;
@@ -240,13 +229,13 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 				// load the crosstab for a crosstab widget (with headers, sum,
 				// ...)
 				if (crosstabDefinition.isStatic()) {
-					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap);
+					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
 				} else {
-					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap);
+					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
 				}
 			} else {
 				// load the crosstab data structure for all other widgets
-				crossTab = new CrossTab(valuesDataStore, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap);
+				crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
 			}
 
 			htmlCode = crossTab.getHTMLCrossTab(this.getLocale());//

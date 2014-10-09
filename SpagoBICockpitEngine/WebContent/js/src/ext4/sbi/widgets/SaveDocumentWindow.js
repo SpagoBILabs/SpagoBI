@@ -243,7 +243,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 			                   });
 				      		}else{
 				      			Ext.MessageBox.show({
-				                       title: LN('sbi.generic.result'),
+				                       title: LN('sbi.generic.resultMsg'),
 				                        msg: LN('sbi.generic.resultMsg'),
 				                        width: 200,
 				                        buttons: Ext.MessageBox.OK
@@ -279,10 +279,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 				labelFileName:'Preview file'
 		};
 		var c = {};
-		if (Sbi.settings.widgets.FileUploadPanel && Sbi.settings.widgets.FileUploadPanel.imgUpload)
-			c = Ext.apply({}, config, Sbi.settings.widgets.FileUploadPanel.imgUpload);
-		else
-			c = Ext.apply({}, config);
+		if (Sbi.settings.widgets.FileUploadPanel && Sbi.settings.widgets.FileUploadPanel.imgUpload){c = Ext.apply({}, config, Sbi.settings.widgets.FileUploadPanel.imgUpload);} else {c = Ext.apply({}, config);}
 		Ext.apply(this,c);
 
 		this.fileUpload = new Sbi.widgets.FileUploadPanel(c);

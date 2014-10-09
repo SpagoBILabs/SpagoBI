@@ -16,6 +16,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -27,6 +28,7 @@ public class CrossTabHTMLSerializer {
 	private static String TABLE_TAG = "TABLE";
 	private static String ROW_TAG = "TR";
 	private static String COLUMN_TAG = "TD";
+	private static String COLUMN_DIV = "DIV";
 	private static String CLASS_ATTRIBUTE = "class";
 	private static String ROWSPAN_ATTRIBUTE = "rowspan";
 	private static String COLSPAN_ATTRIBUTE = "colspan";
@@ -38,11 +40,17 @@ public class CrossTabHTMLSerializer {
 	private static String NA_CLASS = "na";
 
 	private Locale locale = null;
+	private final Integer myGlobalId;
+	private final Map<Integer, NodeComparator> columnsSortKeysMap;
+	private final Map<Integer, NodeComparator> rowsSortKeysMap;
 
 	private static Logger logger = Logger.getLogger(CrossTabHTMLSerializer.class);
 
-	public CrossTabHTMLSerializer(Locale locale) {
+	public CrossTabHTMLSerializer(Locale locale, Integer myGlobalId, Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap) {
+		this.columnsSortKeysMap = columnsSortKeysMap;
+		this.rowsSortKeysMap = rowsSortKeysMap;
 		this.locale = locale;
+		this.myGlobalId = myGlobalId;
 	}
 
 	public Locale getLocale() {
@@ -51,6 +59,7 @@ public class CrossTabHTMLSerializer {
 
 	public void setLocale(Locale locale) {
 		this.locale = locale;
+
 	}
 
 	public String serialize(CrossTab crossTab) {
@@ -198,10 +207,19 @@ public class CrossTabHTMLSerializer {
 					}
 
 					if (isLevel) {
-						aColumn.setAttribute(ON_CLICK_ATTRIBUTE, "javascript:Sbi.cockpit.widgets.crosstab.HTMLCrossTab.sort('" + aNode.getValue() + "','columns')");
+						aColumn.setAttribute(ON_CLICK_ATTRIBUTE, "javascript:Sbi.cockpit.widgets.crosstab.HTMLCrossTab.sort('" + i + "','1'," + myGlobalId
+								+ ")");
+
+						Integer direction = 1;
+						if (columnsSortKeysMap != null && columnsSortKeysMap.get(i) != null) {
+							direction = columnsSortKeysMap.get(i).getDirection();
+						}
+
+						aColumn.setAttribute(addSortArrow(aRow, text, direction));
+					} else {
+						aColumn.setCharacters(text);
 					}
 
-					aColumn.setCharacters(text);
 					int colSpan = aNode.getLeafsNumber();
 					if (colSpan > 1) {
 						aColumn.setAttribute(COLSPAN_ATTRIBUTE, colSpan);
@@ -334,6 +352,29 @@ public class CrossTabHTMLSerializer {
 		return table;
 	}
 
+	private SourceBean addSortArrow(SourceBean aRow, String alias, int direction) throws SourceBeanException {
+		SourceBean innerTable = new SourceBean(TABLE_TAG);
+		SourceBean innerRow = new SourceBean(ROW_TAG);
+
+		SourceBean div1 = new SourceBean(COLUMN_TAG);
+		div1.setCharacters(alias);
+		div1.setAttribute(CLASS_ATTRIBUTE, "crosstab-header-text");
+		SourceBean div2 = new SourceBean(COLUMN_TAG);
+		div2.setCharacters(" ");
+
+		if (direction > 0) {
+			div2.setAttribute(CLASS_ATTRIBUTE, "crosstab-header-sort-up");
+		} else {
+			div2.setAttribute(CLASS_ATTRIBUTE, "crosstab-header-sort-down");
+		}
+
+		innerRow.setAttribute(div1);
+		innerRow.setAttribute(div2);
+		innerTable.setAttribute(innerRow);
+
+		return innerTable;
+	}
+
 	private SourceBean serializeRowsHeaders(CrossTab crossTab) throws SourceBeanException {
 		List<Row> rows = crossTab.getCrosstabDefinition().getRows();
 		SourceBean table = new SourceBean(TABLE_TAG);
@@ -342,9 +383,16 @@ public class CrossTabHTMLSerializer {
 			Row aRowDef = rows.get(i);
 			SourceBean aColumn = new SourceBean(COLUMN_TAG);
 			aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
-			aColumn.setCharacters(aRowDef.getAlias());
+
 			aRow.setAttribute(aColumn);
-			aColumn.setAttribute(ON_CLICK_ATTRIBUTE, "javascript:Sbi.cockpit.widgets.crosstab.HTMLCrossTab.sort('" + aRowDef.getAlias() + "','columns')");
+
+			Integer direction = 1;
+			if (rowsSortKeysMap != null && rowsSortKeysMap.get(i) != null) {
+				direction = rowsSortKeysMap.get(i).getDirection();
+			}
+
+			aColumn.setAttribute(ON_CLICK_ATTRIBUTE, "javascript:Sbi.cockpit.widgets.crosstab.HTMLCrossTab.sort('" + i + "','0'," + myGlobalId + ")");
+			aColumn.setAttribute(addSortArrow(aRow, aRowDef.getAlias(), direction));
 
 		}
 		if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {

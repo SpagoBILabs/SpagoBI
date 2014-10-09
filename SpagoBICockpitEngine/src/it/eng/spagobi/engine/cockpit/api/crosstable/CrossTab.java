@@ -20,7 +20,6 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -86,6 +85,16 @@ public class CrossTab {
 										// row 1.. )
 	private boolean measuresOnRow;
 
+	// The client has a global variable
+	// (Sbi.cockpit.widgets.crosstab.globalConfigs) with the list of the active
+	// crosstab. This variable contains the id of the actual crosstab in the
+	// list
+	private Integer myGlobalId;
+
+	// used to sort the rows/columns
+	private Map<Integer, NodeComparator> columnsSortKeysMap;
+	private Map<Integer, NodeComparator> rowsSortKeysMap;
+
 	public enum CellType {
 		DATA("data"), CF("cf"), SUBTOTAL("partialsum"), TOTAL("totals");
 		CellType(String value) {
@@ -118,9 +127,11 @@ public class CrossTab {
 	 * @param calculateFields
 	 *            : array of JSONObjects the CF
 	 */
-	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray calculateFields, Map<Integer, Comparator<Node>> columnsSortKeysMap,
-			Map<Integer, Comparator<Node>> rowsSortKeysMap) throws JSONException {
+	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray calculateFields, Map<Integer, NodeComparator> columnsSortKeysMap,
+			Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId) throws JSONException {
 		this(dataStore, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap);
+
+		this.myGlobalId = myGlobalId;
 
 		rowsSum = getTotalsOnRows(measuresOnRow);
 		columnsSum = getTotalsOnColumns(measuresOnRow);
@@ -149,8 +160,8 @@ public class CrossTab {
 	 * @param crosstabDefinition
 	 *            : the definition of the crossTab
 	 */
-	public CrossTab(IDataStore valuesDataStore, CrosstabDefinition crosstabDefinition, Map<Integer, Comparator<Node>> columnsSortKeysMap,
-			Map<Integer, Comparator<Node>> rowsSortKeysMap) throws JSONException {
+	public CrossTab(IDataStore valuesDataStore, CrosstabDefinition crosstabDefinition, Map<Integer, NodeComparator> columnsSortKeysMap,
+			Map<Integer, NodeComparator> rowsSortKeysMap) throws JSONException {
 		IRecord valueRecord;
 		String rowPath;
 		String columnPath;
@@ -173,6 +184,9 @@ public class CrossTab {
 		// cellLimit=0;
 		// }
 		//
+
+		this.columnsSortKeysMap = columnsSortKeysMap;
+		this.rowsSortKeysMap = rowsSortKeysMap;
 
 		List<String> rowCordinates = new ArrayList<String>();
 		List<String> columnCordinates = new ArrayList<String>();
@@ -1961,7 +1975,7 @@ public class CrossTab {
 	}
 
 	public String getHTMLCrossTab(Locale locale) {
-		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale);
+		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap, rowsSortKeysMap);
 		String html = serializer.serialize(this);
 		return html;
 	}

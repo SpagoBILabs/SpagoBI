@@ -33,4 +33,8 @@ public class NodeComparator implements Comparator<Node> {
 		}
 	}
 
+	public int getDirection() {
+		return direction;
+	}
+
 }

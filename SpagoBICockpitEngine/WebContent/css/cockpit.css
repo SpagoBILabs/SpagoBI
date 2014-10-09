@@ -622,7 +622,8 @@
  			
 .crosstab table { 			
         border-spacing: 0px; 			
-        border-collapse: collapse; 			
+        border-collapse: collapse;
+        display: inline; 			
 } 			
 
 .crosstab td { 			
@@ -675,7 +676,8 @@
     /*background-repeat:repeat-x;*/ 			
     font:11px tahoma,arial,verdana,sans-serif; 			
     color: #3783E8; 			
-    padding-right:10px; 			
+    padding-right:10px; 	
+	
 } 			
  			
 .crosstab td.data { 			
@@ -746,5 +748,25 @@
 	padding: 2px;
 }
 
+.crosstab-header-text{
+	font: 11px tahoma,arial,verdana,sans-serif;
+	color: #3783e8;
+}
+
+.crosstab-header-sort-up{
+	background:url(../img/sort_asc.gif) right center no-repeat;
+	float: right;
+	width: 8;
+	height: 25;
+	margin-left: 2px !important;
+}
+
+.crosstab-header-sort-down{
+	background:url(../img/sort_desc.gif) right center no-repeat;
+	float: right;
+	width: 8;
+	height: 25;
+	margin-left: 2px !important;
+}
 	
 } /* END MEDIA SCREEN*/		
