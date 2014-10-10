@@ -769,5 +769,9 @@
 	height: 25;
 	margin-left: 2px !important;
 }
+
+.help {
+	background:url(../img/icon-info15.png) right center no-repeat;
+}
 	
 } /* END MEDIA SCREEN*/		

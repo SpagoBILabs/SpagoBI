@@ -86,7 +86,11 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 		var incomingEvensEnabled = new Ext.form.field.Checkbox({
             name: 'incomingevensenabled',
             fieldLabel: LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingevensenabled.label'),
-            boxLabel: LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingevensenabled.description')
+            boxLabel: '&nbsp;',
+            afterBoxLabelTpl : '<span class="help" data-qtip="'
+            	+ LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingevensenabled.description')
+            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+            checked: true
 		});
 
 		this.fields.push(title);
