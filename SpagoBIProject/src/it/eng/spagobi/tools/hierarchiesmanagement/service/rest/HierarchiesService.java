@@ -215,9 +215,13 @@ public class HierarchiesService {
 			// 3- execute query to get hierarchies names
 			String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 			String typeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
+			String hierarchyDescriptionColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_DS", dataSource);
+			String scopeColumn = AbstractJDBCDataset.encapsulateColumnName("SCOPE", dataSource);
+
+			String columns = typeColumn + "," + hierarchyDescriptionColumn + "," + scopeColumn + " ";
 
 			String tableName = "HIER_" + hierarchyPrefix;
-			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyNameColumn + ")," + typeColumn + " FROM " + tableName + " WHERE "
+			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyNameColumn + ")," + columns + " FROM " + tableName + " WHERE "
 					+ typeColumn + "=\"MANUAL\" OR " + typeColumn + "=\"SEMIMANUAL\" ", 0, 0);
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 				IRecord record = (IRecord) iterator.next();
@@ -225,9 +229,15 @@ public class HierarchiesService {
 				String hierarchyName = (String) field.getValue();
 				field = record.getFieldAt(1);
 				String hierarchyType = (String) field.getValue();
+				field = record.getFieldAt(2);
+				String hierarchyDescription = (String) field.getValue();
+				field = record.getFieldAt(3);
+				String hierarchyScope = (String) field.getValue();
 				JSONObject hierarchy = new JSONObject();
 				hierarchy.put("HIERARCHY_NM", hierarchyName);
 				hierarchy.put("HIERARCHY_TP", hierarchyType);
+				hierarchy.put("HIERARCHY_DS", hierarchyDescription);
+				hierarchy.put("HIERARCHY_SC", hierarchyScope);
 				hierarchiesJSONArray.put(hierarchy);
 
 			}
@@ -354,6 +364,35 @@ public class HierarchiesService {
 			throw new SpagoBIServiceException("An unexpected error occured while deleting custom hierarchy", t);
 		} finally {
 			connection.close();
+		}
+
+		return "{\"response\":\"ok\"}";
+
+	}
+
+	@POST
+	@Path("/modifyCustomHierarchy")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String modifyCustomHierarchy(@Context HttpServletRequest req) throws SQLException {
+		// modify an existing custom hierarchy
+		try {
+			String dimension = req.getParameter("dimension");
+			String hierarchyName = req.getParameter("name");
+			String root = req.getParameter("root");
+			String hierarchyDescription = req.getParameter("description");
+			String hierarchyScope = req.getParameter("scope");
+			String hierarchyType = req.getParameter("type");
+
+			if ((dimension == null) || (hierarchyName == null) || (root == null) || (hierarchyDescription == null) || (hierarchyScope == null)
+					|| (hierarchyType == null)) {
+				throw new SpagoBIServiceException("An unexpected error occured while modifing custom hierarchy", "wrong request parameters");
+			}
+
+			deleteCustomHierarchy(req);
+			saveCustomHierarchy(req);
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while modifing custom hierarchy", t);
 		}
 
 		return "{\"response\":\"ok\"}";
