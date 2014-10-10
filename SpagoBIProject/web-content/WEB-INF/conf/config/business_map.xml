@@ -84,6 +84,7 @@
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchyTree" businessProcess="publicFunctionality" />				 						 						
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/saveCustomHierarchy" businessProcess="publicFunctionality" />				 						 						
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteCustomHierarchy" businessProcess="publicFunctionality" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyCustomHierarchy" businessProcess="publicFunctionality" />				 						 						
 					 						 						
 		
 	</MAP_REST_SERVICES>

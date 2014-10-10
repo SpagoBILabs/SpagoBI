@@ -182,10 +182,11 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
             margin: '0 0 0 10',
 	        listeners: {
 	            click: function() {
+	            	this.saveCustomHierarchyButton.setVisible(true);
+	            	this.cancelCustomHierarchyButton.setVisible(true);
+	        		this.saveChangesCustomHierarchyButton.setVisible(false);
 	            	this.createCustomHierarchyEmptyPanel();
 	            	this.disableGUIElements();
-	            	this.saveCustomHierarchyButton.setDisabled(false);
-	            	this.cancelCustomHierarchyButton.setDisabled(false);
 	            }
 				,scope:this 
 	        }
@@ -193,41 +194,55 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		
 		
 		this.saveCustomHierarchyButton = new Ext.Button({
+			id: 'saveCustomHierarchyButton',
 	        text: 'Save',
             margin: '0 0 0 10',
-            disabled: true,
 	        listeners: {
 	            click: function() {
 	            	this.saveCustomHierarchy();
 	            	this.enableGUIElements();
-	            	this.cancelCustomHierarchyButton.setDisabled(true);
 	            }
 				,scope:this 
 	        }
 	    })
-		
+		this.saveCustomHierarchyButton.setVisible(false);
 		this.cancelCustomHierarchyButton = new Ext.Button({
+			id: 'cancelCustomHierarchyButton',
 	        text: 'Cancel',
             margin: '0 0 0 10',
-            disabled: true,
 	        listeners: {
 	            click: function() {
+	            	this.saveCustomHierarchyButton.setVisible(false);
+	            	this.cancelCustomHierarchyButton.setVisible(false);	 
 	            	this.cancelCustomHierarchy();
 	            	this.enableGUIElements();
-	            	this.saveCustomHierarchyButton.setDisabled(true);
-	            	this.cancelCustomHierarchyButton.setDisabled(true);	            	
+           	
 	            }
 				,scope:this 
 	        }
 	    })
+		this.cancelCustomHierarchyButton.setVisible(false);
 		
+		this.saveChangesCustomHierarchyButton = new Ext.Button({
+			autoRender: true, 
+			id: 'saveChangesCustomHierarchyButton',
+	        text: 'Save Changes',
+            margin: '0 0 0 10',
+	        listeners: {
+	            click: function() {
+	            	this.modifyCustomHierarchy();
+	            }
+				,scope:this 
+	        }
+	    })
+		this.saveChangesCustomHierarchyButton.setVisible(false);
 		this.newCustomHierarchyPanel =  Ext.create('Ext.panel.Panel', {
 	        bodyStyle:'padding:3px',
 			layout:'table',
 			layoutConfig: {
 		        columns: 5
 		    },
-			items:[this.newCustomHierarchyTypeCombo,this.newCustomHierarchyButton,this.saveCustomHierarchyButton,this.cancelCustomHierarchyButton]
+			items:[this.newCustomHierarchyTypeCombo,this.newCustomHierarchyButton,this.saveCustomHierarchyButton,this.cancelCustomHierarchyButton,this.saveChangesCustomHierarchyButton]
 		});	
 		
 		
@@ -304,7 +319,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		
 		var gridStore = new Ext.data.Store({
 	        storeId: 'customHierarchiesStore',
-	        fields: ['HIERARCHY_NM', 'HIERARCHY_TP'],
+	        fields: ['HIERARCHY_NM', 'HIERARCHY_TP','HIERARCHY_DS','HIERARCHY_SC'],
 	        proxy: {
 	            type: 'ajax',
 	            url: this.services["getCustomHierarchies"],
@@ -426,6 +441,59 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	/**************************************
 	 * Private methods
 	 **************************************/
+	, modifyCustomHierarchy: function(){
+		
+		var customTreePanel = Ext.getCmp('customTreePanel');
+		var myStore = customTreePanel.getStore();   
+		//this is a fake root node
+		var rootNode =  myStore.getRootNode();
+		//this is the real root node
+		rootNode = rootNode.getChildAt(0);
+		var myJson= this.getJson(rootNode)
+		var params = {}
+		params.name = this.selectedHierarchyName;
+		params.dimension = this.selectedDimensionName;
+		params.root = Ext.encode(myJson);
+		params.description = this.selectedHierarchyDescription;
+		params.scope = this.selectedHierarchyScope;
+		params.type = this.selectedHierarchyType
+		
+		//check the end nodes
+		if (!this.checkLeafNodes(rootNode)){
+			//invalid hierarchy
+			Sbi.exception.ExceptionHandler.showWarningMessage('Nodes on last level must be all leafs', 'Error');
+		} else {
+			//valid hierarchy
+			Ext.MessageBox.confirm(LN('sbi.generic.pleaseConfirm'), LN('Save changes?'), 
+					function(btn, text){
+					if (btn=='yes') {
+						//Call ajax function
+						Ext.Ajax.request({
+							url: this.services["modifyCustomHierarchy"],
+							params: params,			
+							success : function(response, options) {				
+								if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+									if(response.responseText!=null && response.responseText!=undefined){
+										if(response.responseText.indexOf("error.mesage.description")>=0){
+											Sbi.exception.ExceptionHandler.handleFailure(response);
+										}else{		
+											Sbi.exception.ExceptionHandler.showInfoMessage('Hierarchy correctly saved');
+											this.customHierarchiesGridStore.load();		     
+							            }
+									}
+								} else {
+									Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+								}
+							},
+							scope: this,
+							failure: Sbi.exception.ExceptionHandler.handleFailure      
+						});
+					}
+				},
+				this);
+		}
+
+	}
 	
 	, disableGUIElements: function(){
 		//Disable some GUI elements when editing a custom hierarchy to prevent inconsistency
@@ -447,123 +515,137 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	}
 	
 	, saveCustomHierarchy: function(){		
-		this.customHierarchyName = new Ext.form.Text({
-			name: 'name',
-	        fieldLabel: 'Name',
-	        labelWidth: 130,
-			width : 300,
-	        allowBlank: false,
-	        enforceMaxLength: true,
-	        maxLength: 45
-		});
 		
-		this.customHierarchyDescription = new Ext.form.Text({
-			name: 'description',
-	        fieldLabel: 'Description',
-	        labelWidth: 130,
-			width : 300,
-	        allowBlank: false,
-	        enforceMaxLength: true,
-	        maxLength: 45
-		});
-		
-	    this.scopeComboStore = new Ext.data.Store({
-	        fields: ['type', 'name'],
-	        data: [{
-	            "type": "ALL",
-	            "name": "All"
-	        }, {
-	            "type": "OWNER",
-	            "name": "Owner"
-	        }, {
-	            "type": "POWER",
-	            "name": "Power"
-	        }]
-	    });
-		
-		this.scopeCombo = new Ext.form.ComboBox({
-	        fieldLabel: 'Hierarchy Scope',
-	        store: this.scopeComboStore,
-	        queryMode: 'local',
-	        displayField : 'name',
-	        valueField: 'type',
-	        labelWidth: 130,
-			width : 300,
-			typeAhead : true,
-			triggerAction : 'all',
-			editable : false,
-	    });
-		//select first value by default
-		this.scopeCombo.select(this.scopeCombo.getStore().getAt(0));
+		//check the end nodes
+		var customTreePanel = Ext.getCmp('customTreePanel');
+		var myStore = customTreePanel.getStore();        	
+		var rootNode =  myStore.getRootNode();
+		if (!this.checkLeafNodes(rootNode)){
+			//invalid hierarchy
+			Sbi.exception.ExceptionHandler.showWarningMessage('Nodes on last level must be all leafs', 'Error');
+		} else {
+			//valid hierarchy
+			this.customHierarchyName = new Ext.form.Text({
+				name: 'name',
+		        fieldLabel: 'Name',
+		        labelWidth: 130,
+				width : 300,
+		        allowBlank: false,
+		        enforceMaxLength: true,
+		        maxLength: 45
+			});
+			
+			this.customHierarchyDescription = new Ext.form.Text({
+				name: 'description',
+		        fieldLabel: 'Description',
+		        labelWidth: 130,
+				width : 300,
+		        allowBlank: false,
+		        enforceMaxLength: true,
+		        maxLength: 45
+			});
+			
+		    this.scopeComboStore = new Ext.data.Store({
+		        fields: ['type', 'name'],
+		        data: [{
+		            "type": "ALL",
+		            "name": "All"
+		        }, {
+		            "type": "OWNER",
+		            "name": "Owner"
+		        }, {
+		            "type": "POWER",
+		            "name": "Power"
+		        }]
+		    });
+			
+			this.scopeCombo = new Ext.form.ComboBox({
+		        fieldLabel: 'Hierarchy Scope',
+		        store: this.scopeComboStore,
+		        queryMode: 'local',
+		        displayField : 'name',
+		        valueField: 'type',
+		        labelWidth: 130,
+				width : 300,
+				typeAhead : true,
+				triggerAction : 'all',
+				editable : false,
+		    });
+			//select first value by default
+			this.scopeCombo.select(this.scopeCombo.getStore().getAt(0));
 
-		var win = new Ext.Window(
-			    {
-			        layout: 'fit',
-			        width: 400,
-			        height: 200,
-			        modal: true,
-			        closeAction: 'destroy',
-			        title:'Save Custom Hierarchy',
-			        items: new Ext.Panel(
-			        {
-						
-						bodyStyle:'padding:20px',
-			        	items: [this.customHierarchyName,this.customHierarchyDescription,this.scopeCombo,]
-			        }),
-			        buttons:[
-			                 {
-			                	 text:'OK',
-			                	 handler:function() {
-			                		 var customTreePanel = Ext.getCmp('customTreePanel');
-			                		 var myStore = customTreePanel.getStore();        	
-			                		 var rootNode =  myStore.getRootNode();
-			                		 var myJson= this.getJson(rootNode);
-			                		 
-			                		 var params = {};
-			                		 params.root = Ext.encode(myJson);
-			                		 params.name = this.customHierarchyName.getValue();
-			                		 params.description = this.customHierarchyDescription.getValue();
-			                		 params.scope = this.scopeCombo.getValue();
-			                		 params.dimension = this.comboDimensions.getValue();
-			                		 params.type = this.newCustomHierarchyTypeCombo.getValue();
-			                		 
-			                		 //Call ajax function
-			                			Ext.Ajax.request({
-			                				url: this.services["saveCustomHierarchy"],
-			                				params: params,			
-			                				success : function(response, options) {				
-			                					if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
-			                						if(response.responseText!=null && response.responseText!=undefined){
-			                							if(response.responseText.indexOf("error.mesage.description")>=0){
-			                								Sbi.exception.ExceptionHandler.handleFailure(response);
-			                							}else{		
-			                								Sbi.exception.ExceptionHandler.showInfoMessage('Hierarchy correctly saved');
-			                								this.customHierarchiesGridStore.load();
-			                				            	this.saveCustomHierarchyButton.setDisabled(true);
-			                							}
-			                						}
-			                					} else {
-			                						Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-			                					}
-			                				},
-			                				scope: this,
-			                				failure: Sbi.exception.ExceptionHandler.handleFailure      
-			                			});
+			var win = new Ext.Window(
+				    {
+				        layout: 'fit',
+				        width: 400,
+				        height: 200,
+				        modal: true,
+				        closeAction: 'destroy',
+				        title:'Save Custom Hierarchy',
+				        items: new Ext.Panel(
+				        {
+							
+							bodyStyle:'padding:20px',
+				        	items: [this.customHierarchyName,this.customHierarchyDescription,this.scopeCombo,]
+				        }),
+				        buttons:[
+				                 {
+				                	 text:'OK',
+				                	 handler:function() {
+				                		 var customTreePanel = Ext.getCmp('customTreePanel');
+				                		 var myStore = customTreePanel.getStore();        	
+				                		 var rootNode =  myStore.getRootNode();
+				                		 var myJson= this.getJson(rootNode);
+				                		 
+				                		 var params = {};
+				                		 params.root = Ext.encode(myJson);
+				                		 params.name = this.customHierarchyName.getValue();
+				                		 params.description = this.customHierarchyDescription.getValue();
+				                		 params.scope = this.scopeCombo.getValue();
+				                		 params.dimension = this.comboDimensions.getValue();
+				                		 params.type = this.newCustomHierarchyTypeCombo.getValue();
+				                		 
+				                		 //Call ajax function
+				                			Ext.Ajax.request({
+				                				url: this.services["saveCustomHierarchy"],
+				                				params: params,			
+				                				success : function(response, options) {				
+				                					if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+				                						if(response.responseText!=null && response.responseText!=undefined){
+				                							if(response.responseText.indexOf("error.mesage.description")>=0){
+				                								Sbi.exception.ExceptionHandler.handleFailure(response);
+				                							}else{		
+				                								Sbi.exception.ExceptionHandler.showInfoMessage('Hierarchy correctly saved');
+				                								this.customHierarchiesGridStore.load();
+				                				            	this.saveCustomHierarchyButton.setVisible(false);
+				                				            	this.cancelCustomHierarchyButton.setVisible(false);				                							}
+				                						}
+				                					} else {
+				                						Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				                					}
+				                				},
+				                				scope: this,
+				                				failure: Sbi.exception.ExceptionHandler.handleFailure      
+				                			});
 
-			                		 //console.log(Ext.encode(myJson));
-			                		 win.close();
-			                	 }
-			                 	 ,scope:this 
-			                 },
-			                 {
-			                	 text:'Cancel',
-			                	 handler:function() {
-			                		 win.close();
-			                	 }
-			                 }
-			      ]
-			    });
-		win.show();
+				                		 //console.log(Ext.encode(myJson));
+				                		 win.close();
+				                	 }
+				                 	 ,scope:this 
+				                 },
+				                 {
+				                	 text:'Cancel',
+				                	 handler:function() {
+				                		 win.close();
+				                	 }
+				                 }
+				      ]
+				    });
+			win.show();			
+		}
+		
+		
+
 	}
 	
 	, cancelCustomHierarchy: function(){
@@ -600,6 +682,8 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		   }
 		   
 		   this.resetCurrentAutomaticHierarchy();
+		   
+		   this.selectedHierarchyType = null;
 
 		   //TreePanel initialized as simple panel for tree creation
 		   this.treePanelRight = Ext.create('Ext.panel.Panel', {
@@ -625,7 +709,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 						   ddGroup    : 'DDhierarchiesTrees',
 						   copy       : false,
 						   notifyDrop : function(ddSource, e, data){
-							   console.log('drop');
+							   //console.log('drop');
 							   var droppedNode = data.records[0];
 							   if (!droppedNode.isLeaf()){
 								   var store = new Ext.data.TreeStore();
@@ -657,14 +741,21 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	}
 	 
 	, onShowCustomHierarchyTree: function(selectedRecord){
-		var hierarchyName = selectedRecord.get('HIERARCHY_NM');
-		var dimensionName = this.comboDimensions.getValue();
+		this.selectedHierarchyName = selectedRecord.get('HIERARCHY_NM');
+		this.selectedHierarchyType = selectedRecord.get('HIERARCHY_TP');
+		this.selectedHierarchyDescription = selectedRecord.get('HIERARCHY_DS');
+		this.selectedHierarchyScope = selectedRecord.get('HIERARCHY_SC');
+
+
+		this.selectedDimensionName = this.comboDimensions.getValue();
 		
-		var customTreeStore = this.createCustomHierarchyTreeStore(dimensionName,hierarchyName)
+		var customTreeStore = this.createCustomHierarchyTreeStore(this.selectedDimensionName,this.selectedHierarchyName)
   	  	this.rightPanel.remove(Ext.getCmp('customTreePanel'));
 		var customTreePanel = this.createCustomTreePanel(customTreeStore,false);
 		this.rightPanel.add(customTreePanel);
 		customTreePanel.expandAll();
+		
+		this.saveChangesCustomHierarchyButton.show();
 
 	}
 	
@@ -689,7 +780,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 								}else{						
 									Sbi.exception.ExceptionHandler.showInfoMessage(LN('Delete successfull'));
     								this.customHierarchiesGridStore.load();
-
+    								this.rightPanel.remove(Ext.getCmp('customTreePanel'));
 								}
 							}
 						} else {
@@ -727,9 +818,28 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        	//listeners for drag & drop management           	
 	        	viewready: function (tree) {                   
 	        		tree.plugins[0].dropZone.notifyDrop = function(dd, e, data){
-	        			var customHierarchyType = thisPanel.newCustomHierarchyTypeCombo.getValue();
+	        			
+	        			var customHierarchyType;
+	        			if ((thisPanel.selectedHierarchyType == undefined) || (thisPanel.selectedHierarchyType == null)){
+	        				//making a new hierarchy
+		        			customHierarchyType = thisPanel.newCustomHierarchyTypeCombo.getValue();
+	        			} else {
+	        				//editing existing hierarchy
+	        				customHierarchyType = thisPanel.selectedHierarchyType;
+	        				//check if dropped nodes already exists in the tree
+	        				//TODO: Verify this block of code, has problem with node moving on same tree
+//		        			var currentNodes = thisPanel.treeTraversal(store.getRootNode(),new Array());
+//		        			var newNodes = thisPanel.treeTraversal(data.records[0],new Array())
+//	        				for (var i = 0; i < newNodes.length; i++) {
+//	        					if (thisPanel.contains(currentNodes,newNodes[i])){
+//	    	        				Ext.Msg.alert('Wrong Action', 'Node already added to this hierarchy');
+//	        						return false;
+//	        					}
+//	        			    }
+	        			}
 	        			var isLeafNode = data.records[0].isLeaf();
 	        			if ((customHierarchyType != "SEMIMANUAL") || (!isLeafNode) ){
+	        				//Original code from Ext source
 	        				if(this.lastOverNode){
 	        					this.onNodeOut(this.lastOverNode, dd, e, data);
 	        					this.lastOverNode = null;
@@ -739,7 +849,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        						this.onNodeDrop(n, dd, e, data) :
 	        							this.onContainerDrop(dd, e, data);
 	        			} else {
-	        				Ext.Msg.alert('Wrong Action', 'Cannot drop a leaf node');
+	        				Ext.Msg.alert('Wrong Action', 'Cannot drop a leaf node in a semimanual hierarchy');
 	        				return false;
 	        			}
 	        		}	
@@ -792,60 +902,56 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			result.appendChild(this.cloneNode(node.childNodes[i]));
 		return result;
 	}
-	//TODO: to remove
-	, onBeforeDropRightTree: function(node, data, overModel, dropPosition, dropFunction, options) {
-		//alert("before drop");
-        //data.copy = true; //to copy node and not moving from source
+	//explore each node of the tree starting from the passed root
+	, treeTraversal: function(node,array){
+		array.push(node.data.id);
+		
+		node.eachChild(function(child) {
+			thisPanel.treeTraversal(child,array); // handle the child recursively
+		});
         
-        var isFirstTarget = overModel.data.isFirst;
+        //console.log(array);
+        return array;
+	}
+	/**
+	 * check if the nodes at the ending position are real leaf nodes
+	 * returns true if all end nodes are leafs
+	 */
+	, checkLeafNodes: function(rootNode){
+		var endNodes = this.getEndNodes(rootNode, new Array());
+		for (var i = 0; i < endNodes.length; i++){
+			if (!endNodes[i].isLeaf()){
+				//not a real leaf node
+				return false;
+			}
+		}
+		return true;
+	}
+	//get only the nodes that don't have children
+	, getEndNodes: function(node,array){
+		if (!node.hasChildNodes()){
+			array.push(node);
+		}
+		
+		node.eachChild(function(child) {
+			thisPanel.getEndNodes(child,array); // handle the child recursively
+		});
         
-
-        
-        var nodeTargetName = node.textContent;
-        
-        var rec = data.records[0];
-        var isLeaf = rec.get('leaf');
-        var canDropFirst = rec.get('canDropOnFirst');
-        var canDropSecond = rec.get('canDropOnSecond');
-        
-        var mystore = this.store2;
-        /*
-        if (isLeaf){
-        	return false;
-        }
-        */
-        /*
-        if (isFirstTarget){
-        	node = canDropFirst;
-        } else {
-        	alert ("Cannot drop this node here!");
-        	return false;
-        }
-        */
-        
-        
-        //test visita albero partendo dalla radice
-        
-        var rootNode =  mystore.getRootNode();
-        /*
-        var me = this;
-        var hash = {};
-        rootNode.cascadeBy(function(node) {
-           // if (fn.call(me, node)) {
-              if (node.data.parentId == 'root') {
-                hash[node.data.id] = node.copy(null, true);
-                hash[node.data.id].childNodes = [];
-              }
-              else if (hash[node.data.parentId]) {
-                hash[node.data.parentId].appendChild(node.data);
-              }
-           // }
-          });
-        
-        alert(hash);
-        */
-        var myJson= this.getJson(rootNode);
-   }
+        //console.log(array);
+        return array;
+	}
+	
+	//check if the passed array a contains an object obj
+	, contains: function(a, obj) {
+	    var i = a.length;
+	    while (i--) {
+	       if (a[i] === obj) {
+	           return true;
+	       }
+	    }
+	    return false;
+	}
+	
 	//Transform the Tree structure in a JSON form that can be converted to a string
 	//node is the rootNode
 	,getJson: function(node) {
@@ -904,14 +1010,12 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			baseParams: baseParams 
 		});
 		
+		this.services["modifyCustomHierarchy"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'hierarchies/modifyCustomHierarchy',
+			baseParams: baseParams 
+		});		
 		
 	}	
 
-
-	
-
-
-
-	
 });
 
