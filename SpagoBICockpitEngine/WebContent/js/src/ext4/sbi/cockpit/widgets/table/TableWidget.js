@@ -197,9 +197,19 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		var config = this.getConfiguration();
 		var incomingevensenabled = config.wgeneric.incomingevensenabled !== undefined ? config.wgeneric.incomingevensenabled : true;
 		if (!incomingevensenabled) {
-	     	var clone = Sbi.storeManager.cloneStore(this.getStore());
+			// in case this widget shouldn't receive any incoming event,
+			// we unbind it from the store by cloning the store itself
+			// and binding the grid to the clone
+			var previousStore = this.getStore();
+	     	var clone = Sbi.storeManager.cloneStore(previousStore);
 	     	this.grid.reconfigure(clone);
 	     	this.unboundStore();
+	     	// we still need to know when something change on the original store!!
+			// for example: when filters are removed.
+			// We just refresh the grid view in order to highlight current selections
+			previousStore.on('datachanged', function () {
+				this.grid.getView().refresh();
+			}, this);
 		}
 
      	Sbi.trace("[TableWidget.onStoreLoad]: OUT");
@@ -232,6 +242,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 	, applyRendererOnField: function(field) {
 		Sbi.trace("[TableWidget.applyRendererOnField]: IN");
+
+		var rendererFunction = null;
+
 		if(field.type) {
 			var t = field.type;
 			if (field.format) { // format is applied only to numbers
@@ -253,19 +266,39 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			}
 
 			if (field.measureScaleFactor && (t === 'float' || t ==='int')) { // format is applied only to numbers
-			   this.applyScaleRendererOnField(numberFormatterFunction,field);
+				rendererFunction = this.applyScaleRendererOnField(numberFormatterFunction, field);
 			} else {
-			   field.renderer = numberFormatterFunction;
+				rendererFunction = numberFormatterFunction;
 			}
 		}
 
 		if(field.subtype && field.subtype === 'html') {
-		   field.renderer  =  Sbi.locale.formatters['html'];
+			rendererFunction = Sbi.locale.formatters['html'];
 		}
 
 		if(field.subtype && field.subtype === 'timestamp') {
-		   field.renderer  =  Sbi.locale.formatters['timestamp'];
+			rendererFunction = Sbi.locale.formatters['timestamp'];
 		}
+
+		// the following renderer will apply a style to previously selected cells
+		var applyCellStyleRenderer = function (value, metadata, record, rowIndex, colIndex, store, view, fieldHeader) {
+			// optimization: we could retrieve the current selections by
+			// this.getWidgetManager().getWidgetSelections(this.getId()) || {};
+			// but this takes a long time!!! and therefore the rendering of the grid
+			// takes a long time because it is evaluated for all cells!!!
+			// Solution: we put selections on this.selectionsForColumnRenderers variable when
+			// the grid's 'beforerefresh' event is fired (see setSelectionsForColumnRenderers method)
+			// in a way that this.getWidgetManager().getWidgetSelections(this.getId()) || {};
+			// is evaluated one time for all the cells
+			var selections = this.selectionsForColumnRenderers;
+	    	if (selections[fieldHeader] !== undefined && selections[fieldHeader].values.indexOf(value) != -1) {
+	    		metadata.attr = 'style="background-color: #D1D1D1;font-weight: bold;"';
+	    	}
+			return value;
+		};
+
+		field.renderer = Ext.Function.createSequence(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
+		field.scope = this;
 
 		Sbi.trace("[TableWidget.applyRendererOnField]: OUT");
 	}
@@ -273,6 +306,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	, applyScaleRendererOnField: function(numberFormatterFunction, field) {
 
 		Sbi.trace("[TableWidget.applyScaleRendererOnField]: IN");
+
+		var toReturn = null;
 
 		var scaleFactor = field.measureScaleFactor;
 
@@ -292,17 +327,19 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 					scaleFactorNumber=1;
 			}
 
-			field.renderer = function(v){
+			toReturn = function(v) {
 				 var scaledValue = v/scaleFactorNumber;
-				 return numberFormatterFunction.call(this,scaledValue);
+				 return numberFormatterFunction.call(this, scaledValue);
 			};
 
 			field.header = field.header +' '+ LN('sbi.worksheet.config.options.measurepresentation.'+scaleFactor);
 		} else {
-			field.renderer =numberFormatterFunction;
+			toReturn = numberFormatterFunction;
 		}
 
 		Sbi.trace("[TableWidget.applyScaleRendererOnField]: OUT");
+
+		return toReturn;
 	}
 
 	, applySortableOnField: function(field) {
@@ -382,8 +419,16 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	    this.grid.on('columnresize', this.onColumnResize, this);
 	    this.grid.on('columnmove', this.onColumnMove, this);
 	    this.grid.on('afterlayout', this.onAfterLayout, this);
-
+	    // optimization: this is useful for columns rendering (see applyCellStyleRenderer function)
+	    this.grid.getView().on('beforerefresh', this.setSelectionsForColumnRenderers, this);
 	    Sbi.trace("[TableWidget.initGridPanel]: OUT");
+	}
+
+	,
+	// optimization: this is useful for columns rendering (see applyCellStyleRenderer function)
+	setSelectionsForColumnRenderers : function () {
+		this.selectionsForColumnRenderers = this.getWidgetManager().getWidgetSelections(this.getId()) || {};
+		return true;
 	}
 
 	, onColumnResize: function (ct, column, width, eOpts){
@@ -464,19 +509,24 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			//alert("onSelectionChange enabled");
 		}
 
-		// get previous selections
-		var selections = this.getWidgetManager().getWidgetSelections(this.getId()) || {};
+		var selections = {};
 		// get new selection
 		var selection = this.extractSelectionsFromRecord(cellIndex, record);
 		if (selection != null) { // selection may be null, see extractSelectionsFromRecord
-			// merge previous-new selections
 			var fieldHeader = selection.header;
 			var value = selection.value;
-			selections[fieldHeader] = selections[fieldHeader] || {values: []};
-			//selections[fieldHeader] = {values: []};
+			//selections[fieldHeader] = selections[fieldHeader] || {values: []};
+			selections[fieldHeader] = {values: []};
 			Ext.Array.include(selections[fieldHeader].values, value);
 
 			this.fireEvent('selection', this, selections);
+
+			var config = this.getConfiguration();
+			var incomingevensenabled = config.wgeneric.incomingevensenabled !== undefined ? config.wgeneric.incomingevensenabled : true;
+			if (!incomingevensenabled) {
+				// we need to refresh the grid in order to highlight current selections
+				this.grid.getView().refresh();
+			}
 		}
 
 	}

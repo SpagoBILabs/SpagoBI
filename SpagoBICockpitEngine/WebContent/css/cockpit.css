@@ -742,6 +742,7 @@
 
 .tableWidget .x-grid-cell:hover {
     background-color: #D1D1D1;
+	font-weight: bold;
 }
 
 .widget-crosstab{
