@@ -248,6 +248,6 @@ Sbi.locale.ln['sbi.cockpit.window.toolbar.clone'] = 'Clona';
 //Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel
 //===================================================================
 Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.label'] = 'Aggiornabile';
-Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description'] = 'Se impostato, il widget si aggiornerà in seguito alle interazioni dell\'utente con gli altri widget';
+Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description'] = 'Se impostato, il widget si aggiornerà in seguito alle interazioni dell\'utente con gli altri widget. Se stai modificando un documento esistente, ricordati che è necessario salvare il documento e rieseguirlo per applicare la modifica.';
 Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.label'] = 'Cliccabile';
-Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description'] = 'Se impostato, si potrà interagire direttamente con il widget cliccando sui suoi elementi';
+Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description'] = 'Se impostato, si potrà interagire direttamente con il widget cliccando sui suoi elementi. Se stai modificando un documento esistente, ricordati che è necessario salvare il documento e rieseguirlo per applicare la modifica.';
