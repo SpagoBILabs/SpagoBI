@@ -1,5 +1,6 @@
 package it.eng.spagobi.engines.datamining.api;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.compute.DataMiningExecutor;
@@ -29,7 +30,14 @@ public class ExternalResource extends AbstractDataMiningEngineService {
 		
 		DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance, getUserProfile());
 		try {
-			executor.externalExecution(fileName, getUserProfile());
+			UserProfile profile = getUserProfile();
+			if(profile != null){
+				executor.externalExecution(fileName, getUserProfile());
+			}else{
+				logger.error("Missing authentication");
+				return getJsonKo();
+			}
+			
 		} catch (Exception e) {
 			logger.error(e);
 			return getJsonKo();
