@@ -109,9 +109,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 
 		store.sort(categoriesConfig.fields[0], 'ASC');
 
-		var config = this.getConfiguration();
-		var incomingevensenabled = config.wgeneric.incomingevensenabled !== undefined ? config.wgeneric.incomingevensenabled : true;
-		if (!incomingevensenabled) {
+		if (!this.areIncomingEventsEnabled()) {
 	     	var clone = Sbi.storeManager.cloneStore(this.getStore());
 	     	store = clone;
 	     	this.unboundStore();

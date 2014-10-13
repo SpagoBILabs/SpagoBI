@@ -43,7 +43,6 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 			, isBlocking: false
 		}
 		, fieldsSelectionEnabled: true
-		, cls : "tableWidget"
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.table.TableWidget', defaultSettings);
@@ -194,9 +193,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreLoad.call(this, this.getStore());
      	this.refreshWarningMessage();
 
-		var config = this.getConfiguration();
-		var incomingevensenabled = config.wgeneric.incomingevensenabled !== undefined ? config.wgeneric.incomingevensenabled : true;
-		if (!incomingevensenabled) {
+		if (!this.areIncomingEventsEnabled()) {
 			// in case this widget shouldn't receive any incoming event,
 			// we unbind it from the store by cloning the store itself
 			// and binding the grid to the clone
@@ -412,6 +409,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			gridConf = Ext.apply(gridConf, this.gridConfig);
 		}
 
+		if (this.areOutcomingEventsEnabled()) {
+			gridConf.cls = "tableWidget";  // this highlight the cells to be selected
+		}
+
 		// create the Grid
 	    this.grid = new Ext.grid.GridPanel(gridConf);
 	    //this.grid.on('selectionchange', this.onSelectionChange, this);
@@ -502,7 +503,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	,
 	onCellclick : function ( thisGrid, td, cellIndex, record, tr, rowIndex, e, eOpts ) {
 
-		if (this.fireSelectionEvent === false) {
+		if (this.fireSelectionEvent === false || !this.areOutcomingEventsEnabled()) {
 			//alert("onSelectionChange disabled");
 			return;
 		} else {
@@ -521,9 +522,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 			this.fireEvent('selection', this, selections);
 
-			var config = this.getConfiguration();
-			var incomingevensenabled = config.wgeneric.incomingevensenabled !== undefined ? config.wgeneric.incomingevensenabled : true;
-			if (!incomingevensenabled) {
+			if (!this.areIncomingEventsEnabled()) {
 				// we need to refresh the grid in order to highlight current selections
 				this.grid.getView().refresh();
 			}
@@ -708,6 +707,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 		return this.pagingTBar;
 	}
+
 });
 
 

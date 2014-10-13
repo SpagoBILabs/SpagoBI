@@ -850,6 +850,20 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		Sbi.trace("[WidgetRuntime.onStoreAssociation]: OUT");
 	}
 
+	,
+	areIncomingEventsEnabled: function () {
+		var config = this.getConfiguration();
+		var incomingeventsenabled = config.wgeneric.incomingeventsenabled !== undefined ? config.wgeneric.incomingeventsenabled : true;
+		return incomingeventsenabled;
+	}
+
+	,
+	areOutcomingEventsEnabled: function () {
+		var config = this.getConfiguration();
+		var outcomingeventsenabled = config.wgeneric.outcomingeventsenabled !== undefined ? config.wgeneric.outcomingeventsenabled : true;
+		return outcomingeventsenabled;
+	}
+
 
 
 	, onDataChanged: function(store, eOpts) {
