@@ -182,9 +182,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 
 		store.sort(categoriesConfig.fields[0], 'ASC');
 
-		var config = this.getConfiguration();
-		var incomingevensenabled = config.wgeneric.incomingevensenabled !== undefined ? config.wgeneric.incomingevensenabled : true;
-		if (!incomingevensenabled) {
+		if (!this.areIncomingEventsEnabled()) {
 	     	var clone = Sbi.storeManager.cloneStore(this.getStore());
 	     	store = clone;
 	     	this.unboundStore();
@@ -379,11 +377,13 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 
 	, onItemMouseDown: function(item) {
 		Sbi.trace("[BarChartWidgetRuntime.onItemMouseDown]: IN");
-		var itemMeta = this.getItemMeta(item);
-	    var selections = {};
-		selections[itemMeta.categoryFieldHeaders[0]] = {values: []};
-	    Ext.Array.include(selections[itemMeta.categoryFieldHeaders].values, itemMeta.categoryValues[0]);
-	    this.fireEvent('selection', this, selections);
+		if (this.areOutcomingEventsEnabled()) {
+			var itemMeta = this.getItemMeta(item);
+		    var selections = {};
+			selections[itemMeta.categoryFieldHeaders[0]] = {values: []};
+		    Ext.Array.include(selections[itemMeta.categoryFieldHeaders].values, itemMeta.categoryValues[0]);
+		    this.fireEvent('selection', this, selections);
+		}
 	    Sbi.trace("[BarChartWidgetRuntime.onItemMouseDown]: OUT");
 	}
 

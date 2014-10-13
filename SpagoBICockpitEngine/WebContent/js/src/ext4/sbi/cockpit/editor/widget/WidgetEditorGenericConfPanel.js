@@ -83,19 +83,30 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
             allowBlank: true
 		});
 
-		var incomingEvensEnabled = new Ext.form.field.Checkbox({
-            name: 'incomingevensenabled',
-            fieldLabel: LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingevensenabled.label'),
+		var incomingeventsenabled = new Ext.form.field.Checkbox({
+            name: 'incomingeventsenabled',
+            fieldLabel: LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.label'),
             boxLabel: '&nbsp;',
             afterBoxLabelTpl : '<span class="help" data-qtip="'
-            	+ LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingevensenabled.description')
-            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+            	+ LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description')
+            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+            checked: true
+		});
+
+		var outcomingeventsenabled = new Ext.form.field.Checkbox({
+            name: 'outcomingeventsenabled',
+            fieldLabel: LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.label'),
+            boxLabel: '&nbsp;',
+            afterBoxLabelTpl : '<span class="help" data-qtip="'
+            	+ LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description')
+            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
             checked: true
 		});
 
 		this.fields.push(title);
 		this.fields.push(description);
-		this.fields.push(incomingEvensEnabled);
+		this.fields.push(incomingeventsenabled);
+		this.fields.push(outcomingeventsenabled);
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -107,7 +118,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 		var formState = Ext.apply({}, {
 			title: this.fields[0].getValue(),
 			description: this.fields[1].getValue(),
-			incomingevensenabled: this.fields[2].getValue()
+			incomingeventsenabled: this.fields[2].getValue(),
+			outcomingeventsenabled: this.fields[3].getValue()
 		});
 
 		return formState;
@@ -118,7 +130,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 
 		this.fields[0].setValue(widgetConf.title);
 		this.fields[1].setValue(widgetConf.description);
-		this.fields[2].setValue(widgetConf.incomingevensenabled);
+		this.fields[2].setValue(widgetConf.incomingeventsenabled);
+		this.fields[3].setValue(widgetConf.outcomingeventsenabled);
 
 		Sbi.trace("[WidgetEditorGenericConfPanel.setFormState]: OUT");
 	}
@@ -130,6 +143,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
         this.fields[0].reset();
         this.fields[1].reset();
         this.fields[2].reset();
+        this.fields[3].reset();
 
         Sbi.trace("[WidgetEditorGenericConfPanel.resetFormState]: OUT");
     }

@@ -326,11 +326,13 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 
 	, onItemMouseDown: function(item) {
 		Sbi.trace("[AbstractChartWidgetRuntime.onItemMouseDown]: IN");
-		var itemMeta = this.getItemMeta(item);
-	    var selections = {};
-		selections[itemMeta.categoryFieldHeaders[0]] = {values: []};
-	    Ext.Array.include(selections[itemMeta.categoryFieldHeaders].values, itemMeta.categoryValues[0]);
-	    this.fireEvent('selection', this, selections);
+		if (this.areOutcomingEventsEnabled()) {
+			var itemMeta = this.getItemMeta(item);
+		    var selections = {};
+			selections[itemMeta.categoryFieldHeaders[0]] = {values: []};
+		    Ext.Array.include(selections[itemMeta.categoryFieldHeaders].values, itemMeta.categoryValues[0]);
+		    this.fireEvent('selection', this, selections);
+		}
 	    Sbi.trace("[AbstractChartWidgetRuntime.onItemMouseDown]: OUT");
 	}
 
