@@ -96,10 +96,14 @@ public class OutputExecutor {
 
 			re.eval("dev.off()");
 			res.setOutputType(out.getOutputType());
-			res.setResult(getPlotImageAsBase64(out.getOutputName()));
+			String resImg = getPlotImageAsBase64(out.getOutputName());
 			res.setPlotName(plotName);
-			scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX
-					+ plotName + "." + OUTPUT_PLOT_EXTENSION);
+			if (resImg != null && !resImg.equals("")) {
+				res.setResult(resImg);
+
+				scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile)
+						+ DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "." + OUTPUT_PLOT_EXTENSION);
+			}
 
 		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.TEXT_OUTPUT) && outVal != null && out.getOutputName() != null) {
 
@@ -143,13 +147,26 @@ public class OutputExecutor {
 	public String getPlotImageAsBase64(String plotName) throws IOException {
 		String fileImg = DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
 				+ OUTPUT_PLOT_EXTENSION;
+		logger.warn(fileImg);
 		BufferedImage img = null;
 		String imgstr = null;
-		img = ImageIO.read(new File(fileImg));
-		imgstr = encodeToString(img, OUTPUT_PLOT_EXTENSION);
+
+		try {
+			File imgFromPlot = new File(fileImg);
+			if (!imgFromPlot.exists()) {
+				logger.warn("Image not produced!");
+				return imgstr;
+			}
+			img = ImageIO.read(imgFromPlot);
+			imgstr = encodeToString(img, OUTPUT_PLOT_EXTENSION);
+		} catch (IOException ioe) {
+			throw ioe;
+		}
+
 		return imgstr;
 
 	}
+
 
 	private static String encodeToString(BufferedImage image, String type) {
 		String imageString = null;
