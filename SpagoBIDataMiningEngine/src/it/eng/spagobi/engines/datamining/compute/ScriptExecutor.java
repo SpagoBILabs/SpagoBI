@@ -71,7 +71,11 @@ public class ScriptExecutor {
 		}
 
 	}
-
+	protected void evalExternalScript(String fileName) throws Exception {
+		String path = DataMiningUtils.UPLOADED_FILE_PATH + DataMiningConstants.DATA_MINING_EXTERNAL_CODE_PATH;
+		re.eval("source(\"" + path+fileName + "\")");
+	}
+	
 	protected void deleteTemporarySourceScript(String path) {
 		boolean success = (new File(path)).delete();
 	}
@@ -92,10 +96,12 @@ public class ScriptExecutor {
 			if(rHome != null){
 				
 				String libraryNames = script.getLibraries();
-				String[] libs = libraryNames.split(",");
-				for (int i = 0; i < libs.length; i++) {
-					String lib = libs[i].trim();
-					re.eval("library("+lib+",lib.loc=libdir)");
+				if(libraryNames != null){
+					String[] libs = libraryNames.split(",");
+					for (int i = 0; i < libs.length; i++) {
+						String lib = libs[i].trim();
+						re.eval("library("+lib+",lib.loc=libdir)");
+					}
 				}
 			}
 		}
@@ -138,5 +144,6 @@ public class ScriptExecutor {
 		return ret;
 
 	}
+
 
 }

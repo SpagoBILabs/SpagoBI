@@ -34,7 +34,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class DataMiningUtils {
 	static private Logger logger = Logger.getLogger(DataMiningUtils.class);
 
-	public static final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath()
+	public static final String UPLOADED_FILE_PATH = DataMiningEngineConfig.getInstance().getEngineConfig().getResourcePath().replaceAll("\\\\", "/")
 			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 
 	public static Boolean areDatasetsProvided(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) throws IOException {
@@ -79,7 +79,7 @@ public class DataMiningUtils {
 				csvdir.mkdir();
 			}
 			
-			filePath +=  "\\" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
+			filePath +=  "/" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
 			File csvFile = new File(filePath);
 			csvFile.createNewFile();
 
@@ -141,13 +141,13 @@ public class DataMiningUtils {
 	}
 
 	public static String getUserResourcesPath(IEngUserProfile profile) throws IOException {
-		String userResourcePath = UPLOADED_FILE_PATH + profile.getUserUniqueIdentifier() + "\\";
+		String userResourcePath = UPLOADED_FILE_PATH + profile.getUserUniqueIdentifier() + "/";
 		File userPathFile = new File(userResourcePath);
 		return userResourcePath;
 	}
 
 	public static void createUserResourcesPath(IEngUserProfile profile) throws IOException {
-		String userResourcePath = UPLOADED_FILE_PATH + profile.getUserUniqueIdentifier() + "\\";
+		String userResourcePath = UPLOADED_FILE_PATH + profile.getUserUniqueIdentifier() + "/";
 		File userPathFile = new File(userResourcePath);
 		// if it doesn't exist create it
 		if (!userPathFile.exists()) {
