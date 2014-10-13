@@ -250,6 +250,6 @@ Sbi.locale.ln['sbi.cockpit.window.toolbar.clone'] = 'Clone';
 //Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel
 //===================================================================
 Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.label'] = 'Updateable';
-Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description'] = 'If checked, the widget will update on user interactions with other widgets';
+Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description'] = 'If checked, the widget will update on user interactions with other widgets. Be aware that, if you change this setting on an existing document, you need to save it and re-execute it in order to apply changes.';
 Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.label'] = 'Clickable';
-Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description'] = 'If checked, you\'ll be able to interact with the widget directly by clicking on its items';
+Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description'] = 'If checked, you\'ll be able to interact with the widget directly by clicking on its items. Be aware that, if you change this setting on an existing document, you need to save it and re-execute it in order to apply changes.';
