@@ -76,7 +76,37 @@ public class DataMiningExecutor {
 		// get user R workspace
 		loadUserWorkSpace();
 	}
+	/**
+	 * Prepare Rengine and user workspace environmet
+	 * 
+	 * @param dataminingInstance
+	 * @param userProfile
+	 * @throws IOException
+	 */
+	private void setupEnvonmentForExternal() throws IOException {
+		// new R-engine
+		re = Rengine.getMainEngine();
+		if (re == null) {
+			/*
+			 * attention : setting to --save the engine doesn't remove object
+			 * from the current environment,so it's unrelevant the workspace
+			 * saving if you don't remove manualli the R objects first through
+			 * the rm command:re = new Rengine(new String[] { "--save" }, false,
+			 * null);
+			 */
+			re = new Rengine(new String[] { "--vanilla" }, false, null);
 
+		}
+
+		if (!re.waitForR()) {
+			logger.error("Cannot load R");
+		}
+		commandsExecutor.setRe(re);
+		datasetsExecutor.setRe(re);
+		outputExecutor.setRe(re);
+		scriptExecutor.setRe(re);
+
+	}
 	/**
 	 * Starts the execution of the auto mode output and the auto mode command
 	 * passed in paramenters (to avoid list discovering).
@@ -120,6 +150,18 @@ public class DataMiningExecutor {
 		return result;
 	}
 
+
+	public void externalExecution(String fileName, IEngUserProfile userProfile) throws Exception {
+
+		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
+
+		setupEnvonmentForExternal();
+
+		// evaluates script code
+		scriptExecutor.evalExternalScript(fileName);
+
+
+	}
 	public void updateDatasetInWorkspace(DataMiningDataset ds, IEngUserProfile userProfile) throws IOException {
 
 		setupEnvonment(userProfile);

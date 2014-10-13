@@ -7,8 +7,8 @@ package it.eng.spagobi.engines.datamining.common.utils;
 
 public class DataMiningConstants {
 
-	public static final String DATA_MINING_PATH_SUFFIX = "\\datamining\\";
-	public static final String DATA_MINING_TEMP_PATH_SUFFIX = "temp\\";
+	public static final String DATA_MINING_PATH_SUFFIX = "/datamining/";
+	public static final String DATA_MINING_TEMP_PATH_SUFFIX = "temp/";
 	public static final String CSV_FILE_FORMAT = ".csv";
 	public static final String CSV_SEPARATOR = ",";
 	public static final String DATASET_TYPE_FILE = "file";
@@ -21,4 +21,6 @@ public class DataMiningConstants {
 
 	public static final String EXECUTION_TYPE_MANUAL = "manual";
 	public static final String EXECUTION_TYPE_AUTO = "auto";
+	
+	public static final String DATA_MINING_EXTERNAL_CODE_PATH = "external/";
 }
