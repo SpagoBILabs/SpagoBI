@@ -30,10 +30,7 @@
     </filter>
 	
 	
-	 <filter-mapping>
-            <filter-name>EncodingFilter</filter-name>
-            <url-pattern>/restful-services/*</url-pattern>
-    </filter-mapping>
+
 	
 	
 	
@@ -107,6 +104,11 @@ END-CAS -->
 
 	<!-- EngineCheckSessionFilter on AdapterHTTP; urls with NEW_SESSION=TRUE will open a new session if previous one has expired -->
     <filter-mapping>
+            <filter-name>EncodingFilter</filter-name>
+            <url-pattern>/restful-services/*</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
         <filter-name>EngineCheckSessionFilter</filter-name>
         <url-pattern>/restful-services/*</url-pattern>
     </filter-mapping>
@@ -139,6 +141,7 @@ END-CAS -->
     		<filter-name>SpagoBIAccessFilter</filter-name>
     		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
+	
 	
 	<!-- 
 	<filter-mapping>
