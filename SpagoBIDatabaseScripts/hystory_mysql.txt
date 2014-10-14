@@ -2717,4 +2717,4 @@ UPDATE SBI_ENGINES SET LABEL = 'SpagoBIDataMiningEngine', NAME = 'Data-Mining En
 COMMIT;
 
 --3/10/2014 Antonella change column name for mariadb & spago compatibility
-alter table sbi_obj_metadata CHANGE DESCRIPTION  DESCR  VARCHAR(100) ;
+alter table SBI_OBJ_METADATA CHANGE DESCRIPTION  DESCR  VARCHAR(100) ;
