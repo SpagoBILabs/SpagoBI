@@ -76,7 +76,7 @@
 	
 	  <init-param>
 		<param-name>proxyCallbackUrl</param-name>
-		<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBIWhatIfEngine/proxyCallback</param-value>
+		<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBIDataMiningEngine/proxyCallback</param-value>
 	  </init-param>  
 	</filter>
 	
