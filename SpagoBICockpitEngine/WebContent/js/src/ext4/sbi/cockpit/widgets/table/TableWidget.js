@@ -536,16 +536,15 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
     	var meta = Sbi.storeManager.getRecordMeta(record);
 
-    	var field = record.fields.getAt(cellIndex + 1);
-    	var fieldName = field.name;
+    	var header = this.grid.getView().getHeaderCt().getHeaderAtIndex(cellIndex);
+    	var fieldName = header.dataIndex;
+    	var fieldHeader = header.text;
 
-		if (fieldName === 'id' || fieldName === 'recNo') {
-			Sbi.warn("[TableWidget.extractSelectionsFromRecord]: column [" + fieldName + "] is id or recNo so its selection will be ignored");
+    	if (!meta[fieldHeader]) {
+			Sbi.error("[TableWidget.extractSelectionsFromRecord]: column with header [" + fieldHeader + "] not found on record's metadata");
 			return null;
-		}
+    	}
 
-		var fieldHeader = Sbi.storeManager.getFieldHeaderByName(meta, fieldName);
-		//alert(fieldHeader + " = " + meta[fieldHeader].type.type + " - " + (meta[fieldHeader].type.type === 'float'));
 		if(meta[fieldHeader].type.type === 'float') {
 			// Ignoriamo le colonne di tipo float perchè applicando un filtro di uguaglianza su di esse
 			// in alcuni database (ex. mysql)non si hanno risultati per via di errori di approssimmazione
