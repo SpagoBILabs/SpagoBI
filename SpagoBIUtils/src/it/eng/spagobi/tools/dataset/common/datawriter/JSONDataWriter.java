@@ -193,7 +193,7 @@ public class JSONDataWriter implements IDataWriter {
 			result = new JSONObject();
 
 			if (dataStore.getCacheDate() != null) {
-				SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+				SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 				String date = DATE_FORMAT.format(dataStore.getCacheDate());
 				metadata.put("cacheDate", date);
 			}
