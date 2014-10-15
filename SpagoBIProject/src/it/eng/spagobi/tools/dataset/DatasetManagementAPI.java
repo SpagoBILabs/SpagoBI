@@ -403,6 +403,8 @@ public class DatasetManagementAPI {
 			// just get without storing...ok?
 			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
 
+			addLastCacheDate(cache, dataStore, dataSet);
+
 			/*
 			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
 			 * therefore we adjust its metadata
