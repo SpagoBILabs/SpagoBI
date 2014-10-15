@@ -98,3 +98,9 @@ Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.unknowns
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.measures'] = 'No es posible soltar las medidas aquí';
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.postlinecalculated'] = 'No puedes soltar los campos calculados basados en script aquí';
 
+//===================================================================
+//Sbi.cockpit.widgets.table.AggregationChooserWindow
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.aggregationwindow.title'] = 'Select aggregation function';
+Sbi.locale.ln['sbi.cockpit.aggregationwindow.selectAggregation'] = 'Aggregation function';
+

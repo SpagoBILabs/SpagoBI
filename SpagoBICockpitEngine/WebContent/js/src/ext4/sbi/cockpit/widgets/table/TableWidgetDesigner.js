@@ -58,7 +58,8 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 	this.tableDesigner.on(
 		'attributeDblClick' ,
 		function (thePanel, attribute) {
-			this.fireEvent("attributeDblClick", this, attribute);
+			//this.fireEvent("attributeDblClick", this, attribute);
+			this.attributeDblClickHandler(attribute, thePanel);
 		},
 		this
 	);
@@ -110,6 +111,40 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			state.visibleselectfields =  this.visibleselectfields;
 		}
 
+		// if all measures are aggregate set category and series: category are attributes, seriesare measure with aggregation function
+		var areAllMeasureAggregate = true;
+		var measureNumber = 0;
+		var stop = false;
+
+		for (var i = 0; i < state.visibleselectfields.length && stop==false; i++) {
+			var  field = state.visibleselectfields[i];
+			if(field.nature == 'measure'){
+				measureNumber++;
+				if(field.funct == null || field.funct == 'NaN'){
+					areAllMeasureAggregate = false;
+					stop = true;
+				}
+			}
+		}
+		var toAggregate = false;
+		if(measureNumber > 0 && areAllMeasureAggregate == true){
+			toAggregate = true;
+			state.category = new Array();
+			state.series = new Array();
+
+			// calculate category and series
+			for (var i = 0; i < state.visibleselectfields.length && stop==false; i++) {
+				var  field = state.visibleselectfields[i];
+				if(field.nature == 'attribute' || field.nature == 'segment_attribute'){
+					state.category.push(field);
+				}
+				else if(field.nature == 'measure'){
+					state.series.push(field);
+				}
+			}
+		}
+
+
 		Sbi.trace("[TableWidgetDesigner.getDesignerState]: OUT");
 		return state;
 	}
@@ -154,6 +189,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		return this.tableDesigner.containsAttribute(attributeId);
 	}
 
+	, attributeDblClickHandler : function (thePanel, attribute, theSheet) {
+
+	}
 
 
 });

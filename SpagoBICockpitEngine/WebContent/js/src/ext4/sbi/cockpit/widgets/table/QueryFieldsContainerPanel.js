@@ -33,6 +33,7 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 
 	Ext.apply(this, c); // this operation should overwrite this.initialData content, that is initial grid's content
 
+	this.addEvents('attributeDblClick');
 	//this.addEvents('storeChanged', 'attributeDblClick', 'attributeRemoved');
 
 	this.init(c);
@@ -97,6 +98,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 
 	, validFields: null
 
+	, chooserWindow : null
+
 	, Record: Ext.data.Record.create([
 	      {name: 'id', type: 'string'}
 	      , {name: 'alias', type: 'string'}
@@ -116,7 +119,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	                     '<span id="{id}-btnEl" class="{baseCls}-button">',
 	                         '<span id="{id}-btnInnerEl" class="{baseCls}-inner {innerCls}',
 	                             '{childElCls}" unselectable="on">',
-	                             '{text}',
+	                             '{funct}{text}',
 	                         '</span>',
 	                         '<span role="img" id="{id}-btnIconEl" class="{baseCls}-icon-el {iconCls}',
 	                             '{childElCls} {glyphCls}" unselectable="on" style="',
@@ -149,7 +152,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	         //glyph: glyph,
 	         glyphCls: '',
 	         glyphFontFamily: Ext._glyphFontFamily,
-	         text     : '&#160;'
+	         text     : '&#160;',
+	         funct : ''
 	     }
 
 	, init: function(c) {
@@ -195,9 +199,17 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
 	   	    	Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: IN");
 
-        		var templateData = Ext.apply({}, {
+	   	    	var functVar = '';
+	   	    	if(record.get("funct") != null && record.get("funct") != '' && record.get("funct") != 'NaN' && record.get("funct") != 'null')
+	   	    	{
+	   	    		functVar = record.get("funct");
+	   	    		functVar = '('+functVar+')';
+	   	    		}
+
+	   	    	var templateData = Ext.apply({}, {
             		id: Ext.id()
             		, text:  record.get("alias")
+            		, funct: functVar
             		, iconCls: (record.data.valid != undefined && !record.data.valid)? 'x-btn-invalid': record.get("iconCls")
             	}, this.templateArgs);
         		var htmlFragment = this.template.apply(templateData);
@@ -249,10 +261,52 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	}
 
 
-	, rowDblClickHandler: function(grid, rowIndex, event) {
-		var record = grid.store.getAt(rowIndex);
-		if (record.data.nature == 'attribute' || record.data.nature == 'segment_attribute') {
-	     	this.fireEvent("attributeDblClick", this, record.data);
+//	, rowDblClickHandler: function(grid, rowIndex, event) {
+//		var record = grid.store.getAt(rowIndex);
+//		if (record.data.nature == 'attribute' || record.data.nature == 'segment_attribute') {
+//	     	this.fireEvent("attributeDblClick", this, record.data);
+//		}
+//	}
+
+	// double clicking on a field
+	, rowDblClickHandler: function(grid, record, event) {
+
+		var thisPanel = this;
+		var thisGrid = grid;
+		var thisRecord = record;
+
+		if(record != undefined){
+
+			// if is a measure open aggregation chooser window
+			if (record.data.nature == 'measure') {
+
+
+				// instantiate window
+
+//				if(this.chooserWindow != null){
+//					this.chooserWindow.close();
+//					this.chooserWindow.destroy();
+//				}
+
+				// pass actual funct value for default case
+				this.chooserWindow = new Sbi.cockpit.widgets.table.AggregationChooserWindow(record.data.funct);
+
+				// on save set aggregation function
+				this.chooserWindow.on('aggregationSave', function(window, formState){
+					var aggregationSelected = formState.aggregation;
+					var recordIndex  =thisGrid.store.findExact('id', thisRecord.data.id);
+					var record = thisGrid.store.getAt(recordIndex);
+					record.data.funct = aggregationSelected;
+					if(aggregationSelected == 'NONE'){
+						record.data.funct = null;
+					}
+					thisPanel.getView().refresh();
+
+				});
+
+				this.chooserWindow.show();
+
+		}
 		}
 	}
 

@@ -75,3 +75,9 @@ Sbi.locale.ln['sbi.qbe.datastorepanel.grid.lasttext'] = 'Pagina successiva';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.refreshtext'] = 'Aggiorna';
 
 Sbi.locale.ln['sbi.qbe.datastorepanel.button.tt.exportto'] = 'Esporta a';
+
+//===================================================================
+//Sbi.cockpit.widgets.table.AggregationChooserWindow
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.aggregationwindow.title'] = 'Seleziona funzione di aggregazione';
+Sbi.locale.ln['sbi.cockpit.aggregationwindow.selectAggregation'] = 'Funzione di aggregazione';

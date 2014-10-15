@@ -244,3 +244,4 @@ Sbi.locale.ln['sbi.cockpit.core.selections.list.items'] = 'Items';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.editor'] = 'Edit';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.refresh'] = 'Refresh';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.clone'] = 'Clone';
+Sbi.locale.ln['sbi.cockpit.window.toolbar.cacheDate'] = 'Data updated at: ';
