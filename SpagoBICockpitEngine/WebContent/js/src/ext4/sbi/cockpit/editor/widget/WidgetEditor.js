@@ -140,6 +140,11 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 	, initSheetsContainerPanel: function(config) {
 		this.mainPanel = new Sbi.cockpit.editor.widget.WidgetEditorMainPanel();
 
+		this.mainPanel.on(
+				'attributeDblClick',
+				this.attributeDblClickHandler,
+				this
+		);
 
 //		this.mainPanel = new Sbi.worksheet.designer.SheetsContainerPanel(Ext.apply(this.mainPanelCfg  || {}, {
 //			sheets : this.worksheetTemplate.sheets || []  ,

@@ -871,7 +871,12 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	}
 
 	, onStoreMetaChange: function(store, meta) {
-		// do nothing
+		// if in meta is put last cache date put it in wgeneric to be included in title
+		if(meta.cacheDate != undefined){
+			//this.wgeneric.dateTitle = meta.cacheDate;
+			this.getParentComponent().cacheDate = meta.cacheDate;
+			this.getParentComponent().refreshTitle();
+		}
 	}
 
 	/**

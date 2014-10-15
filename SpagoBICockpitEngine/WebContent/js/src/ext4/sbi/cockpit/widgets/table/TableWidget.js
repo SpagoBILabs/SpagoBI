@@ -91,6 +91,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	, enablePaging: false
 	, enableExport: false
 	, fireSelectionEvent: true
+	, aggregations : null
 
     // =================================================================================================================
 	// METHODS
@@ -374,6 +375,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	 */
 	, init: function() {
 		Sbi.trace("[TableWidget.init]: IN");
+
+		if(this.storeConf != null && this.storeConf.aggregations != null){
+			this.aggregations = this.storeConf.aggregations;
+		}
+
 		this.boundStore();
 		this.initGridPanel();
 		Sbi.trace("[TableWidget.init]: OUT");

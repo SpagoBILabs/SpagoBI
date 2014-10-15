@@ -100,3 +100,9 @@ Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.title'] 
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.unknownsource'] = 'Source inconnue';
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.measures'] = 'Vous ne pouvez pas glisser des mésures ici';
 Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.postlinecalculated'] = 'Vous ne pouvez pas déposer des scripts ici';
+
+//===================================================================
+//Sbi.cockpit.widgets.table.AggregationChooserWindow
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.aggregationwindow.title'] = 'Select aggregation function';
+Sbi.locale.ln['sbi.cockpit.aggregationwindow.selectAggregation'] = 'Aggregation function';

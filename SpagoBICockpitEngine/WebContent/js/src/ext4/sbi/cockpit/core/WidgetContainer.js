@@ -409,7 +409,21 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 			var storeConf = {storeId: wizardState.storeId};
 			if(wizardState.wconf.series && wizardState.wconf.category) {
 				var categories = [];
-				categories.push(wizardState.wconf.category);
+
+				// category may be nowan array (keep single name for compatibility)
+
+				if(wizardState.wconf.category instanceof Array){
+
+					for(var i = 0; i<wizardState.wconf.category.length;i++){
+						var cat = wizardState.wconf.category[i];
+						categories.push(cat);
+					}
+
+				}
+				else{
+					categories.push(wizardState.wconf.category);
+				}
+
 				if(wizardState.wconf.groupingVariable) categories.push(wizardState.wconf.groupingVariable);
 
 				var aggregations = {

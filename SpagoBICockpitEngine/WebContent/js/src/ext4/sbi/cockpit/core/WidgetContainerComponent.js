@@ -96,6 +96,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
      */
 	, widget: null
 
+    /**
+     * Last cache date retrieved from datastore, it is memorized because in case of re-execution without changes data store is not reloaded
+     *  and in case of widget change widget cache date information would be lost
+     */
+	, cacheDate: null
+
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
@@ -144,7 +150,19 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	, refreshTitle: function() {
 		var config = this.getWidgetConfiguration();
 
-		this.setTitle(config.wgeneric.title);
+		var buildTitle = config.wgeneric.title;
+
+		if(this.cacheDate != null){
+			if(buildTitle != ''){
+				buildTitle += ' - '+LN('sbi.cockpit.window.toolbar.cacheDate');
+			}
+			else{
+				buildTitle += LN('sbi.cockpit.window.toolbar.cacheDate');
+			}
+			buildTitle += this.cacheDate;
+		}
+
+		this.setTitle(buildTitle);
 	}
 
 	/**
