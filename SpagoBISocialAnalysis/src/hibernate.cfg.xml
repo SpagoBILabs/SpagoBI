@@ -6,28 +6,24 @@
 <hibernate-configuration>
     <session-factory>
  
+		<property name="hibernate.dialect"> org.hibernate.dialect.MySQLDialect</property>
+
         <!-- hibernate dialect -->
+                       <!-- 
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.IngresDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.DB2400Dialect</property>
         
-        <property name="hibernate.connection.datasource">java:/comp/env/jdbc/twitterdb</property>
+        -->
+        <property name="hibernate.connection.datasource">java:/comp/env/jdbc/spagobi</property>
         
-<!--         <property name="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</property> -->
-<!--         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property> -->
-<!--         <property name="hibernate.connection.url">jdbc:mysql://localhost/twitterdb</property> -->
-<!--         <property name="hibernate.connection.username">root</property> -->
-<!--         <property name="hibernate.connection.password">root</property> -->
-<!--         <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property> -->
-
-
-<!-- 		<property name="hibernate.connection.driver_class"> org.hsqldb.jdbcDriver</property> -->
-<!-- 		<property name="hibernate.connection.url">jdbc:hsqldb:file:${catalina.base}/database/twitterdb</property> -->
-<!-- 		<property name="hibernate.connection.username">sa</property> -->
-<!-- 		<property name="connection.password"></property> -->
-<!-- 		<property name="connection.pool_size">1</property> -->
-		<property name="hibernate.dialect"> org.hibernate.dialect.HSQLDialect</property>
-
         <!-- Automatic schema creation (begin) === -->
-        <property name="hibernate.hbm2ddl.auto">validate</property>
- 
+<!--        <property name="hibernate.hbm2ddl.auto">validate</property>
+ -->
  		<property name="show_sql">false</property>
  
         <!-- Simple memory-only cache -->
