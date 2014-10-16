@@ -1,0 +1,238 @@
+#main
+{
+	-moz-border-bottom-colors: none;
+   	-moz-border-left-colors: none;
+   	-moz-border-right-colors: none;
+   	-moz-border-top-colors: none;
+   	background: none repeat scroll 0 0 #fff;
+   	border-color: #ccc;
+   	border-image: none;
+   	border-right: 1px solid #ccc;
+   	border-style: solid;
+   	border-width: 0 1px 1px;
+   	box-shadow: 0 0 0 rgba(0, 0, 0, 0.25);
+   	display: block;
+   	margin: auto;
+   	min-height: 100px;
+   	padding: 30px 20px 20px;
+   	position: relative;
+   	width: 100%;
+   	height: 1700px;
+}
+
+#main .title
+{
+ 	border: 0 solid #000;
+    color: #778899;
+    display: inline-block;
+    font: 30px 'Terminal Dosis',sans-serif;
+    position: relative;
+    width: 100%;
+}
+	
+	
+.generalinfo 
+{
+    border-bottom: 0 solid #ccc;
+    display: block;
+    position: relative;
+}
+
+
+.inforules 
+{
+    min-width: 120px;
+    padding: 20px 26px;
+    text-align: right;
+    color: #778899;
+}
+
+.inforules .num 
+{
+    font-size: 46px;
+}
+
+.top-twitter {
+    border-right: 0 solid #ccc;
+    padding-left: 15px;
+    width: 234px;
+}
+.box {
+    border: 0 solid #000;
+    display: inline-block;
+    vertical-align: top;
+    width: 330px;
+}
+	
+	.toptweets1
+	{
+		border: 2px #444 solid;
+		padding: 0px;
+		margin: 0px;
+		font: 12px/16px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
+		text-decoration: none;
+		text-transform: none;
+		vertical-align: baseline;
+		list-style: none outside none;
+		outline: 0px none;
+		background-color: #292F33;
+		border-top-left-radius:10px;
+		border-top-right-radius:10px;
+		overflow: auto;
+		width: 500px;
+	}
+	
+	.toptweets2
+	{
+		border: 2px #444 solid;
+		padding: 0px;
+		margin: 0px;
+		font: 12px/16px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
+		text-decoration: none;
+		text-transform: none;
+		vertical-align: baseline;
+		list-style: none outside none;
+		outline: 0px none;
+		background-color: #292F33;
+		border-bottom-left-radius:10px;
+		border-bottom-right-radius:10px;
+		overflow: auto;
+		width: 500px;
+	}
+	
+		.retweetClass
+	{
+		float:right; 
+		margin-right: 15px;
+		background-color: #87C2ED; 
+		border-bottom-left-radius:10px; 
+		border-bottom-right-radius:5px;
+		border-top-right-radius:10px;
+		border-top-left-radius:5px;
+		height: 20px;
+    	margin-right: 15px;
+    	text-align: center;
+    	width: 20px;
+    	color: #444;
+    	font-weight: bold;
+	}
+	
+	.tweetData
+	{
+		border-top: 1px solid #444;
+		
+	}
+	
+	.tweetprofileimg
+	{
+		float: left;
+		padding-top: 5px;
+		vertical-align: middle;
+		max-width: 100%;
+		margin-left: 5px;
+	}
+	
+	.tweettext
+	{
+		padding: 12px 12px 10px 69px;
+		border-width: 0px 0px 1px;
+		font-size: 14px;
+		line-height: 16px;
+	}
+	
+	.titletweetbox
+	{
+		font-size: 20px;
+		color: #CFCFCF;
+		font-weight: bold;	
+		text-align: center;	
+		border-bottom: 1px solid #444;
+		padding-top: 5px;
+		padding-bottom: 10px;
+	}
+	
+	.bottomtweetbox
+	{
+		font-size: 20px;
+		color: #CFCFCF;
+		font-weight: bold;	
+		border-bottom: 1px solid #444;
+		padding-top: 5px;
+		padding-bottom: 10px;
+	}
+	
+	ol
+	{
+    	outline: 0px none;
+		border: 0px none;
+		list-style: none outside none;
+		vertical-align: baseline;
+		text-transform: none;
+		text-decoration: none;
+		font: 12px/16px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
+		margin: 0px;
+		padding: 0px;
+	}
+	
+	a:link 
+	{
+    	font-weight:bold;
+    	text-decoration:none;
+	}
+
+	/* visited link */
+	a:visited 
+	{
+    	color: #CFCFCF;
+	}
+
+	/* mouse over link */
+	a:hover 
+	{
+    	color: #CFCFCF;
+    	text-decoration:underline;
+	}
+
+	/* selected link */
+	a:active 
+	{
+    	color: #0000FF;
+	}
+	
+	.free-wall 
+	{
+		margin: 15px;
+		width: 500px;
+	}
+    
+	/*
+	#pie-tooltip 
+	{
+        position: absolute;
+        width: 200px;
+        height: auto;
+        padding: 10px;
+        background-color: white;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        pointer-events: none;
+	}
+
+	#pie-tooltip.hidden
+	{
+        display: none;
+	}
+
+	#pie-tooltip p 
+	{
+        margin: 0;
+        font-family: sans-serif;
+        font-size: 16px;
+        line-height: 20px;
+	}*/
+	
+		

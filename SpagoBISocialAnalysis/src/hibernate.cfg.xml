@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+ 
+<hibernate-configuration>
+    <session-factory>
+ 
+        <!-- hibernate dialect -->
+        
+        <property name="hibernate.connection.datasource">java:/comp/env/jdbc/twitterdb</property>
+        
+<!--         <property name="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</property> -->
+<!--         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property> -->
+<!--         <property name="hibernate.connection.url">jdbc:mysql://localhost/twitterdb</property> -->
+<!--         <property name="hibernate.connection.username">root</property> -->
+<!--         <property name="hibernate.connection.password">root</property> -->
+<!--         <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property> -->
+
+
+<!-- 		<property name="hibernate.connection.driver_class"> org.hsqldb.jdbcDriver</property> -->
+<!-- 		<property name="hibernate.connection.url">jdbc:hsqldb:file:${catalina.base}/database/twitterdb</property> -->
+<!-- 		<property name="hibernate.connection.username">sa</property> -->
+<!-- 		<property name="connection.password"></property> -->
+<!-- 		<property name="connection.pool_size">1</property> -->
+		<property name="hibernate.dialect"> org.hibernate.dialect.HSQLDialect</property>
+
+        <!-- Automatic schema creation (begin) === -->
+        <property name="hibernate.hbm2ddl.auto">validate</property>
+ 
+ 		<property name="show_sql">false</property>
+ 
+        <!-- Simple memory-only cache -->
+        <property name="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</property>
+ 
+        <!-- Enable Hibernate's automatic session context management -->
+        <property name="current_session_context_class">thread</property>
+ 
+        <!-- ############################################ -->
+        <!-- #                mapping                   # -->
+        <!-- ############################################ -->
+ 
+         <mapping class="it.eng.spagobi.twitter.analysis.entities.TwitterUser"></mapping>
+         <mapping class="it.eng.spagobi.twitter.analysis.entities.TwitterSearch"></mapping>
+         <mapping class="it.eng.spagobi.twitter.analysis.entities.TwitterData"></mapping>
+         <mapping class="it.eng.spagobi.twitter.analysis.entities.TwitterSearchScheduler"></mapping>
+         <mapping class="it.eng.spagobi.twitter.analysis.entities.TwitterMonitorScheduler"></mapping>
+         <mapping class="it.eng.spagobi.twitter.analysis.entities.TwitterAccountToMonitor"></mapping>
+         <mapping class="it.eng.spagobi.twitter.analysis.entities.TwitterLinkToMonitor"></mapping>
+         <mapping class="it.eng.spagobi.twitter.analysis.entities.TwitterLinkToMonitorCategory"></mapping>
+         
+         
+ 
+    </session-factory>
+</hibernate-configuration>
