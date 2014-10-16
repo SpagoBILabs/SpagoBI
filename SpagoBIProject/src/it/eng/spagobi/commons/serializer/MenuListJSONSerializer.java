@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
@@ -70,7 +70,7 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_MYDATA_ADMIN = "/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=false";
 	private static final String HREF_LOGIN = "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
 	private static final String HREF_LOGOUT = "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
-	private static final String HREF_SOCIAL_ANALYSIS = "/SpagoBITwitterAnalysisWeb";
+	private static final String HREF_SOCIAL_ANALYSIS = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL");
 	private static final String HREF_HIERARCHIES_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp";
 
 	public String contextName = "";
@@ -245,14 +245,19 @@ public class MenuListJSONSerializer implements Serializer {
 			tempMenuList.put(myData);
 		}
 
-		if (isAbleTo(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS, funcs)) {
+		String strSbiSocialAnalysisStatus = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_STATUS");
+		boolean sbiSocialAnalysisStatus = (strSbiSocialAnalysisStatus.equalsIgnoreCase("true") ? true : false);
+		if (sbiSocialAnalysisStatus && isAbleTo(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS, funcs)) {
 			JSONObject socialAnalysis = new JSONObject();
 			socialAnalysis.put(ICON_CLS, "social_analysis");
 			socialAnalysis.put(TOOLTIP, messageBuilder.getMessage("menu.SocialAnalysis", locale));
 			socialAnalysis.put(ICON_ALIGN, "top");
 			socialAnalysis.put(SCALE, "large");
 			socialAnalysis.put(TARGET, "_self");
-			socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "');");
+			if (!GeneralUtilities.isSSOEnabled()) {
+				socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "="
+						+ userProfile.getUserUniqueIdentifier().toString() + "');");
+			}
 			tempMenuList.put(socialAnalysis);
 		}
 
@@ -387,10 +392,8 @@ public class MenuListJSONSerializer implements Serializer {
 			}
 		}
 		/*
-		 * Cannot set a static ID as a random number!!!! See
-		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
-		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following
-		 * line was the cause of the above issues!!
+		 * Cannot set a static ID as a random number!!!! See https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
+		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following line was the cause of the above issues!!
 		 */
 		// temp2.put(ID, new Double(Math.random()).toString());
 
