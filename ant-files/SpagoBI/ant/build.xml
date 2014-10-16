@@ -236,6 +236,7 @@
 	<target name="create.SpagoBIConsoleEngine.war" depends="create.sbi.utils.jar">
 		<ant dir="../SpagoBIConsoleEngine/ant" />
 	</target>
+	
 	<target name="deploy.SpagoBIConsoleEngine.war" depends="create.sbi.utils.jar,create.SpagoBIConsoleEngine.war">
 		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIConsoleEngine" />
 		<delete dir="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
@@ -284,6 +285,20 @@
 		<delete dir="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
 		<unzip src="../../../SpagoBIWhatIfEngine/dist/SpagoBIWhatIfEngine.war" dest="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
+	</target>
+	
+	
+	
+	<!-- SOCIAL ENGINE -->
+
+	<target name="create.SpagoBISocialAnalysis.war" depends="create.sbi.utils.jar">
+		<ant dir="../SpagoBISocialAnalysis/ant" />
+	</target>
+	<target name="deploy.SpagoBISocialAnalysis.war" depends="create.sbi.utils.jar,create.SpagoBISocialAnalysis.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBISocialAnalysis" />
+		<delete dir="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
+		<mkdir dir="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
+		<unzip src="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" dest="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
 	</target>
 
 
@@ -365,6 +380,10 @@
 		<antcall target="create.SpagoBIWhatIfEngine.war" />
 		<copy file="../../../SpagoBIWhatIfEngine/dist/SpagoBIWhatIfEngine.war" 
         todir="../../../dist" overwrite="true" />
+		
+		<antcall target="create.SpagoBISocialAnalysis.war" />
+		<copy file="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" 
+        todir="../../../dist" overwrite="true" />
 
 	</target>
 
@@ -406,6 +425,7 @@
 		<antcall target="deploy.SpagoBIMobileEngine.war" />
 		<antcall target="deploy.SpagoBINetworkEngine.war" />
 		<antcall target="deploy.SpagoBIWhatIfEngine.war" />
+		<antcall target="deploy.SpagoBISocialAnalysis.war" />
 
 	</target>
 
@@ -471,6 +491,9 @@
 
 		<delete dir="../../../SpagoBIWhatIfEngine/ant-build"/>
 		<delete dir="../../../SpagoBIWhatIfEngine/dist"/>
+		
+		<delete dir="../../../SpagoBISocialAnalysis/ant-build"/>
+		<delete dir="../../../SpagoBISocialAnalysis/dist"/>
 
 	</target>
 
@@ -545,6 +568,8 @@
 
 		<ant dir="../SpagoBIWhatIfEngine/ant" target="package"/>
 
+		<ant dir="../SpagoBISocialAnalysis/ant" target="package"/>
+		
 	</target>
 
 	<target name="package.all.src" depends="clean.all">
