@@ -66,6 +66,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
                  width='0'
                  frameborder='0' >
 </iframe> 
+
+<iframe id='invalidSessionCockpit'
+                 name='invalidSessionCockpit'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/SpagoBICockpitEngine/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe> 
 <%
 
 boolean backUrlB=false;
