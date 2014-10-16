@@ -257,6 +257,8 @@ public class MenuListJSONSerializer implements Serializer {
 			if (!GeneralUtilities.isSSOEnabled()) {
 				socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "="
 						+ userProfile.getUserUniqueIdentifier().toString() + "');");
+			} else {
+				socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "');");
 			}
 			tempMenuList.put(socialAnalysis);
 		}
