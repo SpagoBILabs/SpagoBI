@@ -24,7 +24,7 @@ import org.hibernate.validator.constraints.Length;
  */
 
 @Entity
-@Table(name = "twitter_users")
+@Table(name = "TWITTER_USERS")
 public class TwitterUser {
 
 	@Id
@@ -101,7 +101,6 @@ public class TwitterUser {
 
 	@Column(name = "end_date")
 	@Temporal(TemporalType.TIMESTAMP)
-	@NotNull
 	private java.util.Calendar endDate;
 
 	public TwitterUser() {

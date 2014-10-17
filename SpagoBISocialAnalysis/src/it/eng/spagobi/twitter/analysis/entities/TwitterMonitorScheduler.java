@@ -30,7 +30,7 @@ import org.hibernate.validator.constraints.Length;
  */
 
 @Entity
-@Table(name = "twitter_monitor_scheduler")
+@Table(name = "TWITTER_MONITOR_SCHEDULER")
 public class TwitterMonitorScheduler {
 
 	@Id
