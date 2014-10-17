@@ -33,7 +33,7 @@ import twitter4j.JSONObject;
  */
 
 @Entity
-@Table(name = "twitter_search")
+@Table(name = "TWITTER_SEARCH")
 public class TwitterSearch implements Serializable {
 
 	/**

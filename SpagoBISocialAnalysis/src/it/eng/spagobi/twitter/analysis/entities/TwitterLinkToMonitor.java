@@ -25,7 +25,7 @@ import org.hibernate.validator.constraints.Length;
  */
 
 @Entity
-@Table(name = "twitter_links_to_monitor")
+@Table(name = "TWITTER_LINKS_TO_MONITOR")
 public class TwitterLinkToMonitor {
 
 	@Id

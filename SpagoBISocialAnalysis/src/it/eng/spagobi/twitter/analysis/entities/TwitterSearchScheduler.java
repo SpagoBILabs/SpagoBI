@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
  */
 
 @Entity
-@Table(name = "twitter_search_scheduler")
+@Table(name = "TWITTER_SEARCH_SCHEDULER")
 public class TwitterSearchScheduler {
 
 	@Id

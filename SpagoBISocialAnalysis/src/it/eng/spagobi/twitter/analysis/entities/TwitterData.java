@@ -29,7 +29,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @IdClass(TwitterDataPK.class)
-@Table(name = "twitter_data")
+@Table(name = "TWITTER_DATA")
 public class TwitterData implements Serializable {
 
 	/**
