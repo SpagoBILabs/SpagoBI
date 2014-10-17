@@ -18,23 +18,23 @@ import org.apache.log4j.Logger;
 /**
  * @author Giorgio Federici (giorgio.federici@eng.it)
  */
+
 @Path("/start")
 public class SpagoBISocialAnalysisStartGuiAPI {
 
 	static final Logger logger = Logger.getLogger(SpagoBISocialAnalysisStartGuiAPI.class);
 
 	@GET
-	@Path("/gui")
 	public void startGUI(@Context HttpServletRequest request, @Context HttpServletResponse response) {
 
-		logger.debug("REST Service: /SpagoBISocialAnalysis/restful-services/startGUI - Start ");
+		logger.debug("REST Service: /SpagoBISocialAnalysis/restful-services/start");
 
 		try {
 
 			response.sendRedirect(request.getContextPath() + "/index.jsp");
 
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Error in REST Service: /SpagoBISocialAnalysis/restful-services/startGUI", t);
+			throw new SpagoBIRuntimeException("Error in REST Service: /SpagoBISocialAnalysis/restful-services/start", t);
 		}
 
 	}
