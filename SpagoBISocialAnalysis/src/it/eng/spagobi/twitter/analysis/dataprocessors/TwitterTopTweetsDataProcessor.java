@@ -108,7 +108,7 @@ public class TwitterTopTweetsDataProcessor {
 
 			List<TwitterTopTweetsPojo> topTweetsData = new ArrayList<TwitterTopTweetsPojo>();
 
-			List<TwitterData> topTweets = dpCache.getTopTweetsRTsOrder(searchId, nProfiles);
+			List<TwitterData> topTweets = dpCache.getTopTweetsRecentOrder(searchId, nProfiles);
 
 			for (TwitterData twitterData : topTweets) {
 
