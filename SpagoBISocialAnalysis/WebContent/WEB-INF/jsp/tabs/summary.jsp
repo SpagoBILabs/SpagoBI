@@ -162,7 +162,7 @@
 		<div class="demo-container" style="width: 100%; height: 60%;">
 			<div id="hormenu">
 				<ul> 
-					<li><span>View</span>
+					<li><span>Time Scale</span>
 						<ul>
 							<li><a id="months" style="cursor:pointer;">Months</a>							
 				          	<li><a id="weeks" style="cursor:pointer;">Weeks</a></li>
