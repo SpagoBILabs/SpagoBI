@@ -442,7 +442,7 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 			this.daoService = new DaoService();
 		}
 
-		String query = "SELECT new TwitterData(td.twitterUser, td.dateCreatedAt, td.hashtags, td.tweetText, td.timeCreatedAt, td.retweetCount)) from TwitterData td where td.twitterSearch.searchID = ? order by td.timeCreatedAt DESC";
+		String query = "SELECT new TwitterData(td.twitterUser, td.dateCreatedAt, td.hashtags, td.tweetText, td.timeCreatedAt, td.retweetCount) from TwitterData td where td.twitterSearch.searchID = ? order by td.timeCreatedAt DESC";
 
 		List<TwitterData> twitterDatas = daoService.listFromLimitedQuery(query, nProfiles, searchID);
 
