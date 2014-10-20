@@ -170,8 +170,8 @@
 				<file name='./spagobi/commons/Utils.js' />
 				<file name='./spagobi/commons/Log.js' />
 
-				<file name='./spagobi/widgets/Help.js' />
-
+				<file name='./spagobi/widgets/Help.js'>
+					
 				<file name='./spagobi/exception/ExceptionHandler.js' />
 
 				<file name='./spagobi/olap/model/DimensionModel.js' />
@@ -179,6 +179,7 @@
 				<file name='./spagobi/olap/model/MemberModel.js' />
 				<file name='./spagobi/olap/model/PivotModel.js' />
 				<file name='./spagobi/olap/model/VersionModel.js' />
+				<file name='./spagobi/olap/model/AllocationAlgorithmModel.js' />
 
 				<file name='./spagobi/olap/options/OlapOptionsChart.js' />
 
@@ -191,6 +192,8 @@
 				<file name='./spagobi/olap/toolbar/VersionManagerWindow.js' />
 				<file name='./spagobi/olap/toolbar/ExportWizardWindow.js' />
 				<file name='./spagobi/olap/toolbar/SaveAsWindow.js' />
+				<file name='./spagobi/olap/toolbar/EditMdxWindow.js' />
+				<file name='./spagobi/olap/toolbar/CalculatedMembersWindow.js' />
 
 				<file name='./spagobi/olap/execution/table/OlapExecutionFilterTree.js' />
 				<file name='./spagobi/olap/execution/table/OlapExecutionDimension.js' />
