@@ -21,6 +21,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
@@ -96,6 +97,9 @@ public class TwitterMonitorScheduler {
 	@Column(name = "active", columnDefinition = "boolean", length = 1)
 	@NotNull
 	private boolean active = true;
+
+	@Transient
+	private Calendar firstSearchTime;
 
 	public TwitterMonitorScheduler() {
 
@@ -244,6 +248,14 @@ public class TwitterMonitorScheduler {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public Calendar getFirstSearchTime() {
+		return firstSearchTime;
+	}
+
+	public void setFirstSearchTime(Calendar firstSearchTime) {
+		this.firstSearchTime = firstSearchTime;
 	}
 
 	@Override
