@@ -7,7 +7,6 @@ package it.eng.spagobi.twitter.analysis.dataprocessors;
 
 import it.eng.spagobi.twitter.analysis.cache.DataProcessorCacheImpl;
 import it.eng.spagobi.twitter.analysis.cache.IDataProcessorCache;
-import it.eng.spagobi.twitter.analysis.entities.TwitterUser;
 import it.eng.spagobi.twitter.analysis.utilities.AnalysisUtility;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -38,6 +37,11 @@ public class TwitterGeneralStatsDataProcessor {
 	private String minDateSearch = "";
 	private String maxDateSearch = "";
 
+	// array position fields
+	// int userIdPos = 0;
+	private final int USERFOLLOWERSPOS = 1;
+	private final int USERNTWEETS = 2;
+
 	public TwitterGeneralStatsDataProcessor() {
 
 	}
@@ -49,20 +53,25 @@ public class TwitterGeneralStatsDataProcessor {
 	 */
 	public void initializeTwitterGeneralStats(String searchID) {
 
-		logger.debug("Method initializeTwitterGeneralStats(): Start");
+		logger.debug("Method initializeTwitterGeneralStats(): Start for searchID = " + searchID);
 
+		long initMills = System.currentTimeMillis();
+
+		// check if searchID is a long and convert it
 		long searchId = AnalysisUtility.isLong(searchID);
 
 		try {
 
 			int totalUsersInt = 0;
-			int totalTweetsInt = 0;
+			long totalTweetsLong = 0;
 			int reachInt = 0;
-			int impressionsInt = 0;
+			long impressionsLong = 0;
 
-			totalTweetsInt = totalTweetsCounter(searchId);
+			// count total tweets for searchID search
+			// totalTweetsInt = totalTweetsCounter(searchId);
 
-			List<TwitterUser> users = dpCache.getUsersForSearchID(searchId);
+			logger.debug("Method initializeTwitterGeneralStats(): Getting users for searchID = " + searchID);
+			List<Object[]> users = dpCache.getGeneralStatsForSearchID(searchId);
 
 			if (users != null) {
 
@@ -72,15 +81,17 @@ public class TwitterGeneralStatsDataProcessor {
 
 				int totFollowers = 0;
 
-				for (TwitterUser user : users) {
+				for (Object[] user : users) {
 
-					int userFollowers = user.getFollowersCount();
+					int userFollowers = (int) user[USERFOLLOWERSPOS];
 
 					totFollowers = totFollowers + userFollowers;
 
-					int tweetsNumber = dpCache.getSearchTweetsNumberForUsersID(searchId, user.getUserID());
+					long tweetsNumber = (long) user[USERNTWEETS];
 
-					impressionsInt = impressionsInt + (userFollowers * tweetsNumber);
+					totalTweetsLong = totalTweetsLong + tweetsNumber;
+
+					impressionsLong = impressionsLong + (userFollowers * tweetsNumber);
 
 					// totalTweetsInt = totalTweetsInt + tweetsNumber;
 
@@ -94,11 +105,13 @@ public class TwitterGeneralStatsDataProcessor {
 			this.maxDateSearch = getMaxDateSearch(searchId);
 
 			this.totalUsers = String.format("%,d", totalUsersInt);
-			this.totalTweets = String.format("%,d", totalTweetsInt);
+			this.totalTweets = String.format("%,d", totalTweetsLong);
 			this.reach = String.format("%,d", reachInt);
-			this.impressions = String.format("%,d", impressionsInt);
+			this.impressions = String.format("%,d", impressionsLong);
 
-			logger.debug("Method initializeTwitterGeneralStats(): End");
+			long endMills = System.currentTimeMillis() - initMills;
+
+			logger.debug("Method initializeTwitterGeneralStats(): End for search = " + searchId + " in " + endMills + "ms");
 		} catch (Throwable t) {
 
 			throw new SpagoBIRuntimeException("Method initializeTwitterGeneralStats(): An error occurred for search ID: " + searchId, t);
@@ -114,13 +127,11 @@ public class TwitterGeneralStatsDataProcessor {
 	private int totalTweetsCounter(long searchID) {
 
 		try {
-			logger.debug("Method totalTweetsCounter(): Start");
-
-			Assert.assertNotNull(searchID, "Impossibile execute totalTweetsCounter() without a correct search ID");
+			logger.debug("Method totalTweetsCounter(): Start for search = " + searchID);
 
 			int totalTweets = dpCache.getTotalTweets(searchID);
 
-			logger.debug("Method totalTweetsCounter(): End");
+			logger.debug("Method totalTweetsCounter(): End for search = " + searchID);
 
 			return totalTweets;
 		} catch (Throwable t) {
