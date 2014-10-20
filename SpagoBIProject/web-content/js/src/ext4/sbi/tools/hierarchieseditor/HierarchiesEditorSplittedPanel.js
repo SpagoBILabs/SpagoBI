@@ -838,7 +838,15 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 //	        			    }
 	        			}
 	        			var isLeafNode = data.records[0].isLeaf();
-	        			if ((customHierarchyType != "SEMIMANUAL") || (!isLeafNode) ){
+	        			var ddOnSameTree;
+	        			//check if we are performing drag&drop on the same tree
+	        			if (dd.id.indexOf("customTreePanel") > -1){
+	        				ddOnSameTree = true;
+	        			} else {
+	        				ddOnSameTree = false;
+	        			}
+	        			if  (((customHierarchyType != "SEMIMANUAL") || (!isLeafNode) )
+	        					|| (!isLeafNode && ddOnSameTree)) {
 	        				//Original code from Ext source
 	        				if(this.lastOverNode){
 	        					this.onNodeOut(this.lastOverNode, dd, e, data);
