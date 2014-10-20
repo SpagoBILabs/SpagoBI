@@ -52,14 +52,15 @@ Ext.define('Sbi.olap.tools.OlapViewDefinitionTools', {
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.tools && Sbi.settings.olap.tools.OlapViewDefinitionTools) {
 			Ext.apply(this, Sbi.settings.olap.tools.OlapViewDefinitionTools);
 		}
+		this.cubeSelector = Ext.create('Sbi.olap.tools.OlapViewCubeSelector', {});
+		this.dimensionsSelector = Ext.create('Sbi.olap.tools.OlapViewDimensionsSelector', {});
+		this.measuresSelector = Ext.create('Sbi.olap.tools.OlapViewMeasuresSelector', {});
+
 		this.callParent(arguments);
 	},
 
 	initComponent: function() {
 
-		this.cubeSelector = Ext.create('Sbi.olap.tools.OlapViewCubeSelector', {});
-		this.dimensionsSelector = Ext.create('Sbi.olap.tools.OlapViewDimensionsSelector', {});
-		this.measuresSelector = Ext.create('Sbi.olap.tools.OlapViewMeasuresSelector', {});
 
 		Ext.apply(this, {
 			items: [this.cubeSelector,this.dimensionsSelector,this.measuresSelector]

@@ -46,7 +46,7 @@
 		<BUTTON_VERSION_MANAGER visible="true" menu="false" />
 		<BUTTON_EXPORT_OUTPUT visible="true" menu="false" />
 		<BUTTON_ALGORITHMS visible="true" menu="false" />    
-		
+		<EXPORT_XLS visible="true" menu="false" />    
 		
 		  
 		<!--  NOT YET USED

@@ -405,6 +405,13 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.olapController.exportOutput(params);
 	}
 
+	/**
+	 * Call the rest service to export the pivot table
+	 */
+	,exportPivotTable: function(format){
+		this.olapController.exportPivotTable(format);
+	}
+
 	,executeService: function(text){
 		if(!text){
 			text = LN("sbi.common.wait");

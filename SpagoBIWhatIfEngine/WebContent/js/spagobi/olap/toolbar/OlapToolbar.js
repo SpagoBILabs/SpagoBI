@@ -38,10 +38,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			'BUTTON_HIDE_SPANS':'hideSpans',
 			'BUTTON_FATHER_MEMBERS':'showParentMembers'
 		},
-		whatIfButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER','BUTTON_EXPORT_OUTPUT','BUTTON_CALCULATED_MEMBERS','BUTTON_ALGORITHMS'],
+		whatIfButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER','BUTTON_EXPORT_OUTPUT','BUTTON_CALCULATED_MEMBERS','BUTTON_ALGORITHMS','EXPORT_XLS'],
 		unlockedButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER','BUTTON_ALGORITHMS'],
 		olapToggleButtons:  ['BUTTON_FATHER_MEMBERS','BUTTON_HIDE_SPANS','BUTTON_HIDE_EMPTY' ],
-		olapButtons: ['BUTTON_MDX','BUTTON_EDIT_MDX','BUTTON_FLUSH_CACHE'],
+		olapButtons: ['BUTTON_MDX','BUTTON_EDIT_MDX','BUTTON_FLUSH_CACHE','EXPORT_XLS'],
 		lockButtons:['BUTTON_LOCK','BUTTON_UNLOCK','BUTTON_LOCK_OTHER']
 	},
 
@@ -88,6 +88,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				'BUTTON_EDIT_MDX': this.editMdxWindow,
 				'BUTTON_FLUSH_CACHE': function(){
 					Sbi.olap.eventManager.cleanCache();
+				},
+				'EXPORT_XLS': function(){
+					Sbi.olap.eventManager.exportPivotTable();
 				},
 				'BUTTON_UNDO': function(){
 					Sbi.olap.eventManager.undo();

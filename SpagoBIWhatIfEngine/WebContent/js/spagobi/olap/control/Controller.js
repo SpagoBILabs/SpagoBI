@@ -290,6 +290,20 @@ Ext.define('Sbi.olap.control.Controller', {
 
 	}
 
+
+	/**
+	 * Call the rest service to export the pivot table
+	 */
+	,exportPivotTable: function(format){
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "model",
+			method: 'GET',
+			pathParams: ["export","X"]
+		});
+
+		service.callService(this);
+	}
+
 	,lockModel: function() {
 
 		var olapToolbar = this.eventManager.olapPanel.executionPanel.olapToolbar;
