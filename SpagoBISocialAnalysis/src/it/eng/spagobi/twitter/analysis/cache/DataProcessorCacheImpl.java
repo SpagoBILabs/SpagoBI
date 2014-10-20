@@ -9,7 +9,6 @@ import it.eng.spagobi.twitter.analysis.cache.exceptions.DaoServiceException;
 import it.eng.spagobi.twitter.analysis.entities.TwitterAccountToMonitor;
 import it.eng.spagobi.twitter.analysis.entities.TwitterData;
 import it.eng.spagobi.twitter.analysis.entities.TwitterLinkToMonitor;
-import it.eng.spagobi.twitter.analysis.entities.TwitterMonitorScheduler;
 import it.eng.spagobi.twitter.analysis.entities.TwitterUser;
 import it.eng.spagobi.twitter.analysis.enums.MonitorRepeatTypeEnum;
 
@@ -38,15 +37,20 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 
 		logger.debug("Method getTotalTweets(): Start");
 
+		long initMills = System.currentTimeMillis();
+
 		if (this.daoService == null) {
 			this.daoService = new DaoService();
 		}
 
+		// String queryHQL = "select tweet.tweetID from TwitterData tweet where tweet.twitterSearch.searchID = ?";
 		String queryHQL = "select tweet.tweetID from TwitterData tweet where tweet.twitterSearch.searchID = ?";
 
 		int result = daoService.countQuery(queryHQL, searchID);
 
-		logger.debug("Method getTotalTweets(): End");
+		long endMills = System.currentTimeMillis() - initMills;
+
+		logger.debug("Method getTotalTweets(): End in " + endMills + "ms");
 
 		return result;
 
@@ -175,7 +179,7 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 	}
 
 	@Override
-	public TwitterMonitorScheduler getDocuments(long searchID) throws DaoServiceException {
+	public Object[] getDocuments(long searchID) throws DaoServiceException {
 
 		logger.debug("Method getDocuments(): Start");
 
@@ -183,9 +187,9 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 			this.daoService = new DaoService();
 		}
 
-		String query = "from TwitterMonitorScheduler tms where tms.twitterSearch.searchID = ?";
+		String query = "select ts.creationDate, tms.lastActivationTime, tms.documents from TwitterMonitorScheduler tms, TwitterSearch ts where ts.searchID = ? and tms.twitterSearch.searchID = ts.searchID";
 
-		TwitterMonitorScheduler result = daoService.singleResultQuery(query, searchID);
+		Object[] result = daoService.singleResultQuery(query, searchID);
 
 		logger.debug("Method getDocuments(): End");
 
@@ -575,19 +579,25 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 	}
 
 	@Override
-	public List<TwitterUser> getUsersForSearchID(long searchID) throws DaoServiceException {
+	public List<Object[]> getGeneralStatsForSearchID(long searchID) throws DaoServiceException {
 
 		logger.debug("Method getUsersForSearchID(): Start");
+
+		long initMills = System.currentTimeMillis();
 
 		if (this.daoService == null) {
 			this.daoService = new DaoService();
 		}
 
-		String queryHQL = "select distinct user from TwitterUser user, TwitterData tweet where tweet.twitterSearch.searchID = ? and tweet.twitterUser.userID = user.userID";
+		String queryHQL = "select tu.userID, tu.followersCount, count(td.tweetID) from TwitterUser tu ,TwitterData td where tu.userID = td.twitterUser.userID and td.twitterSearch.searchID = ? GROUP by (td.twitterUser.userID)";
 
-		List<TwitterUser> result = daoService.listFromQuery(queryHQL, searchID);
+		List<Object[]> result = daoService.listFromQuery(queryHQL, searchID);
 
-		logger.debug("Method getUsersForSearchID(): End");
+		// List<TwitterUser> result = daoService.listFromQuery(queryHQL, searchID);
+
+		long endMills = System.currentTimeMillis() - initMills;
+
+		logger.debug("Method getUsersForSearchID(): End in " + endMills + "ms");
 
 		return result;
 

@@ -349,7 +349,7 @@ public class DaoService {
 			if (tx != null)
 				tx.rollback();
 
-			throw new DaoServiceException("DaoService listFromQuery(): Impossible to execute the query [ " + queryHQL + " ]", t);
+			throw new DaoServiceException("DaoService countQuery(): Impossible to execute the query [ " + queryHQL + " ]", t);
 
 		}
 
