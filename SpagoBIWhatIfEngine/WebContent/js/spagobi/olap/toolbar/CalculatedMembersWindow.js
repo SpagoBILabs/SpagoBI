@@ -24,7 +24,7 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 
 	grid: null,
 	constructor : function(config) {
-		debugger;
+
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.toolbar && Sbi.settings.olap.toolbar.CalculatedMembersWindow) {
 			Ext.apply(this, Sbi.settings.olap.toolbar.CalculatedMembersWindow);
@@ -84,7 +84,7 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 		    text: 'Submit expression',
 		    flex: 1,
 		    handler: function() {
-		    	debugger;
+
 		    	thisPanel.sendExpression(editorName.getValue(), editorFormula.getValue());
 		    }
 		});
@@ -106,7 +106,7 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 	},
 
 	sendExpression: function(name, formula){
-		debugger;
+
 		Sbi.olap.eventManager.executeCalculatedMemberExpression(name, formula);
 		this.destroy();
 	}

@@ -309,15 +309,15 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Exports the actual model in a xls format.. Since it takes the actual
-	 * model, it takes also the pendingg transformations (what you see it's what
+	 * model, it takes also the pending transformations (what you see it's what
 	 * you get)
 	 * 
 	 * @return the response with the file embedded
 	 */
 	@GET
-	@Path("/exportXLS")
+	@Path("/export/{format}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response exportXLS()
+	public Response export()
 	{
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
