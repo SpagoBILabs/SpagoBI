@@ -1438,7 +1438,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					SbiFunctions existingFunc = (SbiFunctions) sessionCurrDB.load(SbiFunctions.class, existingId);
 					existingFunc.setName(funct.getName());
 					existingFunc.setDescr(funct.getDescr());
-					existingFunc.setPath(funct.getPath());
+					// existingFunc.setPath(funct.getPath());
 					this.updateSbiCommonInfo4Insert(existingFunc);
 					sessionCurrDB.update(existingFunc);
 					sessionCurrDB.flush();
