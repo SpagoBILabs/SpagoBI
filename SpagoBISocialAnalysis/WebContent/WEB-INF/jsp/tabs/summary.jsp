@@ -26,15 +26,20 @@
 
 <%
 	String searchId = request.getParameter("searchID");
-
+	boolean withDocs = "TRUE".equalsIgnoreCase(request.getParameter("withDocs"));
 	
-	String summaryLink = "summary?searchID=" + searchId;
-	String topicsLink = "topics?searchID=" + searchId; 
-	String networkLink = "network?searchID=" + searchId; 
-	String distributionLink = "distribution?searchID=" + searchId; 
-	String sentimentLink = "sentiment?searchID=" + searchId; 
-	String impactLink = "impact?searchID=" + searchId; 
-	String roiLink = "roi?searchID=" + searchId;
+	String summaryLink = "summary?searchID=" + searchId + "&withDocs=" + withDocs;
+	String topicsLink = "topics?searchID=" + searchId + "&withDocs=" + withDocs; 
+	String networkLink = "network?searchID=" + searchId + "&withDocs=" + withDocs; 
+	String distributionLink = "distribution?searchID=" + searchId + "&withDocs=" + withDocs; 
+	String sentimentLink = "sentiment?searchID=" + searchId + "&withDocs=" + withDocs; 
+	String impactLink = "impact?searchID=" + searchId + "&withDocs=" + withDocs; 
+	String roiLink = "";
+	
+	if(withDocs)
+	{			
+		roiLink = "roi?searchID=" + searchId + "&withDocs=" + withDocs;
+	}
 	
 	/*************** GENERAL INFO ***********************************************************/
 	
@@ -113,7 +118,9 @@
 	    <li class="navtabs"><a href=<%= distributionLink %>>Distribution</a></li>
 	    <li class="navtabs"><a href=<%= sentimentLink %>>Sentiment</a></li>
 	    <li class="navtabs"><a href=<%= impactLink %>>Impact</a></li>
-	    <li class="navtabs"><a href=<%= roiLink %>>ROI</a></li>
+	    <% if(withDocs) { %>
+	   	 	<li class="navtabs"><a href=<%= roiLink %>>ROI</a></li>
+	   	<% } %>
 	    <li class="navtabs" style="float:right;"><a href="<%= application.getContextPath() %>/index.jsp">Search</a></li>
 	</ul>
         		
