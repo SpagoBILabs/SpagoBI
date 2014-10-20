@@ -42,6 +42,7 @@ public class DatasetsExecutor {
 
 
 	protected void evalDatasetsNeeded(HashMap paramsFilled) throws IOException {
+		logger.debug("IN");
 		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
 			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
@@ -86,10 +87,11 @@ public class DatasetsExecutor {
 				}
 			}
 		}
+		logger.debug("OUT");
 	}
 
 	protected void updateDataset(DataMiningDataset ds) throws IOException {
-
+		logger.debug("IN");
 		File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
 		// /find file in dir
 		File[] dsfiles = fileDSDir.listFiles();
@@ -100,5 +102,6 @@ public class DatasetsExecutor {
 
 		String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
 		re.eval(stringToEval);// updated!!!
+		logger.debug("OUT");
 	}
 }

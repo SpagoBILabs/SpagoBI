@@ -6,15 +6,20 @@
 package it.eng.spagobi.engines.datamining.compute;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
@@ -43,53 +48,134 @@ public class ScriptExecutor {
 	}
 
 	protected void evalScript(DataMiningCommand command, Boolean rerun) throws Exception {
+		logger.debug("IN");
 
 		// checks whether executed before
 		if (rerun || command.getExecuted() == null || !command.getExecuted()) {
-			
+			logger.debug("rerun or first execution");
 			//load libraries from local dir (if needed)
 			loadLibrariesFromRLocal(command);
+			logger.debug("loaded libraries from local dir (if needed)");
 			// command-->script name --> execute script without output
 			String scriptToExecute = getScriptCodeToEval(command);
-
+			logger.debug("loaded script to execute");
 			// loading libraries, preprocessing, functions definition in main
 			// "auto"
 			// script
 			String ret = createTemporarySourceScript(scriptToExecute);
+			logger.debug("created temporary script");
 			re.eval("source(\"" + ret + "\")");
+			logger.debug("detects action to execute from command --> used to call functions");
 			// detects action to execute from command --> used to call functions
 			String action = command.getAction();
 			if (action != null) {
 				re.eval(action);
+				logger.debug("evaluated action");
 			}
 
 			command.setExecuted(true);
+			logger.debug("delete temporary scripts");
 			deleteTemporarySourceScript(ret);
+			logger.debug("deleted temporary scripts");
 		} else {
 			// everithing in user workspace
 			logger.debug("Command " + command.getName() + " script " + command.getScriptName() + " already executed");
 		}
-
+		logger.debug("OUT");
 	}
-	protected void evalExternalScript(String fileName) throws Exception {
+	protected void evalExternalScript(String fileName, Map params) throws Exception {
+		logger.debug("IN");
 		String path = DataMiningUtils.UPLOADED_FILE_PATH + DataMiningConstants.DATA_MINING_EXTERNAL_CODE_PATH;
-		re.eval("source(\"" + path+fileName + "\")");
+		String codeResource = path+fileName;
+		logger.debug(codeResource);
+		if(params!= null && !params.isEmpty()){
+			String codeResourceTemp = path+ "temp_"+ fileName;		
+			logger.debug("Needs params for temp script "+codeResourceTemp);
+			File codeResourceFile = new File(codeResource);
+			if(codeResourceFile.exists()){
+				BufferedReader br = null;
+				String code=null;
+				FileWriter fw =null;
+				BufferedWriter bw =null;
+				try {
+		 
+					String sCurrentLine;
+					StringBuffer content =new StringBuffer();
+					br = new BufferedReader(new FileReader(codeResourceFile));
+		 
+					while ((sCurrentLine = br.readLine()) != null) {
+						content.append(sCurrentLine+"\n");
+					}
+					code = content.toString();
+					logger.debug("code read from input file");
+					if(code != null && !code.equals("")){
+						code = StringUtilities.substituteParametersInString(code, params, null, false);
+						logger.debug("parameters replaced");
+					}
+					
+				} catch (IOException e) {
+					logger.error("Unable to read file "+codeResource);				
+					throw e;
+				} finally {
+					try {
+						if (br != null) br.close();
+					} catch (IOException ex) {
+						logger.error("Unable to close file "+codeResource);
+						throw ex;
+					}
+				}
+				try{
+					File codeResourceFileTemp = new File(codeResourceTemp);
+					fw= new FileWriter(codeResourceFileTemp);
+					bw = new BufferedWriter(fw);
+					
+					bw.write(code);
+					bw.close();
+					fw.close();
+					
+				} finally {
+					logger.debug("temp file created");
+					try {
+						if (bw != null)bw.close();
+						if (fw != null)fw.close();
+						
+					} catch (IOException ex) {
+						logger.error("Unable to close file writer "+codeResource);
+						throw ex;
+					}
+				}
+				logger.debug("Ready to execute external script with params");
+				re.eval("source(\"" + codeResourceTemp + "\")");
+				logger.debug("External script executed with params");
+			}else{
+				logger.debug("Ready to execute external script without params");
+				re.eval("source(\"" + codeResource + "\")");
+				logger.debug("External script executed without params");
+			}
+
+		}	
+		logger.debug("OUT");
 	}
 	
 	protected void deleteTemporarySourceScript(String path) {
+		logger.debug("IN");
 		boolean success = (new File(path)).delete();
+		logger.debug("OUT");
 	}
 
 	private String getScriptCodeToEval(DataMiningCommand command) throws Exception {
+		logger.debug("IN");
 		String code = "";
 
 		DataMiningScript script = getScript(command);
 		if (script != null) {			
 			code = DataMiningUtils.replaceVariables(command.getVariables(), script.getCode());
 		}
+		logger.debug("OUT");
 		return code;
 	}
 	private void loadLibrariesFromRLocal(DataMiningCommand command){
+		logger.debug("IN");
 		DataMiningScript script = getScript(command);
 		if (script != null) {
 			REXP rHome = re.eval("libdir<-paste(R.home(),\"library\", sep=\"/\")");
@@ -105,8 +191,10 @@ public class ScriptExecutor {
 				}
 			}
 		}
+		logger.debug("OUT");
 	}
 	private DataMiningScript getScript(DataMiningCommand command){
+		logger.debug("IN");
 		String scriptName = command.getScriptName();
 		if (dataminingInstance.getScripts() != null && !dataminingInstance.getScripts().isEmpty()) {
 			for (Iterator it = dataminingInstance.getScripts().iterator(); it.hasNext();) {
@@ -116,11 +204,13 @@ public class ScriptExecutor {
 				}
 			}
 		}
+		logger.debug("OUT");
 		return null;
 	}
 	
 
 	private String createTemporarySourceScript(String code) throws IOException {
+		logger.debug("IN");
 		String name = RandomStringUtils.randomAlphabetic(10);
 		File temporarySource = new File(DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + name + ".R");
 		FileWriter fw = null;
@@ -140,7 +230,7 @@ public class ScriptExecutor {
 				}
 			}
 		}
-
+		logger.debug("OUT");
 		return ret;
 
 	}

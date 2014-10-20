@@ -50,7 +50,7 @@ public class OutputExecutor {
 	}
 
 	protected DataMiningResult evalOutput(Output out, ScriptExecutor scriptExecutor) throws Exception {
-
+		logger.debug("IN");
 		// output -->if image and function --> execute function then prepare
 		// output
 		// output -->if script --> execute script then prepare output
@@ -58,24 +58,28 @@ public class OutputExecutor {
 		DataMiningResult res = new DataMiningResult();
 		
 		List<Variable> variables = out.getVariables();		
+		logger.debug("Got variables list");
 		//replace in function and in value attributes 
 		String function = out.getOutputFunction();
 		if(function != null && variables!= null && !variables.isEmpty()){
 			function = DataMiningUtils.replaceVariables(variables, function);
+			logger.debug("Replaced variables in output function");
 		}
 		String outVal = out.getOutputValue();
 		if(outVal != null && variables!= null && !variables.isEmpty()){
 			outVal = DataMiningUtils.replaceVariables(variables, outVal);
+			logger.debug("Replaced variables in output value");
 		}
 		
 		
 		if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.IMAGE_OUTPUT) && out.getOutputName() != null) {
+			logger.debug("Image output");
 			res.setVariablename(outVal);// could be multiple value
 														// comma separated
 			String plotName = out.getOutputName();
 			re.eval(getPlotFilePath(plotName));
 			
-
+			logger.debug("Plot file name "+plotName);
 			if (function.equals("hist")) {
 				// predefined Histogram function
 				re.eval(function + "(" + outVal + ", col=4)");
@@ -93,8 +97,9 @@ public class OutputExecutor {
 				}
 
 			}
-
+			logger.debug("Evaluated function");
 			re.eval("dev.off()");
+			logger.debug("Evaluated dev.off()");
 			res.setOutputType(out.getOutputType());
 			String resImg = getPlotImageAsBase64(out.getOutputName());
 			res.setPlotName(plotName);
@@ -103,10 +108,11 @@ public class OutputExecutor {
 
 				scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile)
 						+ DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "." + OUTPUT_PLOT_EXTENSION);
+				logger.debug("Deleted temp image");
 			}
 
 		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.TEXT_OUTPUT) && outVal != null && out.getOutputName() != null) {
-
+			logger.debug("Text output");
 
 			REXP rexp = null;
 
@@ -121,6 +127,7 @@ public class OutputExecutor {
 			} else {
 				rexp = re.eval(outVal);
 			}
+			
 			res.setVariablename(outVal);// could be multiple value
 			// comma separated
 			if (rexp != null) {
@@ -130,21 +137,25 @@ public class OutputExecutor {
 				res.setOutputType(out.getOutputType());
 				res.setResult("No result");
 			}
-
+			logger.debug("Evaluated result");
 		}
+		logger.debug("OUT");
 		return res;
 	}
 
 	private String getPlotFilePath(String plotName) throws IOException {
+		logger.debug("IN");
 		String path = null;
 		if (plotName != null && !plotName.equals("")) {
 			String filePath = DataMiningUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/");
 			path = OUTPUT_PLOT_IMG + "(\"" + filePath + DataMiningConstants.DATA_MINING_TEMP_FOR_SCRIPT + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
 		}
+		logger.debug("OUT");
 		return path;
 	}
 
 	public String getPlotImageAsBase64(String plotName) throws IOException {
+		logger.debug("IN");
 		String fileImg = DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
 				+ OUTPUT_PLOT_EXTENSION;
 		logger.warn(fileImg);
@@ -162,13 +173,14 @@ public class OutputExecutor {
 		} catch (IOException ioe) {
 			throw ioe;
 		}
-
+		logger.debug("OUT");
 		return imgstr;
 
 	}
 
 
 	private static String encodeToString(BufferedImage image, String type) {
+		logger.debug("IN");
 		String imageString = null;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -183,10 +195,12 @@ public class OutputExecutor {
 		} catch (IOException e) {
 			logger.error(e);
 		}
+		logger.debug("OUT");
 		return imageString;
 	}
 
 	private String getResultAsString(REXP rexp) {
+		logger.debug("IN");
 		String result = "";
 
 		int rexpType = rexp.getType();
@@ -216,7 +230,7 @@ public class OutputExecutor {
 			int[] doubleArr = rexp.asIntArray();
 			result = Arrays.toString(doubleArr);
 		}
-
+		logger.debug("OUT");
 		return result;
 
 	}
