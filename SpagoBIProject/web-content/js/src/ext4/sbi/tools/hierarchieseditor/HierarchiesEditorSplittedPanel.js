@@ -50,6 +50,8 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		
 		//***************************************************
    	  	
+		this.treeContextMenu = Ext.create('Sbi.tools.hierarchieseditor.HierarchiesEditorContextMenu',{});
+		
 		this.callParent(arguments);
 
 	}
@@ -819,6 +821,14 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        	viewready: function (tree) {                   
 	        		tree.plugins[0].dropZone.notifyDrop = function(dd, e, data){
 	        			
+	        			var ddOnSameTree;
+	        			//check if we are performing drag&drop on the same tree
+	        			if (dd.id.indexOf("customTreePanel") > -1){
+	        				ddOnSameTree = true;
+	        			} else {
+	        				ddOnSameTree = false;
+	        			}
+	        			
 	        			var customHierarchyType;
 	        			if ((thisPanel.selectedHierarchyType == undefined) || (thisPanel.selectedHierarchyType == null)){
 	        				//making a new hierarchy
@@ -827,24 +837,19 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        				//editing existing hierarchy
 	        				customHierarchyType = thisPanel.selectedHierarchyType;
 	        				//check if dropped nodes already exists in the tree
-	        				//TODO: Verify this block of code, has problem with node moving on same tree
-//		        			var currentNodes = thisPanel.treeTraversal(store.getRootNode(),new Array());
-//		        			var newNodes = thisPanel.treeTraversal(data.records[0],new Array())
-//	        				for (var i = 0; i < newNodes.length; i++) {
-//	        					if (thisPanel.contains(currentNodes,newNodes[i])){
-//	    	        				Ext.Msg.alert('Wrong Action', 'Node already added to this hierarchy');
-//	        						return false;
-//	        					}
-//	        			    }
+	        				if (!ddOnSameTree){
+			        			var currentNodes = thisPanel.treeTraversal(store.getRootNode(),new Array());
+			        			var newNodes = thisPanel.treeTraversal(data.records[0],new Array())
+		        				for (var i = 0; i < newNodes.length; i++) {
+		        					if (thisPanel.contains(currentNodes,newNodes[i])){
+		    	        				Ext.Msg.alert('Wrong Action', 'Node already added to this hierarchy');
+		        						return false;
+		        					}
+		        			    }
+	        				}
 	        			}
 	        			var isLeafNode = data.records[0].isLeaf();
-	        			var ddOnSameTree;
-	        			//check if we are performing drag&drop on the same tree
-	        			if (dd.id.indexOf("customTreePanel") > -1){
-	        				ddOnSameTree = true;
-	        			} else {
-	        				ddOnSameTree = false;
-	        			}
+
 	        			if  (((customHierarchyType != "SEMIMANUAL") || (!isLeafNode) )
 	        					|| (!isLeafNode && ddOnSameTree)) {
 	        				//Original code from Ext source
@@ -864,12 +869,13 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        	},
 	        	beforedrop: function(node, data, overModel, dropPosition, dropFunction, options) {
 	        		//alert("BeforeDrop!");
-	        	}/*
-                , beforedrop: {
-	                fn: this.onBeforeDropRightTree,
-
-	                scope: this
-	            }*/
+	        	},
+	        	itemcontextmenu : function(view, r, node, index, e) {
+	        		e.stopEvent();
+	        		this.selectedNode = node;
+	        		thisPanel.treeContextMenu.showAt(e.getXY());
+	        		return false;
+	        	}	        	
 	        }	        
 	        }
 		});
