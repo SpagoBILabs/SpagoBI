@@ -35,29 +35,35 @@ public class ExternalResource extends AbstractDataMiningEngineService {
 		logger.debug("IN");
 		HashMap<String, String> params = new HashMap<String, String>();
 		Map<String, String[]> map =request.getParameterMap();
-		Set set = map.entrySet();
-        Iterator it = set.iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, String[]> entry = (Entry<String, String[]>) it.next();
-            String paramName = entry.getKey();
-            String[] paramValues = entry.getValue();
-            String paramValue ="";
-            if (paramValues.length == 1) {
-                paramValue = paramValues[0];
-            }else {
-                for (int i = 0; i < paramValues.length; i++) {
-                    paramValue+= paramValues[i] + ",";
-                }
-            }
-            params.put(paramName, paramValue);
-        }
+
+		if(map != null && !map.isEmpty()){
+			logger.debug("Got parameters map");
+			Set set = map.entrySet();
+	        Iterator it = set.iterator();
+	        while (it.hasNext()) {
+	            Map.Entry<String, String[]> entry = (Entry<String, String[]>) it.next();
+	            String paramName = entry.getKey();
+	            String[] paramValues = entry.getValue();
+	            String paramValue ="";
+	            if (paramValues.length == 1) {
+	                paramValue = paramValues[0];
+	            }else {
+	                for (int i = 0; i < paramValues.length; i++) {
+	                    paramValue+= paramValues[i] + ",";
+	                }
+	            }
+	            params.put(paramName, paramValue);
+	        }
+		}
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 		
 		DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance, getUserProfile());
 		try {
 			UserProfile profile = getUserProfile();
+			logger.debug("Got user profile");
 			if(profile != null){
 				executor.externalExecution(fileName, getUserProfile(), params);
+				logger.debug("Executed script for file "+fileName);
 			}else{
 				logger.error("Missing authentication");
 				return getJsonKo();

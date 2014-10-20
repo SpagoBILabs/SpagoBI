@@ -13,12 +13,14 @@ import it.eng.spagobi.engines.datamining.model.Output;
 
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.rosuda.JRI.Rengine;
 
 public class CommandsExecutor {
 	private Rengine re;
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
+	static private Logger logger = Logger.getLogger(CommandsExecutor.class);
 
 	public CommandsExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		this.dataminingInstance = dataminingInstance;
@@ -42,6 +44,7 @@ public class CommandsExecutor {
 	 * @return the command for the auto output mode
 	 */
 	protected DataMiningCommand detectCommandOuputToExecute() {
+		logger.debug("IN");
 		if (dataminingInstance.getCommands() != null && !dataminingInstance.getCommands().isEmpty()) {
 			for (Iterator it = dataminingInstance.getCommands().iterator(); it.hasNext();) {
 				DataMiningCommand command = (DataMiningCommand) it.next();
@@ -58,6 +61,7 @@ public class CommandsExecutor {
 
 			}
 		}
+		logger.debug("IN");
 		return null;
 	}
 

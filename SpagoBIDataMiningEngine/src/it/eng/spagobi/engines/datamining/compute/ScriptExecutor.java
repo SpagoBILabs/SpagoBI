@@ -54,7 +54,8 @@ public class ScriptExecutor {
 		if (rerun || command.getExecuted() == null || !command.getExecuted()) {
 			logger.debug("rerun or first execution");
 			//load libraries from local dir (if needed)
-			loadLibrariesFromRLocal(command);
+			DataMiningScript script = getScript(command);
+			loadLibrariesFromRLocal(script.getLibraries());
 			logger.debug("loaded libraries from local dir (if needed)");
 			// command-->script name --> execute script without output
 			String scriptToExecute = getScriptCodeToEval(command);
@@ -89,6 +90,16 @@ public class ScriptExecutor {
 		String codeResource = path+fileName;
 		logger.debug(codeResource);
 		if(params!= null && !params.isEmpty()){
+			//get libraries param  to load libraries before execution
+			logger.debug("get libraries param  to load libraries before execution");
+			if(params.keySet().contains(DataMiningConstants.PARAM_LIBRARIES)){
+				String libs = (String)params.get(DataMiningConstants.PARAM_LIBRARIES);
+				if(libs != null && !libs.equals("")){
+					loadLibrariesFromRLocal(libs);
+					logger.debug("Loaded libraries "+libs);
+				}
+			}
+			
 			String codeResourceTemp = path+ "temp_"+ fileName;		
 			logger.debug("Needs params for temp script "+codeResourceTemp);
 			File codeResourceFile = new File(codeResource);
@@ -147,6 +158,8 @@ public class ScriptExecutor {
 				logger.debug("Ready to execute external script with params");
 				re.eval("source(\"" + codeResourceTemp + "\")");
 				logger.debug("External script executed with params");
+				deleteTemporarySourceScript(codeResourceTemp);
+				logger.debug("Deleted temp source file");
 			}else{
 				logger.debug("Ready to execute external script without params");
 				re.eval("source(\"" + codeResource + "\")");
@@ -174,25 +187,24 @@ public class ScriptExecutor {
 		logger.debug("OUT");
 		return code;
 	}
-	private void loadLibrariesFromRLocal(DataMiningCommand command){
+	private void loadLibrariesFromRLocal(String libraryNames){
 		logger.debug("IN");
-		DataMiningScript script = getScript(command);
-		if (script != null) {
-			REXP rHome = re.eval("libdir<-paste(R.home(),\"library\", sep=\"/\")");
-			if(rHome != null){
-				
-				String libraryNames = script.getLibraries();
-				if(libraryNames != null){
-					String[] libs = libraryNames.split(",");
-					for (int i = 0; i < libs.length; i++) {
-						String lib = libs[i].trim();
-						re.eval("library("+lib+",lib.loc=libdir)");
-					}
+
+		REXP rHome = re.eval("libdir<-paste(R.home(),\"library\", sep=\"/\")");
+		if(rHome != null){
+			if(libraryNames != null){
+				String[] libs = libraryNames.split(",");
+				for (int i = 0; i < libs.length; i++) {
+					String lib = libs[i].trim();
+					re.eval("library("+lib+",lib.loc=libdir)");
 				}
 			}
 		}
+
 		logger.debug("OUT");
 	}
+
+	
 	private DataMiningScript getScript(DataMiningCommand command){
 		logger.debug("IN");
 		String scriptName = command.getScriptName();
