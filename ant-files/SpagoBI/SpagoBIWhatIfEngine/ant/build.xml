@@ -170,7 +170,7 @@
 				<file name='./spagobi/commons/Utils.js' />
 				<file name='./spagobi/commons/Log.js' />
 
-				<file name='./spagobi/widgets/Help.js'>
+				<file name='./spagobi/widgets/Help.js'/>
 					
 				<file name='./spagobi/exception/ExceptionHandler.js' />
 
