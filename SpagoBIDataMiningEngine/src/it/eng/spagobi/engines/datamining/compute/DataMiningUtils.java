@@ -38,6 +38,7 @@ public class DataMiningUtils {
 			+ DataMiningConstants.DATA_MINING_PATH_SUFFIX;
 
 	public static Boolean areDatasetsProvided(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) throws IOException {
+		logger.debug("IN");
 		Boolean areProvided = true;
 
 		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
@@ -48,6 +49,7 @@ public class DataMiningUtils {
 					File[] dsfiles = fileDSDir.listFiles();
 					if (dsfiles == null || dsfiles.length == 0) {
 						areProvided = false;
+						
 					}
 				} else {
 					areProvided = false;
@@ -55,6 +57,7 @@ public class DataMiningUtils {
 			}
 
 		}
+		logger.debug("OUT");
 		return areProvided;
 	}
 
@@ -67,12 +70,12 @@ public class DataMiningUtils {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
 			IDataSet spagobiDataset = dataSetDao.loadDataSetByLabel(ds.getSpagobiLabel());
-
+			logger.debug("Got spagobi dataset");
 			spagobiDataset.setParamsMap(params);
 			spagobiDataset.loadData();
 			DataStore dataStore = (DataStore) spagobiDataset.getDataStore();
 			filePath = getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + ds.getName();
-			
+			logger.debug("Got user resource path");
 			
 			File csvdir = new File(filePath);
 			if(!csvdir.exists()){
@@ -82,7 +85,7 @@ public class DataMiningUtils {
 			filePath +=  "/" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
 			File csvFile = new File(filePath);
 			csvFile.createNewFile();
-
+			logger.debug("Created Csv file");
 			writer = new CSVWriter(new FileWriter(filePath), ',');
 			writeColumns(dataStore, writer);
 			writeFields(dataStore, writer);
@@ -141,13 +144,19 @@ public class DataMiningUtils {
 	}
 
 	public static String getUserResourcesPath(IEngUserProfile profile) throws IOException {
+		logger.debug("IN");
 		String userResourcePath = UPLOADED_FILE_PATH + profile.getUserUniqueIdentifier() + "/";
+		logger.debug(userResourcePath);
 		File userPathFile = new File(userResourcePath);
+		logger.debug("Got userPathFile");
+		logger.debug("OUT");
 		return userResourcePath;
 	}
 
 	public static void createUserResourcesPath(IEngUserProfile profile) throws IOException {
+		logger.debug("IN");
 		String userResourcePath = UPLOADED_FILE_PATH + profile.getUserUniqueIdentifier() + "/";
+		logger.debug(userResourcePath);
 		File userPathFile = new File(userResourcePath);
 		// if it doesn't exist create it
 		if (!userPathFile.exists()) {
@@ -155,8 +164,10 @@ public class DataMiningUtils {
 			File temp = new File(userPathFile, DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX);
 			temp.mkdir();
 		}
+		logger.debug("OUT");
 	}
 	protected static String replaceVariables(List<Variable> variables, String code) throws Exception{
+		logger.debug("IN");
 		HashMap parameters = new HashMap<String, Object>();
 		if(variables != null && !variables.isEmpty()){
 			for (Iterator it = variables.iterator(); it.hasNext();) {
@@ -171,6 +182,7 @@ public class DataMiningUtils {
 				code = StringUtilities.substituteParametersInString(code, parameters, null, false);
 			}
 		}
+		logger.debug("OUT");
 		return code;
 	}
 }
