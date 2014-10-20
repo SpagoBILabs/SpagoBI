@@ -376,8 +376,28 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	, init: function() {
 		Sbi.trace("[TableWidget.init]: IN");
 
-		if(this.storeConf != null && this.storeConf.aggregations != null){
-			this.aggregations = this.storeConf.aggregations;
+
+		if(this.wconf.series || this.wconf.category){
+			this.aggregations = {};
+//			this.aggregations.series = this.wconf.series;
+//			this.aggregations.category = this.wconf.category;
+
+			var categories = [];
+			if(this.wconf.category instanceof Array){
+				for(var i = 0; i<this.wconf.category.length;i++){
+					var cat = this.wconf.category[i];
+					categories.push(cat);
+				}
+			}
+			else{
+				categories.push(wizardState.wconf.category);
+			}
+
+			//if(wizardState.wconf.groupingVariable) categories.push(wizardState.wconf.groupingVariable);
+
+			this.aggregations.measures = this.wconf.series;
+			this.aggregations.categories = categories;
+
 		}
 
 		this.boundStore();
