@@ -9,7 +9,6 @@ import it.eng.spagobi.twitter.analysis.cache.exceptions.DaoServiceException;
 import it.eng.spagobi.twitter.analysis.entities.TwitterAccountToMonitor;
 import it.eng.spagobi.twitter.analysis.entities.TwitterData;
 import it.eng.spagobi.twitter.analysis.entities.TwitterLinkToMonitor;
-import it.eng.spagobi.twitter.analysis.entities.TwitterMonitorScheduler;
 import it.eng.spagobi.twitter.analysis.entities.TwitterUser;
 import it.eng.spagobi.twitter.analysis.enums.MonitorRepeatTypeEnum;
 
@@ -34,7 +33,7 @@ public interface IDataProcessorCache {
 
 	public Calendar getMaxTweetTime(long searchID) throws DaoServiceException;
 
-	public TwitterMonitorScheduler getDocuments(long searchID) throws DaoServiceException;
+	public Object[] getDocuments(long searchID) throws DaoServiceException;
 
 	public List<TwitterUser> getTopInfluencers(long searchID, int maxResults) throws DaoServiceException;
 
@@ -74,7 +73,7 @@ public interface IDataProcessorCache {
 
 	public int getTotalUsersWithLocationCode(long searchID) throws DaoServiceException;
 
-	public List<TwitterUser> getUsersForSearchID(long searchID) throws DaoServiceException;
+	public List<Object[]> getGeneralStatsForSearchID(long searchID) throws DaoServiceException;
 
 	public List<String> getMentions(long searchID) throws DaoServiceException;
 
