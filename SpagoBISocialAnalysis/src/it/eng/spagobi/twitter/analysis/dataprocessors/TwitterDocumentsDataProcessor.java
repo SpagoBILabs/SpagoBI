@@ -8,16 +8,15 @@ package it.eng.spagobi.twitter.analysis.dataprocessors;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.twitter.analysis.cache.DataProcessorCacheImpl;
 import it.eng.spagobi.twitter.analysis.cache.IDataProcessorCache;
-import it.eng.spagobi.twitter.analysis.entities.TwitterMonitorScheduler;
 import it.eng.spagobi.twitter.analysis.pojos.TwitterDocumentPojo;
 import it.eng.spagobi.twitter.analysis.utilities.AnalysisUtility;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -36,11 +35,18 @@ public class TwitterDocumentsDataProcessor {
 	// private final String HOST = "http://localhost:";
 	// private final String PORT = "8080";
 	private final String CALL = "/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&NEW_SESSION=TRUE&OBJECT_LABEL=";
+	private final String PARAMETERS = "&PARAMETERS=";
+	private final String startDateParam = "startDate=";
+	private final String lastActivationTimeParam = "&lastActivation=";
 	// private final String SPAGOBI_SERVICE_URL = System.getProperty("spagobi_service_url");
 
 	// fields to avoid logic into JSP
 	private List<String> labels = new ArrayList<String>();
 	private List<TwitterDocumentPojo> documents = new ArrayList<TwitterDocumentPojo>();
+
+	private final int SEARCHSTARTPOS = 0;
+	private final int TMSLASTACTIVATIONPOS = 1;
+	private final int TMSDOCUMENTSPOS = 2;
 
 	public TwitterDocumentsDataProcessor() {
 
@@ -54,7 +60,9 @@ public class TwitterDocumentsDataProcessor {
 	 */
 	public void initializeTwitterDocumentsDataProcessor(String searchID) {
 
-		logger.debug("Method initializeTwitterDocumentsDataProcessor(): Start");
+		logger.debug("Method initializeTwitterDocumentsDataProcessor(): Start for searchID = " + searchID);
+
+		long initMills = System.currentTimeMillis();
 
 		long searchId = AnalysisUtility.isLong(searchID);
 
@@ -64,30 +72,39 @@ public class TwitterDocumentsDataProcessor {
 
 		try {
 
-			TwitterMonitorScheduler twitterMonitorScheduler = dpCache.getDocuments(searchId);
+			Object[] twitterMonitorScheduler = dpCache.getDocuments(searchId);
 
-			if (twitterMonitorScheduler != null) {
-				String documents = twitterMonitorScheduler.getDocuments();
+			if (twitterMonitorScheduler != null && twitterMonitorScheduler.length > 0) {
 
-				String[] documentsArr = documents.split(",");
+				String documents = (String) twitterMonitorScheduler[TMSDOCUMENTSPOS];
+				Calendar startDate = (Calendar) twitterMonitorScheduler[SEARCHSTARTPOS];
+				Calendar lastActivation = (Calendar) twitterMonitorScheduler[TMSLASTACTIVATIONPOS];
 
-				for (int i = 0; i < documentsArr.length; i++) {
+				lastActivation = roundSQLTimestamp(lastActivation);
 
-					String label = documentsArr[i].trim();
+				if (documents != null && !documents.equals("")) {
+					String[] documentsArr = documents.split(",");
 
-					String encodedLabel = URLEncoder.encode(label, "UTF-8");
+					for (int i = 0; i < documentsArr.length; i++) {
 
-					String url = this.composeUrl(conf.getSpagoBiServerUrl(), encodedLabel);
+						String label = documentsArr[i].trim();
 
-					TwitterDocumentPojo documentPojo = new TwitterDocumentPojo(label, url);
+						String encodedLabel = URLEncoder.encode(label, "UTF-8");
 
-					this.documents.add(documentPojo);
-					this.labels.add(label);
+						String url = this.composeUrl(conf.getSpagoBiServerUrl(), encodedLabel, startDate, lastActivation);
 
+						TwitterDocumentPojo documentPojo = new TwitterDocumentPojo(label, url);
+
+						this.documents.add(documentPojo);
+						this.labels.add(label);
+
+					}
 				}
 			}
 
-			logger.debug("Method initializeTwitterDocumentsDataProcessor(): End");
+			long endMills = System.currentTimeMillis() - initMills;
+
+			logger.debug("Method initializeTwitterDocumentsDataProcessor(): End in " + endMills + "s");
 
 		} catch (Throwable t) {
 
@@ -101,9 +118,12 @@ public class TwitterDocumentsDataProcessor {
 	 * @param docLabel
 	 * @return
 	 */
-	private String composeUrl(String spagobiServiceUrl, String docLabel) {
+	private String composeUrl(String spagobiServiceUrl, String docLabel, Calendar startDate, Calendar lastActivation) {
 
-		return spagobiServiceUrl + CALL + docLabel;
+		return spagobiServiceUrl + CALL + docLabel + "&PARAMETERS=startDate%3D" + formatCalendar(startDate) + "%26lastActivation%3D"
+				+ formatCalendar(lastActivation);
+		// PARAMETERS + startDateParam + this.formatCalendar(startDate) + lastActivationTimeParam
+		// + this.formatCalendar(lastActivation);
 
 	}
 
@@ -113,18 +133,22 @@ public class TwitterDocumentsDataProcessor {
 	 * @param dbTimestamp
 	 * @return
 	 */
-	private Date roundSQLTimestamp(java.sql.Timestamp dbTimestamp) {
-
-		Calendar calendarTime = GregorianCalendar.getInstance();
-		calendarTime.setTime(dbTimestamp);
+	private Calendar roundSQLTimestamp(Calendar calendarTime) {
 
 		calendarTime.set(Calendar.MILLISECOND, 0);
 		calendarTime.set(Calendar.SECOND, 0);
 		calendarTime.set(Calendar.MINUTE, 0);
 
-		Date roundDate = new Date(calendarTime.getTimeInMillis());
+		return calendarTime;
+	}
 
-		return roundDate;
+	private String formatCalendar(Calendar calendarToFormat) {
+
+		SimpleDateFormat simpleDataFormatter = new SimpleDateFormat("dd_MM_yyyy_HH_mm");
+
+		Date tempDate = new Date(calendarToFormat.getTimeInMillis());
+
+		return simpleDataFormatter.format(tempDate);
 	}
 
 	public List<String> getLabels() {
