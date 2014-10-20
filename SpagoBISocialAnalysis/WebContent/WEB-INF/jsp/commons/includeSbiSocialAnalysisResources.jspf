@@ -10,6 +10,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/jquery-jvectormap-1.2.2.css" media="screen"/>
 <link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/jquery.qtip.css" />
 <link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/jqcloud.css" />
+<link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/jquery-ui.min.css" />
 
 
 <!-- Show result page javascript/jquery  -->
@@ -29,9 +30,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 	<script type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/freewall.js"></script>
 	<script type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/jquery.qtip.js"></script>
 	<script type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/jqcloud-1.0.4.js"></script>
-	<script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
-	<script src="http://d3js.org/topojson.v1.min.js"></script>
-	<script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-<%-- 		<script src="<%= application.getContextPath() %>/js/lib/others/d3.geo.projection.v0.min.js"></script> --%>
-<%-- 	<script src="<%= application.getContextPath() %>/js/lib/others/topojson.js"></script> --%>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/d3.geo.projection.v0.min.js"></script>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/topojson.v1.min.js"></script>
+	<script src="<%= application.getContextPath() %>/js/lib/others/jquery-ui.js"></script>
 	
