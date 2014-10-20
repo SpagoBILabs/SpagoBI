@@ -857,7 +857,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        						this.onNodeDrop(n, dd, e, data) :
 	        							this.onContainerDrop(dd, e, data);
 	        			} else {
-	        				Ext.Msg.alert('Wrong Action', 'Cannot drop a leaf node in a semimanual hierarchy');
+	        				Ext.Msg.alert('Wrong Action', 'Cannot move a leaf node in a semimanual hierarchy');
 	        				return false;
 	        			}
 	        		}	
