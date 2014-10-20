@@ -179,7 +179,22 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
 		            },
 		            handler: function(grid, rowIndex, colIndex) {
 	                    var rec = grid.getStore().getAt(rowIndex);
-		            	window.location.href = "tabs/summary?searchID="+rec.get('searchID');
+	                    
+	                    var searchId = rec.get('searchID');
+	                    var documents = rec.get('documents');    
+	                    
+	                    if(documents != null && documents != "")
+	                    {
+	                    	
+	                    	window.location.href = "tabs/summary?searchID="+ searchId + "&withDocs=true";
+	                    	
+	                    }
+	                    else
+	                    {
+	                    	window.location.href = "tabs/summary?searchID="+ searchId + "&withDocs=false";
+	                    }	                    
+	                    
+//		            	window.location.href = "tabs/summary?searchID="+ searchId + "&documents=" + docArr;
 	                }		            
 		        },
 		        {

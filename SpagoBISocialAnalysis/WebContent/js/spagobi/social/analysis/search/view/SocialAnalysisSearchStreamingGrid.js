@@ -219,8 +219,21 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', 
 		            align: 'center',
 		            icon: 'img/show.png',
 		            handler: function(grid, rowIndex, colIndex) {
+		            	
 	                    var rec = grid.getStore().getAt(rowIndex);
-	                    window.location.href = "tabs/summary?searchID="+rec.get('searchID');
+	                    
+	                    var documents = rec.get('documents');    
+	                    
+	                    if(documents != null && documents != "")
+	                    {
+	                    	
+	                    	window.location.href = "tabs/summary?searchID="+ searchId + "&withDocs=true";
+	                    	
+	                    }
+	                    else
+	                    {
+	                    	window.location.href = "tabs/summary?searchID="+ searchId + "&withDocs=false";
+	                    }	  
 	                }
 		        }
 		    ]}),
