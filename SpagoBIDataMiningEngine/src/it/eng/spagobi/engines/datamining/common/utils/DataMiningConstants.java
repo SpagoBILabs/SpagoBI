@@ -23,4 +23,5 @@ public class DataMiningConstants {
 	public static final String EXECUTION_TYPE_AUTO = "auto";
 	
 	public static final String DATA_MINING_EXTERNAL_CODE_PATH = "external/";
+	public static final String PARAM_LIBRARIES = "libraries";
 }
