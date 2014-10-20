@@ -17,7 +17,6 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorContextMenu', {
 	    handler: function(){
 	    	var tree = Ext.getCmp('customTreePanel');
 	    	var selectedNode = tree.selModel.getSelection()[0];
-	    	//selectedNode.parentNode.removeChild(selectedNode,true);
 	    	selectedNode.remove();
 	        Ext.Msg.alert('Click', 'Node deleted');
 	    },
