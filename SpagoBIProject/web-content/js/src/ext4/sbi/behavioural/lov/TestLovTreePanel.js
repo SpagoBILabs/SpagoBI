@@ -314,7 +314,7 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
     , normalizeTree: function(){
 		var store = this.getStore();
 		var root = store.getRootNode();
-		var node = root;
+		var node = root; 
 		while (node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
 			node.set('description', node.data.value);
 			node = node.childNodes[0];

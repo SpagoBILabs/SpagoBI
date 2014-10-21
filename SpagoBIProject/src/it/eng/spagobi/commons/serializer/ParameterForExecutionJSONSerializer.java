@@ -23,38 +23,41 @@ import org.json.JSONObject;
  */
 public class ParameterForExecutionJSONSerializer implements Serializer {
 
-
 	public Object serialize(Object o, Locale locale) throws SerializationException {
-		JSONObject  result = null;
+		JSONObject result = null;
 
-		if( !(o instanceof GetParametersForExecutionAction.ParameterForExecution) ) {
+		if (!(o instanceof GetParametersForExecutionAction.ParameterForExecution)) {
 			throw new SerializationException("ParameterForExecutionJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
-			GetParametersForExecutionAction.ParameterForExecution parameter = (GetParametersForExecutionAction.ParameterForExecution)o;
+			GetParametersForExecutionAction.ParameterForExecution parameter = (GetParametersForExecutionAction.ParameterForExecution) o;
 			result = new JSONObject();
-			result.put("id", parameter.getId() );
-			MessageBuilder msgBuild=new MessageBuilder();
+			result.put("id", parameter.getId());
+			MessageBuilder msgBuild = new MessageBuilder();
 
-			//String label=msgBuild.getUserMessage(parameter.getLabel(),null, locale);
+			// String label=msgBuild.getUserMessage(parameter.getLabel(),null,
+			// locale);
 			String label = parameter.getLabel();
 			label = msgBuild.getI18nMessage(locale, label);
 
-			result.put("label",label);
-			result.put("type", parameter.getParType() );
-			result.put("selectionType", parameter.getSelectionType() );
-			result.put("enableMaximizer", parameter.isEnableMaximizer() );
-			result.put("typeCode", parameter.getTypeCode() );
-			result.put("mandatory", parameter.isMandatory() );
+			result.put("label", label);
+			result.put("type", parameter.getParType());
+			result.put("selectionType", parameter.getSelectionType());
+			result.put("allowInternalNodeSelection", parameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+			result.put("enableMaximizer", parameter.isEnableMaximizer());
+			result.put("typeCode", parameter.getTypeCode());
+			result.put("mandatory", parameter.isMandatory());
 			result.put("colspan", parameter.getColspan());
 			result.put("thickPerc", parameter.getThickPerc());
-			result.put("multivalue", parameter.isMultivalue() );
-			result.put("visible", parameter.isVisible() );
-			result.put("valuesCount", parameter.getValuesCount() );
-			if(parameter.getValuesCount() == 1) result.put("value", parameter.getValue() );
-			
-			if(parameter.getObjParameterIds() != null){
+			result.put("multivalue", parameter.isMultivalue());
+			result.put("visible", parameter.isVisible());
+			result.put("valuesCount", parameter.getValuesCount());
+			if (parameter.getValuesCount() == 1) {
+				result.put("value", parameter.getValue());
+			}
+
+			if (parameter.getObjParameterIds() != null) {
 				JSONArray objParameterIds = new JSONArray();
 				for (Iterator iterator = parameter.getObjParameterIds().iterator(); iterator.hasNext();) {
 					Integer id = (Integer) iterator.next();
@@ -62,11 +65,11 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 				}
 				result.put("objParameterIds", objParameterIds);
 			}
-			
+
 			JSONArray dependencies = new JSONArray();
 			Iterator it = parameter.getDependencies().keySet().iterator();
-			while( it.hasNext() ) {
-				String paramUrlName = (String)it.next();
+			while (it.hasNext()) {
+				String paramUrlName = (String) it.next();
 				JSONObject dependency = new JSONObject();
 				dependency.put("urlName", paramUrlName);
 				dependency.put("hasDataDependency", false);
@@ -75,14 +78,14 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 				dependency.put("visualDependencyConditions", visualDependencyConditions);
 
 				List<GetParametersForExecutionAction.ParameterForExecution.ParameterDependency> parameterDependencies;
-				parameterDependencies = (List<GetParametersForExecutionAction.ParameterForExecution.ParameterDependency>)parameter.getDependencies().get(paramUrlName);
+				parameterDependencies = parameter.getDependencies().get(paramUrlName);
 
-				for(int i = 0; i < parameterDependencies.size(); i++) {
+				for (int i = 0; i < parameterDependencies.size(); i++) {
 					Object pd = parameterDependencies.get(i);
-					if(pd instanceof GetParametersForExecutionAction.ParameterForExecution.DataDependency) {
+					if (pd instanceof GetParametersForExecutionAction.ParameterForExecution.DataDependency) {
 						dependency.put("hasDataDependency", true);
-					} else if(pd instanceof GetParametersForExecutionAction.ParameterForExecution.VisualDependency) {
-						ObjParview visualCondition = ((GetParametersForExecutionAction.ParameterForExecution.VisualDependency)pd).condition;
+					} else if (pd instanceof GetParametersForExecutionAction.ParameterForExecution.VisualDependency) {
+						ObjParview visualCondition = ((GetParametersForExecutionAction.ParameterForExecution.VisualDependency) pd).condition;
 						dependency.put("hasVisualDependency", true);
 						JSONObject visualDependencyCondition = new JSONObject();
 						visualDependencyCondition.put("operation", visualCondition.getOperation());
@@ -90,7 +93,7 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 						String viewLabel = visualCondition.getViewLabel();
 						viewLabel = msgBuild.getI18nMessage(locale, viewLabel);
 						visualDependencyCondition.put("label", viewLabel);
-						visualDependencyConditions.put( visualDependencyCondition );
+						visualDependencyConditions.put(visualDependencyCondition);
 					}
 				}
 
@@ -98,7 +101,7 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 			}
 			result.put("dependencies", dependencies);
 			result.put("parameterUseId", parameter.getParameterUseId());
-			
+
 			JSONArray defaultValues = new JSONArray();
 			DefaultValuesList defaults = parameter.getDefaultValues();
 			Iterator<DefaultValue> defaultsIt = defaults.iterator();
@@ -118,9 +121,5 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 
 		return result;
 	}
-
-
-
-
 
 }

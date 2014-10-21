@@ -95,7 +95,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 					attr.iconCls = 'parameter-leaf';
 				}
 				
-				if ((attr.leaf) && thisPanel.multivalue) {
+				if ((attr.leaf || thisPanel.allowInternalNodeSelection) && thisPanel.multivalue) {
 					if (thisPanel.xvalues && thisPanel.xvalues.indexOf(attr.value) >= 0) {
 						attr.checked = true;
 					} else {
@@ -153,7 +153,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				}
 				
 
-				if (thisPanel.multivalue || thisPanel.allowInternalNodeSelection ){
+				if (thisPanel.multivalue ){
 					node.on('beforedblclick',
 							function(node, e) {
 						return false;
@@ -224,7 +224,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 
 	,
 	onOkSingleValue : function(value) {
-		if (!this.multivalue && !this.allowInternalNodeSelection ){
+		if (!this.multivalue){
 			this.setValue(value.attributes.value);
 			this.setRawValue(value.attributes.description);
 			this.fireEvent('select', this, value.attributes.value);
