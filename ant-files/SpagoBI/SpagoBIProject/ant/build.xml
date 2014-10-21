@@ -700,7 +700,8 @@
 				<file name="./src/ext4/sbi/tools/scheduler/SchedulerDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/scheduler/TriggerInfoWindow.js" />
 
-				
+				<file name="./src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorSplittedPanel.js" />
+				<file name="./src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorContextMenu.js" />
 
 				
 			</filelist>
