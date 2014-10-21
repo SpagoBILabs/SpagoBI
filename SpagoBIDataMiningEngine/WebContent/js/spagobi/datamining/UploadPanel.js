@@ -94,9 +94,9 @@ Ext.define('Sbi.datamining.UploadPanel', {
 						
 						var dataset = res[i];
 
-						
 						//file datasets
-						if(dataset.type == Sbi.settings.datamining.execution.fileDataset){
+						if(dataset.type == Sbi.settings.datamining.execution.fileDataset
+								&& (dataset.canUpload || dataset.canUpload== 'true')){
 							var fieldLbl = dataset.label;
 							var readType = dataset.readType;
 							

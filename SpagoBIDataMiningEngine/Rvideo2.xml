@@ -16,7 +16,7 @@
 		</SCRIPT>
 	</SCRIPTS>	
 	<DATASETS>
-		<DATASET name="ds1" readType="table" type="file" label="label Data set 1">	
+		<DATASET name="ds1" readType="table" type="file" label="label Data set 1" default="defaultds/dirDoc2/rats2.txt" canUpload="true">	
 			<![CDATA[header = TRUE]]>
 		</DATASET>
 	</DATASETS>	
