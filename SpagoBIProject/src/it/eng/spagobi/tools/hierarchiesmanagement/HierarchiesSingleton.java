@@ -53,6 +53,8 @@ public class HierarchiesSingleton {
 
 		logger.debug("refresh hierarchies");
 		instance = new Hierarchies();
+		logger.debug("OUT");
+
 	}
 
 }
