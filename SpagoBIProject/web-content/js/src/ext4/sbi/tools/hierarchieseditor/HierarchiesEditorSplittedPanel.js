@@ -99,7 +99,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		            	   //populate customHierarchies grid 
 		            	   this.customHierarchiesGridStore = this.createCustomHierarchiesGridStore(dimensionName);
 		            	   this.customHierarchiesGrid.reconfigure(this.customHierarchiesGridStore);
-		            	   this.customHierarchiesGrid.setTitle("Custom Hierarchies for: "+dimensionName);
+		            	   this.customHierarchiesGrid.setTitle(LN('sbi.hierarchies.custom.for')+dimensionName);
 		               }
 		           }
 		        ,scope:this   
@@ -157,15 +157,15 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        fields: ['type', 'name'],
 	        data: [{
 	            "type": "SEMIMANUAL",
-	            "name": "Semi-Manual"
+	            "name": LN('sbi.hierarchies.type.semimanual')
 	        }, {
 	            "type": "MANUAL",
-	            "name": "Manual"
+	            "name": LN('sbi.hierarchies.type.manual')
 	        }]
 	    });
 		
 		this.newCustomHierarchyTypeCombo = new Ext.form.ComboBox({
-	        fieldLabel: 'New Hierarchy Type',
+	        fieldLabel: LN('sbi.hierarchies.new.type'),
 	        store: this.newCustomHierarchyTypeStore,
 	        queryMode: 'local',
 	        displayField : 'name',
@@ -180,7 +180,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		this.newCustomHierarchyTypeCombo.select(this.newCustomHierarchyTypeCombo.getStore().getAt(0));
 		
 		this.newCustomHierarchyButton = new Ext.Button({
-	        text: 'Create new Hierarchy',
+	        text: LN('sbi.hierarchies.new.create'),
             margin: '0 0 0 10',
 	        listeners: {
 	            click: function() {
@@ -197,7 +197,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		
 		this.saveCustomHierarchyButton = new Ext.Button({
 			id: 'saveCustomHierarchyButton',
-	        text: 'Save',
+	        text: LN('sbi.generic.update'),
             margin: '0 0 0 10',
 	        listeners: {
 	            click: function() {
@@ -210,7 +210,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		this.saveCustomHierarchyButton.setVisible(false);
 		this.cancelCustomHierarchyButton = new Ext.Button({
 			id: 'cancelCustomHierarchyButton',
-	        text: 'Cancel',
+	        text: LN('sbi.general.cancel'),
             margin: '0 0 0 10',
 	        listeners: {
 	            click: function() {
@@ -228,7 +228,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		this.saveChangesCustomHierarchyButton = new Ext.Button({
 			autoRender: true, 
 			id: 'saveChangesCustomHierarchyButton',
-	        text: 'Save Changes',
+	        text: LN('sbi.hierarchies.save.changes'),
             margin: '0 0 0 10',
 	        listeners: {
 	            click: function() {
@@ -259,7 +259,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	    });
 		
 		this.customHierarchiesGrid = new Ext.grid.Panel( {
-	        title: 'Custom Hierarchies',
+	        title: LN('sbi.hierarchies.custom'),
 	        store: Ext.data.StoreManager.lookup('customHierarchiesStore'),
 	        columns: [{
 	            header: 'Name',
@@ -277,7 +277,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 				width: 20,
 				columnType: "decorated",
 				items: [{
-					tooltip: 'Show Hierarchy tree',
+					tooltip: LN('sbi.hierarchies.show.tree'),
 					iconCls   : 'button-detail',  
 					handler: function(grid, rowIndex, colIndex) {
 						var selectedRecord =  grid.store.getAt(rowIndex);
@@ -293,7 +293,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 				width: 20,
 				columnType: "decorated",
 				items: [{
-					tooltip: 'Delete custom Hierarchy',
+					tooltip: LN('sbi.hierarchies.custom.delete'),
 					iconCls   : 'button-remove',  
 					handler: function(grid, rowIndex, colIndex) {								
 						var selectedRecord =  grid.store.getAt(rowIndex);
@@ -463,10 +463,10 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		//check the end nodes
 		if (!this.checkLeafNodes(rootNode)){
 			//invalid hierarchy
-			Sbi.exception.ExceptionHandler.showWarningMessage('Nodes on last level must be all leafs', 'Error');
+			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.hierarchies.custom.error.leaf'), LN('sbi.generic.error'));
 		} else {
 			//valid hierarchy
-			Ext.MessageBox.confirm(LN('sbi.generic.pleaseConfirm'), LN('Save changes?'), 
+			Ext.MessageBox.confirm(LN('sbi.generic.pleaseConfirm'), LN('sbi.hierarchies.save.changes.confirm'), 
 					function(btn, text){
 					if (btn=='yes') {
 						//Call ajax function
@@ -479,7 +479,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 										if(response.responseText.indexOf("error.mesage.description")>=0){
 											Sbi.exception.ExceptionHandler.handleFailure(response);
 										}else{		
-											Sbi.exception.ExceptionHandler.showInfoMessage('Hierarchy correctly saved');
+											Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.hierarchies.save.correct'));
 											this.customHierarchiesGridStore.load();		     
 							            }
 									}
@@ -524,12 +524,12 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		var rootNode =  myStore.getRootNode();
 		if (!this.checkLeafNodes(rootNode)){
 			//invalid hierarchy
-			Sbi.exception.ExceptionHandler.showWarningMessage('Nodes on last level must be all leafs', 'Error');
+			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.hierarchies.custom.error.leaf'), LN('sbi.generic.error'));
 		} else {
 			//valid hierarchy
 			this.customHierarchyName = new Ext.form.Text({
 				name: 'name',
-		        fieldLabel: 'Name',
+		        fieldLabel: LN('sbi.generic.name'),
 		        labelWidth: 130,
 				width : 300,
 		        allowBlank: false,
@@ -539,7 +539,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			
 			this.customHierarchyDescription = new Ext.form.Text({
 				name: 'description',
-		        fieldLabel: 'Description',
+		        fieldLabel: LN('sbi.generic.descr'),
 		        labelWidth: 130,
 				width : 300,
 		        allowBlank: false,
@@ -562,7 +562,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		    });
 			
 			this.scopeCombo = new Ext.form.ComboBox({
-		        fieldLabel: 'Hierarchy Scope',
+		        fieldLabel: LN('sbi.hierarchies.scope'),
 		        store: this.scopeComboStore,
 		        queryMode: 'local',
 		        displayField : 'name',
@@ -583,7 +583,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 				        height: 200,
 				        modal: true,
 				        closeAction: 'destroy',
-				        title:'Save Custom Hierarchy',
+				        title:LN('sbi.hierarchies.custom.save'),
 				        items: new Ext.Panel(
 				        {
 							
@@ -617,7 +617,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 				                							if(response.responseText.indexOf("error.mesage.description")>=0){
 				                								Sbi.exception.ExceptionHandler.handleFailure(response);
 				                							}else{		
-				                								Sbi.exception.ExceptionHandler.showInfoMessage('Hierarchy correctly saved');
+				                								Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.hierarchies.save.correct'));
 				                								this.customHierarchiesGridStore.load();
 				                				            	this.saveCustomHierarchyButton.setVisible(false);
 				                				            	this.cancelCustomHierarchyButton.setVisible(false);				                							}
@@ -636,7 +636,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 				                 	 ,scope:this 
 				                 },
 				                 {
-				                	 text:'Cancel',
+				                	 text:LN('sbi.general.cancel'),
 				                	 handler:function() {
 				                		 win.close();
 				                	 }
@@ -702,7 +702,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			   items: [
 			           {
 			        	   xtype: 'label',
-			        	   html: '<b>Drag here the root of the new hierarchy</b>'
+			        	   html: '<b>'+LN('sbi.hierarchies.drag.root')+'</b>'
 			           }
 			   ]
 			   ,listeners: {
@@ -725,7 +725,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 								   Ext.getCmp('customTreePanelTemp').setVisible(false);
 								   return true;
 							   } else {
-								   Ext.Msg.alert('Wrong Action', 'Cannot use a leaf node as a new root');
+								   Ext.Msg.alert(LN('sbi.hierarchies.drag.wrong.action'), LN('sbi.hierarchies.drag.wrong'));
 							   }
 
 							   return false;
@@ -780,7 +780,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 								if(response.responseText.indexOf("error.mesage.description")>=0){
 									Sbi.exception.ExceptionHandler.handleFailure(response);
 								}else{						
-									Sbi.exception.ExceptionHandler.showInfoMessage(LN('Delete successfull'));
+									Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.hierarchies.delete.ok'));
     								this.customHierarchiesGridStore.load();
     								this.rightPanel.remove(Ext.getCmp('customTreePanel'));
 								}
@@ -842,7 +842,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			        			var newNodes = thisPanel.treeTraversal(data.records[0],new Array())
 		        				for (var i = 0; i < newNodes.length; i++) {
 		        					if (thisPanel.contains(currentNodes,newNodes[i])){
-		    	        				Ext.Msg.alert('Wrong Action', 'Node already added to this hierarchy');
+		    	        				Ext.Msg.alert(LN('sbi.hierarchies.drag.wrong.action'), LN('sbi.hierarchies.drag.node.exists'));
 		        						return false;
 		        					}
 		        			    }
@@ -862,7 +862,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        						this.onNodeDrop(n, dd, e, data) :
 	        							this.onContainerDrop(dd, e, data);
 	        			} else {
-	        				Ext.Msg.alert('Wrong Action', 'Cannot move a leaf node in a semimanual hierarchy');
+	        				Ext.Msg.alert(LN('sbi.hierarchies.drag.wrong.action'), LN('sbi.hierarchies.drag.cannot.move'));
 	        				return false;
 	        			}
 	        		}	
