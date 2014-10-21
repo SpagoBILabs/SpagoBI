@@ -66,22 +66,22 @@ public class Hierarchies {
 	public void loadDefinitionFile() {
 		// Load the XML file definition used for the hierarchies
 		File definitionFile = new File(getResourcePath() + File.separator + "hierarchies" + File.separator + HIERARCHIES_FILE_NAME + ".xml");
-		Assert.assertNotNull("The model with the definition of the hierarchies must be uploaded in the server. ");
+		boolean fileExists = definitionFile.exists();
+		Assert.assertTrue("The model with the definition of the hierarchies must be uploaded in the server. ", fileExists);
 
 		if (!definitionFile.isFile()) {
-			logger.debug("No hierarchis definitions loaded");
+			logger.error("No hierarchis definitions loaded");
 		} else {
 			logger.debug("Hierarchies file name is equal to [" + definitionFile + "]");
 
-			// TODO: XML PARSING or conversion
 			try {
 				FileInputStream is = new FileInputStream(definitionFile.getAbsolutePath());
 				String xmlContent = IOUtils.toString(is);
 				template = SourceBean.fromXMLString(xmlContent);
 			} catch (SourceBeanException e) {
-				logger.debug("Error reading Hierarchies file [" + definitionFile + "]");
+				logger.error("Error reading Hierarchies file [" + definitionFile + "]");
 			} catch (IOException e) {
-				logger.debug("Error reading Hierarchies file [" + definitionFile + "]");
+				logger.error("Error reading Hierarchies file [" + definitionFile + "]");
 			}
 
 		}
