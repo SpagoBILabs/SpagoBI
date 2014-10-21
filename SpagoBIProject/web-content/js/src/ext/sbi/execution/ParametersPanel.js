@@ -1307,6 +1307,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		field = new Sbi.widgets.TreeLookUpField(Ext.apply(baseConfig,{
 			params: params, 
+			allowInternalNodeSelection: p.allowInternalNodeSelection,
 			service: this.services['getParameterValueForExecutionService']
 		}));
 

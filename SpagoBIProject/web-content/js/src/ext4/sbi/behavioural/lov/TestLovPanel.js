@@ -197,11 +197,6 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
     	
     	this.fireEvent('lovTypeChanged',value);
     }
-
-
-
-
-	
 });
 
 
