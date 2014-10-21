@@ -127,6 +127,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/scheduler/TriggerInfoWindow.js")%>'></script>
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorSplittedPanel.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorContextMenu.js")%>'></script>
 
 <!-- END-DEBUG -->
 
