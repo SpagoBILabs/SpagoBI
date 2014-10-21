@@ -76,15 +76,15 @@
 		<MAP_REST_SERVICE serviceUrl="/scheduler/resumeTrigger" businessProcess="SchedulerManagement" /> 	
 		<MAP_REST_SERVICE serviceUrl="/scheduler/getTriggerSaveOptions" businessProcess="SchedulerManagement" />
 		
-		<MAP_REST_SERVICE serviceUrl="/hierarchies" businessProcess="publicFunctionality" />
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/dimensions" businessProcess="publicFunctionality" />
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/hierarchiesOfDimension" businessProcess="publicFunctionality" />		
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/getAutomaticHierarchyTree" businessProcess="publicFunctionality" />
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchies" businessProcess="publicFunctionality" />	
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchyTree" businessProcess="publicFunctionality" />				 						 						
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/saveCustomHierarchy" businessProcess="publicFunctionality" />				 						 						
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteCustomHierarchy" businessProcess="publicFunctionality" />				 						 						
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyCustomHierarchy" businessProcess="publicFunctionality" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/dimensions" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/hierarchiesOfDimension" businessProcess="HierarchiesManagement" />		
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getAutomaticHierarchyTree" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchies" businessProcess="HierarchiesManagement" />	
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchyTree" businessProcess="HierarchiesManagement" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/saveCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
 					 						 						
 		
 	</MAP_REST_SERVICES>
