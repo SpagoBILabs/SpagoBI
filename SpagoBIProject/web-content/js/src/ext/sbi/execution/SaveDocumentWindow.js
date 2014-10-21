@@ -203,7 +203,8 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 		      });
 	}
 	
-	,saveDocument: function () {		
+	,saveDocument: function () {	
+		var thisPanel = this;
 		var docName = this.docName.getValue();
 		var docDescr = this.docDescr.getValue();
 		var query = this.OBJECT_QUERY;
@@ -286,7 +287,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 				      			if (this.fromMyAnalysis != undefined && this.fromMyAnalysis != null && this.fromMyAnalysis == true){
 				      				this.fireEvent('returnToMyAnalysis',this);  //fire event to jump to the MyAnalysis page 
 				                }
-				      			this.close();
+				      			thisPanel.close();
 				      		}  
 			      		} else {
 			      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
