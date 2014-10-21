@@ -53,5 +53,7 @@
 <USER_FUNCTIONALITY name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement"/>
 <USER_FUNCTIONALITY name="GeoLayersManagement" description="GeoLayersManagement"/>
 <USER_FUNCTIONALITY name="CreateCockpitFunctionality" description="CreateCockpitFunctionality"/>
+<USER_FUNCTIONALITY name="HierarchiesManagement" description="HierarchiesManagement"/>
+
 
 </USER_FUNCTIONALITIES>
