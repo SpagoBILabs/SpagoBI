@@ -60,17 +60,16 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 		List<DataMiningDataset> datasets = null;
 		List<DataMiningDataset> datasetsToReturn = new ArrayList<DataMiningDataset>();
 		if (dataMiningEngineInstance.getDatasets() != null && !dataMiningEngineInstance.getDatasets().isEmpty()) {
-			datasets = dataMiningEngineInstance.getDatasets(); // finds existing
-																// files for
-																// datasets
-
+			datasets = dataMiningEngineInstance.getDatasets(); 
+			
+			logger.debug("Finds existing files for datasets");
 			for (Iterator dsIt = dataMiningEngineInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
 				if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_FILE) && datasetNames.contains(ds.getName())) {
 					File fileDSDir;
 					try {
 						fileDSDir = new File(DataMiningUtils.getUserResourcesPath(getUserProfile()) + ds.getName());
-						// /find file in dir
+						logger.debug(fileDSDir);
 						File[] dsfiles = fileDSDir.listFiles();
 						if (dsfiles != null && dsfiles.length != 0) {
 							String fileName = dsfiles[0].getName();
@@ -109,12 +108,13 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 		if (dataMiningEngineInstance.getDatasets() != null && !dataMiningEngineInstance.getDatasets().isEmpty()) {
 			datasets = dataMiningEngineInstance.getDatasets();
 			// finds existing files for datasets
-
+			logger.debug("finds existing files for datasets");
 			for (Iterator dsIt = dataMiningEngineInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
 				if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_FILE) && ds.getName().equals(dsName)) {
 					ds.setFileName(fileName);
-					// and update its content in R workspace!
+
+					logger.debug("and update its content in R workspace!");
 					DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance, getUserProfile());
 					try {
 						executor.updateDatasetInWorkspace(ds, getUserProfile());
@@ -139,15 +139,17 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 	}
 
 	private void setCommandExecutable(DataMiningEngineInstance dataminingInstance) {
+		logger.debug("IN");
 		if (dataminingInstance.getCommands() != null && !dataminingInstance.getCommands().isEmpty()) {
 			for (Iterator it = dataminingInstance.getCommands().iterator(); it.hasNext();) {
 				DataMiningCommand command = (DataMiningCommand) it.next();
 				if (command.getMode().equals(DataMiningConstants.EXECUTION_TYPE_AUTO)) {
-					command.setExecuted(false);// in order to be riexecuted
-												// script
+					logger.debug("Sets mode to false in order to be riexecuted by the script");
+					command.setExecuted(false);
 				}
 			}
 		}
+		logger.debug("OUT");
 	}
 
 	@POST
@@ -155,7 +157,7 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 	@Consumes("multipart/form-data")
 	@Produces("text/html; charset=UTF-8")
 	public String loadDataset(@Context HttpServletRequest req, MultipartFormDataInput input, @PathParam("fieldName") String fieldName) {
-
+		logger.debug("IN");
 		String fileName = "";
 
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
@@ -171,18 +173,20 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 
 				// convert the uploaded file to inputstream
 				InputStream inputStream = inputPart.getBody(InputStream.class, null);
-
+				logger.debug("Convert the uploaded file to inputstream");
+				
 				byte[] bytes = IOUtils.toByteArray(inputStream);
 
-				File dirToSaveDS = new File(DataMiningUtils.getUserResourcesPath(getUserProfile()) + fieldName);// remember
-				// to
-				// create
-				// datamining
-				// folder
-				// inside
-				// resources
+				double megabytes = (bytes.length  / (1024*1024));
+				if(megabytes>=50){
+					throw new SpagoBIEngineRuntimeException("Dataset too big: exceeded 50MB");
+				}
+
+				File dirToSaveDS = new File(DataMiningUtils.getUserResourcesPath(getUserProfile()) + fieldName);
+				
 				dirToSaveDS.mkdir();
-				// leave just une file per dataset
+				logger.debug("created dir");
+				// 
 				File[] dsfiles = dirToSaveDS.listFiles();
 				if (dsfiles.length >= 1) {
 					for (int i = 0; i < dsfiles.length; i++) {
@@ -190,10 +194,11 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 						olFile.delete();
 					}
 				}
-
+				logger.debug("Left just une file per dataset");
 				// // constructs upload file path
 				fileName = dirToSaveDS.getPath() + "/" + fileName;
-
+				
+				logger.debug("Constructs upload file path "+fileName);
 				writeFile(bytes, fileName);
 
 			} catch (IOException e) {
@@ -202,13 +207,13 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 			}
 
 		}
-
+		logger.debug("OUT");
 		return getJsonSuccessTrue();
 
 	}
 
 	private String getFileName(MultivaluedMap<String, String> header) {
-
+		logger.debug("IN");
 		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
 
 		for (String filename : contentDisposition) {
@@ -220,27 +225,34 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 				return finalFileName;
 			}
 		}
+		logger.debug("OUT");
 		return "unknown";
 	}
 
 	// save to somewhere
 	private void writeFile(byte[] content, String filename) throws IOException {
-
-		File file = new File(filename);
-
-		if (!file.exists()) {
-			file.createNewFile();
+		logger.debug("IN");
+		FileOutputStream fop = null;
+		try{
+			File file = new File(filename);
+	
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+	
+			fop = new FileOutputStream(file);
+	
+			fop.write(content);
+			fop.flush();
+			fop.close();
+		}finally{
+			if(fop != null) fop.close();
 		}
-
-		FileOutputStream fop = new FileOutputStream(file);
-
-		fop.write(content);
-		fop.flush();
-		fop.close();
-
+		logger.debug("OUT");
 	}
 
 	private List<String> getScriptsForDatasets(DataMiningEngineInstance dataminingInstance, String commandName) {
+		logger.debug("IN");
 		List<String> scriptsToLoad = new ArrayList<String>();
 		if (dataminingInstance.getCommands() != null && !dataminingInstance.getCommands().isEmpty()) {
 			for (Iterator it = dataminingInstance.getCommands().iterator(); it.hasNext();) {
@@ -259,12 +271,14 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 				}
 			}
 		}
+		logger.debug("OUT");
 		return scriptsToLoad;
 	}
 
 	// script tag refers to comma separated list of datasets in datasets
 	// attributes
 	private List<String> geDatasetsToDisplay(DataMiningEngineInstance dataminingInstance, List<String> scriptNames) {
+		logger.debug("IN");
 		String datasets = "";
 		List<String> dsNames = new ArrayList<String>();
 		if (dataminingInstance.getScripts() != null && !dataminingInstance.getScripts().isEmpty()) {
@@ -274,11 +288,14 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 					datasets += script.getDatasets() + ",";
 				}
 			}
+			logger.debug("datasets "+datasets);
 		}
 		String[] datasetNames = datasets.split(",");
 		for (int i = 0; i < datasetNames.length; i++) {
 			dsNames.add(datasetNames[i].trim());
 		}
+		
+		logger.debug("OUT");
 		return dsNames;
 	}
 
