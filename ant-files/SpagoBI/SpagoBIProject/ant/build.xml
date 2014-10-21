@@ -627,6 +627,8 @@
 				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanelInMemoryFiltered.js" />
 				<file name="./src/ext4/sbi/widgets/grid/GrouppedGrid.js" />
 				<file name="./src/ext4/sbi/widgets/compositepanel/ListDetailPanel.js" />
+				<file name="./src/ext4/sbi/widgets/compositepanel/SplittedPanel.js" />
+
 				<file name="./src/ext4/sbi/widgets/toolbar/InLineFilterAndOrder.js" />
 				<file name="./src/ext4/sbi/widgets/toolbar/StaticToolbarBuilder.js" />
 				<file name="./src/ext4/sbi/widgets/wizard/WizardWindow.js" />
