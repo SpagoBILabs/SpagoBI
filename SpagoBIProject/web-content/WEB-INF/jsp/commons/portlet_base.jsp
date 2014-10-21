@@ -203,6 +203,8 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <script type="text/javascript">
 	Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/resources/images/default/s.gif")%>';
 
+	// See https://spagobi.eng.it/jira/browse/SPAGOBI-1916
+	Ext.DatePicker.prototype.startDay = 1;
 
 	Ext.Ajax.defaultHeaders = {
 			'Powered-By': 'Ext'
