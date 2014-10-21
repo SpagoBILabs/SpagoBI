@@ -53,6 +53,8 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	public static String DATASET_ATTRIBUTE_TYPE = "type";
 	public static String DATASET_ATTRIBUTE_MODE = "mode";
 	public static String DATASET_ATTRIBUTE_LABEL = "label";
+	public static String DATASET_ATTRIBUTE_DEFAULT = "default";
+	public static String DATASET_ATTRIBUTE_CANUPLOAD = "canUpload";
 
 	public static final String DATASET_TYPE_FILE = "file";
 	public static final String DATASET_TYPE_SPAGOBI_DS = "spagobi_ds";
@@ -162,6 +164,16 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 								if (options != null) {
 									ftds.setOptions(options);
 
+								}
+								String defaultds = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_DEFAULT);
+								if (defaultds != null) {
+									ftds.setDefaultDS(defaultds);
+								}
+								String canUpload = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_CANUPLOAD);
+								if (canUpload != null && canUpload.equals("true")) {
+									ftds.setCanUpload(true);
+								}else{
+									ftds.setCanUpload(false);
 								}
 							} else if (datasetType.equalsIgnoreCase(DATASET_TYPE_SPAGOBI_DS)) {
 								String dsLabel = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_SPAGOBILABEL);

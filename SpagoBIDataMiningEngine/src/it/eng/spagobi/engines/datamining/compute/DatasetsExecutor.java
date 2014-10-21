@@ -51,26 +51,34 @@ public class DatasetsExecutor {
 					options = "header = TRUE, sep = \",\"";
 				}
 				if (ds.getType().equalsIgnoreCase("file")) {
+					
 					// tries to get it from user workspace
 					REXP datasetNameInR = re.eval(ds.getName());
 					if (datasetNameInR == null) {
-						File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
-						// /find file in dir
-						File[] dsfiles = fileDSDir.listFiles();
-						if (dsfiles != null && dsfiles.length != 0) {
-							String fileDSPath = dsfiles[0].getPath();
+						logger.debug("File ds: gets default DS");
+						Boolean defaultExists =getAndEvalDefaultDataset(ds);
+						if(!defaultExists){						
+							
+							File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
+							// /find file in dir
+							File[] dsfiles = fileDSDir.listFiles();
+							if (dsfiles != null && dsfiles.length != 0) {
+								String fileDSPath = dsfiles[0].getPath();
+	
+								fileDSPath = fileDSPath.replaceAll("\\\\", "/");
+	
+								String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + options + ");";
+								re.eval(stringToEval);
 
-							fileDSPath = fileDSPath.replaceAll("\\\\", "/");
-
-							String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + options + ");";
-							re.eval(stringToEval);
-							REXP dataframe = re.eval(ds.getName());
+							}							
 						}
+
 					} else {
 						// use it!
 						logger.debug("dataset " + ds.getName() + " already loaded in user workspace!");
 					}
 				} else if (ds.getType().equalsIgnoreCase("spagobi_ds")) {
+					logger.debug("SpagoBI ds");
 					// spagobi dataset content could change independently from
 					// the engine, so it must be recalculated every time
 					try {
@@ -89,19 +97,48 @@ public class DatasetsExecutor {
 		}
 		logger.debug("OUT");
 	}
-
+	protected boolean getAndEvalDefaultDataset (DataMiningDataset ds) throws IOException {
+		logger.debug("IN");
+		//checks relative path
+		String relPathToDefDS = ds.getDefaultDS();
+		if(relPathToDefDS == null || relPathToDefDS.equals("")){
+			return false;
+		}
+		if(relPathToDefDS.startsWith("/") || relPathToDefDS.startsWith("\\\\")){
+			relPathToDefDS = relPathToDefDS.substring(1);
+		}
+		String defDSRelPath = DataMiningUtils.UPLOADED_FILE_PATH + relPathToDefDS;		
+		
+		defDSRelPath = defDSRelPath.replaceAll("\\\\", "/");
+		logger.debug("Default path "+defDSRelPath);
+		File fileDSDefault = new File( defDSRelPath);
+		if(!fileDSDefault.exists()){
+			logger.debug("Default file doesn't exist");
+			return false;
+		}
+		String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + defDSRelPath + "\"," + ds.getOptions() + ");";
+		
+		logger.debug("R code to eval "+stringToEval);
+		re.eval(stringToEval);
+		logger.debug("OUT");
+		return true;
+		
+	}
 	protected void updateDataset(DataMiningDataset ds) throws IOException {
 		logger.debug("IN");
 		File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
 		// /find file in dir
 		File[] dsfiles = fileDSDir.listFiles();
-
-		String fileDSPath = dsfiles[0].getPath();
-
-		fileDSPath = fileDSPath.replaceAll("\\\\", "/");
-
-		String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
-		re.eval(stringToEval);// updated!!!
+		if(dsfiles != null){
+			String fileDSPath = dsfiles[0].getPath();
+	
+			fileDSPath = fileDSPath.replaceAll("\\\\", "/");
+			logger.debug("File ds path "+fileDSPath);
+	
+			String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
+			logger.debug("R code to eval "+stringToEval);
+			re.eval(stringToEval);
+		}
 		logger.debug("OUT");
 	}
 }

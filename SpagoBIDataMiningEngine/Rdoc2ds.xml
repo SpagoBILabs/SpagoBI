@@ -23,10 +23,10 @@ poison<-datasetB$time;
 		</SCRIPT>
 	</SCRIPTS>	
 	<DATASETS>
-		<DATASET name="salaries" readType="table" type="file" label="salaries">	
+		<DATASET name="salaries" readType="table" type="file" label="salaries" default="defaultds/dirDoc1/rats2.txt" canUpload="true">	
 			<![CDATA[header = TRUE, sep = ",", quote = "\""]]>
 		</DATASET>
-		<DATASET name="datasetB" readType="csv" type="file" label="Data set 2">
+		<DATASET name="datasetB" readType="csv" type="file" label="Data set 2" default="defaultds/dirDoc1/rats2.txt" canUpload="true">
 			<![CDATA[header = TRUE, sep = ",", quote = "\""]]>
 		</DATASET>
 	</DATASETS>	

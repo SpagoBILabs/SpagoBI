@@ -61,7 +61,6 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 		this.callParent();		
 		this.getOuputs();	
 		
-		
 		this.executeScriptBtn.hide();
 		this.actionsPanel.add(this.executeScriptBtn, this.uploadPanel);
 		this.addDocked(this.actionsPanel);

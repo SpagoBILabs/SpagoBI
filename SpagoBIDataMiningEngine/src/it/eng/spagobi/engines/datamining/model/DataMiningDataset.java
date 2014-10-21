@@ -22,6 +22,26 @@ public class DataMiningDataset implements Serializable {
 	private String mode;
 	private String label;
 
+	private String defaultDS;
+	private Boolean canUpload;
+	
+	public String getDefaultDS() {
+		return defaultDS;
+	}
+
+	public void setDefaultDS(String defaultDS) {
+		this.defaultDS = defaultDS;
+	}
+
+	public Boolean getCanUpload() {
+		return canUpload;
+	}
+
+	public void setCanUpload(Boolean canUpload) {
+		this.canUpload = canUpload;
+	}
+
+
 	public String getLabel() {
 		return label;
 	}

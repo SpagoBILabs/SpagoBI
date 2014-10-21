@@ -28,6 +28,7 @@ public class ExternalResource extends AbstractDataMiningEngineService {
 	 * @return
 	 * 
 	 */
+	//http://localhost:8080/SpagoBIDataMiningEngine/restful-services/1.0/execute/test1.R?user_id=biadmin&search_id=14&libraries=vegan,ellipse
 	@GET
 	@Path("/{fileName}")
 	@Produces("text/html; charset=UTF-8")
