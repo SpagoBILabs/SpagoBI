@@ -13,12 +13,12 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorContextMenu', {
 	extend:'Ext.menu.Menu',
 	itemId : 'idTreeContextMenu',
 	items : [new Ext.Action({
-	    text: 'Delete node',
+	    text: LN('sbi.hierarchies.node.delete'),
 	    handler: function(){
 	    	var tree = Ext.getCmp('customTreePanel');
 	    	var selectedNode = tree.selModel.getSelection()[0];
 	    	selectedNode.remove();
-	        Ext.Msg.alert('Info', 'Node deleted');
+	    	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.hierarchies.node.deleted'));
 	    },
 	    iconCls: 'button-remove',
 	    itemId: 'myAction'
