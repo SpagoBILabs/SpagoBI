@@ -186,7 +186,7 @@ public class Hierarchies {
 	 * @return
 	 */
 
-	public String getResourcePath() {
+	private String getResourcePath() {
 		String resPath;
 		try {
 			String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
