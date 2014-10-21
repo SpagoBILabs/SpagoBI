@@ -108,6 +108,7 @@ public class HierarchiesService {
 			}
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while retriving dimensions names");
 			throw new SpagoBIServiceException("An unexpected error occured while retriving dimensions names", t);
 		}
 
@@ -151,6 +152,7 @@ public class HierarchiesService {
 			}
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while retriving automatic hierarchies names");
 			throw new SpagoBIServiceException("An unexpected error occured while retriving automatic hierarchies names", t);
 		}
 		return hierarchiesJSONArray.toString();
@@ -186,6 +188,7 @@ public class HierarchiesService {
 			treeJSONObject = convertHierarchyTreeAsJSON(hierarchyTree);
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while retriving hierarchy structure");
 			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchy structure", t);
 		}
 
@@ -243,6 +246,7 @@ public class HierarchiesService {
 			}
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while retriving custom hierarchies names");
 			throw new SpagoBIServiceException("An unexpected error occured while retriving custom hierarchies names", t);
 		}
 		return hierarchiesJSONArray.toString();
@@ -282,6 +286,7 @@ public class HierarchiesService {
 			treeJSONObject = convertHierarchyTreeAsJSON(hierarchyTree);
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while retriving custom hierarchy structure");
 			throw new SpagoBIServiceException("An unexpected error occured while retriving custom hierarchy structure", t);
 		}
 
@@ -325,6 +330,7 @@ public class HierarchiesService {
 
 			return "{\"response\":\"ok\"}";
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while retriving custom hierarchy structure");
 			throw new SpagoBIServiceException("An unexpected error occured while retriving custom hierarchy structure", t);
 		}
 
@@ -361,6 +367,7 @@ public class HierarchiesService {
 			statement.close();
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while deleting custom hierarchy");
 			throw new SpagoBIServiceException("An unexpected error occured while deleting custom hierarchy", t);
 		} finally {
 			connection.close();
@@ -392,6 +399,7 @@ public class HierarchiesService {
 			saveCustomHierarchy(req);
 
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while modifing custom hierarchy");
 			throw new SpagoBIServiceException("An unexpected error occured while modifing custom hierarchy", t);
 		}
 
@@ -629,7 +637,7 @@ public class HierarchiesService {
 					String nodeName = (String) nameField.getValue();
 					HierarchyTreeNodeData data = new HierarchyTreeNodeData(nodeCode, nodeName);
 
-					// Here I will contruct the nodes of the tree
+					// Here I will construct the nodes of the tree
 					switch (i) {
 					case 0:
 						// first level (root)
