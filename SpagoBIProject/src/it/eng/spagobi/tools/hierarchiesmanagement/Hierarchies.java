@@ -70,7 +70,7 @@ public class Hierarchies {
 		Assert.assertTrue("The model with the definition of the hierarchies must be uploaded in the server. ", fileExists);
 
 		if (!definitionFile.isFile()) {
-			logger.error("No hierarchis definitions loaded");
+			logger.error("No hierarchies definitions file loaded");
 		} else {
 			logger.debug("Hierarchies file name is equal to [" + definitionFile + "]");
 
