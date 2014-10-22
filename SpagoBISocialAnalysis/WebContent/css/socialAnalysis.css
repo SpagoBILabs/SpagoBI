@@ -287,7 +287,7 @@ div#hormenu li li a
 .pieChart_box
 {
 	border: 1px solid #909090;
-	margin-left: 35px;
+	margin-left: 15px;
 	display:block; 
 	width:350px; 
 	height:300px; 
@@ -309,7 +309,7 @@ div#hormenu li li a
 {
 	border: 1px solid #909090;
 	float: left;
-	margin-left: 25px;
+/* 	margin-left: 25px; */
 	margin-bottom: 30px;
 }
 
@@ -337,7 +337,7 @@ div#hormenu li li a
 	vertical-align: baseline;
 	list-style: none outside none;
 	outline: 0px none;
-	width: 390px;
+	width: 340px;
 	height: 575px;
 	font: 12px/16px "Helvetica Neue",Roboto,"Segoe UI",Calibri,sans-serif;
 	overflow: auto;
@@ -350,7 +350,7 @@ div#hormenu li li a
 {
 	border: 1px solid #909090;
 	display:block; 
-	width:500px; 
+	width:525px; 
 	height:450px; 
 	float:left;
 	margin-top: 50px;
@@ -359,7 +359,7 @@ div#hormenu li li a
 
 .tagCloud_box
 {
-	width: 455px;
+	width: 480px;
 	height: 360px;
 	border: 1px solid #ccc;  
 	background-color: #FFFFFF;
