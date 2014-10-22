@@ -360,6 +360,7 @@ public class AnalysisUtility {
 		String result = "";
 
 		if (s != null && !s.equals("")) {
+			s = s.replace("\r\n", " ").replace("\n", " ");
 			String firstEscapedString = s.replaceAll("'", " ");
 			String secondEscapedString = firstEscapedString.replaceAll(System.getProperty("line.separator"), " ");
 			String thirdEscapedString = secondEscapedString.replaceAll("\n", " ");
@@ -370,7 +371,8 @@ public class AnalysisUtility {
 	}
 
 	public static double parseDoubleUtil(String str) throws ParseException {
-		return (double) NumberFormat.getNumberInstance(Locale.ITALY).parse(str);
+
+		return (double) NumberFormat.getNumberInstance(Locale.getDefault()).parse(str);
 
 	}
 }
