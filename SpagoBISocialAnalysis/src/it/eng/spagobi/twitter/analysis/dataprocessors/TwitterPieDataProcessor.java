@@ -29,17 +29,45 @@ public class TwitterPieDataProcessor {
 
 	private final IDataProcessorCache dpCache = new DataProcessorCacheImpl();
 
+	private TwitterPiePojo tweetsPieChart;
+	private List<TwitterPieSourcePojo> tweetsPieSourceChart;
+
+	public TwitterPieDataProcessor() {
+
+	}
+
+	/**
+	 * Initialize pie charts
+	 *
+	 * @param searchID
+	 */
+	public void initializeTwitterPieCharts(String searchID) {
+
+		logger.debug("Method initializeTwitterPieCharts(): Start for searchID = " + searchID);
+
+		long initMills = System.currentTimeMillis();
+
+		// check if searchID is a long and convert it
+		long searchId = AnalysisUtility.isLong(searchID);
+
+		this.tweetsPieChart = this.createTweetsPieChart(searchId);
+		this.tweetsPieSourceChart = this.createTweetsPieSourceChart(searchId);
+
+		long endMills = System.currentTimeMillis() - initMills;
+
+		logger.debug("Method initializeTwitterPieCharts(): End for search = " + searchId + " in " + endMills + "ms");
+	}
+
 	/**
 	 * This method creates the tweets type pie chart object for summary.jsp
 	 *
 	 * @param searchID
 	 * @return
 	 */
-	public TwitterPiePojo getTweetsPieChart(String searchID) {
+	private TwitterPiePojo createTweetsPieChart(long searchId) {
 
-		logger.debug("Method getTweetsPieChart(): Start");
+		logger.debug("Method createTweetsPieChart(): Start");
 
-		long searchId = AnalysisUtility.isLong(searchID);
 		try {
 
 			int totalTweets = dpCache.getTotalTweets(searchId);
@@ -50,12 +78,12 @@ public class TwitterPieDataProcessor {
 
 			TwitterPiePojo statsObj = new TwitterPiePojo(originalTweets, totalReplies, totalRTs);
 
-			logger.debug("Method getTweetsPieChart(): End");
+			logger.debug("Method createTweetsPieChart(): End");
 			return statsObj;
 
 		} catch (Throwable t) {
 
-			throw new SpagoBIRuntimeException("Method getTweetsPieChart(): An error occurred for search ID: " + searchID, t);
+			throw new SpagoBIRuntimeException("Method createTweetsPieChart(): An error occurred for search ID: " + searchId, t);
 		}
 
 	}
@@ -66,11 +94,9 @@ public class TwitterPieDataProcessor {
 	 * @param searchID
 	 * @return
 	 */
-	public List<TwitterPieSourcePojo> getTweetsPieSourceChart(String searchID) {
+	private List<TwitterPieSourcePojo> createTweetsPieSourceChart(long searchId) {
 
-		logger.debug("Method getTweetsPieSourceChart(): Start");
-
-		long searchId = AnalysisUtility.isLong(searchID);
+		logger.debug("Method createTweetsPieSourceChart(): Start");
 
 		try {
 
@@ -103,12 +129,12 @@ public class TwitterPieDataProcessor {
 				sources.add(obj);
 			}
 
-			logger.debug("Method getTweetsPieSourceChart(): End");
+			logger.debug("Method createTweetsPieSourceChart(): End");
 			return sources;
 
 		} catch (Throwable t) {
 
-			throw new SpagoBIRuntimeException("Method getTweetsPieSourceChart(): An error occurred for search ID: " + searchId, t);
+			throw new SpagoBIRuntimeException("Method createTweetsPieSourceChart(): An error occurred for search ID: " + searchId, t);
 		}
 
 	}
@@ -128,4 +154,13 @@ public class TwitterPieDataProcessor {
 		return formattedTextSourceSecond;
 
 	}
+
+	public TwitterPiePojo getTweetsPieChart() {
+		return tweetsPieChart;
+	}
+
+	public List<TwitterPieSourcePojo> getTweetsPieSourceChart() {
+		return tweetsPieSourceChart;
+	}
+
 }

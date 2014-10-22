@@ -35,7 +35,7 @@ public class UsersNetworkGraphDataProcessor {
 	private final IDataProcessorCache dpCache = new DataProcessorCacheImpl();
 	private final ITwitterCache twitterCache = new TwitterCacheImpl();
 
-	private final int NRESULTS = 50;
+	private final int NRESULTS = 30;
 
 	private int actualMin = 0;
 	private int actualMax = 0;
@@ -48,7 +48,9 @@ public class UsersNetworkGraphDataProcessor {
 
 	public void initializeUsersNetworkGraph(String searchID) {
 
-		logger.debug("Method initializeUsersNetworkGraph(): Start");
+		logger.debug("Method initializeUsersNetworkGraph(): Start for searchID = " + searchID);
+
+		long initMills = System.currentTimeMillis();
 
 		long searchId = AnalysisUtility.isLong(searchID);
 
@@ -71,7 +73,9 @@ public class UsersNetworkGraphDataProcessor {
 
 			createLinksAndProfilesJsonArray(tweets, searchId, nTweets);
 
-			logger.debug("Method initializeUsersNetworkGraph(): End");
+			long endMills = System.currentTimeMillis() - initMills;
+
+			logger.debug("Method initializeUsersNetworkGraph(): End for search = " + searchId + " in " + endMills + "ms");
 
 		} catch (Throwable t) {
 
@@ -155,15 +159,14 @@ public class UsersNetworkGraphDataProcessor {
 
 				if (tweet.getReplyToUserId() != null) {
 
-					TwitterData tweetToReply = twitterCache.isTwitterDataPresent(tweet.getTwitterSearch().getSearchID(),
-							Long.parseLong(tweet.getReplyToUserId()));
+					TwitterUser tweetUserToReply = dpCache.getUserFromTweet(tweet.getTwitterSearch().getSearchID(), Long.parseLong(tweet.getReplyToUserId()));
 
-					if (tweetToReply != null) {
+					if (tweetUserToReply != null) {
 
 						JSONObject linkObj = new JSONObject();
 
 						linkObj.put("source", tweet.getTwitterUser().getUsername());
-						linkObj.put("target", tweetToReply.getTwitterUser().getUsername());
+						linkObj.put("target", tweetUserToReply.getUsername());
 						linkObj.put("type", "reply");
 
 						this.links.put(linkObj);
@@ -172,27 +175,27 @@ public class UsersNetworkGraphDataProcessor {
 							users.add(tweet.getTwitterUser());
 						}
 
-						if (!users.contains(tweetToReply.getTwitterUser())) {
-							users.add(tweetToReply.getTwitterUser());
+						if (!users.contains(tweetUserToReply)) {
+							users.add(tweetUserToReply);
 						}
 					}
 
 				} else if (tweet.getOriginalRTTweetId() != null) {
 
-					TwitterData originalTweet = twitterCache.isTwitterDataPresent(tweet.getTwitterSearch().getSearchID(),
+					TwitterUser originalTweetUser = dpCache.getUserFromTweet(tweet.getTwitterSearch().getSearchID(),
 							Long.parseLong(tweet.getOriginalRTTweetId()));
 
-					if (originalTweet != null) {
+					if (originalTweetUser != null) {
 						JSONObject linkObj = new JSONObject();
 
-						linkObj.put("source", originalTweet.getTwitterUser().getUsername());
+						linkObj.put("source", originalTweetUser.getUsername());
 						linkObj.put("target", tweet.getTwitterUser().getUsername());
 						linkObj.put("value", "rt");
 
 						this.links.put(linkObj);
 
-						if (!users.contains(originalTweet.getTwitterUser())) {
-							users.add(originalTweet.getTwitterUser());
+						if (!users.contains(originalTweetUser)) {
+							users.add(originalTweetUser);
 						}
 
 						if (!users.contains(tweet.getTwitterUser())) {

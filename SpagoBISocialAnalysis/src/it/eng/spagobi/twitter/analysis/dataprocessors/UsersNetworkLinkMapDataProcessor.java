@@ -36,7 +36,7 @@ public class UsersNetworkLinkMapDataProcessor {
 	private final IDataProcessorCache dpCache = new DataProcessorCacheImpl();
 	private final ITwitterCache twitterCache = new TwitterCacheImpl();
 
-	private final int NRESULTS = 500;
+	private final int NRESULTS = 30;
 
 	private int actualMin = 0;
 	private int actualMax = 0;
@@ -50,7 +50,9 @@ public class UsersNetworkLinkMapDataProcessor {
 
 	public void initializeUsersNetworkLinkMap(String searchID) {
 
-		logger.debug("Method initializeUsersNetworkLinkMap(): Start");
+		logger.debug("Method initializeUsersNetworkLinkMap(): Start for searchID = " + searchID);
+
+		long initMills = System.currentTimeMillis();
 
 		long searchId = AnalysisUtility.isLong(searchID);
 
@@ -79,7 +81,9 @@ public class UsersNetworkLinkMapDataProcessor {
 			// createLinksAndCodesJsonArray(tweets);
 			// this.contriesCodes = createCountriesList(codes);
 
-			logger.debug("Method initializeUsersNetworkLinkMap(): End");
+			long endMills = System.currentTimeMillis() - initMills;
+
+			logger.debug("Method initializeUsersNetworkLinkMap(): End for search = " + searchId + " in " + endMills + "ms");
 
 		} catch (Throwable t) {
 

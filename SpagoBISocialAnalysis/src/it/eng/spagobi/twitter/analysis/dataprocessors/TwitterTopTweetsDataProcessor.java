@@ -32,6 +32,35 @@ public class TwitterTopTweetsDataProcessor {
 
 	private final IDataProcessorCache dpCache = new DataProcessorCacheImpl();
 
+	private List<TwitterTopTweetsPojo> topTweetsData = new ArrayList<TwitterTopTweetsPojo>();
+	private List<TwitterTopTweetsPojo> topRecentTweetsData = new ArrayList<TwitterTopTweetsPojo>();
+
+	public TwitterTopTweetsDataProcessor() {
+
+	}
+
+	/**
+	 * Initialize twitter top/recent list
+	 *
+	 * @param searchID
+	 */
+	public void initializeTwitterTopData(String searchID, int nProfiles) {
+
+		logger.debug("Method initializeTwitterTopData(): Start for searchID = " + searchID);
+
+		long initMills = System.currentTimeMillis();
+
+		// check if searchID is a long and convert it
+		long searchId = AnalysisUtility.isLong(searchID);
+
+		this.topTweetsData = this.createTopTweetsData(searchId, nProfiles);
+		this.topRecentTweetsData = this.createTopRecentTweetsData(searchId, nProfiles);
+
+		long endMills = System.currentTimeMillis() - initMills;
+
+		logger.debug("Method initializeTwitterTopData(): End for search = " + searchId + " in " + endMills + "ms");
+	}
+
 	/**
 	 * This method creats the objects to show in top retweets box
 	 *
@@ -39,11 +68,9 @@ public class TwitterTopTweetsDataProcessor {
 	 * @param nProfiles
 	 * @return
 	 */
-	public List<TwitterTopTweetsPojo> getTopTweetsData(String searchID, int nProfiles) {
+	public List<TwitterTopTweetsPojo> createTopTweetsData(long searchId, int nProfiles) {
 
-		logger.debug("Method getTopTweetsData(): Start");
-
-		long searchId = AnalysisUtility.isLong(searchID);
+		logger.debug("Method createTopTweetsData(): Start");
 
 		try {
 			List<TwitterTopTweetsPojo> topTweetsData = new ArrayList<TwitterTopTweetsPojo>();
@@ -81,12 +108,12 @@ public class TwitterTopTweetsDataProcessor {
 				nProfiles++;
 			}
 
-			logger.debug("Method getTopTweetsData(): End");
+			logger.debug("Method createTopTweetsData(): End");
 			return topTweetsData;
 
 		} catch (Throwable t) {
 
-			throw new SpagoBIRuntimeException("Method  getTopTweetsData(): An error occurred for search ID: " + searchID, t);
+			throw new SpagoBIRuntimeException("Method  createTopTweetsData(): An error occurred for search ID: " + searchId, t);
 		}
 
 	}
@@ -98,11 +125,9 @@ public class TwitterTopTweetsDataProcessor {
 	 * @param nProfiles
 	 * @return
 	 */
-	public List<TwitterTopTweetsPojo> getTopRecentTweetsData(String searchID, int nProfiles) {
+	public List<TwitterTopTweetsPojo> createTopRecentTweetsData(long searchId, int nProfiles) {
 
-		logger.debug("Method getTopRecentTweetsData(): Start");
-
-		long searchId = AnalysisUtility.isLong(searchID);
+		logger.debug("Method createTopRecentTweetsData(): Start");
 
 		try {
 
@@ -141,13 +166,21 @@ public class TwitterTopTweetsDataProcessor {
 				nProfiles++;
 			}
 
-			logger.debug("Method getTopRecentTweetsData(): End");
+			logger.debug("Method createTopRecentTweetsData(): End");
 			return topTweetsData;
 
 		} catch (Throwable t) {
 
-			throw new SpagoBIRuntimeException("Method  getTopRecentTweetsData(): An error occurred for search ID: " + searchID, t);
+			throw new SpagoBIRuntimeException("Method  createTopRecentTweetsData(): An error occurred for search ID: " + searchId, t);
 		}
+	}
+
+	public List<TwitterTopTweetsPojo> getTopTweetsData() {
+		return topTweetsData;
+	}
+
+	public List<TwitterTopTweetsPojo> getTopRecentTweetsData() {
+		return topRecentTweetsData;
 	}
 
 }

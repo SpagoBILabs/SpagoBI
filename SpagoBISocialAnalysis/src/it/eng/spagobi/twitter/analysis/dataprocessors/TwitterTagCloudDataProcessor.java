@@ -32,17 +32,45 @@ public class TwitterTagCloudDataProcessor {
 
 	private final IDataProcessorCache dpCache = new DataProcessorCacheImpl();
 
+	private JSONArray hashtagsCloud = new JSONArray();
+	private JSONArray topicsCloud = new JSONArray();
+
+	public TwitterTagCloudDataProcessor() {
+
+	}
+
+	/**
+	 * Initialize tag clouds
+	 *
+	 * @param searchID
+	 */
+	public void initializeTagClouds(String searchID) {
+
+		logger.debug("Method initializeTagClouds(): Start for searchID = " + searchID);
+
+		long initMills = System.currentTimeMillis();
+
+		// check if searchID is a long and convert it
+		long searchId = AnalysisUtility.isLong(searchID);
+
+		this.hashtagsCloud = this.hashtagsCloudCreate(searchId);
+
+		this.topicsCloud = this.topicsCloudCreate(searchId);
+
+		long endMills = System.currentTimeMillis() - initMills;
+
+		logger.debug("Method initializeTagClouds(): End for search = " + searchId + " in " + endMills + "ms");
+	}
+
 	/**
 	 * This method creates the json array for the hashtag cloud
 	 *
 	 * @param searchID
 	 * @return
 	 */
-	public JSONArray tagCloudCreate(String searchID) {
+	private JSONArray hashtagsCloudCreate(long searchId) {
 
-		logger.debug("Method tagCloudCreate(): Start");
-
-		long searchId = AnalysisUtility.isLong(searchID);
+		logger.debug("Method hashtagsCloudCreate(): Start");
 
 		try {
 
@@ -69,12 +97,64 @@ public class TwitterTagCloudDataProcessor {
 				jsonTagCloudArr = tweetIntoJSON(htagWeghtMap);
 			}
 
-			logger.debug("Method tagCloudCreate(): End");
+			logger.debug("Method hashtagsCloudCreate(): End");
 			return jsonTagCloudArr;
 
 		} catch (Throwable t) {
 
-			throw new SpagoBIRuntimeException("Method  tagCloudCreate(): An error occurred for search ID: " + searchID, t);
+			throw new SpagoBIRuntimeException("Method hashtagsCloudCreate(): An error occurred for search ID: " + searchId, t);
+		}
+
+	}
+
+	/**
+	 * This method creates the json array for the topics cloud
+	 *
+	 * @param searchID
+	 * @return
+	 */
+	private JSONArray topicsCloudCreate(long searchId) {
+
+		logger.debug("Method topicsCloudCreate(): Start");
+
+		try {
+
+			JSONArray jsonTagCloudArr = new JSONArray();
+			List<String> globalTopics = new ArrayList<String>();
+
+			List<String> topicsList = dpCache.getTopics(searchId);
+
+			for (String topicsFromDb : topicsList) {
+
+				if (topicsFromDb != null && !topicsFromDb.equals("")) {
+					topicsFromDb = topicsFromDb.toLowerCase();
+					String[] topicsSplitted = topicsFromDb.split(";");
+
+					for (int i = 0; i < topicsSplitted.length; i++) {
+						String word = topicsSplitted[i];
+						String topicWords = word.substring(word.lastIndexOf(":") + 1).trim();
+
+						String[] topicWordsArray = topicWords.split(",");
+
+						for (int j = 0; j < topicWordsArray.length; j++)
+
+							globalTopics.add(topicWordsArray[j]);
+					}
+				}
+			}
+
+			Map<String, Integer> htagWeghtMap = generateHtagWeight(globalTopics);
+
+			if (htagWeghtMap != null) {
+				jsonTagCloudArr = tweetIntoJSON(htagWeghtMap);
+			}
+
+			logger.debug("Method topicsCloudCreate(): End");
+			return jsonTagCloudArr;
+
+		} catch (Throwable t) {
+
+			throw new SpagoBIRuntimeException("Method topicsCloudCreate(): An error occurred for search ID: " + searchId, t);
 		}
 
 	}
@@ -117,6 +197,14 @@ public class TwitterTagCloudDataProcessor {
 		}
 
 		return jsonArr;
+	}
+
+	public JSONArray getHashtagsCloud() {
+		return hashtagsCloud;
+	}
+
+	public JSONArray getTopicsCloud() {
+		return topicsCloud;
 	}
 
 }

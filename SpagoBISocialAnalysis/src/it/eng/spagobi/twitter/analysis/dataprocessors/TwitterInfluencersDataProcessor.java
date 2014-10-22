@@ -11,6 +11,7 @@ import it.eng.spagobi.twitter.analysis.entities.TwitterUser;
 import it.eng.spagobi.twitter.analysis.utilities.AnalysisUtility;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -26,28 +27,78 @@ public class TwitterInfluencersDataProcessor {
 
 	private final IDataProcessorCache dpCache = new DataProcessorCacheImpl();
 
+	List<TwitterUser> mostInfluencers = new ArrayList<TwitterUser>();
+
+	public TwitterInfluencersDataProcessor() {
+
+	}
+
+	/**
+	 * Initialize top influencers
+	 *
+	 * @param searchID
+	 */
+	public void initializeTwitterTopInfluencers(String searchID) {
+
+		logger.debug("Method initializeTwitterTopInfluencers(): Start for searchID = " + searchID);
+
+		long initMills = System.currentTimeMillis();
+
+		// check if searchID is a long and convert it
+		long searchId = AnalysisUtility.isLong(searchID);
+
+		this.mostInfluencers = this.createMostInfluencers(searchId);
+
+		long endMills = System.currentTimeMillis() - initMills;
+
+		logger.debug("Method initializeTwitterTopInfluencers(): End for search = " + searchId + " in " + endMills + "ms");
+	}
+
 	/**
 	 * Finds most influencers
-	 * 
+	 *
 	 * @param searchID
 	 * @return
 	 */
-	public List<TwitterUser> getMostInfluencers(String searchID) {
+	private List<TwitterUser> createMostInfluencers(long searchId) {
 
-		logger.debug("Method getMostInfluencersJSON(): Start");
-
-		long searchId = AnalysisUtility.isLong(searchID);
+		logger.debug("Method createMostInfluencersJSON(): Start");
 
 		try {
 
 			List<TwitterUser> topInfluencers = dpCache.getTopInfluencers(searchId, 32);
 
+			List<TwitterUser> result = new ArrayList<TwitterUser>();
+
+			if (topInfluencers != null && topInfluencers.size() > 0) {
+
+				for (TwitterUser influencer : topInfluencers) {
+
+					String profileImg = influencer.getProfileImgSrc();
+
+					if (profileImg != null && !profileImg.equals("")) {
+
+						profileImg = profileImg.replace("http", "https");
+
+						influencer.setProfileImgSrc(profileImg);
+
+					}
+
+					result.add(influencer);
+				}
+			}
+
 			logger.debug("Method getMostInfluencers(): End");
 			return topInfluencers;
 		} catch (Throwable t) {
 
-			throw new SpagoBIRuntimeException("Method getMostInfluencers(): An error occurred for search ID: " + searchID, t);
+			throw new SpagoBIRuntimeException("Method createMostInfluencers(): An error occurred for search ID: " + searchId, t);
 		}
 
 	}
+
+	public List<TwitterUser> getMostInfluencers() {
+		return mostInfluencers;
+	}
+
 }
