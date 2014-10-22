@@ -37,8 +37,6 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 
 		logger.debug("Method getTotalTweets(): Start");
 
-		long initMills = System.currentTimeMillis();
-
 		if (this.daoService == null) {
 			this.daoService = new DaoService();
 		}
@@ -48,9 +46,7 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 
 		int result = daoService.countQuery(queryHQL, searchID);
 
-		long endMills = System.currentTimeMillis() - initMills;
-
-		logger.debug("Method getTotalTweets(): End in " + endMills + "ms");
+		logger.debug("Method getTotalTweets(): End");
 
 		return result;
 
@@ -403,6 +399,25 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 	}
 
 	@Override
+	public List<String> getTopics(long searchID) throws DaoServiceException {
+
+		logger.debug("Method getTopics(): Start");
+
+		if (this.daoService == null) {
+			this.daoService = new DaoService();
+		}
+
+		String query = "SELECT td.topics from TwitterData td where td.twitterSearch.searchID = ?";
+
+		List<String> topics = daoService.listFromQuery(query, searchID);
+
+		logger.debug("Method getTopics(): End");
+
+		return topics;
+
+	}
+
+	@Override
 	public List<TwitterData> getTimelineTweets(long searchID) throws DaoServiceException {
 
 		logger.debug("Method getTimelineTweets(): Start");
@@ -647,7 +662,7 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 			this.daoService = new DaoService();
 		}
 
-		String query = "from TwitterData td where td.twitterSearch.searchID = ? and (td.replyToUserId IS NOT NULL or td.originalRTTweetId IS NOT NULL) order by td.twitterUser.followersCount DESC";
+		String query = "select new TwitterData(td.twitterSearch, td.twitterUser, td.replyToUserId, td.originalRTTweetId) from TwitterData td where td.twitterSearch.searchID = ? and (td.replyToUserId IS NOT NULL or td.originalRTTweetId IS NOT NULL) order by td.twitterUser.followersCount DESC";
 
 		List<TwitterData> tweets = daoService.listFromBetweenLimitedQuery(query, start, end, searchID);
 
@@ -701,7 +716,7 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 			this.daoService = new DaoService();
 		}
 
-		String query = "SELECT new TwitterData(td.isPositive, td.isNeutral, td.isNegative) from TwitterData td where td.twitterSearch.searchID = ?";
+		String query = "SELECT new TwitterData(td.isPositive, td.isNeutral, td.isNegative, td.topics) from TwitterData td where td.twitterSearch.searchID = ?";
 
 		List<TwitterData> result = daoService.listFromQuery(query, searchID);
 
@@ -726,6 +741,23 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 
 		return result;
 
+	}
+
+	@Override
+	public TwitterUser getUserFromTweet(long searchID, long tweetID) throws DaoServiceException {
+
+		logger.debug("Method getUserFromTweet(): Start looking for user of tweet_id = " + tweetID);
+
+		if (this.daoService == null) {
+			this.daoService = new DaoService();
+		}
+
+		String query = "select tweet.twitterUser from TwitterData tweet where tweet.twitterSearch.searchID = ? and tweet.tweetID = ?";
+
+		TwitterUser twitterUser = daoService.singleResultQuery(query, searchID, tweetID);
+
+		logger.debug("Method getUserFromTweet(): End");
+		return twitterUser;
 	}
 
 }
