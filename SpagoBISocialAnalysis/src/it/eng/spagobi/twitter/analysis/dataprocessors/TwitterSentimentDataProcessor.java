@@ -110,6 +110,8 @@ public class TwitterSentimentDataProcessor {
 				}
 			}
 
+			logger.debug("Method initializeTwitterSentimentDataProcessor(): Calculating results..");
+
 			int totalTweets = positiveNumberInt + neutralNumberInt + negativeNumberInt;
 
 			DecimalFormat df = new DecimalFormat("#.#");
@@ -170,7 +172,8 @@ public class TwitterSentimentDataProcessor {
 			logger.debug("Method initializeTwitterSentimentDataProcessor(): End for search = " + searchId + " in " + endMills + "ms");
 		} catch (Throwable t) {
 
-			throw new SpagoBIRuntimeException("Method  initializeTwitterSentimentDataProcessor(): An error occurred for search ID: " + searchID, t);
+			logger.error("Method initializeTwitterSentimentDataProcessor(): Error in sentiment analysis for searchID = " + searchID, t);
+			throw new SpagoBIRuntimeException("Method initializeTwitterSentimentDataProcessor(): An error occurred for search ID: " + searchID, t);
 		}
 	}
 

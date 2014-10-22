@@ -141,6 +141,10 @@ public class UsersNetworkGraphDataProcessor {
 		if (users != null && users.size() > 0) {
 			for (TwitterUser user : users) {
 
+				if (user.getProfileImgSrc() != null && !user.getProfileImgSrc().equals("")) {
+					String modifiedProfileImgSrc = user.getProfileImgSrc().replace("http", "https");
+					user.setProfileImgSrc(modifiedProfileImgSrc);
+				}
 				// userObj.put("name", user.getUsername());
 				// userObj.put("fixed", true);
 				result.put(user.getUsername(), user.getProfileImgSrc());
