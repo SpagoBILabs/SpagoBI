@@ -40,14 +40,16 @@ Ext.extend(Sbi.geo.stat.DataPoint, Ext.util.Observable, {
 	 */
 	, coordinatesAreEqualTo: function(c, isCaseSensitive) {
 		if(c === undefined || c === null) return false;
-		if (typeof c != 'string') c += "";
+		var tmpC = c;
+		if (typeof tmpC !== 'string') tmpC += "";
 		isCaseSensitive = isCaseSensitive || false;
 		for(var i = 0; i < this.coordinates.length; i++) {
-			if (typeof this.coordinates[i] != 'string') this.coordinates[i] += "";
+			var tmpCoordinate = this.coordinates[i];
+			if (typeof tmpCoordinate !== 'string')	tmpCoordinate += "";
 			if(isCaseSensitive) {
-				if(this.coordinates[i] != c[i]) return false;
+				if(tmpCoordinate != tmpC) return false;
 			} else {
-				if(this.coordinates[i].toUpperCase() != c[i].toUpperCase()) return false;
+				if(tmpCoordinate.toUpperCase() != tmpC.toUpperCase()) return false;
 			}
 		}
 		return true;
