@@ -163,9 +163,13 @@ public class TwitterSentimentDataProcessor {
 				this.negativePercentage = formattedNegativePerc + "%";
 			}
 
-			this.positiveBC = this.sentimentMapIntoJSON(positiveMap);
-			this.neutralBC = this.sentimentMapIntoJSON(neutralMap);
-			this.negativeBC = this.sentimentMapIntoJSON(negativeMap);
+			Map<String, Integer> positiveOrdMap = AnalysisUtility.sortByValue(positiveMap);
+			Map<String, Integer> neutralOrdMap = AnalysisUtility.sortByValue(neutralMap);
+			Map<String, Integer> negativeOrdMap = AnalysisUtility.sortByValue(negativeMap);
+
+			this.positiveBC = this.sentimentMapIntoJSON(positiveOrdMap);
+			this.neutralBC = this.sentimentMapIntoJSON(neutralOrdMap);
+			this.negativeBC = this.sentimentMapIntoJSON(negativeOrdMap);
 
 			long endMills = System.currentTimeMillis() - initMills;
 
