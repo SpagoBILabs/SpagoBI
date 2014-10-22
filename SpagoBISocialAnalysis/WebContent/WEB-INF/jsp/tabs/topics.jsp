@@ -106,7 +106,7 @@
 		
 	</div>
 	
-	<div id="tagcloud" class="blank_box tagCloudMain_box" style="margin-left: 10%;">
+	<div id="tagcloud" class="blank_box tagCloudMain_box" style="margin-left: 20px;">
 			
 		<div class="tagCloudTitle_box">
 			

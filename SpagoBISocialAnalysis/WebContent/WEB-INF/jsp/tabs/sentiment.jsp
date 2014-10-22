@@ -147,6 +147,11 @@
 			
 	</div> 
 	
+	
+	<div style="float:left; margin-left: 50px; margin-top: 50px; margin-bottom: 30px;">	
+		<img src="<%= application.getContextPath() %>/img/screens/radar_sentiment.png" ></img>
+	</div>	
+	
 	<div style="width: 90%; float:left;">
 	
 		<div class="blank_box polarity_barchartMain" >

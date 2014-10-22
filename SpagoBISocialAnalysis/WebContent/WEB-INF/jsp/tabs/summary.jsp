@@ -259,7 +259,7 @@
 
 	</div>
 	
-	<div id="toptweets" class="blank_box twitterTopWidget_box">
+	<div id="toptweets" class="blank_box twitterTopWidget_box" style="margin-left:10px;">
 			
 		<div class="twitterTopTitle_box">	
 			<span>Recent Tweets</span>
