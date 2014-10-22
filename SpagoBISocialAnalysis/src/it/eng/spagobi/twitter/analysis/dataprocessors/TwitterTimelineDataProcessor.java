@@ -65,7 +65,9 @@ public class TwitterTimelineDataProcessor {
 	 */
 	public void initializeTwitterTimelineDataProcessor(String searchID) {
 
-		logger.debug("Method initializeTwitterTimelineDataProcessor(): Start");
+		logger.debug("Method initializeTwitterTimelineDataProcessor(): Start for searchID = " + searchID);
+
+		long initMills = System.currentTimeMillis();
 
 		long searchId = AnalysisUtility.isLong(searchID);
 
@@ -127,7 +129,9 @@ public class TwitterTimelineDataProcessor {
 
 			this.weekTicks = this.createWeekTicks(weekJSONArray).toString();
 
-			logger.debug("Method initializeTwitterTimelineDataProcessor(): End");
+			long endMills = System.currentTimeMillis() - initMills;
+
+			logger.debug("Method initializeTwitterTimelineDataProcessor(): End for search = " + searchId + " in " + endMills + "ms");
 
 		}
 

@@ -32,17 +32,42 @@ public class TwitterMentionsCloudDataProcessor {
 
 	private final IDataProcessorCache dpCache = new DataProcessorCacheImpl();
 
+	private JSONArray mentions = new JSONArray();
+
+	public TwitterMentionsCloudDataProcessor() {
+
+	}
+
+	/**
+	 * Initialize mentions cloud
+	 *
+	 * @param searchID
+	 */
+	public void initializeTwitterMentionsCloud(String searchID) {
+
+		logger.debug("Method initializeTwitterMentionsCloud(): Start for searchID = " + searchID);
+
+		long initMills = System.currentTimeMillis();
+
+		// check if searchID is a long and convert it
+		long searchId = AnalysisUtility.isLong(searchID);
+
+		this.mentions = this.mentionsCloudCreate(searchId);
+
+		long endMills = System.currentTimeMillis() - initMills;
+
+		logger.debug("Method initializeTwitterMentionsCloud(): End for search = " + searchId + " in " + endMills + "ms");
+	}
+
 	/**
 	 * This method creates the json array for the mentions cloud
 	 *
 	 * @param searchID
 	 * @return
 	 */
-	public JSONArray mentionsCloudCreate(String searchID) {
+	private JSONArray mentionsCloudCreate(long searchId) {
 
 		logger.debug("Method mentionsCloudCreate(): Start");
-
-		long searchId = AnalysisUtility.isLong(searchID);
 
 		try {
 
@@ -76,7 +101,7 @@ public class TwitterMentionsCloudDataProcessor {
 
 		} catch (Throwable t) {
 
-			throw new SpagoBIRuntimeException("Method mentionsCloudCreate(): An error occurred for search ID: " + searchID, t);
+			throw new SpagoBIRuntimeException("Method mentionsCloudCreate(): An error occurred for search ID: " + searchId, t);
 		}
 
 	}
@@ -119,6 +144,10 @@ public class TwitterMentionsCloudDataProcessor {
 		}
 
 		return jsonArr;
+	}
+
+	public JSONArray getMentions() {
+		return mentions;
 	}
 
 }

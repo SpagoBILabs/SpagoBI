@@ -7,13 +7,21 @@ package it.eng.spagobi.twitter.analysis.dataprocessors;
 
 import it.eng.spagobi.twitter.analysis.cache.DataProcessorCacheImpl;
 import it.eng.spagobi.twitter.analysis.cache.IDataProcessorCache;
+import it.eng.spagobi.twitter.analysis.cache.exceptions.DaoServiceException;
 import it.eng.spagobi.twitter.analysis.entities.TwitterData;
 import it.eng.spagobi.twitter.analysis.utilities.AnalysisUtility;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import twitter4j.JSONArray;
+import twitter4j.JSONException;
+import twitter4j.JSONObject;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it), Giorgio Federici (giorgio.federici@eng.it)
@@ -34,13 +42,19 @@ public class TwitterSentimentDataProcessor {
 	private String neutralNumber = "";
 	private String negativeNumber = "";
 
-	public TwitterSentimentDataProcessor() {
+	private JSONArray positiveBC = new JSONArray();
+	private JSONArray neutralBC = new JSONArray();
+	private JSONArray negativeBC = new JSONArray();
+
+	public TwitterSentimentDataProcessor() throws DaoServiceException {
 
 	}
 
 	public void initializeTwitterSentimentDataProcessor(String searchID) {
 
-		logger.debug("Method initializeTwitterSentimentDataProcessor(): Start");
+		logger.debug("Method initializeTwitterSentimentDataProcessor(): Start for searchID = " + searchID);
+
+		long initMills = System.currentTimeMillis();
 
 		long searchId = AnalysisUtility.isLong(searchID);
 
@@ -54,59 +68,152 @@ public class TwitterSentimentDataProcessor {
 			int neutralNumberInt = 0;
 			int negativeNumberInt = 0;
 
+			Map<String, Integer> positiveMap = new HashMap<String, Integer>();
+			Map<String, Integer> neutralMap = new HashMap<String, Integer>();
+			Map<String, Integer> negativeMap = new HashMap<String, Integer>();
+
 			List<TwitterData> tweetsSentiment = dpCache.getSentimentSmilesTweets(searchId);
 
 			if (tweetsSentiment != null && tweetsSentiment.size() > 0) {
 
 				for (TwitterData tweet : tweetsSentiment) {
 					if (tweet.isPositive()) {
+
 						positiveNumberInt++;
+
+						if (tweet.getTopics() != null && !tweet.getTopics().trim().equals("")) {
+
+							manageSentimentTopics(tweet.getTopics(), positiveMap);
+
+						}
+
 					} else if (tweet.isNeutral()) {
+
 						neutralNumberInt++;
+
+						if (tweet.getTopics() != null && !tweet.getTopics().trim().equals("")) {
+
+							manageSentimentTopics(tweet.getTopics(), neutralMap);
+
+						}
+
 					} else if (tweet.isNegative()) {
+
 						negativeNumberInt++;
+
+						if (tweet.getTopics() != null && !tweet.getTopics().trim().equals("")) {
+
+							manageSentimentTopics(tweet.getTopics(), negativeMap);
+
+						}
 					}
 				}
 			}
 
 			int totalTweets = positiveNumberInt + neutralNumberInt + negativeNumberInt;
 
+			DecimalFormat df = new DecimalFormat("#.#");
+
 			if (totalTweets > 0) {
 
-				positivePercentageDouble = (positiveNumberInt * 100) / totalTweets;
+				positivePercentageDouble = ((double) positiveNumberInt * 100) / totalTweets;
 
-				positivePercentageDouble = (positiveNumberInt * 100) / totalTweets;
+				neutralPercentageDouble = ((double) neutralNumberInt * 100) / totalTweets;
 
-				positivePercentageDouble = (positiveNumberInt * 100) / totalTweets;
+				negativePercentageDouble = ((double) negativeNumberInt * 100) / totalTweets;
+
 			}
 
 			this.positiveNumber = String.format("%,d", positiveNumberInt);
 			this.neutralNumber = String.format("%,d", neutralNumberInt);
 			this.negativeNumber = String.format("%,d", negativeNumberInt);
 
-			if ((positivePercentageDouble % 1) == 0) {
+			String formattedPositivePerc = df.format(positivePercentageDouble);
+			String formattedNeutralPerc = df.format(neutralPercentageDouble);
+			String formattedNegativePerc = df.format(negativePercentageDouble);
+
+			if (positivePercentageDouble % 1 == 0) {
 				this.positivePercentage = String.valueOf((int) positivePercentageDouble) + "%";
 			} else {
-				this.positivePercentage = String.valueOf(positivePercentageDouble) + "%";
+
+				// corrections %
+				double correctionsPerc = 100 - AnalysisUtility.parseDoubleUtil(formattedPositivePerc) - AnalysisUtility.parseDoubleUtil(formattedNeutralPerc)
+						- AnalysisUtility.parseDoubleUtil(formattedNegativePerc);
+
+				// logger.debug(AnalysisUtility.parseDoubleUtil(formattedPositivePerc));
+				// logger.debug(AnalysisUtility.parseDoubleUtil(formattedNeutralPerc));
+				// logger.debug(AnalysisUtility.parseDoubleUtil(formattedNegativePerc));
+
+				positivePercentageDouble = AnalysisUtility.parseDoubleUtil(formattedPositivePerc) + correctionsPerc;
+
+				this.positivePercentage = String.valueOf(df.format(positivePercentageDouble)) + "%";
 			}
 
-			if ((neutralPercentageDouble % 1) == 0) {
+			if (neutralPercentageDouble % 1 == 0) {
 				this.neutralPercentage = String.valueOf((int) neutralPercentageDouble) + "%";
 			} else {
-				this.neutralPercentage = String.valueOf(neutralPercentageDouble) + "%";
+				this.neutralPercentage = formattedNeutralPerc + "%";
 			}
 
-			if ((negativePercentageDouble % 1) == 0) {
+			if (negativePercentageDouble % 1 == 0) {
 				this.negativePercentage = String.valueOf((int) negativePercentageDouble) + "%";
 			} else {
-				this.negativePercentage = String.valueOf(negativePercentageDouble) + "%";
+				this.negativePercentage = formattedNegativePerc + "%";
 			}
 
-			logger.debug("Method initializeTwitterSentimentDataProcessor(): End");
+			this.positiveBC = this.sentimentMapIntoJSON(positiveMap);
+			this.neutralBC = this.sentimentMapIntoJSON(neutralMap);
+			this.negativeBC = this.sentimentMapIntoJSON(negativeMap);
+
+			long endMills = System.currentTimeMillis() - initMills;
+
+			logger.debug("Method initializeTwitterSentimentDataProcessor(): End for search = " + searchId + " in " + endMills + "ms");
 		} catch (Throwable t) {
 
 			throw new SpagoBIRuntimeException("Method  initializeTwitterSentimentDataProcessor(): An error occurred for search ID: " + searchID, t);
 		}
+	}
+
+	private void manageSentimentTopics(String topicsFromDb, Map<String, Integer> sentimentMap) {
+
+		topicsFromDb = topicsFromDb.toLowerCase();
+		String[] topicsSplitted = topicsFromDb.split(";");
+
+		for (int i = 0; i < topicsSplitted.length; i++) {
+			String word = topicsSplitted[i];
+			String topicWords = word.substring(word.lastIndexOf(":") + 1).trim();
+
+			String[] topicWordsArray = topicWords.split(",");
+
+			for (int j = 0; j < topicWordsArray.length; j++) {
+				String key = topicWordsArray[j];
+				if (sentimentMap.containsKey(key)) {
+					int value = sentimentMap.get(key);
+					value++;
+					sentimentMap.put(key, value);
+				} else {
+					sentimentMap.put(key, 1);
+				}
+			}
+
+		}
+	}
+
+	private JSONArray sentimentMapIntoJSON(Map<String, Integer> sentimentMap) {
+		JSONArray jsonArr = new JSONArray();
+
+		for (Map.Entry<String, Integer> entry : sentimentMap.entrySet()) {
+			try {
+				JSONObject obj = new JSONObject();
+				obj.put("name", entry.getKey());
+				obj.put("value", entry.getValue());
+				jsonArr.put(obj);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return jsonArr;
 	}
 
 	public String getPositivePercentage() {
@@ -131,6 +238,18 @@ public class TwitterSentimentDataProcessor {
 
 	public String getNegativeNumber() {
 		return negativeNumber;
+	}
+
+	public JSONArray getPositiveBC() {
+		return positiveBC;
+	}
+
+	public JSONArray getNeutralBC() {
+		return neutralBC;
+	}
+
+	public JSONArray getNegativeBC() {
+		return negativeBC;
 	}
 
 }
