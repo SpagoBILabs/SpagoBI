@@ -105,6 +105,8 @@
 
 <div id="navigation">
 
+	<div id="report-loading" class="loading"><img src="<%= application.getContextPath() %>/img/ajax-loader.gif" width="32" height="32" /><br /><strong>Loading</strong></div>
+
 	<ul class="navtabs tabsStyle">
 	    <li class="navtabs"><a href=<%= summaryLink %>> Summary</a></li>
 	    <li class="navtabs"><a href=<%= topicsLink %>>Topics</a></li>
@@ -118,7 +120,13 @@
 	    <li class="navtabs" style="float:right;"><a href="<%= application.getContextPath() %>/index.jsp">Search</a></li>
 	</ul>		
 		
-		<div class="timeline_main">	
+		<div class="impacttimeline_main blank_box">	
+		
+			<div class="twitterFollowersTitle_box">
+			
+				<span>Accounts Followers Timeline</span>
+			
+			</div>
 		
 			<div id="main-graph-account"></div>
 		
@@ -127,7 +135,7 @@
 				<div style="float:right;">
 					<div id="hormenu-a">
 						<ul> 
-							<li><span>View</span>
+							<li><span>Time Scale</span>
 								<ul>
 									<li><a id="months" style="cursor:pointer;">Months</a>							
 						          	<li><a id="weeks" style="cursor:pointer;">Weeks</a></li>
@@ -138,7 +146,7 @@
 					</div>
 					
 				</div>
-				<div id="placeholder-account"  style="width: 95%;" class="demo-placeholder"></div>
+				<div id="placeholder-account"  style="width: 90%;" class="demo-placeholder"></div>
 			</div>
 			
 			<div class="demo-container" style="width: 100%; height: 40%">
@@ -147,7 +155,13 @@
 			
 		</div>
 		
-		<div class="timeline_main">	
+		<div class="impacttimeline_main blank_box">	
+		
+			<div class="twitterFollowersTitle_box">
+			
+				<span>Bitly Clicks Timeline</span>
+			
+			</div>
 		
 			<div id="main-graph-link"></div>
 				
@@ -157,7 +171,7 @@
 				<div style="float:right;">
 					<div id="hormenu-l">
 						<ul> 
-							<li><span>View</span>
+							<li><span>Time Scale</span>
 								<ul>
 									<li><a id="months-link" style="cursor:pointer;">Months</a>							
 						          	<li><a id="weeks-link" style="cursor:pointer;">Weeks</a></li>
@@ -168,7 +182,7 @@
 					</div>
 					
 				</div>
-				<div id="placeholder-link"  style="width: 95%;" class="demo-placeholder"></div>
+				<div id="placeholder-link"  style="width: 90%;" class="demo-placeholder"></div>
 			</div>
 			
 			<div class="demo-container" style="width: 100%; height: 40%">
@@ -1305,6 +1319,24 @@
 			});
 		
 		</script>  
+		
+		<script type="text/javascript">
+			  $(document).ready(function(){
+			
+			    $(".navtabs").click(function(){
+			    	
+			    	var width = $("#navigation").width();
+			        var height = $("#navigation").height()
+			    	
+			    	$("#report-loading").css({
+				        top: (100),
+				        left: ((width / 2) - 50),
+				        display: "block"
+				    })			
+			    });
+			
+			  });
+		</script>
 		 		
 </body>
 </html>

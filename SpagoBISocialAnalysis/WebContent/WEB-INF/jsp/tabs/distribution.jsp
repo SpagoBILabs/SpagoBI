@@ -69,6 +69,8 @@
 
 <div id="navigation">
 
+	<div id="report-loading" class="loading"><img src="<%= application.getContextPath() %>/img/ajax-loader.gif" width="32" height="32" /><br /><strong>Loading</strong></div>
+
 	<ul class="navtabs tabsStyle">
 	    <li class="navtabs"><a href=<%= summaryLink %>> Summary</a></li>
 	    <li class="navtabs"><a href=<%= topicsLink %>>Topics</a></li>
@@ -182,6 +184,24 @@
 			});
 
 	</script>
+	
+	<script type="text/javascript">
+			  $(document).ready(function(){
+			
+			    $(".navtabs").click(function(){
+			    	
+			    	var width = $("#navigation").width();
+			        var height = $("#navigation").height()
+			    	
+			    	$("#report-loading").css({
+				        top: (100),
+				        left: ((width / 2) - 50),
+				        display: "block"
+				    })			
+			    });
+			
+			  });
+		</script>
 		  		
 </body>
 </html>
