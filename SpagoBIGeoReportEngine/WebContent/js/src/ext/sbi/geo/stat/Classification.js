@@ -1,8 +1,8 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  **/
 
 Ext.ns("Sbi.geo.stat");
@@ -20,10 +20,10 @@ Sbi.geo.stat.DataPoint = function(config) {
 * @extends Ext.util.Observable
 */
 Ext.extend(Sbi.geo.stat.DataPoint, Ext.util.Observable, {
- 
+
 	coordinates: null
 	, value: null
-	
+
 
 	, initialize: function(coordinates, value) {
 		this.coordinates =  coordinates || [];
@@ -33,15 +33,17 @@ Ext.extend(Sbi.geo.stat.DataPoint, Ext.util.Observable, {
 	, getValue: function() {
 		return this.value;
 	}
-	
+
 	/**
 	 * By default coordinates are not case sensitive so for example ['Milano', 'Gennaio'] identify
 	 * exactly the same datapoint of coordinate ['MILANO', 'geNNaio']
 	 */
 	, coordinatesAreEqualTo: function(c, isCaseSensitive) {
 		if(c === undefined || c === null) return false;
+		if (typeof c != 'string') c += "";
 		isCaseSensitive = isCaseSensitive || false;
 		for(var i = 0; i < this.coordinates.length; i++) {
+			if (typeof this.coordinates[i] != 'string') this.coordinates[i] += "";
 			if(isCaseSensitive) {
 				if(this.coordinates[i] != c[i]) return false;
 			} else {
@@ -76,28 +78,28 @@ Ext.extend(Sbi.geo.stat.Distribution, Ext.util.Observable, {
 	, getSize: function() {
 		return this.dataPoints.length;
 	}
-	
+
 	, getDataPointAt: function(index) {
 		return this.dataPoints[index];
 	}
-	
+
 	, addDataPoint: function(dataPoint) {
 		this.dataPoints.push(dataPoint);
 	}
-	
+
 	, getDataPoint: function(coordinates){
 		for(var i = 0; i < this.dataPoints.length; i++) {
 			if(this.dataPoints[i].coordinatesAreEqualTo(coordinates, false)) return this.dataPoints[i];
 		}
-		return null;		
+		return null;
 	}
-	
+
 	/**
-     * @method 
+     * @method
      * the max data point.
      */
     , getMaxDataPoint: function() {
-    	
+
     	var maxVal = Number.MIN_VALUE;
     	var maxDataPoint = null;
     	for(var i = 0; i < this.dataPoints.length; i++) {
@@ -106,16 +108,16 @@ Ext.extend(Sbi.geo.stat.Distribution, Ext.util.Observable, {
     			maxDataPoint = this.dataPoints[i];
     		}
     	}
-    	
+
         return maxDataPoint;
     }
 
     /**
-     * @method 
+     * @method
      * the min data point.
      */
     , getMinDataPoint: function() {
-   
+
     	var minVal = Number.MAX_VALUE;
     	var minDataPoint = null;
     	for(var i = 0; i < this.dataPoints.length; i++) {
@@ -125,10 +127,10 @@ Ext.extend(Sbi.geo.stat.Distribution, Ext.util.Observable, {
     		}
     		//Sbi.trace("[Distribution.getMinDataPoint] : last value read is equal to [" + this.dataPoints[i].getValue() + "]. Min val found so far is equal to [" + minVal + "]");
     	}
-    	
+
     	return minDataPoint;
     }
-    
+
     , getValues: function() {
     	var values = [];
     	for(var i = 0; i < this.dataPoints.length; i++) {
@@ -153,7 +155,7 @@ Sbi.geo.stat.Bin = function(config) {
 /**
  * @class Sbi.geo.stat.Bin
  * @extends Ext.util.Observable
- * 
+ *
  *  Bin is category of the Classification.
  *  When they are defined, lowerBound is within the class
  *  and upperBound is outside the class.
@@ -205,11 +207,11 @@ Ext.extend(Sbi.geo.stat.Classification, Ext.util.Observable, {
         }
         return bounds;
     }
-    
+
     , getBins: function() {
     	return this.bins;
     }
-    
+
     , getBin: function(dataPointCoordinates) {
     	for(var i = 0; i < bin.length; i++) {
     		for(var j = 0; j < bin.length; j++) {
