@@ -229,6 +229,20 @@ public class TwitterData implements Serializable {
 		this.isNegative = isNegative;
 	}
 
+	public TwitterData(boolean isPositive, boolean isNeutral, boolean isNegative, String topics) {
+		this.isPositive = isPositive;
+		this.isNeutral = isNeutral;
+		this.isNegative = isNegative;
+		this.topics = topics;
+	}
+
+	public TwitterData(TwitterSearch twitterSearch, TwitterUser twitterUser, String replyToUserId, String originalRTTweetId) {
+		this.twitterSearch = twitterSearch;
+		this.twitterUser = twitterUser;
+		this.replyToUserId = replyToUserId;
+		this.originalRTTweetId = originalRTTweetId;
+	}
+
 	public long getTweetID() {
 		return tweetID;
 	}
