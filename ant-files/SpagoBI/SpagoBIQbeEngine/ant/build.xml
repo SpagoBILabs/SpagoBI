@@ -357,8 +357,9 @@
 
 <file name='./spagobi/worksheet/config/OptionsWindow.js' />
 
-<file name='./spagobi/registry/RegistryPanel.js' />
 <file name='./spagobi/registry/RegistryEditorGridPanel.js' />
+<file name='./spagobi/registry/RegistryPanel.js' />
+
 
 			</filelist>
 
