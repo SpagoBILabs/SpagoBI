@@ -60,8 +60,9 @@ public class ExportHighChartsAction extends AbstractEngineAction {
 
 			String svg = this.getAttributeAsString(SVG);
 
-			// inputStream = new ByteArrayInputStream(svg.getBytes("UTF-8"));
-			inputStream = new ByteArrayInputStream(svg.getBytes("ISO-8859-1"));
+			inputStream = new ByteArrayInputStream(svg.getBytes("UTF-8"));
+			// inputStream = new
+			// ByteArrayInputStream(svg.getBytes("ISO-8859-1"));
 			String outputType = this.getAttributeAsString(OUTPUT_FORMAT);
 			if (outputType == null || outputType.trim().equals("")) {
 				logger.debug("Output format not specified, default is " + OUTPUT_FORMAT_JPEG);
