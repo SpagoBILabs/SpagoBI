@@ -687,6 +687,95 @@ div.tooltip {
 /* 	padding-right: 10px; */
 }
 
+
+.polarity_info
+{
+	vertical-align: top;
+	background-color: #ffffff;
+	border-radius: 10px;
+}
+
+.polarity_barchartMain
+{
+	border: 1px solid #909090;
+	display:block; 
+	float:left;
+	margin-top: 50px;
+	margin-left: 30px;
+	margin-bottom: 50px;
+	width: 30%;
+}
+
+.positive_barchart div {
+  font: 10px sans-serif;
+  background-color: #33CC33;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+  margin-bottom: 10px;
+  overflow: auto;
+}
+
+.neutral_barchart div {
+  font: 10px sans-serif;
+  background-color: #FF9900;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+  margin-bottom: 10px;
+  overflow: auto;
+}
+
+.negative_barchart div {
+  font: 10px sans-serif;
+  background-color: #B00000;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+  margin-bottom: 10px;
+  overflow: auto;
+}
+
+.twitterPolarityBCTitle_box
+{
+	font-size: 25px;
+	font-weight: bold;
+/* 	margin-left: 15px; */
+/* 	margin-top: 10px; */
+	background-color: #0084B4;
+	padding-left: 15px;
+	padding-top: 10px;
+	color: #ffffff;
+	padding-bottom: 10px;
+}
+
+.posTopics_label
+{
+	  font: 10px sans-serif;
+	  text-align: right;
+	  overflow: auto;
+	  color: #33CC33;
+}
+
+.neuTopics_label
+{
+	  font: 10px sans-serif;
+	  text-align: right;
+	  overflow: auto;
+	  color: #FF9900;
+}
+
+.negTopics_label
+{
+	  font: 10px sans-serif;
+	  text-align: right;
+	  overflow: auto;
+	  color: #B00000;
+}
+
 /********************* IMPACTS TAB **********************************************************/
 
 div#hormenu-a 
@@ -841,5 +930,57 @@ div#hormenu-l li li a
 	border-top-right-radius: 0px;
 }
 
+.twitterFollowersTitle_box
+{
+	font-size: 25px;
+	font-weight: bold;
+/* 	margin-left: 15px; */
+/* 	margin-top: 10px; */
+	background-color: #0084B4;
+	padding-left: 15px;
+	padding-top: 10px;
+	color: #ffffff;
+	padding-bottom: 10px;
+}
+
+.twitterClicksTitle_box
+{
+	font-size: 25px;
+	font-weight: bold;
+/* 	margin-left: 15px; */
+/* 	margin-top: 10px; */
+	background-color: #0084B4;
+	padding-left: 15px;
+	padding-top: 10px;
+	color: #ffffff;
+	padding-bottom: 10px;
+}
+
+.impacttimeline_main
+{
+	float: left;
+	display:block; 
+	width: 90%; 
+	overflow:hidden; 
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
+
+
+.loading {
+    position: absolute;
+    display: none;
+    border: 1px solid #0084B4;
+    padding: 2px;
+    background-color: #0084B4;
+    color: #ffffff;
+    opacity: 0.90;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    width: 100px;
+    height: 50px;
+    text-align: center;
+    z-index: 100000;
+}
 
 
