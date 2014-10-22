@@ -14,9 +14,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -364,5 +367,10 @@ public class AnalysisUtility {
 		}
 
 		return result;
+	}
+
+	public static double parseDoubleUtil(String str) throws ParseException {
+		return (double) NumberFormat.getNumberInstance(Locale.ITALY).parse(str);
+
 	}
 }
