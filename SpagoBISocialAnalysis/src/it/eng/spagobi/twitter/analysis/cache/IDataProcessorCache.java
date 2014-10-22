@@ -57,6 +57,8 @@ public interface IDataProcessorCache {
 
 	public List<String> getHashtags(long searchID) throws DaoServiceException;
 
+	public List<String> getTopics(long searchID) throws DaoServiceException;
+
 	public List<TwitterData> getTimelineTweets(long searchID) throws DaoServiceException;
 
 	public List<TwitterData> getTopTweetsRTsOrder(long searchID, int nProfiles) throws DaoServiceException;
@@ -88,5 +90,7 @@ public interface IDataProcessorCache {
 	public List<TwitterData> getSentimentSmilesTweets(long searchID) throws DaoServiceException;
 
 	public List<TwitterUser> getLimitedUsersForSearchID(long searchID, int limit) throws DaoServiceException;
+
+	public TwitterUser getUserFromTweet(long searchID, long tweetID) throws DaoServiceException;
 
 }
