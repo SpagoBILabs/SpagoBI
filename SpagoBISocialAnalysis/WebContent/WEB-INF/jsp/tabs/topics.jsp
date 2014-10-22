@@ -45,7 +45,10 @@
 	}
 	
 	TwitterTagCloudDataProcessor tCloudDP = new TwitterTagCloudDataProcessor();
-	String hTagCloud = tCloudDP.tagCloudCreate(searchId).toString();
+	tCloudDP.initializeTagClouds(searchId);
+	
+	String hTagCloud = tCloudDP.getHashtagsCloud().toString();
+	String topicsCloud = tCloudDP.getTopicsCloud().toString();
 	 
 %>
 
@@ -72,6 +75,8 @@
 
 <div id="navigation">
 
+	<div id="report-loading" class="loading"><img src="<%= application.getContextPath() %>/img/ajax-loader.gif" width="32" height="32" /><br /><strong>Loading</strong></div>
+
 	<ul class="navtabs tabsStyle">
 	    <li class="navtabs"><a href=<%= summaryLink %>> Summary</a></li>
 	    <li class="navtabs" id="activelink"><a href=<%= topicsLink %>>Topics</a></li>
@@ -96,32 +101,62 @@
 			
 		<br/>
 			
-		<div id="my_cloud" class="tagCloud_box"></div>
+		<div id="hashtagsCloud" class="tagCloud_box"></div>
 		
 		
 	</div>
 	
-	<div style="float:left; margin-left: 30px; margin-top: 130px;">	
-		<img src="<%= application.getContextPath() %>/img/screens/topic_cloud.png" ></img>
+	<div id="tagcloud" class="blank_box tagCloudMain_box" style="margin-left: 10%;">
+			
+		<div class="tagCloudTitle_box">
+			
+			<span>Topics Cloud</span>
+		
+		</div>
+			
+		<br/>
+			
+		<div id="topicsCloud" class="tagCloud_box"></div>
+		
+		
 	</div>
 	
-	<div style="float:left; margin-left: 30px; margin-top: 30px; margin-bottom: 30px;">	
-		<img src="<%= application.getContextPath() %>/img/screens/linked_topic.png" ></img>
 	</div>
-	
-	
 		
 </div>        	
 			
 	<script type="text/javascript">
-					var word_list = <%= hTagCloud %>
+					var word_list_hashtags = <%= hTagCloud %>
 					$(function() {
-	 						$("#my_cloud").jQCloud(word_list);
+	 						$("#hashtagsCloud").jQCloud(word_list_hashtags);
+					});
+	</script>
+	
+	<script type="text/javascript">
+					var word_list_topics = <%= topicsCloud %>
+					$(function() {
+	 						$("#topicsCloud").jQCloud(word_list_topics);
 					});
 	</script>
 			
 			
-
+	<script type="text/javascript">
+			  $(document).ready(function(){
+			
+			    $(".navtabs").click(function(){
+			    	
+			    	var width = $("#navigation").width();
+			        var height = $("#navigation").height()
+			    	
+			    	$("#report-loading").css({
+				        top: (100),
+				        left: ((width / 2) - 50),
+				        display: "block"
+				    })			
+			    });
+			
+			  });
+		</script>
 		
 </body>
 </html>

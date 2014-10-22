@@ -15,6 +15,7 @@
 <%-- ---------------------------------------------------------------------- --%>
 
 <%@ page import="it.eng.spagobi.twitter.analysis.dataprocessors.*" %>
+<%@ page import="twitter4j.JSONArray" %>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -48,6 +49,10 @@
 	String positiveNumber = sentimentDP.getPositiveNumber();
 	String neutralNumber = sentimentDP.getNeutralNumber();
 	String negativeNumber = sentimentDP.getNegativeNumber();
+	
+	JSONArray positiveTopics = sentimentDP.getPositiveBC();
+	JSONArray neutralTopics = sentimentDP.getNeutralBC();
+	JSONArray negativeTopics = sentimentDP.getNegativeBC();
 	 
 %>
 
@@ -71,6 +76,8 @@
 
 
 <div id="navigation">
+
+	<div id="report-loading" class="loading"><img src="<%= application.getContextPath() %>/img/ajax-loader.gif" width="32" height="32" /><br /><strong>Loading</strong></div>
 
 	<ul class="navtabs tabsStyle">
 	    <li class="navtabs"><a href=<%= summaryLink %>> Summary</a></li>
@@ -137,15 +144,145 @@
 			<span class="smileBoxNTweetsBox"><%= negativeNumber %></span>
 		
 		</div>
-		
-		
 			
 	</div> 
 	
+	<div style="width: 90%; float:left;">
+	
+		<div class="blank_box polarity_barchartMain" >
+		
+			<div class="twitterPolarityBCTitle_box">
+				
+				<span>Positive Topics</span>
 			
-</div>        	
+			</div>
 			
+			<div class="posTopics_label" style="float:left;"></div>
+			<div class="positive_barchart" style="float:left;"></div>
+			
+		</div>
+		
+		<div class="blank_box polarity_barchartMain" >
+		
+			<div class="twitterPolarityBCTitle_box">
+				
+				<span>Neutral Topics</span>
+			
+			</div>
+			
+			<div class="neuTopics_label" style="float:left;"></div>
+			<div class="neutral_barchart" style="float:left;"></div>
+			
+		</div>
+		
+		<div class="blank_box polarity_barchartMain" >
+		
+			<div class="twitterPolarityBCTitle_box">
+				
+				<span>Negative Topics</span>
+			
+			</div>
+			
+			<div class="negTopics_label" style="float:left;"></div>
+			<div class="negative_barchart" style="float:left;"></div>
+			
+		</div>	
+	
+	</div>
+			
+</div>      
 
+	<script>
+
+		var positiveData = <%= positiveTopics %>
+		var neutralData = <%= neutralTopics %>
+		var negativeData = <%= negativeTopics %>
+
+// 		var positiveData = [{name:"test1", value:5}, {name:"test2", value:20}, {name:"test3", value:15}, {name:"test4", value:30}, {name:"test5", value:2}, {name:"test6", value:1}];
+// 		var neutralData = [{name:"test1", value:5}, {name:"test2", value:20}, {name:"test3", value:15}, {name:"test4", value:30}, {name:"test5", value:2}, {name:"test6", value:1}];
+// 		var negativeData = [{name:"test1", value:5}, {name:"test2", value:20}, {name:"test3", value:15}, {name:"test4", value:30}, {name:"test5", value:2}, {name:"test6", value:1}];
+
+		
+		
+// 		var w = $('.polarity_barchartMain').width();
+		
+		d3.select(".positive_barchart")
+		  .selectAll("div")
+		  .data(positiveData)
+		  .enter()
+		  .append("div")
+		  .style("width", function(d)
+		    				{ if(d.value > 30) return "300px"; else return (d.value*10) + "px"; })
+		   .text(function(d) { return d.value; });
+	       
+		
+		d3.select(".posTopics_label")
+		  .selectAll("div")
+		  .data(positiveData)
+		  .enter()
+		  .append("div")
+		  .style("margin", "1px 1px 10px 1px")
+		  .style("padding", "3px")
+		  .text(function(d) { return d.name });
+		
+	
+
+		
+		d3.select(".neutral_barchart")
+		  .selectAll("div")
+		    .data(neutralData)
+		  .enter().append("div")
+		    .style("width", function(d) { if(d.value > 30) return "300px"; else return (d.value*10) + "px"; })
+		    .text(function(d) { return d.value; });
+		
+		d3.select(".neuTopics_label")
+		  .selectAll("div")
+		  .data(neutralData)
+		  .enter()
+		  .append("div")
+		  .style("margin", "1px 1px 10px 1px")
+		  .style("padding", "3px")
+		  .text(function(d) { return d.name });
+	
+	
+		d3.select(".negative_barchart")
+		  .selectAll("div")
+		    .data(negativeData)
+		  .enter().append("div")
+		    .style("width", function(d) { if(d.value > 30) return "300px"; else return (d.value*10) + "px"; })
+		    .text(function(d) { return d.value; });
+		
+		d3.select(".negTopics_label")
+		  .selectAll("div")
+		  .data(negativeData)
+		  .enter()
+		  .append("div")
+		  .style("margin", "1px 1px 10px 1px")
+		  .style("padding", "3px")
+		  .text(function(d) { return d.name });
+	
+	
+	
+	</script>
+
+			
+	<script type="text/javascript">
+			  $(document).ready(function(){
+			
+			    $(".navtabs").click(function(){
+			    	
+			    	var width = $("#navigation").width();
+			        var height = $("#navigation").height()
+			    	
+			    	$("#report-loading").css({
+				        top: (100),
+				        left: ((width / 2) - 50),
+				        display: "block"
+				    })			
+			    });
+			
+			  });
+		</script>
 		
 </body>
 </html>

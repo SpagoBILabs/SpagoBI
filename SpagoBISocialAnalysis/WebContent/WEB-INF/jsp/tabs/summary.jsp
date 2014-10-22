@@ -74,15 +74,17 @@
 	/*************** PIE CHARTS *************************************************************/
 	
 	TwitterPieDataProcessor tPieDP = new TwitterPieDataProcessor();
-	TwitterPiePojo pieChartObj = tPieDP.getTweetsPieChart(searchId);
- 	List<TwitterPieSourcePojo> sources = tPieDP.getTweetsPieSourceChart(searchId);
+	tPieDP.initializeTwitterPieCharts(searchId);
+	TwitterPiePojo pieChartObj = tPieDP.getTweetsPieChart();
+ 	List<TwitterPieSourcePojo> sources = tPieDP.getTweetsPieSourceChart();
 	
 	
  	/*************** TWEETS BOXs ************************************************************/
 	
  	TwitterTopTweetsDataProcessor tTopDP = new TwitterTopTweetsDataProcessor();
- 	List<TwitterTopTweetsPojo> topTweets = tTopDP.getTopTweetsData(searchId, 30);
- 	List<TwitterTopTweetsPojo> topRecents = tTopDP.getTopRecentTweetsData(searchId, 30);
+ 	tTopDP.initializeTwitterTopData(searchId, 30);
+ 	List<TwitterTopTweetsPojo> topTweets = tTopDP.getTopTweetsData();
+ 	List<TwitterTopTweetsPojo> topRecents = tTopDP.getTopRecentTweetsData();
 
 	
 	/*****************************************************************************************/
@@ -110,6 +112,9 @@
 <body>
 
 <div id="navigation">
+
+    <div id="report-loading" class="loading"><img src="<%= application.getContextPath() %>/img/ajax-loader.gif" width="32" height="32" /><br /><strong>Loading</strong></div>
+
 
 	<ul class="navtabs tabsStyle">
 	    <li class="navtabs" id="activelink"><a href=<%= summaryLink %>> Summary</a></li>
@@ -903,27 +908,33 @@
 				"data": {
 					"sortOrder": "value-desc",
 					"content": [
+					<% if(pieChartObj.getTweets() > 0) { %>
 					{
 						"label": 'Tweets',
 						"value": <%= pieChartObj.getTweets() %>,
 					},
+					<% } %>
+					<% if(pieChartObj.getRTs() > 0) { %>
 					{
 						"label": "RTs",
 						"value": <%= pieChartObj.getRTs() %>,
 					},
+					<% } %>
+					<% if(pieChartObj.getReplies() > 0) { %>
 					{
 						"label": "Replies",
 						"value": <%= pieChartObj.getReplies() %>,
 					}
+					<% } %>
 					]
 				},
 				"labels": {
 					"outer": {
 						"pieDistance": 1
 					},
-					"inner": {
-						"hideWhenLessThanPercentage": 4
-					},
+// 					"inner": {
+// 						"hideWhenLessThanPercentage": 4
+// 					},
 					"mainLabel": {
 						"fontSize": 12
 					},
@@ -954,6 +965,10 @@
 				}
 			});
 			
+			
+			</script>
+			
+			<script>
 			
 			var pieDevice = new d3pie("pieChartDevice", {
 				"header": {
@@ -1039,6 +1054,25 @@
 				}
 			});
 		</script>
+		
+		<script type="text/javascript">
+			  $(document).ready(function(){
+			
+			    $(".navtabs").click(function(){
+			    	
+			    	var width = $("#navigation").width();
+			        var height = $("#navigation").height()
+			    	
+			    	$("#report-loading").css({
+				        top: (100),
+				        left: ((width / 2) - 50),
+				        display: "block"
+				    })			
+			    });
+			
+			  });
+		</script>
+
 		
 </body>
 </html>

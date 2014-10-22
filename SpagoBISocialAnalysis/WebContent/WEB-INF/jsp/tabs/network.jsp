@@ -47,10 +47,12 @@
 	}
 	
 	TwitterInfluencersDataProcessor influencersDP = new TwitterInfluencersDataProcessor();
-	List<TwitterUser> mostrInfluencers = influencersDP.getMostInfluencers(searchId);
+	influencersDP.initializeTwitterTopInfluencers(searchId);
+	List<TwitterUser> mostrInfluencers = influencersDP.getMostInfluencers();
 	
 	TwitterMentionsCloudDataProcessor mentionsDP = new TwitterMentionsCloudDataProcessor();
-	String mentionsCloud = mentionsDP.mentionsCloudCreate(searchId).toString();
+	mentionsDP.initializeTwitterMentionsCloud(searchId);
+	String mentionsCloud = mentionsDP.getMentions().toString();
 	
 	UsersNetworkGraphDataProcessor usersGraphDP = new UsersNetworkGraphDataProcessor();
 	usersGraphDP.initializeUsersNetworkGraph(searchId);
@@ -87,6 +89,8 @@
 <body>
 
 <div id="navigation">
+
+	<div id="report-loading" class="loading"><img src="<%= application.getContextPath() %>/img/ajax-loader.gif" width="32" height="32" /><br /><strong>Loading</strong></div>
 
 	<ul class="navtabs tabsStyle">
 	    <li class="navtabs"><a href=<%= summaryLink %>> Summary</a></li>
@@ -639,6 +643,24 @@
 // 	}
 	
 	</script>
+	
+	<script type="text/javascript">
+			  $(document).ready(function(){
+			
+			    $(".navtabs").click(function(){
+			    	
+			    	var width = $("#navigation").width();
+			        var height = $("#navigation").height()
+			    	
+			    	$("#report-loading").css({
+				        top: (100),
+				        left: ((width / 2) - 50),
+				        display: "block"
+				    })			
+			    });
+			
+			  });
+		</script>
 
 		
 </body>
