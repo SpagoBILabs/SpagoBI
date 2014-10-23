@@ -852,15 +852,19 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 
 	,
 	areIncomingEventsEnabled: function () {
+		Sbi.trace("[WidgetRuntime.areIncomingEventsEnabled]: IN");
 		var config = this.getConfiguration();
 		var incomingeventsenabled = config.wgeneric.incomingeventsenabled !== undefined ? config.wgeneric.incomingeventsenabled : true;
+		Sbi.trace("[WidgetRuntime.areIncomingEventsEnabled]: OUT, returning : " + incomingeventsenabled);
 		return incomingeventsenabled;
 	}
 
 	,
 	areOutcomingEventsEnabled: function () {
+		Sbi.trace("[WidgetRuntime.areOutcomingEventsEnabled]: IN");
 		var config = this.getConfiguration();
 		var outcomingeventsenabled = config.wgeneric.outcomingeventsenabled !== undefined ? config.wgeneric.outcomingeventsenabled : true;
+		Sbi.trace("[WidgetRuntime.areOutcomingEventsEnabled]: OUT, returning : " + outcomingeventsenabled);
 		return outcomingeventsenabled;
 	}
 
