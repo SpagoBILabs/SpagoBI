@@ -61,9 +61,9 @@
 --%>
 
 <%-- Include MIF production code --%>
-<!-- 
-<script type="text/javascript" src='../js/lib/ext-3.2.1/ux/miframe/miframe.js'/></script>
- -->
+
+<script type="text/javascript" src='../js/lib/ext-3.4.1/ux/miframe/miframe.js'/></script>
+
 
 <%-- Include Ext.ux.ColorField code --%>
 <!-- 
