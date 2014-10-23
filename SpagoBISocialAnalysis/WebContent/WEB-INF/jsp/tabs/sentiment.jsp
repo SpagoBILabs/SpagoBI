@@ -214,7 +214,7 @@
 		  .enter()
 		  .append("div")
 		  .style("width", function(d)
-		    				{ if(d.value > 28) return "280px"; else return (d.value*10) + "px"; })
+		    				{ if(d.value > 30) return "300px"; else return (d.value*10) + "px"; })
 		   .text(function(d) { return d.value; });
 	       
 		
