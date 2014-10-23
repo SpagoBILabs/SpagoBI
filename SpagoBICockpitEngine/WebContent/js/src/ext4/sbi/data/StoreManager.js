@@ -1689,6 +1689,14 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	Sbi.trace("[StoreManager.onStoreLoad]: OUT");
     }
 
+
+	/**
+	 * @method
+	 * Clones the input store by creating a new one with the same model and adding one record of the source one at a time,
+	 * therefore the store is expected to contain data
+	 *
+	 * @param {Ext.data.Store} source The Store to be cloned
+	 */
     ,
     cloneStore : function(source) {
         var target = Ext.create ('Ext.data.Store', {
