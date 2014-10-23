@@ -353,7 +353,6 @@ div#hormenu li li a
 	width:525px; 
 	height:450px; 
 	float:left;
-	margin-top: 50px;
 	margin-left: 30px;
 }
 
@@ -388,7 +387,6 @@ div#hormenu li li a
 	display:block; 
 	width:530px; 
 	float:left;
-	margin-top: 50px;
 	margin-left: 30px;
 }
 
@@ -422,7 +420,6 @@ div#hormenu li li a
 	width:500px; 
 	height:450px; 
 	float:left;
-	margin-top: 50px;
 	margin-left: 30px;
 }
 
@@ -609,7 +606,6 @@ div.tooltip {
 	width:90%; 
 	height:450px; 
 	float:left;
-	margin-top: 50px;
 	margin-left: 30px;
 	margin-bottom: 50px;
 }
@@ -653,9 +649,7 @@ div.tooltip {
 	display:block; 
 	width:40%; 
 	float:left;
-	margin-top: 50px;
-	margin-left: 30px;
-	margin-bottom: 50px;
+	margin-left: 10px;
 	max-width: 410px;
 }
 
@@ -700,8 +694,7 @@ div.tooltip {
 	border: 1px solid #909090;
 	display:block; 
 	float:left;
-	margin-top: 50px;
-	margin-left: 30px;
+	margin-left: 10px;
 	margin-bottom: 50px;
 	width: 30%;
 }
@@ -714,7 +707,6 @@ div.tooltip {
   margin: 1px;
   color: white;
   margin-bottom: 10px;
-  overflow: auto;
 }
 
 .neutral_barchart div {
@@ -725,7 +717,6 @@ div.tooltip {
   margin: 1px;
   color: white;
   margin-bottom: 10px;
-  overflow: auto;
 }
 
 .negative_barchart div {
@@ -736,7 +727,6 @@ div.tooltip {
   margin: 1px;
   color: white;
   margin-bottom: 10px;
-  overflow: auto;
 }
 
 .twitterPolarityBCTitle_box
@@ -758,6 +748,7 @@ div.tooltip {
 	  text-align: right;
 	  overflow: auto;
 	  color: #33CC33;
+	  width: 15%;
 }
 
 .neuTopics_label
@@ -766,6 +757,7 @@ div.tooltip {
 	  text-align: right;
 	  overflow: auto;
 	  color: #FF9900;
+	  width: 15%;
 }
 
 .negTopics_label
@@ -774,6 +766,7 @@ div.tooltip {
 	  text-align: right;
 	  overflow: auto;
 	  color: #B00000;
+	  width: 15%;
 }
 
 /********************* IMPACTS TAB **********************************************************/
