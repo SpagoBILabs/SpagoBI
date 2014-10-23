@@ -148,13 +148,13 @@
 	</div> 
 	
 	
-	<div style="float:left; margin-left: 50px; margin-top: 50px; margin-bottom: 30px;">	
+	<div style="float:left; margin-left: 50px; margin-bottom: 30px;">	
 		<img src="<%= application.getContextPath() %>/img/screens/radar_sentiment.png" ></img>
 	</div>	
 	
 	<div style="width: 90%; float:left;">
 	
-		<div class="blank_box polarity_barchartMain" >
+		<div class="blank_box polarity_barchartMain">
 		
 			<div class="twitterPolarityBCTitle_box">
 				
@@ -163,7 +163,7 @@
 			</div>
 			
 			<div class="posTopics_label" style="float:left;"></div>
-			<div class="positive_barchart" style="float:left;"></div>
+			<div class="positive_barchart" style="float:left; width:80%; overflow-x:auto"></div>
 			
 		</div>
 		
@@ -176,7 +176,7 @@
 			</div>
 			
 			<div class="neuTopics_label" style="float:left;"></div>
-			<div class="neutral_barchart" style="float:left;"></div>
+			<div class="neutral_barchart" style="float:left; width:80%; overflow-x:auto"></div>
 			
 		</div>
 		
@@ -189,7 +189,7 @@
 			</div>
 			
 			<div class="negTopics_label" style="float:left;"></div>
-			<div class="negative_barchart" style="float:left;"></div>
+			<div class="negative_barchart" style="float:left; width:80%; overflow-x:auto"></div>
 			
 		</div>	
 	
@@ -208,16 +208,13 @@
 // 		var negativeData = [{name:"test1", value:5}, {name:"test2", value:20}, {name:"test3", value:15}, {name:"test4", value:30}, {name:"test5", value:2}, {name:"test6", value:1}];
 
 		
-		
-// 		var w = $('.polarity_barchartMain').width();
-		
 		d3.select(".positive_barchart")
 		  .selectAll("div")
 		  .data(positiveData)
 		  .enter()
 		  .append("div")
 		  .style("width", function(d)
-		    				{ if(d.value > 30) return "300px"; else return (d.value*10) + "px"; })
+		    				{ if(d.value > 28) return "280px"; else return (d.value*10) + "px"; })
 		   .text(function(d) { return d.value; });
 	       
 		
