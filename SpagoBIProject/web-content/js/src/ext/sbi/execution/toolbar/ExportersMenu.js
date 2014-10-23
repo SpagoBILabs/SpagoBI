@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
- 
+var highChartForm; 
 Ext.ns("Sbi.execution.toolbar");
 
 Sbi.execution.toolbar.ExportersMenu = function(config) {
@@ -283,8 +283,8 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 					var documentWindow = this.getDocumentWindow();
 					
 					var newPars='';
-					var isHighchart = false;
-					var isExtChart = false;
+					//var isHighchart = false;
+					//var isExtChart = false;
 					var randUUID = Math.random();
 					var idxElements = 0;
 					for (var i=0; i<documentWindow.frames.length; i++) {
@@ -324,16 +324,16 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 							 // See source of DomHelper.append and DomHelper.overwrite methods
 							 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
 							 var dh = Ext.DomHelper;
-							 var form = document.getElementById('export-chart-form__'+ randUUID);
-							 if (form === undefined || form === null) {
-							     var form = dh.append(Ext.getBody(), { // creating the hidden form
+							 highChartForm = document.getElementById('export-chart-form__'+ randUUID);
+							 if (highChartForm === undefined || highChartForm === null) {
+							     highChartForm = dh.append(Ext.getBody(), { // creating the hidden form
 											  id: 'export-chart-form__' + randUUID
 											  , tag: 'form'
 											  , method: 'post'
 										  });
 							 }	  
 							 
-							 dh.append(form, {		// creating the hidden input in form
+							 dh.append(highChartForm, {		// creating the hidden input in form
 									tag: 'input'
 									, type: 'hidden'
 									, name: 'SVG_' + cutName
@@ -342,7 +342,7 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 							 
 							// putting the chart data into hidden input
 							//form.elements[i].value =  Ext.encode(svg);     
-							form.elements[idxElements].value = svg;  
+							highChartForm.elements[idxElements].value = svg;  
 							idxElements ++;
 							
 						}				
@@ -661,16 +661,17 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * @TODO terrible code. refactor when possible!
 	 */
 	, exportCompositeDocumentTo: function (format) {
-
+		isHighchart = false;
+		isExtChart = false;
 		var urlExporter = this.getExportationUrl(format, 'DOCUMENT_COMPOSITE');	
 		
-		window.open(urlExporter,'exportWindow','resizable=1,height=750,width=1000');
-		
+		window.open(urlExporter,'exportWindow','resizable=1,height=650,width=800');
+
 		if (isHighchart || isExtChart){
-		    form.action = urlExporter;
+			highChartForm.action = urlExporter;
 			//form.target = '_blank'; // result into a new browser tab
-			form.target = 'exportWindow'; // result into a popup
-			form.submit();
+			highChartForm.target = 'exportWindow'; // result into a popup
+			highChartForm.submit();
 		}
 		
 		Ext.DomHelper.useDom = false; //reset configuration for dom management
