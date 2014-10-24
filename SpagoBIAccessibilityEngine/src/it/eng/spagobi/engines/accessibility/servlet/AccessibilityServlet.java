@@ -165,7 +165,7 @@ public class AccessibilityServlet extends HttpServlet {
     
     private HashMap<String, String> cleanParameters(HttpServletRequest request){
 		//gets request parameters to execute query
-		HashMap<String, String> parameters = new HashMap<String, String>((HashMap<String, String>)request.getParameterMap());
+		HashMap<String, String[]> parameters = new HashMap<String, String[]>((HashMap<String, String[]>)request.getParameterMap());
 		HashMap<String, String> parametersCleaned = new HashMap<String, String>();
 		if(parameters.containsKey(QUERY)){    			
 			parameters.remove(QUERY);
