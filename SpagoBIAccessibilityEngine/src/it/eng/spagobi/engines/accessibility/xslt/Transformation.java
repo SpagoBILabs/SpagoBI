@@ -5,13 +5,12 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.accessibility.xslt;
 
-import it.eng.spagobi.engines.accessibility.dao.QueryExecutor;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,8 +26,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import com.sun.org.apache.xalan.internal.xsltc.trax.Util;
 
 public class Transformation {
 	
@@ -58,6 +55,8 @@ public class Transformation {
 	        byteArray = new ByteArrayOutputStream();
 	        result = new StreamResult(byteArray);
 	        transFact = TransformerFactory.newInstance();
+	        transFact.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+	        logger.debug("Set FEATURE_SECURE_PROCESSING to true");
 
 	        final Source xmlSource;
             final Document doc = loadXMLFrom(new ByteArrayInputStream(xml.getBytes()));

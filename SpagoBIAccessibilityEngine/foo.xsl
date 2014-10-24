@@ -9,25 +9,40 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:template match="/">
   <html xmlns="http://www.w3.org/1999/xhtml">
  	<head>
-	  <link href="../main.css" rel="stylesheet" type="text/css" />
+ 		<!-- Replace css link with embedded style for safety  -->
+	  	<!-- link href="../main.css" rel="stylesheet" type="text/css" /-->
+	  	<style>
+	  	h2 {
+		    color:#538620;
+			font-size:110%;
+			font-weight:bold;
+		 } 
+		 tr{
+		 	border: 1px solid blue;
+		 }
+		 td{
+		  border: 1px solid blue;
+		 }	 	  	
+	  	
+	  	</style>
+
 	</head>
   <body>
   <h2>Risultato:</h2>
   <table>
-    <tr class="verde">
-      <th>Regione</th>
-      <th>Persone in cerca</th>
-      <th>Non forze lavoro</th>
-      <th>Occupati</th>
-      <th>Totale</th>
+    <tr>
+      <th>id</th>
+      <th>username</th>
+      <th>group</th>
+      <th>ERROR</th>
+
     </tr>
     <xsl:for-each select="ROWS/ROW">
     <tr>
-      <td><xsl:value-of select="@REGIONE"/></td>
-      <td><xsl:value-of select="@INCERCA"/></td>
-      <td><xsl:value-of select="@NONLAVORO"/></td>
-      <td><xsl:value-of select="@OCCUPATI"/></td>
-      <td><xsl:value-of select="@TOTALE"/></td>
+      <td><xsl:value-of select="@ID"/></td>
+      <td><xsl:value-of select="@USERNAME"/></td>
+      <td><xsl:value-of select="@USERGROUP"/></td>
+      <td><xsl:value-of select="@ERROR_MESSAGE"/></td>
     </tr>
     </xsl:for-each>
   </table>
