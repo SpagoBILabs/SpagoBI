@@ -11,7 +11,6 @@
  */
 package it.eng.spagobi.api;
 
-
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
@@ -24,6 +23,8 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
@@ -952,6 +953,26 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 		}
 		return datasetsJSONReturn;
+	}
+
+	@POST
+	@Path("/{datasetLabel}/cleanCache")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String cleanCache(@PathParam("datasetLabel") String datasetLabel) {
+		logger.debug("IN");
+		try {
+			logger.debug("get dataset with label " + datasetLabel);
+			IDataSet dataSet = getDatasetManagementAPI().getDataSet(datasetLabel);
+			ICache cache = SpagoBICacheManager.getCache();
+			logger.debug("Delete from cache dataset references with signature " + dataSet.getSignature());
+			cache.delete(dataSet.getSignature());
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occurred while cleaning cache for dataset with label "
+					+ datasetLabel, t);
+		} finally {
+			logger.debug("OUT");
+		}
+		return null;
 	}
 
 }
