@@ -396,6 +396,11 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		Sbi.trace("[MainPanel.onSelectionsWindowCancel]: OUT");
 	}
 
+
+	, onCleanCache: function(){
+		Sbi.storeManager.cleanCache();
+	}
+
 	, onShowAssociationEditorWizard: function(){
 		if (Sbi.storeManager.getStoreIds().length == 0){
 			alert('Per gestire le associazioni è necessario creare prima dei widget!');
@@ -537,6 +542,16 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.addWidget')
 			, scope: this
 			, handler:  this.onAddWidget
+			, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+		 }));
+
+
+		tbItems.push(  new Ext.Button({
+			id: 'cleanCache'
+     		, iconCls: 'icon_clean_cache_widget'
+			, tooltip: LN('sbi.cockpit.mainpanel.btn.cleanCacheWidget')
+			, scope: this
+			, handler:  this.onCleanCache
 			, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
 		 }));
 

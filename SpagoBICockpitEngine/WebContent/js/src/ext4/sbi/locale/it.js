@@ -49,6 +49,10 @@ Sbi.locale.formats = {
 			dateFormat: 'd/m/Y',
     		nullValue: ''
 		},
+		timestamp: {
+			dateFormat: 'd/m/Y H:i:s',
+    		nullValue: ''
+		},
 
 		boolean: {
 			trueSymbol: 'vero',
@@ -195,6 +199,7 @@ Sbi.locale.ln['sbi.cockpit.mainpanel.btn.clearselections'] = 'Cancella selezioni
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.parameters'] = 'Parametri';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.associations'] = 'Associazioni';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.addWidget'] = 'Aggiungi Widget';
+Sbi.locale.ln['sbi.cockpit.mainpanel.btn.cleanCacheWidget'] = 'Pulisci la cache';
 
 //ASSOCIATIONS
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.title'] = 'Editor Associazioni';
@@ -253,3 +258,11 @@ Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingev
 Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description'] = 'Se impostato, il widget si aggiornerà in seguito alle interazioni dell\'utente con gli altri widget. Se stai modificando questa impostazione in un documento esistente, ricordati che è necessario salvare il documento e rieseguirlo per applicare la modifica.';
 Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.label'] = 'Cliccabile';
 Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description'] = 'Se impostato, si potrà interagire direttamente con il widget cliccando sui suoi elementi. Se stai modificando questa impostazione in un documento esistente, ricordati che è necessario salvare il documento e rieseguirlo per applicare la modifica.';
+
+//===================================================================
+//sbi.cockpit.storeManager
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.storeManager.errorInCleaningCache'] = 'Errore nella pulizia della cache';
+Sbi.locale.ln['sbi.cockpit.storeManager.cacheCleaned'] = 'Cache pulita';
+Sbi.locale.ln['sbi.cockpit.storeManager.noDatastoreToClean'] = 'Nessun datasource nel cockpit';
+

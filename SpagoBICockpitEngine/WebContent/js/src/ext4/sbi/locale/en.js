@@ -48,7 +48,11 @@ Sbi.locale.formats = {
 		},
 
 		date: {
-			dateFormat: 'm/Y/d',
+			dateFormat: 'm/d/Y',
+    		nullValue: ''
+		},
+		timestamp: {
+			dateFormat: 'm/d/Y H:i:s',
     		nullValue: ''
 		},
 
@@ -196,6 +200,7 @@ Sbi.locale.ln['sbi.cockpit.mainpanel.btn.clearselections'] = 'Clear selections';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.parameters'] = 'Parameters';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.associations'] = 'Associations';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.addWidget'] = 'Add Widget';
+Sbi.locale.ln['sbi.cockpit.mainpanel.btn.cleanCacheWidget'] = 'Clean Cache';
 
 
 //ASSOCIATIONS
@@ -254,3 +259,11 @@ Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingev
 Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description'] = 'If checked, the widget will update on user interactions with other widgets. Be aware that, if you change this setting on an existing document, you need to save it and re-execute it in order to apply changes.';
 Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.label'] = 'Clickable';
 Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description'] = 'If checked, you\'ll be able to interact with the widget directly by clicking on its items. Be aware that, if you change this setting on an existing document, you need to save it and re-execute it in order to apply changes.';
+
+//===================================================================
+//sbi.cockpit.storeManager
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.storeManager.errorInCleaningCache'] = 'Error in cleaning cache';
+Sbi.locale.ln['sbi.cockpit.storeManager.cacheCleaned'] = 'Cache cleaned';
+Sbi.locale.ln['sbi.cockpit.storeManager.noDatastoreToClean'] = 'No datasource in cockpit';
+

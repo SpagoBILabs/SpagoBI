@@ -1712,6 +1712,37 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
         return target;
     }
+    , cleanCache : function(){
+    	// ids of data store
+    	var ids  = this.getStoreIds();
+
+    	if(ids.length == 0){
+    		Sbi.exception.ExceptionHandler.showWarningMessage(LN("sbi.cockpit.storeManager.noDatastoreToClean"), "Warning");
+    	}
+    	else {
+
+    	var params = {datasetLabels: ids};
+
+    	Ext.Ajax.request({
+		    url: Sbi.config.serviceReg.getServiceUrl('cleanCache', {
+				pathParams: params
+			}),
+		    method: 'DELETE',
+		    params: {
+		       requestParam: 'notInRequestBody'
+		    },
+		    success : function(){
+				Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.cockpit.storeManager.cacheCleaned'), 'Info');
+		    },
+			failure: function(){
+				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.cockpit.storeManager.errorInCleaningCache'), 'Service Error');
+				},
+			scope: this
+		});
+
+    	}
+    }
+
 
 });
 

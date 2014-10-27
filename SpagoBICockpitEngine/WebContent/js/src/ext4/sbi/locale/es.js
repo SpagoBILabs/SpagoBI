@@ -48,7 +48,11 @@ Sbi.locale.formats = {
 		},
 
 		date: {
-			dateFormat: 'm/Y/d',
+			dateFormat: 'm/d/Y',
+    		nullValue: ''
+		},
+		timestamp: {
+			dateFormat: 'm/d/Y H:i:s',
     		nullValue: ''
 		},
 
@@ -197,6 +201,7 @@ Sbi.locale.ln['sbi.cockpit.mainpanel.btn.clearselections'] = 'Clear selections';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.parameters'] = 'Parameters';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.associations'] = 'Associations';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.addWidget'] = 'Add Widget';
+Sbi.locale.ln['sbi.cockpit.mainpanel.btn.cleanCacheWidget'] = 'Clean Cache';
 
 
 //ASSOCIATIONS
@@ -246,3 +251,10 @@ Sbi.locale.ln['sbi.cockpit.window.toolbar.editor'] = 'Edit';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.refresh'] = 'Refresh';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.clone'] = 'Clone';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.cacheDate'] = 'Data updated at: ';
+
+//===================================================================
+//sbi.cockpit.storeManager
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.storeManager.errorInCleaningCache'] = 'Error in cleaning cache';
+Sbi.locale.ln['sbi.cockpit.storeManager.cacheCleaned'] = 'Cache cleaned';
+Sbi.locale.ln['sbi.cockpit.storeManager.noDatastoreToClean'] = 'No datasource in cockpit';
