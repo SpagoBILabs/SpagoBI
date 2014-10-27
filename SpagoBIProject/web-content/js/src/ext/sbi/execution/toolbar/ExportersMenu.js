@@ -665,13 +665,16 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 		isExtChart = false;
 		var urlExporter = this.getExportationUrl(format, 'DOCUMENT_COMPOSITE');	
 		
-		window.open(urlExporter,'exportWindow','resizable=1,height=650,width=800');
+		//window.open(urlExporter,'exportWindow','resizable=1,height=650,width=800');
 
 		if (isHighchart || isExtChart){
+			window.open(null,'exportWindow','resizable=1,height=650,width=800');
 			highChartForm.action = urlExporter;
 			//form.target = '_blank'; // result into a new browser tab
 			highChartForm.target = 'exportWindow'; // result into a popup
 			highChartForm.submit();
+		} else {
+			window.open(urlExporter,'exportWindow','resizable=1,height=650,width=800');
 		}
 		
 		Ext.DomHelper.useDom = false; //reset configuration for dom management

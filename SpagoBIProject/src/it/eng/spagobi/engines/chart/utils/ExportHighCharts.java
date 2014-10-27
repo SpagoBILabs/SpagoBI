@@ -60,9 +60,9 @@ public class ExportHighCharts {
 
 	public static void transformSVGIntoPDF(InputStream inputStream, OutputStream outputStream) throws IOException, DocumentException {
 
-		Rectangle pageSize = PageSize.A4.rotate();
+		Rectangle pageSize = PageSize.A4;
 		Document document = new Document(pageSize);
-		int orientation = PageFormat.LANDSCAPE;
+		int orientation = PageFormat.PORTRAIT;
 		try {
 			PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 			document.open();
