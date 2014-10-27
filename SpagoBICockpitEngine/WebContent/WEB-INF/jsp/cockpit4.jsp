@@ -219,6 +219,13 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			, method: 'POST'
 		}, 'spagobiServiceConf');
 		
+	    Sbi.config.serviceReg.registerService('cleanCache', {
+	            name: 'cleanCache'
+	            , description: 'clean the cache of used datasets'
+	            , resourcePath: 'cache/{datasetLabels}/cleanCache'
+	            , method: 'DELETE'
+	        }, 'spagobiServiceConf');
+		
 		Sbi.config.serviceReg.registerService('loadJoinedDataSetStore', {
 			name: 'loadJoinedDataSetStore'
 			, description: 'Load the store of the specified joined dataset'

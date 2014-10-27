@@ -159,7 +159,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			else{
 				buildTitle += LN('sbi.cockpit.window.toolbar.cacheDate');
 			}
-			buildTitle += this.cacheDate;
+
+			var dateObjF =  Sbi.locale.formats['timestamp'].dateFormat;
+			var dateTs =Sbi.commons.Format.date(this.cacheDate, dateObjF);
+
+			buildTitle += dateTs;
+
 		}
 
 		this.setTitle(buildTitle);
