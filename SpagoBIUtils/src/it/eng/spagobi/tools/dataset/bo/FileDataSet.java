@@ -22,157 +22,144 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 /**
- * @authors
- *  Angelo Bernabei
- *         angelo.bernabei@eng.it
- *  Giulio Gavardi
- *         giulio.gavardi@eng.it
- *  Andrea Gioia
- *         andrea.gioia@eng.it
- *  Davide Zerbetto
- *         davide.zerbetto@eng.it
- *         
+ * @authors Angelo Bernabei angelo.bernabei@eng.it Giulio Gavardi giulio.gavardi@eng.it Andrea Gioia andrea.gioia@eng.it Davide Zerbetto davide.zerbetto@eng.it
+ * 
  */
-public class FileDataSet extends ConfigurableDataSet{
-    
+public class FileDataSet extends ConfigurableDataSet {
+
 	public static String DS_TYPE = "SbiFileDataSet";
 	public static final String FILE_NAME = "fileName";
 	public static final String FILE_TYPE = "fileType";
 	public static final String RESOURCE_PATH = "resourcePath";
 
 	public String fileType;
-	
-	public boolean useTempFile = false; //if true we use a file in resources\dataset\files\temp for reading
-	
+
+	public boolean useTempFile = false; // if true we use a file in resources\dataset\files\temp for reading
+
 	private static transient Logger logger = Logger.getLogger(FileDataSet.class);
-    
-    /**
-     * Instantiates a new empty file data set.
-     */
-    public FileDataSet(){
-    	super();
-    }
-    
-    public FileDataSet( SpagoBiDataSet dataSetConfig ) {
-    	super(dataSetConfig);
-    	
-    	logger.debug("IN");
-    	try{
+
+	/**
+	 * Instantiates a new empty file data set.
+	 */
+	public FileDataSet() {
+		super();
+	}
+
+	public FileDataSet(SpagoBiDataSet dataSetConfig) {
+		super(dataSetConfig);
+
+		logger.debug("IN");
+		try {
 			// JSONObject jsonConf =
 			// ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
-			String config = JSONUtils.escapeJsonString(dataSetConfig
-					.getConfiguration());
+			String config = JSONUtils.escapeJsonString(dataSetConfig.getConfiguration());
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
-			String fileName = (jsonConf.get(FILE_NAME) != null) ? jsonConf.get(
-					FILE_NAME).toString() : "";
+			String fileName = (jsonConf.get(FILE_NAME) != null) ? jsonConf.get(FILE_NAME).toString() : "";
 			if (fileName == null || fileName.length() == 0) {
-				throw new IllegalArgumentException(
-						"fileName member of SpagoBiDataSet object parameter cannot be null or empty"
-								+ "while creating a FileDataSet. If you whant to create an empty FileDataSet use the proper constructor.");
+				throw new IllegalArgumentException("fileName member of SpagoBiDataSet object parameter cannot be null or empty"
+						+ "while creating a FileDataSet. If you whant to create an empty FileDataSet use the proper constructor.");
 			}
-			this.setFileName((jsonConf.get(FILE_NAME) != null) ? jsonConf.get(
-					FILE_NAME).toString() : "");
+			this.setFileName((jsonConf.get(FILE_NAME) != null) ? jsonConf.get(FILE_NAME).toString() : "");
 			logger.info("File name: " + fileName);
-			
-			this.setResourcePath( StringUtilities.isNotEmpty(jsonConf.optString(RESOURCE_PATH)) 
-					? jsonConf.optString(RESOURCE_PATH) : "");
-			logger.info("Resource path: " + this.getResourcePath() );
-			if(this.dataProxy != null) dataProxy.setResPath(this.getResourcePath());
-		}catch (Exception e){
+
+			this.setResourcePath(StringUtilities.isNotEmpty(jsonConf.optString(RESOURCE_PATH)) ? jsonConf.optString(RESOURCE_PATH) : "");
+			logger.info("Resource path: " + this.getResourcePath());
+			if (this.dataProxy != null)
+				dataProxy.setResPath(this.getResourcePath());
+		} catch (Exception e) {
 			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
-    	//setFileName(  dataSetConfig.getFileName() );
-    	
-    	logger.debug("OUT");    	
-    }
-     
-	
-	public SpagoBiDataSet toSpagoBiDataSet( ) {
+		// setFileName( dataSetConfig.getFileName() );
+
+		logger.debug("OUT");
+	}
+
+	@Override
+	public SpagoBiDataSet toSpagoBiDataSet() {
 		SpagoBiDataSet sbd;
-		
+
 		sbd = super.toSpagoBiDataSet();
-		
-		sbd.setType( DS_TYPE );
+
+		sbd.setType(DS_TYPE);
 		return sbd;
 	}
-	
+
 	/**
 	 * try to guess the proper dataReader to use depending on the file extension
 	 * 
-	 * @param fileName the target filename
+	 * @param fileName
+	 *            the target filename
 	 */
 	public void setDataReader(String fileName) {
 		JSONObject jsonConf = ObjectUtils.toJSONObject(this.getConfiguration());
-		String fileExtension = fileName.lastIndexOf('.') > 0 ? fileName
-				.substring(fileName.lastIndexOf('.') + 1) : null;
-		logger.debug("File extension: [" + fileExtension +"]");
+		String fileExtension = fileName.lastIndexOf('.') > 0 ? fileName.substring(fileName.lastIndexOf('.') + 1) : null;
+		logger.debug("File extension: [" + fileExtension + "]");
 		String fileType = this.getFileType();
-		
-		if ((fileType != null) && (!fileType.isEmpty())){
-			logger.debug("File type is: [" + fileType +"]");
+
+		if ((fileType != null) && (!fileType.isEmpty())) {
+			logger.debug("File type is: [" + fileType + "]");
 		} else {
-			logger.debug("No file type specified, using file extension as file type: [" + fileExtension +"]");
+			logger.debug("No file type specified, using file extension as file type: [" + fileExtension + "]");
 			fileType = fileExtension;
 		}
 
-		 
-		if("CSV".equalsIgnoreCase( fileType )) {
+		if ("CSV".equalsIgnoreCase(fileType)) {
 			logger.info("File format: [CSV]");
-			//setDataReader( new CsvDataReader() );
-			setDataReader( new FileDatasetCsvDataReader(jsonConf));
-		} 
-		else if ("XLS".equalsIgnoreCase( fileType )){
+			// setDataReader( new CsvDataReader() );
+			setDataReader(new FileDatasetCsvDataReader(jsonConf));
+		} else if ("XLS".equalsIgnoreCase(fileType)) {
 			logger.info("File format: [XLS Office 2003]");
-			setDataReader( new FileDatasetXlsDataReader(jsonConf) );
-		}		
-//		else if ("xml".equalsIgnoreCase( fileExtension ) || "txt".equalsIgnoreCase( fileExtension )) {
-//			logger.info("File format: [XML]");
-//			setDataReader( new XmlDataReader() );
-//		} 
-		
+			setDataReader(new FileDatasetXlsDataReader(jsonConf));
+		}
+		// else if ("xml".equalsIgnoreCase( fileExtension ) || "txt".equalsIgnoreCase( fileExtension )) {
+		// logger.info("File format: [XML]");
+		// setDataReader( new XmlDataReader() );
+		// }
+
 		else {
-			throw new  IllegalArgumentException("[" + fileExtension+ "] is not a supported file type");
+			throw new IllegalArgumentException("[" + fileExtension + "] is not a supported file type");
 		}
 	}
-	
+
+	@Override
 	public FileDataProxy getDataProxy() {
 		IDataProxy dataProxy;
-		
+
 		dataProxy = super.getDataProxy();
-		
-		if(dataProxy == null) {
-			setDataProxy( new FileDataProxy(this.getResourcePath()) );
+
+		if (dataProxy == null) {
+			setDataProxy(new FileDataProxy(this.getResourcePath()));
 			dataProxy = getDataProxy();
-			if (useTempFile){
-				if (dataProxy instanceof FileDataProxy){
-					((FileDataProxy)dataProxy).setUseTempFile(true);
+			if (useTempFile) {
+				if (dataProxy instanceof FileDataProxy) {
+					((FileDataProxy) dataProxy).setUseTempFile(true);
 
 				}
 			}
 		}
-		
-		if(!(dataProxy instanceof  FileDataProxy)) throw new RuntimeException("DataProxy cannot be of type [" + 
-				dataProxy.getClass().getName() + "] in FileDataSet");
-		
-		return (FileDataProxy)dataProxy;
+
+		if (!(dataProxy instanceof FileDataProxy))
+			throw new RuntimeException("DataProxy cannot be of type [" + dataProxy.getClass().getName() + "] in FileDataSet");
+
+		return (FileDataProxy) dataProxy;
 	}
-	
-	public String getFileName() {		
-		return getDataProxy().getFileName();		
+
+	public String getFileName() {
+		return getDataProxy().getFileName();
 	}
-	
+
 	public void setFileName(String fileName) {
 		setFileName(fileName, true);
 	}
-	
+
 	public void setFileName(String fileName, boolean updateFileFormat) {
-		if(fileName == null || fileName.length() == 0) {
-			throw new  IllegalArgumentException("fileName argument cannot be null or an empty string");
+		if (fileName == null || fileName.length() == 0) {
+			throw new IllegalArgumentException("fileName argument cannot be null or an empty string");
 		}
 		getDataProxy().setFileName(fileName);
-		
-		if( updateFileFormat ) {
-			try{	
+
+		if (updateFileFormat) {
+			try {
 				setDataReader(fileName);
 			} catch (Exception e) {
 				throw new RuntimeException("Missing right exstension", e);
@@ -186,8 +173,6 @@ public class FileDataSet extends ConfigurableDataSet{
 	public String getFileType() {
 		return fileType;
 	}
-	
-	
 
 	@Override
 	public void loadData() {
@@ -200,7 +185,7 @@ public class FileDataSet extends ConfigurableDataSet{
 		try {
 			IMetaData definedMetadata = this.getMetadata();
 			int count = metadata.getFieldCount();
-			for (int i = 0 ; i < count ; i++ ) {
+			for (int i = 0; i < count; i++) {
 				IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
 				String name = fieldMetadata.getName();
 				int index = definedMetadata.getFieldIndex(name);
@@ -208,25 +193,26 @@ public class FileDataSet extends ConfigurableDataSet{
 					IFieldMetaData aFieldMetaData = definedMetadata.getFieldMeta(index);
 					fieldMetadata.setFieldType(aFieldMetaData.getFieldType());
 				}
-				
+
 			}
 		} catch (Exception e) {
 			logger.error("Cannot adjust metadata", e);
 		}
-		
-		
-		
+
 	}
 
 	/**
-	 * @param fileType the fileType to set
+	 * @param fileType
+	 *            the fileType to set
 	 */
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
 	}
-	
+
+	@Override
 	public String getSignature() {
-		return this.getDataProxy().getMD5Checksum();
+		// return this.getDataProxy().getMD5Checksum();
+		return this.getDataProxy().getFileName();
 	}
 
 	/**
@@ -237,7 +223,8 @@ public class FileDataSet extends ConfigurableDataSet{
 	}
 
 	/**
-	 * @param useTempFile the useTempFile to set
+	 * @param useTempFile
+	 *            the useTempFile to set
 	 */
 	public void setUseTempFile(boolean useTempFile) {
 		this.useTempFile = useTempFile;
@@ -247,7 +234,5 @@ public class FileDataSet extends ConfigurableDataSet{
 	public IDataSource getDataSource() {
 		return null;
 	}
-	
-	
-	
+
 }
