@@ -109,10 +109,10 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
 //    	if((this.bbar == undefined || this.bbar==null) && this.pagingToolbar){
 //    		this.bbar = this.pagingToolbar;
 //    	}
-    	if(this.bbar!=undefined && this.bbar!=null){
+//    	if(this.bbar!=undefined && this.bbar!=null){
     		this.bbar.bindStore(this.store);
     		this.bbar.doLayout();
-    	}
+//    	}
     	this.reconfigure(this.store, columns);
     }
 
