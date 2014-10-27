@@ -43,6 +43,7 @@ public class JSONDataWriter implements IDataWriter {
 
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
 	public static final String METADATA = "metaData";
@@ -193,8 +194,8 @@ public class JSONDataWriter implements IDataWriter {
 			result = new JSONObject();
 
 			if (dataStore.getCacheDate() != null) {
-				SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-				String date = DATE_FORMAT.format(dataStore.getCacheDate());
+				// metadata.put("cacheDate", dataStore.getCacheDate());
+				String date = CACHE_TIMESTAMP_FORMATTER.format(dataStore.getCacheDate());
 				metadata.put("cacheDate", date);
 			}
 
