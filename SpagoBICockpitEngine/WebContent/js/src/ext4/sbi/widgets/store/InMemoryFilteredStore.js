@@ -130,6 +130,14 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 
 	}
 
+	,
+	loadData : function( data ) {
+		delete this.inMemoryData;
+		this.removeAll();
+		Sbi.widgets.store.InMemoryFilteredStore.superclass.loadData.call(this, data);
+		this.fireEvent("load");
+	}
+
 	/**
 	 * Pages the in memory data.
      * @private
