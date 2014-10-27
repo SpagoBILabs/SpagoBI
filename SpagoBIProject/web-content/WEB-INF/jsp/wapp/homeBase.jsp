@@ -27,7 +27,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%!private static transient Logger logger = Logger.getLogger("it.eng.spagobi.home_jsp");%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
-<%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>
     
 
 <%
