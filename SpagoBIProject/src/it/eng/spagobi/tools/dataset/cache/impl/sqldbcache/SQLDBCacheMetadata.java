@@ -18,20 +18,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBase;
 import it.eng.spagobi.utilities.database.IDataBase;
 
@@ -44,32 +38,33 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
- *
+ * 
  */
 public class SQLDBCacheMetadata implements ICacheMetadata {
-	
-	private LinkedHashMap<String, CacheItem> cacheRegistry = new LinkedHashMap<String, CacheItem>();	
-	
+
+	private LinkedHashMap<String, CacheItem> cacheRegistry = new LinkedHashMap<String, CacheItem>();
+
+	private final LinkedHashMap<String, List<String>> datasetToJoinedMap = new LinkedHashMap<String, List<String>>();
+
 	SQLDBCacheConfiguration cacheConfiguration;
 
 	private BigDecimal totalMemory;
-	//private BigDecimal availableMemory ;
+	// private BigDecimal availableMemory ;
 
 	private boolean isActiveCleanAction = false;
 	private Integer cachePercentageToClean;
-	
-	private Map<String, Integer> columnSize =  new HashMap<String, Integer>();
-	
-	private enum FieldType {ATTRIBUTE, MEASURE}
-	
+
+	private final Map<String, Integer> columnSize = new HashMap<String, Integer>();
+
+	private enum FieldType {
+		ATTRIBUTE, MEASURE
+	}
+
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
@@ -83,100 +78,102 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public static final String DIALECT_DB2 = "DB2";
 	public static final String DIALECT_INGRES = "Ingres";
 	public static final String DIALECT_TERADATA = "Teradata";
-	
+
 	static private Logger logger = Logger.getLogger(SQLDBCacheMetadata.class);
 
-	public SQLDBCacheMetadata(SQLDBCacheConfiguration cacheConfiguration){
+	public SQLDBCacheMetadata(SQLDBCacheConfiguration cacheConfiguration) {
 		this.cacheConfiguration = cacheConfiguration;
-		if (this.cacheConfiguration != null){
+		if (this.cacheConfiguration != null) {
 			totalMemory = this.cacheConfiguration.getCacheSpaceAvailable();
 			cachePercentageToClean = this.cacheConfiguration.getCachePercentageToClean();
 		}
-		
+
 		String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
-		if(StringUtilities.isEmpty(tableNamePrefix)) {
+		if (StringUtilities.isEmpty(tableNamePrefix)) {
 			throw new CacheException("An unexpected error occured while initializing cache metadata: SPAGOBI.CACHE.NAMEPREFIX cannot be empty");
 		}
-		
-		if (totalMemory != null && cachePercentageToClean != null ) {
+
+		if (totalMemory != null && cachePercentageToClean != null) {
 			isActiveCleanAction = true;
 		}
 	}
-	
+
 	public BigDecimal getTotalMemory() {
 		logger.debug("Total memory is equal to [" + totalMemory + "]");
 		return totalMemory;
 	}
-	
+
 	/**
 	 * Returns the number of bytes used by the table already cached (approximate)
 	 */
 	public BigDecimal getUsedMemory() {
-		IDataBase dataBase = DataBase.getDataBase( cacheConfiguration.getCacheDataSource() );
+		IDataBase dataBase = DataBase.getDataBase(cacheConfiguration.getCacheDataSource());
 		BigDecimal usedMemory = dataBase.getUsedMemorySize(cacheConfiguration.getSchema(), cacheConfiguration.getTableNamePrefix());
 		logger.debug("Used memory is equal to [" + usedMemory + "]");
 		return usedMemory;
 	}
+
 	/**
 	 * Returns the number of bytes available in the cache (approximate)
 	 */
-	public BigDecimal getAvailableMemory(){
+	public BigDecimal getAvailableMemory() {
 		BigDecimal availableMemory = getTotalMemory();
 		BigDecimal usedMemory = getUsedMemory();
-		if (usedMemory != null) availableMemory = availableMemory.subtract(usedMemory);
+		if (usedMemory != null)
+			availableMemory = availableMemory.subtract(usedMemory);
 		logger.debug("Available memory is equal to [" + availableMemory + "]");
 		return availableMemory;
-	}	
-	
+	}
+
 	/**
 	 * @return the number of bytes used by the resultSet (approximate)
 	 */
-	public BigDecimal getRequiredMemory(IDataStore store){
+	public BigDecimal getRequiredMemory(IDataStore store) {
 		return DataStoreStatistics.extimateMemorySize(store, cacheConfiguration.getObjectsTypeDimension());
 	}
-	
-	public 	Integer getAvailableMemoryAsPercentage(){
+
+	public Integer getAvailableMemoryAsPercentage() {
 		Integer toReturn = 0;
 		BigDecimal spaceAvailable = getAvailableMemory();
-		toReturn = Integer.valueOf(((spaceAvailable.multiply(new BigDecimal(100)).divide(getTotalMemory(),RoundingMode.HALF_UP)).intValue()));
+		toReturn = Integer.valueOf(((spaceAvailable.multiply(new BigDecimal(100)).divide(getTotalMemory(), RoundingMode.HALF_UP)).intValue()));
 		return toReturn;
 	}
 
-	public Integer getNumberOfObjects(){		
+	public Integer getNumberOfObjects() {
 		return cacheRegistry.size();
 	}
 
-	public boolean isCleaningEnabled(){ 
+	public boolean isCleaningEnabled() {
 		return isActiveCleanAction;
-	} 
-	
-	public Integer getCleaningQuota(){
+	}
+
+	public Integer getCleaningQuota() {
 		return cachePercentageToClean;
 	}
-	
+
 	public boolean isAvailableMemoryGreaterThen(BigDecimal requiredMemory) {
 		BigDecimal availableMemory = getAvailableMemory();
-		if (availableMemory.compareTo(requiredMemory) <= 0){
+		if (availableMemory.compareTo(requiredMemory) <= 0) {
 			return false;
 		} else {
 			return true;
 		}
-	}	
-	
+	}
+
 	public boolean hasEnoughMemoryForStore(IDataStore store) {
 		BigDecimal availableMemory = getAvailableMemory();
 		BigDecimal requiredMemory = getRequiredMemory(store);
-		if (availableMemory.compareTo(requiredMemory) <= 0){
+		if (availableMemory.compareTo(requiredMemory) <= 0) {
 			return false;
 		} else {
 			return true;
 		}
-	}	
-	
+	}
+
 	private Map<String, Integer> getColumnSize() {
 		return columnSize;
 	}
-	
+
 	public LinkedHashMap<String, CacheItem> getCacheRegistry() {
 		return cacheRegistry;
 	}
@@ -185,87 +182,120 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		this.cacheRegistry = cacheRegistry;
 	}
 
-
 	public CacheItem addCacheItem(String resultsetSignature, String tableName, IDataStore resultset) {
 		CacheItem item = new CacheItem();
 		item.setName(tableName);
 		item.setTable(tableName);
-		item.setSignature(resultsetSignature);				
+		item.setSignature(resultsetSignature);
 		item.setDimension(getRequiredMemory(resultset));
 		item.setCreationDate(new Date());
-		getCacheRegistry().put(tableName,item);		
-		
-		logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature() +
-				" \n Dimension: "+ item.getDimension() +" bytes (approximately)  ]");
-		
+		getCacheRegistry().put(tableName, item);
+
+		logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature() + " \n Dimension: " + item.getDimension()
+				+ " bytes (approximately)  ]");
+
 		return item;
 	}
 
-
 	public void removeCacheItem(String tableName) {
-		getCacheRegistry().remove(tableName);		
+		getCacheRegistry().remove(tableName);
 	}
-
 
 	public void removeAllCacheItems() {
 		Iterator it = getCacheRegistry().entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
-	        String key = entry.getKey();
-	        this.removeCacheItem(key);
-	    }		
+		while (it.hasNext()) {
+			Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
+			String key = entry.getKey();
+			this.removeCacheItem(key);
+		}
 	}
 
 	public CacheItem getCacheItemByResultSetTableName(String tableName) {
 		CacheItem toReturn = null;
 		Iterator it = getCacheRegistry().entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();	
-	        CacheItem item =  entry.getValue();
-	        if (item.getTable().equalsIgnoreCase(tableName)){
-	        	toReturn = item;
-	        	break;
-	        }
-	    }
+		while (it.hasNext()) {
+			Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
+			CacheItem item = entry.getValue();
+			if (item.getTable().equalsIgnoreCase(tableName)) {
+				toReturn = item;
+				break;
+			}
+		}
 		return toReturn;
 	}
 
-	public CacheItem getCacheItem(String resultSetSignature){
+	public CacheItem getCacheItem(String resultSetSignature) {
 		CacheItem toReturn = null;
 		Iterator it = getCacheRegistry().entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();	
-	        CacheItem item =  entry.getValue();
-	        if (item.getSignature().equalsIgnoreCase(resultSetSignature)){
-	        	toReturn = item;
-	        	break;
-	        }
-	    }
+		while (it.hasNext()) {
+			Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
+			CacheItem item = entry.getValue();
+			if (item.getSignature().equalsIgnoreCase(resultSetSignature)) {
+				toReturn = item;
+				break;
+			}
+		}
 		return toReturn;
 	}
 
 	public boolean containsCacheItemByTableName(String tableName) {
 		return getCacheItemByResultSetTableName(tableName) != null;
 	}
-	
+
 	public boolean containsCacheItem(String resultSetSignature) {
 		return getCacheItem(resultSetSignature) != null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheMetadata#getSignatures()
 	 */
 	public List<String> getSignatures() {
 		List<String> signatures = new ArrayList<String>();
 		Iterator it = getCacheRegistry().entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
-	        signatures.add( entry.getValue().getSignature() );
-	    }
-	    return signatures;
+		while (it.hasNext()) {
+			Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
+			signatures.add(entry.getValue().getSignature());
+		}
+		return signatures;
 	}
-	
+
 	public String getTableNamePrefix() {
 		return cacheConfiguration.getTableNamePrefix().toUpperCase();
+	}
+
+	public LinkedHashMap<String, List<String>> getDatasetToJoinedMap() {
+		return datasetToJoinedMap;
+	}
+
+	public List<String> getJoinedsReferringDataset(String datasetSignature) {
+		logger.debug("IN");
+		logger.debug("Search if dataset with signature " + datasetSignature + " has joined dataset referring to it");
+		List<String> joineds = datasetToJoinedMap.get(datasetSignature);
+		logger.debug("OUT");
+		return joineds;
+	}
+
+	public void addJoinedDatasetReference(String signature, String joinedSignature) {
+		logger.debug("IN");
+
+		if (datasetToJoinedMap.containsKey(signature) && datasetToJoinedMap.get(signature) != null) {
+			List joineds = datasetToJoinedMap.get(signature);
+			if (!joineds.contains(joinedSignature)) {
+				joineds.add(joinedSignature);
+				logger.debug("added information that " + joinedSignature + " refers " + signature);
+			} else {
+				logger.debug("Already know that that " + datasetToJoinedMap + " refers " + signature);
+			}
+			datasetToJoinedMap.put(signature, joineds);
+		} else {
+			List<String> joineds = new ArrayList<String>();
+			joineds.add(joinedSignature);
+			datasetToJoinedMap.put(signature, joineds);
+			logger.debug("added information that " + joinedSignature + " refers " + signature);
+		}
+		logger.debug("OUT");
+
 	}
 }

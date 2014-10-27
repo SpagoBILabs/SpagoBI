@@ -11,20 +11,23 @@
  */
 package it.eng.spagobi.api;
 
-import java.util.List;
-
-import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheItem;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -41,97 +44,138 @@ import org.json.JSONObject;
  */
 @Path("/1.0/cache")
 public class CacheResource extends AbstractSpagoBIResource {
-	
+
 	static private Logger logger = Logger.getLogger(CacheResource.class);
-	
+
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getCache() {
-		
+
 		logger.debug("IN");
 		try {
 			ICache cache = SpagoBICacheManager.getCache();
 			return serializeCache(cache);
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-		} finally {			
+		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
-	
+
 	@DELETE
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String deleteCache() {
-		
+
 		logger.debug("IN");
 		try {
 			ICache cache = SpagoBICacheManager.getCache();
 			cache.deleteAll();
 			return serializeCache(cache);
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-		} finally {			
+		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
-	
+
+	/**
+	 * datasetLabels is a string containing all dataset labels divided by ','
+	 * 
+	 * @param datasetLabelsPar
+	 */
+
+	@DELETE
+	@Path("/{datasetLabels}/cleanCache")
+	public void deleteCacheByDatasetLabels(@PathParam("datasetLabels") String datasetLabelsPar) {
+		logger.debug("IN");
+
+		logger.debug("clean cache for dataset with labels " + datasetLabelsPar);
+
+		UserProfile profile = this.getIOManager().getUserProfile();
+
+		StringTokenizer st = new StringTokenizer(datasetLabelsPar, ",");
+
+		Vector<String> datasetLabels = new Vector<String>();
+		while (st.hasMoreElements()) {
+			datasetLabels.add(st.nextElement().toString());
+		}
+
+		for (Iterator iterator = datasetLabels.iterator(); iterator.hasNext();) {
+			String label = (String) iterator.next();
+			try {
+				IDataSet dataSet = (new DatasetManagementAPI(profile)).getDataSet(label);
+				ICache cache = SpagoBICacheManager.getCache();
+				logger.debug("Delete from cache dataset references with signature " + dataSet.getSignature());
+				cache.deleteDatasetAndJoined(dataSet.getSignature());
+			} catch (Throwable t) {
+				throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occurred while cleaning cache for dataset with label "
+						+ label, t);
+			}
+		}
+		logger.debug("OUT");
+		return;
+	}
+
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String updateCache(@QueryParam("enabled") Boolean enabled) {
-		
+
 		logger.debug("IN");
 		try {
 			ICache cache = SpagoBICacheManager.getCache();
 			cache.deleteAll();
 			cache.enable(enabled);
 			return serializeCache(cache);
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-		} finally {			
+		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
-	
+
 	@GET
 	@Path("/meta")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getCacheMetadata() {
-		
+
 		logger.debug("IN");
 		try {
 			ICache cache = SpagoBICacheManager.getCache();
 			ICacheMetadata cacheMetadata = cache.getMetadata();
 			return serializeCacheMetadata(cacheMetadata);
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-		} finally {			
+		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
-	
-	
-	
+
 	private String serializeCacheMetadata(ICacheMetadata cacheMetadata) {
 		try {
 			JSONArray resultJSON = new JSONArray();
 			List<String> signatures = cacheMetadata.getSignatures();
-			for(String signature: signatures) {
+			for (String signature : signatures) {
 				CacheItem item = cacheMetadata.getCacheItem(signature);
 				JSONObject itemJSON = new JSONObject();
-				if(item.getName() != null) itemJSON.put("name", item.getName());
-				if(item.getSignature() != null) itemJSON.put("signature", item.getSignature());
-				if(item.getTable() != null) itemJSON.put("table", item.getTable());
-				if(item.getDimension() != null) itemJSON.put("dimension", item.getDimension().longValue());
+				if (item.getName() != null)
+					itemJSON.put("name", item.getName());
+				if (item.getSignature() != null)
+					itemJSON.put("signature", item.getSignature());
+				if (item.getTable() != null)
+					itemJSON.put("table", item.getTable());
+				if (item.getDimension() != null)
+					itemJSON.put("dimension", item.getDimension().longValue());
 				resultJSON.put(itemJSON);
 			}
 			return resultJSON.toString();
-		} catch(Throwable t) {
-			throw new RuntimeException("An unexpected error occured while serializing results",  t);
-		}	
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while serializing results", t);
+		}
 	}
+
 	/**
 	 * @param cache
 	 * @return
@@ -147,8 +191,8 @@ public class CacheResource extends AbstractSpagoBIResource {
 			resultJSON.put("cleaningEnabled", cache.getMetadata().isCleaningEnabled());
 			resultJSON.put("cleaningQuota", cache.getMetadata().getCleaningQuota() + "%");
 			return resultJSON.toString();
-		} catch(Throwable t) {
-			throw new RuntimeException("An unexpected error occured while serializing results",  t);
-		}	
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while serializing results", t);
+		}
 	}
 }
