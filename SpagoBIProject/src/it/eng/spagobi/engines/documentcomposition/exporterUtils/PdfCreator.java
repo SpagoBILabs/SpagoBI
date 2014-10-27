@@ -5,13 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.documentcomposition.exporterUtils;
 
-import it.eng.spagobi.commons.utilities.ExecutionProxy;
-
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,12 +25,9 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfReader;
@@ -52,30 +45,31 @@ public class PdfCreator {
 
 	static private Logger logger = Logger.getLogger(PdfCreator.class);
 
-
-	public FileOutputStream createPdfFile(FileOutputStream fileOutputStream, Map<String, DocumentContainer> documentsMap, boolean defaultStyle) throws MalformedURLException, IOException, DocumentException{
+	public FileOutputStream createPdfFile(FileOutputStream fileOutputStream, Map<String, DocumentContainer> documentsMap, boolean defaultStyle)
+			throws MalformedURLException, IOException, DocumentException {
 
 		logger.debug("IN");
 
-		Document document=new Document(PageSize.A4.rotate());
-		Rectangle rect=document.getPageSize();
-		docWidth=rect.getWidth();
-		docHeight=rect.getHeight();
+		Document document = new Document(PageSize.A4.rotate());
+		Rectangle rect = document.getPageSize();
+		docWidth = rect.getWidth();
+		docHeight = rect.getHeight();
 
-		logger.debug("document size width: "+docWidth+ " height: "+docHeight);
+		logger.debug("document size width: " + docWidth + " height: " + docHeight);
 
-		//PdfWriter writer=PdfWriter.getInstance(document,new FileOutputStream("C:/comp/SpagoBIProva.pdf"));
-		PdfWriter writer=PdfWriter.getInstance(document,fileOutputStream);
+		// PdfWriter writer=PdfWriter.getInstance(document,new
+		// FileOutputStream("C:/comp/SpagoBIProva.pdf"));
+		PdfWriter writer = PdfWriter.getInstance(document, fileOutputStream);
 		document.open();
 
-		int documentsNumber=documentsMap.keySet().size();
-		int columnnsNumber=2;
+		int documentsNumber = documentsMap.keySet().size();
+		int columnnsNumber = 2;
 
-		if(defaultStyle==true){
+		if (defaultStyle == true) {
 			logger.debug("use default style");
-			int cellsCounter=0;
+			int cellsCounter = 0;
 
-			PdfPTable table=new PdfPTable(columnnsNumber);
+			PdfPTable table = new PdfPTable(columnnsNumber);
 			table.setWidthPercentage(100);
 
 			for (Iterator iterator = documentsMap.keySet().iterator(); iterator.hasNext();) {
@@ -86,78 +80,80 @@ public class PdfCreator {
 					Image img = null;
 					try {
 						img = Image.getInstance(content);
-						table.addCell(img);	
+						table.addCell(img);
 					} catch (Exception e) {
 						logger.debug("Trying to evaluate response as a PDF file... ");
 						table.addCell("");
-//						try {
-//							PdfReader reader = new PdfReader(content);
-//							PdfImportedPage page = writer.getImportedPage(reader, 1);
-//							writer.addPage(page);
-//							table.addCell("");
-//						} catch (Exception x) {
-//							logger.error("Error in inserting image for document " + label, e);
-//							logger.error("Error in inserting pdf file for document " + label, x);
-//							table.addCell("");
-//						}
+						// try {
+						// PdfReader reader = new PdfReader(content);
+						// PdfImportedPage page = writer.getImportedPage(reader,
+						// 1);
+						// writer.addPage(page);
+						// table.addCell("");
+						// } catch (Exception x) {
+						// logger.error("Error in inserting image for document "
+						// + label, e);
+						// logger.error("Error in inserting pdf file for document "
+						// + label, x);
+						// table.addCell("");
+						// }
 					}
 				}
 				cellsCounter++;
 			}
 
 			// if cell counter is not pair make it pair
-			if(cellsCounter%2!=0){
+			if (cellsCounter % 2 != 0) {
 				table.addCell("");
 			}
 			document.add(table);
 
-		}
-		else
-		{ // ************* NO DEFAULT STYLE *****************
+		} else { // ************* NO DEFAULT STYLE *****************
 			logger.debug("No default style");
 
 			// I want to calculate total height of scaled heights!!
-			//int totalScaledHeight=calculateTotaleScaledHeights(documentsMap, defaultStyle);
+			// int totalScaledHeight=calculateTotaleScaledHeights(documentsMap,
+			// defaultStyle);
 
 			// run on all documents
 			for (Iterator iterator = documentsMap.keySet().iterator(); iterator.hasNext();) {
 				String label = (String) iterator.next();
-				logger.debug("document with label "+label);
+				logger.debug("document with label " + label);
 
-				DocumentContainer docContainer=	documentsMap.get(label);
-				MetadataStyle style=docContainer.getStyle();
-
+				DocumentContainer docContainer = documentsMap.get(label);
+				MetadataStyle style = docContainer.getStyle();
 
 				// one table for each image, set at absolute position
-				PdfPTable table=new PdfPTable(1);
+				PdfPTable table = new PdfPTable(1);
 
-				// width and height specified for the container by style attribute
-				int widthStyle=style.getWidth();
-				int heightStyle=style.getHeight();
-				logger.debug("style for document width: "+widthStyle+ " height: "+heightStyle);
+				// width and height specified for the container by style
+				// attribute
+				int widthStyle = style.getWidth();
+				int heightStyle = style.getHeight();
+				logger.debug("style for document width: " + widthStyle + " height: " + heightStyle);
 
 				// width and height for the table scaled to the document size
-				int tableWidth=calculatePxSize(docWidth, widthStyle, videoWidth);
-				int tableHeight=calculatePxSize(docHeight, heightStyle, videoHeight);
+				int tableWidth = calculatePxSize(docWidth, widthStyle, videoWidth);
+				int tableHeight = calculatePxSize(docHeight, heightStyle, videoHeight);
 
-				logger.debug("table for document width: "+tableWidth+ " height: "+tableHeight);
+				logger.debug("table for document width: " + tableWidth + " height: " + tableHeight);
 
-				// x and y position as specified for the container by the style attribute
-				int yStyle=style.getY();
-				int xStyle=style.getX();
+				// x and y position as specified for the container by the style
+				// attribute
+				int yStyle = style.getY();
+				int xStyle = style.getX();
 				// width and height scaled to the document size
-				int xPos=(calculatePxPos(docWidth, xStyle, videoWidth));
-				int yPos=(int)docHeight-(calculatePxPos(docHeight, yStyle, videoHeight));
-				logger.debug("Table position at x: "+xPos+ " y: "+yPos);
+				int xPos = (calculatePxPos(docWidth, xStyle, videoWidth));
+				int yPos = (int) docHeight - (calculatePxPos(docHeight, yStyle, videoHeight));
+				logger.debug("Table position at x: " + xPos + " y: " + yPos);
 
 				// get the image
-				byte[] content=docContainer.getContent();
-				if(content != null){
+				byte[] content = docContainer.getContent();
+				if (content != null) {
 					Image img = null;
 					try {
 						img = Image.getInstance(content);
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						logger.debug("Trying to evaluate response as a PDF file... ");
 						try {
 							PdfReader reader = new PdfReader(content);
@@ -172,48 +168,48 @@ public class PdfCreator {
 						continue;
 					}
 
-					//if it is a REPORT and has more than one page, too large, you have to resize the image, but how to understand it?
-					// if image size is more than double of the container size cut the first part,otherwise scale it
-					if(docContainer.getDocumentType().equals("REPORT")){
-						boolean cutImageWIdth=isToCutWidth(img, tableWidth);
-						boolean cutImageHeight=isToCutHeight(img, tableWidth);
+					// if it is a REPORT and has more than one page, too large,
+					// you have to resize the image, but how to understand it?
+					// if image size is more than double of the container size
+					// cut the first part,otherwise scale it
+					if (docContainer.getDocumentType().equals("REPORT")) {
+						boolean cutImageWIdth = isToCutWidth(img, tableWidth);
+						boolean cutImageHeight = isToCutHeight(img, tableWidth);
 
-						if(cutImageWIdth==true || cutImageHeight==true){
-							logger.debug("Report will be cut to width "+tableWidth+" and height "+tableHeight);
-							try{
-								img=cutImage(content, cutImageHeight, cutImageWIdth, tableHeight, tableWidth, (int)img.getWidth(), (int)img.getHeight());
-							}catch (Exception e) {
-								logger.error("Error in image cut, cutt will be ignored and image will be drawn anyway ",e);
+						if (cutImageWIdth == true || cutImageHeight == true) {
+							logger.debug("Report will be cut to width " + tableWidth + " and height " + tableHeight);
+							try {
+								img = cutImage(content, cutImageHeight, cutImageWIdth, tableHeight, tableWidth, (int) img.getWidth(), (int) img.getHeight());
+							} catch (Exception e) {
+								logger.error("Error in image cut, cutt will be ignored and image will be drawn anyway ", e);
 							}
 						}
 					}
 
 					// this is percentage to resize
-					// The image must be size within the cell					
-					int percToResize=percentageToResize((int)img.getWidth(), (int)img.getHeight(), tableWidth, tableHeight);
-					logger.debug("image will be scaled of percentage "+percToResize);
+					// The image must be size within the cell
+					int percToResize = percentageToResize((int) img.getWidth(), (int) img.getHeight(), tableWidth, tableHeight);
+					logger.debug("image will be scaled of percentage " + percToResize);
 					img.scalePercent(percToResize);
-					
-					PdfPCell cell= new PdfPCell(img);
+
+					PdfPCell cell = new PdfPCell(img);
 					cell.setNoWrap(true);
 					cell.setFixedHeight(tableHeight);
 					cell.setBorderWidth(0);
 					cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 					cell.setVerticalAlignment(Element.ALIGN_CENTER);
-					table.addCell(cell);			
+					table.addCell(cell);
 
-					//table.setWidthPercentage(tableWidthPerc);
+					// table.setWidthPercentage(tableWidthPerc);
 					table.setTotalWidth(tableWidth);
 					table.setLockedWidth(true);
-				}
-				else{
+				} else {
 					// TODO: setALT!
 				}
 				logger.debug("Add table");
 				table.writeSelectedRows(0, -1, xPos, yPos, writer.getDirectContent());
 				logger.debug("Document added");
 			}
-
 
 		}
 		document.close();
@@ -224,99 +220,87 @@ public class PdfCreator {
 	private float[] getTransformationMatrix(PdfImportedPage page, int xPos, int yPos, int tableWidth, int tableHeight) {
 		float pageWidth = page.getWidth();
 		float pageHeight = page.getHeight();
-		float scaleX = tableWidth/pageWidth;
-		float scaleY = tableHeight/pageHeight;
-		float scale = Math.min(scaleX, scaleY);		
-		//float[] toReturn = {scale, 0f, 0f, scale, xPos, docHeight - tableHeight};
-		float dX = (float) xPos;
+		float scaleX = tableWidth / pageWidth;
+		float scaleY = tableHeight / pageHeight;
+		float scale = Math.min(scaleX, scaleY);
+		// float[] toReturn = {scale, 0f, 0f, scale, xPos, docHeight -
+		// tableHeight};
+		float dX = xPos;
 		float dY = yPos - tableHeight;
-		float[] toReturn = {scale, 0f, 0f, scale, dX, dY};
+		float[] toReturn = { scale, 0f, 0f, scale, dX, dY };
 		return toReturn;
 	}
 
-	int chooseDefaultColumnsNumber(int documentsNumber){
+	int chooseDefaultColumnsNumber(int documentsNumber) {
 
-//		if(documentsNumber<=2)return documentsNumber;
-//		else if(documentsNumber==3 || documentsNumber==4) return 2;
-//		else return 3;
+		// if(documentsNumber<=2)return documentsNumber;
+		// else if(documentsNumber==3 || documentsNumber==4) return 2;
+		// else return 3;
 		return 2;
 
 	}
 
-
-
-
-	int calculatePercentage(float documentSize, int styleSize, int videoSize){
+	int calculatePercentage(float documentSize, int styleSize, int videoSize) {
 
 		// this is x value to object in PDF
-		int value=(styleSize*(int)documentSize)/videoSize;
+		int value = (styleSize * (int) documentSize) / videoSize;
 
 		// get percentage of x within docyment
-		int percentage=(value*100)/(int)documentSize;
+		int percentage = (value * 100) / (int) documentSize;
 		return percentage;
 	}
 
-
-
-	int calculatePxSize(float documentSize, int styleSize, int videoSize){
+	int calculatePxSize(float documentSize, int styleSize, int videoSize) {
 
 		// this is x value to object in PDF
-		int value=(styleSize*(int)documentSize)/videoSize;
+		int value = (styleSize * (int) documentSize) / videoSize;
 		return value;
-//		// get percentage of x within docyment
-//		int percentage=(value*100)/(int)documentSize;
-//		return percentage;
+		// // get percentage of x within docyment
+		// int percentage=(value*100)/(int)documentSize;
+		// return percentage;
 	}
 
-	int calculatePxPos(float documentSize, int styleSize, int videoSize){
+	int calculatePxPos(float documentSize, int styleSize, int videoSize) {
 
 		// this is x value to object in PDF
-		int value=(styleSize*(int)documentSize)/videoSize;
+		int value = (styleSize * (int) documentSize) / videoSize;
 
 		return value;
 	}
-
-
-
 
 	public Integer getVideoHeight() {
 		return videoHeight;
 	}
 
-
-
 	public void setVideoHeight(Integer videoHeight) {
 		this.videoHeight = videoHeight;
 	}
 
-
-
 	public Integer getVideoWidth() {
 		return videoWidth;
 	}
-
-
 
 	public void setVideoWidth(Integer videoWidth) {
 		this.videoWidth = videoWidth;
 	}
 
 	/**
-	 *  called only if not default style
+	 * called only if not default style
+	 * 
 	 * @param documentsMap
 	 */
-	int calculateTotalHeight(Map<String, DocumentContainer> documentsMap, boolean defaultStyle){
+	int calculateTotalHeight(Map<String, DocumentContainer> documentsMap, boolean defaultStyle) {
 		logger.debug("IN");
-		int totalHeight=0;
-		if(defaultStyle==false){
+		int totalHeight = 0;
+		if (defaultStyle == false) {
 			// total height is the maximum top+height revealed!
 			for (Iterator iterator = documentsMap.keySet().iterator(); iterator.hasNext();) {
 				String label = (String) iterator.next();
-				DocumentContainer docContainer=documentsMap.get(label);
-				MetadataStyle style=docContainer.getStyle();
-				int verticalLimit=style.getHeight()+style.getY();
-				if(verticalLimit>totalHeight){
-					totalHeight=verticalLimit;
+				DocumentContainer docContainer = documentsMap.get(label);
+				MetadataStyle style = docContainer.getStyle();
+				int verticalLimit = style.getHeight() + style.getY();
+				if (verticalLimit > totalHeight) {
+					totalHeight = verticalLimit;
 				}
 
 			}
@@ -325,18 +309,18 @@ public class PdfCreator {
 		return totalHeight;
 	}
 
-	int calculateTotalWidth(Map<String, DocumentContainer> documentsMap, boolean defaultStyle){
+	int calculateTotalWidth(Map<String, DocumentContainer> documentsMap, boolean defaultStyle) {
 		logger.debug("IN");
-		int totalWidth=0;
-		if(defaultStyle==false){
+		int totalWidth = 0;
+		if (defaultStyle == false) {
 			// total height is the maximum top+height revealed!
 			for (Iterator iterator = documentsMap.keySet().iterator(); iterator.hasNext();) {
 				String label = (String) iterator.next();
-				DocumentContainer docContainer=documentsMap.get(label);
-				MetadataStyle style=docContainer.getStyle();
-				int horizontalLimit=style.getWidth()+style.getX();
-				if(horizontalLimit>totalWidth){
-					totalWidth=horizontalLimit;
+				DocumentContainer docContainer = documentsMap.get(label);
+				MetadataStyle style = docContainer.getStyle();
+				int horizontalLimit = style.getWidth() + style.getX();
+				if (horizontalLimit > totalWidth) {
+					totalWidth = horizontalLimit;
 				}
 
 			}
@@ -345,71 +329,68 @@ public class PdfCreator {
 		return totalWidth;
 	}
 
-	int calculateTotaleScaledHeights(Map<String, DocumentContainer> documentsMap, boolean defaultStyle){
+	int calculateTotaleScaledHeights(Map<String, DocumentContainer> documentsMap, boolean defaultStyle) {
 		logger.debug("IN");
-		int totalHeight=0;
-		if(defaultStyle==false){
+		int totalHeight = 0;
+		if (defaultStyle == false) {
 			// total height is the maximum top+height revealed!
 			for (Iterator iterator = documentsMap.keySet().iterator(); iterator.hasNext();) {
 				String label = (String) iterator.next();
-				DocumentContainer docContainer=documentsMap.get(label);
-				MetadataStyle style=docContainer.getStyle();
-				int height=style.getHeight()+style.getY();
-				int verticalLimit=calculatePxSize(docHeight, height, videoHeight);
-				if(verticalLimit>totalHeight){
-					totalHeight=verticalLimit;
+				DocumentContainer docContainer = documentsMap.get(label);
+				MetadataStyle style = docContainer.getStyle();
+				int height = style.getHeight() + style.getY();
+				int verticalLimit = calculatePxSize(docHeight, height, videoHeight);
+				if (verticalLimit > totalHeight) {
+					totalHeight = verticalLimit;
 				}
 
 			}
 		}
-		logger.debug("OUT");		
+		logger.debug("OUT");
 		return totalHeight;
 	}
 
-
-	int percentageToResize(int imgWidth, int imgHeight, int tableWidth, int tableHeight){
+	int percentageToResize(int imgWidth, int imgHeight, int tableWidth, int tableHeight) {
 		logger.debug("IN");
-		int perc=100;
-		int percReductionWidth=100;
-		if(imgWidth>tableWidth){
-			percReductionWidth=(tableWidth*100)/imgWidth;
+		int perc = 100;
+		int percReductionWidth = 100;
+		if (imgWidth > tableWidth) {
+			percReductionWidth = (tableWidth * 100) / imgWidth;
 		}
-		int percReductionHeight=100;
-		if(imgHeight>tableHeight){
-			percReductionHeight=(tableHeight*100)/imgHeight;
+		int percReductionHeight = 100;
+		if (imgHeight > tableHeight) {
+			percReductionHeight = (tableHeight * 100) / imgHeight;
 		}
 
-		perc=percReductionHeight<percReductionWidth ? percReductionHeight : percReductionWidth;
+		perc = percReductionHeight < percReductionWidth ? percReductionHeight : percReductionWidth;
 		logger.debug("OUT");
-		return perc;	
+		return perc;
 	}
 
+	// cutImage(content, cutImageHeight, cutImageWIdth, tableHeight,
+	// tableWidth);
 
-	// 					cutImage(content, cutImageHeight, cutImageWIdth, tableHeight, tableWidth);
-
-	Image cutImage(byte[] bytes, boolean cutImageHeight, boolean cutImageWidth, int tableHeight, int tableWidth, int imgWidth, int imgHeight) throws IOException, BadElementException{
+	Image cutImage(byte[] bytes, boolean cutImageHeight, boolean cutImageWidth, int tableHeight, int tableWidth, int imgWidth, int imgHeight)
+			throws IOException, BadElementException {
 		logger.debug("IN");
 
-		BufferedImage image = null; // Read from a file 
-		BufferedImage region = null; 
+		BufferedImage image = null; // Read from a file
+		BufferedImage region = null;
 
+		int pxWidthToCut = (cutImageWidth == true) ? tableWidth : imgWidth;
+		int pxHeightToCut = (cutImageHeight == true) ? tableHeight : imgHeight;
 
-		int pxWidthToCut = (cutImageWidth==true) ? tableWidth : imgWidth;
-		int pxHeightToCut = (cutImageHeight==true) ? tableHeight : imgHeight;
+		InputStream inputStream = new ByteArrayInputStream(bytes);
 
-
-		InputStream inputStream=new ByteArrayInputStream(bytes);
-
-		image = ImageIO.read(inputStream); // Read from an input stream 
-		try{
+		image = ImageIO.read(inputStream); // Read from an input stream
+		try {
 			region = image.getSubimage(0, 0, pxWidthToCut, pxHeightToCut);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		byte[] newBytes=getBytes(region);
+		byte[] newBytes = getBytes(region);
 		Image cutImg = Image.getInstance(newBytes);
-		//ImageIO.write(region,"PNG",new File("C:/nuovaImmagine222.PNG"));
+		// ImageIO.write(region,"PNG",new File("C:/nuovaImmagine222.PNG"));
 		logger.debug("OUT");
 
 		return cutImg;
@@ -421,18 +402,20 @@ public class PdfCreator {
 		return baos.toByteArray();
 	}
 
-
-	boolean isToCutWidth(Image img, int tableWidth){
-		int imgWidth=(int)img.getWidth();
-		if(imgWidth>(4*tableWidth)) return true;
-		else return false;
+	boolean isToCutWidth(Image img, int tableWidth) {
+		int imgWidth = (int) img.getWidth();
+		if (imgWidth > (4 * tableWidth))
+			return true;
+		else
+			return false;
 	}
 
-	boolean isToCutHeight(Image img, int tableHeight){
-		int imgHeight=(int)img.getHeight();
-		if(imgHeight>(4*tableHeight)) return true;
-		else return false;
+	boolean isToCutHeight(Image img, int tableHeight) {
+		int imgHeight = (int) img.getHeight();
+		if (imgHeight > (4 * tableHeight))
+			return true;
+		else
+			return false;
 	}
 
 }
-
