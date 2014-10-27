@@ -147,9 +147,9 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/selection/SelectionWidgetDesigner.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/selection/locale/<%=locale.getLanguage()%>.js'/></script>
 
-
-
-
+<!-- Selection widget  -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/store/InMemoryFilteredStore.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/grid/DynamicGridPanel.js'/></script>
 
 
 

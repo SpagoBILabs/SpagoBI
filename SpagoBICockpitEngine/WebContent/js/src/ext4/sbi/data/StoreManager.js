@@ -1425,7 +1425,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		reader.on('exception', this.onStoreReadException, this);
 		Sbi.trace("[StoreManager.createStore]: reader sucesfully created");
 
-		var store = new Ext.data.Store({
+		var store = new Sbi.widgets.store.InMemoryFilteredStore({
+//		var store = new Ext.data.Store({
 			storeId: storeConf.storeId,
 			storeType: 'sbi',
 			storeConf: storeConf,

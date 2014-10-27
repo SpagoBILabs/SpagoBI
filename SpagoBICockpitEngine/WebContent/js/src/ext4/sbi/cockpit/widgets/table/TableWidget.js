@@ -439,8 +439,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			gridConf.cls = "tableWidget";  // this highlight the cells to be selected
 		}
 
+		gridConf.pagingConfig = {};
+
 		// create the Grid
-	    this.grid = new Ext.grid.GridPanel(gridConf);
+	    //this.grid = new Ext.grid.GridPanel(gridConf);
+		this.grid = new Sbi.widgets.grid.DynamicGridPanel(gridConf);
 	    //this.grid.on('selectionchange', this.onSelectionChange, this);
 	    this.grid.on('cellclick', this.onCellclick, this);
 	    this.grid.on('columnresize', this.onColumnResize, this);
