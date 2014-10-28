@@ -146,9 +146,19 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		}
 
 		var itemMeta = this.getItemMeta(item);
+
 		var fieldValue = itemMeta.seriesFieldValue;
 
-		if (percent) fieldValue = (fieldValue/seriesum)*100 + "%";
+		if (percent) fieldValue = (fieldValue/seriesum)*100;
+
+		if (typeof(fieldValue) == 'number'){
+			if (!this.isInteger(fieldValue)){
+				//decimal number
+				fieldValue = +fieldValue.toFixed(2);
+			}
+		}
+
+		if (percent) fieldValue = fieldValue + "%";
 
 		tooltip =  itemMeta.seriesFieldHeader + ': ' + fieldValue + " <p> " + itemMeta.categoryFieldHeaders;
 

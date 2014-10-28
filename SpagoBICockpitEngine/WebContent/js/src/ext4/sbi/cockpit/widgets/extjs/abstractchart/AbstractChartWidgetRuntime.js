@@ -336,6 +336,12 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 	    Sbi.trace("[AbstractChartWidgetRuntime.onItemMouseDown]: OUT");
 	}
 
+	, isInteger: function(value) {
+		  return !isNaN(value) &&
+	         parseInt(Number(value)) == value &&
+	         !isNaN(parseInt(value, 10));
+	}
+
 	//------------------------------------------------------------------------------------------------------------------
 	// test methods
 	// -----------------------------------------------------------------------------------------------------------------
