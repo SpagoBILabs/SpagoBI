@@ -114,9 +114,11 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 				value = +value.toFixed(2);
 			}
 		}
+		var categoryValue = itemMeta.categoryValues[0];
 
 		tooltip =  itemMeta.seriesFieldHeader + ': ' + value
-					+ " <p> " + itemMeta.categoryFieldHeaders;
+					+ " <p> " +
+					itemMeta.categoryFieldHeaders + ': '+ categoryValue;
 
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: IN");
 
