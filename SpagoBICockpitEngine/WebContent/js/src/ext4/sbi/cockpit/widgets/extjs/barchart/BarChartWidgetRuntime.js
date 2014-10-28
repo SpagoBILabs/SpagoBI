@@ -410,8 +410,11 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 				}
 			}
 
+			var categoryValue = itemMeta.categoryValues[0];
+
 			tooltip =  itemMeta.seriesFieldHeader + ': ' + value
-						+ " <p> " + itemMeta.categoryFieldHeaders;
+						+ " <p> " +
+						itemMeta.categoryFieldHeaders + ': '+ categoryValue;
 		}
 
 		return tooltip;

@@ -160,7 +160,10 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 
 		if (percent) fieldValue = fieldValue + "%";
 
-		tooltip =  itemMeta.seriesFieldHeader + ': ' + fieldValue + " <p> " + itemMeta.categoryFieldHeaders;
+		var categoryValue = itemMeta.categoryValues[0];
+
+		tooltip =  itemMeta.seriesFieldHeader + ': ' + fieldValue + " <p> " +
+				   itemMeta.categoryFieldHeaders + ': '+ categoryValue;
 
 		Sbi.trace("[PieChartWidgetRuntime.getTooltip]: IN");
 
