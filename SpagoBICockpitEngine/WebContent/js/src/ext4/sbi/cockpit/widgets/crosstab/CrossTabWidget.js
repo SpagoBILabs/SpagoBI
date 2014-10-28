@@ -40,7 +40,8 @@ Sbi.cockpit.widgets.crosstab.CrossTabWidget = function(config) {
 	Sbi.cockpit.widgets.crosstab.globalConfigs.push(this);
 	this.sortOptions = {};
 	this.sortOptions.myGlobalId = this.myGlobalId;
-
+	this.getStore().on("load", this.loadCrosstab, this);
+	this.getStore().on("refreshData", this.updateCrosstab, this);
 	Sbi.trace("[CrossTabWidget.constructor]: OUT");
 };
 
@@ -59,6 +60,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	, sortOptions: null
 	, myGlobalId: null
 	, crosstabDefinition: null
+	, linked: false
 
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
@@ -82,9 +84,60 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 			this.requestParameters.FILTERS = Ext.util.JSON.encode(filters);
 		}
 		this.crosstabDefinition = crosstabDefinitionEncoded;
-		this.loadCrosstabAjaxRequest.defer(100, this,[]);
+
+		Sbi.storeManager.loadStore(this.getStore());
+		this.linked = false;
 
 		Sbi.trace("[CrossTabWidget.load]: OUT");
+	}
+
+	, sortCrosstab: function(){
+		if(this.linked){
+			this.updateCrosstab();
+		}else{
+			this.loadCrosstabAjaxRequest();
+		}
+	}
+
+	, loadCrosstab: function(){
+		this.linked = false;
+		this.loadCrosstabAjaxRequest.defer(100, this,[]);
+	}
+
+	, updateCrosstab: function(storedata, metadata){
+
+		this.linked = true;
+
+		var params={
+				crosstabDefinition: this.requestParameters.crosstabDefinition
+		};
+
+		if(storedata!=null){
+			this.storedData = {
+					metadata: metadata,
+					jsonData: storedata,
+					sortOptions: this.sortOptions
+			};
+		}
+
+
+		Ext.Ajax.request({
+			url: Sbi.config.serviceReg.getServiceUrl('updateCrosstab', {
+			}),
+			method: 'POST',
+			params: params,
+	        success : function(response, opts) {
+	        	this.hideLoadingMask();
+	        	this.refreshCrossTab(response.responseText);
+	        },
+	        scope: this,
+	        jsonData: Ext.encode(this.storedData),
+			failure: function(response, options) {
+				this.hideLoadingMask();
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			}
+		});
+
 	}
 
 	, loadCrosstabAjaxRequest: function(){

@@ -30,6 +30,18 @@ Sbi.data.StoreManager = function(config) {
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 
+
+	var stores = c.storesConf.stores;
+	var widgets = c.template.widgetsConf.widgets;
+
+	for(var i=0; i<widgets.length; i++){
+		var aWidget = widgets[i];
+		var aStore = stores[i];
+		if(aWidget.wtype == "crosstab"){
+			aStore.stype = "crosstab";
+		}
+	}
+
 	this.setConfiguration(c.storesConf);
 
 	// constructor
@@ -541,7 +553,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 					var task = {
 						run: function(){
 							//if the console is hidden doesn't refresh the datastore
-							if(store.stopped) return;
+							if(store.stopped) {
+								return;
+							}
 
 							// if store is paging...
 							if(store.lastParams) {
@@ -722,7 +736,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
 		var stores = [];
 		if(Ext.isString(storeId) == false) {
-			var stores = [];
 			Sbi.error("[StoreManager.getStoresById]: parameter storeId must be a string");
 			return;
 		}
@@ -1103,7 +1116,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			var s = this.stores.get(storeId);
 			s.stopped = value;
 		} else { // if a storeId is NOT defined, stopRefresh on ALL stores
-			for(var i = 0, l = this.stores.length, s; i < l; i++) {
+			for(var i = 0, l = this.stores.length; i < l; i++) {
 				var s = this.stores.get(i);
 				if (s.dsLabel !== undefined){
 					s.stopped = value;
@@ -1189,8 +1202,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	, getStoresByAssociation: function(a){
 		for(var i=0; i<this.getAssociations().length; i++){
 			var obj = this.getAssociations()[i];
-			if (obj.description == a)
+			if (obj.description == a) {
 				return obj.stores;
+			}
 		}
 
 		return null;
@@ -1204,8 +1218,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			var obj = this.getAssociations()[i];
 			if (obj.stores !== null && obj.stores !== undefined ){
 				for(var i=0; i<obj.stores.length; i++){
-					if (obj.stores[i] == s)
-						assList.push(obj);
+					if (obj.stores[i] == s){assList.push(obj);}
 				}
 			}
 		}
@@ -1367,7 +1380,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 						value = obj.initialValue;
 					}
 
-					if (Sbi.isValorized(value)) parametersValues[label] = value;
+					if (Sbi.isValorized(value)){parametersValues[label] = value;}
 				}
 			}
 		}
@@ -1425,8 +1438,12 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		reader.on('exception', this.onStoreReadException, this);
 		Sbi.trace("[StoreManager.createStore]: reader sucesfully created");
 
+		var dataStoreType = 'Ext.data.Store';
+		if(storeConf.stype=="crosstab"){
+			dataStoreType = 'Sbi.cockpit.widgets.crosstab.CrossTabStore';
+		}
+
 		var store = new Sbi.widgets.store.InMemoryFilteredStore({
-//		var store = new Ext.data.Store({
 			storeId: storeConf.storeId,
 			storeType: 'sbi',
 			storeConf: storeConf,
@@ -1445,6 +1462,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		} else {
 			Sbi.trace("[StoreManager.createStore]: there are no aggregations to add to store");
 		}
+
+
 
 
 		Sbi.trace("[StoreManager.createStore]: IN");
@@ -1624,7 +1643,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
 			for(var i = 0; i < meta.fields.length; i++) {
 				var f = meta.fields[i];
-				if(Ext.isString(f)) continue;
+				if(Ext.isString(f)) {
+					continue;
+				}
 				f.header = f.header || f.name;
 				fieldsMeta[f.header] = f;
 			}
@@ -1641,6 +1662,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     , onStoreLoad: function(store, records, successful, eOpts) {
 
     	Sbi.trace("[StoreManager.onStoreLoad]: IN");
+
+		if(store.crossTabStore && store.proxy.reader && store.proxy.reader.jsonData && store.proxy.reader.jsonData.metaData){
+			store.myStoreMetaData = Ext.apply(store.proxy.reader.jsonData.metaData,{});
+		}
 
     	// {"service":"/1.0/datasets/AAA_SALES_1998/data",
     	// "errors":[{"message":"An unexpected [java.lang.NullPointerException] exception has been trown during service execution"}]}

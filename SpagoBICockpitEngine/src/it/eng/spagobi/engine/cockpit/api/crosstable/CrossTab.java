@@ -10,9 +10,11 @@ import groovy.util.Eval;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.math.BigInteger;
@@ -131,6 +133,32 @@ public class CrossTab {
 			Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId) throws JSONException {
 		this(dataStore, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap);
 
+		init(crosstabDefinition, calculateFields, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+	}
+
+	/**
+	 * Builds the crossTab (headers structure and data)
+	 * 
+	 * @param dataStore
+	 *            : the source of the data
+	 * @param crosstabDefinition
+	 *            : the definition of the crossTab
+	 * @param fieldOptions
+	 *            : fieldOptions
+	 * @param calculateFields
+	 *            : array of JSONObjects the CF
+	 */
+	public CrossTab(JSONArray datastore, JSONObject datastoreMetadata, CrosstabDefinition crosstabDefinition, JSONArray calculateFields,
+			Map<Integer, NodeComparator> columnsSortKeysMap,
+			Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId) throws JSONException {
+		this(datastore, datastoreMetadata, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap);
+
+		init(crosstabDefinition, calculateFields, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+	}
+
+	private void init(CrosstabDefinition crosstabDefinition, JSONArray calculateFields, Map<Integer, NodeComparator> columnsSortKeysMap,
+			Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId) throws JSONException {
+
 		this.myGlobalId = myGlobalId;
 
 		rowsSum = getTotalsOnRows(measuresOnRow);
@@ -150,6 +178,191 @@ public class CrossTab {
 		addTotals();
 		List<CrosstabDefinition.Column> columns = crosstabDefinition.getColumns();
 		addHeaderTitles(columns, 0, columnsRoot);
+	}
+
+	/**
+	 * Builds the crossTab (headers structure and data)
+	 * 
+	 * @param dataStore
+	 *            : the source of the data
+	 * @param crosstabDefinition
+	 *            : the definition of the crossTab
+	 */
+	public CrossTab(JSONArray dataStoredata, JSONObject datastoreMetadata, CrosstabDefinition crosstabDefinition, Map<Integer, NodeComparator> columnsSortKeysMap,
+			Map<Integer, NodeComparator> rowsSortKeysMap) throws JSONException {
+		JSONObject valueRecord;
+		String rowPath;
+		String columnPath;
+		this.config = crosstabDefinition.getConfig();
+		this.crosstabDefinition = crosstabDefinition;
+		int cellLimit = crosstabDefinition.getCellLimit();
+		boolean columnsOverflow = false; // true if the number of cell shown in
+											// the crosstab is less than the
+											// total number of cells
+		boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();
+		measuresOnRow = config.getString("measureson").equals("rows");
+		int rowsCount = crosstabDefinition.getRows().size();
+		int columnsCount = crosstabDefinition.getColumns().size();
+		int measuresCount = crosstabDefinition.getMeasures().size();
+		int index;
+
+		this.columnsSortKeysMap = columnsSortKeysMap;
+		this.rowsSortKeysMap = rowsSortKeysMap;
+
+		List<String> rowCordinates = new ArrayList<String>();
+		List<String> columnCordinates = new ArrayList<String>();
+		List<String> data = new ArrayList<String>();
+
+		columnsRoot = new Node("rootC");
+		rowsRoot = new Node("rootR");
+
+		// JSONObject dataStoreMetadata = datastore.getJSONObject("metaData");
+		JSONArray dataStoreMetadataFields = datastoreMetadata.getJSONArray("fields");
+
+		List<String> columnsNameList = new ArrayList<String>();
+		List<String> rowsNameList = new ArrayList<String>();
+		List<String> measuresNameList = new ArrayList<String>();
+
+		List<String> columnsHeaderList = new ArrayList<String>();
+		List<String> rowsHeaderList = new ArrayList<String>();
+		List<String> measuresHeaderList = new ArrayList<String>();
+
+		for (int i = 0; i < crosstabDefinition.getMeasures().size(); i++) {
+			measuresHeaderList.add(crosstabDefinition.getMeasures().get(i).getAlias());
+		}
+
+		for (int i = 0; i < crosstabDefinition.getColumns().size(); i++) {
+			columnsHeaderList.add(crosstabDefinition.getColumns().get(i).getAlias());
+		}
+
+		for (int i = 0; i < crosstabDefinition.getRows().size(); i++) {
+			rowsHeaderList.add(crosstabDefinition.getRows().get(i).getAlias());
+		}
+
+		for (int i = 0; i < dataStoreMetadataFields.length(); i++) {
+			if (dataStoreMetadataFields.get(i) instanceof String) {
+				continue;
+			}
+			String name = dataStoreMetadataFields.getJSONObject(i).getString("name");
+			String header = dataStoreMetadataFields.getJSONObject(i).getString("header");
+			if (columnsHeaderList.contains(header)) {
+				columnsNameList.add(addNumberToColumnName(name, -1));
+			} else if (rowsHeaderList.contains(header)) {
+				rowsNameList.add(addNumberToColumnName(name, -1));
+			} else if (measuresHeaderList.contains(header)) {
+				measuresNameList.add(addNumberToColumnName(name, -1));
+			}
+		}
+
+		int cellCount = 0;
+		int actualRows = 0;
+		int actualColumns = 0;
+		for (index = 0; index < dataStoredata.length() && (cellLimit <= 0 || cellCount < cellLimit); index++) {
+			valueRecord = dataStoredata.getJSONObject(index);
+
+			boolean columnInserted = addRecord(columnsRoot, valueRecord, columnsNameList);
+			boolean rowInserted = addRecord(rowsRoot, valueRecord, rowsNameList);
+			actualRows += rowInserted ? 1 : 0;
+			actualColumns += columnInserted ? 1 : 0;
+			cellCount = actualRows * actualColumns * measuresCount;
+		}
+
+		columnsRoot.updateFathers();
+		rowsRoot.updateFathers();
+
+		columnsRoot.orderedSubtree(columnsSortKeysMap);
+		rowsRoot.orderedSubtree(rowsSortKeysMap);
+
+		if (index < dataStoredata.length()) {
+			logger.debug("Crosstab cells number limit exceeded");
+			Node completeColumnsRoot = new Node("rootCompleteC");
+			for (index = 0; index < dataStoredata.length(); index++) {
+				valueRecord = dataStoredata.getJSONObject(index);
+
+				addRecord(completeColumnsRoot, valueRecord, columnsNameList);
+			}
+			columnsOverflow = columnsRoot.getLeafsNumber() < completeColumnsRoot.getLeafsNumber();
+		}
+
+		for (index = 0; index < dataStoredata.length(); index++) {
+			valueRecord = dataStoredata.getJSONObject(index);
+
+			columnPath = "";
+			for (int i = 0; i < columnsCount; i++) {
+				String column = columnsNameList.get(i);
+				Object value = valueRecord.get(column);
+				String valueStr = null;
+				if (value == null) {
+					valueStr = "null";
+				} else {
+					valueStr = value.toString();
+				}
+				columnPath = columnPath + PATH_SEPARATOR + valueStr;
+			}
+
+			rowPath = "";
+			for (int i = 0; i < rowsCount; i++) {
+				String row = rowsNameList.get(i);
+				Object value = valueRecord.get(row);
+				String valueStr = null;
+				if (value == null) {
+					valueStr = "null";
+				} else {
+					valueStr = value.toString();
+				}
+				rowPath = rowPath + PATH_SEPARATOR + valueStr.toString();
+			}
+
+			for (int i = 0; i < measuresNameList.size(); i++) {
+				String measure = measuresNameList.get(i);
+				columnCordinates.add(columnPath);
+				rowCordinates.add(rowPath);
+				data.add("" + getStringValue(valueRecord.get(measure)));
+			}
+		}
+
+		List<String> columnsSpecification = getLeafsPathList(columnsRoot);
+		List<String> rowsSpecification = getLeafsPathList(rowsRoot);
+
+		if (measuresOnColumns) {
+			addMeasuresToTree(columnsRoot, crosstabDefinition.getMeasures());
+		} else {
+			addMeasuresToTree(rowsRoot, crosstabDefinition.getMeasures());
+		}
+		config.put("columnsOverflow", columnsOverflow);
+		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, data, measuresOnColumns, measuresCount,
+				columnsRoot.getLeafsNumber());
+
+		// put measures' info into measures variable
+		measures = new ArrayList<CrossTab.MeasureInfo>();
+
+		for (int i = 0; i < crosstabDefinition.getMeasures().size(); i++) {
+			// the field number i contains the measure number (i - <number of
+			// dimensions>)
+			// but <number of dimension> is <total fields count> - <total
+			// measures count>
+			IFieldMetaData fieldMeta = new FieldMetadata();
+			Measure relevantMeasure = crosstabDefinition.getMeasures().get(i);
+			measures.add(getMeasureInfo(fieldMeta, relevantMeasure));
+		}
+
+		celltypeOfColumns = new ArrayList<CrossTab.CellType>();
+		celltypeOfRows = new ArrayList<CrossTab.CellType>();
+
+		for (int i = 0; i < dataMatrix.length; i++) {
+			celltypeOfRows.add(CellType.DATA);
+		}
+
+		for (int i = 0; i < dataMatrix[0].length; i++) {
+			celltypeOfColumns.add(CellType.DATA);
+		}
+
+	}
+
+	public String addNumberToColumnName(String columnName, int number) {
+		// String columnNumber = columnName.substring(7);// remove "column_"
+		// return "column_" + (new Integer(columnNumber) + number);
+		return columnName;
 	}
 
 	/**
@@ -476,6 +689,48 @@ public class CrossTab {
 		}
 
 		return matrix;
+	}
+
+	/**
+	 * Add to the root (columnRoot or rowRoot) a path from the root to a leaf. A
+	 * record contains both the columns definition and the rows definition: (it
+	 * may be something like that: C1 C2 C3 R1 R2 M1 M1, where Ci represent a
+	 * column, Ri represent a row, Mi a measure). So for take a column path (C1
+	 * C2 C3), we need need a start and end position in the record (in this case
+	 * 0,3)
+	 * 
+	 * @param root
+	 *            : the node in witch add the record
+	 * @param record
+	 * @param startPosition
+	 * @param endPosition
+	 */
+	private boolean addRecord(Node root, JSONObject datasetRecords, List<String> attributeFieldsName) {
+		boolean toReturn = false;
+		String valueField;
+		Node node;
+		Node nodeToCheck = root;
+		int nodePosition;
+
+		for (int indexFields = 0; indexFields < attributeFieldsName.size(); indexFields++) {
+			try {
+				valueField = datasetRecords.getString(attributeFieldsName.get(indexFields));
+			} catch (JSONException e) {
+				logger.error("Error getting the values from the dataset");
+				throw new SpagoBIEngineRuntimeException("Error getting the values from the dataset");
+			}
+			node = new Node(valueField);
+
+			nodePosition = nodeToCheck.getChilds().indexOf(node);
+			if (nodePosition < 0) {
+				toReturn = true;
+				nodeToCheck.addChild(node);
+				nodeToCheck = node;
+			} else {
+				nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
+			}
+		}
+		return toReturn;
 	}
 
 	/**
