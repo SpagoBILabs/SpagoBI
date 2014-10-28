@@ -401,13 +401,23 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 
 		} else {
 			var itemMeta = this.getItemMeta(item);
-			tooltip =  itemMeta.seriesFieldHeader + ': ' + itemMeta.seriesFieldValue
+
+			var value = itemMeta.seriesFieldValue;
+			if (typeof(value) == 'number'){
+				if (!this.isInteger(value)){
+					//decimal number
+					value = +value.toFixed(2);
+				}
+			}
+
+			tooltip =  itemMeta.seriesFieldHeader + ': ' + value
 						+ " <p> " + itemMeta.categoryFieldHeaders;
 		}
 
 		return tooltip;
 
 
+		/*
 		var chartType = this.wconf.designer;
 		var allRuntimeSeries = this.getRuntimeSeries();
 		var allDesignSeries = this.wconf.series;
@@ -456,6 +466,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		Sbi.trace("[BarChartWidgetRuntime.getTooltip]: OUT");
 
 		return tooltip;
+		*/
 	}
 
 	/**

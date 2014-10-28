@@ -107,7 +107,15 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 		var tooltip;
 
 		var itemMeta = this.getItemMeta(item);
-		tooltip =  itemMeta.seriesFieldHeader + ': ' + itemMeta.seriesFieldValue
+		var value = itemMeta.seriesFieldValue;
+		if (typeof(value) == 'number'){
+			if (!this.isInteger(value)){
+				//decimal number
+				value = +value.toFixed(2);
+			}
+		}
+
+		tooltip =  itemMeta.seriesFieldHeader + ': ' + value
 					+ " <p> " + itemMeta.categoryFieldHeaders;
 
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: IN");
