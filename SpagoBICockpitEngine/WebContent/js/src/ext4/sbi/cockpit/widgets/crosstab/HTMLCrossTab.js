@@ -93,7 +93,7 @@ Ext.define('Sbi.cockpit.widgets.crosstab.HTMLCrossTab', {
 
 			axisConfig[column] = direction;
 
-			Sbi.cockpit.widgets.crosstab.globalConfigs[globalId].loadCrosstabAjaxRequest();
+			Sbi.cockpit.widgets.crosstab.globalConfigs[globalId].sortCrosstab();
 		}
 	},
 
@@ -112,10 +112,6 @@ Ext.define('Sbi.cockpit.widgets.crosstab.HTMLCrossTab', {
 		Ext.apply(this, settings);
 		this.html = config.htmlData;
 		this.callParent(arguments);
-	},
-
-	sort: function(column, order){
-		alert(column);
 	}
 
 });

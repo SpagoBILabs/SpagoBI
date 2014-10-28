@@ -158,7 +158,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		  , baseParams: params
 		});
 		
-		
+				
 		// test
 		Sbi.config.serviceReg = new Sbi.service.ServiceReg();
 		
@@ -288,6 +288,13 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			, method: 'GET'
 		}, 'cockpitServiceConf');
 		
+		Sbi.config.serviceReg.registerService('updateCrosstab', {
+			name: 'updateCrosstab'
+			, description: 'Update the crosstab in HTML'
+			, resourcePath: 'crosstab/update'
+			, method: 'GET'
+		}, 'cockpitServiceConf');
+		
 		Sbi.config.serviceReg.registerService('setCrosstabSort', {
 			name: 'setCrosstabSort'
 			, description: 'Get the crosstab in HTML'
@@ -315,7 +322,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		
 		
 		
-		Sbi.storeManager = new Sbi.data.StoreManager({storesConf: template.storesConf});
+		Sbi.storeManager = new Sbi.data.StoreManager({storesConf: template.storesConf, template: template});
 		//Sbi.storeManager.setConfiguration(template.storesConf);
 		
 		Sbi.config.docLabel ="<%=docLabel%>";

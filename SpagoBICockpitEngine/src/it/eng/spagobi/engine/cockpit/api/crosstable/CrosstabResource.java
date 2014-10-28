@@ -103,11 +103,11 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getSortedCrosstab(@QueryParam("crosstabDefinition") String crosstabDefinition, @QueryParam("datasetLabel") String datasetLabel) {
 		logger.debug("IN");
-		
-		//the sort options
+
+		// the sort options
 		Map<String, Object> columnsSortKeys;
 		Map<String, Object> rowsSortKeys;
-		//the id of the crosstab in the client configuration array
+		// the id of the crosstab in the client configuration array
 		Integer myGlobalId;
 
 		try {
@@ -127,6 +127,43 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 		try {
 			return createCrossTable(crosstabDefinition, datasetLabel, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@POST
+	@Path("/update")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getSortedCrosstabUpdated(@QueryParam("crosstabDefinition") String crosstabDefinition) {
+		logger.debug("IN");
+
+		// the sort options
+		Map<String, Object> columnsSortKeys;
+		Map<String, Object> rowsSortKeys;
+		// the id of the crosstab in the client configuration array
+		Integer myGlobalId;
+
+		try {
+
+			JSONObject request = RestUtilities.readBodyAsJSONObject(servletRequest);
+
+			JSONObject sortOptions = request.getJSONObject("sortOptions");
+
+			JSONObject columnsSortKeysJo = sortOptions.optJSONObject("columnsSortKeys");
+			JSONObject rowsSortKeysJo = sortOptions.optJSONObject("rowsSortKeys");
+			myGlobalId = sortOptions.optInt("myGlobalId");
+			columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
+			rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
+
+			Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
+			Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
+
+			CrosstabBuilder builder = new CrosstabBuilder(getLocale(), crosstabDefinition, request.getJSONArray("jsonData"), request.getJSONObject("metadata"));
+			return builder.getSortedCrosstab(columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		} finally {
