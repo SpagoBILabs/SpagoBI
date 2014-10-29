@@ -19,6 +19,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
@@ -161,6 +162,12 @@ public class TwitterData implements Serializable {
 	@NotNull
 	private boolean isNegative = false;
 
+	@Transient
+	private TwitterUser replyUser;
+
+	@Transient
+	private TwitterUser rtUser;
+
 	public TwitterData() {
 
 	}
@@ -236,11 +243,14 @@ public class TwitterData implements Serializable {
 		this.topics = topics;
 	}
 
-	public TwitterData(TwitterSearch twitterSearch, TwitterUser twitterUser, String replyToUserId, String originalRTTweetId) {
+	public TwitterData(TwitterSearch twitterSearch, TwitterUser twitterUser, String replyToUserId, String originalRTTweetId, TwitterUser replyUser,
+			TwitterUser rtUser) {
 		this.twitterSearch = twitterSearch;
 		this.twitterUser = twitterUser;
 		this.replyToUserId = replyToUserId;
 		this.originalRTTweetId = originalRTTweetId;
+		this.replyUser = replyUser;
+		this.rtUser = rtUser;
 	}
 
 	public long getTweetID() {
@@ -481,6 +491,22 @@ public class TwitterData implements Serializable {
 
 	public void setNegative(boolean isNegative) {
 		this.isNegative = isNegative;
+	}
+
+	public TwitterUser getReplyUser() {
+		return replyUser;
+	}
+
+	public void setReplyUser(TwitterUser replyUser) {
+		this.replyUser = replyUser;
+	}
+
+	public TwitterUser getRtUser() {
+		return rtUser;
+	}
+
+	public void setRtUser(TwitterUser rtUser) {
+		this.rtUser = rtUser;
 	}
 
 	@Override

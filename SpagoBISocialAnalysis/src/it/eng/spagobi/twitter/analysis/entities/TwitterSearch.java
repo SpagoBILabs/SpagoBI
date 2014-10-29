@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.twitter.analysis.entities;
 
+import it.eng.spagobi.twitter.analysis.enums.BooleanOperatorEnum;
 import it.eng.spagobi.twitter.analysis.enums.SearchTypeEnum;
 
 import java.io.Serializable;
@@ -88,6 +89,11 @@ public class TwitterSearch implements Serializable {
 	@Length(max = 500)
 	private String failMessage;
 
+	@Column(name = "boolean_operator")
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	private BooleanOperatorEnum booleanOperator;
+
 	@OneToOne(mappedBy = "twitterSearch", cascade = { CascadeType.PERSIST })
 	private TwitterSearchScheduler twitterSearchScheduler;
 
@@ -102,8 +108,8 @@ public class TwitterSearch implements Serializable {
 	}
 
 	public TwitterSearch(long searchID, String label, String keywords, Calendar creationDate, Calendar lastActivationTime, SearchTypeEnum type,
-			boolean loading, boolean deleted, boolean failed, String failMessage, TwitterSearchScheduler twitterSearchScheduler,
-			TwitterMonitorScheduler twitterMonitorScheduler) {
+			boolean loading, boolean deleted, boolean failed, String failMessage, BooleanOperatorEnum booleanOperator,
+			TwitterSearchScheduler twitterSearchScheduler, TwitterMonitorScheduler twitterMonitorScheduler) {
 
 		this.searchID = searchID;
 		this.label = label;
@@ -115,6 +121,7 @@ public class TwitterSearch implements Serializable {
 		this.deleted = deleted;
 		this.failed = failed;
 		this.failMessage = failMessage;
+		this.booleanOperator = booleanOperator;
 		this.twitterSearchScheduler = twitterSearchScheduler;
 		this.twitterMonitorScheduler = twitterMonitorScheduler;
 	}
@@ -199,6 +206,14 @@ public class TwitterSearch implements Serializable {
 		this.failMessage = failMessage;
 	}
 
+	public BooleanOperatorEnum getBooleanOperator() {
+		return booleanOperator;
+	}
+
+	public void setBooleanOperator(BooleanOperatorEnum booleanOperator) {
+		this.booleanOperator = booleanOperator;
+	}
+
 	public TwitterSearchScheduler getTwitterSearchScheduler() {
 		return twitterSearchScheduler;
 	}
@@ -224,6 +239,11 @@ public class TwitterSearch implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		TwitterSearch other = (TwitterSearch) obj;
+		if (booleanOperator == null) {
+			if (other.booleanOperator != null)
+				return false;
+		} else if (!booleanOperator.equals(other.booleanOperator))
+			return false;
 		if (creationDate == null) {
 			if (other.creationDate != null)
 				return false;
