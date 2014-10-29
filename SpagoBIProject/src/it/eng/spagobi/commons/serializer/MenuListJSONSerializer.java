@@ -256,9 +256,10 @@ public class MenuListJSONSerializer implements Serializer {
 			socialAnalysis.put(TARGET, "_self");
 			if (!GeneralUtilities.isSSOEnabled()) {
 				socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "="
-						+ userProfile.getUserUniqueIdentifier().toString() + "');");
+						+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "');");
 			} else {
-				socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "');");
+				socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage()
+						+ "');");
 			}
 			tempMenuList.put(socialAnalysis);
 		}
