@@ -38,7 +38,7 @@ public class TwitterErrorsServlet extends HttpServlet {
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = -8767760518159744239L;
+	private static final long serialVersionUID = -4433038159065011137L;
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
