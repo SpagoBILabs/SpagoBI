@@ -11,6 +11,7 @@ import it.eng.spagobi.twitter.analysis.cache.ITwitterCache;
 import it.eng.spagobi.twitter.analysis.cache.TwitterCacheImpl;
 import it.eng.spagobi.twitter.analysis.cache.exceptions.DaoServiceException;
 import it.eng.spagobi.twitter.analysis.entities.TwitterData;
+import it.eng.spagobi.twitter.analysis.entities.TwitterUser;
 import it.eng.spagobi.twitter.analysis.utilities.AnalysisUtility;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -202,15 +203,15 @@ public class UsersNetworkLinkMapDataProcessor {
 
 					if (tweet.getReplyToUserId() != null) {
 
-						TwitterData tweetToReply = twitterCache.isTwitterDataPresent(tweet.getTwitterSearch().getSearchID(),
-								Long.parseLong(tweet.getReplyToUserId()));
+						// TwitterData tweetToReply = twitterCache.isTwitterDataPresent(tweet.getTwitterSearch().getSearchID(),
+						// Long.parseLong(tweet.getReplyToUserId()));
 
-						if (tweetToReply != null
-								&& (tweetToReply.getTwitterUser().getLocationCode() != null && !tweetToReply.getTwitterUser().getLocationCode().trim()
-										.equals(""))) {
+						TwitterUser tweetUserToReply = tweet.getReplyUser();
+
+						if (tweetUserToReply != null && (tweetUserToReply.getLocationCode() != null && !tweetUserToReply.getLocationCode().trim().equals(""))) {
 
 							String sourceCountry = tweet.getTwitterUser().getLocationCode();
-							String tagetCountry = tweetToReply.getTwitterUser().getLocationCode();
+							String tagetCountry = tweetUserToReply.getLocationCode();
 
 							if (!sourceCountry.equals(tagetCountry)) {
 
@@ -251,7 +252,7 @@ public class UsersNetworkLinkMapDataProcessor {
 									codes.put(keyOne, 1);
 								}
 
-								String keyTwo = tweetToReply.getTwitterUser().getLocationCode();
+								String keyTwo = tweetUserToReply.getLocationCode();
 
 								if (codes.containsKey(keyTwo)) {
 
@@ -269,14 +270,15 @@ public class UsersNetworkLinkMapDataProcessor {
 
 					} else if (tweet.getOriginalRTTweetId() != null) {
 
-						TwitterData originalTweet = twitterCache.isTwitterDataPresent(tweet.getTwitterSearch().getSearchID(),
-								Long.parseLong(tweet.getOriginalRTTweetId()));
+						// TwitterData originalTweet = twitterCache.isTwitterDataPresent(tweet.getTwitterSearch().getSearchID(),
+						// Long.parseLong(tweet.getOriginalRTTweetId()));
 
-						if (originalTweet != null
-								&& (originalTweet.getTwitterUser().getLocationCode() != null && !originalTweet.getTwitterUser().getLocationCode().trim()
-										.equals(""))) {
+						TwitterUser originalTweetUser = tweet.getRtUser();
 
-							String sourceCountry = originalTweet.getTwitterUser().getLocationCode();
+						if (originalTweetUser != null
+								&& (originalTweetUser.getLocationCode() != null && !originalTweetUser.getLocationCode().trim().equals(""))) {
+
+							String sourceCountry = originalTweetUser.getLocationCode();
 							String tagetCountry = tweet.getTwitterUser().getLocationCode();
 
 							if (!sourceCountry.equals(tagetCountry)) {
@@ -305,7 +307,7 @@ public class UsersNetworkLinkMapDataProcessor {
 									linksWeight.put(label, 1);
 								}
 
-								String keyOne = originalTweet.getTwitterUser().getLocationCode();
+								String keyOne = originalTweetUser.getLocationCode();
 
 								if (codes.containsKey(keyOne)) {
 

@@ -7,6 +7,7 @@ package it.eng.spagobi.twitter.analysis.dataprocessors;
 
 import it.eng.spagobi.twitter.analysis.cache.DataProcessorCacheImpl;
 import it.eng.spagobi.twitter.analysis.cache.IDataProcessorCache;
+import it.eng.spagobi.twitter.analysis.entities.TwitterUser;
 import it.eng.spagobi.twitter.analysis.utilities.AnalysisUtility;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -71,7 +72,7 @@ public class TwitterGeneralStatsDataProcessor {
 			// totalTweetsInt = totalTweetsCounter(searchId);
 
 			logger.debug("Method initializeTwitterGeneralStats(): Getting users for searchID = " + searchID);
-			List<Object[]> users = dpCache.getGeneralStatsForSearchID(searchId);
+			List<TwitterUser> users = dpCache.getGeneralStatsForSearchID(searchId);
 
 			if (users != null) {
 
@@ -81,13 +82,13 @@ public class TwitterGeneralStatsDataProcessor {
 
 				int totFollowers = 0;
 
-				for (Object[] user : users) {
+				for (TwitterUser user : users) {
 
-					int userFollowers = (int) user[USERFOLLOWERSPOS];
+					int userFollowers = user.getFollowersCount();
 
 					totFollowers = totFollowers + userFollowers;
 
-					long tweetsNumber = (long) user[USERNTWEETS];
+					long tweetsNumber = user.getnTweets();
 
 					totalTweetsLong = totalTweetsLong + tweetsNumber;
 

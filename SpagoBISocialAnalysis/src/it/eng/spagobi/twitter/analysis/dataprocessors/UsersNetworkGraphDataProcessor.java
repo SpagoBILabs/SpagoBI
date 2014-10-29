@@ -163,7 +163,10 @@ public class UsersNetworkGraphDataProcessor {
 
 				if (tweet.getReplyToUserId() != null) {
 
-					TwitterUser tweetUserToReply = dpCache.getUserFromTweet(tweet.getTwitterSearch().getSearchID(), Long.parseLong(tweet.getReplyToUserId()));
+					// TwitterUser tweetUserToReply = dpCache.getUserFromTweet(tweet.getTwitterSearch().getSearchID(),
+					// Long.parseLong(tweet.getReplyToUserId()));
+
+					TwitterUser tweetUserToReply = tweet.getReplyUser();
 
 					if (tweetUserToReply != null) {
 
@@ -186,8 +189,10 @@ public class UsersNetworkGraphDataProcessor {
 
 				} else if (tweet.getOriginalRTTweetId() != null) {
 
-					TwitterUser originalTweetUser = dpCache.getUserFromTweet(tweet.getTwitterSearch().getSearchID(),
-							Long.parseLong(tweet.getOriginalRTTweetId()));
+					// TwitterUser originalTweetUser = dpCache.getUserFromTweet(tweet.getTwitterSearch().getSearchID(),
+					// Long.parseLong(tweet.getOriginalRTTweetId()));
+
+					TwitterUser originalTweetUser = tweet.getRtUser();
 
 					if (originalTweetUser != null) {
 						JSONObject linkObj = new JSONObject();

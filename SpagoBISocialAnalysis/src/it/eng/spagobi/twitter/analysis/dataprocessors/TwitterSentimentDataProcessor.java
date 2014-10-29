@@ -60,6 +60,8 @@ public class TwitterSentimentDataProcessor {
 
 		try {
 
+			// TwitterRScriptUtility.callSentimentRScript("biuser", 2);
+
 			double positivePercentageDouble = 0;
 			double neutralPercentageDouble = 0;
 			double negativePercentageDouble = 0;
