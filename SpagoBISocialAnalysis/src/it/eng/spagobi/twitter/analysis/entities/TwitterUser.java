@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
@@ -103,6 +104,9 @@ public class TwitterUser {
 	@Temporal(TemporalType.TIMESTAMP)
 	private java.util.Calendar endDate;
 
+	@Transient
+	private long nTweets;
+
 	public TwitterUser() {
 
 	}
@@ -136,6 +140,12 @@ public class TwitterUser {
 		this.description = AnalysisUtility.customEscapeString(description);
 		this.profileImgSrc = profileImg;
 		this.followersCount = followers;
+	}
+
+	public TwitterUser(long userID, int followersCount, long nTweets) {
+		this.userID = userID;
+		this.followersCount = followersCount;
+		this.nTweets = nTweets;
 	}
 
 	public long getUserID() {
@@ -280,6 +290,14 @@ public class TwitterUser {
 
 	public void setEndDate(java.util.Calendar endDate) {
 		this.endDate = endDate;
+	}
+
+	public long getnTweets() {
+		return nTweets;
+	}
+
+	public void setnTweets(long nTweets) {
+		this.nTweets = nTweets;
 	}
 
 	@Override
