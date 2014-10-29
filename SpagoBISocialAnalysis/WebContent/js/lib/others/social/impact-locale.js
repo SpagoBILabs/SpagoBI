@@ -1,0 +1,12 @@
+localeMapping('accountsfollowerstimeline', "sbi.social.analysis.accountsfollowerstimeline");
+localeMapping('bitlyclickstimeline', "sbi.social.analysis.bitlyclickstimeline");
+localeMapping("hoursf", "sbi.social.analysis.hours");
+localeMapping("daysf", "sbi.social.analysis.days");
+localeMapping("weeksf", "sbi.social.analysis.weeks");
+localeMapping("monthsf", "sbi.social.analysis.months");
+localeMapping("timescalef", "sbi.social.analysis.timescale");
+localeMapping("hoursc", "sbi.social.analysis.hours");
+localeMapping("daysc", "sbi.social.analysis.days");
+localeMapping("weeksc", "sbi.social.analysis.weeks");
+localeMapping("monthsc", "sbi.social.analysis.months");
+localeMapping("timescalec", "sbi.social.analysis.timescale");
