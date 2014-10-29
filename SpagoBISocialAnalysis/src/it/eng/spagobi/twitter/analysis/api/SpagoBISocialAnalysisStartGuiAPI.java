@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.twitter.analysis.api;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +32,7 @@ public class SpagoBISocialAnalysisStartGuiAPI {
 
 		try {
 
+			request.getSession().setAttribute(SpagoBIConstants.SBI_LANGUAGE, request.getParameter(SpagoBIConstants.SBI_LANGUAGE));
 			response.sendRedirect(request.getContextPath() + "/index.jsp");
 
 		} catch (Throwable t) {

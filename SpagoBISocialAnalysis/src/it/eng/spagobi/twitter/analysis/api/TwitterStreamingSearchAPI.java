@@ -14,6 +14,7 @@ package it.eng.spagobi.twitter.analysis.api;
 
 import it.eng.spagobi.twitter.analysis.entities.TwitterMonitorScheduler;
 import it.eng.spagobi.twitter.analysis.entities.TwitterSearch;
+import it.eng.spagobi.twitter.analysis.enums.BooleanOperatorEnum;
 import it.eng.spagobi.twitter.analysis.enums.MonitorRepeatTypeEnum;
 import it.eng.spagobi.twitter.analysis.enums.SearchTypeEnum;
 import it.eng.spagobi.twitter.analysis.enums.UpToTypeEnum;
@@ -334,7 +335,19 @@ public class TwitterStreamingSearchAPI {
 		String accounts = req.getParameter("accounts");
 		String documents = req.getParameter("documents");
 
+		String booleanOperator = req.getParameter("booleanOperator");
+
 		// set ready parameters
+
+		if (booleanOperator != null && !booleanOperator.equals("")) {
+			if (booleanOperator.equalsIgnoreCase("AND")) {
+				twitterSearch.setBooleanOperator(BooleanOperatorEnum.AND);
+			} else if (booleanOperator.equalsIgnoreCase("OR")) {
+				twitterSearch.setBooleanOperator(BooleanOperatorEnum.OR);
+			} else if (booleanOperator.equalsIgnoreCase("FREE")) {
+				twitterSearch.setBooleanOperator(BooleanOperatorEnum.FREE);
+			}
+		}
 
 		twitterSearch.setType(SearchTypeEnum.STREAMINGAPI);
 		twitterSearch.setKeywords(keywords);
@@ -389,6 +402,12 @@ public class TwitterStreamingSearchAPI {
 
 				twitterMonitorScheduler.setUpToValue(Integer.parseInt(numberUpTo));
 
+				if (Integer.parseInt(numberUpTo) <= 0) {
+					twitterMonitorScheduler.setActive(false);
+				} else {
+					twitterMonitorScheduler.setActive(true);
+				}
+
 				if (typeUpTo.equalsIgnoreCase(UpToTypeEnum.Day.toString())) {
 					twitterMonitorScheduler.setUpToType(UpToTypeEnum.Day);
 				} else if (typeUpTo.equalsIgnoreCase(UpToTypeEnum.Week.toString())) {
@@ -403,7 +422,6 @@ public class TwitterStreamingSearchAPI {
 				twitterMonitorScheduler.setEndingTime(AnalysisUtility.setMonitorSchedulerEndingDate(twitterMonitorScheduler));
 				twitterMonitorScheduler.setLastActivationTime(GregorianCalendar.getInstance());
 				twitterMonitorScheduler.setStartingTime(GregorianCalendar.getInstance());
-				twitterMonitorScheduler.setActive(true);
 
 				twitterMonitorScheduler.setTwitterSearch(twitterSearch);
 
