@@ -3,6 +3,11 @@ IMPORTANT: every time this file get modified (i.e. a new js file is added to the
 create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
  -->
 
+<!-- Include localized labels  -->
+<script type="text/javascript" src='js/spagobi/locale/<%=locale %>.js'/></script>
+
+<script type="text/javascript" src='js/spagobi/locale/LocaleUtils.js'></script>
+
 <link rel="stylesheet" type="text/css" href="css/socialAnalysis.css" >
 
 
@@ -19,3 +24,5 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='js/spagobi/social/analysis/search/store/HistoricalSearchStore.js'></script>
 <script type="text/javascript" src='js/spagobi/social/analysis/search/store/RepeatTypeStore.js'></script>
 <script type="text/javascript" src='js/spagobi/social/analysis/search/store/UpToStore.js'></script>
+
+

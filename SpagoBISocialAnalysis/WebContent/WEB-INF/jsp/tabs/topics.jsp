@@ -20,7 +20,7 @@
 <%@ page import="it.eng.spagobi.twitter.analysis.pojos.*" %>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
-
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -28,6 +28,9 @@
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
+	
+	String locale = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE);
+
 	String searchId = request.getParameter("searchID");
 	boolean withDocs = "TRUE".equalsIgnoreCase(request.getParameter("withDocs"));
 	
@@ -78,16 +81,16 @@
 	<div id="report-loading" class="loading"><img src="<%= application.getContextPath() %>/img/ajax-loader.gif" width="32" height="32" /><br /><strong>Loading</strong></div>
 
 	<ul class="navtabs tabsStyle">
-	    <li class="navtabs"><a href=<%= summaryLink %>> Summary</a></li>
-	    <li class="navtabs" id="activelink"><a href=<%= topicsLink %>>Topics</a></li>
-	    <li class="navtabs"><a href=<%= networkLink %>>Network</a></li>
-	    <li class="navtabs"><a href=<%= distributionLink %>>Distribution</a></li>
-  	    <li class="navtabs"><a href=<%= sentimentLink %>>Sentiment</a></li>
-	    <li class="navtabs"><a href=<%= impactLink %>>Impact</a></li>
+	    <li class="navtabs"><a href=<%= summaryLink %>> <label id="summary"></label> </a></li>
+	    <li class="navtabs" id="activelink"><a href=<%= topicsLink %>> <label id="topics"></label> </a></li>
+	    <li class="navtabs"><a href=<%= networkLink %>> <label id="network"></label> </a></li>
+	    <li class="navtabs"><a href=<%= distributionLink %>> <label id="distribution"></label> </a></li>
+  	    <li class="navtabs"><a href=<%= sentimentLink %>> <label id="sentiment"></label> </a></li>
+	    <li class="navtabs"><a href=<%= impactLink %>> <label id="impact"></label> </a></li>
 	    <% if(withDocs) { %>
-	    	<li class="navtabs"><a href=<%= roiLink %>>ROI</a></li>
+	    	<li class="navtabs"><a href=<%= roiLink %>> <label id="roi"></label> </a></li>
 	    <% } %>
-	    <li class="navtabs" style="float:right;"><a href="<%= application.getContextPath() %>/index.jsp">Search</a></li>
+	    <li class="navtabs" style="float:right;"><a href="<%= application.getContextPath() %>/index.jsp"> <label id="searchome"></label> </a></li>
 	</ul>
         	
 
@@ -95,7 +98,7 @@
 			
 		<div class="tagCloudTitle_box">
 			
-			<span>Hashtags Cloud</span>
+			<span><label id="hashtagscloud"></label></span>
 		
 		</div>
 			
@@ -110,7 +113,7 @@
 			
 		<div class="tagCloudTitle_box">
 			
-			<span>Topics Cloud</span>
+			<span><label id="topicscloud"></label></span>
 		
 		</div>
 			
@@ -124,6 +127,8 @@
 	</div>
 		
 </div>        	
+
+	<%@include file="../commons/includeSbiSocialAnalysisComponents.jspf"%>
 			
 	<script type="text/javascript">
 					var word_list_hashtags = <%= hTagCloud %>
@@ -138,25 +143,6 @@
 	 						$("#topicsCloud").jQCloud(word_list_topics);
 					});
 	</script>
-			
-			
-	<script type="text/javascript">
-			  $(document).ready(function(){
-			
-			    $(".navtabs").click(function(){
-			    	
-			    	var width = $("#navigation").width();
-			        var height = $("#navigation").height()
-			    	
-			    	$("#report-loading").css({
-				        top: (100),
-				        left: ((width / 2) - 50),
-				        display: "block"
-				    })			
-			    });
-			
-			  });
-		</script>
 		
 </body>
 </html>

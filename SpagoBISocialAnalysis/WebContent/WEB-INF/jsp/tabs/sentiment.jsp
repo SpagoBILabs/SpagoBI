@@ -16,12 +16,16 @@
 
 <%@ page import="it.eng.spagobi.twitter.analysis.dataprocessors.*" %>
 <%@ page import="twitter4j.JSONArray" %>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
+
+	String locale = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE);
+	
 	String searchId = request.getParameter("searchID");
 	boolean withDocs = "TRUE".equalsIgnoreCase(request.getParameter("withDocs"));
 	
@@ -80,16 +84,16 @@
 	<div id="report-loading" class="loading"><img src="<%= application.getContextPath() %>/img/ajax-loader.gif" width="32" height="32" /><br /><strong>Loading</strong></div>
 
 	<ul class="navtabs tabsStyle">
-	    <li class="navtabs"><a href=<%= summaryLink %>> Summary</a></li>
-	    <li class="navtabs"><a href=<%= topicsLink %>>Topics</a></li>
-	    <li class="navtabs"><a href=<%= networkLink %>>Network</a></li>
-	    <li class="navtabs"><a href=<%= distributionLink %>>Distribution</a></li>
-   	    <li class="navtabs" id="activelink"><a href=<%= sentimentLink %>>Sentiment</a></li>
-	    <li class="navtabs"><a href=<%= impactLink %>>Impact</a></li>
+	    <li class="navtabs"><a href=<%= summaryLink %>> <label id="summary"></label> </a></li>
+	    <li class="navtabs"><a href=<%= topicsLink %>> <label id="topics"></label> </a></li>
+	    <li class="navtabs"><a href=<%= networkLink %>> <label id="network"></label> </a></li>
+	    <li class="navtabs"><a href=<%= distributionLink %>> <label id="distribution"></label> </a></li>
+   	    <li class="navtabs" id="activelink"><a href=<%= sentimentLink %>> <label id="sentiment"></label> </a></li>
+	    <li class="navtabs"><a href=<%= impactLink %>> <label id="impact"></label> </a></li>
 	    <% if(withDocs) { %>
-	    	<li class="navtabs"><a href=<%= roiLink %>>ROI</a></li>
+	    	<li class="navtabs"><a href=<%= roiLink %>> <label id="roi"></label> </a></li>
 	    <% } %>
-	    <li class="navtabs" style="float:right;"><a href="<%= application.getContextPath() %>/index.jsp">Search</a></li>
+	    <li class="navtabs" style="float:right;"><a href="<%= application.getContextPath() %>/index.jsp"> <label id="searchome"></label> </a></li>
 	</ul>
         	
     
@@ -97,7 +101,7 @@
 			
 		<div class="twitterPolarityTitle_box">
 			
-			<span>Tweets Polarity</span>
+			<span><label id="tweetspolarity"></label></span>
 		
 		</div>
 		
@@ -158,7 +162,7 @@
 		
 			<div class="twitterPolarityBCTitle_box">
 				
-				<span>Positive Topics</span>
+				<span><label id="positivestopics"></label></span>
 			
 			</div>
 			
@@ -171,7 +175,7 @@
 		
 			<div class="twitterPolarityBCTitle_box">
 				
-				<span>Neutral Topics</span>
+				<span><label id="neutralstopics"></label></span>
 			
 			</div>
 			
@@ -184,7 +188,7 @@
 		
 			<div class="twitterPolarityBCTitle_box">
 				
-				<span>Negative Topics</span>
+				<span><label id="negativestopics"></label></span>
 			
 			</div>
 			
@@ -195,96 +199,18 @@
 	
 	</div>
 			
-</div>      
+</div>
+
+	<%@include file="../commons/includeSbiSocialAnalysisComponents.jspf"%>
 
 	<script>
 
 		var positiveData = <%= positiveTopics %>
 		var neutralData = <%= neutralTopics %>
 		var negativeData = <%= negativeTopics %>
-
-// 		var positiveData = [{name:"test1", value:5}, {name:"test2", value:20}, {name:"test3", value:15}, {name:"test4", value:30}, {name:"test5", value:2}, {name:"test6", value:1}];
-// 		var neutralData = [{name:"test1", value:5}, {name:"test2", value:20}, {name:"test3", value:15}, {name:"test4", value:30}, {name:"test5", value:2}, {name:"test6", value:1}];
-// 		var negativeData = [{name:"test1", value:5}, {name:"test2", value:20}, {name:"test3", value:15}, {name:"test4", value:30}, {name:"test5", value:2}, {name:"test6", value:1}];
-
 		
-		d3.select(".positive_barchart")
-		  .selectAll("div")
-		  .data(positiveData)
-		  .enter()
-		  .append("div")
-		  .style("width", function(d)
-		    				{ if(d.value > 30) return "300px"; else return (d.value*10) + "px"; })
-		   .text(function(d) { return d.value; });
-	       
-		
-		d3.select(".posTopics_label")
-		  .selectAll("div")
-		  .data(positiveData)
-		  .enter()
-		  .append("div")
-		  .style("margin", "1px 1px 10px 1px")
-		  .style("padding", "3px")
-		  .text(function(d) { return d.name });
-		
-	
-
-		
-		d3.select(".neutral_barchart")
-		  .selectAll("div")
-		    .data(neutralData)
-		  .enter().append("div")
-		    .style("width", function(d) { if(d.value > 30) return "300px"; else return (d.value*10) + "px"; })
-		    .text(function(d) { return d.value; });
-		
-		d3.select(".neuTopics_label")
-		  .selectAll("div")
-		  .data(neutralData)
-		  .enter()
-		  .append("div")
-		  .style("margin", "1px 1px 10px 1px")
-		  .style("padding", "3px")
-		  .text(function(d) { return d.name });
-	
-	
-		d3.select(".negative_barchart")
-		  .selectAll("div")
-		    .data(negativeData)
-		  .enter().append("div")
-		    .style("width", function(d) { if(d.value > 30) return "300px"; else return (d.value*10) + "px"; })
-		    .text(function(d) { return d.value; });
-		
-		d3.select(".negTopics_label")
-		  .selectAll("div")
-		  .data(negativeData)
-		  .enter()
-		  .append("div")
-		  .style("margin", "1px 1px 10px 1px")
-		  .style("padding", "3px")
-		  .text(function(d) { return d.name });
-	
-	
-	
+		sentimentTopics(positiveData, neutralData, negativeData);
 	</script>
-
-			
-	<script type="text/javascript">
-			  $(document).ready(function(){
-			
-			    $(".navtabs").click(function(){
-			    	
-			    	var width = $("#navigation").width();
-			        var height = $("#navigation").height()
-			    	
-			    	$("#report-loading").css({
-				        top: (100),
-				        left: ((width / 2) - 50),
-				        display: "block"
-				    })			
-			    });
-			
-			  });
-		</script>
 		
 </body>
 </html>
