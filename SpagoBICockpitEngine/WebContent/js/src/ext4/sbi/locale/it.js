@@ -161,6 +161,8 @@ Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.measurealread
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.attributes'] = 'Non puoi inserire degli attributi tra le serie del grafico';
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.postlinecalculated'] = 'Non puoi utilizzare i campi calcolati basati su script tra le serie del grafico';
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.tools.tt.removeall'] = ['Rimuovi tutti'];
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.sort'] = 'Ordina per questa misura';
+
 
 //===================================================================
 //Sbi.cockpit.widgets.ChartSeriesPanel

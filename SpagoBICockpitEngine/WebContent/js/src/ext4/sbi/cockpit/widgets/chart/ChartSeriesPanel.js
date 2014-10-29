@@ -4,6 +4,8 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
+var selected_value="";
+
 Ext.ns("Sbi.cockpit.widgets.chart");
 
 Sbi.cockpit.widgets.chart.ChartSeriesPanel = function(config) {
@@ -80,6 +82,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 	      , {name: 'showcomma', type: 'bool'}
 	      , {name: 'precision', type: 'int'}
 	      , {name: 'suffix', type: 'string'}
+	      , {name: 'sortMeasure', type: 'bool'}
 	])
 
 	, aggregationFunctionsStore:  new Ext.data.ArrayStore({
@@ -110,7 +113,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'color', 'showcomma', 'precision', 'suffix', 'valid']
+			id: 'ChartSeriesPanelStoreId',
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'color', 'showcomma', 'precision', 'suffix', 'valid', 'sortMeasure']
 		});
 	}
 
@@ -179,6 +183,14 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		       }
 			};
 
+		var sortByThisMeasureRadioColumn = {
+			header: LN('sbi.cockpit.widgets.chartseriespanel.columns.sort'),
+			tooltip: LN('sbi.cockpit.widgets.chartseriespanel.columns.sort'),
+			hideable: false,
+			renderer: this.renderRadioBox,
+			width: 30
+		};
+
 		var showCommaCheckColumn = {
 				xtype: 'checkcolumn',
 	    		text: LN('sbi.cockpit.widgets.chartseriespanel.columns.showcomma')
@@ -220,6 +232,9 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			this.gridColumns.push(this.colorColumn);
 		}
 		this.gridColumns.push(showCommaCheckColumn);
+		if ((c.parent != undefined) && (c.parent == 'barchart')){
+			this.gridColumns.push(sortByThisMeasureRadioColumn);
+		}
 		this.gridColumns.push(precisionColumn);
 		this.gridColumns.push(suffixColumn);
 
@@ -286,12 +301,21 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
  	          		}
          			, scope: this
  	        	}
+
  			}
  	        , type: 'measuresContainerPanel'
 
 		});
 
 
+	}
+	, renderRadioBox: function (val, meta, record, rowIndex, colIndex, store){
+		var sortMeasure = record.data.sortMeasure;
+		if (sortMeasure){
+			selected_value = "radio"+rowIndex;
+		}
+		var myRadio = '<input '+(sortMeasure==true?'checked=checked':'')+' type= "radio" value="radio'+rowIndex+'" name="radiogroup" id="sortRadio'+rowIndex+'"  onclick="setSortMeasure('+rowIndex+',\''+store.storeId+'\');" />';
+		return myRadio;
 	}
 
 	, initDropTarget: function() {
@@ -389,7 +413,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 
 	, getContainedMeasures: function () {
 		var measures = [];
-		for(i = 0; i < this.store.getCount(); i++) {
+		for(var i = 0; i < this.store.getCount(); i++) {
 			var record = this.store.getAt(i);
 			measures.push(record.data);
 		}
@@ -506,3 +530,29 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 
 
 });
+
+//Pure javascript functions
+function setSortMeasure(rowIdx,storeId){
+
+	var store = Ext.getStore(storeId);
+
+	var value = document.getElementById('sortRadio'+rowIdx).value;
+
+	if (selected_value == value){
+		//uncheck same radio button
+		document.getElementById('sortRadio'+rowIdx).checked = false;
+	    store.data.items[rowIdx].set('sortMeasure',false);
+	    selected_value = "";
+	} else {
+		//check radio button (and uncheck all the rest)
+	    for(var i=0;i<store.getCount();i++)	    {
+	        if(store.data.items[i].data.sortMeasure==true){
+	        	store.data.items[i].set('sortMeasure',false);
+	    		document.getElementById('sortRadio'+i).checked = false;
+	        }
+	    }
+	    store.data.items[rowIdx].set('sortMeasure',true);
+		document.getElementById('sortRadio'+rowIdx).checked = true;
+		selected_value = document.getElementById('sortRadio'+rowIdx).value;
+	}
+}

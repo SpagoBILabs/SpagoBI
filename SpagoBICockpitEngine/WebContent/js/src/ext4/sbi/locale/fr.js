@@ -163,6 +163,7 @@ Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.measurealread
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.attributes'] = 'You cannot drag attributes into the chart\'s series';
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.postlinecalculated'] = 'You cannot use script-based calculated fields into the chart\'s series';
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.tools.tt.removeall'] = ['Remove all'];
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.sort'] = 'Sort by this Measure';
 
 //===================================================================
 //Sbi.cockpit.widgets.ChartSeriesPanel
