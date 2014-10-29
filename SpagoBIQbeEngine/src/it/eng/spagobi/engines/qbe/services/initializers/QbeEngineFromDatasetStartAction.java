@@ -21,51 +21,46 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-
 /**
- * The Class QbeEngineFromDatasetStartAction.
- * Called when opening QBE engine by passing a datase, not a document.
+ * The Class QbeEngineFromDatasetStartAction. Called when opening QBE engine by passing a datase, not a document.
  * 
  * @author Giulio Gavardi
  */
-public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {	
-	
+public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
+
 	// INPUT PARAMETERS
-	
+
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
-	
-	// SESSION PARAMETRES	
+
+	// SESSION PARAMETRES
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 	public static final String REGISTRY_CONFIGURATION = "REGISTRY_CONFIGURATION";
-	
+
 	// INPUT PARAMETERS
-	
-	// The passed dataset label 
+
+	// The passed dataset label
 	public static final String DATASET_LABEL = "dataset_label";
 	// label of default datasource associated to Qbe Engine
 	public static final String DATASOURCE_LABEL = "datasource_label";
-	
-	
-	
+
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(QbeEngineFromDatasetStartAction.class);
-    
-    public static final String ENGINE_NAME = "SpagoBIQbeEngine";
-				
-    private IDataSet dataSet;
-	
-	
+	private static transient Logger logger = Logger.getLogger(QbeEngineFromDatasetStartAction.class);
+
+	public static final String ENGINE_NAME = "SpagoBIQbeEngine";
+
+	private IDataSet dataSet;
+
 	@Override
 	public IDataSet getDataSet() {
 		logger.debug("IN");
 		if (dataSet == null) {
 			// dataset information is coming with the request
-			String datasetLabel = this.getAttributeAsString( DATASET_LABEL );
+			String datasetLabel = this.getAttributeAsString(DATASET_LABEL);
 			logger.debug("Parameter [" + DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
 			Assert.assertNotNull(datasetLabel, "Dataset not specified");
-			dataSet = getDataSetServiceProxy().getDataSetByLabel(datasetLabel);  	
+			dataSet = getDataSetServiceProxy().getDataSetByLabel(datasetLabel);
 		}
 		logger.debug("OUT");
 		return dataSet;
@@ -80,21 +75,20 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		return datasource;
 	}
 
-
 	@Override
 	public String getDocumentId() {
 		// there is no document at the time
 		return null;
-	}   
+	}
 
 	// no template in this use case
-	 public SourceBean getTemplateAsSourceBean() {
-		 SourceBean templateSB = null;
-		 return templateSB;
-	 }
-	 
-	 
-	 
+	@Override
+	public SourceBean getTemplateAsSourceBean() {
+		SourceBean templateSB = null;
+		return templateSB;
+	}
+
+	@Override
 	public Map addDatasetsToEnv() {
 		Map env = super.getEnv();
 		env.put(EngineConstants.ENV_LOCALE, getLocale());
@@ -102,7 +96,7 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
 
 		IDataSet dataset = this.getDataSet();
-		
+
 		// substitute default engine's datasource with dataset one
 		IDataSource dataSource = dataset.getDataSource();
 		if (dataSource == null) {
@@ -110,7 +104,7 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		} else {
 			env.put(EngineConstants.ENV_DATASOURCE, dataSource);
 		}
-		
+
 		IDataSetTableDescriptor descriptor = this.persistDataset(dataset, env);
 		if (dataset instanceof QbeDataSet) {
 			adjustMetadataForQbeDataset((QbeDataSet) dataset, descriptor);
@@ -121,42 +115,37 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		env.put(EngineConstants.ENV_DATASETS, dataSets);
 		return env;
 	}
-	
-	
+
 	/**
-	 * This method solves the following issue: SQLDataSet defines the SQL
-	 * statement directly considering the names' of the wrapped dataset fields,
-	 * but, in case of QbeDataSet, the fields' names are
-	 * "it.eng.spagobi......Entity.fieldName" and not the name of the
-	 * persistence table!!! We modify the dataset's metadata in order to fix
-	 * this.
+	 * This method solves the following issue: SQLDataSet defines the SQL statement directly considering the names' of the wrapped dataset fields, but, in case
+	 * of QbeDataSet, the fields' names are "it.eng.spagobi......Entity.fieldName" and not the name of the persistence table!!! We modify the dataset's metadata
+	 * in order to fix this.
 	 * 
 	 * @param dataset
 	 *            The persisted Qbe dataset
 	 * @param descriptor
 	 *            The persistence table descriptor
 	 */
-//	TODO move this logic inside the SQLDataSet: when building the
-//	SQL statement, the SQLDataSet should get the columns' names
-//	from the IDataSetTableDescriptor. Replace
-//	IDataSet.getPersistTableName with
-//	IDataSet.getPersistTableDescriptor in order to permit the
-//	IDataSetTableDescriptor to go with its dataset.
-//	TODO merge with it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction.adjustMetadataForQbeDataset
-	private void adjustMetadataForQbeDataset(QbeDataSet dataset,
-			IDataSetTableDescriptor descriptor) {
+	// TODO move this logic inside the SQLDataSet: when building the
+	// SQL statement, the SQLDataSet should get the columns' names
+	// from the IDataSetTableDescriptor. Replace
+	// IDataSet.getPersistTableName with
+	// IDataSet.getPersistTableDescriptor in order to permit the
+	// IDataSetTableDescriptor to go with its dataset.
+	// TODO merge with it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction.adjustMetadataForQbeDataset
+	private void adjustMetadataForQbeDataset(QbeDataSet dataset, IDataSetTableDescriptor descriptor) {
 		IMetaData metadata = dataset.getMetadata();
 		int columns = metadata.getFieldCount();
 		for (int i = 0; i < columns; i++) {
 			IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
-			String newName = descriptor.getColumnName(fieldMetadata
-					.getName());
+			String newName = descriptor.getColumnName(fieldMetadata.getName());
 			fieldMetadata.setName(newName);
 			fieldMetadata.setProperty("uniqueName", newName);
 		}
 		dataset.setMetadata(metadata);
 	}
 
+	@Override
 	protected boolean tolerateMissingDatasource() {
 		return true;
 	}
