@@ -135,6 +135,20 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		return this.wconf.type == 'percent-stacked-barchart';
 	}
 
+	, getMeasureToSort: function(){
+		var store = this.getStore();
+		var sortCriteria = [];
+		for(var i = 0; i < this.wconf.series.length; i++) {
+			var serie = this.wconf.series[i];
+			if ((serie.sortMeasure != undefined) && (serie.sortMeasure != false)){
+				var id = this.wconf.series[i].alias;
+				sortCriteria.push(store.fieldsMeta[id].name);
+				break;
+			}
+		}
+		return sortCriteria;
+	}
+
     , refresh:  function() {
     	Sbi.trace("[BarChartWidgetRuntime.refresh]: IN");
     	Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime.superclass.refresh.call(this);
@@ -179,8 +193,12 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 				}
 			}
 		}
-
-		store.sort(categoriesConfig.fields[0], 'ASC');
+		var sortMeasure = this.getMeasureToSort();
+		if (sortMeasure.length > 0){
+			store.sort(sortMeasure[0], 'ASC');
+		} else {
+			store.sort(categoriesConfig.fields[0], 'ASC');
+		}
 
 		if (!this.areIncomingEventsEnabled()) {
 	     	var clone = Sbi.storeManager.cloneStore(this.getStore());
@@ -416,7 +434,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 						+ " <p> " +
 						itemMeta.categoryFieldHeaders + ': '+ categoryValue;
 		}
-
+		Sbi.trace("[BarChartWidgetRuntime.getTooltip]: OUT");
 		return tooltip;
 
 

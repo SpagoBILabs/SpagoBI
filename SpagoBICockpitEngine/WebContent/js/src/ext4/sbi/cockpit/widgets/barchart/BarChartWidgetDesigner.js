@@ -202,6 +202,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
             , initialData: []
             , crosstabConfig: {}
             , ddGroup: this.ddGroup
+            , parent: 'barchart'
 		});
 
 
