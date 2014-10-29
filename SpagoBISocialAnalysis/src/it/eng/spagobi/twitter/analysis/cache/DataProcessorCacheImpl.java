@@ -594,7 +594,7 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 	}
 
 	@Override
-	public List<Object[]> getGeneralStatsForSearchID(long searchID) throws DaoServiceException {
+	public List<TwitterUser> getGeneralStatsForSearchID(long searchID) throws DaoServiceException {
 
 		logger.debug("Method getUsersForSearchID(): Start");
 
@@ -604,17 +604,23 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 			this.daoService = new DaoService();
 		}
 
-		String queryHQL = "select tu.userID, tu.followersCount, count(td.tweetID) from TwitterUser tu ,TwitterData td where tu.userID = td.twitterUser.userID and td.twitterSearch.searchID = ? GROUP by (td.twitterUser.userID)";
+		// String queryHQL =
+		// "select tu.userID as user, tu.followersCount, count(td.tweetID) from TwitterUser tu ,TwitterData td where tu.userID = td.twitterUser.userID and td.twitterSearch.searchID = ? GROUP by (td.twitterUser.userID)";
 
-		List<Object[]> result = daoService.listFromQuery(queryHQL, searchID);
+		String queryHQL = "select new TwitterUser(tu.userID, tu.followersCount, count(td.tweetID)) from TwitterUser tu ,TwitterData td where tu.userID = td.twitterUser.userID and td.twitterSearch.searchID = ? GROUP by (td.twitterUser.userID)";
+
+		// List<Object[]> result = daoService.listFromQuery(queryHQL, searchID);
+		// List<Map<String, Object>> result = null;
+		List<TwitterUser> users = daoService.listFromQuery(queryHQL, searchID);
 
 		// List<TwitterUser> result = daoService.listFromQuery(queryHQL, searchID);
+		// Annotation[] test = TwitterUser.class.getAnnotations();
 
 		long endMills = System.currentTimeMillis() - initMills;
 
 		logger.debug("Method getUsersForSearchID(): End in " + endMills + "ms");
 
-		return result;
+		return users;
 
 	}
 
@@ -662,7 +668,7 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 			this.daoService = new DaoService();
 		}
 
-		String query = "select new TwitterData(td.twitterSearch, td.twitterUser, td.replyToUserId, td.originalRTTweetId) from TwitterData td where td.twitterSearch.searchID = ? and (td.replyToUserId IS NOT NULL or td.originalRTTweetId IS NOT NULL) order by td.twitterUser.followersCount DESC";
+		String query = "select new TwitterData(td.twitterSearch, td.twitterUser, td.replyToUserId, td.originalRTTweetId, (select tru from TwitterUser tru where tru.userID = td.replyToUserId), (select rtuser from TwitterData data, TwitterUser rtuser where data.twitterSearch.searchID = td.twitterSearch.searchID and data.tweetID = td.originalRTTweetId and rtuser.userID = data.twitterUser.userID)) from TwitterData td where td.twitterSearch.searchID = ? and (td.replyToUserId IS NOT NULL or td.originalRTTweetId IS NOT NULL) order by td.twitterUser.followersCount DESC";
 
 		List<TwitterData> tweets = daoService.listFromBetweenLimitedQuery(query, start, end, searchID);
 

@@ -75,7 +75,7 @@ public interface IDataProcessorCache {
 
 	public int getTotalUsersWithLocationCode(long searchID) throws DaoServiceException;
 
-	public List<Object[]> getGeneralStatsForSearchID(long searchID) throws DaoServiceException;
+	public List<TwitterUser> getGeneralStatsForSearchID(long searchID) throws DaoServiceException;
 
 	public List<String> getMentions(long searchID) throws DaoServiceException;
 
