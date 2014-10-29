@@ -73,12 +73,12 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	        	//container for search type and options
 	        	padding: "0 0 0 20",
 	        	xtype      : 'fieldcontainer',
-	            fieldLabel: "Search type",
+	            fieldLabel: LN('sbi.social.analysis.searchType'),
 	            layout: 'hbox',
 	            items: [
 	                {
 	                	xtype	  :	'radiofield',
-	                    boxLabel  : 'On-line monitoring',
+	                    boxLabel  : LN('sbi.social.analysis.onlinemonitoring'),
 	                    name      : 'searchType',
 	                    inputValue: 'streamingAPI',
 	                    id        : 'radioStreaming',
@@ -86,7 +86,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	                }, 
 	                {
 						xtype	  :	'radiofield',
-					    boxLabel  : 'Historical data',
+					    boxLabel  : LN('sbi.social.analysis.historicaldata'),
 					    name      : 'searchType',
 					    inputValue: 'searchAPI',
 					    id        : 'radioHSearch',
@@ -128,7 +128,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 					    [
 						    {
 						    	xtype: 'checkboxfield',
-						    	boxLabel  : 'Starting from',
+						    	boxLabel  : LN('sbi.social.analysis.startingfrom'),
 						        name      : 'isStartingFrom',
 						        inputValue: '1',
 						        id        : 'checkboxStartingFromID',
@@ -166,7 +166,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 						    },                
 							{
 						    	xtype: 'displayfield',
-						    	value: 'day ago',
+						    	value: LN('sbi.social.analysis.dayago'),
 						    	margin: '0 0 0 10',
 						    	hidden: true,
 						    	id: 'labelAgoStartingFromID'
@@ -182,7 +182,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 					   items :[
 					   {
 						   	xtype: 'checkboxfield',
-						   	boxLabel  : 'Repeat every',
+						   	boxLabel  : LN('sbi.social.analysis.repeatevery'),
 						   	name      : 'isRepeating',
 						   	inputValue: '1',
 						   	id        : 'checkboxRepeatID',
@@ -221,7 +221,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 		            		editable: false,
 		            		store: this.repeatTypeStore, 
 		            		queryMode: 'local', 
-		            		displayField: 'type',  
+		            		displayField: 'name',  
 		            		valueField: 'type',
 		            		padding: '0 0 0 10',
 		            		name: 'repeatType',
@@ -249,22 +249,73 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	            },
 	        	items: [
 	        	{
-	        		fieldLabel: 'Logical identifier',
+	        		fieldLabel: LN('sbi.social.analysis.logicalidentifier'),
 	        		name: 'label',
 	        		anchor: '30%',
 	        		enforceMaxLength: true,
 	        		maxLength: 100
-	        	}, {
-	        		fieldLabel: 'Keywords',
-	        		name: 'keywords',
+	        	}, 
+	        	{
+	        		xtype:'fieldcontainer',
 	        		anchor: '50%',
-	        		allowBlank: false,
-	        		invalidCls: 'x-form-invalid-field',
-	        		enforceMaxLength: true,
-	        		maxLength: 200,
-	        		regexText: 'Please, use a comma as keywords separator. Max 5 keywords allowed',
-	        		regex: /^([#]?[a-zA-Z0-9_-]+)(,\s*[#]?[a-zA-Z0-9_-]+){0,4}$/
-	        		
+					layout: 'hbox',
+					items: 
+					[
+					 	{
+			        		fieldLabel: LN('sbi.social.analysis.keywords'),
+			        		xtype: 'textfield',
+			        		name: 'keywords',
+			        		id: 'keywordsId',
+			        		allowBlank: false,
+			        		invalidCls: 'x-form-invalid-field',
+			        		enforceMaxLength: true,
+			        		flex: 1,
+//			        		maxLength: 200,
+			        		regexText: LN('sbi.social.analysis.keywordsfieldalertmessage'),
+			        		regex: /^([#]?[a-zA-Z0-9_-]+)(,\s*[#]?[a-zA-Z0-9_-]+){0,4}$/
+					 	},
+					 	{
+		                	xtype	  :	'radiofield',
+		                    boxLabel  : LN('sbi.social.analysis.and'),
+		                    name      : 'booleanOperator',
+		                    inputValue: 'AND',
+		                    id        : 'radioAND',
+		                    margin	  : '0 0 0 20',
+		                    checked	  : true
+		                }, 
+		                {
+		                	xtype	  :	'radiofield',
+		                    boxLabel  : LN('sbi.social.analysis.or'),
+		                    name      : 'booleanOperator',
+		                    inputValue: 'OR',
+		                    id        : 'radioOR',
+		                    margin	  : '0 0 0 20'		                    
+		                },
+		                {
+		                	xtype	  :	'radiofield',
+		                    boxLabel  : LN('sbi.social.analysis.free'),
+		                    name      : 'booleanOperator',
+		                    inputValue: 'FREE',
+		                    id        : 'radioFree',
+		                    margin	  : '0 0 0 20',
+		                    listeners: 
+		                    {
+						        change: function (field, newValue, oldValue) 
+						        {
+						        	var form = field.up('form');
+						            var keywordsfield = form.down('#keywordsId');
+						            if(newValue)
+						            {
+						            	keywordsfield.regex = '';
+						            }
+						            else
+						            {
+						            	keywordsfield.regex = /^([#]?[a-zA-Z0-9_-]+)(,\s*[#]?[a-zA-Z0-9_-]+){0,4}$/;
+						            }
+						        }
+		                    }
+		                }
+		        	]
 	        	}],
 	        },
 	        {
@@ -274,7 +325,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	            padding: '0 0 0 20',
 	            items: [
 	                {
-	                    boxLabel  : 'Twitter',
+	                    boxLabel  : LN('sbi.social.analysis.twitter'),
 	                    name      : 'socialType',
 	                    inputValue: '1',
 	                    disabled  : true,
@@ -282,7 +333,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	                    id        : 'checkboxTwitter',
 	                    padding: '0 0 0 20',
 	                }, {
-	                    boxLabel  : 'Facebook',
+	                    boxLabel  : LN('sbi.social.analysis.facebook'),
 	                    name      : 'socialType',
 	                    inputValue: '2',
 	                    disabled   : true,
@@ -290,7 +341,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	                    padding: '0 0 0 20'
 	                },
 	                {
-	                    boxLabel  : 'Linkedin',
+	                    boxLabel  : LN('sbi.social.analysis.linkedin'),
 	                    name      : 'socialType',
 	                    inputValue: '3',
 	                    disabled   : true,
@@ -314,31 +365,31 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	            },
 	        	items: [
 	        	{
-	        		fieldLabel: 'Accounts to monitor',
+	        		fieldLabel: LN('sbi.social.analysis.accountstomonitor'),
 	        		name: 'accounts',
 	        		anchor: '50%',
 	        		invalidCls: 'x-form-invalid-field',
 	        		enforceMaxLength: true,
 	        		maxLength: 500,
-	        		regexText: 'Check input format. E.g. @Account1, @Account2, etc. Max 3 accounts allowed',
+	        		regexText: LN('sbi.social.analysis.accountstomonitorfieldalertmessage'),
 	        		regex: /^([@][a-zA-Z0-9_-]+)(,\s*[@][a-zA-Z0-9_-]+){0,2}$/
 	        	}, {
-	        		fieldLabel: 'Resources',
+	        		fieldLabel: LN('sbi.social.analysis.resourcestomonitor'),
 	        		name: 'links',
 	        		anchor: '50%',
 	        		invalidCls: 'x-form-invalid-field',
 	        		enforceMaxLength: true,
 	        		maxLength: 500,
-	        		regexText: 'Check input format. E.g. http://bit.ly/yourbitly1, http://bit.ly/yourbitly2, etc. Max 3 bitly links allowed',
+	        		regexText: LN('sbi.social.analysis.resourcestomonitorfieldalertmessage'),
 	        		regex: /^((http:\/\/bit.ly\/)[a-zA-Z0-9_-]+)(,\s*(http:\/\/bit.ly\/)[a-zA-Z0-9_-]+){0,2}$/
 	        	}, {
-	        		fieldLabel: 'Impact on business',
+	        		fieldLabel: LN('sbi.social.analysis.documentstomonitor'),
 	        		name: 'documents',
 	        		anchor: '50%',
 	        		invalidCls: 'x-form-invalid-field',
 	        		enforceMaxLength: true,
 	        		maxLength: 500,
-	        		regexText: 'Please, use a comma as documents separator. Max 3 documents allowed',
+	        		regexText: LN('sbi.social.analysis.documentstomonitorfieldalertmessage'),
 	        		regex: /^([a-zA-Z0-9_-]+)(,\s*[a-zA-Z0-9_-]+){0,2}$/
 //	        		hidden: true
 	        	}],
@@ -357,7 +408,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
                  	width: 40,
                  	value: 0,
                  	minValue: 0,
-                	fieldLabel: 'Up to',
+                	fieldLabel: LN('sbi.social.analysis.upto'),
                     name      : 'numberUpTo',
                     width: 200
                 },                   
@@ -366,7 +417,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
             		editable: false,
             		store: this.upToStore, 
             		queryMode: 'local', 
-            		displayField: 'type',  
+            		displayField: 'name',  
             		valueField: 'type',
             		padding: '0 0 0 10',
             		name: 'typeUpTo',
@@ -385,7 +436,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
                },
 	       	   {
 					xtype: 'numberfield',
-					fieldLabel: 'Frequency',
+					fieldLabel: LN('sbi.social.analysis.frequency'),
 			    	labelWidth: 50,
 			        name: 'monitorFrequencyValue',
 			        padding: '0 0 0 19',
@@ -399,7 +450,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 		       		editable: false,
 		       		store: this.repeatTypeStore, 
 		       		queryMode: 'local', 
-		       		displayField: 'type',  
+		       		displayField: 'name',  
 		       		valueField: 'type',
 		       		padding: '0 0 0 10',
 		       		name: 'monitorFrequencyType',
@@ -414,7 +465,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 		   	   },
 		   	{
 	        		xtype: 'button',
-	        		text: 'Search',
+	        		text: LN('sbi.social.analysis.search'),
 	        		margin: '0, 0, 0, 20',
 	        		width: 55,
 	        		handler: function()

@@ -15,10 +15,10 @@
 Ext.define('Sbi.social.analysis.search.store.RepeatTypeStore', {
 	
 	extend: 'Ext.data.Store',
-	fields: ['type'],
+	fields: ['name', 'type'],
     data : [
-        {"type":"Day"},
-        {"type":"Hour"}
+        {"name": LN('sbi.social.analysis.day'),  "type": 'Day'},
+        {"name": LN('sbi.social.analysis.hour'), "type": 'Hour'}
 
     ]           
 	

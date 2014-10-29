@@ -16,7 +16,7 @@
 Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', {
 	extend: 'Ext.grid.Panel',
 	
-	title: 'Continuos scanning',
+	title: LN('sbi.social.analysis.continuousscanning'),
 	titleAlign: 'center',
 	flex: 1,
 
@@ -44,43 +44,43 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', 
 //		            dataIndex: 'searchID'
 //		        },
 		        {
-		            text: 'Label',
+		            text: LN('sbi.social.analysis.label'),
 //		            width: 100,
 		            dataIndex: 'label'
 		        },
 		        {
-		            text: 'Keywords',
+		            text: LN('sbi.social.analysis.keywords'),
 //		            width: 100,
 		            flex: 1,
 		            dataIndex: 'keywords'
 		        },
 		        {
-		            text: 'Last Activation',
+		            text: LN('sbi.social.analysis.lastactivation'),
 //		            width: 100,
 		            dataIndex: 'lastActivationTime',
 		            renderer : Ext.util.Format.dateRenderer('m/d/Y H:i')
 		        },
 		        {
-		            text: 'Accounts to monitor',
+		            text: LN('sbi.social.analysis.accountstomonitor'),
 //		            width: 200,
 		            flex: 1,
 		            dataIndex: 'accounts',
 		        },
 		        {
-		            text: 'Resources to monitor',
+		            text: LN('sbi.social.analysis.resourcestomonitor'),
 //		            width: 200,
 		            flex: 1,
 		            dataIndex: 'links',
 		        },
 		        {
-		            text: 'Documents',
+		            text: LN('sbi.social.analysis.documents'),
 //		            width: 200,
 		            flex: 1,
 		            dataIndex: 'documents',
 		        },
 		        {
 		        	xtype: 'actioncolumn',
-		            text: 'Start/Stop',
+		            text: LN('sbi.social.analysis.startstop'),
 		            width: 100,
 		            dataIndex: 'loading',
 		            align: 'center',
@@ -104,7 +104,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', 
 	                    	//stop code
 	                    	Ext.Msg.show({
 	                    	     title:'Confirm',
-	                    	     msg: 'Your are stopping the streaming search. Are you sure?',
+	                    	     msg: LN('sbi.social.analysis.stopstreammessage'),
 	                    	     buttons: Ext.Msg.YESNO,
 	                    	     icon: Ext.Msg.QUESTION,
 	                    	     fn: function(btn, text){
@@ -137,7 +137,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', 
 	                    	//start code
 	                    	Ext.Msg.show({
 	                    	     title:'Confirm',
-	                    	     msg: 'Starting this Stream will stop the other one active. Are you sure?',
+	                    	     msg: LN('sbi.social.analysis.startstreammessage'),
 	                    	     buttons: Ext.Msg.YESNO,
 	                    	     icon: Ext.Msg.QUESTION,
 	                    	     fn: function(btn, text){
@@ -171,7 +171,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', 
 	            },
 		        {
 		            xtype: 'actioncolumn',
-		            text: 'Delete',
+		            text: LN('sbi.social.analysis.delete'),
 		            icon: 'img/delete.png',
 		            align: 'center',
 		            handler: function(grid, rowIndex, colIndex) {
@@ -180,7 +180,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', 
 	              
                     	Ext.Msg.show({
                     	     title:'Confirm',
-                    	     msg: 'You are deleting this search. Are you sure?',
+                    	     msg: LN('sbi.social.analysis.deletingmessage'),
                     	     buttons: Ext.Msg.YESNO,
                     	     icon: Ext.Msg.QUESTION,
                     	     fn: function(btn, text){
@@ -213,7 +213,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', 
 		        },
 		        {
 		        	xtype: 'actioncolumn',
-		            text: 'Analyse',
+		            text: LN('sbi.social.analysis.analyse'),
 //		            width: 100,
 		            dataIndex: 'loading',
 		            align: 'center',
@@ -222,6 +222,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', 
 		            	
 	                    var rec = grid.getStore().getAt(rowIndex);
 	                    
+	                    var searchId = rec.get('searchID');
 	                    var documents = rec.get('documents');    
 	                    
 	                    if(documents != null && documents != "")
