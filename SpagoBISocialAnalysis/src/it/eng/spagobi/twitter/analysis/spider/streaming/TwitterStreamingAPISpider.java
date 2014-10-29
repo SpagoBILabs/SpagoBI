@@ -70,7 +70,7 @@ public class TwitterStreamingAPISpider {
 
 		// Initialize my listener
 		TwitterStreamListener twitterStreamListener = new TwitterStreamListener(this.cache, searchID);
-		twitterStreamListener.setKeyword(joinStrings(keywords));
+		// twitterStreamListener.setKeyword(joinStrings(keywords));
 		twitterStream.addListener(twitterStreamListener);
 
 		this.filterQuery = new FilterQuery();
