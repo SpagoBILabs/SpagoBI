@@ -38,7 +38,7 @@ public class TwitterDistributionTabServlet extends HttpServlet {
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = -8767760518159744239L;
+	private static final long serialVersionUID = 8494200564985525032L;
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
