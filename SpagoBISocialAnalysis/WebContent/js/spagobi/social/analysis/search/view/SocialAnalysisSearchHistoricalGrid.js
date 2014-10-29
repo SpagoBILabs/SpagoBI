@@ -16,7 +16,7 @@
 Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid', {
 	extend: 'Ext.grid.Panel',
 	
-	title: 'Timely scanning',
+	title: LN('sbi.social.analysis.timelyscanning'),
 	titleAlign: 'center',
 	flex: 1,
 	margin: '10 0 10 0',
@@ -56,36 +56,36 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
 //		            dataIndex: 'searchID'
 //		        },
 		        {
-		            text: 'Label',
+		            text: LN('sbi.social.analysis.label'),
 //		            width: 200,
 		            dataIndex: 'label'
 		        },
 		        {
-		            text: 'Keywords',
+		            text: LN('sbi.social.analysis.keywords'),
 //		            width: 100,
 		            flex: 1,
 		            dataIndex: 'keywords'
 		        },
 		        {
-		            text: 'Last Activation',
+		            text: LN('sbi.social.analysis.lastactivation'),
 //		            width: 100,
 		            dataIndex: 'lastActivationTime',
 		            renderer : Ext.util.Format.dateRenderer('m/d/Y H:i')
 		        },
 		        {
-		            text: 'Accounts to monitor',
+		            text: LN('sbi.social.analysis.accountstomonitor'),
 //		            width: 200,
 		            flex: 1,
 		            dataIndex: 'accounts',
 		        },
 		        {
-		            text: 'Resources to monitor',
+		            text: LN('sbi.social.analysis.resourcestomonitor'),
 //		            width: 200,
 		            flex: 1,
 		            dataIndex: 'links',
 		        },
 		        {
-		            text: 'Documents',
+		            text: LN('sbi.social.analysis.documents'),
 //		            width: 200,
 		            flex: 1,
 		            dataIndex: 'documents',
@@ -97,7 +97,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
 //		        },
 		        {
 		            xtype: 'actioncolumn',
-		            text: 'Delete',
+		            text: LN('sbi.social.analysis.delete'),
 		            icon: 'img/delete.png',
 		            align: 'center',
 		            isDisabled: function(view, rowIndex, colIndex, item, record)
@@ -118,7 +118,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
 	              
                     	Ext.Msg.show({
                     	     title:'Confirm',
-                    	     msg: 'You are deleting this search. Are you sure?',
+                    	     msg: LN('sbi.social.analysis.deletingmessage'),
                     	     buttons: Ext.Msg.YESNO,
                     	     icon: Ext.Msg.QUESTION,
                     	     fn: function(btn, text){
@@ -150,7 +150,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
 		        },
 		        {
 		        	xtype: 'actioncolumn',
-		            text: 'Analyse',
+		            text: LN('sbi.social.analysis.analyse'),
 //		            width: 100,
 		            dataIndex: 'loading',
 		            align: 'center',
@@ -199,7 +199,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
 		        },
 		        {
 		        	xtype: 'actioncolumn',
-		            text: 'Scheduler',
+		            text: LN('sbi.social.analysis.scheduler'),
 //		            width: 100,
 		            align: 'center',
 		            isDisabled: function(view, rowIndex, colIndex, item, record)
@@ -228,7 +228,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
 			            	    return 'x-scheduler-stop-disabled';               
 			            	}
 			            },
-		                tooltip: 'Stop Historic Search Scheduler',
+		                tooltip: LN('sbi.social.analysis.schedulertooltip'),
 		                handler:  this.twitterStopSearchScheduler
 		            }
 //		            {
@@ -270,7 +270,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
         					
         					Ext.Msg.show({
         						title:'Alert',
-        						msg: 'Search ' + labelSearch + ' failed cause of connection problems. Loading partial results..',
+        						msg: labelSearch + LN('sbi.social.analysis.searchfailedmessage'),
         						buttons: Ext.Msg.OK,
         						icon: Ext.Msg.WARNING,
         						fn: function(btn, text){
@@ -317,7 +317,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
         	//stop scheduler code
         	Ext.Msg.show({
         	     title:'Confirm',
-        	     msg: 'You are stopping the search scheduler. Are you sure?',
+        	     msg: LN('sbi.social.analysis.stopsearchscheduler'),
         	     buttons: Ext.Msg.YESNO,
         	     icon: Ext.Msg.QUESTION,
         	     fn: function(btn, text){

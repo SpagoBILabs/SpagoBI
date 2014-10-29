@@ -15,11 +15,11 @@
 Ext.define('Sbi.social.analysis.search.store.UpToStore', {
 	
 	extend: 'Ext.data.Store',
-	fields: ['type'],
+	fields: ['name', 'type'],
     data : [
-        {"type":"Day"},
-        {"type":"Week"},
-        {"type":"Month"}
+        {"name":LN('sbi.social.analysis.day'),  "type":"Day"},
+        {"name":LN('sbi.social.analysis.week') , "type":"Week"},
+        {"name":LN('sbi.social.analysis.month') , "type":"Month"}
     ]           
 	
 });
