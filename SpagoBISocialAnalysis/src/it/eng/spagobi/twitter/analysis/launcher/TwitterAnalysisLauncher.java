@@ -27,6 +27,7 @@ import it.eng.spagobi.twitter.analysis.cache.TwitterCacheImpl;
 import it.eng.spagobi.twitter.analysis.entities.TwitterMonitorScheduler;
 import it.eng.spagobi.twitter.analysis.entities.TwitterSearch;
 import it.eng.spagobi.twitter.analysis.entities.TwitterSearchScheduler;
+import it.eng.spagobi.twitter.analysis.enums.BooleanOperatorEnum;
 import it.eng.spagobi.twitter.analysis.enums.MonitorRepeatTypeEnum;
 import it.eng.spagobi.twitter.analysis.enums.SearchRepeatTypeEnum;
 import it.eng.spagobi.twitter.analysis.enums.SearchTypeEnum;
@@ -511,20 +512,45 @@ public class TwitterAnalysisLauncher {
 		twitterSearchAPI.setLanguage(this.languageCode);
 		twitterSearchAPI.setResultType(ResultType.recent);
 
-		String[] keywordsArr = twitterSearch.getKeywords().split(",");
-		String textQuery = "";
+		if (this.twitterSearch.getBooleanOperator() == BooleanOperatorEnum.FREE) {
 
-		// TODO: 5 as default, query too complex
+			String textQuery = this.twitterSearch.getKeywords();
+			twitterSearchAPI.setQuery(textQuery);
 
-		for (int i = 0; (i < keywordsArr.length) && (i < 5); i++) {
-			if (i == 0) {
-				textQuery = keywordsArr[i].trim();
-			} else {
-				textQuery = textQuery + " OR " + keywordsArr[i].trim();
+		} else if (this.twitterSearch.getBooleanOperator() == BooleanOperatorEnum.AND) {
+
+			String textQuery = "";
+			String[] keywordsArr = twitterSearch.getKeywords().split(",");
+
+			// TODO: 5 as default, query too complex
+
+			for (int i = 0; (i < keywordsArr.length) && (i < 5); i++) {
+				if (i == 0) {
+					textQuery = keywordsArr[i].trim();
+				} else {
+					textQuery = textQuery + " " + keywordsArr[i].trim();
+				}
 			}
+			twitterSearchAPI.setQuery(textQuery);
+
+		} else if (this.twitterSearch.getBooleanOperator() == BooleanOperatorEnum.OR) {
+
+			String textQuery = "";
+			String[] keywordsArr = twitterSearch.getKeywords().split(",");
+
+			// TODO: 5 as default, query too complex
+
+			for (int i = 0; (i < keywordsArr.length) && (i < 5); i++) {
+				if (i == 0) {
+					textQuery = keywordsArr[i].trim();
+				} else {
+					textQuery = textQuery + " OR " + keywordsArr[i].trim();
+				}
+			}
+			twitterSearchAPI.setQuery(textQuery);
+
 		}
 
-		twitterSearchAPI.setQuery(textQuery);
 		twitterSearchAPI.setTwitterSearch(this.twitterSearch);
 		twitterSearchAPI.setSinceDate(this.sinceCalendar);
 
@@ -539,8 +565,27 @@ public class TwitterAnalysisLauncher {
 		twitterStreamingAPI.setSearchID(twitterSearch.getSearchID());
 		twitterStreamingAPI.setCache(cache);
 
-		String[] keywordsArr = twitterSearch.getKeywords().split(" ");
-		twitterStreamingAPI.setTrack(keywordsArr);
+		if (this.twitterSearch.getBooleanOperator() == BooleanOperatorEnum.FREE) {
+
+			String[] keywordsArr = twitterSearch.getKeywords().split(",");
+			twitterStreamingAPI.setTrack(keywordsArr);
+
+		} else if (this.twitterSearch.getBooleanOperator() == BooleanOperatorEnum.AND) {
+
+			String andQueryText = twitterSearch.getKeywords().trim().replace(",", " ");
+
+			String[] keywordsArr = new String[1];
+			keywordsArr[0] = andQueryText;
+
+			twitterStreamingAPI.setTrack(keywordsArr);
+
+		} else if (this.twitterSearch.getBooleanOperator() == BooleanOperatorEnum.OR) {
+
+			String[] keywordsArr = twitterSearch.getKeywords().trim().split(",");
+
+			twitterStreamingAPI.setTrack(keywordsArr);
+
+		}
 
 		if (this.languageCode != null && !this.languageCode.equals("")) {
 
@@ -570,7 +615,11 @@ public class TwitterAnalysisLauncher {
 					searchAPI.collectTweets();
 
 					// historical search completed, loading = false;
-					logger.debug("Method startHistoricalSearchThread(): Historical Search completed");
+					logger.debug("Method startHistoricalSearchThread(): Historical Search completed. Processing results for topics and sentiment..");
+
+					// TwitterRScriptUtility.callSentimentRScript("demo_admin", twitterSearch.getSearchID());
+
+					logger.debug("Method startHistoricalSearchThread(): R Script called. Update search loading field. Results ready");
 
 					twitterSearch.setLoading(false);
 
@@ -767,7 +816,13 @@ public class TwitterAnalysisLauncher {
 			}
 
 			twitterMonitor.setStartingTime(startingCalendar);
-			twitterMonitor.setActive(true);
+
+			if (twitterMonitor.getUpToValue() <= 0) {
+				twitterMonitor.setActive(false);
+			} else {
+				twitterMonitor.setActive(true);
+			}
+
 			cache.updateTwitterMonitorScheduler(twitterMonitor);
 
 			logger.debug("Method createMonitoringTriggerWithoutEndingDate(): End");
