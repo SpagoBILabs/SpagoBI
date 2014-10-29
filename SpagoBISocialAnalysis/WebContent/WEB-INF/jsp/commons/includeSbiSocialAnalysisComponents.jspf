@@ -1,0 +1,26 @@
+
+
+<script src="<%= application.getContextPath() %>/js/lib/others/social/social-jquery-locale.js"></script>
+<script src="<%= application.getContextPath() %>/js/lib/others/social/tabs-locale.js"></script>
+
+<script src="<%= application.getContextPath() %>/js/lib/others/social/summary-locale.js"></script>	
+<script src="<%= application.getContextPath() %>/js/lib/others/social/summary-timeline.js"></script>
+
+<script src="<%= application.getContextPath() %>/js/lib/others/social/topics-locale.js"></script>
+
+<script src="<%= application.getContextPath() %>/js/lib/others/social/network-locale.js"></script>
+<script src="<%= application.getContextPath() %>/js/lib/others/social/interactions-graph.js"></script>	
+<script src="<%= application.getContextPath() %>/js/lib/others/social/interactions-network.js"></script>	
+
+<script src="<%= application.getContextPath() %>/js/lib/others/social/distribution-locale.js"></script>	
+
+<script src="<%= application.getContextPath() %>/js/lib/others/social/sentiment-locale.js"></script>
+<script src="<%= application.getContextPath() %>/js/lib/others/social/sentiment-topics.js"></script>
+
+<script src="<%= application.getContextPath() %>/js/lib/others/social/impact-locale.js"></script>		
+<script src="<%= application.getContextPath() %>/js/lib/others/social/followers-timeline.js"></script>
+<script src="<%= application.getContextPath() %>/js/lib/others/social/clicks-timeline.js"></script>
+
+<script src="<%= application.getContextPath() %>/js/lib/others/social/roi-locale.js"></script>	
+
+<script src="<%= application.getContextPath() %>/js/lib/others/social/loading-results.js"></script>		

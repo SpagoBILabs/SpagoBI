@@ -11,13 +11,22 @@
 Giorgio Federici (giorgio.federici@eng.it)
 --%>
 
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="java.util.Locale"%>
+
 <%@ page language="java"
          contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"
          session="true"
 %>	
 
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA CODE 																--%>
+<%-- ---------------------------------------------------------------------- --%>
 
+<%
+	String locale = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE); 
+%>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
