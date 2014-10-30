@@ -377,7 +377,8 @@ public class AnalysisUtility {
 
 	public static double parseDoubleUtil(String str) throws ParseException {
 
-		return (double) NumberFormat.getNumberInstance(Locale.getDefault()).parse(str);
+		Number number = NumberFormat.getNumberInstance(Locale.getDefault()).parse(str);
+		return number.doubleValue();
 
 	}
 
