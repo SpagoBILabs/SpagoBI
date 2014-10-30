@@ -144,6 +144,7 @@ Sbi.locale.ln['sbi.social.analysis.locationtweets'] = 'Location Tweets';
 
 //SENTIMENT
 Sbi.locale.ln['sbi.social.analysis.tweetspolarity'] = 'Tweets Polarity';
+Sbi.locale.ln['sbi.social.analysis.sentimentradar'] = 'Sentiment Radar';
 Sbi.locale.ln['sbi.social.analysis.positivestopics'] = 'Positives Topics';
 Sbi.locale.ln['sbi.social.analysis.neutralstopics'] = 'Neutrals Topics';
 Sbi.locale.ln['sbi.social.analysis.negativestopics'] = 'Negatives Topics';
