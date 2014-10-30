@@ -186,6 +186,7 @@ public class TwitterCacheImpl implements ITwitterCache {
 
 					String locationCode = AnalysisUtility.findCountryCodeFromUserLocation(twitterUser.getLocation(), twitterUser.getTimeZone());
 					twitterUserFromDB.setLocationCode(locationCode);
+					twitterUserFromDB.setLocation(twitterUser.getLocation());
 				}
 
 				twitterUserFromDB.setTimeZone(twitterUser.getTimeZone());
