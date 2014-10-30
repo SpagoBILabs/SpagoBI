@@ -23,53 +23,55 @@ import org.apache.log4j.Logger;
 @Path("/1.0/execute")
 public class ExternalResource extends AbstractDataMiningEngineService {
 	public static transient Logger logger = Logger.getLogger(ExternalResource.class);
+
 	/**
-	 * Service to execute an external script * 
+	 * Service to execute an external script *
+	 *
 	 * @return
-	 * 
+	 *
 	 */
-	//http://localhost:8080/SpagoBIDataMiningEngine/restful-services/1.0/execute/test1.R?user_id=biadmin&search_id=14&libraries=vegan,ellipse
+	// http://localhost:8080/SpagoBIDataMiningEngine/restful-services/1.0/execute/test1.R?user_id=biadmin&search_id=14&libraries=vegan,ellipse
 	@GET
 	@Path("/{fileName}")
 	@Produces("text/html; charset=UTF-8")
-	public String executeScript(@PathParam("fileName") String fileName,@Context HttpServletRequest request) {
+	public String executeScript(@PathParam("fileName") String fileName, @Context HttpServletRequest request) {
 		logger.debug("IN");
 		HashMap<String, String> params = new HashMap<String, String>();
-		Map<String, String[]> map =request.getParameterMap();
+		Map<String, String[]> map = request.getParameterMap();
 
-		if(map != null && !map.isEmpty()){
+		if (map != null && !map.isEmpty()) {
 			logger.debug("Got parameters map");
 			Set set = map.entrySet();
-	        Iterator it = set.iterator();
-	        while (it.hasNext()) {
-	            Map.Entry<String, String[]> entry = (Entry<String, String[]>) it.next();
-	            String paramName = entry.getKey();
-	            String[] paramValues = entry.getValue();
-	            String paramValue ="";
-	            if (paramValues.length == 1) {
-	                paramValue = paramValues[0];
-	            }else {
-	                for (int i = 0; i < paramValues.length; i++) {
-	                    paramValue+= paramValues[i] + ",";
-	                }
-	            }
-	            params.put(paramName, paramValue);
-	        }
+			Iterator it = set.iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, String[]> entry = (Entry<String, String[]>) it.next();
+				String paramName = entry.getKey();
+				String[] paramValues = entry.getValue();
+				String paramValue = "";
+				if (paramValues.length == 1) {
+					paramValue = paramValues[0];
+				} else {
+					for (int i = 0; i < paramValues.length; i++) {
+						paramValue += paramValues[i] + ",";
+					}
+				}
+				params.put(paramName, paramValue);
+			}
 		}
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
-		
+
 		DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance, getUserProfile());
 		try {
 			UserProfile profile = getUserProfile();
 			logger.debug("Got user profile");
-			if(profile != null){
-				executor.externalExecution(fileName, getUserProfile(), params);
-				logger.debug("Executed script for file "+fileName);
-			}else{
-				logger.error("Missing authentication");
-				return getJsonKo();
-			}
-			
+			// if(profile != null){
+			executor.externalExecution(fileName, getUserProfile(), params);
+			logger.debug("Executed script for file " + fileName);
+			// }else{
+			// logger.error("Missing authentication");
+			// return getJsonKo();
+			// }
+
 		} catch (Exception e) {
 			logger.error(e);
 			return getJsonKo();
