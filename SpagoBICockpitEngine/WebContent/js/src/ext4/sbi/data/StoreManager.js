@@ -30,17 +30,21 @@ Sbi.data.StoreManager = function(config) {
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 
+	//check if exist a crosstab in order to create a crosstab store
+	if(c && c.storesConf && c.storesConf.stores){
+		var stores = c.storesConf.stores;
+		var widgets = c.template.widgetsConf.widgets;
 
-	var stores = c.storesConf.stores;
-	var widgets = c.template.widgetsConf.widgets;
-
-	for(var i=0; i<widgets.length; i++){
-		var aWidget = widgets[i];
-		var aStore = stores[i];
-		if(aWidget.wtype == "crosstab"){
-			aStore.stype = "crosstab";
+		for(var i=0; i<widgets.length; i++){
+			var aWidget = widgets[i];
+			var aStore = stores[i];
+			if(aWidget.wtype == "crosstab"){
+				aStore.stype = "crosstab";
+			}
 		}
 	}
+
+
 
 	this.setConfiguration(c.storesConf);
 
@@ -1438,9 +1442,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		reader.on('exception', this.onStoreReadException, this);
 		Sbi.trace("[StoreManager.createStore]: reader sucesfully created");
 
-		var dataStoreType = 'Ext.data.Store';
 		if(storeConf.stype=="crosstab"){
-			dataStoreType = 'Sbi.cockpit.widgets.crosstab.CrossTabStore';
 		}
 
 		var store = new Sbi.widgets.store.InMemoryFilteredStore({
