@@ -57,6 +57,10 @@
 	JSONArray positiveTopics = sentimentDP.getPositiveBC();
 	JSONArray neutralTopics = sentimentDP.getNeutralBC();
 	JSONArray negativeTopics = sentimentDP.getNegativeBC();
+	
+	JSONArray positiveRadar = sentimentDP.getPositiveRadar();
+	JSONArray neutralRadar = sentimentDP.getNeutralRadar();
+	JSONArray negativeRadar = sentimentDP.getNegativeRadar();
 	 
 %>
 
@@ -151,10 +155,17 @@
 			
 	</div> 
 	
+	<div class="blank_box" style="float:left; margin-left: 10px; margin-bottom: 30px;">
+		
+			<div class="twitterPolarityBCTitle_box">
+				
+				<span><label id="sentimentradar"></label></span>
+			
+			</div>
+
+		<div id="chart"></div>
+	</div>
 	
-	<div style="float:left; margin-left: 50px; margin-bottom: 30px;">	
-		<img src="<%= application.getContextPath() %>/img/screens/radar_sentiment.png" ></img>
-	</div>	
 	
 	<div style="width: 90%; float:left;">
 	
@@ -202,6 +213,18 @@
 </div>
 
 	<%@include file="../commons/includeSbiSocialAnalysisComponents.jspf"%>
+
+	<script>
+
+		var positiveRadar = <%= positiveRadar %>
+		var neutralRadar = <%= neutralRadar %>
+		var negativeRadar = <%= negativeRadar %>
+		
+		if(positiveRadar.length > 0 && neutralRadar.length > 0 && negativeRadar.length > 0)
+		{		
+			sentimentRadar(positiveRadar, neutralRadar, negativeRadar);
+		}
+	</script>
 
 	<script>
 
