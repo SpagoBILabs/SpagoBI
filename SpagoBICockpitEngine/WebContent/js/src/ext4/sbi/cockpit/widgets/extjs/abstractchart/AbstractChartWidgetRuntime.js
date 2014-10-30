@@ -16,7 +16,8 @@ Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime = function(co
 
 	var defaultSettings = {
 		layout: 'fit',
-		fieldsSelectionEnabled: true
+		fieldsSelectionEnabled: true,
+		msg: 'Rendering...'
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime', defaultSettings);
@@ -45,11 +46,11 @@ Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime = function(co
 		Sbi.error("[AbstractChartWidgetRuntime.constructor]: store [" + this.getStoreId() + "] not bounded to widget [" + this.getWidgetName() + "]");
 	}
 
-
 	this.reload();
 	Sbi.trace("[AbstractChartWidgetRuntime.constructor]: Reloading store [" + this.getStoreId() + "] ...");
 
 	this.addEvents('selection');
+
 
 	Sbi.trace("[AbstractChartWidgetRuntime.constructor]: OUT");
 };
