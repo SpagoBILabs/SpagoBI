@@ -72,7 +72,7 @@ public class BitlyCounterClicksUtility {
 
 			String bitlyFile = "bitly.properties";
 
-			InputStream inputStream = TestTwitterAnalysisLauncher.class.getClassLoader().getResourceAsStream(bitlyFile);
+			InputStream inputStream = BitlyCounterClicksUtility.class.getClassLoader().getResourceAsStream(bitlyFile);
 
 			bitlyProp.load(inputStream);
 
