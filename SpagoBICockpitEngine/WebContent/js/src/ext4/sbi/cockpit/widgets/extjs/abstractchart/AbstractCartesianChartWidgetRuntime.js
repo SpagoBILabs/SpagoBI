@@ -153,4 +153,18 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.init]: IN");
 		return colors;
 	}
+
+	, getMeasureToSort: function(){
+		var store = this.getStore();
+		var sortCriteria = [];
+		for(var i = 0; i < this.wconf.series.length; i++) {
+			var serie = this.wconf.series[i];
+			if ((serie.sortMeasure != undefined) && (serie.sortMeasure != false)){
+				var id = this.wconf.series[i].alias;
+				sortCriteria.push(store.fieldsMeta[id].name);
+				break;
+			}
+		}
+		return sortCriteria;
+	}
 });
