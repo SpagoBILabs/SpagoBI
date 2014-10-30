@@ -71,7 +71,7 @@ import org.json.JSONObject;
  insert into SBI_CONFIG (ID,LABEL,NAME,DESCRIPTION,IS_ACTIVE,VALUE_CHECK, VALUE_TYPE_ID, USER_IN, TIME_IN, CATEGORY)
  values(
  (select NEXT_VAL from hibernate_sequences where SEQUENCE_NAME = 'SBI_CONFIG')
- , 'remoteUrl.host' , ' Remote Url Host', ' Remote Url Host', 1, 'sira2.hyperborea.com' 
+ , 'remoteUrl.host' , ' Remote Url Host', ' Remote Url Host', 1, 'HOST_TO_CALL' 
  , (select VALUE_ID from SBI_DOMAINS where DOMAIN_CD = 'PAR_TYPE ' AND VALUE_CD = 'STRING')
  , 'spagobi'
  , current_timestamp
@@ -83,7 +83,7 @@ import org.json.JSONObject;
  insert into SBI_CONFIG (ID,LABEL,NAME,DESCRIPTION,IS_ACTIVE,VALUE_CHECK, VALUE_TYPE_ID, USER_IN, TIME_IN, CATEGORY)
  values(
  (select NEXT_VAL from hibernate_sequences where SEQUENCE_NAME = 'SBI_CONFIG')
- , 'remoteUrl.port' , ' Remote Url Port', ' Remote Url Host', 1, '' 
+ , 'remoteUrl.port' , ' Remote Url Port', ' Remote Url Host', 1, 'PORT_TO_CALL' 
  , (select VALUE_ID from SBI_DOMAINS where DOMAIN_CD = 'PAR_TYPE ' AND VALUE_CD = 'NUM')
  , 'spagobi'
  , current_timestamp
@@ -95,7 +95,7 @@ import org.json.JSONObject;
  insert into SBI_CONFIG (ID,LABEL,NAME,DESCRIPTION,IS_ACTIVE,VALUE_CHECK, VALUE_TYPE_ID, USER_IN, TIME_IN, CATEGORY)
  values(
  (select NEXT_VAL from hibernate_sequences where SEQUENCE_NAME = 'SBI_CONFIG')
- , 'remoteUrl.domain' , ' Remote Url DOMAIN', ' Remote Url Domain', 1, '/h2cube/elaborazioni/elaboracsvmetadata' 
+ , 'remoteUrl.domain' , ' Remote Url DOMAIN', ' Remote Url Domain', 1, 'DOMAIN_TO_CALL' 
  , (select VALUE_ID from SBI_DOMAINS where DOMAIN_CD = 'PAR_TYPE ' AND VALUE_CD = 'STRING')
  , 'spagobi'
  , current_timestamp
