@@ -195,6 +195,11 @@ END-CAS -->
         <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
     </servlet>
     
+    <servlet>
+		<servlet-name>ExternalResourceServlet</servlet-name>
+		<servlet-class>it.eng.spagobi.engines.datamining.servlet.ExternalResourceServlet</servlet-class>
+	</servlet>
+    
     
     <!--  ============================================================================ -->
 	<!--  SERVLET MAPPINGS						 									   -->
@@ -219,6 +224,11 @@ END-CAS -->
         <servlet-name>Resteasy</servlet-name>
         <url-pattern>/restful-services/*</url-pattern>
     </servlet-mapping>
+    
+    <servlet-mapping>
+		<servlet-name>ExternalResourceServlet</servlet-name>
+		<url-pattern>/external/1.0/execute</url-pattern>
+	</servlet-mapping>
 
     
     
