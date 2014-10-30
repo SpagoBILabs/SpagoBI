@@ -1,0 +1,11 @@
+localeMapping("timescale", "sbi.social.analysis.timescale");
+localeMapping("users", "sbi.social.analysis.users");
+localeMapping("searchrange", "sbi.social.analysis.searchrange");
+localeMapping("hours", "sbi.social.analysis.hours");
+localeMapping("days", "sbi.social.analysis.days");
+localeMapping("weeks", "sbi.social.analysis.weeks");
+localeMapping("months", "sbi.social.analysis.months");
+localeMapping("tweetssummary", "sbi.social.analysis.tweetssummary");
+localeMapping("tweetssources", "sbi.social.analysis.tweetssources");
+localeMapping("toptweets", "sbi.social.analysis.toptweets");
+localeMapping("recenttweets", "sbi.social.analysis.recenttweets");
