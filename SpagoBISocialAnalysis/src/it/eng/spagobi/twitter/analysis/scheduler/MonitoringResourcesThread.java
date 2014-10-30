@@ -17,16 +17,18 @@ import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.PersistJobDataAfterExecution;
 
 @DisallowConcurrentExecution
-public class MonitoringResourcesJob implements Job {
+@PersistJobDataAfterExecution
+public class MonitoringResourcesThread implements Job {
 
 	static final Logger logger = Logger.getLogger(MonitoringResourcesJob.class);
 	private final ITwitterCache twitterCache = new TwitterCacheImpl();
 
 	private long searchID;
 
-	public MonitoringResourcesJob() {
+	public MonitoringResourcesThread() {
 
 	}
 
@@ -39,7 +41,7 @@ public class MonitoringResourcesJob implements Job {
 
 			TwitterMonitorScheduler monitorScheduler = twitterCache.getMonitorSchedulerFromSearch(searchID);
 
-			Assert.assertNotNull(monitorScheduler, "Monitoring Resources Job: Impossible to create a monitor job without a linked entity");
+			Assert.assertNotNull(monitorScheduler, "Monitoring Resources Thread: Impossible to create a monitor job without a linked entity");
 
 			String links = "";
 			String accounts = "";
@@ -89,7 +91,7 @@ public class MonitoringResourcesJob implements Job {
 
 		} catch (Throwable t) {
 
-			throw new SpagoBIRuntimeException("Monitoring Resources Job: An error occurred in monitoring resources job", t);
+			throw new SpagoBIRuntimeException("Monitoring Resources Thread: An error occurred in monitoring resources job", t);
 		}
 
 	}
