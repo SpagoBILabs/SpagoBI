@@ -71,6 +71,15 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		logger.debug("IN");
 		IDataSet dataset = this.getDataSet();
 		IDataSource datasource = dataset.getDataSource();
+
+		if (datasource == null) {
+			// if dataset has no datasource associated take it from request
+			String dataSourceLabel = getSpagoBIRequestContainer().get(DATASOURCE_LABEL) != null ? getSpagoBIRequestContainer().get(DATASOURCE_LABEL).toString()
+					: null;
+			logger.debug("passed from server datasource " + dataSourceLabel);
+			datasource = getDataSourceServiceProxy().getDataSourceByLabel(dataSourceLabel);
+		}
+
 		logger.debug("OUT : returning [" + datasource + "]");
 		return datasource;
 	}
