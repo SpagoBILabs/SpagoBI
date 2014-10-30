@@ -769,6 +769,22 @@ div.tooltip {
 	  width: 15%;
 }
 
+
+.radar-chart-serie0
+{
+	fill: #33CC33;
+}
+
+.radar-chart-serie1
+{
+	fill: #FF9900;
+}
+
+.radar-chart-serie2
+{
+	fill: #B00000;
+}
+
 /********************* IMPACTS TAB **********************************************************/
 
 div#hormenu-a 
