@@ -231,12 +231,12 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		if (this.displayColorColumn)  {
 			this.gridColumns.push(this.colorColumn);
 		}
-		this.gridColumns.push(showCommaCheckColumn);
+		//this.gridColumns.push(showCommaCheckColumn);
 		if ((c.parent != undefined) && ((c.parent == 'barchart') || (c.parent == 'linechart')  )){
 			this.gridColumns.push(sortByThisMeasureRadioColumn);
 		}
-		this.gridColumns.push(precisionColumn);
-		this.gridColumns.push(suffixColumn);
+		//this.gridColumns.push(precisionColumn);
+		//this.gridColumns.push(suffixColumn);
 
 		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
 	        clicksToEdit: 1
