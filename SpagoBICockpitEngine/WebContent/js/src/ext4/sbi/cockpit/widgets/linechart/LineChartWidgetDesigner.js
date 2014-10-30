@@ -359,6 +359,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
             , initialData: []
             , crosstabConfig: {}
             , ddGroup: this.ddGroup
+            , parent: 'linechart'
 		});
 	}
 

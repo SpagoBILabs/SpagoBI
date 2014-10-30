@@ -107,7 +107,12 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 			}
 		}
 
-		store.sort(categoriesConfig.fields[0], 'ASC');
+		var sortMeasure = this.getMeasureToSort();
+		if (sortMeasure.length > 0){
+			store.sort(sortMeasure[0], 'ASC');
+		} else {
+			store.sort(categoriesConfig.fields[0], 'ASC');
+		}
 
 		if (!this.areIncomingEventsEnabled()) {
 	     	var clone = Sbi.storeManager.cloneStore(this.getStore());

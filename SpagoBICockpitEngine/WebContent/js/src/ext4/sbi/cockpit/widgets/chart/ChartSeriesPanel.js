@@ -232,7 +232,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			this.gridColumns.push(this.colorColumn);
 		}
 		this.gridColumns.push(showCommaCheckColumn);
-		if ((c.parent != undefined) && (c.parent == 'barchart')){
+		if ((c.parent != undefined) && ((c.parent == 'barchart') || (c.parent == 'linechart')  )){
 			this.gridColumns.push(sortByThisMeasureRadioColumn);
 		}
 		this.gridColumns.push(precisionColumn);
