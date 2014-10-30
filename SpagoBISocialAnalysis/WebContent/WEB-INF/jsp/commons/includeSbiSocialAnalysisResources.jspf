@@ -40,5 +40,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/d3.geo.projection.v0.min.js"></script>
 	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/topojson.v1.min.js"></script>
 	<script src="<%= application.getContextPath() %>/js/lib/others/jquery-ui.js"></script>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/RadarChart.js"></script>
 <%-- 	<script src="<%= application.getContextPath() %>/js/lib/others/social-jquery-locale.js"></script> --%>
 	
