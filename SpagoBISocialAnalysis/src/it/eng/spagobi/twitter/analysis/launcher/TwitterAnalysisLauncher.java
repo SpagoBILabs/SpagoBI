@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.twitter.analysis.launcher;
 
-import it.eng.spagobi.bitly.analysis.utilities.BitlyCounterClicksUtility;
 import it.eng.spagobi.twitter.analysis.cache.ITwitterCache;
 import it.eng.spagobi.twitter.analysis.cache.TwitterCacheImpl;
 import it.eng.spagobi.twitter.analysis.entities.TwitterMonitorScheduler;
@@ -33,12 +32,12 @@ import it.eng.spagobi.twitter.analysis.enums.SearchRepeatTypeEnum;
 import it.eng.spagobi.twitter.analysis.enums.SearchTypeEnum;
 import it.eng.spagobi.twitter.analysis.exceptions.TwitterGenericErrorException;
 import it.eng.spagobi.twitter.analysis.scheduler.HistoricalSearchJob;
+import it.eng.spagobi.twitter.analysis.scheduler.HistoricalSearchThread;
 import it.eng.spagobi.twitter.analysis.scheduler.MonitoringResourcesJob;
+import it.eng.spagobi.twitter.analysis.scheduler.MonitoringResourcesThread;
 import it.eng.spagobi.twitter.analysis.spider.search.TwitterSearchAPISpider;
 import it.eng.spagobi.twitter.analysis.spider.streaming.TwitterStreamingAPISpider;
 import it.eng.spagobi.twitter.analysis.utilities.AnalysisUtility;
-import it.eng.spagobi.twitter.analysis.utilities.TwitterUserInfoUtility;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -49,6 +48,7 @@ import org.apache.log4j.Logger;
 import org.quartz.CalendarIntervalScheduleBuilder;
 import org.quartz.DateBuilder;
 import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
@@ -248,17 +248,17 @@ public class TwitterAnalysisLauncher {
 	/**
 	 * Method used by historical search jobs. This particular search already exist in the DB
 	 */
-	public void startHistoricalSearch() {
-
-		logger.debug("Method startHistoricalSearch(): Start..");
-
-		// launch historical search linked with twitter SEARCH API
-		logger.debug("Method createHistoricalSearch(): Twitter Search Thread starting..");
-		startHistoricalSearchThread();
-
-		logger.debug("Method startHistoricalSearch: End");
-
-	}
+	// public void startHistoricalSearch() {
+	//
+	// logger.debug("Method startHistoricalSearch(): Start..");
+	//
+	// // launch historical search linked with twitter SEARCH API
+	// logger.debug("Method createHistoricalSearch(): Twitter Search Thread starting..");
+	// startHistoricalSearchThread();
+	//
+	// logger.debug("Method startHistoricalSearch: End");
+	//
+	// }
 
 	/**
 	 * This method is used to start the twitter streaming search. When a new stream starts, you have to close the previous opened stream (in DB loading = false
@@ -600,111 +600,73 @@ public class TwitterAnalysisLauncher {
 
 	}
 
-	private void startHistoricalSearchThread() {
+	private void startHistoricalSearchThread() throws TwitterGenericErrorException {
 
-		Thread twitterSearchThread = new Thread() {
-			@Override
-			public void run() {
+		logger.debug("Method startHistoricalSearchThread(): Start");
 
-				// initialize SearchAPI
-				logger.debug("Method startHistoricalSearchThread(): Initializing Historical Search");
+		try {
 
-				try {
-					TwitterSearchAPISpider searchAPI = initializeSearchAPI();
+			SchedulerFactory schedFact = new org.quartz.impl.StdSchedulerFactory();
 
-					searchAPI.collectTweets();
+			Scheduler sched = schedFact.getScheduler();
 
-					// historical search completed, loading = false;
-					logger.debug("Method startHistoricalSearchThread(): Historical Search completed. Processing results for topics and sentiment..");
+			sched.start();
 
-					// TwitterRScriptUtility.callSentimentRScript("demo_admin", twitterSearch.getSearchID());
+			long searchID = this.twitterSearch.getSearchID();
 
-					logger.debug("Method startHistoricalSearchThread(): R Script called. Update search loading field. Results ready");
+			JobDataMap jobDataMap = new JobDataMap();
+			jobDataMap.put("searchID", searchID);
+			jobDataMap.put("languageCode", this.languageCode);
+			jobDataMap.put("sinceCalendar", this.sinceCalendar);
 
-					twitterSearch.setLoading(false);
+			JobDetail hSearchThread = JobBuilder.newJob(HistoricalSearchThread.class).withIdentity("HSearchThread_" + searchID, "groupHSearchThread")
+					.usingJobData(jobDataMap).build();
 
-					cache.updateTwitterSearch(twitterSearch);
+			Trigger trigger = TriggerBuilder.newTrigger().withIdentity("HSearchThreadTgr_" + searchID, "groupHSearchThread").startNow().build();
 
-				} catch (Throwable t) {
+			// Tell quartz to schedule the job using our trigger
+			sched.scheduleJob(hSearchThread, trigger);
 
-					throw new SpagoBIRuntimeException("Method startHistoricalSearchThread(): An error occurred starting a thread search", t);
-				}
-			}
+		} catch (Throwable t) {
 
-		};
+			throw new TwitterGenericErrorException("Method startHistoricalSearchThread(): An error occurred creating search scheduler", t);
+		}
 
-		twitterSearchThread.start();
+		logger.debug("Method startHistoricalSearchThread(): End");
+
 	}
 
-	private void startMonitoringResourcesThreads() {
+	private void startMonitoringResourcesThreads() throws TwitterGenericErrorException {
 
-		if (twitterSearch.getTwitterMonitorScheduler().getLinks() != null && !twitterSearch.getTwitterMonitorScheduler().getLinks().equals("")) {
+		logger.debug("Method startMonitoringResourcesThreads(): Start");
 
-			Thread bitlyAnalysisThread = new Thread() {
-				@Override
-				public void run() {
+		try {
 
-					BitlyCounterClicksUtility bitlyUtil = new BitlyCounterClicksUtility(twitterSearch.getTwitterMonitorScheduler().getLinks(),
-							twitterSearch.getSearchID());
+			SchedulerFactory schedFact = new org.quartz.impl.StdSchedulerFactory();
 
-					bitlyUtil.startBitlyAnalysis();
+			Scheduler sched = schedFact.getScheduler();
 
-				}
-			};
+			sched.start();
 
-			bitlyAnalysisThread.start();
+			long searchID = this.twitterSearch.getSearchID();
+
+			JobDataMap jobDataMap = new JobDataMap();
+			jobDataMap.put("searchID", searchID);
+
+			JobDetail mResourcesThread = JobBuilder.newJob(MonitoringResourcesThread.class)
+					.withIdentity("MResourcesThread_" + searchID, "groupMResourcesThread").usingJobData(jobDataMap).build();
+
+			Trigger trigger = TriggerBuilder.newTrigger().withIdentity("MResourcesThreadTgr_" + searchID, "groupMResourcesThread").startNow().build();
+
+			// Tell quartz to schedule the job using our trigger
+			sched.scheduleJob(mResourcesThread, trigger);
+
+		} catch (Throwable t) {
+
+			throw new TwitterGenericErrorException("Method startMonitoringResourcesThreads(): An error occurred creating monitoring thread ", t);
 		}
 
-		if (twitterSearch.getTwitterMonitorScheduler().getAccounts() != null && !twitterSearch.getTwitterMonitorScheduler().getAccounts().equals("")) {
-
-			Thread accountAnalysisThread = new Thread() {
-
-				String accounts = twitterSearch.getTwitterMonitorScheduler().getAccounts();
-
-				@Override
-				public void run() {
-
-					TwitterUserInfoUtility userUtil = new TwitterUserInfoUtility(twitterSearch.getSearchID());
-
-					accounts = accounts.trim().replaceAll("@", "");
-					String[] accountArr = accounts.split(",");
-
-					for (int i = 0; i < accountArr.length; i++) {
-						String account = accountArr[i].trim();
-						userUtil.saveFollowersCount(account);
-					}
-
-				}
-			};
-
-			accountAnalysisThread.start();
-		}
-
-		if (twitterSearch.getTwitterMonitorScheduler().getDocuments() != null && !twitterSearch.getTwitterMonitorScheduler().getDocuments().equals("")) {
-
-			Thread documentAnalysisThread = new Thread() {
-
-				String documents = twitterSearch.getTwitterMonitorScheduler().getDocuments();
-
-				@Override
-				public void run() {
-
-					// TwitterUserInfoUtility userUtil = new
-					// TwitterUserInfoUtility(twitterSearch.getSearchID());
-					//
-					// accounts = accounts.trim().replaceAll("@", "");
-					// String[] accountArr = accounts.split(",");
-					//
-					// for (int i = 0; i < accountArr.length; i++) {
-					// String account = accountArr[i].trim();
-					// userUtil.saveFollowersCount(account);
-					// }
-
-				}
-			};
-
-			documentAnalysisThread.start();
-		}
+		logger.debug("Method startMonitoringResourcesThreads(): End");
 
 	}
 
@@ -722,8 +684,13 @@ public class TwitterAnalysisLauncher {
 
 			long searchID = this.twitterSearch.getSearchID();
 
-			JobDetail hSearchJob = JobBuilder.newJob(HistoricalSearchJob.class).withIdentity("HSearchJob_" + searchID, "groupHSearch")
-					.usingJobData("searchID", searchID).build();
+			JobDataMap jobDataMap = new JobDataMap();
+			jobDataMap.put("searchID", searchID);
+			jobDataMap.put("languageCode", this.languageCode);
+			jobDataMap.put("sinceCalendar", this.sinceCalendar);
+
+			JobDetail hSearchJob = JobBuilder.newJob(HistoricalSearchJob.class).withIdentity("HSearchJob_" + searchID, "groupHSearch").usingJobData(jobDataMap)
+					.build();
 
 			// scheduler parameters
 
@@ -759,7 +726,7 @@ public class TwitterAnalysisLauncher {
 
 		} catch (Throwable t) {
 
-			throw new TwitterGenericErrorException("Method startHistoricalSearchThread(): An error occurred creating search scheduler", t);
+			throw new TwitterGenericErrorException("Method createHistoricalSearchTrigger(): An error occurred creating search scheduler", t);
 		}
 	}
 
