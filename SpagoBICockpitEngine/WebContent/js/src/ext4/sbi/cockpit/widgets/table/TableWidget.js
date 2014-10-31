@@ -443,7 +443,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 		// create the Grid
 	    //this.grid = new Ext.grid.GridPanel(gridConf);
-		this.grid = new Sbi.widgets.grid.DynamicGridPanel(gridConf);
+		this.grid = new Sbi.widgets.grid.InMemoryPagingGridPanel(gridConf);
 	    //this.grid.on('selectionchange', this.onSelectionChange, this);
 	    this.grid.on('cellclick', this.onCellclick, this);
 	    this.grid.on('columnresize', this.onColumnResize, this);
