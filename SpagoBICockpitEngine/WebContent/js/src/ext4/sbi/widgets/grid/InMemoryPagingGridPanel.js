@@ -74,7 +74,8 @@ Ext.define('Sbi.widgets.grid.InMemoryPagingGridPanel', {
             emptyMsg: "No rows to display"
         };
 		defaultPagingConfig = Ext.apply(defaultPagingConfig,config.pagingConfig );
-		this.pagingToolbar = Ext.create('Ext.PagingToolbar',defaultPagingConfig);
+		this.pagingToolbar = Ext.create('Ext.PagingToolbar', defaultPagingConfig);
+		this.pagingToolbar.down('#refresh').hide();
 		this.bbar = this.pagingToolbar;
 		Sbi.debug('InMemoryPagingGridPanel add paging OUT');
     }
