@@ -75,9 +75,8 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
    			var items = this.getFilteredItems(this.inMemoryData, this.filteredProperties, this.filterString, this.filteredObjects, this.filterSpecificProperty);
    			items = this.getPageItems(this.start, this.limit, items);
    			this.removeAll();
-   			for (var i=0; i<items.length;i++) {
-   				this.add(items[i]);
-   			}
+   			this.add(items);
+   			this.fireEvent('datachanged', this);
     	}, this);
     }
 
@@ -111,9 +110,9 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 			options.page = null;
 			delete this.inMemoryData;
 			this.start = 0;
-			this.removeAll(); // this is need for the paging toolbar
-		    this.currentPage = 1; // this is need for the paging toolbar
-			this.callParent([options]);
+			this.removeAll(); // this is needed to reset the paging toolbar
+		    this.currentPage = 1; // this is needed to reset the paging toolbar
+		    this.callParent([options]);
 		} else {
 			this.fireEvent("load", this);
 		}
@@ -123,7 +122,9 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 	,
 	loadData : function( data ) {
 		delete this.inMemoryData;
-		this.removeAll();
+		this.start = 0;
+		this.removeAll(); // this is needed to reset the paging toolbar
+	    this.currentPage = 1; // this is needed to reset the paging toolbar
 		Sbi.widgets.store.InMemoryFilteredStore.superclass.loadData.call(this, data);
 		this.fireEvent("load", this);
 	}
