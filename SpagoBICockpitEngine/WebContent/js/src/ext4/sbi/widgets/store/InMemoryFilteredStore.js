@@ -33,7 +33,8 @@
 Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
     extend: 'Ext.data.Store'
 
-    ,config: {
+    ,
+    config: {
     	/**
     	 * The container of the items loaded from the store
     	 */
@@ -67,66 +68,55 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
     , constructor: function(config) {
     	this.initConfig(config);
     	this.callParent(arguments);
-    	this.on("load",function(a){
-    		if(!this.inMemoryData){
+    	this.on("load", function(a) {
+    		if (!this.inMemoryData) {
     			this.inMemoryData = this.data.items.slice(0);//clone the items
     		}
    			var items = this.getFilteredItems(this.inMemoryData, this.filteredProperties, this.filterString, this.filteredObjects, this.filterSpecificProperty);
    			items = this.getPageItems(this.start, this.limit, items);
    			this.removeAll();
-   			for(var i=0; i<items.length;i++){
+   			for (var i=0; i<items.length;i++) {
    				this.add(items[i]);
    			}
-
-
-    	},this);
+    	}, this);
     }
 
     /**
      * @Override
      */
 	, load: function(options) {
-		if(!options){
+		if (!options) {
 			options = {};
 		}
 
-		if (options.params) {
-			delete this.inMemoryData;
-			this.removeAll();
-			Sbi.widgets.store.InMemoryFilteredStore.superclass.load.call(this, options);
-			return;
-		}
-
-		if(options.limit){
+		if (options.limit) {
 			this.limit = options.limit;
 		}
-		if(options.start){
+		if (options.start) {
 			this.start = options.start;
-		}else if(this.limit){
+		} else if (this.limit) {
 			this.start = 0;
 		}
 
 		this.page = options.page;
 		this.filterString = options.filterString;
-		if (options.filterSpecificProperty){
+		if (options.filterSpecificProperty) {
 			this.filterSpecificProperty = options.filterSpecificProperty;
 		}
 
-
-		if(options.reset || !this.useChache ||  this.inMemoryData==null ||  this.inMemoryData==undefined){
+		if (options.params || options.reset || !this.useChache ||  this.inMemoryData == null ||  this.inMemoryData == undefined) {
 			//set null the paging configuration to load all the items from the store
 			options.start = null;
 			options.limit = null;
 			options.page = null;
-			this.inMemoryData=null;
+			delete this.inMemoryData;
+			this.start = 0;
+			this.removeAll(); // this is need for the paging toolbar
+		    this.currentPage = 1; // this is need for the paging toolbar
 			this.callParent([options]);
-		}else{
-			this.fireEvent("load");
+		} else {
+			this.fireEvent("load", this);
 		}
-
-
-
-		return this;
 
 	}
 
@@ -135,7 +125,7 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 		delete this.inMemoryData;
 		this.removeAll();
 		Sbi.widgets.store.InMemoryFilteredStore.superclass.loadData.call(this, data);
-		this.fireEvent("load");
+		this.fireEvent("load", this);
 	}
 
 	/**
@@ -182,7 +172,7 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 			for (var i=0; i<copyObjectProperties.length; i++){
 				var objectFilteredProperties = copyObjectProperties[i].filteredProperties;
 				if (objectFilteredProperties.contains(filterSpecificProperty)){
-					copyObjectProperties[i].filteredProperties = [filterSpecificProperty]
+					copyObjectProperties[i].filteredProperties = [filterSpecificProperty];
 				} else {
 					copyObjectProperties[i].filteredProperties =  [];
 				}
