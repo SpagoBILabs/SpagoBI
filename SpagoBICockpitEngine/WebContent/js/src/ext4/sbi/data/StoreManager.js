@@ -1727,8 +1727,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 */
     ,
     cloneStore : function(source) {
-        var target = Ext.create ('Ext.data.Store', {
+        var target = Ext.create(Ext.getClassName(source), {
             model: source.model
+            //, proxy: source.proxy
         });
 
         Ext.each (source.getRange (), function (record) {
@@ -1737,6 +1738,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
             target.add (model);
         });
+
+        if (Ext.getClassName(source) == 'Sbi.widgets.store.InMemoryFilteredStore') {
+        	target.inMemoryData = source.inMemoryData;
+        }
 
         return target;
     }

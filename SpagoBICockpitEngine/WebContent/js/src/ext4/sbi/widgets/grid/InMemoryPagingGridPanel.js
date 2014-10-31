@@ -81,12 +81,13 @@ Ext.define('Sbi.widgets.grid.InMemoryPagingGridPanel', {
     }
 
 	,
-    updateGrid: function(theStore, records, successful, eOpts) {
+    updateGrid: function() {
     	Sbi.debug('InMemoryPagingGridPanel updategrid IN');
-    	var columns = this.store.getColumns().slice(1); // we need to remove the first "recNo" column!!!
+    	//var columns = this.store.getColumns().slice(1); // we need to remove the first "recNo" column!!!
     	this.bbar.bindStore(this.store);
     	this.bbar.doLayout();
-    	this.reconfigure(this.store, columns);
+    	this.reconfigure(this.store); // , this.columnManager.columns);
+    	this.getView().refresh();
     	Sbi.debug('InMemoryPagingGridPanel updategrid OUT');
     }
 
