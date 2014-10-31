@@ -383,6 +383,13 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		var store = this.getStore();
 		store.sort(categoriesConfig.fields[0], 'ASC');
 
+		for(var i = 0; i < store.data.items.length; i++){
+			//truncate long category labels, and riassign value inside store
+			var categoryField = categoriesConfig.fields[0];
+			var categoryLabel = store.data.items[i].data[categoryField];
+			store.data.items[i].data[categoryField] = Ext.util.Format.ellipsis(categoryLabel,50);
+		}
+
 		if (!this.areIncomingEventsEnabled()) {
 	     	var clone = Sbi.storeManager.cloneStore(this.getStore());
 	     	store = clone;

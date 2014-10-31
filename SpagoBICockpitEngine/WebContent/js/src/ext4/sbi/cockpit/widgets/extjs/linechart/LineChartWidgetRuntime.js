@@ -105,6 +105,11 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 					}
 				}
 			}
+
+			//truncate long category labels, and riassign value inside store
+			var categoryField = categoriesConfig.fields[0];
+			var categoryLabel = store.data.items[i].data[categoryField];
+			store.data.items[i].data[categoryField] = Ext.util.Format.ellipsis(categoryLabel,50);
 		}
 
 		var sortMeasure = this.getMeasureToSort();
