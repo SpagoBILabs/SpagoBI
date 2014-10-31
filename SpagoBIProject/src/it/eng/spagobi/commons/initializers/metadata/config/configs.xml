@@ -177,5 +177,8 @@
 
 <CONFIG label="SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN" name="SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN" description="Show the logout button in case of silent login" isActive="true" valueCheck="true" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
+<CONFIG label="SPAGOBI.SOCIAL_ANALYSIS_URL" name="SPAGOBI SOCIAL ANALYSIS URL" description="SPAGOBI SOCIAL ANALYSIS URL" isActive="true" valueCheck="/SpagoBISocialAnalysis/restful-services/start" valueType="STRING" category="SOCIAL_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE" name="SPAGOBI SOCIAL ANALYSIS STATUS" description="SPAGOBI SOCIAL ANALYSIS STATUS" isActive="true" valueCheck="true" valueType="STRING" category="SOCIAL_CONFIGURATION"/>
+
 </CONFIGS>
 
