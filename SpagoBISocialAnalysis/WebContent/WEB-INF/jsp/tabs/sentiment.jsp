@@ -157,7 +157,7 @@
 	
 	<div class="blank_box" style="float:left; margin-left: 10px; margin-bottom: 30px;">
 		
-			<div class="twitterPolarityBCTitle_box">
+			<div class="twitterSentimentRadarTitle_box">
 				
 				<span><label id="sentimentradar"></label></span>
 			
