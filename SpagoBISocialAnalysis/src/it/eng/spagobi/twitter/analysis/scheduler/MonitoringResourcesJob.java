@@ -85,6 +85,8 @@ public class MonitoringResourcesJob implements Job {
 				monitorScheduler.setActive(false);
 			}
 
+			monitorScheduler.setLastActivationTime(GregorianCalendar.getInstance());
+
 			twitterCache.updateTwitterMonitorScheduler(monitorScheduler);
 
 		} catch (Throwable t) {
