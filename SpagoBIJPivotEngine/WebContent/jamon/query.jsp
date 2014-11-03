@@ -5,7 +5,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
 <html>
 <head>
-<META http-equiv="Content-Type" content="text/html"; charset=ISO-8859-1">
+<META http-equiv="Content-Type" content="text/html"; charset=UTF-8">
 <link rel="stylesheet" type="text/css" href="css/JAMonStyles.css">
 <title>JAMon Test Queries</title>
 <script type="text/javascript">

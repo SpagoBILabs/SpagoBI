@@ -18,8 +18,8 @@ To call it the url must be: http://localhost:8080/SpagoBISDK/dataset.jsp?ds_id=1
 The parameter 'ds_id' defines an existing dataset (modify test), if it isn't setted the insert method is called.
 */
 %>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%
 /*
 	String user = "biadmin";
@@ -35,7 +35,7 @@ The parameter 'ds_id' defines an existing dataset (modify test), if it isn't set
 */
 String user = "biadmin";
 String password = "biadmin";
-String message = "Il dataset è stato ";
+String message = "Il dataset Ã¨ stato ";
 String dsId = null;
 if (user != null && password != null) {
 	InputStream is = null;

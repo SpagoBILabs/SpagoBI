@@ -27,12 +27,12 @@ The parameter 'folderUpload' gives the name of the folder to upload the file. If
 a random folder name is created.
 */
 %>
-<%@ page  session="true"  language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page  session="true"  language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%
 String user = "biadmin";
 String password = "biadmin";
-String message = "Il documento è stato ";
+String message = "Il documento Ã¨ stato ";
 String doUpload = "false";
 String folderUpload = null;
 String action = null;

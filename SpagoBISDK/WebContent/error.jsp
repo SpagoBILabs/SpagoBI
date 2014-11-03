@@ -5,8 +5,8 @@
  License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.  If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/. --%>
 
-<%@ page isErrorPage="true" language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page isErrorPage="true" language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@page import="org.apache.axis.AxisFault"%>
 <html>
 <head>
