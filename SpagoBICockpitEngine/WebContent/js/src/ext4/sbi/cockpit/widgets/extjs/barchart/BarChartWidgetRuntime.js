@@ -24,7 +24,6 @@ Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime = function(config) {
 	Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime.superclass.constructor.call(this, c);
 
 	this.boundStore();
-	this.reload();
 	this.addEvents('selection');
 
 	Sbi.trace("[BarChartWidgetRuntime.constructor]: OUT");
