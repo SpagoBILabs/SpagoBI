@@ -18,6 +18,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 
@@ -421,7 +422,14 @@ public class TwitterResourcesTimelineDataProcessor {
 
 			}
 
-			long roundTimeWithOffset = tempTime.getTimeInMillis() + (CONST_TIMEZONE);
+			TimeZone timeZone = TimeZone.getDefault();
+			int offset = timeZone.getRawOffset();
+
+			if (timeZone.inDaylightTime(tempTime.getTime())) {
+				offset = offset + timeZone.getDSTSavings();
+			}
+
+			long roundTimeWithOffset = tempTime.getTimeInMillis() + offset;
 			tempTime.setTimeInMillis(roundTimeWithOffset);
 
 			return tempTime;
