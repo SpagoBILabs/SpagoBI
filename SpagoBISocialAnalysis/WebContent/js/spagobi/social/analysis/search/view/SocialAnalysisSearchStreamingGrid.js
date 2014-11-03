@@ -217,7 +217,29 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', 
 //		            width: 100,
 		            dataIndex: 'loading',
 		            align: 'center',
-		            icon: 'img/show.png',
+		            getClass: function(value, metadata, record)
+		            {
+		            	var searchLoading = record.get('loading');
+
+		            	if(!searchLoading)
+		            	{
+		            	    return 'x-analysis-display'; 
+		            	} else {
+		            	    return 'x-analysis-loading';               
+		            	}
+		            },
+		            isDisabled: function(view, rowIndex, colIndex, item, record)
+		            {
+		            	var searchLoading = record.get('loading');
+		            	if(!searchLoading)
+	            		{
+		            		return false;	            		
+	            		}
+		            	else
+	            		{
+		            		return true;
+	            		}
+		            },
 		            handler: function(grid, rowIndex, colIndex) {
 		            	
 	                    var rec = grid.getStore().getAt(rowIndex);
