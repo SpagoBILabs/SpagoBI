@@ -57,6 +57,7 @@
 .blank_box
 {
 	background-color: #FFFFFF;
+	min-height: 50px;
 }
 
 /******************* TABS **************************************************/
@@ -180,7 +181,6 @@ div#navigation .navtabs li#activelink a
 .dateRange_box
 {
 	font-size: 24px;
-	margin-left: 50px;
 	margin-top: 25px;
 	border: 1px solid #909090;
 	text-align: center;
@@ -696,6 +696,7 @@ div.tooltip {
 	float:left;
 	margin-left: 10px;
 	margin-bottom: 50px;
+	margin-top: 10px;
 	width: 30%;
 }
 
@@ -783,6 +784,20 @@ div.tooltip {
 .radar-chart-serie2
 {
 	fill: #B00000;
+}
+
+.twitterSentimentRadarTitle_box
+{
+	font-size: 25px;
+	font-weight: bold;
+/* 	margin-left: 15px; */
+/* 	margin-top: 10px; */
+	background-color: #0084B4;
+	padding-left: 15px;
+	padding-top: 10px;
+	color: #ffffff;
+	padding-bottom: 10px;
+	min-width: 300px;
 }
 
 /********************* IMPACTS TAB **********************************************************/
