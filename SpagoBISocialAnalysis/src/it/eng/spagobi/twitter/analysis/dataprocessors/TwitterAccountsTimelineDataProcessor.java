@@ -18,6 +18,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 
@@ -405,7 +406,7 @@ public class TwitterAccountsTimelineDataProcessor {
 
 			else if (filter.equalsIgnoreCase("months")) {
 
-				// round for weeks
+				// round for months
 				tempTime.set(Calendar.HOUR_OF_DAY, 0);
 				tempTime.set(Calendar.MINUTE, 0);
 				tempTime.set(Calendar.SECOND, 0);
@@ -414,7 +415,15 @@ public class TwitterAccountsTimelineDataProcessor {
 
 			}
 
-			long roundTimeWithOffset = tempTime.getTimeInMillis() + (CONST_TIMEZONE);
+			TimeZone timeZone = TimeZone.getDefault();
+			int offset = timeZone.getRawOffset();
+
+			if (timeZone.inDaylightTime(tempTime.getTime())) {
+				offset = offset + timeZone.getDSTSavings();
+			}
+
+			long roundTimeWithOffset = tempTime.getTimeInMillis() + offset;
+
 			tempTime.setTimeInMillis(roundTimeWithOffset);
 
 			return tempTime;

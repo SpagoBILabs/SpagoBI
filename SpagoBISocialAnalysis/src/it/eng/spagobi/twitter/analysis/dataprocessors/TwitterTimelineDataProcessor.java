@@ -14,10 +14,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 
@@ -213,8 +215,14 @@ public class TwitterTimelineDataProcessor {
 		Calendar lowerCalendar = GregorianCalendar.getInstance();
 		Calendar upperCalendar = GregorianCalendar.getInstance();
 
+		long roundedUpperBound;
+
 		long roundedLowerBound = roundTime(filter, this.lowerBound);
-		long roundedUpperBound = roundTime(filter, this.upperBound);
+		if (!filter.equalsIgnoreCase("months") && !filter.equalsIgnoreCase("weeks")) {
+			roundedUpperBound = roundTime(filter, this.upperBound);
+		} else {
+			roundedUpperBound = this.upperBound.getTime();
+		}
 
 		lowerCalendar.setTimeInMillis(roundedLowerBound);
 		upperCalendar.setTimeInMillis(roundedUpperBound);
@@ -241,6 +249,8 @@ public class TwitterTimelineDataProcessor {
 			upperCalendar.add(Calendar.MONTH, 1);
 		}
 
+		boolean roundDST = false;
+
 		while (lowerCalendar.compareTo(upperCalendar) <= 0) {
 
 			long tempMinMills = lowerCalendar.getTimeInMillis();
@@ -252,18 +262,42 @@ public class TwitterTimelineDataProcessor {
 
 				lowerCalendar.add(Calendar.HOUR_OF_DAY, 1);
 
+				if (TimeZone.getDefault().inDaylightTime(new Date(roundedLowerBound)) && !TimeZone.getDefault().inDaylightTime(lowerCalendar.getTime())
+						&& !roundDST) {
+					lowerCalendar.add(Calendar.HOUR_OF_DAY, -1);
+					roundDST = true;
+				}
+
 			} else if (filter.equalsIgnoreCase("days")) {
 
 				lowerCalendar.add(Calendar.DAY_OF_MONTH, 1);
 
+				if (TimeZone.getDefault().inDaylightTime(new Date(roundedLowerBound)) && !TimeZone.getDefault().inDaylightTime(lowerCalendar.getTime())
+						&& !roundDST) {
+					lowerCalendar.add(Calendar.HOUR_OF_DAY, -1);
+					roundDST = true;
+				}
+
 			} else if (filter.equalsIgnoreCase("weeks")) {
 
 				lowerCalendar.add(Calendar.WEEK_OF_YEAR, 1);
+
+				if (TimeZone.getDefault().inDaylightTime(new Date(roundedLowerBound)) && !TimeZone.getDefault().inDaylightTime(lowerCalendar.getTime())
+						&& !roundDST) {
+					lowerCalendar.add(Calendar.HOUR_OF_DAY, -1);
+					roundDST = true;
+				}
 			}
 
 			else if (filter.equalsIgnoreCase("months")) {
 
 				lowerCalendar.add(Calendar.MONTH, 1);
+
+				if (TimeZone.getDefault().inDaylightTime(new Date(roundedLowerBound)) && !TimeZone.getDefault().inDaylightTime(lowerCalendar.getTime())
+						&& !roundDST) {
+					lowerCalendar.add(Calendar.HOUR_OF_DAY, -1);
+					roundDST = true;
+				}
 			}
 
 		}
@@ -297,6 +331,10 @@ public class TwitterTimelineDataProcessor {
 			tempTime.set(Calendar.SECOND, 0);
 			tempTime.set(Calendar.MILLISECOND, 0);
 
+			if (TimeZone.getDefault().getOffset(tempTime.getTimeInMillis()) != TimeZone.getDefault().getOffset(sqlTimestamp.getTime())) {
+				tempTime.add(Calendar.HOUR_OF_DAY, 1);
+			}
+
 		} else if (filter.equalsIgnoreCase("weeks")) {
 
 			// round for weeks
@@ -306,20 +344,38 @@ public class TwitterTimelineDataProcessor {
 			tempTime.set(Calendar.MILLISECOND, 0);
 			tempTime.set(Calendar.DAY_OF_WEEK, tempTime.getFirstDayOfWeek());
 
+			if (TimeZone.getDefault().getOffset(tempTime.getTimeInMillis()) != TimeZone.getDefault().getOffset(sqlTimestamp.getTime())) {
+				tempTime.add(Calendar.HOUR_OF_DAY, 1);
+			}
+
 		}
 
 		else if (filter.equalsIgnoreCase("months")) {
 
-			// round for weeks
+			// round for months
 			tempTime.set(Calendar.HOUR_OF_DAY, 0);
 			tempTime.set(Calendar.MINUTE, 0);
 			tempTime.set(Calendar.SECOND, 0);
 			tempTime.set(Calendar.MILLISECOND, 0);
 			tempTime.set(Calendar.DAY_OF_MONTH, 1);
 
+			if (TimeZone.getDefault().getOffset(tempTime.getTimeInMillis()) != TimeZone.getDefault().getOffset(sqlTimestamp.getTime())) {
+				tempTime.add(Calendar.HOUR_OF_DAY, 1);
+			}
+
 		}
 
-		return tempTime.getTimeInMillis() + (CONST_TIMEZONE);
+		TimeZone timeZone = TimeZone.getDefault();
+		int offset = timeZone.getRawOffset();
+
+		if (timeZone.inDaylightTime(sqlTimestamp)) {
+			offset = offset + timeZone.getDSTSavings();
+		}
+
+		long roundedTime = tempTime.getTimeInMillis() + offset;
+		return roundedTime;
+
+		// return tempTime.getTimeInMillis() + (CONST_TIMEZONE);
 	}
 
 	/**
