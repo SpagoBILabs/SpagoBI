@@ -74,9 +74,12 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
     		}
    			var items = this.getFilteredItems(this.inMemoryData, this.filteredProperties, this.filterString, this.filteredObjects, this.filterSpecificProperty);
    			items = this.getPageItems(this.start, this.limit, items);
+   			this.suspendEvents(false);
    			this.removeAll();
    			this.add(items);
+   			this.resumeEvents();
    			this.fireEvent('datachanged', this);
+   			this.fireEvent('refresh', this);
     	}, this);
     }
 
