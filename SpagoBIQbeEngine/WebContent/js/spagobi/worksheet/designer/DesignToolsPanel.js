@@ -209,7 +209,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 		for (var i = 0; i < fields.length; i++) {
 			var aField = fields[i];
 			if (aField.values != '[]') {
-				this.globalFilters.push(aField);
+				this.globalFilters.push(Ext.apply({}, aField)); // we clone the field in order to solve https://spagobi.eng.it/jira/browse/SPAGOBI-1530
 			}
 		}
 		return this.globalFilters;
