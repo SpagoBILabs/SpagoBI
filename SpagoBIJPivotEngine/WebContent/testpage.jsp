@@ -1,4 +1,4 @@
-<%@ page session="true" contentType="text/html; charset=ISO-8859-1" %>
+<%@ page session="true" contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://www.tonbeller.com/jpivot" prefix="jp" %>
 <%@ taglib uri="http://www.tonbeller.com/wcf" prefix="wcf" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
@@ -30,7 +30,7 @@
 <html>
 <head>
   <title>Mondrian/JPivot Test Page</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <link rel="stylesheet" type="text/css" href="jpivot/table/mdxtable.css">
   <link rel="stylesheet" type="text/css" href="jpivot/navi/mdxnavi.css">
   <link rel="stylesheet" type="text/css" href="wcf/form/xform.css">

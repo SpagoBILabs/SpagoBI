@@ -14,8 +14,8 @@ If the parameter is manual input, a manul input appears.
 */
 %>
 
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%@page import="java.util.*"%>
@@ -24,7 +24,7 @@ If the parameter is manual input, a manul input appears.
 <%@page import="it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue"%>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Choose parameters</title>
 	<style>
 	body, p { font-family:Tahoma; font-size:10pt; padding-left:30; }

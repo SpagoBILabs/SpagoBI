@@ -12,8 +12,8 @@ This page use the SpagoBI execution tag, that displays an iframe pointing to Spa
 */
 %>
 
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@ taglib prefix="spagobi" tagdir="/WEB-INF/tags/spagobi" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -22,7 +22,7 @@ This page use the SpagoBI execution tag, that displays an iframe pointing to Spa
 <%@page import="it.eng.spagobi.sdk.documents.bo.SDKDocument"%>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Document execution</title>
 	<style>
 	body, p { font-family:Tahoma; font-size:10pt; padding-left:30; }

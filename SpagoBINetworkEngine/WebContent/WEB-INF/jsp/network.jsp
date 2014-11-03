@@ -14,8 +14,8 @@ author: Alberto Ghedin
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="it.eng.spagobi.engines.network.bean.INetwork"%>
 <%@ page language="java" 
-	     contentType="text/html; charset=ISO-8859-1" 
-	     pageEncoding="ISO-8859-1"%>	
+	     contentType="text/html; charset=UTF-8" 
+	     pageEncoding="UTF-8"%>	
 
 
 <%-- ---------------------------------------------------------------------- --%>
