@@ -10,6 +10,7 @@ import it.eng.spagobi.twitter.analysis.utilities.TwitterRScriptUtility;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import org.apache.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
@@ -55,12 +56,12 @@ public class HistoricalSearchJob implements Job {
 			// historical search completed, loading = false;
 			logger.debug("Method startHistoricalSearchThread(): Historical Search completed. Processing results for topics and sentiment..");
 
-			// TwitterRScriptUtility.callSentimentRScript("demo_admin", twitterSearch.getSearchID());
 			TwitterRScriptUtility.callTopicsRScript(twitterSearch.getSearchID());
 			TwitterRScriptUtility.callSentimentRScript(twitterSearch.getSearchID());
 
 			logger.debug("Method startHistoricalSearchThread(): R Scripts called. Update search loading field. Results ready");
 
+			twitterSearch.setLastActivationTime(GregorianCalendar.getInstance());
 			twitterSearch.setLoading(false);
 
 			twitterCache.updateTwitterSearch(twitterSearch);
