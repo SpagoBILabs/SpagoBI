@@ -135,6 +135,7 @@ public class TwitterCacheImpl implements ITwitterCache {
 
 		}
 
+		twitterSearch.setLabel(twitterSearch.getLabel() + "_DELETED_" + System.currentTimeMillis());
 		twitterSearch.setDeleted(true);
 
 		daoService.update(twitterSearch);
