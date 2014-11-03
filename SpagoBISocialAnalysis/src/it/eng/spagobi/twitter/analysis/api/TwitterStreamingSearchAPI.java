@@ -371,6 +371,8 @@ public class TwitterStreamingSearchAPI {
 					label = label + tempKeyword + "_";
 				}
 			}
+
+			label = label + "_" + System.currentTimeMillis();
 		}
 
 		// set search label
