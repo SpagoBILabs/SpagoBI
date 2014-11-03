@@ -354,7 +354,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		var toReturn = [];
 		for (var x in this.filtersOnDomainValues) {
 			if (this.filtersOnDomainValues[x].values !== '[]') {
-				toReturn.push(this.filtersOnDomainValues[x]);
+				toReturn.push(Ext.apply({}, this.filtersOnDomainValues[x])); // we clone the field in order to solve https://spagobi.eng.it/jira/browse/SPAGOBI-1530
 			}
 		}
 		return toReturn;
