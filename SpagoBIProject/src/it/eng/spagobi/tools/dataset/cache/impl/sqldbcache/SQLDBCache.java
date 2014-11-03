@@ -934,7 +934,7 @@ public class SQLDBCache implements ICache {
 		try {
 			persistedTableManager.persistDataset(dataStore, dataSource);
 		} catch (Exception e) {
-			logger.error("Error persisting dataset");
+			logger.error("Error persisting dataset", e);
 		}
 
 		// try to query the table using the Schema.TableName syntax if
@@ -948,7 +948,7 @@ public class SQLDBCache implements ICache {
 				dataSource.executeStatement("SELECT * FROM " + schema + "." + tableName, 0, 0);
 			}
 		} catch (Exception e) {
-			throw new CacheException("An unexpected error occured while testing database schema for cache");
+			throw new CacheException("An unexpected error occured while testing database schema for cache", e);
 		} finally {
 			// Dropping table
 			persistedTableManager.dropTableIfExists(dataSource, tableName);
