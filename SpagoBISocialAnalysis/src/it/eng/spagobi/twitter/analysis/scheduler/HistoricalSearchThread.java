@@ -52,7 +52,6 @@ public class HistoricalSearchThread implements Job {
 			// historical search completed, loading = false;
 			logger.debug("Method HistoricalSearchThread: Historical Search completed. Processing results for topics and sentiment..");
 
-			// TwitterRScriptUtility.callSentimentRScript("demo_admin", twitterSearch.getSearchID());
 			TwitterRScriptUtility.callTopicsRScript(twitterSearch.getSearchID());
 			TwitterRScriptUtility.callSentimentRScript(twitterSearch.getSearchID());
 
