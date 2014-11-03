@@ -38,6 +38,7 @@ import it.eng.spagobi.twitter.analysis.scheduler.MonitoringResourcesThread;
 import it.eng.spagobi.twitter.analysis.spider.search.TwitterSearchAPISpider;
 import it.eng.spagobi.twitter.analysis.spider.streaming.TwitterStreamingAPISpider;
 import it.eng.spagobi.twitter.analysis.utilities.AnalysisUtility;
+import it.eng.spagobi.twitter.analysis.utilities.TwitterRScriptUtility;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -336,6 +337,13 @@ public class TwitterAnalysisLauncher {
 
 			twitterStream.clearListeners();
 			twitterStream.cleanUp();
+
+			logger.debug("Method stopStreamingSearch(): Streaming Search stopped. Processing results for topics and sentiment..");
+
+			TwitterRScriptUtility.callTopicsRScript(twitterSearch.getSearchID());
+			TwitterRScriptUtility.callSentimentRScript(twitterSearch.getSearchID());
+
+			logger.debug("Method stopStreamingSearch(): R Scripts called. Update search loading field. Results ready");
 
 			twitterSearch.setLoading(false);
 
@@ -770,7 +778,7 @@ public class TwitterAnalysisLauncher {
 
 			} else if (repeatType == MonitorRepeatTypeEnum.Hour) {
 
-				startingCalendar.add(Calendar.HOUR_OF_DAY, repeatFrequency);
+				 startingCalendar.add(Calendar.HOUR_OF_DAY, repeatFrequency);
 
 				Date startingDateJob = new java.util.Date(startingCalendar.getTimeInMillis());
 
@@ -852,7 +860,7 @@ public class TwitterAnalysisLauncher {
 
 			} else if (repeatType == MonitorRepeatTypeEnum.Hour) {
 
-				startingCalendar.add(Calendar.HOUR_OF_DAY, repeatFrequency);
+				 startingCalendar.add(Calendar.HOUR_OF_DAY, repeatFrequency);
 
 				if (twitterMonitor.getEndingTime().compareTo(startingCalendar) > 0) {
 
@@ -899,6 +907,13 @@ public class TwitterAnalysisLauncher {
 
 				twitterStream.clearListeners();
 				twitterStream.cleanUp();
+
+				logger.debug("Method previousStreamAndMonitorManager(): Streaming Search stopped. Processing results for topics and sentiment..");
+
+				TwitterRScriptUtility.callTopicsRScript(twitterSearch.getSearchID());
+				TwitterRScriptUtility.callSentimentRScript(twitterSearch.getSearchID());
+
+				logger.debug("Method previousStreamAndMonitorManager(): R Scripts called. Update search loading field. Results ready");
 
 				previousEnabledTwitterSearch.setLoading(false);
 
