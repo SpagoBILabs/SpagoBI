@@ -105,6 +105,7 @@ public class TwitterHistoricalSearchAPI {
 						label = label + tempKeyword + "_";
 					}
 				}
+				label = label + "_" + System.currentTimeMillis();
 			}
 			// set search label
 			twitterSearch.setLabel(label);
@@ -134,7 +135,7 @@ public class TwitterHistoricalSearchAPI {
 						twitterSearchScheduler.setRepeatType(SearchRepeatTypeEnum.Day);
 
 					} else if (repeatTypeField.equalsIgnoreCase(SearchRepeatTypeEnum.Hour.toString())) {
-						startingDate.add(Calendar.HOUR_OF_DAY, repeatFrequency);
+						 startingDate.add(Calendar.HOUR_OF_DAY, repeatFrequency);
 
 						twitterSearchScheduler.setRepeatType(SearchRepeatTypeEnum.Hour);
 					}
