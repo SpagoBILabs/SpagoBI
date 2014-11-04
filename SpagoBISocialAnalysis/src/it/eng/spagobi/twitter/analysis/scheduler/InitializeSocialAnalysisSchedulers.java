@@ -6,7 +6,7 @@ import it.eng.spagobi.twitter.analysis.entities.TwitterMonitorScheduler;
 import it.eng.spagobi.twitter.analysis.entities.TwitterSearch;
 import it.eng.spagobi.twitter.analysis.entities.TwitterSearchScheduler;
 import it.eng.spagobi.twitter.analysis.enums.SearchRepeatTypeEnum;
-import it.eng.spagobi.twitter.analysis.utilities.AnalysisUtility;
+import it.eng.spagobi.twitter.analysis.launcher.TwitterAnalysisLauncher;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Calendar;
@@ -41,14 +41,21 @@ public class InitializeSocialAnalysisSchedulers implements Job {
 
 			if (twitterSearch != null) {
 
-				TwitterMonitorScheduler twitterMonitor = twitterSearch.getTwitterMonitorScheduler();
+				// TwitterMonitorScheduler twitterMonitor = twitterSearch.getTwitterMonitorScheduler();
+				//
+				// if (twitterMonitor != null) {
+				// twitterMonitor.setEndingTime(AnalysisUtility.setMonitorSchedulerEndingDate(twitterMonitor));
+				// twitterMonitor.setActiveSearch(false);
+				//
+				// twitterCache.updateTwitterMonitorScheduler(twitterMonitor);
 
-				if (twitterMonitor != null) {
-					twitterMonitor.setEndingTime(AnalysisUtility.setMonitorSchedulerEndingDate(twitterMonitor));
-					twitterMonitor.setActiveSearch(false);
+				String languageCode = null;
 
-					twitterCache.updateTwitterMonitorScheduler(twitterMonitor);
-				}
+				// initializing the launcher with this search
+				TwitterAnalysisLauncher twitterLauncher = new TwitterAnalysisLauncher(twitterSearch);
+				twitterLauncher.setLanguageCode(languageCode);
+
+				twitterLauncher.restartStreamingSearch();
 
 			}
 
@@ -61,8 +68,8 @@ public class InitializeSocialAnalysisSchedulers implements Job {
 				}
 			}
 
-			logger.debug("All streams must to be loading = 0");
-			twitterCache.stopAllStreams();
+			// logger.debug("All streams must to be loading = 0");
+			// twitterCache.stopAllStreams();
 
 			SchedulerFactory schedFact = new org.quartz.impl.StdSchedulerFactory();
 
