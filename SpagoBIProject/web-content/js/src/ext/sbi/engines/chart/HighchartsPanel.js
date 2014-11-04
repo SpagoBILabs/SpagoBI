@@ -254,10 +254,12 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	}
 	
 	, defineFormatterAxis: function(config){
-		for(var j =0; j< config.yAxis.length; j++){
-			if (config.yAxis[j].labels && config.yAxis[j].labels.formatter){
-				var formatterCode = this.getFormatter( config.yAxis[j].labels.formatter);
-				config.yAxis[j].labels.formatter = formatterCode;
+		if ( config.yAxis !== undefined){
+			for(var j =0; j< config.yAxis.length; j++){
+				if (config.yAxis[j].labels && config.yAxis[j].labels.formatter){
+					var formatterCode = this.getFormatter( config.yAxis[j].labels.formatter);
+					config.yAxis[j].labels.formatter = formatterCode;
+				}
 			}
 		}
 	}
