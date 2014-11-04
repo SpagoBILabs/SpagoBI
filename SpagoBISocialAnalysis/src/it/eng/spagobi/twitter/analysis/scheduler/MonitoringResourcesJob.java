@@ -47,18 +47,23 @@ public class MonitoringResourcesJob implements Job {
 			links = monitorScheduler.getLinks();
 			accounts = monitorScheduler.getAccounts();
 
-			BitlyCounterClicksUtility bitlyUtil = new BitlyCounterClicksUtility(links, searchID);
-			bitlyUtil.startBitlyAnalysis();
+			if (links != null && !links.equals("")) {
+				BitlyCounterClicksUtility bitlyUtil = new BitlyCounterClicksUtility(links, searchID);
+				bitlyUtil.startBitlyAnalysis();
+			}
 
 			TwitterUserInfoUtility userUtil = new TwitterUserInfoUtility(searchID);
 
-			accounts = accounts.replaceAll("@", "");
-			String[] accountsArr = accounts.split(",");
+			if (accounts != null && !accounts.equals("")) {
 
-			if (accountsArr != null && accountsArr.length > 0) {
-				for (int i = 0; i < accountsArr.length; i++) {
-					String account = accountsArr[i].trim();
-					userUtil.saveFollowersCount(account);
+				accounts = accounts.replaceAll("@", "");
+				String[] accountsArr = accounts.split(",");
+
+				if (accountsArr != null && accountsArr.length > 0) {
+					for (int i = 0; i < accountsArr.length; i++) {
+						String account = accountsArr[i].trim();
+						userUtil.saveFollowersCount(account);
+					}
 				}
 			}
 
