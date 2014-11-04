@@ -971,6 +971,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				toReturn = this.createFieldDate(editorConfig);
 			} else {
 				toReturn = new Ext.form.TextField();
+				toReturn.selectOnFocus = true;
 			}
 		}
 		return toReturn;
