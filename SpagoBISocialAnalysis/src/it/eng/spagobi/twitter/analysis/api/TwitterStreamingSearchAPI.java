@@ -106,6 +106,8 @@ public class TwitterStreamingSearchAPI {
 			TwitterSearch twitterSearch = this.createStreamingSearch(req);
 			String languageCode = null;
 
+			twitterSearch.setLoading(false);
+
 			if (twitterSearch.getTwitterMonitorScheduler() != null) {
 				twitterSearch.getTwitterMonitorScheduler().setActiveSearch(false);
 			}
