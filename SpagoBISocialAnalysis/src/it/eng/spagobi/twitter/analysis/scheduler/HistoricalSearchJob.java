@@ -76,7 +76,9 @@ public class HistoricalSearchJob implements Job {
 			int repeatFrequency = searchScheduler.getRepeatFrequency();
 			String repeatType = searchScheduler.getRepeatType().toString();
 
-			Calendar startingCalendar = searchScheduler.getStartingTime();
+			// Calendar startingCalendar = searchScheduler.getStartingTime();
+
+			Calendar startingCalendar = GregorianCalendar.getInstance();
 
 			startingCalendar.set(Calendar.SECOND, 0);
 			startingCalendar.set(Calendar.MILLISECOND, 0);
