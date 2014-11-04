@@ -740,7 +740,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			}
 		   
 		   
-		   this.on('beforeedit', function(e){			   
+		 this.on('beforeedit', function(e){			   
 			   
 			   /*
 			    grid - This grid
@@ -755,7 +755,12 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			    
 			    this.previousValueEdit = val;
 			    
-			    
+			    // check if is a total value than cannot be edited
+			    for(var j = 0; j < this.meta.summaryCellsCoordinates.length; j++) {
+			    	if(this.meta.summaryCellsCoordinates[j].row === e.row){
+			    		return 	false
+			    	}
+			    }
 			    
 			    var valorig; 
 			    if(e.record.json != undefined){
