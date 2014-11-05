@@ -104,7 +104,11 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 			field: seriesConfig.fields[0],
 			showInLegend: this.isLegendVisible(),
 			colorSet: this.getColors(),
-			segment: {margin:20},
+			highlight: {
+	            segment: {
+	                margin: 20
+	            }
+	        },
 	        smooth: true,
 	        tips: this.getSeriesTips(seriesConfig),
 	        label: this.getSeriesLabel(categoriesConfig, seriesConfig),
@@ -265,11 +269,45 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 	}
 
 	, getSeriesLabel: function(categoriesConfig, seriesConfig) {
+		var thisPanel = this;
+		var percent = this.wconf.showpercentage;
+		var store = this.getStore();
+		var seriresConfig = this.getSeriesConfig();
+
+		var seriesum = 0;
+
+		if (percent){
+			for(var i = 0; i < store.data.items.length; i++){
+				for (var h in store.data.items[i].data){
+					if (h == seriresConfig.fields){
+						seriesum = seriesum + parseFloat(store.data.items[i].data[h]);
+					}
+				}
+			}
+		}
+
 		var label = {
-			field: categoriesConfig.fields[0],
+			field: seriresConfig.fields[0],
 		    display: 'rotate',
 		    contrast: true,
-		    font: '0px Arial'
+		    font: '1em Arial',
+		    renderer:function(value){
+		    	var fieldValue = value;
+				if (percent) fieldValue = (fieldValue/seriesum)*100;
+
+				if (typeof(fieldValue) == 'number'){
+					if (!thisPanel.isInteger(fieldValue)){
+						//decimal number
+						fieldValue = +fieldValue.toFixed(2);
+					}
+				}
+
+				if (percent) fieldValue = fieldValue + "%";
+
+				return fieldValue;
+
+            }
+			,scope:this
 		};
 
 		return label;
@@ -291,7 +329,7 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 	}
 
 	/**
-	 * @deprectaed
+	 * @deprecated
 	 */
 	, getChartSeries: function(serieNames, colors){
 		var seriesForChart = new Array();
@@ -314,7 +352,7 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 	}
 
 	/**
-	 * @deprectaed
+	 * @deprecated
 	 */
 	, createSeries : function(items, showLegend){
 		var thisPanel = this;
