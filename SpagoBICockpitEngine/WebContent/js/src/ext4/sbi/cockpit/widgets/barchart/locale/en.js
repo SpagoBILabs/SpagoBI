@@ -19,3 +19,5 @@ Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.st
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.percent-stacked'] = 'Percent stacked';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.title'] = 'Show values';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title'] = 'Show legend';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'] = 'Category Axis Name';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'] = 'Series Axis Name';

@@ -17,3 +17,5 @@ Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.st
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.percent-stacked'] = 'Porcentaje apilado';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.title'] = 'Mostrar valores';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title'] = 'Mostrar leyenda';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'] = 'Nombre Ejes Categoría';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'] = 'Nombre Ejes Serie';

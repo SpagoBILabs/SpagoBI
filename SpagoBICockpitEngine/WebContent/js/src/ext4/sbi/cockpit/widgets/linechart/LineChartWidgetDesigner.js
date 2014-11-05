@@ -32,6 +32,8 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	, radioGroupIds: null
 	, chartLib: null
 	, initialConfig: null
+	, categoryAxis: null
+	, seriesAxis: null
 
 	, constructor : function(config) {
 		Sbi.trace("[PieChartWidgetDesigner.constructor]: IN");
@@ -67,6 +69,8 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		state.colorarea = this.colorAreaCheck.getValue();
 		state.showvalues = this.showValuesCheck.getValue();
 		state.showlegend = this.showLegendCheck.getValue();
+		state.categoryAxis = this.categoryAxisText.getValue();
+		state.seriesAxis = this.seriesAxisText.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
 		if(this.showSeriesGroupingPanel === true) {
 			state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
@@ -88,6 +92,8 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.groupingVariable && this.showSeriesGroupingPanel === true) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
+		if (state.categoryAxis) this.categoryAxisText.setValue(state.categoryAxis);
+		if (state.seriesAxis) this.seriesAxisText.setValue(state.seriesAxis);
 
 		if (this.rendered) {
 			//this.changeLineChartImage.defer(200, this);
@@ -209,6 +215,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		this.initTemplate();
 		this.initRadioGroup();
 		this.initCheckFields();
+		this.initAxisNamesFields();
 
 		var checkFields = new Array();
 
@@ -228,7 +235,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 			, border: false
 			, items: [{
 				xtype: 'fieldset'
-				, columnWidth : .7
+				, columnWidth : .4
 				, border: false
 				, items: [this.typeRadioGroup]
 			}, {
@@ -236,7 +243,12 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 				, columnWidth : .3
 				, border: false
 				, items: checkFields
-			}]
+			}, {
+				xtype: 'fieldset'
+					, columnWidth : .3
+					, border: false
+					, items: [this.categoryAxisText,this.seriesAxisText]
+				}]
 		});
 	}
 
@@ -275,6 +287,20 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		this.showLegendCheck = new Ext.form.Checkbox({
 			checked: false
 			, fieldLabel: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showlegend.title')
+		});
+	}
+
+	, initAxisNamesFields: function(){
+		this.categoryAxisText = new Ext.form.Text({
+			 name: 'categoryAxis',
+			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'),
+			 allowBlank: true
+		});
+
+		this.seriesAxisText = new Ext.form.Text({
+			 name: 'seriesAxis',
+			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'),
+			 allowBlank: true
 		});
 	}
 
