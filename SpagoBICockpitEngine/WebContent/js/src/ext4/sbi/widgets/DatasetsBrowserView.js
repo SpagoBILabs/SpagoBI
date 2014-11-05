@@ -214,7 +214,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 		                return Ext.util.Format.ellipsis(text,35,false);
 		            },
 		            shortenTitle: function(text){
-		                return Ext.util.Format.ellipsis(text,19,false);
+		                return Ext.util.Format.ellipsis(text,18,false);
 		            }
 				 }
 				);
