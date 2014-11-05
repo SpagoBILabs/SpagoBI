@@ -63,9 +63,18 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
         , listeners: {
 			render: function(grid) { // hide the grid header
 				//grid.getView().el.select('.x-grid3-header').setStyle('display', 'none');
+//				new Ext.util.KeyMap({
+//				    target: grid,
+//				    key: Ext.EventObject.DELETE,
+//				    fn: function () {
+//				    	this.removeSelectedValues();
+//				    },
+//				    scope: this
+//				});
+
     		}
-        	, keydown: function(e) {
-        		if (e.keyCode === 46) {
+        	, cellkeydown: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+        		if (e.keyCode === Ext.EventObject.DELETE) {
         			this.removeSelectedValues();
       	      	}
       	    }
@@ -83,6 +92,15 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 
 	// constructor
 	Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.superclass.constructor.call(this, c);
+
+//	new Ext.util.KeyMap({
+//	    target: this,
+//	    key: 46,
+//	    fn: function () {
+//	    	this.removeSelectedValues();
+//	    },
+//	    scope: this
+//	});
 
 	this.on('rowdblclick', this.rowDblClickHandler, this);
 };
@@ -167,7 +185,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
-			for (i = 0; i < this.initialData.length; i++) {
+			for (var i = 0; i < this.initialData.length; i++) {
 				this.addField(this.initialData[i]);
 			}
 		}
@@ -312,7 +330,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 
 	, getContainedValues: function () {
 		var attributes = [];
-		for(i = 0; i < this.store.getCount(); i++) {
+		for(var i = 0; i < this.store.getCount(); i++) {
 			var record = this.store.getAt(i);
 			attributes.push(record.data);
 		}
