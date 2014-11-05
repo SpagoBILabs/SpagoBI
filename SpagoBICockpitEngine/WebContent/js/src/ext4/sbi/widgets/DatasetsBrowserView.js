@@ -212,6 +212,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 		        	},
 		        	shorten: function(text){
 		                return Ext.util.Format.ellipsis(text,35,false);
+		            },
+		            shortenTitle: function(text){
+		                return Ext.util.Format.ellipsis(text,19,false);
 		            }
 				 }
 				);
@@ -228,6 +231,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 		var classImg = ' class="measure-detail-dataset" ';
 
 		var author = LN('sbi.generic.author');
+		var created = LN('sbi.generic.creationdate');
 //		var changed = LN('sbi.ds.changedon');
 
 		var datasetTpl = ''+
@@ -238,18 +242,20 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 			'</div>'+ //box-figure
 			'<tpl if="this.checkIsUsed(isUsed, label) == true">'+
 				'<div id="box-text-{label}" title="{name}" class="box-text box-text-select">'+
-					'<h3>{[this.shorten(values.name)]}</h3>'+
+					'<h3>{[this.shortenTitle(values.name)]}</h3>'+
 					'<p>{[this.shorten(values.description)]}</p>'+
 //					'<p>{description}</p>'+
 					'<p><b>'+author+':</b> {owner}</p>'+
+					'<p><b>'+created+':</b> {dateIn}</p>'+
 				'</div>'+
 			'</tpl>'+
 	        '<tpl if="this.checkIsUsed(isUsed, label) == false">'+
 		        '<div id="box-text-{label}" title="{name}" class="box-text">'+
-					'<h3>{[this.shorten(values.name)]}</h3>'+
+					'<h3>{[this.shortenTitle(values.name)]}</h3>'+
 						'<p>{[this.shorten(values.description)]}</p>'+
 //					'<p>{description}</p>'+
 					'<p><b>'+author+':</b> {owner}</p>'+
+					'<p class="modified"><b>'+created+':</b> {dateIn}</p>'+
 				'</div>'+
 			'</tpl>'+
 		'</div>';
