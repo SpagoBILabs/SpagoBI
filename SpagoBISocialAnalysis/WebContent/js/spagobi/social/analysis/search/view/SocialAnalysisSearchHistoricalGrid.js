@@ -279,7 +279,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
             								url : 'restful-services/historicalSearch/updateFailedSearch',
             								method:'POST', 
             								params : {
-            									searchID: Ext.encode(record.get('searchID'))
+            									searchID: Ext.encode(searchID)
             									},
             									scope : this,
             									success: function(response)
@@ -292,7 +292,8 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
                                     }
                                }
         						
-        					});        					
+        					});
+        					break;
     					}
     				}		        		
         		}
