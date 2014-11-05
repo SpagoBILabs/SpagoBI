@@ -46,7 +46,25 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 
-	getChartType: function() {
+	//return category axis name (if specified)
+	getCategoryAxis: function(){
+		var categoryAxis = '';
+		if (this.wconf.categoryAxis){
+			categoryAxis = this.wconf.categoryAxis;
+		}
+		return categoryAxis;
+	}
+
+	//return series axis name (if specified)
+	, getSeriesAxis: function(){
+		var seriesAxis = '';
+		if (this.wconf.seriesAxis){
+			seriesAxis = this.wconf.seriesAxis;
+		}
+		return seriesAxis;
+	}
+
+	, getChartType: function() {
 		return 'line';
 	}
 
@@ -142,7 +160,12 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	}
 
 	, getAxes: function( categoriesConfig, seriesConfig ) {
-
+		var seriesTitle;
+		if (this.getSeriesAxis().length > 0){
+			seriesTitle = this.getSeriesAxis();
+		} else {
+			seriesTitle = seriesConfig.titles.length == 1? seriesConfig.titles[0]: undefined;
+		}
 		var seriesAxis = {
 		    type: 'Numeric'
 		    , position: seriesConfig.position
@@ -152,7 +175,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 //		    	display: 'inside',
 //		    	renderer: Ext.util.Format.numberRenderer('0,0')
 //		    }
-			, title: seriesConfig.titles.length == 1? seriesConfig.titles[0]: undefined
+			, title: seriesTitle
 		   	, grid: true
 		    , minimum: 0
 		};
@@ -162,11 +185,17 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 			seriesAxis.maximum = 100;
 		}
 
+		var categoryTitle;
+		if (this.getCategoryAxis().length > 0){
+			categoryTitle = this.getCategoryAxis();
+		} else {
+			categoryTitle = categoriesConfig.titles.length == 1? categoriesConfig.titles[0]: undefined;
+		}
 		var categoryAxis = {
 		    type: 'Category'
 		    , position: categoriesConfig.position
 		    , fields: categoriesConfig.fields
-		    , title: categoriesConfig.titles.length == 1? categoriesConfig.titles[0]: undefined
+		    , title: categoryTitle
 	    };
 
 		var axes = [seriesAxis, categoryAxis];

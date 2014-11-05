@@ -19,4 +19,6 @@ Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.st
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.percent-stacked'] = 'Sovrapposto Percentuale';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.title'] = 'Mostra valori';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title'] = 'Mostra legenda';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'] = 'Nome Asse Categoria';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'] = 'Nome Asse Serie';
 

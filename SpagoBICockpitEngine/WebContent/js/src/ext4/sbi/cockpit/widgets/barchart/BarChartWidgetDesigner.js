@@ -52,6 +52,8 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 					state.category = thePanel.category;
 					state.groupingVariable = thePanel.groupingVariable;
 					state.series = thePanel.series;
+					state.categoryAxis = thePanel.categoryAxis;
+					state.seriesAxis = thePanel.seriesAxis;
 					state.wtype = 'barchart';
 					this.setDesignerState(state);
 				},
@@ -83,6 +85,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 	, showLegendCheck: null
 	, radioGroupIds: null
 	, chartLib: null
+	, categoryAxis: null
+	, seriesAxis: null
 
 	// =================================================================================================================
 	// METHODS
@@ -144,7 +148,17 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title')
 		});
 
+		this.categoryAxisText = new Ext.form.Text({
+			 name: 'categoryAxis',
+			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'),
+			 allowBlank: true
+		});
 
+		this.seriesAxisText = new Ext.form.Text({
+			 name: 'seriesAxis',
+			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'),
+			 allowBlank: true
+		});
 
 
 		this.categoryContainerPanel = new Sbi.cockpit.widgets.chart.ChartCategoryPanel({
@@ -241,6 +255,11 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 
     	controlsItems.push(this.showLegendCheck);
 
+    	controlsItems.push(this.categoryAxisText);
+
+    	controlsItems.push(this.seriesAxisText);
+
+
 		this.form = new Ext.form.FormPanel({
 			border: false
 			, items: [
@@ -328,6 +347,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		state.orientation = this.orientationCombo.getValue();
 		state.showvalues = this.showValuesCheck.getValue();
 		state.showlegend = this.showLegendCheck.getValue();
+		state.categoryAxis = this.categoryAxisText.getValue();
+		state.seriesAxis = this.seriesAxisText.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
 		if(this.showSeriesGroupingPanel === true) {
 			state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
@@ -345,6 +366,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		if (state.orientation) this.orientationCombo.setValue(state.orientation);
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
+		if (state.categoryAxis) this.categoryAxisText.setValue(state.categoryAxis);
+		if (state.seriesAxis) this.seriesAxisText.setValue(state.seriesAxis);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.groupingVariable && this.showSeriesGroupingPanel === true) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
