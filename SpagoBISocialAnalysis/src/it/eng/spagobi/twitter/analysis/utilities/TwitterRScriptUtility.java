@@ -21,7 +21,7 @@ public class TwitterRScriptUtility {
 	private static final String RSCRIPT_SENTIMENT_LIBS = "RMySQL,DBI,tau,tm,plyr";
 
 	private static final String RSCRIPT_TOPICS = "fileR=Topic_Modeling_Twitter_TM_outputDB_unificato.r";
-	private static final String RSCRIPT_TOPICS_LIBS = "RMySQL,DBI,reshape2,lda,topicmodels,slam,stringr,tau,tm,pbapply,plyr";
+	private static final String RSCRIPT_TOPICS_LIBS = "RMySQL,DBI,reshape2,topicmodels,slam,stringr,tau,tm,plyr";
 
 	public static void callSentimentRScript(long searchId) throws Throwable {
 
