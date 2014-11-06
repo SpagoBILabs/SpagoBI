@@ -118,6 +118,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsCardPanel, Ext.Panel, {
 		Sbi.trace("[QueryFieldsCardPanel.onFieldDrop]: IN");
 		if (ddSource.id === "field-grid-body") {
 			this.tableDesigner.notifyDropFromQueryFieldsPanel(ddSource);
+		} else if (this.tableDesigner.view.getId() == ddSource.view.getId()) {
+			this.tableDesigner.notifyDropFromItSelf(ddSource);
 		} else {
 			alert('Unknown drag sorurce [' + ddSource.id + ']');
 		}
