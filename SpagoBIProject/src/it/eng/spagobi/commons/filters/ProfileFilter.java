@@ -39,8 +39,7 @@ import org.apache.log4j.Logger;
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
  * 
- *         This filter tries to build the user profile object, using the user
- *         identifier
+ *         This filter tries to build the user profile object, using the user identifier
  */
 
 public class ProfileFilter implements Filter {
@@ -97,6 +96,7 @@ public class ProfileFilter implements Filter {
 					if (userId != null && !userId.trim().equals("")) {
 						profile = GeneralUtilities.createNewUserProfile(userId);
 						permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+						session.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 					} else {
 						logger.debug("User identifier not found.");
 					}
@@ -105,16 +105,10 @@ public class ProfileFilter implements Filter {
 					// in case the profile is different, creates a new one
 					// and overwrites the existing
 					/*
-					 * if (!((UserProfile)
-					 * profile).getUserUniqueIdentifier().toString
-					 * ().equals(userId)) {logger.debug(
-					 * "Different user profile found in session, creating a new one and replacing in session...."
-					 * ); profile =
-					 * GeneralUtilities.createNewUserProfile(userId);
-					 * permanentSession
-					 * .setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-					 * } else { logger.debug("User profile object for user [" +
-					 * userId + "] already existing in session, ok"); }
+					 * if (!((UserProfile) profile).getUserUniqueIdentifier().toString ().equals(userId)) {logger.debug(
+					 * "Different user profile found in session, creating a new one and replacing in session...." ); profile =
+					 * GeneralUtilities.createNewUserProfile(userId); permanentSession .setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile); } else {
+					 * logger.debug("User profile object for user [" + userId + "] already existing in session, ok"); }
 					 */
 				}
 
@@ -216,10 +210,8 @@ public class ProfileFilter implements Filter {
 	}
 
 	/**
-	 * Finds the user identifier from http request or from SSO system (by the
-	 * http request in input). Use the SsoServiceInterface for read the userId
-	 * in all cases, if SSO is disabled use FakeSsoService. Check
-	 * spagobi_sso.xml
+	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
+	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
 	 * 
 	 * @param httpRequest
 	 *            The http request
@@ -227,8 +219,7 @@ public class ProfileFilter implements Filter {
 	 * @return the current user unique identified
 	 * 
 	 * @throws Exception
-	 *             in case the SSO is enabled and the user identifier specified
-	 *             on http request is different from the SSO detected one.
+	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
 	private static String getUserIdWithSSO(HttpServletRequest request) throws Exception {
 		logger.debug("IN");
