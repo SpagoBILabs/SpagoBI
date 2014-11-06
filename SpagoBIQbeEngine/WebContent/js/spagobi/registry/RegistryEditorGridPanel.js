@@ -1703,14 +1703,14 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		  		if(IE == true){
 		  			previousTotal = parseFloat(cell.innerText);
 			  		// add to previous total the difference between new and old value
-			  		var newTotal = previousTotal - previousValue + parseFloat(newValue)
+			  		var newTotal = previousTotal - previousValue + parseFloat(newValue);
 			  		newTotal = newTotal.toFixed(2);
 			  		cell.innerText = newTotal;
 		  		}	
 		  		else{
 		  			previousTotal = parseFloat(cell.textContent);
 			  		// add to previous total the difference between new and old value
-			  		var newTotal = previousTotal - previousValue + parseFloat(newValue)
+			  		var newTotal = previousTotal - previousValue + parseFloat(newValue);
 			  		newTotal = newTotal.toFixed(2);
 			  		cell.textContent = newTotal;
 		  		}
