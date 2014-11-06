@@ -238,6 +238,15 @@ public class FileServiceDataSetCRUD {
 			qbeContext = qbeContext.substring(1);
 		}
 
+		// Build locale
+		Object languageO = req.getSession().getAttribute(SpagoBIConstants.AF_LANGUAGE);
+		Object countryO = req.getSession().getAttribute(SpagoBIConstants.AF_COUNTRY);
+
+		String sbiLanguage = languageO != null ? languageO.toString() : "en";
+		String sbiCountry = countryO != null ? countryO.toString() : "En";
+
+		logger.debug("Language retrieved: [" + sbiLanguage + "]; country retrieved: [" + sbiCountry + "]");
+
 		url = protocol + "://" + host + ":" + port + "/" + qbeContext;
 
 		if (openWorksheet) {
@@ -248,6 +257,9 @@ public class FileServiceDataSetCRUD {
 			url += "&dataset_label=" + dataSet.getLabel();
 			url += "&ENGINE_DATASOURCE_LABEL=" + dataSourceLabel;
 			url += "&NEW_SESSION=TRUE";
+			url += "&SBI_LANGUAGE=" + sbiLanguage;
+			url += "&SBI_COUNTRY=" + sbiCountry;
+
 		} else {
 
 			logger.debug("Open with QBE case");
@@ -257,6 +269,8 @@ public class FileServiceDataSetCRUD {
 			url += "&dataset_label=" + dataSet.getLabel();
 			url += "&datasource_label=" + dataSourceLabel;
 			url += "&NEW_SESSION=TRUE";
+			url += "&SBI_LANGUAGE=" + sbiLanguage;
+			url += "&SBI_COUNTRY=" + sbiCountry;
 		}
 
 		logger.debug("URL to call");
@@ -486,6 +500,15 @@ public class FileServiceDataSetCRUD {
 			String labelF = field.getString("label");
 			String type = field.getString("tipo");
 			String role = field.getString("ruolo");
+
+			final String MEASURE = "MEASURE";
+			final String ATTRIBUTE = "ATTRIBUTE";
+
+			if (role != null && role.equalsIgnoreCase("attributo")) {
+				role = ATTRIBUTE;
+			} else if (role != null && role.equalsIgnoreCase("misura")) {
+				role = MEASURE;
+			}
 
 			// clean label from not regular characters
 			// labelF = labelF.replaceAll("[^a-zA-Z0-9\\_\\s]", "");
