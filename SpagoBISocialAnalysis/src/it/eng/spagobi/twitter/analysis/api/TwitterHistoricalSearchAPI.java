@@ -135,7 +135,7 @@ public class TwitterHistoricalSearchAPI {
 						twitterSearchScheduler.setRepeatType(SearchRepeatTypeEnum.Day);
 
 					} else if (repeatTypeField.equalsIgnoreCase(SearchRepeatTypeEnum.Hour.toString())) {
-						 startingDate.add(Calendar.HOUR_OF_DAY, repeatFrequency);
+						startingDate.add(Calendar.HOUR_OF_DAY, repeatFrequency);
 
 						twitterSearchScheduler.setRepeatType(SearchRepeatTypeEnum.Hour);
 					}
@@ -223,6 +223,8 @@ public class TwitterHistoricalSearchAPI {
 				Calendar sinceDate = actualDate;
 
 				sinceDate.add(Calendar.DAY_OF_MONTH, -Integer.parseInt(numberStartingFrom));
+
+				twitterSearch.setDaysAgo(Integer.parseInt(numberStartingFrom));
 
 				twitterLauncher = new TwitterAnalysisLauncher(twitterSearch);
 				twitterLauncher.setLanguageCode(languageCode);
