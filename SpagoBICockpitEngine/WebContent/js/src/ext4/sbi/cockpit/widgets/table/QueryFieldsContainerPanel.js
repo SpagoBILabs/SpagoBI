@@ -63,26 +63,17 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
         , listeners: {
 			render: function(grid) { // hide the grid header
 				//grid.getView().el.select('.x-grid3-header').setStyle('display', 'none');
-//				new Ext.util.KeyMap({
-//				    target: grid,
-//				    key: Ext.EventObject.DELETE,
-//				    fn: function () {
-//				    	this.removeSelectedValues();
-//				    },
-//				    scope: this
-//				});
-
     		}
         	, cellkeydown: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
         		if (e.keyCode === Ext.EventObject.DELETE) {
         			this.removeSelectedValues();
       	      	}
       	    }
-        	, mouseover: function(e, t) {
-        		this.targetRow = t; // for Drag&Drop
+        	, itemmouseenter: function(grid, record, item, index, e, eOpts) {
+        		this.targetRowIndex = index; // for Drag&Drop
         	}
-        	, mouseout: function(e, t) {
-        		this.targetRow = undefined;
+        	, itemmouseleave: function(grid, record, item, index, e, eOpts) {
+        		this.targetRowIndex = -1;  // for Drag&Drop
         	}
         	, scope: this
 		}
@@ -93,15 +84,6 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 	// constructor
 	Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.superclass.constructor.call(this, c);
 
-//	new Ext.util.KeyMap({
-//	    target: this,
-//	    key: 46,
-//	    fn: function () {
-//	    	this.removeSelectedValues();
-//	    },
-//	    scope: this
-//	});
-
 	this.on('rowdblclick', this.rowDblClickHandler, this);
 };
 
@@ -109,7 +91,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 
 	initialData: undefined
 
-	, targetRow: null
+	, targetRowIndex: -1
 
 	, calculateTotalsCheckbox: null
 	, calculateSubtotalsCheckbox: null
@@ -278,6 +260,37 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		Sbi.trace("[QueryFieldsContainerPanel.notifyDropFromQueryFieldsPanel]: OUT");
 	}
 
+	,
+	notifyDropFromItSelf: function(ddSource) {
+		Sbi.trace("[QueryFieldsContainerPanel.notifyDropFromItSelf]: IN");
+
+        var sm = this.getSelectionModel();
+        var store = this.getStore();
+        var records = sm.getSelections();
+
+        records = records.sort(function(r1, r2) {
+            return store.indexOf(r2) - store.indexOf(r1);
+        });
+
+        // this.targetRowIndex is the row index on which the tree node has been dropped on
+        if (this.targetRowIndex == -1) {
+           records = records.reverse();
+        }
+
+        for (var i = 0; i < records.length; i++) {
+        	var record = records[i];
+        	store.remove(record);
+            if (this.targetRowIndex != -1) {
+            	store.insert(this.targetRowIndex, record);
+            } else {
+            	store.add(record);
+            }
+        }
+
+        this.getView().refresh();
+
+		Sbi.trace("[QueryFieldsContainerPanel.notifyDropFromItSelf]: OUT");
+	}
 
 //	, rowDblClickHandler: function(grid, rowIndex, event) {
 //		var record = grid.store.getAt(rowIndex);
