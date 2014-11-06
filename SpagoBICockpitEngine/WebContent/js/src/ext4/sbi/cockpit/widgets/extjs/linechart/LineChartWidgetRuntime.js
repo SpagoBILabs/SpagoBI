@@ -101,6 +101,8 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 
 		var store = this.getStore();
 
+		var colors = this.getColors();
+
 		for(var i = 0; i < store.data.items.length; i++){
 			var seriesum = 0;
 
@@ -143,13 +145,24 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	     	this.unboundStore();
 		}
 
+		//Create theme for using custom defined colors
+		Ext.define('Ext.chart.theme.CustomTheme', {
+		    extend: 'Ext.chart.theme.CustomBlue',
+
+		    constructor: function(config) {
+		        this.callParent([Ext.apply({
+		            colors: colors
+		        }, config)]);
+		    }
+		});
+
 		this.chartPanel =  Ext.create('Ext.chart.Chart', {
             store: store,
             axes: axes,
             series: series,
             shadow: true,
             animate: true,
-            theme: 'CustomBlue',
+            theme: 'CustomTheme',
             background: this.getBackground(),
 	        legend: this.isLegendVisible()
         });
