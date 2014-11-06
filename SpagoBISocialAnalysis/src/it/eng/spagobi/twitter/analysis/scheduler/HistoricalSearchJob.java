@@ -152,6 +152,21 @@ public class HistoricalSearchJob implements Job {
 
 		}
 
+		Integer daysAgo = twitterSearch.getDaysAgo();
+
+		if (daysAgo != null) {
+			logger.debug("Method initializeSearchAPI() for historical search job: Search with a starting date");
+
+			int daysAgoValue = daysAgo.intValue();
+
+			Calendar actualDate = GregorianCalendar.getInstance();
+
+			this.sinceCalendar = actualDate;
+
+			this.sinceCalendar.add(Calendar.DAY_OF_MONTH, -daysAgoValue);
+
+		}
+
 		twitterSearchAPI.setTwitterSearch(twitterSearch);
 		twitterSearchAPI.setSinceDate(this.sinceCalendar);
 
