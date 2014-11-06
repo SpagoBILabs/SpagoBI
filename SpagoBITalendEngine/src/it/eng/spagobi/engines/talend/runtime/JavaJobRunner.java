@@ -36,6 +36,11 @@ import org.safehaus.uuid.UUIDGenerator;
 /**
  * @author Andrea Gioia
  * 
+ * @update Giulio Gavardi
+ * 
+ * @contributor November 6th 2014 : Yvo Hooyberghs
+ * 
+ * 
  */
 public class JavaJobRunner implements IJobRunner {
 
@@ -79,8 +84,10 @@ public class JavaJobRunner implements IJobRunner {
 
 			logger.debug("Java execution command is equal to [" + cmd + "]");
 
-			// TODO: improve post-processing cleaning
 			List filesToBeDeleted = new ArrayList();
+			// remove temporary directory after jobrun
+			filesToBeDeleted.add(tempDir);
+
 			executeCommand(cmd, job, parameters, filesToBeDeleted);
 
 		} catch (Throwable e) {
