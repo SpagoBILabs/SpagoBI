@@ -110,6 +110,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorPage, Ext.Panel, {
 		this.widgetEditorPanel.mainPanel.customConfPanel.removeAllDesigners();
 		this.widgetEditorPanel.mainPanel.genericConfPanel.resetFormState();
 		this.widgetEditorPanel.mainPanel.setDefaultActiveTab();
+		this.widgetEditorPanel.controlPanel.designerPalettePanel.expand();
 		Sbi.trace("[WidgetEditorPage.resetPageState]: OUT");
 	}
 
