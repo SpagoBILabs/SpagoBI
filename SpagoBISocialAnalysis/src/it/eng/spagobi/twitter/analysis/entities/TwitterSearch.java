@@ -94,6 +94,9 @@ public class TwitterSearch implements Serializable {
 	@NotNull
 	private BooleanOperatorEnum booleanOperator;
 
+	@Column(name = "days_ago")
+	private Integer daysAgo;
+
 	@OneToOne(mappedBy = "twitterSearch", cascade = { CascadeType.PERSIST })
 	private TwitterSearchScheduler twitterSearchScheduler;
 
@@ -108,7 +111,7 @@ public class TwitterSearch implements Serializable {
 	}
 
 	public TwitterSearch(long searchID, String label, String keywords, Calendar creationDate, Calendar lastActivationTime, SearchTypeEnum type,
-			boolean loading, boolean deleted, boolean failed, String failMessage, BooleanOperatorEnum booleanOperator,
+			boolean loading, boolean deleted, boolean failed, String failMessage, BooleanOperatorEnum booleanOperator, Integer daysAgo,
 			TwitterSearchScheduler twitterSearchScheduler, TwitterMonitorScheduler twitterMonitorScheduler) {
 
 		this.searchID = searchID;
@@ -122,6 +125,7 @@ public class TwitterSearch implements Serializable {
 		this.failed = failed;
 		this.failMessage = failMessage;
 		this.booleanOperator = booleanOperator;
+		this.daysAgo = daysAgo;
 		this.twitterSearchScheduler = twitterSearchScheduler;
 		this.twitterMonitorScheduler = twitterMonitorScheduler;
 	}
@@ -212,6 +216,14 @@ public class TwitterSearch implements Serializable {
 
 	public void setBooleanOperator(BooleanOperatorEnum booleanOperator) {
 		this.booleanOperator = booleanOperator;
+	}
+
+	public Integer getDaysAgo() {
+		return daysAgo;
+	}
+
+	public void setDaysAgo(Integer daysAgo) {
+		this.daysAgo = daysAgo;
 	}
 
 	public TwitterSearchScheduler getTwitterSearchScheduler() {
