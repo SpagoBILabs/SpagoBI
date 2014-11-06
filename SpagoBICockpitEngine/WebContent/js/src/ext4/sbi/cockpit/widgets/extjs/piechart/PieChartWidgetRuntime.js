@@ -287,12 +287,12 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		}
 
 		var label = {
-			field: seriresConfig.fields[0],
+			field: categoriesConfig.fields[0],
 		    display: 'rotate',
 		    contrast: true,
 		    font: '1em Arial',
-		    renderer:function(value){
-		    	var fieldValue = value;
+		    renderer:function(value,label, storeItem, item, i, display, animate, index){
+		    	var fieldValue = storeItem.get(seriesConfig.fields[0]);
 				if (percent) fieldValue = (fieldValue/seriesum)*100;
 
 				if (typeof(fieldValue) == 'number'){
