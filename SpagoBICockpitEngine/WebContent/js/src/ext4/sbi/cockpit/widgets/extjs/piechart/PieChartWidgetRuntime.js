@@ -99,6 +99,8 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 			alert("[PieChartWidgetRuntime.getSeries]: Pie chart can have only one series");
 		}
 
+
+
 		var series = [{
 			type: this.getChartType(),
 			field: seriesConfig.fields[0],
@@ -110,13 +112,15 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 	            }
 	        },
 	        smooth: true,
-	        tips: this.getSeriesTips(seriesConfig),
 	        label: this.getSeriesLabel(categoriesConfig, seriesConfig),
+	        tips: this.getSeriesTips(seriesConfig),
 	        listeners: {
 	        	itemmousedown: this.onItemMouseDown,
 	    	    scope: this
 	    	}
 	    }];
+
+
 
 		Sbi.trace("[PieChartWidgetRuntime.getSeries]: OUT");
 
@@ -292,19 +296,24 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		    contrast: true,
 		    font: '1em Arial',
 		    renderer:function(value,label, storeItem, item, i, display, animate, index){
-		    	var fieldValue = storeItem.get(seriesConfig.fields[0]);
-				if (percent) fieldValue = (fieldValue/seriesum)*100;
+				if (thisPanel.wconf.showvalues == true){
+			    	var fieldValue = storeItem.get(seriesConfig.fields[0]);
+					if (percent) fieldValue = (fieldValue/seriesum)*100;
 
-				if (typeof(fieldValue) == 'number'){
-					if (!thisPanel.isInteger(fieldValue)){
-						//decimal number
-						fieldValue = +fieldValue.toFixed(2);
+					if (typeof(fieldValue) == 'number'){
+						if (!thisPanel.isInteger(fieldValue)){
+							//decimal number
+							fieldValue = +fieldValue.toFixed(2);
+						}
 					}
+
+					if (percent) fieldValue = fieldValue + "%";
+
+					return fieldValue;
+				} else {
+					return '';
 				}
 
-				if (percent) fieldValue = fieldValue + "%";
-
-				return fieldValue;
 
             }
 			,scope:this
