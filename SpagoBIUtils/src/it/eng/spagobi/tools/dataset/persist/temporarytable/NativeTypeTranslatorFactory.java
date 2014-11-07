@@ -17,6 +17,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 public class NativeTypeTranslatorFactory {
 	
 	public static final String DRIVER_ORACLE = "Oracle";
+	public static final String DRIVER_HSQL = "HSQL";
 	public static final String DRIVER_SQLSERVER = "mssqlserver4";
 	public static final String DRIVER_SQLSERVERMICROSOFT_WITH_SPACE = "SQL Server";
 	public static final String DRIVER_SQLSERVERMICROSOFT = "SQLServer";
@@ -43,6 +44,8 @@ public class NativeTypeTranslatorFactory {
 			return new SqlServerTypeTranslator();
 		}else if(driverName.contains(DRIVER_MYSQL) ){
 			return new MySqlTypeTranslator();
+		}else if(driverName.contains(DRIVER_HSQL) ){
+			return new HSQLTypeTranslator();
 		}
 		throw new SpagoBIEngineRuntimeException("The db with dialect "+driverName+" is not supported yet for the temporary table creation..");
 	}
