@@ -65,6 +65,18 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/olap/tools/OlapViewDimensionsSelector.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/tools/OlapViewDefinitionTools.js'></script>
 
+
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedMembersWizard.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedOperationPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedMembersLeftSide.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedMembersRightSide.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedDataPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedOperatorsPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedAggregatorsPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedDimensionsPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedMembersFunctionsPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedSetFunctionsPanel.js'></script>
+
 <script type="text/javascript" src='../js/spagobi/olap/control/Controller.js'/></script>
 <script type="text/javascript" src='../js/spagobi/olap/control/EventManager.js'/></script>
 

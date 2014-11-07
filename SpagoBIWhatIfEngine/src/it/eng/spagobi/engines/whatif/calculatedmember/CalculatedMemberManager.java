@@ -1,6 +1,15 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package it.eng.spagobi.engines.whatif.calculatedmember;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
+import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 import java.util.ArrayList;
@@ -10,7 +19,10 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.olap4j.Axis;
+import org.olap4j.CellSet;
+import org.olap4j.CellSetAxis;
 import org.olap4j.OlapConnection;
+import org.olap4j.OlapException;
 import org.olap4j.mdx.AxisNode;
 import org.olap4j.mdx.CallNode;
 import org.olap4j.mdx.DimensionNode;
@@ -26,7 +38,11 @@ import org.olap4j.mdx.SelectNode;
 import org.olap4j.mdx.Syntax;
 import org.olap4j.mdx.WithMemberNode;
 import org.olap4j.mdx.parser.MdxParser;
+import org.olap4j.metadata.Dimension;
+import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
+
+import com.eyeq.pivot4j.PivotModel;
 
 public class CalculatedMemberManager {
 	public static transient Logger logger = Logger.getLogger(CalculatedMemberManager.class);
@@ -38,14 +54,41 @@ public class CalculatedMemberManager {
 
 	}
 
+	/**
+	 * Service to inject the calculated member in the tree
+	 * 
+	 * @param calculateFieldName
+	 *            the name of the calculated member
+	 * @param calculateFieldFormula
+	 *            the formula
+	 * @param parentMember
+	 *            the parent member
+	 * @param parentMemberAxis
+	 *            the axis of the parent member
+	 */
 	public void injectCalculatedIntoMdxQuery(String calculateFieldName, String calculateFieldFormula, Member parentMember, Axis parentMemberAxis) throws SpagoBIEngineException {
 		String currentMdx = ei.getPivotModel().getCurrentMdx();
 		MdxParser p = createParser();
 		SelectNode selectNode = p.parseSelect(currentMdx);
-
-		ParseTreeNode expression = p.parseExpression(calculateFieldFormula);
-
-		IdentifierNode nodoCalcolato = new IdentifierNode(getParentSegments(parentMember, calculateFieldName));
+		IdentifierNode nodoCalcolato = new IdentifierNode(new NameSegment("Measures"), new NameSegment(calculateFieldName));
+		ParseTreeNode expression = p.parseExpression(calculateFieldFormula); // parse
+																				// the
+																				// calculated
+																				// member
+																				// formula
+		try {
+			if (!parentMember.getDimension().getDimensionType().name().equalsIgnoreCase(new String("MEASURE")))
+			{
+				nodoCalcolato = new IdentifierNode(getParentSegments(parentMember, calculateFieldName));// build
+																										// identifier
+																										// node
+																										// from
+																										// identifier
+																										// segments
+			}
+		} catch (OlapException olapEx) {
+			throw new SpagoBIEngineException("Error building identifier node from segments for Measures", olapEx);
+		}
 
 		WithMemberNode withMemberNode = new WithMemberNode(null, nodoCalcolato, expression, Collections.<PropertyValueNode> emptyList());
 		selectNode.getWithList().add(withMemberNode);
@@ -63,14 +106,14 @@ public class CalculatedMemberManager {
 					new ArrayList<IdentifierNode>(),
 					new CallNode(null, "{}", Syntax.Braces, column)));
 
-			getDimensionNode(null, 0, row, tree, parentMember.getUniqueName());
+			insertCalculatedInParentNode(null, 0, row, tree, parentMember.getUniqueName());
 			selectNode.getAxisList().add(new AxisNode(null,
 					false, Axis.ROWS,
 					new ArrayList<IdentifierNode>(),
 					new CallNode(null, "{}", Syntax.Braces, row)));
 		} else {
 
-			getDimensionNode(null, 0, column, tree, parentMember.getUniqueName());
+			insertCalculatedInParentNode(null, 0, column, tree, parentMember.getUniqueName());
 			selectNode.getAxisList().add(new AxisNode(null,
 					false, Axis.COLUMNS,
 					new ArrayList<IdentifierNode>(),
@@ -130,41 +173,113 @@ public class CalculatedMemberManager {
 
 	}
 
-	private boolean getDimensionNode(CallNode parentCallNode, int positionInParentCallNode, ParseTreeNode parseNode, ParseTreeNode calculatedFieldTree, String patrentNodeUniqueName) {
+	/**
+	 * Service to find where to insert the calculated member in the tree
+	 * 
+	 * @param parentCallNode
+	 * 
+	 * @param positionInParentCallNode
+	 * 
+	 * @param parseNode
+	 * 
+	 * @param calculatedFieldTree
+	 * 
+	 * @param parentNodeUniqueName
+	 * @return boolean true when the parent is found
+	 */
+
+	private boolean insertCalculatedInParentNode(CallNode parentCallNode, int positionInParentCallNode, ParseTreeNode parseNode, ParseTreeNode calculatedFieldTree,
+			String parentNodeUniqueName) {
 
 		if (parseNode instanceof CallNode) {
 			CallNode node = (CallNode) parseNode;
 			List<ParseTreeNode> args = node.getArgList();
 			for (int i = 0; i < args.size(); i++) {
 				ParseTreeNode aNode = args.get(i);
-				if (getDimensionNode(node, i, aNode, calculatedFieldTree, patrentNodeUniqueName)) {
+				if (insertCalculatedInParentNode(node, i, aNode, calculatedFieldTree, parentNodeUniqueName)) {
 					return true;
 				}
 			}
 		} else if (parseNode instanceof DimensionNode) {
-		
+
 		} else if (parseNode instanceof HierarchyNode) {
-			
+
 		} else if (parseNode instanceof IdentifierNode) {
 			IdentifierNode node = (IdentifierNode) parseNode;
 			String name = getIdentifierUniqueName(node);
-			if (patrentNodeUniqueName.equals(name)) {
-				parentCallNode.getArgList().add(positionInParentCallNode + 1, calculatedFieldTree);
+			if (parentNodeUniqueName.equals(name)) {
+				parentCallNode.getArgList().add(positionInParentCallNode + 1, calculatedFieldTree);// The
+																									// new
+																									// calculated
+																									// member
+																									// goes
+																									// next
+																									// its
+																									// parent
+																									// node
 				return true;
 			}
 		} else if (parseNode instanceof LevelNode) {
-			
+
 		} else if (parseNode instanceof MemberNode) {
-			
+
 		}
 		return false;
 
 	}
 
+	/**
+	 * Service to get an MDX Parser
+	 * 
+	 * @return The MDX Parser
+	 */
 	private MdxParser createParser() {
 		OlapConnection olapConnection = ei.getOlapConnection();
 		return olapConnection.getParserFactory()
 				.createMdxParser(olapConnection);
+	}
+
+	/**
+	 * Service to get the dimensions
+	 * 
+	 * @return The SbiDimension List
+	 */
+	public List<SbiDimension> getDimensions(PivotModel model) throws SpagoBIEngineException {
+		logger.debug("IN");
+		CellSet cellSet = model.getCellSet();
+		List<CellSetAxis> axis = cellSet.getAxes();
+		List<Dimension> otherHDimensions;
+		List<SbiDimension> dimensions = new ArrayList<SbiDimension>();
+		try {
+			List<Hierarchy> axisHierarchies = axis.get(0).getAxisMetaData().getHierarchies();
+			axisHierarchies.addAll(axis.get(1).getAxisMetaData().getHierarchies());
+			otherHDimensions = CubeUtilities.getDimensions(model.getCube().getHierarchies());
+			for (int i = 0; i < otherHDimensions.size(); i++) {
+				Dimension aDimension = otherHDimensions.get(i);
+				SbiDimension myDimension = new SbiDimension(aDimension, -1, i);
+				List<Hierarchy> dimensionHierarchies = aDimension.getHierarchies();
+				String selectedHierarchyName = this.ei.getModelConfig().getDimensionHierarchyMap().get(myDimension.getUniqueName());
+				if (selectedHierarchyName == null) {
+					selectedHierarchyName = aDimension.getDefaultHierarchy().getUniqueName();
+				}
+				myDimension.setSelectedHierarchyUniqueName(selectedHierarchyName);
+				for (int j = 0; j < dimensionHierarchies.size(); j++) {
+					Hierarchy hierarchy = dimensionHierarchies.get(j);
+					SbiHierarchy hierarchyObject = new SbiHierarchy(hierarchy, i);
+					myDimension.getHierarchies().add(hierarchyObject);
+					// set the position of the selected hierarchy
+					if (selectedHierarchyName.equals(hierarchy.getUniqueName())) {
+						myDimension.setSelectedHierarchyPosition(j);
+					}
+				}
+				dimensions.add(myDimension);
+			}
+		} catch (Exception e) {
+			logger.error("Error getting dimensions", e);
+			throw new SpagoBIEngineException("Error getting dimensions", e);
+		}
+		logger.debug("OUT");
+		return dimensions;
 	}
 
 }

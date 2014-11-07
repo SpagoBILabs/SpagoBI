@@ -352,17 +352,6 @@ Ext.define('Sbi.olap.control.Controller', {
 		);
 	}
 
-	//author: Maria Katia Russo from Osmosit
-	,executeCalculatedMemberExpression: function(name,expression,ccParentUniqueName,ccAxis){
-		var service = Ext.create("Sbi.service.RestService", {
-			url: "calculatedmembers",
-			method: 'POST',
-			pathParams: ["execute",name, expression,ccParentUniqueName,ccAxis]
-		});
-
-		service.callService(this);
-
-	}
 
 	, setAllocationAlgorithm: function(className){
 		var service = Ext.create("Sbi.service.RestService", {
@@ -371,9 +360,49 @@ Ext.define('Sbi.olap.control.Controller', {
 			pathParams: [className]
 		});
 
-		service.callService(this, function(){Sbi.olap.eventManager.hideLoadingMask()});
+		service.callService(this, function(){Sbi.olap.eventManager.hideLoadingMask();});
 	}
 
+	/**
+	* Call the rest service to execute calculated member expression
+	*/
+	//author: Maria Caterina Russo from Osmosit
+	,executeCalculatedMemberExpression: function(name,expression,ccParentUniqueName,ccAxis){
+		var newExpression = expression.replace(/\//gi, this.DIVISION_SIGN);
+
+		var	service = Ext.create("Sbi.service.RestService", {
+				url: "calculatedmembers",
+				method: 'POST',
+				longExecution: true,
+				pathParams: ["execute",name, newExpression,ccParentUniqueName,ccAxis]
+			});
+
+		service.callService(this);
+	}
+
+	,DIVISION_SIGN: "{spagobi.operator.division}"
+
+	/**
+	* Opens the calculated members wizard by double click
+	*/
+	//author: Maria Caterina Russo from Osmosit
+	,getData: function() {
+			var controller = this;
+			var service = Ext.create("Sbi.service.RestService", {
+				url: "calculatedmembers/initializeData",
+				async: true
+			});
+			Ext.Ajax.request({
+			   url: service.getRestUrlWithParameters(),
+			   params: service.getRequestParams(),
+			   method: 'GET',
+			   success: function(response){
+			       var data = response.responseText;
+			       controller.eventManager.openCalculatedMembersWindow(data);
+
+			   }
+			});
+		}
 
 
 });
