@@ -556,6 +556,8 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			boolean reportNameInSubject = "true".equalsIgnoreCase((String) request.getAttribute("reportNameInSubject_"+biobId+"__"+index));
 			dispatchContext.setReportNameInSubject(reportNameInSubject);
 			
+			boolean uniqueMail = "true".equalsIgnoreCase((String) request.getAttribute("uniqueMail_"+biobId+"__"+index));
+			dispatchContext.setUniqueMail(uniqueMail);
 			
 			// set File Name if chosen
 			String containedFileName = (String)request.getAttribute("containedFileName_"+biobId+"__"+index);	
@@ -933,6 +935,10 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			}
 			if(dispatchContext.isReportNameInSubject()) {
 				saveOptString += "reportNameInSubject=true%26";
+			}
+			
+			if(dispatchContext.isUniqueMail()) {
+				saveOptString += "uniqueMail=true%26";
 			}
 
 			if(dispatchContext.getContainedFileName() != null) {

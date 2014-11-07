@@ -54,23 +54,22 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 
 	private DispatchContext dispatchContext;
-	
-	// logger component
-	private static Logger logger = Logger.getLogger(MailDocumentDispatchChannel.class); 
-    final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-    final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
 
-	
+	// logger component
+	private static Logger logger = Logger.getLogger(MailDocumentDispatchChannel.class);
+	final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+	final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
+
 	public MailDocumentDispatchChannel(DispatchContext dispatchContext) {
 		this.dispatchContext = dispatchContext;
 		try {
 			IEngUserProfile userProfile = this.dispatchContext.getUserProfile();
-			//gets the dataset data about the email address
+			// gets the dataset data about the email address
 			IDataStore emailDispatchDataStore = null;
 			if (dispatchContext.isUseDataSet()) {
 				IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(dispatchContext.getDataSetLabel());
@@ -79,27 +78,27 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 				emailDispatchDataStore = dataSet.getDataStore();
 			}
 			dispatchContext.setEmailDispatchDataStore(emailDispatchDataStore);
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to instatiate MailDocumentDispatchChannel class", t);
 		}
 	}
-	
+
 	public void setDispatchContext(DispatchContext dispatchContext) {
 		this.dispatchContext = dispatchContext;
 	}
 
 	public void close() {
-		
+
 	}
-	
-	public boolean canDispatch(BIObject document)  {
-		return canDispatch(dispatchContext, document, dispatchContext.getEmailDispatchDataStore() );
+
+	public boolean canDispatch(BIObject document) {
+		return canDispatch(dispatchContext, document, dispatchContext.getEmailDispatchDataStore());
 	}
-	
+
 	public boolean dispatch(BIObject document, byte[] executionOutput) {
 		Map parametersMap;
-		String contentType; 
-		String fileExtension; 
+		String contentType;
+		String fileExtension;
 		IDataStore emailDispatchDataStore;
 		String nameSuffix;
 		String descriptionSuffix;
@@ -108,54 +107,53 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 		boolean reportNameInSubject;
 
 		logger.debug("IN");
-		try{
+		try {
 			parametersMap = dispatchContext.getParametersMap();
-			contentType = dispatchContext.getContentType(); 
-			fileExtension = dispatchContext.getFileExtension(); 
+			contentType = dispatchContext.getContentType();
+			fileExtension = dispatchContext.getFileExtension();
 			emailDispatchDataStore = dispatchContext.getEmailDispatchDataStore();
 			nameSuffix = dispatchContext.getNameSuffix();
 			descriptionSuffix = dispatchContext.getDescriptionSuffix();
-			containedFileName = dispatchContext.getContainedFileName() != null && !dispatchContext.getContainedFileName().equals("")?
-					dispatchContext.getContainedFileName() : document.getName();
-		    zipFileName = dispatchContext.getZipMailName() != null && !dispatchContext.getZipMailName().equals("")?
-							dispatchContext.getZipMailName() : document.getName();
-	       reportNameInSubject = dispatchContext.isReportNameInSubject();
+			containedFileName = dispatchContext.getContainedFileName() != null && !dispatchContext.getContainedFileName().equals("") ? dispatchContext
+					.getContainedFileName() : document.getName();
+			zipFileName = dispatchContext.getZipMailName() != null && !dispatchContext.getZipMailName().equals("") ? dispatchContext.getZipMailName()
+					: document.getName();
+			reportNameInSubject = dispatchContext.isReportNameInSubject();
 
 			String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtphost");
-		    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtpport");
-		    String smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.useSSL"); 
-		    logger.debug(smtphost+" "+smtpport+" use SSL: "+smtpssl);
-		    
-		    //Custom Trusted Store Certificate Options
-		    String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file"); 
-		    String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password"); 
-		    
-		    int smptPort=25;
-		    
-			if( (smtphost==null) || smtphost.trim().equals(""))
+			String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtpport");
+			String smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.useSSL");
+			logger.debug(smtphost + " " + smtpport + " use SSL: " + smtpssl);
+
+			// Custom Trusted Store Certificate Options
+			String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file");
+			String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password");
+
+			int smptPort = 25;
+
+			if ((smtphost == null) || smtphost.trim().equals(""))
 				throw new Exception("Smtp host not configured");
-			if( (smtpport==null) || smtpport.trim().equals("")){
+			if ((smtpport == null) || smtpport.trim().equals("")) {
 				throw new Exception("Smtp host not configured");
-			}else{
-				smptPort=Integer.parseInt(smtpport);
+			} else {
+				smptPort = Integer.parseInt(smtpport);
 			}
-				
-		    
+
 			String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.from");
-			if( (from==null) || from.trim().equals(""))
+			if ((from == null) || from.trim().equals(""))
 				from = "spagobi.scheduler@eng.it";
 			String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.user");
-			if( (user==null) || user.trim().equals("")){
-				logger.debug("Smtp user not configured");	
-				user=null;
+			if ((user == null) || user.trim().equals("")) {
+				logger.debug("Smtp user not configured");
+				user = null;
 			}
-			//	throw new Exception("Smtp user not configured");
+			// throw new Exception("Smtp user not configured");
 			String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.password");
-			if( (pass==null) || pass.trim().equals("")){
-			logger.debug("Smtp password not configured");	
+			if ((pass == null) || pass.trim().equals("")) {
+				logger.debug("Smtp password not configured");
 			}
-			//	throw new Exception("Smtp password not configured");
-			
+			// throw new Exception("Smtp password not configured");
+
 			String mailSubj = dispatchContext.getMailSubj();
 			mailSubj = StringUtilities.substituteParametersInString(mailSubj, parametersMap, null, false);
 
@@ -167,53 +165,52 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 				return false;
 			}
 
-			//Set the host smtp address
+			// Set the host smtp address
 			Properties props = new Properties();
 			props.put("mail.smtp.host", smtphost);
 			props.put("mail.smtp.port", Integer.toString(smptPort));
-			
+
 			// open session
-			Session session=null;
-			
+			Session session = null;
+
 			// create autheticator object
 			Authenticator auth = null;
-			if (user!=null) {
+			if (user != null) {
 				auth = new SMTPAuthenticator(user, pass);
 				props.put("mail.smtp.auth", "true");
-		 	    //SSL Connection
-		    	if (smtpssl.equals("true")){
-		            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());	            
-				    //props.put("mail.smtp.debug", "true");          
-				    props.put("mail.smtps.auth", "true");
-			        props.put("mail.smtps.socketFactory.port", Integer.toString(smptPort));
-		            if ((!StringUtilities.isEmpty(trustedStorePath)) ) {            	
-						/* Dynamic configuration of trustedstore for CA
-						 * Using Custom SSLSocketFactory to inject certificates directly from specified files
+				// SSL Connection
+				if (smtpssl.equals("true")) {
+					Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+					// props.put("mail.smtp.debug", "true");
+					props.put("mail.smtps.auth", "true");
+					props.put("mail.smtps.socketFactory.port", Integer.toString(smptPort));
+					if ((!StringUtilities.isEmpty(trustedStorePath))) {
+						/*
+						 * Dynamic configuration of trustedstore for CA Using Custom SSLSocketFactory to inject certificates directly from specified files
 						 */
-		            	//System.setProperty("java.security.debug","certpath");
-		            	//System.setProperty("javax.net.debug","ssl ");
-				        props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
+						// System.setProperty("java.security.debug","certpath");
+						// System.setProperty("javax.net.debug","ssl ");
+						props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
 
-		            } else {
-		            	//System.setProperty("java.security.debug","certpath");
-		            	//System.setProperty("javax.net.debug","ssl ");
-				        props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
-		            }
-			        props.put("mail.smtp.socketFactory.fallback", "false"); 
-		    	}
-				
-				//session = Session.getDefaultInstance(props, auth);
+					} else {
+						// System.setProperty("java.security.debug","certpath");
+						// System.setProperty("javax.net.debug","ssl ");
+						props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
+					}
+					props.put("mail.smtp.socketFactory.fallback", "false");
+				}
+
+				// session = Session.getDefaultInstance(props, auth);
 				session = Session.getInstance(props, auth);
-		 	    //session.setDebug(true);
-		 	    //session.setDebugOut(null);
+				// session.setDebug(true);
+				// session.setDebugOut(null);
 				logger.info("Session.getInstance(props, auth)");
-				
-			}else{
-				//session = Session.getDefaultInstance(props);
+
+			} else {
+				// session = Session.getDefaultInstance(props);
 				session = Session.getInstance(props);
 				logger.info("Session.getInstance(props)");
 			}
-			
 
 			// create a message
 			Message msg = new MimeMessage(session);
@@ -221,19 +218,18 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			InternetAddress addressFrom = new InternetAddress(from);
 			msg.setFrom(addressFrom);
 			InternetAddress[] addressTo = new InternetAddress[recipients.length];
-			for (int i = 0; i < recipients.length; i++)  {
+			for (int i = 0; i < recipients.length; i++) {
 				addressTo[i] = new InternetAddress(recipients[i]);
 			}
 			msg.setRecipients(Message.RecipientType.TO, addressTo);
 			// Setting the Subject and Content Type
 
 			String subject = mailSubj;
-			
-	
-			if(reportNameInSubject){
+
+			if (reportNameInSubject) {
 				subject += " " + document.getName() + nameSuffix;
 			}
-			
+
 			msg.setSubject(subject);
 			// create and fill the first message part
 			MimeBodyPart mbp1 = new MimeBodyPart();
@@ -243,17 +239,17 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			// attach the file to the message
 
 			SchedulerDataSource sds = null;
-			//if zip requested
-			if(dispatchContext.isZipMailDocument()){				
-				mbp2 = zipAttachment(executionOutput, containedFileName, zipFileName, nameSuffix , fileExtension);
+			// if zip requested
+			if (dispatchContext.isZipMailDocument()) {
+				mbp2 = zipAttachment(executionOutput, containedFileName, zipFileName, nameSuffix, fileExtension);
 			}
-			//else 
-			else{
+			// else
+			else {
 				sds = new SchedulerDataSource(executionOutput, contentType, containedFileName + nameSuffix + fileExtension);
 				mbp2.setDataHandler(new DataHandler(sds));
 				mbp2.setFileName(sds.getName());
 			}
-			
+
 			// create the Multipart and add its parts to it
 			Multipart mp = new MimeMultipart();
 			mp.addBodyPart(mbp1);
@@ -261,110 +257,106 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			// add the Multipart to the message
 			msg.setContent(mp);
 			// send message
-	    	if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) &&  (!StringUtilities.isEmpty(pass))){
-	    		//USE SSL Transport comunication with SMTPS
-		    	Transport transport = session.getTransport("smtps");
-		    	transport.connect(smtphost,smptPort,user,pass);
-		    	transport.sendMessage(msg, msg.getAllRecipients());
-		    	transport.close(); 
-	    	}
-	    	else {
-	    		//Use normal SMTP
-		    	Transport.send(msg);
-	    	}
+			if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) && (!StringUtilities.isEmpty(pass))) {
+				// USE SSL Transport comunication with SMTPS
+				Transport transport = session.getTransport("smtps");
+				transport.connect(smtphost, smptPort, user, pass);
+				transport.sendMessage(msg, msg.getAllRecipients());
+				transport.close();
+			} else {
+				// Use normal SMTP
+				Transport.send(msg);
+			}
+			logger.info("Mail sent for document with label " + document.getLabel());
+
 		} catch (Exception e) {
-			logger.error("Error while sending schedule result mail",e);
+			logger.error("Error while sending schedule result mail", e);
 			return false;
-		}finally{
+		} finally {
 			logger.debug("OUT");
 		}
 		return true;
 	}
-	
-	private MimeBodyPart zipAttachment( byte[] attach, String containedFileName, String zipFileName ,String nameSuffix, String fileExtension)
-	{
-	    MimeBodyPart messageBodyPart = null;
-	    try
-	    {
 
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            ZipOutputStream zipOut = new ZipOutputStream(bout);
-            String entryName = containedFileName + nameSuffix + fileExtension;
-            zipOut.putNextEntry(new ZipEntry(entryName));
-            zipOut.write(attach);
-            zipOut.closeEntry();
+	private MimeBodyPart zipAttachment(byte[] attach, String containedFileName, String zipFileName, String nameSuffix, String fileExtension) {
+		MimeBodyPart messageBodyPart = null;
+		try {
 
-            zipOut.close();
-            
-	        messageBodyPart = new MimeBodyPart();
-	        DataSource source = new ByteArrayDataSource( bout.toByteArray(), "application/zip" );
-	        messageBodyPart.setDataHandler( new DataHandler( source ) );
-	        messageBodyPart.setFileName( zipFileName+nameSuffix+".zip" );
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			ZipOutputStream zipOut = new ZipOutputStream(bout);
+			String entryName = containedFileName + nameSuffix + fileExtension;
+			zipOut.putNextEntry(new ZipEntry(entryName));
+			zipOut.write(attach);
+			zipOut.closeEntry();
 
-	    }
-	    catch( Exception e )
-	    {
-	        // TODO: handle exception            
-	    }
-	    return messageBodyPart;
+			zipOut.close();
+
+			messageBodyPart = new MimeBodyPart();
+			DataSource source = new ByteArrayDataSource(bout.toByteArray(), "application/zip");
+			messageBodyPart.setDataHandler(new DataHandler(source));
+			messageBodyPart.setFileName(zipFileName + nameSuffix + ".zip");
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return messageBodyPart;
 	}
-	
+
 	private byte[] zipDocument(String fileZipName, byte[] content) {
-		logger.debug("IN");  
+		logger.debug("IN");
 
-		ByteArrayOutputStream bos=null;
-		ZipOutputStream zos=null;
-		ByteArrayInputStream in=null;
-    	try{
- 
-    		bos = new ByteArrayOutputStream();
-    		zos = new ZipOutputStream(bos);
-    		ZipEntry ze= new ZipEntry(fileZipName);
-    		zos.putNextEntry(ze);
-    		in = new ByteArrayInputStream(content);
+		ByteArrayOutputStream bos = null;
+		ZipOutputStream zos = null;
+		ByteArrayInputStream in = null;
+		try {
 
-    		for (int c = in.read(); c != -1; c = in.read()) {
-    		      zos.write(c);
-    		}
-    		
-    		
-    		return bos.toByteArray();
+			bos = new ByteArrayOutputStream();
+			zos = new ZipOutputStream(bos);
+			ZipEntry ze = new ZipEntry(fileZipName);
+			zos.putNextEntry(ze);
+			in = new ByteArrayInputStream(content);
 
-    	}catch(IOException ex){
-    		logger.error("Error zipping the document",ex);
-    		return null;
-    	}finally{
-    		if (bos != null) {
-				try {		
+			for (int c = in.read(); c != -1; c = in.read()) {
+				zos.write(c);
+			}
+
+			return bos.toByteArray();
+
+		} catch (IOException ex) {
+			logger.error("Error zipping the document", ex);
+			return null;
+		} finally {
+			if (bos != null) {
+				try {
 					bos.close();
 				} catch (IOException e) {
 					logger.error("Error closing output stream", e);
 				}
 			}
-    		if (zos != null) {
-				try {		
+			if (zos != null) {
+				try {
 					zos.close();
 				} catch (IOException e) {
 					logger.error("Error closing output stream", e);
 				}
 			}
-    		if (in != null) {
-				try {		
+			if (in != null) {
+				try {
 					in.close();
 				} catch (IOException e) {
 					logger.error("Error closing output stream", e);
 				}
 			}
-    	}
+		}
 
 	}
+
 	public static boolean canDispatch(DispatchContext dispatchContext, BIObject document, IDataStore emailDispatchDataStore) {
 		String[] recipients = findRecipients(dispatchContext, document, emailDispatchDataStore);
 		return (recipients != null && recipients.length > 0);
 	}
-	
-	private static String[] findRecipients(DispatchContext info, BIObject biobj,
-			IDataStore dataStore) {
+
+	private static String[] findRecipients(DispatchContext info, BIObject biobj, IDataStore dataStore) {
 		logger.debug("IN");
 		String[] toReturn = null;
 		List<String> recipients = new ArrayList();
@@ -441,7 +433,7 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 				}
 			}
 			// we must substitute parameter values on the expression
-			String recipientStr = StringUtilities.substituteParametersInString(expression, parametersMap,null, false);
+			String recipientStr = StringUtilities.substituteParametersInString(expression, parametersMap, null, false);
 			logger.debug("The expression, after substitution, now is [" + recipientStr + "].");
 			String[] recipientsArray = recipientStr.split(",");
 			logger.debug("Recipients found with expression: " + recipientsArray);
@@ -451,8 +443,7 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 		return recipients;
 	}
 
-	private static List<String> findRecipientsFromDataSet(DispatchContext info, BIObject biobj,
-			IDataStore dataStore) throws Exception {
+	private static List<String> findRecipientsFromDataSet(DispatchContext info, BIObject biobj, IDataStore dataStore) throws Exception {
 		logger.debug("IN");
 		List<String> recipients = new ArrayList();
 		if (info.isUseDataSet()) {
@@ -492,25 +483,25 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			Iterator it = dataStore.iterator();
 			while (it.hasNext()) {
 				String recipient = null;
-				IRecord record = (IRecord)it.next();
+				IRecord record = (IRecord) it.next();
 				// the parameter value is used to filter on the first dataset field
-				IField valueField = (IField) record.getFieldAt(0);
+				IField valueField = record.getFieldAt(0);
 				Object valueObj = valueField.getValue();
 				String value = null;
-				if (valueObj != null) 
+				if (valueObj != null)
 					value = valueObj.toString();
 				if (codeValue.equals(value)) {
 					logger.debug("Found value [" + codeValue + "] on the first field of a record of the dataset.");
 					// recipient address is on the second dataset field
-					IField recipientField = (IField) record.getFieldAt(1);
+					IField recipientField = record.getFieldAt(1);
 					Object recipientFieldObj = recipientField.getValue();
 					if (recipientFieldObj != null) {
 						recipient = recipientFieldObj.toString();
 						// in this case recipients can be separated by ","
 						String[] multiRecipients = recipient.split(",");
-						
+
 						recipients.addAll(Arrays.asList(multiRecipients));
-						
+
 						logger.debug("DataSet multi recipients found: " + Arrays.deepToString(multiRecipients));
 					} else {
 						logger.warn("The second field of the record is null.");
@@ -525,14 +516,13 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 		logger.debug("OUT");
 		return recipients;
 	}
-	
-	private class SMTPAuthenticator extends javax.mail.Authenticator
-	{
+
+	private class SMTPAuthenticator extends javax.mail.Authenticator {
 		private String username = "";
 		private String password = "";
 
-		public PasswordAuthentication getPasswordAuthentication()
-		{
+		@Override
+		public PasswordAuthentication getPasswordAuthentication() {
 			return new PasswordAuthentication(username, password);
 		}
 
@@ -541,7 +531,6 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			this.password = pass;
 		}
 	}
-
 
 	private class SchedulerDataSource implements DataSource {
 
