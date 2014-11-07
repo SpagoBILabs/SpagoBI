@@ -22,7 +22,7 @@ import test.writeback.TestConstants;
  *
  */
 public class MondrianSchemaRetriverTestCase extends AbstractWhatIfTestCase {
-	public static final String VERSION_COLUMN_NAME = "versione";
+	public static final String VERSION_COLUMN_NAME = "wbversion";
 	
 	
 	public String getCatalogue(){
