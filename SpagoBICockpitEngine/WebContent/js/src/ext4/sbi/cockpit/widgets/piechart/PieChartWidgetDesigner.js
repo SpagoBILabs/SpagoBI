@@ -201,13 +201,16 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 
 		var controlsItems = new Array();
 
+		/*
 		switch (this.chartLib) {
 	        case 'ext3':
 	        	break;
 	        default:
 	        	controlsItems.push(this.showValuesCheck);
 		}
+		*/
 
+    	controlsItems.push(this.showValuesCheck);
     	controlsItems.push(this.showLegendCheck);
     	controlsItems.push(this.legendPositionCombo);
 //    	controlsItems.push(this.showPercentageCheck);
