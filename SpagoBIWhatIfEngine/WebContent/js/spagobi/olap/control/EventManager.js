@@ -440,10 +440,11 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.lastEditedCell = null;
 	}
 
+
 	/**
-	 * Call the rest service to show the Calculated Member Output
-	 */
-	//author: Maria Katia Russo from Osmosit
+	* Execute calculated member expression
+	*/
+	//author: Maria Caterina Russo from Osmosit
 	,executeCalculatedMemberExpression: function(name, expression){
 		this.olapController.executeCalculatedMemberExpression(name,expression,this.ccParentUniqueName,this.ccAxis);
 	}
@@ -451,7 +452,27 @@ Ext.define('Sbi.olap.control.EventManager', {
 	,setCalculatedFieldParent: function(uniqueName, axis){
 		this.ccParentUniqueName = uniqueName;
 		this.ccAxis = axis;
+		this.olapController.getData();
 	}
+
+	/**
+	* Opens the calculated members wizard by double click and set the label of the calculated member name
+	*/
+	//author: Maria Caterina Russo from Osmosit
+	,openCalculatedMembersWindow: function(dimensions) {
+		var wizard = Ext.create('Sbi.olap.calculatedmembers.CalculatedMembersWizard',{
+			actualVersion: this.olapPanel.modelConfig.actualVersion,
+			dimensions: dimensions
+		});
+		if(this.ccParentUniqueName.indexOf("Measures") > -1)
+			{
+				var lastIndex = this.ccParentUniqueName.lastIndexOf('[');
+				var name = this.ccParentUniqueName.substring(0,lastIndex) +'[';
+				Ext.getCmp('calculatedNameLeftId').setText(name);
+			} else {Ext.getCmp('calculatedNameLeftId').setText(this.ccParentUniqueName+'.[');}
+		wizard.show();
+		}
+
 
 	, setAllocationAlgorithm: function(className){
 		this.olapController.setAllocationAlgorithm(className);

@@ -296,6 +296,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	        store: algorithmsStore,
 	        displayField: 'name',
 	        valueField: 'className',
+	        hidden : saveHidden,
 	        typeAhead: true,
 	        queryMode: 'local',
 	        triggerAction: 'all',
