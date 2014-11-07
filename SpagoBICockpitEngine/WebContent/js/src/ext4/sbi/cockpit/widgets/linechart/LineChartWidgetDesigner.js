@@ -34,6 +34,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	, initialConfig: null
 	, categoryAxis: null
 	, seriesAxis: null
+	, sortOrder: null
 
 	, constructor : function(config) {
 		Sbi.trace("[PieChartWidgetDesigner.constructor]: IN");
@@ -71,6 +72,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		state.showlegend = this.showLegendCheck.getValue();
 		state.categoryAxis = this.categoryAxisText.getValue();
 		state.seriesAxis = this.seriesAxisText.getValue();
+		state.sortOrder = this.sortOrderCombo.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
 		if(this.showSeriesGroupingPanel === true) {
 			state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
@@ -94,6 +96,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 		if (state.categoryAxis) this.categoryAxisText.setValue(state.categoryAxis);
 		if (state.seriesAxis) this.seriesAxisText.setValue(state.seriesAxis);
+		if (state.sortOrder) this.sortOrderCombo.setValue(state.sortOrder);
 
 		if (this.rendered) {
 			//this.changeLineChartImage.defer(200, this);
@@ -216,6 +219,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		this.initRadioGroup();
 		this.initCheckFields();
 		this.initAxisNamesFields();
+		this.initSortOrderCombo();
 
 		var checkFields = new Array();
 
@@ -247,7 +251,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 				xtype: 'fieldset'
 					, columnWidth : .3
 					, border: false
-					, items: [this.categoryAxisText,this.seriesAxisText]
+					, items: [this.categoryAxisText,this.seriesAxisText, this.sortOrderCombo]
 				}]
 		});
 	}
@@ -270,6 +274,28 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 			]
 		});
 		this.typeRadioGroup.on('change', this.onTypeRadioGroupChange, this);
+	}
+
+	, initSortOrderCombo: function(){
+		this.sortOrderComboStore = new Ext.data.ArrayStore({
+			fields : ['name', 'description']
+			, data : [['ASC', LN('sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.ascending')]
+					, ['DESC', LN('sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.descending')]]
+		});
+		this.sortOrderCombo = new Ext.form.ComboBox({
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	false,
+			fieldLabel:     LN('sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.title'),
+			name:           'sortOrder',
+			displayField:   'description',
+			valueField:     'name',
+			value:			'ASC',
+			anchor:			'95%',
+			store:          this.sortOrderComboStore
+		});
 	}
 
 	, initCheckFields: function() {

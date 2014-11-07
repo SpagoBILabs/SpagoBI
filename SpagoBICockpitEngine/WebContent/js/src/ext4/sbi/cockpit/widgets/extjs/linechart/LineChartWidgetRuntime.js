@@ -64,6 +64,12 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 		return seriesAxis;
 	}
 
+	, getSortOrder: function(){
+		if (this.wconf.sortOrder){
+			return this.wconf.sortOrder;
+		}
+	}
+
 	, getChartType: function() {
 		return 'line';
 	}
@@ -133,10 +139,11 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 		}
 
 		var sortMeasure = this.getMeasureToSort();
+		var sortOrder = this.getSortOrder();
 		if (sortMeasure.length > 0){
-			store.sort(sortMeasure[0], 'ASC');
+			store.sort(sortMeasure[0], sortOrder);
 		} else {
-			store.sort(categoriesConfig.fields[0], 'ASC');
+			store.sort(categoriesConfig.fields[0], sortOrder);
 		}
 
 		if (!this.areIncomingEventsEnabled()) {
