@@ -21,4 +21,6 @@ Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.titl
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title'] = 'Mostra legenda';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'] = 'Nome Asse Categoria';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'] = 'Nome Asse Serie';
-
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.ascending'] = 'ascendente';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.descending'] = 'discendente';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.title'] = 'Tipo Ordine';

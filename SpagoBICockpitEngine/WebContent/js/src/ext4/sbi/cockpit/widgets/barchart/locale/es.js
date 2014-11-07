@@ -19,3 +19,6 @@ Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.titl
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title'] = 'Mostrar leyenda';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'] = 'Nombre Ejes Categoría';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'] = 'Nombre Ejes Serie';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.ascending'] = 'ascending';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.descending'] = 'descending';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.title'] = 'Sort Order';

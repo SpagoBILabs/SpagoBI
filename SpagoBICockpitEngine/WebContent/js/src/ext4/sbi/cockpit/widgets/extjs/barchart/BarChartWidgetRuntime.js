@@ -198,10 +198,11 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 			store.data.items[i].data[categoryField] = Ext.util.Format.ellipsis(categoryLabel,50);
 		}
 		var sortMeasure = this.getMeasureToSort();
+		var sortOrder = this.getSortOrder();
 		if (sortMeasure.length > 0){
-			store.sort(sortMeasure[0], 'ASC');
+			store.sort(sortMeasure[0], sortOrder);
 		} else {
-			store.sort(categoriesConfig.fields[0], 'ASC');
+			store.sort(categoriesConfig.fields[0], sortOrder);
 		}
 
 		if (!this.areIncomingEventsEnabled()) {
@@ -441,6 +442,12 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 			seriesAxis = this.wconf.seriesAxis;
 		}
 		return seriesAxis;
+	}
+
+	, getSortOrder: function(){
+		if (this.wconf.sortOrder){
+			return this.wconf.sortOrder;
+		}
 	}
 
 	, getTooltip : function(storeItem, item){
