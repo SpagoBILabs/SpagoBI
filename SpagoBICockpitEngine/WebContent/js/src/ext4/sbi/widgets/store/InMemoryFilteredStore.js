@@ -68,19 +68,31 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
     , constructor: function(config) {
     	this.initConfig(config);
     	this.callParent(arguments);
-    	this.on("load", function(a) {
-    		if (!this.inMemoryData) {
-    			this.inMemoryData = this.data.items.slice(0);//clone the items
-    		}
-   			var items = this.getFilteredItems(this.inMemoryData, this.filteredProperties, this.filterString, this.filteredObjects, this.filterSpecificProperty);
-   			items = this.getPageItems(this.start, this.limit, items);
-   			this.suspendEvents(false);
-   			this.removeAll();
-   			this.add(items);
-   			this.resumeEvents();
-   			this.fireEvent('datachanged', this);
-   			this.fireEvent('refresh', this);
-    	}, this);
+    	this.on("load", this.onLoadHandler, this);
+    }
+
+    ,
+    onLoadHandler: function(store, records, successful, eOpts, sorterFn) {
+		if (!this.inMemoryData) {
+			this.inMemoryData = this.data.items.slice(0);//clone the items
+		}
+		var items = this.getFilteredItems(this.inMemoryData, this.filteredProperties, this.filterString, this.filteredObjects, this.filterSpecificProperty);
+		this.suspendEvents(false);
+		if (sorterFn) {
+			items = Ext.Array.sort(items, sorterFn);
+		}
+		items = this.getPageItems(this.start, this.limit, items);
+		this.removeAll();
+		this.remoteSort = true; // this will prevent the add method to invoke the doSort method (an infinite loop will occur)
+		this.add(items);
+		this.resumeEvents();
+		this.fireEvent('datachanged', this);
+		this.fireEvent('refresh', this);
+	}
+
+    ,
+    doSort: function(sorterFn) {
+    	this.onLoadHandler(this, null, null, null, sorterFn);
     }
 
     /**
