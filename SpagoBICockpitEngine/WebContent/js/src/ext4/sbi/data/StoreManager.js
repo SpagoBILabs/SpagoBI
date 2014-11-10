@@ -45,7 +45,6 @@ Sbi.data.StoreManager = function(config) {
 	}
 
 
-
 	this.setConfiguration(c.storesConf);
 
 	// constructor
@@ -78,6 +77,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
      * The list of registered parameters managed by this manager
      */
 	, parameters: null
+
+	, widgetConfig: null
 
 
 	// =================================================================================================================
@@ -1442,21 +1443,39 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		reader.on('exception', this.onStoreReadException, this);
 		Sbi.trace("[StoreManager.createStore]: reader sucesfully created");
 
+		var storeType = "Sbi.widgets.store.InMemoryFilteredStore";
 		if(storeConf.stype=="crosstab"){
+			storeType = 'Sbi.cockpit.widgets.crosstab.CrossTabStore';
 		}
 
-		var store = new Sbi.widgets.store.InMemoryFilteredStore({
+
+
+//
+//		for(var i=0; i<this.widgetConfig.length; i++){
+//			var aWidget = this.widgetConfig[i];
+//			if(aWidget.wtype == "crosstab" && (storeConf.storeId == aWidget.storeId)){
+//				storeType = "Sbi.cockpit.widgets.crosstab.CrossTabStore";
+//			}
+//		}
+
+		var store = Ext.create(storeType,{
 			storeId: storeConf.storeId,
 			storeType: 'sbi',
 			storeConf: storeConf,
 			model: storeConf.storeId,
 	        proxy: proxy,
 	        reader: reader,
-	        remoteSort: false
+	        remoteSort: false,
+	        test: new Date()
 	    });
 		store.on('load', this.onStoreLoad, this);
 		store.on('metachange', this.onStoreMetaChange, this);
 		Sbi.trace("[StoreManager.createStore]: store sucesfully created");
+
+
+
+
+
 
 		if(Sbi.isValorized(storeConf.aggregations)) {
 			this.setAggregationOnStore(store, storeConf.aggregations);
@@ -1464,8 +1483,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		} else {
 			Sbi.trace("[StoreManager.createStore]: there are no aggregations to add to store");
 		}
-
-
 
 
 		Sbi.trace("[StoreManager.createStore]: IN");
@@ -1663,59 +1680,61 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
     , onStoreLoad: function(store, records, successful, eOpts) {
 
-    	Sbi.trace("[StoreManager.onStoreLoad]: IN");
+   	Sbi.trace("[StoreManager.onStoreLoad]: IN");
 
-		if(store.crossTabStore && store.proxy.reader && store.proxy.reader.jsonData && store.proxy.reader.jsonData.metaData){
-			store.myStoreMetaData = Ext.apply(store.proxy.reader.jsonData.metaData,{});
-		}
+	if(store && store.crossTabStore && store.proxy.reader && store.proxy.reader.jsonData && store.proxy.reader.jsonData.metaData){
+		store.myStoreMetaData = Ext.apply(store.proxy.reader.jsonData.metaData,{});
+	}
 
-    	// {"service":"/1.0/datasets/AAA_SALES_1998/data",
-    	// "errors":[{"message":"An unexpected [java.lang.NullPointerException] exception has been trown during service execution"}]}
+	// {"service":"/1.0/datasets/AAA_SALES_1998/data",
+	// "errors":[{"message":"An unexpected [java.lang.NullPointerException] exception has been trown during service execution"}]}
 
-    	var recordsNumber = store.getTotalCount();
+	var recordsNumber = store.getTotalCount();
 
-    	store.status = "ready";
+	store.status = "ready";
 
-		if (recordsNumber == 1){
-			var rawData = store.getAt(0).raw;
-			if (Sbi.isValorized(rawData) && Sbi.isValorized(rawData.errors)) {
-				store.status = "error";
+	if (recordsNumber == 1){
+		var rawData = store.getAt(0).raw;
+		if (Sbi.isValorized(rawData) && Sbi.isValorized(rawData.errors)) {
+			store.status = "error";
 
-				var msg = "Impossible to load dataset [" + this.getStoreId(store) + "] due to the following service errors: <p><ul>";
-				for(var i = 0; i < rawData.errors.length; i++) {
-					msg += "<li>" + rawData.errors[i].message + ";";
-				}
-				msg += "</ul>";
-
-				Ext.Msg.show({
-					   title: "Service error",
-					   msg: msg,
-					   buttons: Ext.Msg.OK,
-					   icon: Ext.MessageBox.ERROR,
-					   modal: false
-				});
+			var msg = "Impossible to load dataset [" + this.getStoreId(store) + "] due to the following service errors: <p><ul>";
+			for(var i = 0; i < rawData.errors.length; i++) {
+				msg += "<li>" + rawData.errors[i].message + ";";
 			}
+			msg += "</ul>";
 
-		}
-
-		if(recordsNumber == 0) {
 			Ext.Msg.show({
-				   title: LN('sbi.qbe.messagewin.info.title'),
-				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
+				   title: "Service error",
+				   msg: msg,
 				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.INFO,
+				   icon: Ext.MessageBox.ERROR,
 				   modal: false
 			});
-		}
+		
 
-    	Sbi.trace("[StoreManager.onStoreLoad]: store [" + this.getStoreId(store) + "] reloaded succesfully: " + successful);
-    	if(successful) {
-    		Sbi.trace("[StoreManager.onStoreLoad]: record loaded for store [" + this.getStoreId(store) + "] are [" + records.length + "]");
-    	}
-    	Sbi.trace("[StoreManager.onStoreLoad]: eOpts for store [" + this.getStoreId(store) + "] is equal to [" + Sbi.toSource(eOpts, true) + "]");
+	}
 
-    	Sbi.trace("[StoreManager.onStoreLoad]: OUT");
-    }
+	if(recordsNumber == 0) {
+		Ext.Msg.show({
+			   title: LN('sbi.qbe.messagewin.info.title'),
+			   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
+			   buttons: Ext.Msg.OK,
+			   icon: Ext.MessageBox.INFO,
+			   modal: false
+		});
+	}
+
+	Sbi.trace("[StoreManager.onStoreLoad]: store [" + this.getStoreId(store) + "] reloaded succesfully: " + successful);
+	if(successful) {
+		Sbi.trace("[StoreManager.onStoreLoad]: record loaded for store [" + this.getStoreId(store) + "] are [" + records.length + "]");
+	}
+	Sbi.trace("[StoreManager.onStoreLoad]: eOpts for store [" + this.getStoreId(store) + "] is equal to [" + Sbi.toSource(eOpts, true) + "]");
+
+	Sbi.trace("[StoreManager.onStoreLoad]: OUT");
+
+}
+     }
 
 
 	/**

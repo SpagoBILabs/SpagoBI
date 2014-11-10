@@ -403,10 +403,14 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		}
 
 
+
 		wizardState.storeId = wizardState.selectedDatasetLabel;
 
 		if (wizardState.storeId != null){
 			var storeConf = {storeId: wizardState.storeId};
+			if(wizardState.wtype.indexOf("crosstab")){
+				storeConf.stype = "crosstab";
+			}
 			if(wizardState.wconf.series && wizardState.wconf.category) {
 				var categories = [];
 
@@ -424,7 +428,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 					categories.push(wizardState.wconf.category);
 				}
 
-				if(wizardState.wconf.groupingVariable) categories.push(wizardState.wconf.groupingVariable);
+				if(wizardState.wconf.groupingVariable){categories.push(wizardState.wconf.groupingVariable);}
 
 				var aggregations = {
 					measures: wizardState.wconf.series,
@@ -774,7 +778,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		Sbi.trace("[WidgetContainer.onWidgetEditorWizardSubmit]: IN");
 		var validated = this.applyWidgetEditorWizardState();
 
-		if (validated) this.hideWidgetEditorWizard();
+		if (validated){this.hideWidgetEditorWizard();}
 		Sbi.trace("[WidgetContainer.onWidgetEditorWizardSubmit]: OUT");
 	}
 

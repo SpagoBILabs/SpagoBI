@@ -35,9 +35,17 @@ Ext.define('Sbi.cockpit.widgets.crosstab.CrossTabStore', {
     	, crossTabStore: true
     	, myStoreMetaData: null
 
-    	, loadData: function(data, par, metadata){
+
+
+    	, loadData: function(data, par, store){
     		this.callParent([data, par]);
-    		this.fireEvent("refreshData", data, this.myStoreMetaData);
+//    		if(store){
+    			this.fireEvent("refreshData", data, this.myStoreMetaData);
+    			this.fireEvent("ei");
+//    		}else{
+//    			this.fireEvent("refreshData", data, this.myStoreMetaData);
+//    		}
+
 
     	}
 
