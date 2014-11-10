@@ -491,9 +491,9 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		this.documentSaved = true;
 
 		// show save button (the button that allow to perform save as)
-		var itemEl = Ext.get('save');
+		var itemEl = Ext.getCmp('save');
 		if(itemEl && itemEl !== null) {
-			itemEl.hidden = false;
+			itemEl.setVisible(true);
 		}
 
 		Sbi.trace("[MainPanel.onSaveDocument]: Input parameter [closeDocument] is equal to [" + closeDocument + "]");
