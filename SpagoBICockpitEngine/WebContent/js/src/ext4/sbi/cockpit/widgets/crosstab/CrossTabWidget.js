@@ -21,13 +21,6 @@ Sbi.cockpit.widgets.crosstab.CrossTabWidget = function(config) {
 
 	this.init();
 
-//	this.on("afterRender", function(){
-//		Sbi.storeManager.loadStore(this.storeId);
-//		Sbi.trace("[CrossTabWidget.onRender]: store loaded");
-//	}, this);
-
-//	this.addEvents('selection');
-
 
 	//create the configuration in a global variable. we must act in this way because we should manage the clicks on the table and from the table
 	//we can access only global variables
@@ -38,10 +31,15 @@ Sbi.cockpit.widgets.crosstab.CrossTabWidget = function(config) {
 
 	this.myGlobalId = Sbi.cockpit.widgets.crosstab.globalConfigs.length;
 	Sbi.cockpit.widgets.crosstab.globalConfigs.push(this);
+
+
 	this.sortOptions = {};
 	this.sortOptions.myGlobalId = this.myGlobalId;
+
+	//manage the load events
 	this.getStore().on("load", this.loadCrosstab, this);
 	this.getStore().on("refreshData", this.updateCrosstab, this);
+	this.getStore().cc = 1;
 	Sbi.trace("[CrossTabWidget.constructor]: OUT");
 };
 
@@ -60,7 +58,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	, sortOptions: null
 	, myGlobalId: null
 	, crosstabDefinition: null
-	, linked: false
+	, linked: false//used to understand if the dataset of the crosstab is linked to another object. We need this information in order to reload data the custom service or using the data taken from the store manager
 
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
@@ -99,9 +97,16 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 		}
 	}
 
-	, loadCrosstab: function(){
-		this.linked = false;
-		this.loadCrosstabAjaxRequest.defer(100, this,[]);
+	, loadCrosstab: function(store, records, successful, eOpts){
+		if(store.proxy.reader && store.proxy.reader.jsonData && store.proxy.reader.jsonData.metaData){
+			store.myStoreMetaData = Ext.apply(store.proxy.reader.jsonData.metaData,{});
+		}
+
+		var dataStore = new Array();
+		for(var i=0; i<records.length; i++){
+			dataStore.push(records[i].data);
+		}
+		Ext.defer(this.updateCrosstab, 600, this, [dataStore, store.myStoreMetaData]);
 	}
 
 	, updateCrosstab: function(storedata, metadata){
@@ -109,7 +114,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 		this.linked = true;
 
 		var params={
-				crosstabDefinition: this.requestParameters.crosstabDefinition
+				crosstabDefinition: this.crosstabDefinition
 		};
 
 		if(storedata!=null){
