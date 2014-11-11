@@ -219,6 +219,43 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		return widget;
 	}
 
+
+    , addSelectionWidget: function(selectionWidget, layoutConf) {
+
+		Sbi.trace("[WidgetContainer.addSelectionWidget]: IN");
+
+		if(Sbi.isNotValorized(selectionWidget)) {
+			Sbi.trace("[WidgetContainer.addSelectionbWidget]: [selectionWidget] parameter is not defined. Create it");
+		} else {
+			selectionWidget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(selectionWidget);
+
+	    	if(Sbi.isValorized(selectionWidget)) {
+	    		this.getWidgetManager().register(selectionWidget);
+
+	    		//selectionWidget.setConfiguration()
+
+	    		if(Sbi.isValorized(layoutConf)) {
+	        		Sbi.trace("[WidgetContainer.addSelectionWidget]: Input parameter [layoutConf] is valorized");
+	        		selectionWidget.setLayoutConfiguration(layoutConf);
+	        	} else {
+	        		Sbi.trace("[WidgetContainer.addSelectionWidget]: Input parameter [layoutConf] is not valorized so it will e replaced with the [wlayout] property of the widget]");
+	        		layoutConf = selectionWidget.getLayoutConfiguration();
+	        	}
+	    	} else {
+	    		Sbi.error("[WidgetContainer.addSelectionWidget]: Impossible to create a widget from [widget] parameter passed in as argument. An empty container will be added to the container.");
+	    	}
+		}
+
+
+    	var component = this.addSelectionComponent(selectionWidget, layoutConf);
+
+		Sbi.trace("[WidgetContainer.addWidget]: OUT");
+
+		return selectionWidget;
+	}
+
+
+
     /**
      * @method
      *
@@ -679,6 +716,52 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	Sbi.trace("[WidgetContainer.addComponent]: OUT");
 
     	return component;
+    }
+
+    , addSelectionComponent: function(selectionWidget, layoutConf) {
+
+    	Sbi.trace("[WidgetContainer.addSelectionComponent]: IN");
+
+    	var componentConf = {};
+    	if(selectionWidget) {
+    		Sbi.trace("[WidgetContainer.addSelectionComponent]: add a component with an alredy embedded widget");
+    		componentConf.widget = selectionWidget;
+    	}
+
+    	if( Sbi.isNotValorized(layoutConf) ) {
+    		Sbi.trace("[WidgetContainer.addSelectionComponent]: input parameter [layoutConf] is not defined");
+    		layoutConf = {};
+    	}
+    	if( Sbi.isNotValorized(layoutConf.region) ) {
+    		Sbi.trace("[WidgetContainer.addComponent]: attribute [region] of input parameter [layoutConf] is not defined");
+    		layoutConf.region = this.getDefaultRegion();
+    	}
+
+    	layoutConf.region = this.convertToAbsoluteRegion(layoutConf.region);
+    	Sbi.trace("[WidgetContainer.addComponent]: the new component will be added to region: [" + Sbi.toSource(layoutConf.region) + "]");
+
+    	Ext.apply(componentConf, layoutConf);
+    	//var component = new Sbi.cockpit.core.WidgetContainerComponent(componentConf);
+    	//var window  = new Sbi.cockpit.core.SelectionsWindow(componentConf);
+    	var window = new Sbi.cockpit.core.WidgetContainerComponent(componentConf);
+
+    	window.on('move', this.onComponentMove, this);
+    	window.on('resize', this.onComponentResize, this);
+    	window.on("performaction", this.onComponentAction, this);
+    	window.on("close", this.onComponentClose, this);
+
+    	this.components.add(window.getId(), window);
+    	window.setParentContainer(this);
+
+    	if(selectionWidget) {
+    		selectionWidget.setParentComponent(window);
+    	}
+
+    	window.show();
+
+    	Sbi.trace("[WidgetContainer.addComponent]: OUT");
+
+    	return window;
     }
 
     /**

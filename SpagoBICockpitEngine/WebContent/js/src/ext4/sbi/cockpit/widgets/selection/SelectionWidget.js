@@ -11,7 +11,7 @@ Sbi.cockpit.widgets.selection.SelectionWidget = function(config) {
 	Sbi.trace("[SelectionWidget.constructor]: IN");
 
 	var defaultSettings = {
-//		layout: 'fit'
+			wconf : {}
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.selection.SelectionWidget', defaultSettings);
@@ -109,6 +109,8 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
             ]
 		};
 
+		this.wtype = 'selection';
+
 		Sbi.trace("[SelectionWidget.init]: OUT");
 	}
 
@@ -118,5 +120,5 @@ Sbi.registerWidget('selection', {
 	name: 'Selection'
 		, icon: 'js/src/ext4/sbi/cockpit/widgets/selection/img/ico_panel_assoc.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.selection.SelectionWidget'
-	, designerClass: 'Sbi.cockpit.widgets.selection.SelectionWidgetDesigner'
+	//, designerClass: 'Sbi.cockpit.widgets.selection.SelectionWidgetDesigner'
 });

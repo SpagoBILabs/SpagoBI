@@ -371,16 +371,19 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, onShowSelectionsWindow: function(){
 		var config = {};
 		config.widgetManager = this.widgetContainer.getWidgetManager();
-		//config.selections = this.widgetContainer.getWidgetManager().getSelections() || [];
+		config.selections = this.widgetContainer.getWidgetManager().getSelections() || [];
 		Sbi.trace("[MainPanel.onShowSelectionsWindow]: config.selections is equal to [" + Sbi.toSource(config.selections) + "]");
 		Sbi.trace("[MainPanel.onShowSelectionsWindow]: instatiating the window");
-		this.selectionsWindow = Ext.create('Sbi.cockpit.core.SelectionsWindow', config);
-		this.selectionsWindow.on("cancel", this.onSelectionsWindowCancel, this);
-		this.selectionsWindow.on("cancelSingle", this.onSelectionsWindowCancelSingle, this);
 
-    	Sbi.trace("[MainPanel.onShowSelectionsWindow]: window succesfully instantiated");
+		var selectionWidget = new Sbi.cockpit.widgets.selection.SelectionWidget();
+//		config = {};
+//		config.wtype = "selection";
+//		config.wconf = {
+//				wtype : "selection"
+//		};
+//		config.wlayout = null;
 
-		this.selectionsWindow.show();
+		this.widgetContainer.addSelectionWidget(selectionWidget, config.wlayout);
 	}
 
 	, onSelectionsWindowCancel: function(wizard) {
