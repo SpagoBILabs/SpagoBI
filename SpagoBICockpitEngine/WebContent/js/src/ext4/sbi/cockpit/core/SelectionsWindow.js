@@ -14,8 +14,15 @@ Ext.define('Sbi.cockpit.core.SelectionsWindow', {
 		, height: 510
 		, closable: true
 		, closeAction: 'destroy'
-		, modal: true
+		, modal: false
 	}
+
+
+	/**
+	 * @property {Sbi.cockpit.core.WidgetContainer} parentContainer
+	 * The parent container
+	 */
+	, parentContainer: null
 
 
 	/**
@@ -97,5 +104,20 @@ Ext.define('Sbi.cockpit.core.SelectionsWindow', {
 
 	, onCancelSingle: function(grid, rowIndex, colIndex) {
 		this.widgetManager.clearSingleSelection(grid, rowIndex, colIndex);
+	}
+    , setParentContainer: function(container) {
+    	Sbi.trace("[WidgetContainerComponent.setParentContainer]: IN");
+		this.parentContainer = container;
+		Sbi.trace("[WidgetContainerComponent.setParentContainer]: OUT");
+	}
+    , isNotEmpty: function(){
+    	return true;
+    }
+	, getWidgetConfiguration: function(widgetConf) {
+		var widgetConf = null;
+		if(Sbi.isValorized(this.selectionsPanel)) {
+			widgetConf = this.selectionsPanel.getConfiguration();
+		}
+		return widgetConf;
 	}
 });
