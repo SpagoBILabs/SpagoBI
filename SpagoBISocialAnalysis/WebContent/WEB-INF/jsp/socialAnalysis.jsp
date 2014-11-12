@@ -11,6 +11,9 @@
 Giorgio Federici (giorgio.federici@eng.it)
 --%>
 
+<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+<%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
+<%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.Locale"%>
 
@@ -25,7 +28,13 @@ Giorgio Federici (giorgio.federici@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
+
 	String locale = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE); 
+	UserProfile profile = (UserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	
+	String profileJSONStr = new ObjectMapper().writeValueAsString(profile);	
+	String createSocialAnalysis = new ObjectMapper().writeValueAsString(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS);
+	
 %>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
@@ -43,6 +52,10 @@ Giorgio Federici (giorgio.federici@eng.it)
 	
     	<script type="text/javascript">  
     	
+    	Sbi.user = {};
+    	
+    	Sbi.user = <%= profileJSONStr %>;
+    	Sbi.createsocialanalysis = <%= createSocialAnalysis %>;
 
     	Ext.onReady(function () {
     		
