@@ -20,7 +20,7 @@ import it.eng.spagobi.twitter.analysis.enums.MonitorRepeatTypeEnum;
 import it.eng.spagobi.twitter.analysis.enums.SearchTypeEnum;
 import it.eng.spagobi.twitter.analysis.enums.UpToTypeEnum;
 import it.eng.spagobi.twitter.analysis.launcher.TwitterAnalysisLauncher;
-import it.eng.spagobi.twitter.analysis.rest.annotations.CheckFunctionalities;
+import it.eng.spagobi.twitter.analysis.rest.annotations.UserConstraint;
 import it.eng.spagobi.twitter.analysis.utilities.AnalysisUtility;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -49,7 +49,7 @@ public class TwitterStreamingSearchAPI {
 	@Path("/createEnabledStream")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@CheckFunctionalities(funcs = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
 	public String createEnabledStream(@Context HttpServletRequest req) {
 
 		logger.debug("Method createEnabledStream(): Start");
@@ -100,7 +100,7 @@ public class TwitterStreamingSearchAPI {
 	@Path("/createDisabledStream")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@CheckFunctionalities(funcs = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
 	public String createDisabledStream(@Context HttpServletRequest req) {
 
 		logger.debug("Method createDisabledStream(): Start");
@@ -148,7 +148,7 @@ public class TwitterStreamingSearchAPI {
 	}
 
 	@POST
-	@CheckFunctionalities(funcs = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
 	public String start(@Context HttpServletRequest req) throws Exception {
 
 		logger.debug("Method start(): Start");
@@ -228,7 +228,7 @@ public class TwitterStreamingSearchAPI {
 	// Delete a Twitter Search
 	@Path("/deleteSearch")
 	@POST
-	@CheckFunctionalities(funcs = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
 	public String delete(@Context HttpServletRequest req) throws Exception {
 
 		logger.debug("Method delete(): Start..");
@@ -274,7 +274,7 @@ public class TwitterStreamingSearchAPI {
 	// Stop a Twitter Search
 	@Path("/stopStreamingSearch")
 	@POST
-	@CheckFunctionalities(funcs = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
 	public String stopStream(@Context HttpServletRequest req) throws Exception {
 
 		logger.debug("Method stopStream(): Start");
