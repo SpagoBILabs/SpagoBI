@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.profiling.services;
 
@@ -34,7 +34,7 @@ import org.json.JSONObject;
 
 public class ManageRolesAction extends AbstractSpagoBIAction {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 4873196748328877998L;
 
@@ -80,6 +80,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	private final String KPI_COMMENT_EDIT_MY = "kpiCommentEditMy";
 	private final String KPI_COMMENT_DELETE = "kpiCommentDelete";
 	private final String CREATE_SOCIAL_ANALYSIS = "createSocialAnalysis";
+	private final String VIEW_SOCIAL_ANALYSIS = "viewSocialAnalysis";
 	private final String HIERARCHIES_MANAGEMENT = "hierarchiesManagement";
 
 	private final String BM_CATEGORY_ID = "bmCategoryId";
@@ -172,6 +173,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 			Boolean kpiCommEditMy = getAttributeAsBoolean(KPI_COMMENT_EDIT_MY);
 			Boolean kpiCommDelete = getAttributeAsBoolean(KPI_COMMENT_DELETE);
 			Boolean createAnalysisSocial = getAttributeAsBoolean(CREATE_SOCIAL_ANALYSIS);
+			Boolean viewAnalysisSocial = getAttributeAsBoolean(VIEW_SOCIAL_ANALYSIS);
 			Boolean hierarchiesManagement = getAttributeAsBoolean(HIERARCHIES_MANAGEMENT);
 
 			List<String> bmCategoryIds = getAttributeAsList(BM_CATEGORIES);
@@ -258,6 +260,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				role.setAbleToEditMyKpiComm(kpiCommEditMy);
 				role.setAbleToDeleteKpiComm(kpiCommDelete);
 				role.setIsAbleToCreateSocialAnalysis(createAnalysisSocial);
+				role.setIsAbleToViewSocialAnalysis(viewAnalysisSocial);
 				role.setIsAbleToHierarchiesManagement(hierarchiesManagement);
 
 				try {
@@ -462,7 +465,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 	/**
 	 * Creates a json array with children roles informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -479,7 +482,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 	/**
 	 * Creates a json array with children informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
