@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /*
  * Created on 22-giu-2005
@@ -44,7 +44,7 @@ import org.hibernate.criterion.Order;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a Role.
- * 
+ *
  * @author zoppello
  */
 public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
@@ -53,15 +53,15 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Load by id.
-	 * 
+	 *
 	 * @param roleID
 	 *            the role id
-	 * 
+	 *
 	 * @return the role
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#loadByID(java.lang.Integer)
 	 */
 	@Override
@@ -125,15 +125,15 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Load by name.
-	 * 
+	 *
 	 * @param roleName
 	 *            the role name
-	 * 
+	 *
 	 * @return the role
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#loadByName(java.lang.String)
 	 */
 	@Override
@@ -180,12 +180,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Load all roles.
-	 * 
+	 *
 	 * @return the list
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#loadAllRoles()
 	 */
 	@Override
@@ -226,13 +226,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Insert role.
-	 * 
+	 *
 	 * @param aRole
 	 *            the a role
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRole(it.eng.spagobi.commons.bo.Role)
 	 */
 	@Override
@@ -281,13 +281,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Erase role.
-	 * 
+	 *
 	 * @param aRole
 	 *            the a role
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#eraseRole(it.eng.spagobi.commons.bo.Role)
 	 */
 	@Override
@@ -351,13 +351,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Modify role.
-	 * 
+	 *
 	 * @param aRole
 	 *            the a role
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#modifyRole(it.eng.spagobi.commons.bo.Role)
 	 */
 	@Override
@@ -426,6 +426,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (authI.getName().equals("KPI_COMMENT_DELETE") && aRole.isAbleToDeleteKpiComm())
 						|| (authI.getName().equals("CREATE_DOCUMENTS") && aRole.isAbleToCreateDocuments())
 						|| (authI.getName().equals("CREATE_SOCIAL_ANALYSIS") && aRole.isAbleToCreateSocialAnalysis())
+						|| (authI.getName().equals("VIEW_SOCIAL_ANALYSIS") && aRole.isAbleToViewSocialAnalysis())
 						|| (authI.getName().equals("HIERARCHIES_MANAGEMENT") && aRole.isAbleToHierarchiesManagement())
 
 				) {
@@ -466,15 +467,15 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Load all free roles for insert.
-	 * 
+	 *
 	 * @param parameterID
 	 *            the parameter id
-	 * 
+	 *
 	 * @return the list
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#loadAllFreeRolesForInsert(java.lang.Integer)
 	 */
 	@Override
@@ -490,8 +491,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			List hibListAllRoles = hibQuery.list();
 
 			/*
-			 * String hql = "from SbiParuseDet s " +
-			 * " where s.id.sbiParuse.sbiParameters.parId = " + parameterID;
+			 * String hql = "from SbiParuseDet s " + " where s.id.sbiParuse.sbiParameters.parId = " + parameterID;
 			 */
 
 			String hql = "from SbiParuseDet s " + " where s.id.sbiParuse.sbiParameters.parId = ?";
@@ -535,15 +535,15 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Load all free roles for detail.
-	 * 
+	 *
 	 * @param parUseID
 	 *            the par use id
-	 * 
+	 *
 	 * @return the list
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#loadAllFreeRolesForDetail(java.lang.Integer)
 	 */
 	@Override
@@ -566,9 +566,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 
 			/*
-			 * String hql = "from SbiParuseDet s "
-			 * +" where s.id.sbiParuse.sbiParameters.parId = "+
-			 * sbiParuse.getSbiParameters().getParId()
+			 * String hql = "from SbiParuseDet s " +" where s.id.sbiParuse.sbiParameters.parId = "+ sbiParuse.getSbiParameters().getParId()
 			 * +" and s.id.sbiParuse.label != '" + sbiParuse.getLabel()+ "'";
 			 */
 
@@ -613,12 +611,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	/**
-	 * From the hibernate Role at input, gives the corrispondent
-	 * <code>Role</code> object.
-	 * 
+	 * From the hibernate Role at input, gives the corrispondent <code>Role</code> object.
+	 *
 	 * @param hibRole
 	 *            The hybernate role
-	 * 
+	 *
 	 * @return The corrispondent <code>Role</code> object
 	 */
 	public Role toRole(SbiExtRoles hibRole) {
@@ -699,6 +696,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("CREATE_SOCIAL_ANALYSIS")) {
 				role.setIsAbleToCreateSocialAnalysis(true);
 			}
+			if (name.equals("VIEW_SOCIAL_ANALYSIS")) {
+				role.setIsAbleToViewSocialAnalysis(true);
+			}
 			if (name.equals("HIERARCHIES_MANAGEMENT")) {
 				role.setIsAbleToHierarchiesManagement(true);
 			}
@@ -722,12 +722,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Gets all the authorizations associated to the role.
-	 * 
+	 *
 	 * @param roleID
 	 *            The role id
-	 * 
+	 *
 	 * @return The authorizations associated to the role
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -740,11 +740,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			/*
-			 * String hql =
-			 * "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r "
-			 * +" where f.functId = fr.id.function.functId "
-			 * +" and r.extRoleId = fr.id.role.extRoleId "
-			 * +" and r.extRoleId = " + roleID;
+			 * String hql = "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " +" where f.functId = fr.id.function.functId "
+			 * +" and r.extRoleId = fr.id.role.extRoleId " +" and r.extRoleId = " + roleID;
 			 */
 
 			String hql = "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " + " where f.functId = fr.id.function.functId "
@@ -770,12 +767,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Gets all the parameter uses associated to the role.
-	 * 
+	 *
 	 * @param roleID
 	 *            The role id
-	 * 
+	 *
 	 * @return The parameter uses associated to the role
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -788,11 +785,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			/*
-			 * String hql =
-			 * "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r "
-			 * +" where pu.useId = pud.id.sbiParuse.useId "
-			 * +" and r.extRoleId = pud.id.sbiExtRoles.extRoleId "
-			 * +" and r.extRoleId = " + roleID;
+			 * String hql = "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " +" where pu.useId = pud.id.sbiParuse.useId "
+			 * +" and r.extRoleId = pud.id.sbiExtRoles.extRoleId " +" and r.extRoleId = " + roleID;
 			 */
 
 			String hql = "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " + " where pu.useId = pud.id.sbiParuse.useId "
@@ -875,6 +869,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (functI.getName().equals("KPI_COMMENT_DELETE") && role.isAbleToDeleteKpiComm())
 						|| (functI.getName().equals("CREATE_DOCUMENTS") && role.isAbleToCreateDocuments())
 						|| (functI.getName().equals("CREATE_SOCIAL_ANALYSIS") && role.isAbleToCreateSocialAnalysis())
+						|| (functI.getName().equals("VIEW_SOCIAL_ANALYSIS") && role.isAbleToViewSocialAnalysis())
 						|| (functI.getName().equals("HIERARCHIES_MANAGEMENT") && role.isAbleToHierarchiesManagement())) {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
@@ -1000,9 +995,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Associate a Meta Model Category to the role
-	 * 
-	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRoleMetaModelCategory(java.lang.Integer,
-	 *      java.lang.Integer)
+	 *
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRoleMetaModelCategory(java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
 	public void insertRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError {
@@ -1050,9 +1044,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Remove the association between the role and the Meta Model Category
-	 * 
-	 * @see it.eng.spagobi.commons.dao.IRoleDAO#removeRoleMetaModelCategory(java.lang.Integer,
-	 *      java.lang.Integer)
+	 *
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#removeRoleMetaModelCategory(java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
 	public void removeRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError {
@@ -1101,7 +1094,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Get the Meta Model Categories associated to a role
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#getMetaModelCategoryForRole(java.lang.Integer)
 	 */
 	@Override
@@ -1145,10 +1138,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Gets all the Authorizationsations present
-	 * 
-	 * 
+	 *
+	 *
 	 * @return The authorizations
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1184,12 +1177,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Gets all the authorizations associated to the role.
-	 * 
+	 *
 	 * @param roleID
 	 *            The role id
-	 * 
+	 *
 	 * @return The authorizations associated to the role
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1226,14 +1219,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	/**
-	 * Gets all the authorizationsRoles object (relationn objects) associated to
-	 * the role.
-	 * 
+	 * Gets all the authorizationsRoles object (relationn objects) associated to the role.
+	 *
 	 * @param roleID
 	 *            The role id
-	 * 
+	 *
 	 * @return The authorizations associated to the role
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
