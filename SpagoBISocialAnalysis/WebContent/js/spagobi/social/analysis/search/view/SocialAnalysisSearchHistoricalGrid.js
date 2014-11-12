@@ -102,15 +102,33 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
 		            align: 'center',
 		            isDisabled: function(view, rowIndex, colIndex, item, record)
 		            {
-		            	var searchLoading = record.get('loading');
-		            	if(!searchLoading)
-	            		{
-		            		return false;	            		
-	            		}
-		            	else
-	            		{
-		            		return true;
-	            		}
+		            	var isDisabled = true;
+		        		
+		        		for(var i = 0; i < Sbi.user.functionalities.length; i++)
+		        		{
+		        			if(Sbi.user.functionalities[i]==Sbi.createsocialanalysis)
+		        			{
+		        				isDisabled = false;
+		        				break;
+		        			}
+		        		}
+		        		
+		        		if(isDisabled)
+		        		{
+		        			return true;
+		        		}
+		        		else
+		        		{	
+			            	var searchLoading = record.get('loading');
+			            	if(!searchLoading)
+		            		{
+			            		return false;	            		
+		            		}
+			            	else
+		            		{
+			            		return true;
+		            		}
+		        		}
 		            },
 		            handler: function(grid, rowIndex, colIndex) {
 	                    
@@ -130,12 +148,16 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
          	                                searchID: Ext.encode(rec.get('searchID'))
          	                            },
          	                            scope : this,
-         	                           success: function(response)
-         	                           {
-         	                        	 var text = response.responseText;
-         	                        	 Ext.Msg.alert('Success', text);
-         	                        	 grid.getStore().load();
-         	                           }
+         	                            success: function(response)
+         	                            {
+		     	                        	var text = response.responseText;
+		     	                        	Ext.Msg.alert('Success', text);
+		     	                        	grid.getStore().load();
+         	                            },
+         	                            failure: function(response)
+         	                            {
+         	                            	Ext.Msg.alert("Sono qui");
+         	                            }
                                 	 }); 
                                   
                                  }
@@ -204,6 +226,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
 		            align: 'center',
 		            isDisabled: function(view, rowIndex, colIndex, item, record)
 		            {
+		            	
 		            	var searchLoading = record.get('loading');
 		            	if(!searchLoading)
 	            		{
@@ -227,6 +250,24 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
 			            	} else {
 			            	    return 'x-scheduler-stop-disabled';               
 			            	}
+			            },
+			            isDisabled: function(view, rowIndex, colIndex, item, record)
+			            {
+			            	var isDisabled = true;
+			        		
+			        		for(var i = 0; i < Sbi.user.functionalities.length; i++)
+			        		{
+			        			if(Sbi.user.functionalities[i]==Sbi.createsocialanalysis)
+			        			{
+			        				isDisabled = false;
+			        				break;
+			        			}
+			        		}
+			        		
+			        		if(isDisabled)
+			        		{
+			        			return true;
+			        		}
 			            },
 		                tooltip: LN('sbi.social.analysis.schedulertooltip'),
 		                handler:  this.twitterStopSearchScheduler
