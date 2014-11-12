@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.constants;
 
@@ -33,10 +33,8 @@ public class SpagoBIConstants {
 	public static final String RUN_ANYWAY = "RUN_ANYWAY";
 
 	/*
-	 * public static final String ACTOR = "ACTOR"; public static final String
-	 * TESTER_ACTOR = "TESTER_ACTOR"; public static final String USER_ACTOR =
-	 * "USER_ACTOR"; public static final String ADMIN_ACTOR = "ADMIN_ACTOR";
-	 * public static final String DEV_ACTOR = "DEV_ACTOR";
+	 * public static final String ACTOR = "ACTOR"; public static final String TESTER_ACTOR = "TESTER_ACTOR"; public static final String USER_ACTOR =
+	 * "USER_ACTOR"; public static final String ADMIN_ACTOR = "ADMIN_ACTOR"; public static final String DEV_ACTOR = "DEV_ACTOR";
 	 */
 	public static final String USE_PUBLIC_USER = "SPAGOBI.SECURITY.USE_PUBLIC_USER";
 	public static final String PUBLIC_USER_ID = "public_user";
@@ -373,6 +371,7 @@ public class SpagoBIConstants {
 	public static final String KPI_COMMENT_EDIT_MY = "KpiCommentEditMy";
 	public static final String KPI_COMMENT_DELETE = "KpiCommentDelete";
 	public static final String CREATE_SOCIAL_ANALYSIS = "CreateSocialAnalysis";
+	public static final String VIEW_SOCIAL_ANALYSIS = "ViewSocialAnalysis";
 	public static final String HIERARCHIES_MANAGEMENT = "HierarchiesManagement";
 
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState";
