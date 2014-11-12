@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.utilities;
 
@@ -80,9 +80,9 @@ public class UserUtilities {
 
 	/**
 	 * Gets the user profile.
-	 * 
+	 *
 	 * @return the user profile
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -224,12 +224,12 @@ public class UserUtilities {
 
 	/**
 	 * User functionality root exists.
-	 * 
+	 *
 	 * @param username
 	 *            the username
-	 * 
+	 *
 	 * @return true, if successful
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -248,12 +248,12 @@ public class UserUtilities {
 
 	/**
 	 * User functionality root exists.
-	 * 
+	 *
 	 * @param userProfile
 	 *            the user profile
-	 * 
+	 *
 	 * @return true, if successful
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -270,19 +270,15 @@ public class UserUtilities {
 	}
 
 	/**
-	 * Load the user personal folder as a LowFunctionality object. If the
-	 * personal folder exists, it is returned; if it does not exist and create
-	 * is false, null is returned, otherwise the personal folder is created and
-	 * then returned.
-	 * 
+	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
+	 * is returned, otherwise the personal folder is created and then returned.
+	 *
 	 * @param userProfile
 	 *            UserProfile the user profile object
 	 * @param createIfNotExisting
-	 *            Boolean that specifies if the personal folder must be created
-	 *            if it doesn't exist
-	 * 
-	 * @return the personal folder as a LowFunctionality object, or null in case
-	 *         the personal folder does not exist and create is false
+	 *            Boolean that specifies if the personal folder must be created if it doesn't exist
+	 *
+	 * @return the personal folder as a LowFunctionality object, or null in case the personal folder does not exist and create is false
 	 */
 	public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile, boolean createIfNotExisting) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
@@ -337,10 +333,10 @@ public class UserUtilities {
 
 	/**
 	 * Creates the user functionality root.
-	 * 
+	 *
 	 * @param userProfile
 	 *            the user profile
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -494,6 +490,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToCreateSocialAnalysis()) {
 				roleFunctionalities.add(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS);
 			}
+			if (virtualRole.isAbleToViewSocialAnalysis()) {
+				roleFunctionalities.add(SpagoBIConstants.VIEW_SOCIAL_ANALYSIS);
+			}
 			if (virtualRole.isAbleToHierarchiesManagement()) {
 				roleFunctionalities.add(SpagoBIConstants.HIERARCHIES_MANAGEMENT);
 			}
@@ -555,6 +554,7 @@ public class UserUtilities {
 		virtualRole.setAbleToEditAllKpiComm(false);
 		virtualRole.setAbleToEditMyKpiComm(false);
 		virtualRole.setIsAbleToCreateSocialAnalysis(false);
+		virtualRole.setIsAbleToViewSocialAnalysis(false);
 		virtualRole.setIsAbleToHierarchiesManagement(false);
 
 		if (roles != null) {
@@ -660,6 +660,10 @@ public class UserUtilities {
 					if (anotherRole.isAbleToCreateSocialAnalysis()) {
 						logger.debug("User has role " + roleName + " that is able to create social analysis.");
 						virtualRole.setIsAbleToCreateSocialAnalysis(true);
+					}
+					if (anotherRole.isAbleToViewSocialAnalysis()) {
+						logger.debug("User has role " + roleName + " that is able to view social analysis.");
+						virtualRole.setIsAbleToViewSocialAnalysis(true);
 					}
 					if (anotherRole.isAbleToHierarchiesManagement()) {
 						logger.debug("User has role " + roleName + " that is able to manage hierarchies");
