@@ -664,12 +664,13 @@ public class HierarchiesService {
 					case 16:
 					case 18:
 					case 20:
-						// inject leafID into node
-						IField leafIdField = record.getFieldAt(i + 2);
-						Long leafId = (Long) leafIdField.getValue();
-						String leafIdString = String.valueOf(leafId);
-						data.setLeafId(leafIdString);
-
+						if (i == 20) {
+							// inject leafID into node
+							IField leafIdField = record.getFieldAt(i + 2);
+							Long leafId = (Long) leafIdField.getValue();
+							String leafIdString = String.valueOf(leafId);
+							data.setLeafId(leafIdString);
+						}
 						attachNodeToLevel(root, nodeCode, lastLevelFound, data);
 						lastLevelFound = nodeCode;
 						// leaf level
