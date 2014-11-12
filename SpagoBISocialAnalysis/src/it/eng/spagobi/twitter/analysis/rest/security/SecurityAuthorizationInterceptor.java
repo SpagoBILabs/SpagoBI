@@ -26,8 +26,9 @@ import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.LoggableFailure;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
-import org.json.JSONArray;
-import org.json.JSONObject;
+
+import twitter4j.JSONArray;
+import twitter4j.JSONObject;
 
 /**
  * @author Giorgio Federici (giorgio.federici@eng.it)
