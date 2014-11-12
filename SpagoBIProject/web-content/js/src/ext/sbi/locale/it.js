@@ -376,7 +376,7 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.showscheduled'] = 'Mostra ese
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Torna alla pagina di selezione parametri';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Torna alla pagina di vista documenti';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Riesegui il documento';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'La selezione dei parametri è cambiata: vuoi eseguire il documento con la selezione corrente o con quella precedente?';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'La selezione dei parametri ï¿½ cambiata: vuoi eseguire il documento con la selezione corrente o con quella precedente?';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.usecurrentselection'] = 'Usa corrente';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.usepreviousselection'] = 'Usa precedente';
 
@@ -513,6 +513,7 @@ Sbi.locale.ln['sbi.roles.seeSubscriptions'] = 'Vede le sottoscrizioni';
 Sbi.locale.ln['sbi.roles.seeToDoList'] = 'Vede la lista To Do';
 Sbi.locale.ln['sbi.roles.createDocument'] = 'Crea i documenti';
 Sbi.locale.ln['sbi.roles.createSocialAnalysis'] = 'Crea analisi sui social network';
+Sbi.locale.ln['sbi.roles.viewSocialAnalysis'] = 'Vede analisi sui social network';
 Sbi.locale.ln['sbi.roles.hierarchiesManagement'] = 'Editor delle gerarchie';
 Sbi.locale.ln['sbi.roles.allKpiComment'] = 'Tutti commenti kpi';
 Sbi.locale.ln['sbi.roles.myKpiComment'] = 'Propri commenti kpi';
@@ -751,11 +752,11 @@ Sbi.locale.ln['sbi.ds.filterLabel']= 'Filtra per ...';
 Sbi.locale.ln['sbi.ds.moreRecent']= 'Recenti';
 Sbi.locale.ln['sbi.ds.owner']= 'Autore';
 Sbi.locale.ln['sbi.ds.USED']= 'Il file viene utilizzato da altri ';
-Sbi.locale.ln['sbi.ds.EXISTS']= 'Il file è già presente nel server';
+Sbi.locale.ln['sbi.ds.EXISTS']= 'Il file ï¿½ giï¿½ presente nel server';
 Sbi.locale.ln['sbi.ds.failedToUpload']= 'File non caricato';
 Sbi.locale.ln['sbi.ds.skip.checks']='Sovrascrivi il file';
 Sbi.locale.ln['sbi.ds.changedon']='Modificato il ';
-Sbi.locale.ln['sbi.ds.metadata.msgKO']='La validazione ha riscontrato alcuni errori. Le celle contenenti errori sono colorate in rosso. Muovendo il mouse su tali celle comparirà un tooltip contenente maggiori informazioni relative all\'errore occorso';
+Sbi.locale.ln['sbi.ds.metadata.msgKO']='La validazione ha riscontrato alcuni errori. Le celle contenenti errori sono colorate in rosso. Muovendo il mouse su tali celle comparirï¿½ un tooltip contenente maggiori informazioni relative all\'errore occorso';
 Sbi.locale.ln['sbi.ds.metadata.msgOK']='La validazione non ha riscontrato errori';
 Sbi.locale.ln['sbi.ds.metadata.addProperty']='Aggiungi Proprieta';
 Sbi.locale.ln['sbi.ds.metadata.deleteProperty']='Cancella Proprieta';
@@ -788,14 +789,14 @@ Sbi.locale.ln['sbi.datasource.type.jndi.name']= 'Nome Jndi';
 Sbi.locale.ln['sbi.datasource.type.jdbc.url']= 'URL';
 Sbi.locale.ln['sbi.datasource.type.jdbc.user']= 'User';
 Sbi.locale.ln['sbi.datasource.type.jdbc.password']= 'Password';
-Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI è necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
+Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI ï¿½ necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 Sbi.locale.ln['sbi.datasource.saved']= 'Data source salvato correttamente';
 Sbi.locale.ln['sbi.datasource.deleted']= 'Data source cancellato correttamente';
 Sbi.locale.ln['sbi.datasource.delete.forbidden']= 'Non hai le autorizzazioni necessarie per cancellare il data source!';
 Sbi.locale.ln['sbi.datasource.tested']= 'Data source configurato correttamente';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'Ci sono degli errori di validazione. Controlla i campi marcati.';
 Sbi.locale.ln['sbi.datasource.test.failed']= 'Errore nel test del datasource';
-Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ' : data source già presente con funzione di scrittura di default. Sostituire con il presente?';
+Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ' : data source giï¿½ presente con funzione di scrittura di default. Sostituire con il presente?';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
@@ -815,7 +816,7 @@ Sbi.locale.ln['sbi.generic.to'] = 'Data fine';
 //MESSAGE FOR SCHEDULER
 //===================================================================
 Sbi.locale.ln['sbi.scheduler.alert'] = 'Attenzione! Inserire una nuova data-ora di inizio schedulazione successiva a quella attuale, per evitare la rischedulazione.';
-Sbi.locale.ln['sbi.scheduler.overview'] = 'Panoramica Attività ';
+Sbi.locale.ln['sbi.scheduler.overview'] = 'Panoramica Attivitï¿½ ';
 Sbi.locale.ln['sbi.scheduler.documents'] = 'Documenti';
 Sbi.locale.ln['sbi.scheduler.name'] = 'Nome';
 Sbi.locale.ln['sbi.scheduler.parameters'] = 'Parametri';
@@ -829,9 +830,9 @@ Sbi.locale.ln['sbi.scheduler.addschedulation'] = 'Aggiungi Schedulazione';
 Sbi.locale.ln['sbi.scheduler.schedulationtype'] = 'Tipo Schedulazione';
 Sbi.locale.ln['sbi.scheduler.schedulation.detail'] = 'Dettaglio Schedulazione';
 Sbi.locale.ln['sbi.scheduler.schedulation.delete'] = 'Elimina Schedulazione';
-Sbi.locale.ln['sbi.scheduler.activity.detailactivity'] = 'Dettaglio Attività';
+Sbi.locale.ln['sbi.scheduler.activity.detailactivity'] = 'Dettaglio Attivitï¿½';
 Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Lista Schedulazioni';
-Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Attività Eliminata';
+Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Attivitï¿½ Eliminata';
 Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Schedulazione Eliminata';
 Sbi.locale.ln['sbi.scheduler.schedulation.execute'] = 'Esegui ora';
 Sbi.locale.ln['sbi.scheduler.schedulation.executed'] = 'Schedulazione eseguita';
@@ -1043,12 +1044,12 @@ Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= "Impossibile
 		
 //DATASOURCE	
 Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= "La label del documento deve essere valorizata"
-Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossibile cancellare il datasource perché è in uso"
+Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = "Impossibile cancellare il datasource perchï¿½ ï¿½ in uso"
 Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossibile salvare il datasource: label duplicata"
 	
 //DATASET
 Sbi.locale.ln["error.mesage.description.data.set.cannot.be.null"]= "La label del dataset deve essere valorizzata";
-Sbi.locale.ln["error.mesage.description.data.set.deleting.inuse"] = "Impossibile cancellare il datset perché è in uso";
+Sbi.locale.ln["error.mesage.description.data.set.deleting.inuse"] = "Impossibile cancellare il datset perchï¿½ ï¿½ in uso";
 Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]="Impossibile salvare il dataset: label duplicata";			   
 Sbi.locale.ln["error.mesage.description.data.set.parsing.error"]="Impossibile analizzare il file. Controlla il contenuto e caricalo di nuovo sul server";
 
@@ -1076,7 +1077,7 @@ Sbi.locale.ln["sbi.community.title"]="Community";
 Sbi.locale.ln["sbi.community.name"]="Nome";
 Sbi.locale.ln["sbi.community.descr"]="Descrizione";
 Sbi.locale.ln["sbi.community.owner"]="Proprietario";
-Sbi.locale.ln["sbi.community.functCode"]="Funzionalità";
+Sbi.locale.ln["sbi.community.functCode"]="Funzionalitï¿½";
 Sbi.locale.ln["sbi.community.id"]="Id";
 Sbi.locale.ln['sbi.community.saved']= 'Community salvata correttamente';
 Sbi.locale.ln['sbi.community.deleted']= 'Community cancellata correttamente';
@@ -1116,7 +1117,7 @@ Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
 Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
 
 //Multitenant
-Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant salvato correttamente. \n L\'utente amministratore del tenant è stato creato con username e password ';
+Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant salvato correttamente. \n L\'utente amministratore del tenant ï¿½ stato creato con username e password ';
 Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant cancellato correttamente';
 Sbi.locale.ln['sbi.multitenant.delete.title']= 'Cancellare il Tenant?';
 Sbi.locale.ln['sbi.multitenant.delete.msg']= 'Sei sicuro di voler cancellare il tenant e tutti i dati ad esso associati?';
@@ -1164,7 +1165,7 @@ Sbi.locale.ln['sbi.myanalysis.noEngines']= 'Nell\'installazione in uso non sono 
 //===================================================================
 //Sbi.execution.SaveDocumentWindow
 //===================================================================
-Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'Il documento è stato salvato correttamente; è disponibile nella sezione "Le mie analisi"';
+Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'Il documento ï¿½ stato salvato correttamente; ï¿½ disponibile nella sezione "Le mie analisi"';
 //===================================================================
 //Hierarchies Editor
 //===================================================================
@@ -1186,12 +1187,12 @@ Sbi.locale.ln['sbi.hierarchies.custom.delete']= 'Elimina gerarchia custom';
 Sbi.locale.ln['sbi.hierarchies.custom.error.leaf']= 'I nodi all\'ultimo livello devono essere tutti foglie';		
 Sbi.locale.ln['sbi.hierarchies.save.changes.confirm']= 'Salvare le modifiche?';		
 Sbi.locale.ln['sbi.hierarchies.save.correct']= 'Gerarchia correttamente salvata';		
-Sbi.locale.ln['sbi.hierarchies.scope']= 'Visibilità Gerarchia';		
+Sbi.locale.ln['sbi.hierarchies.scope']= 'Visibilitï¿½ Gerarchia';		
 Sbi.locale.ln['sbi.hierarchies.custom.save']= 'Salva gerarchia custom';		
 Sbi.locale.ln['sbi.hierarchies.drag.root']= 'Spostare qui la radice della nuova gerarchia';		
-Sbi.locale.ln['sbi.hierarchies.drag.wrong']= 'Non è possibile usare una nodo foglia come nuova radice';		
+Sbi.locale.ln['sbi.hierarchies.drag.wrong']= 'Non ï¿½ possibile usare una nodo foglia come nuova radice';		
 Sbi.locale.ln['sbi.hierarchies.drag.wrong.action']= 'Azione sbagliata';	
-Sbi.locale.ln['sbi.hierarchies.drag.node.exists']= 'Nodo già presente in questa gerarchia';	
+Sbi.locale.ln['sbi.hierarchies.drag.node.exists']= 'Nodo giï¿½ presente in questa gerarchia';	
 Sbi.locale.ln['sbi.hierarchies.drag.cannot.move']= 'Impossibile muovere nodi foglia in una gerarchia semimanuale';		
 Sbi.locale.ln['sbi.hierarchies.delete.ok']= 'Cancellazione avvenuta';		
 //===================================================================

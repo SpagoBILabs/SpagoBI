@@ -524,6 +524,7 @@ Sbi.locale.ln['sbi.roles.seeSubscriptions'] = 'View Subscriptions';
 Sbi.locale.ln['sbi.roles.seeToDoList'] = 'View ToDo List';
 Sbi.locale.ln['sbi.roles.createDocument'] = 'Create Documents';
 Sbi.locale.ln['sbi.roles.createSocialAnalysis'] = 'Create analysis on social networks';
+Sbi.locale.ln['sbi.roles.viewSocialAnalysis'] = 'View analysis on social networks';
 Sbi.locale.ln['sbi.roles.hierarchiesManagement'] = 'Hierarchies editor';
 Sbi.locale.ln['sbi.roles.allKpiComment'] = 'All kpi comments';
 Sbi.locale.ln['sbi.roles.myKpiComment'] = 'Owned kpi comments';
