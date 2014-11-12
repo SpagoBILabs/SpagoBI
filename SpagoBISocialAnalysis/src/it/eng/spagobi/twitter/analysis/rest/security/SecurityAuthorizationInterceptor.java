@@ -102,7 +102,7 @@ public class SecurityAuthorizationInterceptor implements PreProcessInterceptor {
 								+ methodName + "]", e);
 					}
 				} else {
-					logger.debug("The user [" + profile.getUserName() + "] is enabled to execute the method method [" + methodName + "] ");
+					logger.debug("The user [" + profile.getUserName() + "] is enabled to execute the method [" + methodName + "] ");
 				}
 
 			}
