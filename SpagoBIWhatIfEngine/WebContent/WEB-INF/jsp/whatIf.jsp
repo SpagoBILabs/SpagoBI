@@ -83,6 +83,7 @@ author:...
 	
 	<head>
 		<%@include file="commons/includeExtJS.jspf" %>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSbiWhatIfJS.jspf"%>
 
 		<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
@@ -94,57 +95,54 @@ author:...
 	</head>
 	
 	<body>
-	
     	<script type="text/javascript">  
+   	        Sbi.config = {};
+   	    	var config= {};
+   	        
+   	    	var isStandalone = <%=whatIfEngineInstance.isStandalone()%>;
 
-    	
-        Sbi.config = {};
-    	var config= {};
+   	    	var documentLabel= '<%=documentLabel != null ? documentLabel : "" %>';
+   	    
+   	    	<% if(!whatIfEngineInstance.isStandalone()){ %>
+   	    		
+   	    	
+   			var urlSettings = {
+   			    sbihost:  '<%=spagobiServerHost%>'    
+   			    , protocol: '<%= request.getScheme()%>'
+   		    	, host: '<%= request.getServerName()%>'
+   		    	, port: '<%= request.getServerPort()%>'
+   		    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
+   		    		  spagobiContext.substring(1) :
+   		    			spagobiContext%>'	    	   				  
+   		    };
+   		
+   	        var externalUrl =  urlSettings.sbihost+"/"+ urlSettings.contextPath+"/restful-services/";
+   			
+   	        Sbi.config.urlSettings = urlSettings;
+   	        Sbi.config.externalUrl = externalUrl;
+   	       
+   	    	<%} %>
+
+   	    	 Sbi.config.isStandalone = isStandalone;
+   	         Sbi.config.documentLabel = documentLabel;
+   	         
+   	        var params = {
+   		    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+   		    };
+   	    	
+
+   		    Sbi.config.ajaxBaseParams = params;
+   	    	
+   		    Sbi.olap.eventManager={};
+   	        Ext.onReady(function(){
+   	    		var whatIfPanel = Ext.create('Sbi.olap.OlapPanel',{}); //by alias
+   	    		var whatIfPanelViewport = Ext.create('Ext.container.Viewport', {
+   	    			layout:'fit',
+   	    	     	items: [whatIfPanel]
+   	    	    });
+   	        });
         
-    	var isStandalone = <%=whatIfEngineInstance.isStandalone()%>;
-
-    	var documentLabel= '<%=documentLabel != null ? documentLabel : "" %>';
-    
-    	<% if(!whatIfEngineInstance.isStandalone()){ %>
-    		
-    	
-		var urlSettings = {
-		    sbihost:  '<%=spagobiServerHost%>'    
-		    , protocol: '<%= request.getScheme()%>'
-	    	, host: '<%= request.getServerName()%>'
-	    	, port: '<%= request.getServerPort()%>'
-	    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
-	    		  spagobiContext.substring(1) :
-	    			spagobiContext%>'	    	   				  
-	    };
-	
-        var externalUrl =  urlSettings.sbihost+"/"+ urlSettings.contextPath+"/restful-services/";
-		
-        Sbi.config.urlSettings = urlSettings;
-        Sbi.config.externalUrl = externalUrl;
-       
-    	<%} %>
-
-    	 Sbi.config.isStandalone = isStandalone;
-         Sbi.config.documentLabel = documentLabel;
-         
-        var params = {
-	    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
-	    };
-    	
-
-	    Sbi.config.ajaxBaseParams = params;
-    	
-	    Sbi.olap.eventManager={};
-        Ext.onReady(function(){
-    		var whatIfPanel = Ext.create('Sbi.olap.OlapPanel',{}); //by alias
-    		var whatIfPanelViewport = Ext.create('Ext.container.Viewport', {
-    			layout:'fit',
-    	     	items: [whatIfPanel]
-    	    });
-        });
-        
-        </script>
+    	</script>
 	
 	</body>
 
