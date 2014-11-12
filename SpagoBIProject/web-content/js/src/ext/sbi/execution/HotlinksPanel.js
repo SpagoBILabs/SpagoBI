@@ -156,11 +156,11 @@ Ext.extend(Sbi.execution.HotlinksPanel, Ext.Panel, {
 		this.grid = new Ext.grid.GridPanel({
 			store: this.store,
 	        columns: [
-	            {header: "Name", sortable: true, dataIndex: 'name'},
-	            {header: "Document", sortable: true, dataIndex: 'documentLabel'},
-	            {header: "Document name", sortable: true, dataIndex: 'documentName'},
-	            {header: "Document description", sortable: true, dataIndex: 'documentDescription'},
-	            {header: "Document type", sortable: true, dataIndex: 'documentType'}
+	            {header: LN('sbi.hotlinks.name'), sortable: true, dataIndex: 'name'},
+	            {header: LN('sbi.hotlinks.document'), sortable: true, dataIndex: 'documentLabel'},
+	            {header: LN('sbi.hotlinks.document.name'), sortable: true, dataIndex: 'documentName'},
+	            {header: LN('sbi.hotlinks.document.description'), sortable: true, dataIndex: 'documentDescription'},
+	            {header: LN('sbi.hotlinks.document.type'), sortable: true, dataIndex: 'documentType'}
 	        ],
 			viewConfig: {
 	        	forceFit: true

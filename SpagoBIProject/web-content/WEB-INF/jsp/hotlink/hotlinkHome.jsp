@@ -24,6 +24,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.analiticalmodel.document.service.ExecuteBIObjectModule"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.analiticalmodel.execution.service.ExecuteDocumentAction"%>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/LocaleUtils.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/commons/" + locale.getLanguage() + ".js")%>'></script>	
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/" + locale.getLanguage() + ".js")%>'></script>
+
 
 <%
 List rememberMeList = null;
@@ -158,11 +162,11 @@ Ext.onReady(function(){
     var gridRememberMe = new Ext.grid.GridPanel({
         store: storeRememberMe,
         columns: [
-            {id: "Name", header: "Name", sortable: true, dataIndex: 'Name'},
-            {header: "Document", sortable: true, dataIndex: 'DocumentLabel'},
-            {header: "Document name", sortable: true, dataIndex: 'DocumentName'},
-            {header: "Document description", sortable: true, dataIndex: 'DocumentDescription'},
-            {header: "Document type", sortable: true, dataIndex: 'DocumentType'}
+            {id: "Name", header: LN('sbi.hotlinks.name'), sortable: true, dataIndex: 'Name'},
+            {header: LN('sbi.hotlinks.document'), sortable: true, dataIndex: 'DocumentLabel'},
+            {header: LN('sbi.hotlinks.document.name'), sortable: true, dataIndex: 'DocumentName'},
+            {header: LN('sbi.hotlinks.document.description'), sortable: true, dataIndex: 'DocumentDescription'},
+            {header: LN('sbi.hotlinks.document.type'), sortable: true, dataIndex: 'DocumentType'}
         ],
 		onRender: function() {
         	Ext.grid.GridPanel.prototype.onRender.apply(this, arguments);
@@ -189,7 +193,7 @@ Ext.onReady(function(){
         //autoExpandColumn: 'Document',
         height:200,
         width:600,
-        title:'Remember Me',
+        title:LN('sbi.hotlinks.rememberme'),
 		listeners: {
 			render: function(g) {
 				g.on("beforetooltipshow", function(grid, row, col) {
@@ -269,10 +273,10 @@ Ext.onReady(function(){
     var gridMostPopular = new Ext.grid.GridPanel({
         store: storeMostPopular,
         columns: [
-            {id: "Document", header: "Document", sortable: true, dataIndex: 'DocumentLabel'},
-            {header: "Document name", sortable: true, dataIndex: 'DocumentName'},
-            {header: "Document description", sortable: true, dataIndex: 'DocumentDescription'},
-            {header: "Document type", sortable: true, dataIndex: 'DocumentType'}
+            {id: "Document", header: LN('sbi.hotlinks.document'), sortable: true, dataIndex: 'DocumentLabel'},
+            {header: LN('sbi.hotlinks.document.name'), sortable: true, dataIndex: 'DocumentName'},
+            {header: LN('sbi.hotlinks.document.description'), sortable: true, dataIndex: 'DocumentDescription'},
+            {header: LN('sbi.hotlinks.document.type'), sortable: true, dataIndex: 'DocumentType'}
         ],
 		viewConfig: {
         	forceFit: true
@@ -282,7 +286,7 @@ Ext.onReady(function(){
         //autoExpandColumn: 'Document',
         height:200,
         width:600,
-        title:'Most Popular'
+        title:LN('sbi.hotlinks.mostpopular')
     });
 	gridMostPopular.on(
 		'rowclick', function(grid, rowIndex, e) {
@@ -342,10 +346,10 @@ Ext.onReady(function(){
     var gridMyRecentlyUsed = new Ext.grid.GridPanel({
         store: storeMyRecentlyUsed,
         columns: [
-            {id: "Document", header: "Document", sortable: true, dataIndex: 'DocumentLabel'},
-            {header: "Document name", sortable: true, dataIndex: 'DocumentName'},
-            {header: "Document description", sortable: true, dataIndex: 'DocumentDescription'},
-            {header: "Document type", sortable: true, dataIndex: 'DocumentType'}
+            {id: "Document", header: LN('sbi.hotlinks.document'), sortable: true, dataIndex: 'DocumentLabel'},
+            {header: LN('sbi.hotlinks.document.name'), sortable: true, dataIndex: 'DocumentName'},
+            {header: LN('sbi.hotlinks.document.description'), sortable: true, dataIndex: 'DocumentDescription'},
+            {header: LN('sbi.hotlinks.document.type'), sortable: true, dataIndex: 'DocumentType'}
         ],
 		viewConfig: {
         	forceFit: true
@@ -355,7 +359,7 @@ Ext.onReady(function(){
         //autoExpandColumn: 'Document',
         height:200,
         width:600,
-        title:'My Recently Used'
+        title:LN('sbi.hotlinks.recently')
     });
 	gridMyRecentlyUsed.on(
 		'rowclick', function(grid, rowIndex, e) {

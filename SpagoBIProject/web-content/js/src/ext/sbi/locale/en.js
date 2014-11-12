@@ -1214,5 +1214,16 @@ Sbi.locale.ln['sbi.hierarchies.drag.wrong.action']= 'Wrong Action';
 Sbi.locale.ln['sbi.hierarchies.drag.node.exists']= 'Node already added to this hierarchy';	
 Sbi.locale.ln['sbi.hierarchies.drag.cannot.move']= 'Cannot move a leaf node in a semimanual hierarchy';		
 Sbi.locale.ln['sbi.hierarchies.delete.ok']= 'Delete successfull';		
+//===================================================================
+//Hot Links
+//===================================================================
+Sbi.locale.ln['sbi.hotlinks.name']= 'Name';	
+Sbi.locale.ln['sbi.hotlinks.document']= 'Document';	
+Sbi.locale.ln['sbi.hotlinks.document.name']= 'Document name';	
+Sbi.locale.ln['sbi.hotlinks.document.description']= 'Document description';	
+Sbi.locale.ln['sbi.hotlinks.document.type']= 'Document type';	
+Sbi.locale.ln['sbi.hotlinks.rememberme']= 'Remember Me';	
+Sbi.locale.ln['sbi.hotlinks.mostpopular']= 'Most Popular';	
+Sbi.locale.ln['sbi.hotlinks.recently']= 'My Recently Used';	
 
 

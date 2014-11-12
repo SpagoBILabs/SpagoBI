@@ -1194,5 +1194,14 @@ Sbi.locale.ln['sbi.hierarchies.drag.wrong.action']= 'Azione sbagliata';
 Sbi.locale.ln['sbi.hierarchies.drag.node.exists']= 'Nodo già presente in questa gerarchia';	
 Sbi.locale.ln['sbi.hierarchies.drag.cannot.move']= 'Impossibile muovere nodi foglia in una gerarchia semimanuale';		
 Sbi.locale.ln['sbi.hierarchies.delete.ok']= 'Cancellazione avvenuta';		
-
-	
+//===================================================================
+//Hot Links
+//===================================================================
+Sbi.locale.ln['sbi.hotlinks.name']= 'Nome';	
+Sbi.locale.ln['sbi.hotlinks.document']= 'Documento';	
+Sbi.locale.ln['sbi.hotlinks.document.name']= 'Nome documento';	
+Sbi.locale.ln['sbi.hotlinks.document.description']= 'Descrizione documento';	
+Sbi.locale.ln['sbi.hotlinks.document.type']= 'Tipo documento';	
+Sbi.locale.ln['sbi.hotlinks.rememberme']= 'Da ricordare';	
+Sbi.locale.ln['sbi.hotlinks.mostpopular']= 'Pi\u00FA popolari';	
+Sbi.locale.ln['sbi.hotlinks.recently']= 'Usati di recente';		
