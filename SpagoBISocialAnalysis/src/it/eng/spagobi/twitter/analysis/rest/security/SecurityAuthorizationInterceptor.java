@@ -1,3 +1,8 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.twitter.analysis.rest.security;
 
 import it.eng.spago.security.IEngUserProfile;
@@ -23,6 +28,10 @@ import org.jboss.resteasy.spi.LoggableFailure;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+/**
+ * @author Giorgio Federici (giorgio.federici@eng.it)
+ */
 
 @Provider
 @ServerInterceptor
@@ -70,7 +79,7 @@ public class SecurityAuthorizationInterceptor implements PreProcessInterceptor {
 				if (profile == null) {
 					// TODO check if the error can be processed by the client
 					// throws unlogged user exception that will be managed by RestExcepionMapper
-					logger.info("User not logged");
+					logger.error("Error checking user profile calling the method [" + methodName + "]. Profile null ");
 					throw new LoggableFailure(request.getUri().getRequestUri().getPath());
 				}
 
@@ -86,6 +95,7 @@ public class SecurityAuthorizationInterceptor implements PreProcessInterceptor {
 
 				if (!authorized) {
 					try {
+						logger.error("The user don't have the rights to call the method [" + methodName + "]. Functionalities constraint violation ");
 						return new ServerResponse(serializeException("not-enabled-to-call-service", null), 400, new Headers<Object>());
 					} catch (Exception e) {
 						throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["
@@ -125,19 +135,9 @@ public class SecurityAuthorizationInterceptor implements PreProcessInterceptor {
 		engProfile = (IEngUserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		if (engProfile == null) {
 			engProfile = (IEngUserProfile) ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);
-		} else {
-			setUserProfileInSession(engProfile);
 		}
 
 		return engProfile;
-	}
-
-	private void setUserProfileInSession(IEngUserProfile engProfile) {
-		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-		ioManager.initConetxtManager();
-		ioManager.getContextManager().set(IEngUserProfile.ENG_USER_PROFILE, engProfile);
-
-		// servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 	}
 
 	private String serializeException(String message, String localizedMessage) {
