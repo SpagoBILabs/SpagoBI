@@ -65,6 +65,8 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 		
 		var searchForm = this;
 		
+//		alert(Sbi.user.functionalities[Sbi.createsocialanalysis]);
+		
 		Ext.apply(this, {
 
 	     // The fields
@@ -75,6 +77,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	        	xtype      : 'fieldcontainer',
 	            fieldLabel: LN('sbi.social.analysis.searchType'),
 	            layout: 'hbox',
+//	            disabled: this.noCreateSocialAnalysis,
 	            items: [
 	                {
 	                	xtype	  :	'radiofield',
@@ -247,6 +250,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	                msgTarget: 'side',
 	                labelWidth: 75
 	            },
+//	            disabled: this.noCreateSocialAnalysis,
 	        	items: [
 	        	{
 	        		fieldLabel: LN('sbi.social.analysis.logicalidentifier'),
@@ -363,6 +367,7 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	                msgTarget: 'side',
 	                labelWidth: 75
 	            },
+//	            disabled: this.noCreateSocialAnalysis,
 	        	items: [
 	        	{
 	        		fieldLabel: LN('sbi.social.analysis.accountstomonitor'),
@@ -624,6 +629,8 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	       }],
 	    });
 		
+		this.noCreateSocialAnalysis();
+		
 		this.callParent();
 		
 		Ext.TaskManager.start({
@@ -634,138 +641,21 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 			});
 	},
 	
-	twitterSearchSubmit: function(){
-		var form = this.up('form').getForm() // get the basic form
-        var record = form.getRecord(),
-        values = form.getFieldValues();
-        form.updateRecord(record);
-        if(values.searchType == 'searchAPI')
-        {
-        	form.submit({
-        		//
-        		url: 'restful-services/historicalSearch',
-        			
-        		success: function(form, action) 
-        		{
-        			Ext.Msg.alert('Success', action.result.msg);
-        			form.reset();
-        			 
-        			var searchType = form.findField('repeatTypeCombo');
-        			searchType.setValue(searchType.store.first().data.type);
-        			
-        			var monitorType = form.findField('monitorFrequencyTypeID');
-        			monitorType.setValue(monitorType.store.first().data.type);
-        			
-        			var upToType = form.findField('typeUpToID');
-        			upToType.setValue(upToType.store.first().data.type);
-        			
-        	    },
-        	    failure: function(form, action) 
-        	    {
-        	    	Ext.Msg.alert('Failure', action.result.msg);
-        	    	form.reset();
-        	    	
-        	    	var searchType = form.findField('repeatTypeCombo');
-        			searchType.setValue(searchType.store.first().data.type);
-        			
-        			var monitorType = form.findField('monitorFrequencyTypeID');
-        			monitorType.setValue(monitorType.store.first().data.type);
-        			
-        			var upToType = form.findField('typeUpToID');
-        			upToType.setValue(upToType.store.first().data.type);
-        	    }
-        	
-        	});
-        	
-        }
-        else if(values.searchType == 'streamingAPI')
-        {
-        	Ext.Msg.show({
-        	     title:'Confirm',
-        	     msg: 'Would you like to enable now your stream? If you have another enabled stream, this will stop it',
-        	     buttons: Ext.Msg.YESNO,
-        	     icon: Ext.Msg.QUESTION,
-        	     fn: function(btn, text){
-                     if (btn == 'yes'){
-                    	 form.submit({
-	                    		url: 'restful-services/streamingSearch/createEnabledStream',
-	                    	
-	                    		success: function(form, action) 
-	                    		{
-	                    			Ext.Msg.alert('Success', action.result.msg);
-	                    			
-	                    			form.reset();
-	                    			
-	                    			var searchType = form.findField('repeatTypeCombo');
-	                    			searchType.setValue(searchType.store.first().data.type);
-	                    			
-	                    			var monitorType = form.findField('monitorFrequencyTypeID');
-	                    			monitorType.setValue(monitorType.store.first().data.type);
-	                    			
-	                    			var upToType = form.findField('typeUpToID');
-	                    			upToType.setValue(upToType.store.first().data.type);
-	                    	    },
-	                    	    failure: function(form, action) 
-	                    	    {
-	                    	    	Ext.Msg.alert('Failure', action.result.msg);
-	                    	    	
-	                    	    	form.reset();
-                    	    	
-	                    	    	var searchType = form.findField('repeatTypeCombo');
-	                    			searchType.setValue(searchType.store.first().data.type);
-	                    			
-	                    			var monitorType = form.findField('monitorFrequencyTypeID');
-	                    			monitorType.setValue(monitorType.store.first().data.type);
-	                    			
-	                    			var upToType = form.findField('typeUpToID');
-	                    			upToType.setValue(upToType.store.first().data.type);
-	                    	    }
-	                    	    
-	                    	});
-                      
-                     }
-                     if (btn == 'no'){
-                    	 form.submit({
-	                    		url: 'restful-services/streamingSearch/createDisabledStream',
-	                    	
-	                    		success: function(form, action) 
-	                    		{
-	                    			Ext.Msg.alert('Success', action.result.msg);   
-	                    			
-	                 				form.reset();
-	                    	    	
-	                    	    	var searchType = form.findField('repeatTypeCombo');
-	                    			searchType.setValue(searchType.store.first().data.type);
-	                    			
-	                    			var monitorType = form.findField('monitorFrequencyTypeID');
-	                    			monitorType.setValue(monitorType.store.first().data.type);
-	                    			
-	                    			var upToType = form.findField('typeUpToID');
-	                    			upToType.setValue(upToType.store.first().data.type);
-	                    	    },
-	                    	    failure: function(form, action) 
-	                    	    {
-	                    	    	Ext.Msg.alert('Failure', action.result.msg);
-	                    	    	
-	                 	    		form.reset();
-	                    	    	
-	                    	    	var searchType = form.findField('repeatTypeCombo');
-	                    			searchType.setValue(searchType.store.first().data.type);
-	                    			
-	                    			var monitorType = form.findField('monitorFrequencyTypeID');
-	                    			monitorType.setValue(monitorType.store.first().data.type);
-	                    			
-	                    			var upToType = form.findField('typeUpToID');
-	                    			upToType.setValue(upToType.store.first().data.type);
-	                    	    }
-	                    	    
-	                    	});
-                     }
-                 },
-        	     icon: Ext.Msg.QUESTION
-        	});
-        	
-        }
+	noCreateSocialAnalysis: function()
+	{
+		
+		var isDisabled = true;
+		
+		for(var i = 0; i < Sbi.user.functionalities.length; i++)
+		{
+			if(Sbi.user.functionalities[i]==Sbi.createsocialanalysis)
+			{
+				isDisabled = false;
+				break;
+			}
+		}
+		
+		this.disabled = isDisabled;
 	}
 
 });

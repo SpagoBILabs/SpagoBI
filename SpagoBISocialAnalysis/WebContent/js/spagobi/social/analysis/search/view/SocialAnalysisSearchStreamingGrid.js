@@ -95,6 +95,24 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', 
 		            	    return 'x-streaming-stop';               
 		            	}
 		            },
+		            isDisabled: function(view, rowIndex, colIndex, item, record)
+		            {
+		            	var isDisabled = true;
+		        		
+		        		for(var i = 0; i < Sbi.user.functionalities.length; i++)
+		        		{
+		        			if(Sbi.user.functionalities[i]==Sbi.createsocialanalysis)
+		        			{
+		        				isDisabled = false;
+		        				break;
+		        			}
+		        		}
+		        		
+		        		if(isDisabled)
+		        		{
+		        			return true;
+		        		}
+		            },
 		            handler: function(grid, rowIndex, colIndex) {
 	                    var rec = grid.getStore().getAt(rowIndex);
 	                    var loadingValue = rec.get('loading');
@@ -174,6 +192,24 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchStreamingGrid', 
 		            text: LN('sbi.social.analysis.delete'),
 		            icon: 'img/delete.png',
 		            align: 'center',
+		            isDisabled: function(view, rowIndex, colIndex, item, record)
+		            {
+		            	var isDisabled = true;
+		        		
+		        		for(var i = 0; i < Sbi.user.functionalities.length; i++)
+		        		{
+		        			if(Sbi.user.functionalities[i]==Sbi.createsocialanalysis)
+		        			{
+		        				isDisabled = false;
+		        				break;
+		        			}
+		        		}
+		        		
+		        		if(isDisabled)
+		        		{
+		        			return true;
+		        		}
+		            },
 		            handler: function(grid, rowIndex, colIndex) {
 	                    
 		            	var rec = grid.getStore().getAt(rowIndex);
