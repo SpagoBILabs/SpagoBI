@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.twitter.analysis.api;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.twitter.analysis.entities.TwitterMonitorScheduler;
 import it.eng.spagobi.twitter.analysis.entities.TwitterSearch;
 import it.eng.spagobi.twitter.analysis.entities.TwitterSearchScheduler;
@@ -14,6 +15,7 @@ import it.eng.spagobi.twitter.analysis.enums.SearchRepeatTypeEnum;
 import it.eng.spagobi.twitter.analysis.enums.SearchTypeEnum;
 import it.eng.spagobi.twitter.analysis.enums.UpToTypeEnum;
 import it.eng.spagobi.twitter.analysis.launcher.TwitterAnalysisLauncher;
+import it.eng.spagobi.twitter.analysis.rest.annotations.CheckFunctionalities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Calendar;
@@ -46,6 +48,7 @@ public class TwitterHistoricalSearchAPI {
 	// Save a new Twitter Search
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
+	@CheckFunctionalities(funcs = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
 	public String search(@Context HttpServletRequest req) {
 
 		logger.debug("Method search(): Start");
@@ -300,7 +303,7 @@ public class TwitterHistoricalSearchAPI {
 	// Delete a new Twitter Search
 	@Path("/deleteSearch")
 	@POST
-	// @Produces(MediaType.APPLICATION_JSON)
+	@CheckFunctionalities(funcs = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
 	public String delete(@Context HttpServletRequest req) throws Exception {
 
 		logger.debug("Method delete(): Start..");
@@ -329,7 +332,7 @@ public class TwitterHistoricalSearchAPI {
 	// Stop the search scheduler and start monitor scheduler
 	@Path("/stopSearchScheduler")
 	@POST
-	// @Produces(MediaType.APPLICATION_JSON)
+	@CheckFunctionalities(funcs = { SpagoBIConstants.CREATE_SOCIAL_ANALYSIS })
 	public String stopSearchScheduler(@Context HttpServletRequest req) throws Exception {
 
 		logger.debug("Method stopSearchScheduler(): Start..");
