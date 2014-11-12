@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
@@ -53,6 +53,7 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String KPI_COMMENT_EDIT_MY = "kpiCommentEditMy";
 	private static final String KPI_COMMENT_DELETE = "kpiCommentDelete";
 	private static final String CREATE_SOCIAL_ANALYSIS = "createSocialAnalysis";
+	private static final String VIEW_SOCIAL_ANALYSIS = "viewSocialAnalysis";
 	private static final String HIERARCHIES_MANAGEMENT = "hierarchiesManagement";
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
@@ -97,6 +98,7 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(KPI_COMMENT_EDIT_MY, role.isAbleToEditMyKpiComm());
 			result.put(KPI_COMMENT_DELETE, role.isAbleToDeleteKpiComm());
 			result.put(CREATE_SOCIAL_ANALYSIS, role.isAbleToCreateSocialAnalysis());
+			result.put(VIEW_SOCIAL_ANALYSIS, role.isAbleToViewSocialAnalysis());
 			result.put(HIERARCHIES_MANAGEMENT, role.isAbleToHierarchiesManagement());
 
 			// create an array for Business Model Categories Ids

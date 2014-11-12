@@ -247,7 +247,7 @@ public class MenuListJSONSerializer implements Serializer {
 
 		String strSbiSocialAnalysisStatus = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE");
 		boolean sbiSocialAnalysisStatus = "TRUE".equalsIgnoreCase(strSbiSocialAnalysisStatus);
-		if (sbiSocialAnalysisStatus && isAbleTo(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS, funcs)) {
+		if (sbiSocialAnalysisStatus && (isAbleTo(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS, funcs) || isAbleTo(SpagoBIConstants.VIEW_SOCIAL_ANALYSIS, funcs))) {
 			JSONObject socialAnalysis = new JSONObject();
 			socialAnalysis.put(ICON_CLS, "social_analysis");
 			socialAnalysis.put(TOOLTIP, messageBuilder.getMessage("menu.SocialAnalysis", locale));
