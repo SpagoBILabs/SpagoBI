@@ -74,6 +74,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
                  width='0'
                  frameborder='0' >
 </iframe> 
+
+<iframe id='invalidSessionSocialAnalysis'
+                 name='invalidSessionSocialAnalysis'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/SpagoBISocialAnalysis/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe> 
 <%
 
 boolean backUrlB=false;
