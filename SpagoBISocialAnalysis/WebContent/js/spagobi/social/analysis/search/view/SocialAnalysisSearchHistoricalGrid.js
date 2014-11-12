@@ -153,10 +153,6 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchHistoricalGrid',
 		     	                        	var text = response.responseText;
 		     	                        	Ext.Msg.alert('Success', text);
 		     	                        	grid.getStore().load();
-         	                            },
-         	                            failure: function(response)
-         	                            {
-         	                            	Ext.Msg.alert("Sono qui");
          	                            }
                                 	 }); 
                                   
