@@ -351,7 +351,21 @@ public class TwitterAccountsTimelineDataProcessor {
 
 		while (minTime.compareTo(maxTime) <= 0) {
 
-			baseMap.put(minTime.getTimeInMillis(), -1);
+			Calendar utcCalendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
+			utcCalendar.setTime(minTime.getTime());
+
+			// TODO: check the behaviour for others time zone != GMT
+			// manage daylight auto add/sub 1 hour
+			if (!filter.equalsIgnoreCase("hours")) {
+
+				if (utcCalendar.get(Calendar.HOUR_OF_DAY) == 23) {
+					utcCalendar.add(Calendar.HOUR_OF_DAY, 1);
+				} else if (utcCalendar.get(Calendar.HOUR_OF_DAY) == 1) {
+					utcCalendar.add(Calendar.HOUR_OF_DAY, -1);
+				}
+			}
+
+			baseMap.put(utcCalendar.getTimeInMillis(), -1);
 
 			if (filter.equalsIgnoreCase("hours")) {
 
