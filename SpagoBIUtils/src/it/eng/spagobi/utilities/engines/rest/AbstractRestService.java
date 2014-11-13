@@ -6,6 +6,7 @@
 
 package it.eng.spagobi.utilities.engines.rest;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineInstance;
 
@@ -31,8 +32,7 @@ public abstract class AbstractRestService {
 	 */
 	public ExecutionSession getExecutionSession() {
 		if (es == null) {
-			es = new ExecutionSession(getServletRequest(), getServletRequest()
-					.getSession());
+			es = new ExecutionSession(getServletRequest(), getServletRequest().getSession());
 		}
 		return es;
 	}
@@ -43,8 +43,7 @@ public abstract class AbstractRestService {
 	 * @return the console engine instance
 	 */
 	public IEngineInstance getEngineInstance() {
-		return (IEngineInstance) es
-				.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+		return (IEngineInstance) es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
 	}
 
 	/**
@@ -66,8 +65,7 @@ public abstract class AbstractRestService {
 	 * @return true if the value is null
 	 */
 	public boolean isNull(String value) {
-		return value == null || value.equals("null")
-				|| value.equals("undefined");
+		return value == null || value.equals("null") || value.equals("undefined");
 	}
 
 	/**
@@ -89,16 +87,26 @@ public abstract class AbstractRestService {
 		return (Locale) getEnv().get(EngineConstants.ENV_LOCALE);
 	}
 
+	public Locale buildLocaleFromSession() {
+		Locale locale = null;
+		Object countryO = getHttpSession().getAttribute(SpagoBIConstants.AF_COUNTRY);
+		Object languageO = getHttpSession().getAttribute(SpagoBIConstants.AF_LANGUAGE);
+		String country = countryO != null ? countryO.toString() : null;
+		String language = languageO != null ? languageO.toString() : null;
+		if (country != null && language != null) {
+			locale = new Locale(language, country);
+		}
+		return locale;
+	}
+
 	/**
-	 * Gets the HttpServletRequest.. A standard implementation is to get the
-	 * HttpServletRequest from the context.. The implementing class can be:
+	 * Gets the HttpServletRequest.. A standard implementation is to get the HttpServletRequest from the context.. The implementing class can be:
 	 * 
 	 * public class XXXEngineService extends AbstractRestService{
 	 * 
 	 * @Context protected HttpServletRequest servletRequest;
 	 * 
-	 *          public HttpServletRequest getServletRequest(){ return
-	 *          servletRequest; }
+	 *          public HttpServletRequest getServletRequest(){ return servletRequest; }
 	 * @return the HttpServletRequest
 	 */
 	public abstract HttpServletRequest getServletRequest();
@@ -110,11 +118,10 @@ public abstract class AbstractRestService {
 	public Object getAttributeFromHttpSession(String attrName) {
 		return getHttpSession().getAttribute(attrName);
 	}
-	
+
 	public Object getAttributeFromExecutionSession(String attrName) {
 		return getExecutionSession().getAttributeFromSession(attrName);
 	}
-
 
 	public String getAttributeFromSessionAsString(String attrName) {
 		return getExecutionSession().getAttributeFromSessionAsString(attrName);
