@@ -160,10 +160,10 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 				buildTitle += LN('sbi.cockpit.window.toolbar.cacheDate');
 			}
 
-			var dateObjF =  Sbi.locale.formats['timestamp'].dateFormat;
-			var dateTs =Sbi.commons.Format.date(this.cacheDate, dateObjF);
-
-			buildTitle += dateTs;
+//			var dateObjF =  Sbi.locale.formats['timestamp'].dateFormat;
+//			var dateTs =Sbi.commons.Format.date(this.cacheDate, dateObjF);
+//			buildTitle += dateTs;
+			buildTitle += this.cacheDate;
 
 		}
 
