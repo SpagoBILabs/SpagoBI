@@ -16,9 +16,11 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -40,10 +42,12 @@ public class JSONDataWriter implements IDataWriter {
 	private boolean setRenderer = false;
 	private boolean writeDataOnly = false;
 	private JSONArray fieldsOptions;
+	private Locale locale;
 
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	private static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat("HH:mm:ss");
 	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
 	public static final String METADATA = "metaData";
@@ -194,9 +198,17 @@ public class JSONDataWriter implements IDataWriter {
 			result = new JSONObject();
 
 			if (dataStore.getCacheDate() != null) {
-				// metadata.put("cacheDate", dataStore.getCacheDate());
-				String date = CACHE_TIMESTAMP_FORMATTER.format(dataStore.getCacheDate());
-				metadata.put("cacheDate", date);
+				// String date = CACHE_TIMESTAMP_FORMATTER.format(dataStore.getCacheDate());
+
+				if (getLocale() == null)
+					setLocale(Locale.ENGLISH);
+
+				DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, getLocale());
+				String date = df.format(dataStore.getCacheDate());
+				String time = CACHE_TIMEONLY_FORMATTER.format(dataStore.getCacheDate());
+				String dateFull = date + " " + time;
+				metadata.put("cacheDate", dateFull);
+
 			}
 
 			result.put(METADATA, metadata);
@@ -447,6 +459,14 @@ public class JSONDataWriter implements IDataWriter {
 	 */
 	public void setSetRenderer(boolean setRenderer) {
 		this.setRenderer = setRenderer;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 
 }
