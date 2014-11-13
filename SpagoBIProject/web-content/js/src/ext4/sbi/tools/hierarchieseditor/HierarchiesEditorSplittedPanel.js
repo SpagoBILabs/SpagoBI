@@ -803,6 +803,8 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		return new Ext.tree.Panel({
 	        id: 'customTreePanel',
 	        layout: 'fit',
+	        autoScroll: true,
+	        height: 400,
 	        store: store,
 	        rootVisible: rootVisible,
 	        frame: false,
@@ -816,6 +818,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	               enableDrag: true,
 	               enableDrop: true
 	         }
+	        ,loadMask:true
 	        ,listeners: {           	
 	        	//listeners for drag & drop management           	
 	        	viewready: function (tree) {                   
@@ -887,6 +890,8 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        id: 'automaticTreePanel',
 	        layout: 'fit',
 	        store: store,
+	        autoScroll: true,
+	        height: 400,
 	        rootVisible: false,
 	        frame: false,
 	        border:false,
@@ -899,7 +904,8 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	               enableDrag: true,
 	               enableDrop: false,
 	               copy: false
-	            }
+	            },
+	            loadMask:true
 	        }
 	    });
 		return automaticTree;
