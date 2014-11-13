@@ -78,11 +78,11 @@ public class TreeString {
 	}
 
 	// │
-	public static final String BAR = bar(1);
+	public static final String BAR = "|";
 	// └
-	public static final String END = bar(2);
+	public static final String END = "->";
 	// ├
-	public static final String MIDDLE = bar(3);
+	public static final String MIDDLE = "+-";
 
 	private static String bar(int i) {
 		try {
