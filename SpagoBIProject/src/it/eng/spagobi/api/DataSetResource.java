@@ -234,6 +234,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
 			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
 			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
+			dataSetWriter.setLocale(buildLocaleFromSession());
 			JSONObject gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
 
 			String stringFeed = gridDataFeed.toString();
@@ -312,6 +313,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
 			properties.put(JSONDataWriter.PROPERTY_WRITE_DATA_ONLY, true);
 			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
+			dataSetWriter.setLocale(buildLocaleFromSession());
 			JSONArray gridDataFeed = (JSONArray) dataSetWriter.write(dataStore);
 			logger.info("Dataset serialized in: " + monitor.elapsedAsString());
 
