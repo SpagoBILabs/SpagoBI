@@ -14,7 +14,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -249,11 +248,25 @@ public class TwitterTimelineDataProcessor {
 			upperCalendar.add(Calendar.MONTH, 1);
 		}
 
-		boolean roundDST = false;
-
 		while (lowerCalendar.compareTo(upperCalendar) <= 0) {
 
 			long tempMinMills = lowerCalendar.getTimeInMillis();
+
+			Calendar utcCalendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
+			utcCalendar.setTimeInMillis(tempMinMills);
+
+			// TODO: check the behaviour for others time zone != GMT
+			// manage daylight auto add/sub 1 hour
+			if (!filter.equalsIgnoreCase("hours")) {
+
+				if (utcCalendar.get(Calendar.HOUR_OF_DAY) == 23) {
+					utcCalendar.add(Calendar.HOUR_OF_DAY, 1);
+				} else if (utcCalendar.get(Calendar.HOUR_OF_DAY) == 1) {
+					utcCalendar.add(Calendar.HOUR_OF_DAY, -1);
+				}
+			}
+
+			tempMinMills = utcCalendar.getTimeInMillis();
 
 			tweetTimelineMap.put(tempMinMills, 0);
 			rtTimelineMap.put(tempMinMills, 0);
@@ -262,42 +275,20 @@ public class TwitterTimelineDataProcessor {
 
 				lowerCalendar.add(Calendar.HOUR_OF_DAY, 1);
 
-				if (TimeZone.getDefault().inDaylightTime(new Date(roundedLowerBound)) && !TimeZone.getDefault().inDaylightTime(lowerCalendar.getTime())
-						&& !roundDST) {
-					lowerCalendar.add(Calendar.HOUR_OF_DAY, -1);
-					roundDST = true;
-				}
-
 			} else if (filter.equalsIgnoreCase("days")) {
 
 				lowerCalendar.add(Calendar.DAY_OF_MONTH, 1);
-
-				if (TimeZone.getDefault().inDaylightTime(new Date(roundedLowerBound)) && !TimeZone.getDefault().inDaylightTime(lowerCalendar.getTime())
-						&& !roundDST) {
-					lowerCalendar.add(Calendar.HOUR_OF_DAY, -1);
-					roundDST = true;
-				}
 
 			} else if (filter.equalsIgnoreCase("weeks")) {
 
 				lowerCalendar.add(Calendar.WEEK_OF_YEAR, 1);
 
-				if (TimeZone.getDefault().inDaylightTime(new Date(roundedLowerBound)) && !TimeZone.getDefault().inDaylightTime(lowerCalendar.getTime())
-						&& !roundDST) {
-					lowerCalendar.add(Calendar.HOUR_OF_DAY, -1);
-					roundDST = true;
-				}
 			}
 
 			else if (filter.equalsIgnoreCase("months")) {
 
 				lowerCalendar.add(Calendar.MONTH, 1);
 
-				if (TimeZone.getDefault().inDaylightTime(new Date(roundedLowerBound)) && !TimeZone.getDefault().inDaylightTime(lowerCalendar.getTime())
-						&& !roundDST) {
-					lowerCalendar.add(Calendar.HOUR_OF_DAY, -1);
-					roundDST = true;
-				}
 			}
 
 		}
