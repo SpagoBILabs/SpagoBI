@@ -100,6 +100,16 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 		return this.getOrientation() === 'horizontal';
 	}
 
+	, isValuesVisibles: function() {
+		var showvalues;
+		if (this.wconf.showvalues !== undefined){
+			showvalues = this.wconf.showvalues;
+		} else {
+			showvalues = false;
+		}
+		return showvalues;
+	}
+
 	, getTooltip : function(storeItem, item){
 
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: IN");

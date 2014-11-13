@@ -226,6 +226,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	, getSeries: function( categoriesConfig, seriesConfig ) {
 
 		Sbi.trace("[LineChartWidgetRuntime.getSeries]: IN");
+		var thisPanel = this;
 		var series = [];
 
 		for(var i = 0; i < seriesConfig.fields.length; i++) {
@@ -251,8 +252,20 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	            {
 	               display: 'over',
 	               field: seriesConfig.fields[i],
-	               renderer: function(val) {
-	                   return val;
+	               renderer: function(value) {
+	            	if (thisPanel.isValuesVisibles()){
+		           		if (typeof(value) == 'number'){
+		        			if (!thisPanel.isInteger(value)){
+		        				//decimal number
+		        				value = +value.toFixed(2);
+		        			}
+		        		}
+		                   return value;
+	            	} else {
+	            		return "";
+	            	}
+
+
 	              }
 	            }
 	        });
