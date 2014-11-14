@@ -349,7 +349,8 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 
 	, getSeriesLabel: function(seriesConfig) {
 		var label = {
-            display: 'outside',
+			//insideEnd is the only options that work with stacked!
+            display: this.isStacked()? 'insideEnd':'outside',
             field: this.isValuesVisibles()?( seriesConfig.fields.length == 1? seriesConfig.fields[0]: seriesConfig.fields) : null,
             renderer: Ext.util.Format.numberRenderer('0.##'),
             orientation: 'horizontal',
