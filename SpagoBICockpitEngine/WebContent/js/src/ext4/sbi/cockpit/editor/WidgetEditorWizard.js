@@ -102,8 +102,8 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 	}
 
 
-	, getWizardState: function() {
-		return this.editorMainPanel.getWizardState();
+	, getWizardState: function(running) {
+		return this.editorMainPanel.getWizardState(running);
 	}
 
 	, setWizardState: function(editorState) {

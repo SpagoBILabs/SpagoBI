@@ -257,3 +257,9 @@ Sbi.locale.ln['sbi.cockpit.window.toolbar.cacheDate'] = 'Data updated at: ';
 Sbi.locale.ln['sbi.cockpit.storeManager.errorInCleaningCache'] = 'Error in cleaning cache';
 Sbi.locale.ln['sbi.cockpit.storeManager.cacheCleaned'] = 'Cache cleaned';
 Sbi.locale.ln['sbi.cockpit.storeManager.noDatastoreToClean'] = 'No datasource in cockpit';
+
+//===================================================================
+//sbi.cockpit.TableWidgetDesigner
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.TableWidgetDesigner.notAllMeasureAggregated'] = 'Aggregation cannot be done because not all selected measures are aggregated';
+

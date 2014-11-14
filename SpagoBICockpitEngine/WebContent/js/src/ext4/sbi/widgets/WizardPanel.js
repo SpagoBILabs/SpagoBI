@@ -172,7 +172,7 @@ Ext.define('Sbi.widgets.WizardPanel', {
 		// its content. This is useful if some info contained in the active page depends uppon
 		// values inserted by user in some other page of the wizard
 		if (activePage.updateValues){
-			var wizardState = this.getWizardState();
+			var wizardState = this.getWizardState(false);
 			activePage.updateValues(wizardState);
 		}
 
@@ -279,13 +279,14 @@ Ext.define('Sbi.widgets.WizardPanel', {
 		}
 	}
 
-	, getWizardState: function() {
+	// running is true if checking state in order to execute
+	, getWizardState: function(running) {
 		Sbi.trace("[WizardPanel.getWizardState]: IN");
 		var state = {};
 		for(var i = 0; i < this.getPageCount(); i++) {
 			var page = this.getPage(i);
 			if(page.applyPageState) {
-				state = page.applyPageState(state);
+				state = page.applyPageState(state, running);
 				Sbi.trace("[WizardPanel.getWizardState]: apply page [" + i + "] state - " + Sbi.toSource(state));
 			}
 		}

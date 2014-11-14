@@ -268,3 +268,8 @@ Sbi.locale.ln['sbi.cockpit.storeManager.errorInCleaningCache'] = 'Errore nella p
 Sbi.locale.ln['sbi.cockpit.storeManager.cacheCleaned'] = 'Cache pulita';
 Sbi.locale.ln['sbi.cockpit.storeManager.noDatastoreToClean'] = 'Nessun datasource nel cockpit';
 
+//===================================================================
+//sbi.cockpit.TableWidgetDesigner
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.TableWidgetDesigner.notAllMeasureAggregated'] = 'Aggregazione non possibile in quanto non tutte le misure selezionate sono aggregate.';
+

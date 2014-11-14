@@ -84,12 +84,12 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorPage, Ext.Panel, {
 		return isValid;
 	}
 
-	, applyPageState: function(state) {
+	, applyPageState: function(state, running) {
 		Sbi.trace("[WidgetEditorPage.applyPageState]: IN");
 		state =  state || {};
 		if(this.widgetEditorPanel.mainPanel.customConfPanel.designer) {
 			state.wtype = this.widgetEditorPanel.mainPanel.customConfPanel.designer.getDesignerType();
-			state.wconf = this.widgetEditorPanel.mainPanel.customConfPanel.designer.getDesignerState();
+			state.wconf = this.widgetEditorPanel.mainPanel.customConfPanel.designer.getDesignerState(running);
 			state.wgeneric = this.widgetEditorPanel.mainPanel.genericConfPanel.getFormState();
 		}
 		Sbi.trace("[WidgetEditorPage.applyPageState]: OUT");
