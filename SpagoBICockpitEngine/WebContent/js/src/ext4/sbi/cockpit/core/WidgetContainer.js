@@ -425,8 +425,15 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
         	wtype = existingWidget.wtype;
         }
 
-		var wizardState = this.widgetEditorWizard.getWizardState();
-
+        // pass information that is moving towards runtime
+		var wizardState = null;
+		try{
+			wizardState = this.widgetEditorWizard.getWizardState(true);
+		}
+		catch(e){
+			Sbi.error("[WidgetContainer.applyWidgetEditorWizardState]: OUT because exception happened");
+			return null;
+		}
 		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: Title validation");
 
 		var re = this.widgetEditorWizard.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.genericConfPanel.re;

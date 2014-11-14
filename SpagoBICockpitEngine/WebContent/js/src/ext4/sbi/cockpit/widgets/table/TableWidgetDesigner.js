@@ -100,7 +100,7 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.WidgetDesigner, {
 	tableDesigner: null
 
-	, getDesignerState: function() {
+	, getDesignerState: function(running) {
 		Sbi.trace("[TableWidgetDesigner.getDesignerState]: IN");
 
 		var state = Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getDesignerState(this);
@@ -112,20 +112,30 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		}
 
 		// if all measures are aggregate set category and series: category are attributes, seriesare measure with aggregation function
+		var atLeastOneAggregate = false;
 		var areAllMeasureAggregate = true;
 		var measureNumber = 0;
-		var stop = false;
 
-		for (var i = 0; i < state.visibleselectfields.length && stop==false; i++) {
+		for (var i = 0; i < state.visibleselectfields.length; i++) {
 			var  field = state.visibleselectfields[i];
 			if(field.nature == 'measure'){
 				measureNumber++;
-				if(field.funct == null || field.funct == 'NaN'){
+				if(field.funct != null && field.funct != 'NaN' && field.funct != '' ){
+					atLeastOneAggregate = true;
+				}
+				if(field.funct == null || field.funct == 'NaN' || field.funct == ''){
 					areAllMeasureAggregate = false;
-					stop = true;
 				}
 			}
 		}
+
+		if(running != undefined && running === true){
+			if(atLeastOneAggregate == true && areAllMeasureAggregate==false){
+				Sbi.exception.ExceptionHandler.showWarningMessage(LN("sbi.cockpit.TableWidgetDesigner.notAllMeasureAggregated"), "Warning");
+				throw new Error(LN("sbi.cockpit.TableWidgetDesigner.notAllMeasureAggregated"));
+			}
+		}
+
 		var toAggregate = false;
 		if(measureNumber > 0 && areAllMeasureAggregate == true){
 			toAggregate = true;
@@ -133,7 +143,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			state.series = new Array();
 
 			// calculate category and series
-			for (var i = 0; i < state.visibleselectfields.length && stop==false; i++) {
+			for (var i = 0; i < state.visibleselectfields.length; i++) {
 				var  field = state.visibleselectfields[i];
 				if(field.nature == 'attribute' || field.nature == 'segment_attribute'){
 					state.category.push(field);
