@@ -434,6 +434,20 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 			Sbi.error("[WidgetContainer.applyWidgetEditorWizardState]: OUT because exception happened");
 			return null;
 		}
+
+		// must select widget to confirm
+		if(!wizardState.wconf){
+			Sbi.trace("Must define widget on custom configuration before confirming");
+			Ext.Msg.show({
+				title: 'Warning',
+				msg: LN('Sbi.cockpit.core.WidgetContainer.applyWidgetEditorWizardState'),
+				buttons: Ext.Msg.OK,
+				icon: Ext.MessageBox.WARNING
+			});
+			return;
+		}
+
+
 		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: Title validation");
 
 		var re = this.widgetEditorWizard.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.genericConfPanel.re;

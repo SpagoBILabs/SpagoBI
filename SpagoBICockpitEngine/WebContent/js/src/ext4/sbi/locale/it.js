@@ -251,6 +251,7 @@ Sbi.locale.ln['sbi.cockpit.window.toolbar.refresh'] = 'Aggiorna';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.clone'] = 'Clona';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.cacheDate'] = 'Dati aggiornati al: ';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.clone'] = 'Clona';
+Sbi.locale.ln['Sbi.cockpit.core.WidgetContainer.applyWidgetEditorWizardState'] = 'Necessario selezionare un widget';
 
 
 //===================================================================

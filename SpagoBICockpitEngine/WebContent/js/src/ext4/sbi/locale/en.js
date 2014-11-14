@@ -252,7 +252,7 @@ Sbi.locale.ln['sbi.cockpit.window.toolbar.editor'] = 'Edit';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.refresh'] = 'Refresh';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.clone'] = 'Clone';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.cacheDate'] = 'Data updated at: ';
-
+Sbi.locale.ln['Sbi.cockpit.core.WidgetContainer.applyWidgetEditorWizardState'] = 'No widget defined, select one on custom configurations tab';
 
 //===================================================================
 //Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel
@@ -273,4 +273,5 @@ Sbi.locale.ln['sbi.cockpit.storeManager.noDatastoreToClean'] = 'No datasource in
 //sbi.cockpit.TableWidgetDesigner
 //===================================================================
 Sbi.locale.ln['sbi.cockpit.TableWidgetDesigner.notAllMeasureAggregated'] = 'Aggregation cannot be done because not all selected measures are aggregated';
+
 
