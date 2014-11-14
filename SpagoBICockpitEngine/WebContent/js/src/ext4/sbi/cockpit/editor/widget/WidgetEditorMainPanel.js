@@ -20,7 +20,7 @@ Sbi.cockpit.editor.widget.WidgetEditorMainPanel = function(config) {
 	this.init();
 
 	c = {
-	    activeTab: 1,
+	    activeTab: 0,
 	    items: [this.genericConfPanel,this.customConfPanel]
 	};
 
@@ -46,7 +46,11 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.tab.Panel, {
 
 	, setDefaultActiveTab: function(){
 		if (this.rendered)
-			this.setActiveTab(1);
+			this.setActiveTab(0);
+	}
+    , setActiveTabPar: function(i){
+    	if (this.rendered)
+			this.setActiveTab(i);
 	}
 	/*
 	 * @method

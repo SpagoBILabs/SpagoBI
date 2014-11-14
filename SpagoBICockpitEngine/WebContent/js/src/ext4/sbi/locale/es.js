@@ -252,6 +252,7 @@ Sbi.locale.ln['sbi.cockpit.window.toolbar.editor'] = 'Edit';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.refresh'] = 'Refresh';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.clone'] = 'Clone';
 Sbi.locale.ln['sbi.cockpit.window.toolbar.cacheDate'] = 'Data updated at: ';
+Sbi.locale.ln['Sbi.cockpit.core.WidgetContainer.applyWidgetEditorWizardState'] = 'No widget defined, select one on custom configurations tab';
 
 //===================================================================
 //sbi.cockpit.storeManager

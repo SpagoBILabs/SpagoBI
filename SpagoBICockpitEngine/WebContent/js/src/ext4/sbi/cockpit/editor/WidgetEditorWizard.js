@@ -87,7 +87,11 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 				this.getWidgetEditorPage().setPageState(widgetConf);
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: move to page [" + 1 + "]");
 				this.editorMainPanel.moveToPage (1);
-			} else {
+				// if opening in editing mode open second tab page
+				if(widget.wtype != 'selection'){
+					this.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.setActiveTabPar(1);
+				}
+				} else {
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: there are no a used dataset");
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: widgetConf [" + Sbi.toSource(widgetConf) + "]");
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: move to page [" + 0 + "]");
