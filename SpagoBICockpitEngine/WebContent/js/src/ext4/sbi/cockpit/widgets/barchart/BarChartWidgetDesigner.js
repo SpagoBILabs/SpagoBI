@@ -266,13 +266,15 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		var controlsItems = new Array();
 
 		controlsItems.push(this.orientationCombo);
-
+		/*
 		switch (this.chartLib) {
 	        case 'ext3':
 	        	break;
 	        default:
 	        	controlsItems.push(this.showValuesCheck);
-		}
+		}*/
+
+		controlsItems.push(this.showValuesCheck);
 
     	controlsItems.push(this.showLegendCheck);
 

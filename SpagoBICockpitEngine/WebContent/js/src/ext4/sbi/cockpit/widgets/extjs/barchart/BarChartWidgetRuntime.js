@@ -115,6 +115,10 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		return this.getOrientation() === 'horizontal';
 	}
 
+	, isValuesVisibles: function(){
+		return this.wconf? this.wconf.showvalues : null;
+	}
+
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -345,11 +349,12 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 
 	, getSeriesLabel: function(seriesConfig) {
 		var label = {
-            display: 'insideEnd',
-            field: seriesConfig.titles.length == 1? seriesConfig.titles[0]: undefined,
-            renderer: Ext.util.Format.numberRenderer('0'),
+            display: 'outside',
+            field: this.isValuesVisibles()?( seriesConfig.fields.length == 1? seriesConfig.fields[0]: seriesConfig.fields) : null,
+            renderer: Ext.util.Format.numberRenderer('0.##'),
             orientation: 'horizontal',
-            color: '#333',
+            contrast: true,
+		    font: '1em Arial',
             'text-anchor': 'middle'
 		};
 		return label;
