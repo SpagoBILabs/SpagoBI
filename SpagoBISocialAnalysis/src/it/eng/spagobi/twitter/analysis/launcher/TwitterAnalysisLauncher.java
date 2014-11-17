@@ -294,6 +294,9 @@ public class TwitterAnalysisLauncher {
 
 			if (twitterMonitor != null) {
 
+				twitterSearch.getTwitterMonitorScheduler().setActive(true);
+				twitterSearch.getTwitterMonitorScheduler().setActiveSearch(true);
+
 				// thread to get resources info
 				startMonitoringResourcesThreads();
 
@@ -808,12 +811,6 @@ public class TwitterAnalysisLauncher {
 
 			twitterMonitor.setStartingTime(startingCalendar);
 
-			if (twitterMonitor.getUpToValue() <= 0) {
-				twitterMonitor.setActive(false);
-			} else {
-				twitterMonitor.setActive(true);
-			}
-
 			twitterMonitor.setActiveSearch(true);
 			cache.updateTwitterMonitorScheduler(twitterMonitor);
 
@@ -896,6 +893,12 @@ public class TwitterAnalysisLauncher {
 
 					sched.scheduleJob(hSearchJob, trigger);
 				}
+			}
+
+			if (twitterMonitor.getUpToValue() <= 0) {
+				twitterMonitor.setActive(false);
+			} else {
+				twitterMonitor.setActive(true);
 			}
 
 			twitterMonitor.setStartingTime(startingCalendar);
@@ -982,6 +985,12 @@ public class TwitterAnalysisLauncher {
 
 					sched.scheduleJob(hSearchJob, trigger);
 				}
+			}
+
+			if (twitterMonitor.getUpToValue() <= 0) {
+				twitterMonitor.setActive(false);
+			} else {
+				twitterMonitor.setActive(true);
 			}
 
 			twitterMonitor.setStartingTime(startingCalendar);
