@@ -85,7 +85,7 @@ public class MonitoringResourcesJob implements Job {
 
 			Calendar endingTime = monitorScheduler.getEndingTime();
 
-			if (endingTime.compareTo(startingCalendar) < 0) {
+			if (endingTime.compareTo(startingCalendar) < 0 && monitorScheduler.getUpToValue() > 0) {
 
 				monitorScheduler.setActive(false);
 			}
