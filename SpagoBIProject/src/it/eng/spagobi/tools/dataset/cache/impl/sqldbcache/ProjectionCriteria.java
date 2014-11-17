@@ -37,11 +37,11 @@ public class ProjectionCriteria {
 		this.dataset = dataset;
 		this.columnName = columnName;
 		this.aggregateFunction = aggregateFunction;
-		if (aggregateFunction != null) {
-			this.aliasName = aggregateFunction + "(" + aliasName + ")";
-		} else {
-			this.aliasName = aliasName;
-		}
+		// if (aggregateFunction != null) {
+		// this.aliasName = aggregateFunction + "(" + aliasName + ")";
+		// } else {
+		this.aliasName = aliasName;
+		// }
 	}
 
 	public String getDataset() {
