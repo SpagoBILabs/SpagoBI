@@ -466,7 +466,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 
 		if (wizardState.storeId != null){
 			var storeConf = {storeId: wizardState.storeId};
-			if(wizardState.wtype.indexOf("crosstab")){
+			if(wizardState.wtype.indexOf("crosstab")>=0){
 				storeConf.stype = "crosstab";
 			}
 			if(wizardState.wconf.series && wizardState.wconf.category) {
