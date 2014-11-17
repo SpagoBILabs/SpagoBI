@@ -179,12 +179,6 @@ public class TwitterHistoricalSearchAPI {
 
 					twitterMonitorScheduler.setUpToValue(Integer.parseInt(numberUpTo));
 
-					if (Integer.parseInt(numberUpTo) <= 0) {
-						twitterMonitorScheduler.setActive(false);
-					} else {
-						twitterMonitorScheduler.setActive(true);
-					}
-
 					if (typeUpTo.equalsIgnoreCase(UpToTypeEnum.Day.toString())) {
 						twitterMonitorScheduler.setUpToType(UpToTypeEnum.Day);
 					} else if (typeUpTo.equalsIgnoreCase(UpToTypeEnum.Week.toString())) {
@@ -195,8 +189,15 @@ public class TwitterHistoricalSearchAPI {
 
 					if (twitterSearch.getTwitterSearchScheduler() != null) {
 						twitterMonitorScheduler.setActiveSearch(true);
+						twitterMonitorScheduler.setActive(true);
 					} else {
 						twitterMonitorScheduler.setActiveSearch(false);
+
+						if (Integer.parseInt(numberUpTo) <= 0) {
+							twitterMonitorScheduler.setActive(false);
+						} else {
+							twitterMonitorScheduler.setActive(true);
+						}
 					}
 
 					twitterMonitorScheduler.setAccounts(accounts);

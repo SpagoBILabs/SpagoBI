@@ -60,6 +60,7 @@ public class TwitterStreamingSearchAPI {
 
 			if (twitterSearch.getTwitterMonitorScheduler() != null) {
 				twitterSearch.getTwitterMonitorScheduler().setActiveSearch(true);
+				twitterSearch.getTwitterMonitorScheduler().setActive(true);
 			}
 
 			String languageCode = null;
@@ -114,6 +115,11 @@ public class TwitterStreamingSearchAPI {
 
 			if (twitterSearch.getTwitterMonitorScheduler() != null) {
 				twitterSearch.getTwitterMonitorScheduler().setActiveSearch(false);
+				if (twitterSearch.getTwitterMonitorScheduler().getUpToValue() <= 0) {
+					twitterSearch.getTwitterMonitorScheduler().setActive(false);
+				} else {
+					twitterSearch.getTwitterMonitorScheduler().setActive(true);
+				}
 			}
 
 			// initializing the launcher with this search
@@ -409,12 +415,6 @@ public class TwitterStreamingSearchAPI {
 				}
 
 				twitterMonitorScheduler.setUpToValue(Integer.parseInt(numberUpTo));
-
-				if (Integer.parseInt(numberUpTo) <= 0) {
-					twitterMonitorScheduler.setActive(false);
-				} else {
-					twitterMonitorScheduler.setActive(true);
-				}
 
 				if (typeUpTo.equalsIgnoreCase(UpToTypeEnum.Day.toString())) {
 					twitterMonitorScheduler.setUpToType(UpToTypeEnum.Day);
