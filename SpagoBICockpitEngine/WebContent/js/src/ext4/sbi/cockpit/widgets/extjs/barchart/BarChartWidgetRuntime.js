@@ -234,7 +234,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
             animate: true,
             theme: 'CustomTheme',
             background: this.getBackground(),
-	        legend: this.isLegendVisible()
+	        legend: this.isLegendVisible()? this.getLegendConfiguration(): false
         });
 
 		this.setContentPanel(this.chartPanel);

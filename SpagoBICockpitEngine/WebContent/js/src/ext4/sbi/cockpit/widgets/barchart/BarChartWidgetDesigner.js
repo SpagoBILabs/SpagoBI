@@ -49,6 +49,7 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 					state.orientation = thePanel.orientation;
 					state.showvalues = thePanel.showvalues;
 					state.showlegend = thePanel.showlegend;
+					state.legendPosition = thePanel.legendPosition;
 					state.category = thePanel.category;
 					state.groupingVariable = thePanel.groupingVariable;
 					state.series = thePanel.series;
@@ -89,6 +90,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 	, categoryAxis: null
 	, seriesAxis: null
 	, sortOrder: null
+	, legendPositionCombo: null
 
 	// =================================================================================================================
 	// METHODS
@@ -148,6 +150,28 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			name: 'showlegend'
 			, checked: false
 			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title')
+		});
+
+		this.legendPositionStore = new Ext.data.ArrayStore({
+			fields : ['name', 'description']
+			, data : [['bottom', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.bottom')]
+					, ['top', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.top')]
+					, ['left', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.left')]
+					, ['right', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right')]]
+		});
+		this.legendPositionCombo = new Ext.form.ComboBox({
+			width:			160,
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	false,
+			fieldLabel:      LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.title'),
+			name:           'position',
+			displayField:   'description',
+			valueField:     'name',
+			value:			'bottom',
+			store:          this.legendPositionStore
 		});
 
 		this.categoryAxisText = new Ext.form.Text({
@@ -278,11 +302,13 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 
     	controlsItems.push(this.showLegendCheck);
 
-    	controlsItems.push(this.categoryAxisText);
+    	controlsItems.push(this.legendPositionCombo);
 
-    	controlsItems.push(this.seriesAxisText);
+    	//controlsItems.push(this.categoryAxisText);
 
-    	controlsItems.push(this.sortOrderCombo);
+    	//controlsItems.push(this.seriesAxisText);
+
+    	//controlsItems.push(this.sortOrderCombo);
 
 
 		this.form = new Ext.form.FormPanel({
@@ -296,17 +322,22 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		  			    {
 							xtype: 'fieldset'
 //							, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.type')
-							, columnWidth : .7
+							, columnWidth : .430
 							, border: false
 							, items: [this.typeRadioGroup]
 						}
 						, {
 							xtype: 'fieldset'
 //							, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
-							, columnWidth : .3
+							, columnWidth : .275
 							, border: false
 							, items: controlsItems
-						}
+						}, {
+							xtype: 'fieldset'
+								, columnWidth : .275
+								, border: false
+								, items: [this.categoryAxisText,this.seriesAxisText,this.sortOrderCombo]
+							}
 			    	]
 			    }
 				, this.axisDefinitionPanel
@@ -372,6 +403,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		state.orientation = this.orientationCombo.getValue();
 		state.showvalues = this.showValuesCheck.getValue();
 		state.showlegend = this.showLegendCheck.getValue();
+		state.legendPosition = this.legendPositionCombo.getValue();
 		state.categoryAxis = this.categoryAxisText.getValue();
 		state.sortOrder = this.sortOrderCombo.getValue();
 		state.seriesAxis = this.seriesAxisText.getValue();
@@ -392,6 +424,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		if (state.orientation) this.orientationCombo.setValue(state.orientation);
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
+		if (state.legendPosition) this.legendPositionCombo.setValue(state.legendPosition);
 		if (state.categoryAxis) this.categoryAxisText.setValue(state.categoryAxis);
 		if (state.seriesAxis) this.seriesAxisText.setValue(state.seriesAxis);
 		if (state.sortOrder) this.sortOrderCombo.setValue(state.sortOrder);
