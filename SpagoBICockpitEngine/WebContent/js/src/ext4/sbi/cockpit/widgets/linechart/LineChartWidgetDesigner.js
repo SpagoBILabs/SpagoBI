@@ -35,6 +35,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	, categoryAxis: null
 	, seriesAxis: null
 	, sortOrder: null
+	, legendPositionCombo: null
 
 	, constructor : function(config) {
 		Sbi.trace("[PieChartWidgetDesigner.constructor]: IN");
@@ -70,6 +71,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		state.colorarea = this.colorAreaCheck.getValue();
 		state.showvalues = this.showValuesCheck.getValue();
 		state.showlegend = this.showLegendCheck.getValue();
+		state.legendPosition = this.legendPositionCombo.getValue();
 		state.categoryAxis = this.categoryAxisText.getValue();
 		state.seriesAxis = this.seriesAxisText.getValue();
 		state.sortOrder = this.sortOrderCombo.getValue();
@@ -91,6 +93,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		if (state.colorarea) this.colorAreaCheck.setValue(state.colorarea);
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
+		if (state.legendPosition) this.legendPositionCombo.setValue(state.legendPosition);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.groupingVariable && this.showSeriesGroupingPanel === true) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
@@ -232,6 +235,8 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		}
 
 		checkFields.push(this.showLegendCheck);
+		checkFields.push(this.legendPositionCombo);
+
 
 		this.optionsPanel = new Ext.Panel({
 			layout: 'column'
@@ -313,6 +318,28 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		this.showLegendCheck = new Ext.form.Checkbox({
 			checked: false
 			, fieldLabel: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showlegend.title')
+		});
+
+		this.legendPositionStore = new Ext.data.ArrayStore({
+			fields : ['name', 'description']
+			, data : [['bottom', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.bottom')]
+					, ['top', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.top')]
+					, ['left', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.left')]
+					, ['right', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right')]]
+		});
+		this.legendPositionCombo = new Ext.form.ComboBox({
+			width:			180,
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	false,
+			fieldLabel:      LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.title'),
+			name:           'position',
+			displayField:   'description',
+			valueField:     'name',
+			value:			'bottom',
+			store:          this.legendPositionStore
 		});
 	}
 
