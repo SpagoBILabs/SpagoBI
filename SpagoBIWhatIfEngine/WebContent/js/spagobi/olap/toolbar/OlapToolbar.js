@@ -38,8 +38,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			'BUTTON_HIDE_SPANS':'hideSpans',
 			'BUTTON_FATHER_MEMBERS':'showParentMembers'
 		},
-		whatIfButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER','BUTTON_EXPORT_OUTPUT','BUTTON_CALCULATED_MEMBERS','BUTTON_ALGORITHMS','EXPORT_XLS'],
-		unlockedButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER','BUTTON_ALGORITHMS'],
+		whatIfButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER','BUTTON_EXPORT_OUTPUT','BUTTON_CALCULATED_MEMBERS'],//,'BUTTON_ALGORITHMS','EXPORT_XLS'],
+		unlockedButtons: [ 'BUTTON_SAVE','BUTTON_SAVE_NEW', 'BUTTON_UNDO','BUTTON_VERSION_MANAGER'],//,'BUTTON_ALGORITHMS'],
 		olapToggleButtons:  ['BUTTON_FATHER_MEMBERS','BUTTON_HIDE_SPANS','BUTTON_HIDE_EMPTY' ],
 		olapButtons: ['BUTTON_MDX','BUTTON_EDIT_MDX','BUTTON_FLUSH_CACHE','EXPORT_XLS'],
 		lockButtons:['BUTTON_LOCK','BUTTON_UNLOCK','BUTTON_LOCK_OTHER']
@@ -288,30 +288,30 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 
 		// Combo with the allocation algorithms
-		this.buttonsConfigContainer['BUTTON_ALGORITHMS'] = {
-			extType: 'Ext.form.field.ComboBox',
-			tooltip: LN('sbi.olap.toolbar.BUTTON_ALGORITHMS'),
-			iconCls: 'BUTTON_ALGORITHMS',
-	        hideLabel: true,
-	        store: algorithmsStore,
-	        displayField: 'name',
-	        valueField: 'className',
-	        hidden : saveHidden,
-	        typeAhead: true,
-	        queryMode: 'local',
-	        triggerAction: 'all',
-	        emptyText: LN('sbi.olap.toolbar.BUTTON_ALGORITHMS'),
-	        selectOnFocus: true,
-	        width: 160,
-	        indent: true,
-	        listeners:{
-				select:{
-					fn: function( combo, records ){
-						Sbi.olap.eventManager.setAllocationAlgorithm(records[0].data.name);
-					}
-				}
-			}
-		};
+//		this.buttonsConfigContainer['BUTTON_ALGORITHMS'] = {
+//			extType: 'Ext.form.field.ComboBox',
+//			tooltip: LN('sbi.olap.toolbar.BUTTON_ALGORITHMS'),
+//			iconCls: 'BUTTON_ALGORITHMS',
+//	        hideLabel: true,
+//	        store: algorithmsStore,
+//	        displayField: 'name',
+//	        valueField: 'className',
+//	        hidden : saveHidden,
+//	        typeAhead: true,
+//	        queryMode: 'local',
+//	        triggerAction: 'all',
+//	        emptyText: LN('sbi.olap.toolbar.BUTTON_ALGORITHMS'),
+//	        selectOnFocus: true,
+//	        width: 160,
+//	        indent: true,
+//	        listeners:{
+//				select:{
+//					fn: function( combo, records ){
+//						Sbi.olap.eventManager.setAllocationAlgorithm(records[0].data.name);
+//					}
+//				}
+//			}
+//		};
 
 
 		// LOCK BUTTON CREATION
