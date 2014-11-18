@@ -81,3 +81,10 @@ Sbi.locale.ln['sbi.qbe.datastorepanel.button.tt.exportto'] = 'Esporta a';
 //===================================================================
 Sbi.locale.ln['sbi.cockpit.aggregationwindow.title'] = 'Seleziona funzione di aggregazione';
 Sbi.locale.ln['sbi.cockpit.aggregationwindow.selectAggregation'] = 'Funzione di aggregazione';
+
+//===================================================================
+//Sbi.cockpit.widgets.table.QueryFieldsContainerPanel
+//===================================================================
+
+Sbi.locale.ln['Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.infoTitle'] = 'Info';
+Sbi.locale.ln['Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.info'] = 'Definisci col mouse l\'ordine di apparizione dei campi, con un doppio click su una misura si definisce l\'aggregazione. per cancellare un campo premere Canc';
