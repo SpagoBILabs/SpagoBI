@@ -74,7 +74,8 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
     ,
     onLoadHandler: function(store, records, successful, eOpts, sorterFn) {
 		if (!this.inMemoryData) {
-			this.inMemoryData = this.data.items.slice(0);//clone the items
+			this.inMemoryData = this.data.items;
+			this.data.items = [];
 		}
 		var items = this.getFilteredItems(this.inMemoryData, this.filteredProperties, this.filterString, this.filteredObjects, this.filterSpecificProperty);
 		this.suspendEvents(false);
@@ -82,7 +83,9 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 			items = Ext.Array.sort(items, sorterFn);
 		}
 		items = this.getPageItems(this.start, this.limit, items);
-		this.removeAll();
+		if (this.data.items.length > 0){
+			this.removeAll();
+		}
 		this.remoteSort = true; // this will prevent the add method to invoke the doSort method (an infinite loop will occur)
 		this.add(items);
 		this.resumeEvents();
