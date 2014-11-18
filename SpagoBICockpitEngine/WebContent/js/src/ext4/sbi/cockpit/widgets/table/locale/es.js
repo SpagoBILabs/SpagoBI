@@ -104,3 +104,9 @@ Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.postline
 Sbi.locale.ln['sbi.cockpit.aggregationwindow.title'] = 'Select aggregation function';
 Sbi.locale.ln['sbi.cockpit.aggregationwindow.selectAggregation'] = 'Aggregation function';
 
+//===================================================================
+//Sbi.cockpit.widgets.table.QueryFieldsContainerPanel
+//===================================================================
+
+Sbi.locale.ln['Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.infoTitle'] = 'Info';
+Sbi.locale.ln['Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.info'] = 'Define with mouse fields order of appearance. \n Double click on measure to define aggregation. \n Click cancel button to delete.';

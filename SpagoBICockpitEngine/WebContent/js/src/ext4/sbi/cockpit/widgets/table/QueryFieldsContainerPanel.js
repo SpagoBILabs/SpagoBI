@@ -53,7 +53,18 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 	    	forceFit: true
 	    }
 		, tools: [
-	          {
+			        {
+			        	  type: 'help'
+			        	, handler: function(){
+							Ext.Msg.show({
+								   title: LN('Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.infoTitle'),
+								   msg: LN('Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.info'),
+								   buttons: Ext.Msg.OK,
+								   icon: Ext.MessageBox.INFO 	});
+			            }
+			          }
+		          ,
+		        {
 	        	  type: 'close'
 	        	, handler: this.removeAllValues
 	          	, scope: this
