@@ -13,13 +13,13 @@
 <script type="text/javascript" src='../js/lib/ext-3.4.1/adapter/ext/ext-base.js'/></script>
 --%>
 
-<%-- Ext lib for development environment --%>
+<%-- Ext lib for development environment
 <script type="text/javascript" src='../js/lib/ext-3.4.1/ext-all-debug-w-comments.js'/></script>
+ --%>
 
-
-<%-- Ext lib for production environment 
+<%-- Ext lib for production environment --%>
 <script type="text/javascript" src='../js/lib/ext-3.4.1/ext-all.js'/></script>  
---%>
+
 
 <%-- Ext lib overrides --%>
 <!--<script type="text/javascript" src='../js/lib/overrides-ext-3.4.1/overrides.js'/></script> -->
