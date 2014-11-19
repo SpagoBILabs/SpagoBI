@@ -482,7 +482,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				Class clas = targetEntity.getJavaType();
 				Field f = clas.getDeclaredField(subKey);
 				f.setAccessible(true);
-				entityManager.refresh(referenced);
+				// entityManager.refresh(referenced);
 				f.set(obj, referenced);
 			} catch (JSONException e) {
 				logger.error(e);
