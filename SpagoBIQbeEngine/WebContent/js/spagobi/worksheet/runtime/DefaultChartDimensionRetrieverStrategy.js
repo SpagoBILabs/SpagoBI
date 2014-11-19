@@ -97,7 +97,7 @@ Sbi.worksheet.runtime.DefaultChartDimensionRetrieverStrategy = function(config) 
 			}
 			return toReturn;
 		}
-		
+		 
 		, getMaxCategoryLength : function (categories) {
 			var toReturn = 0;
 			for (var i = 0; i < categories.length; i++) {
