@@ -8,6 +8,7 @@ package it.eng.spagobi.engine.mobile.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -37,136 +38,215 @@ import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
 import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
-
 /**
  * @author Monica Franceschini
- *
+ * 
  */
-public class DocumentBrowserAction extends AbstractBaseHttpAction{
-	
+public class DocumentBrowserAction extends AbstractBaseHttpAction {
+
 	// REQUEST PARAMETERS
 	public static final String FOLDER_ID = "node";
-	
+
 	public static final String ROOT_NODE_ID = "rootNode";
-	
+
 	// logger component
-	private static Logger logger = Logger.getLogger(DocumentBrowserAction.class);
-	
-	public void service(SourceBean request, SourceBean response) throws Exception {
-		
-		
+	private static Logger logger = Logger
+			.getLogger(DocumentBrowserAction.class);
+
+	public void service(SourceBean request, SourceBean response)
+			throws Exception {
+
 		List functionalities;
+
 		List objects = new ArrayList<BIObject>();
 		boolean isRoot = false;
 		boolean isHome = false;
-		
+
 		logger.debug("IN");
-		
+
 		try {
-			setSpagoBIRequestContainer( request );
-			setSpagoBIResponseContainer( response );
-			
-			String functID = getAttributeAsString(FOLDER_ID);		
-			logger.debug("Parameter [" + FOLDER_ID + "] is equal to [" + functID + "]");
-			
-			//getting default folder (root)
-			LowFunctionality rootFunct = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
-			if (functID == null || functID.equalsIgnoreCase(ROOT_NODE_ID) ||functID.equalsIgnoreCase("0")||functID.equalsIgnoreCase("ext-data-treestore-1-root")){
+			setSpagoBIRequestContainer(request);
+			setSpagoBIResponseContainer(response);
+
+			String functID = getAttributeAsString(FOLDER_ID);
+			logger.debug("Parameter [" + FOLDER_ID + "] is equal to ["
+					+ functID + "]");
+
+			// getting default folder (root)
+			LowFunctionality rootFunct = DAOFactory.getLowFunctionalityDAO()
+					.loadRootLowFunctionality(false);
+			if (functID == null || functID.equalsIgnoreCase(ROOT_NODE_ID)
+					|| functID.equalsIgnoreCase("0")
+					|| functID.equalsIgnoreCase("ext-data-treestore-1-root")) {
 				isRoot = true;
 				functID = String.valueOf(rootFunct.getId());
-			}else if (functID.equalsIgnoreCase(rootFunct.getId().toString())) {
+			} else if (functID.equalsIgnoreCase(rootFunct.getId().toString())) {
 				isRoot = true;
 			}
-			
-			
+
 			SessionContainer sessCont = getSessionContainer();
 			SessionContainer permCont = sessCont.getPermanentContainer();
-			IEngUserProfile profile = (IEngUserProfile)permCont.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			
-			///case user not logged provides a fake store
-			if(profile == null || functID.equals("ext-data-treestore-1-root")){
+			IEngUserProfile profile = (IEngUserProfile) permCont
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
-				JSONObject foldersAndDocsResponseJSON =  createJSONResponse(new JSONArray("[{name: Document Browser}]"), new JSONArray());
-				
+			// /case user not logged provides a fake store
+			if (profile == null || functID.equals("ext-data-treestore-1-root")) {
+
+				JSONObject foldersAndDocsResponseJSON = createJSONResponse(
+						new JSONArray("[{name: Document Browser}]"),
+						new JSONArray());
+
 				try {
-					writeBackToClient( new JSONSuccess( foldersAndDocsResponseJSON ) );
+					writeBackToClient(new JSONSuccess(
+							foldersAndDocsResponseJSON));
 					return;
 				} catch (IOException e) {
-					SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Document Browser", "Document browser failure");
+					SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException(
+							"Document Browser", "Document browser failure");
 					writeBackToClient(new JSONFailure(serviceError));
-					throw new SpagoBIException("Impossible to write back the responce to the client", e);
-					
+					throw new SpagoBIException(
+							"Impossible to write back the responce to the client",
+							e);
+
 				}
 			}
 
-			objects = fillInnerDocuments(functID, isHome,profile);
-			
+			objects = fillInnerDocuments(functID, isHome, profile);
+
 			HttpServletRequest httpRequest = getHttpRequest();
 			MessageBuilder m = new MessageBuilder();
 			Locale locale = m.getLocale(httpRequest);
-			
 
+			functionalities = DAOFactory.getLowFunctionalityDAO()
+					.loadUserFunctionalities(Integer.valueOf(functID), false,
+							profile);
+			HashMap<Integer, Integer> functToRet = new HashMap<Integer, Integer>();
 
-			functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(Integer.valueOf(functID), false, profile);
-			if(functionalities!= null && functionalities.size() ==1){
-				Integer lonelyFolderId = ((LowFunctionality)functionalities.get(0)).getId();
-				functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(lonelyFolderId, false, profile);
-				objects = fillInnerDocuments(lonelyFolderId.toString(), isHome,profile);
+			List toRet = new ArrayList();
+			toRet.addAll(functionalities);
+			for (int i = 0; i < functionalities.size(); i++) {
+				LowFunctionality lf = (LowFunctionality)functionalities.get(i);
+				getFoldersWithinMobileDocs(lf, profile,functToRet,lf.getId());
 			}
-			
-			JSONArray documentsJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( objects ,locale);
-			JSONArray foldersJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( functionalities,locale );			
-			
-			JSONObject foldersAndDocsResponseJSON =  createJSONResponse(foldersJSON, documentsJSON);
-			
-			
+			for (int i = 0; i < functionalities.size(); i++) {
+				LowFunctionality functI = ((LowFunctionality) functionalities
+						.get(i));
+
+				if (!functToRet.keySet().contains(functI.getId())) {
+					toRet.remove(functI);
+				}
+			}
+
+			while (toRet != null && toRet.size() == 1) {
+				Integer lonelyFolderId = ((LowFunctionality) toRet
+						.get(0)).getId();
+				toRet = DAOFactory
+						.getLowFunctionalityDAO()
+						.loadUserFunctionalities(lonelyFolderId, false, profile);
+				ArrayList innerobjects = fillInnerDocuments(lonelyFolderId.toString(), isHome,
+						profile);
+				objects.addAll(innerobjects);
+			}
+
+			JSONArray documentsJSON = (JSONArray) SerializerFactory
+					.getSerializer("application/json").serialize(objects,
+							locale);
+			JSONArray foldersJSON = (JSONArray) SerializerFactory
+					.getSerializer("application/json").serialize(toRet, locale);
+
+			JSONObject foldersAndDocsResponseJSON = createJSONResponse(
+					foldersJSON, documentsJSON);
+
 			try {
-				writeBackToClient( new JSONSuccess( foldersAndDocsResponseJSON ) );
+				writeBackToClient(new JSONSuccess(foldersAndDocsResponseJSON));
 			} catch (IOException e) {
-				SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Document Browser", "Document browser failure");
+				SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException(
+						"Document Browser", "Document browser failure");
 				writeBackToClient(new JSONFailure(serviceError));
-				throw new SpagoBIException("Impossible to write back the responce to the client", e);
+				throw new SpagoBIException(
+						"Impossible to write back the responce to the client",
+						e);
 			}
-			
+
 		} catch (Throwable t) {
 
-			throw new SpagoBIException("An unexpected error occured while executing " + getActionName(), t);
+			throw new SpagoBIException(
+					"An unexpected error occured while executing "
+							+ getActionName(), t);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 
-	
-	private ArrayList fillInnerDocuments(String functID, boolean isHome, IEngUserProfile profile) throws NumberFormatException, EMFUserError, EMFInternalError{
-		LowFunctionality targetFunct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(new Integer(functID), false);
-		isHome = "USER_FUNCT".equalsIgnoreCase( targetFunct.getCodType() );
-		List tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(functID), profile, isHome);
+	private ArrayList fillInnerDocuments(String functID, boolean isHome,
+			IEngUserProfile profile) throws NumberFormatException,
+			EMFUserError, EMFInternalError {
+		LowFunctionality targetFunct = DAOFactory.getLowFunctionalityDAO()
+				.loadLowFunctionalityByID(new Integer(functID), false);
+		isHome = "USER_FUNCT".equalsIgnoreCase(targetFunct.getCodType());
+		List tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(
+				Integer.valueOf(functID), profile, isHome);
 		ArrayList objects = new ArrayList();
-		if(tmpObjects != null) {
-            for(Iterator it = tmpObjects.iterator(); it.hasNext();) {
-                BIObject obj = (BIObject)it.next();
-                if(ObjectsAccessVerifier.checkProfileVisibility(obj, profile))
-                	objects.add(obj);
-            }
+		if (tmpObjects != null) {
+			for (Iterator it = tmpObjects.iterator(); it.hasNext();) {
+				BIObject obj = (BIObject) it.next();
+				if (ObjectsAccessVerifier.checkProfileVisibility(obj, profile))
+					objects.add(obj);
+			}
 		}
 		return objects;
 	}
 
+	private void getFoldersWithinMobileDocs(LowFunctionality lf, IEngUserProfile profile, HashMap toReturn, Integer origin)
+			throws NumberFormatException, EMFUserError, EMFInternalError {
+
+			List tmpBiObjs = DAOFactory.getBIObjectDAO().loadBIObjects(lf.getId(), profile, false);
+			if (tmpBiObjs != null && !tmpBiObjs.isEmpty()) {
+
+				for (Iterator iterator = tmpBiObjs.iterator(); iterator
+						.hasNext();) {
+					BIObject biobj = (BIObject) iterator.next();
+
+					if (ObjectsAccessVerifier.checkProfileVisibility(biobj,
+							profile)
+							&& (biobj.getEngine().getDriverName()
+									.indexOf("Mobile") != -1)) {
+
+						toReturn.put(origin, lf.getId());
+					}
+				}
+			}
+			List tmpLowFuncts = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(lf.getId(), true, profile);
+			
+			if (tmpLowFuncts != null && !tmpLowFuncts.isEmpty()) {
+				for (int i = 0; i < tmpLowFuncts.size(); i++) {
+					LowFunctionality lfi = (LowFunctionality) tmpLowFuncts.get(i);
+					getFoldersWithinMobileDocs(lfi, profile, toReturn, origin);
+				}
+			}
+
+	}
+
 	/**
 	 * Creates a json object with children document and folders
+	 * 
 	 * @param rows
 	 * @return
 	 * @throws JSONException
 	 */
-	private JSONObject createJSONResponse(JSONArray folders, JSONArray documents) throws JSONException {
+	private JSONObject createJSONResponse(JSONArray folders, JSONArray documents)
+			throws JSONException {
 		JSONObject results = new JSONObject();
-		if(documents.length() != 0){
-			for(int i=0; i< documents.length(); i++){
-				
+		if (documents.length() != 0) {
+			for (int i = 0; i < documents.length(); i++) {
+
 				JSONObject doc = documents.getJSONObject(i);
-				if(((String)doc.get("typeCode")).equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_REPORT) || 
-						((String)doc.get("typeCode")).equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_CHART)||
-						((String)doc.get("typeCode")).equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_COCKPIT)){
+				if (((String) doc.get("typeCode"))
+						.equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_REPORT)
+						|| ((String) doc.get("typeCode"))
+								.equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_CHART)
+						|| ((String) doc.get("typeCode"))
+								.equalsIgnoreCase(MobileConstants.DOCUMENT_TYPE_MOBILE_COCKPIT)) {
 					doc.put("leaf", "true");
 					folders.put(doc);
 				}
