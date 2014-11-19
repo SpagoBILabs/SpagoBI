@@ -1,9 +1,9 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
+
 Ext.define('app.controllers.ParametersController',{
 	extend: 'Ext.app.Controller',
 	config:{
@@ -24,9 +24,9 @@ Ext.define('app.controllers.ParametersController',{
 		});
 	}
 
-	
+
 	, getParametersForExecutionAction: function(option, refresh){
-	
+
 		var id = option.id;
 		var label = option.label;
 		var roleName = option.roleName;
@@ -45,18 +45,18 @@ Ext.define('app.controllers.ParametersController',{
 			success: function(response, opts) {
 				if(response!=undefined && response!=null && response.responseText!=undefined && response.responseText!=null){
 					var responseJson = Ext.decode(response.responseText);
-					
+
 					var executionInstance = {
 							OBJECT_NAME: option.docName,
-							OBJECT_ID: id, 
-							OBJECT_LABEL: label, 
-							isFromCross: isFromCross, 
-							ROLE:roleName, 
+							OBJECT_ID: id,
+							OBJECT_LABEL: label,
+							isFromCross: isFromCross,
+							ROLE:roleName,
 							SBI_EXECUTION_ID: sbiExecutionId,
-							ENGINE: engine, 
+							ENGINE: engine,
 							TYPE_CODE: typeCode
 					};
-					
+
 					if(responseJson==undefined || responseJson==null || responseJson.length==0  ){
 						executionInstance.noParametersPageNeeded=true;
 						app.controllers.executionController.executeTemplate({executionInstance: executionInstance},null,refresh);
@@ -67,7 +67,7 @@ Ext.define('app.controllers.ParametersController',{
 							//app.controllers.mobileController.destroyExecutionView();
 							var paramsToBeFilled = parameters.slice(0);
 							var paramsFilled= this.fillParametersFromCross(parameters, paramsFromCross, paramsToBeFilled);
-							
+
 							if((paramsToBeFilled.length-defaultValues)==0){
 								//execute now!
 								executionInstance.PARAMETERS = this.fromArrayToObject(paramsFromCross, defaultValues);
@@ -101,11 +101,18 @@ Ext.define('app.controllers.ParametersController',{
 			,failure: function(response, options) {
 				Sbi.exception.ExceptionHandler.handleFailure(response, options);
 			}
-		}); 
+		});
 	}
-	
-	, fromArrayToObject: function(jsonArray, defaultValues){
+
+	, fromArrayToObject: function(jsonArrayTemp, defaultValues){
 		var params={};
+		var jsonArray;
+		if(jsonArrayTemp.length==1 && jsonArrayTemp[0] instanceof Array){
+			jsonArray = jsonArrayTemp[0];
+		}else{
+			jsonArray = jsonArrayTemp;
+		}
+
 		if(jsonArray){
 			for(var i=0; i<jsonArray.length; i++){
 				var obj = jsonArray[i];
@@ -131,11 +138,11 @@ Ext.define('app.controllers.ParametersController',{
 
 		return params;
 	}
-	
+
 	, fillParametersWithDefault: function(parametersNeeded){
 		var parametersFilled = new Array();
 		if(parametersNeeded != null && parametersNeeded != undefined){
-		
+
 			for(var i =parametersNeeded.length-1; i>=0; i--){
 				var p = parametersNeeded[i];
 				var nm = p.getName();
@@ -150,16 +157,23 @@ Ext.define('app.controllers.ParametersController',{
 		}
 		return parametersFilled;
 	}
-	
-	, fillParametersFromCross: function(parametersNeeded, parametersFromCross, paramsToBeFilled){
+
+	, fillParametersFromCross: function(parametersNeeded, parametersFromCrossNav, paramsToBeFilled){
 		var parametersFilled = new Array();
-		if(parametersNeeded != null && parametersNeeded != undefined && 
-				parametersFromCross != null && parametersFromCross != undefined	){
-		
+		var parametersFromCross;
+		if(parametersNeeded != null && parametersNeeded != undefined &&
+				parametersFromCrossNav != null && parametersFromCrossNav != undefined	){
+			if(parametersFromCrossNav.length==1 && parametersFromCrossNav[0] instanceof Array){
+				parametersFromCross = parametersFromCrossNav[0];
+			}else{
+				parametersFromCross = parametersFromCrossNav;
+			}
+
 			for(var i =parametersNeeded.length-1; i>=0; i--){
 				var p = parametersNeeded[i];
 				var nm = p.getName();
 				var found =false;
+
 				for(var k =0; k<parametersFromCross.length; k++){
 					var pCross = parametersFromCross[k];
 					var pCrossValue = pCross.value;
@@ -184,25 +198,25 @@ Ext.define('app.controllers.ParametersController',{
 		}
 		return parametersFilled;
 	}
-	
+
 	, onParametersForExecutionLoaded: function( executionInstance, parameters ) {
 		executionInstance.PARAMETERS = parameters;
 		this.executionInstance = executionInstance;
 		this.fields = new Array();
-	
+
 		for(var i = 0; i < parameters.length; i++) {
 			var field = this.createField( executionInstance, parameters[i] );
 			this.fields.push(field);
 		}
-	
+
 		return this.fields;
-	
+
 	}
-	
+
 	, createField: function( executionInstance, p, c ) {
 		var field;
-	
-	
+
+
 		var baseConfig = {
 				label: p.label
 				, name : p.id
@@ -214,15 +228,15 @@ Ext.define('app.controllers.ParametersController',{
 			baseConfig.value = defaultValue;
 		}
 		if(p.selectionType === 'COMBOBOX' || p.selectionType === 'LIST' || p.selectionType ===  'CHECK_LIST' || p.selectionType === 'LOOKUP') {
-	
-			//get the metadata of the parameter 
+
+			//get the metadata of the parameter
 			var metadata = p.metaData.metaData;
-	
+
 			var params = Ext.apply({}, {
 				PARAMETER_ID: p.id
 				, MODE: 'complete'
 			}, executionInstance);
-	
+
 			var store = Ext.create("Ext.data.Store",{
 				proxy: {
 					type: 'ajax',
@@ -237,13 +251,13 @@ Ext.define('app.controllers.ParametersController',{
 				autoLoad : true,
 				autoDestroy : true
 			});
-	
+
 			store.on('beforeload', function(store, o) {
 				var p = Ext.encode(this.getFormState());
 				store.proxy.extraParams.PARAMETERS = p;
 				//return true;
 			}, this);
-	
+
 			var mandatory= false;
 			if(p.mandatory && p.mandatory == true){
 				mandatory = true;
@@ -261,26 +275,26 @@ Ext.define('app.controllers.ParametersController',{
 			field.on('focus', function(f) {
 				f.setValue(' ');
 			}, this);
-		} else { 
-			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
+		} else {
+			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {
 				field = Ext.create("Ext.field.DatePicker",baseConfig);
-	
+
 			} else if(p.type === 'NUMBER') {
 				field =  Ext.create("Ext.field.Number",baseConfig);
-			} else {	
+			} else {
 				field =  Ext.create("Ext.field.Text",baseConfig);
-				
-			}			
-		}	
+
+			}
+		}
 		field.setValue(defaultValue);
 		return field;
 	}
-	
+
 	, getFormState: function() {
 		var state;
 		state = {};
 		for(var i=0; i<this.fields.length; i++) {
-			
+
 			try{
 				var field = this.fields[i];
 				state[field.getName() + '_field_visible_description'] = '';
@@ -293,17 +307,17 @@ Ext.define('app.controllers.ParametersController',{
 			}catch (e){
 				state[field.getName()] = '';
 			}
-	
+
 		}
 		return state;
 	}
-	
+
 	, setFormState: function(state) {
 		var state;
 		state = {};
 		if(this.fields!=undefined && this.fields!=null){
 			for(var i=0; i<this.fields.length; i++) {
-				
+
 				var field = this.fields[i];
 				var newValue = state.fieldName;
 				if(newValue!=undefined && newValue!=null){
