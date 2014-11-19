@@ -67,8 +67,7 @@ public class TransformerFrom5_0_0To5_1_0 implements ITransformer {
 		Statement stmt = conn.createStatement();
 		String sql = "";
 		try {
-
-			sql = "ALTER TABLE SBI_OBJ_METADATA CHANGE DESCRIPTION  DESCR  VARCHAR(100);";
+			sql = "ALTER TABLE SBI_OBJ_METADATA ALTER COLUMN DESCRIPTION RENAME TO DESCR;";
 			stmt.executeUpdate(sql);
 
 		} catch (Exception e) {
