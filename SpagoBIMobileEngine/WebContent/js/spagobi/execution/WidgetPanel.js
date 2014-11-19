@@ -8,18 +8,89 @@
  
 Ext.define('app.views.WidgetPanel',{
 	extend:'Ext.Panel',
+	overlay: null,
 	config:{
 		executionInstance : null
 		,resp: null
 		,slider: null
-		,dockedItems: []	
+		,dockedItems: []		
+
 	},
 
 	constructor : function(config) {
 		Ext.apply(this,config);
 		this.callParent(arguments);
-	}
 
+		if(this.executionInstance.TYPE_CODE != null && this.executionInstance.TYPE_CODE !== undefined 
+				&& (this.executionInstance.TYPE_CODE != Sbi.constants.documenttype.cockpit)){
+	
+			var innerPanel =  new Ext.Panel({  
+			            //the element where the panel is going to be inserted 
+						style: 'text-align: center; vertical-align: middle;padding-top: 30px;',
+						layout: 'fit',
+			            html: 'Loading...' //panel's content  
+			            });  
+			var executionInstanceVar= this.executionInstance;
+
+			this.overlay = Ext.Viewport.add({
+			    xtype: 'panel',
+			    scope: this,
+			    isOverlay: true,
+			    executionInstance: executionInstanceVar,
+			    layout:'fit',
+			    // We give it a left and top property to make it floating by default
+			
+			    // Make it modal so you can click the mask to hide the overlay
+	            centered : true,
+	            modal    : true,
+	            hideOnMaskTap : true,
+			
+			    // Make it hidden by default
+			    hidden: true,
+			
+			    // Set the width and height of the panel
+	
+	            width    : '100%',
+	            height   : '100%',
+
+			
+			    // Style the content and make it scrollable
+			    styleHtmlContent: true,
+			    scrollable: true,
+			
+			    // Insert a title docked at the top with a title
+			    items: [	
+			        innerPanel
+			    ]
+	
+			});
+	    	this.element.on("doubletap",function(e) {
+				var exInst = this.overlay.config.executionInstance;
+				var typeCode= exInst.TYPE_CODE;
+				if(typeCode != null && typeCode !== undefined && (typeCode == Sbi.constants.documenttype.cockpit)){
+					return;
+					
+				}
+				var h = screen.availHeight;
+				var w = screen.availWidth;
+				this.overlay.setHeight(h*0.75);
+				this.overlay.setWidth(w*0.75);
+
+				this.overlay.show();
+
+		        app.controllers.executionController.executeTemplate({executionInstance: exInst},this.overlay,false);
+			},this);
+		
+	
+		}
+		}
+
+	,
+	plugins: [
+	          {
+	              xclass: 'Ext.ux.plugin.Pinchemu'
+	          }
+	]
 	                
     ,initialize: function (options) {
     	if(this.resp && this.resp.documentProperties && this.resp.documentProperties.style){
@@ -37,8 +108,30 @@ Ext.define('app.views.WidgetPanel',{
 		}
 		
     	this.callParent( arguments);
+    	Ext.apply(this,{listeners:{
+			doubletap: { 
+				element : 'element',
+				fn : function(e) {
+					var exInst = this.overlay.config.executionInstance;
+					var typeCode= exInst.TYPE_CODE;
+					if(typeCode != null && typeCode !== undefined && (typeCode == Sbi.constants.documenttype.cockpit)){
+						return;
+						
+					}
+					var h = this.screen.availHeight;
+					var w = this.screen.availWidth;
+					this.overlay.setHeight(h*0.75);
+					this.overlay.setWidth(w*0.75);
+
+					this.overlay.show();
+
+			        app.controllers.executionController.executeTemplate({executionInstance: exInst},this.overlay,false);
+				},
+				scope : this
+			}
+		}});
 	}
-	
+
 	,
 	setExecutionInstance : function (executionInstance) {
 		this.executionInstance = executionInstance;

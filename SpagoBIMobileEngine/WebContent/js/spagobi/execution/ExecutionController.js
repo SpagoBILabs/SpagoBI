@@ -140,7 +140,19 @@ Ext.define('app.controllers.ExecutionController',{
 			app.views.viewport.goExecution({noParametersPageNeeded: executionInstance.noParametersPageNeeded});
 
 		} else {
-			documentContainerPanel.addWidgetComposed(resp, type, composedComponentOptions, positionInComposition);
+			if(documentContainerPanel.config.isOverlay){
+				documentContainerPanel.removeAll();
+				if (type == "chart") {
+					panel = Ext.create("app.views.ChartExecutionPanel",{ region: "center", resp: resp, fromcomposition: false, executionInstance: executionInstance});
+				} else {
+					panel = Ext.create("app.views.TableExecutionPanel",{ region: "center", resp: resp, fromcomposition: false, executionInstance: executionInstance});
+				}
+				documentContainerPanel.add(panel);
+			}else{
+				documentContainerPanel.addWidgetComposed(resp, type, composedComponentOptions, positionInComposition);
+
+			}
+			
 		}
 		
 		

@@ -9,10 +9,10 @@ Ext.define('app.views.TableExecutionPanel',{
 	extend: 'app.views.WidgetPanel',
 	config:{
 		cls: 'spagobi-table',
-		scroll: 'vertical',		
+		scroll: 'vertical'
+
 	},
-
-
+	
 
 	initialize : function() {
 		this.callParent();
@@ -81,71 +81,12 @@ Ext.define('app.views.TableExecutionPanel',{
 		}
 		
 		
-//		
-//		if(this.header){
-//			var h =0;
-//			try{
-//				h = this.header.getHeight();
-//				if(!h){
-//					h = this.header.getStyle().height;
-//					h = h.replace('px','');
-//					h = h.replace('em','');
-//					h = h.replace('pt','');
-//					h = parseFloat(h);
-//				}
-//			}catch(e){
-//				
-//			}
-//			
-//			
-//			headerFooter = headerFooter+ h;
-//		}
-//		if(this.footer){
-//			var h =0;
-//			try{
-//				h = this.footer.getHeight();
-//				if(!h){
-//					h = this.footer.getStyle().height;
-//					h = h.replace('px','');
-//					h = h.replace('em','');
-//					h = h.replace('pt','');
-//					h = parseFloat(h);
-//				}
-//			}catch(e){
-//				
-//			}
-//			
-//			
-//			headerFooter = headerFooter+ h;
-//		}
-//		
-//		if(!tbConfig.style){
-//			tbConfig.style =""; 
-//		}
-//		
-//		tbConfig.style = tbConfig.style + "margin-top: "+headerFooter+";";
 		
 		var table =new Ext.ux.touch.grid.List(tbConfig);
 		
 
 		table.applyStore(store);
-
-//
-//		if(fromcomposition){
-//			this.insert(0, table);
-//
-//		}else if(fromCross){
-//			var r = new Ext.Panel({
-//				style:'z-index:100;',
-//				height:'100%'
-//
-//			});
-//			r.add(table);
-//			this.insert(0, r);
-//
-//		}else{
-			this.add(table);
-//		}
+		this.add(table);
 		if(this.IS_FROM_COMPOSED){
 			this.loadingMask.hide();
 		}
