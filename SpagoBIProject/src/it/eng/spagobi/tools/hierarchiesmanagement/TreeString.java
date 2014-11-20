@@ -30,7 +30,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
 /**
- * Given a <code>HierarchyTreeNode</code> structure, <code>TreeString</code> will print a string like
+ * Given a <code>HierarchyTreeNode</code> structure, <code>TreeString</code>
+ * will print a string like
  * 
  * <pre>
  * └ a
@@ -70,7 +71,11 @@ public class TreeString {
 			}
 			// sb.append(tn.getObject() + "\n");
 			HierarchyTreeNodeData nodeData = (HierarchyTreeNodeData) tn.getObject();
-			sb.append("(" + nodeData.getNodeCode() + ") " + nodeData.getNodeName() + "\n");
+			boolean isLeaf = false;
+			if (!nodeData.leafId.equals("")) {
+				isLeaf = true;
+			}
+			sb.append("(" + nodeData.getNodeCode() + ")" + nodeData.getNodeName() + " -- LEAF:" + isLeaf + "\n");
 		}
 
 		return sb.toString();

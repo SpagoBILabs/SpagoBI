@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -517,7 +518,8 @@ public class HierarchiesService {
 			String nodeName = node.getString("text");
 			String nodeCode = node.getString("id");
 			String nodeLeafId = node.getString("leafId");
-			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId);
+			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, ""); // TODO:add
+																											// leafParentCode
 
 			// current node is a leaf?
 			boolean isLeaf = node.getBoolean("leaf");
@@ -566,8 +568,9 @@ public class HierarchiesService {
 		String CD_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEAF", dataSource);
 		String NM_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEAF", dataSource);
 		String LEAF_ID = AbstractJDBCDataset.encapsulateColumnName(hierarchyFK, dataSource);
+		String LEAF_PARENT_CD = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
 
-		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + " ");
+		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + "," + LEAF_PARENT_CD + " ");
 		String selectClause = selectClauseBuffer.toString();
 
 		// where
@@ -617,6 +620,9 @@ public class HierarchiesService {
 	private HierarchyTreeNode createHierarchyTreeStructure(IDataStore dataStore) {
 		HierarchyTreeNode root = null;
 
+		// TODO: to remove
+		Set<String> allNodeCodes = new HashSet<String>();
+
 		// contains the code of the last level node (not null) inserted in the
 		// tree
 
@@ -627,7 +633,7 @@ public class HierarchiesService {
 			List<IField> recordFields = record.getFields();
 			int fieldsCount = recordFields.size();
 
-			for (int i = 0; i < fieldsCount - 1; i = i + 2) {
+			for (int i = 0; i < fieldsCount - 2; i = i + 2) {
 				IField codeField = record.getFieldAt(i); // NODE CODE
 				IField nameField = record.getFieldAt(i + 1); // NODE NAME
 
@@ -644,6 +650,13 @@ public class HierarchiesService {
 						// first level (root)
 						if (root == null) {
 							root = new HierarchyTreeNode(data, nodeCode);
+							// TODO: to remove, only for test
+							if (allNodeCodes.contains(nodeCode)) {
+								System.out.println("COLLISION DETECTED ON: " + nodeCode);
+							} else {
+								allNodeCodes.add(nodeCode);
+							}
+							// ------------------------
 						}
 						lastLevelFound = nodeCode;
 						break;
@@ -653,6 +666,13 @@ public class HierarchiesService {
 							// node not already attached to the root
 							HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
 							root.add(aNode, nodeCode);
+							// TODO: to remove, only for test
+							if (allNodeCodes.contains(nodeCode)) {
+								System.out.println("COLLISION DETECTED ON: " + nodeCode);
+							} else {
+								allNodeCodes.add(nodeCode);
+							}
+							// ------------------------
 						}
 						lastLevelFound = nodeCode;
 						break;
@@ -682,10 +702,13 @@ public class HierarchiesService {
 								leafIdString = String.valueOf(leafId);
 							}
 							data.setLeafId(leafIdString);
-							data.setNodeCode("LEAF_" + nodeCode);
-							nodeCode = "LEAF_" + nodeCode;
+							IField leafParentCodeField = record.getFieldAt(i + 3);
+							String leafParentCodeString = (String) leafParentCodeField.getValue();
+							data.setNodeCode(leafParentCodeString + "_" + nodeCode);
+							nodeCode = leafParentCodeString + "_" + nodeCode;
+							data.setLeafParentCode(leafParentCodeString);
 						}
-						attachNodeToLevel(root, nodeCode, lastLevelFound, data);
+						attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
 						lastLevelFound = nodeCode;
 						// leaf level
 						break;
@@ -705,7 +728,8 @@ public class HierarchiesService {
 	/**
 	 * Attach a node as a child of another node (with key lastLevelFound)
 	 */
-	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, HierarchyTreeNodeData data) {
+	// TODO: remove allNodeCodes from signature
+	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, HierarchyTreeNodeData data, Set<String> allNodeCodes) {
 		HierarchyTreeNode treeNode = null;
 		// first search parent node
 		for (Iterator<HierarchyTreeNode> treeIterator = root.iterator(); treeIterator.hasNext();) {
@@ -721,6 +745,19 @@ public class HierarchiesService {
 			// node not already attached to the level
 
 			HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
+			/*boolean flag = true;
+			while (flag) {
+				// TODO: to remove, only for test
+				if (allNodeCodes.contains(nodeCode)) {
+					System.out.println("COLLISION DETECTED ON: " + nodeCode);
+				} else {
+					allNodeCodes.add(nodeCode);
+					flag = false;
+				}
+			}
+
+			// ------------------------
+*/
 			treeNode.add(aNode, nodeCode);
 
 		}
