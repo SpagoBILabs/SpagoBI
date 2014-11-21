@@ -25,6 +25,8 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
 import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
@@ -42,6 +44,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
@@ -65,9 +68,9 @@ import commonj.work.Work;
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
  * simple CRUD operations over the dataset. It also manages user's profilation and autorization. Other class must access dataset through this class and not
  * calling directly the DAO.
- *
+ * 
  * @author gavardi, gioia
- *
+ * 
  */
 
 public class DatasetManagementAPI {
@@ -280,7 +283,7 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param label
 	 * @param offset
 	 * @param fetchSize
@@ -329,7 +332,7 @@ public class DatasetManagementAPI {
 
 	/**
 	 * insert into data store last cache date if present
-	 *
+	 * 
 	 * @param cache
 	 * @param dataStore
 	 * @param dataSet
@@ -404,7 +407,7 @@ public class DatasetManagementAPI {
 	 * @param selections
 	 * @param parametersValues
 	 *            A map of map with the following structure: storeId->paramName->paramValue
-	 *
+	 * 
 	 * @return
 	 */
 	public IDataStore getJoinedDataStore(AssociationGroup associationGroup, JSONObject selections, Map<String, Map<String, String>> parametersValues) {
@@ -1020,6 +1023,110 @@ public class DatasetManagementAPI {
 				}
 			}
 		}
+	}
+
+	/**
+	 * The association is valid if number of records froma ssociation is less than Maximum of single datasets
+	 * 
+	 * @param dsLabel1
+	 * @param dsLabel2
+	 * @param field1
+	 * @param field2
+	 * @return
+	 * @throws Exception
+	 */
+
+	public boolean checkAssociation(String dsLabel1, String dsLabel2, String field1, String field2) throws Exception {
+		logger.debug("IN");
+
+		logger.debug("Check join for dataset " + dsLabel1 + " and " + dsLabel2 + " with condition " + field1 + "=" + field2);
+		boolean toReturn = false;
+
+		String table1 = null;
+		String table2 = null;
+		try {
+
+			IDataSet ds1 = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel1);
+			IDataSet ds2 = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel2);
+
+			ICache cache = SpagoBICacheManager.getCache();
+
+			// check datasets are cached otherwise cache it
+			IDataStore cachedResultSet = cache.get(ds1);
+			if (cachedResultSet == null) {
+				logger.error("dataset " + ds1.getLabel() + " is not already cached, cache it");
+				IDataStore dataStore = dataStore = cache.refresh(ds1, false);
+			}
+			IDataStore cachedResultSet2 = cache.get(ds2);
+			if (cachedResultSet2 == null) {
+				logger.error("dataset " + ds2.getLabel() + " is not already cached, cache it");
+				IDataStore dataStore = dataStore = cache.refresh(ds2, false);
+			}
+
+			table1 = cache.getMetadata().getCacheItem(ds1.getSignature()).getTable();
+			table2 = cache.getMetadata().getCacheItem(ds2.getSignature()).getTable();
+			IDataSource dataSource = ((SQLDBCache) cache).getDataSource();
+
+			logger.debug("Tables involved are " + table1 + ", " + table2);
+
+			SelectBuilder sqlBuilder = new SelectBuilder();
+
+			// Count query one
+			logger.debug("Count record on table " + table1);
+			sqlBuilder = new SelectBuilder();
+			sqlBuilder.column("count(*) counter");
+			sqlBuilder.from(table1 + " a");
+			String queryText1 = sqlBuilder.toString();
+			logger.debug("execute " + queryText1);
+			IDataStore dataStore = dataSource.executeStatement(queryText1, 0, 0);
+			Long count1 = (Long) ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
+			logger.debug("On query 1 counted " + count1 + " records");
+
+			// Count query two
+			logger.debug("Count record on table " + table2);
+			sqlBuilder = new SelectBuilder();
+			sqlBuilder.column("count(*) counter");
+			sqlBuilder.from(table2 + " a");
+			String queryText2 = sqlBuilder.toString();
+			logger.debug("execute " + queryText2);
+			dataStore = dataSource.executeStatement(queryText2, 0, 0);
+			Long count2 = (Long) ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
+			logger.debug("On query 2 counted " + count2 + " records");
+
+			// count the Join
+			sqlBuilder = new SelectBuilder();
+			sqlBuilder.column("count(*) counter");
+			sqlBuilder.from(table1 + " a");
+			sqlBuilder.join(table2 + " b");
+			String where = "a." + field1 + " = " + "b." + field2;
+			sqlBuilder.where(where);
+			String queryText3 = sqlBuilder.toString();
+			logger.trace("Join query is equal to [" + queryText3 + "]");
+			dataStore = dataSource.executeStatement(queryText3, 0, 0);
+			Long joinCount = (Long) ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
+			logger.debug("On join counted " + joinCount + " records");
+
+			logger.debug("Join is valid is joinCOnut > MAX(count1, count2");
+
+			Long max = count1 > count2 ? count1 : count2;
+			if (joinCount > max) {
+				logger.warn("Chosen join among tables " + table1 + "," + table2 + " and fields " + field1 + "=" + field2 + " return too many rows");
+				toReturn = false;
+			} else {
+				logger.debug("Chosen join among tables " + table1 + "," + table2 + " and fields " + field1 + "=" + field2 + "is valid");
+				toReturn = true;
+
+			}
+		} catch (Exception e) {
+			logger.error("Error while checking the join among tables " + table1 + "," + table2 + " and fields " + field1 + "=" + field2
+					+ " return too many rows", e);
+			throw new Exception("Error while checking the join among tables " + table1 + "," + table2 + " and fields " + field1 + "=" +
+
+			field2, e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
 	}
 
 }

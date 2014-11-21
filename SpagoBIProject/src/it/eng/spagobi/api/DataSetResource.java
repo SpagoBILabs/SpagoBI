@@ -977,4 +977,48 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return null;
 	}
 
+	/**
+	 * Check if the association passed is valid ',' is valid if number of record from association is lower than maximum of single datasets
+	 * 
+	 * @param association
+	 */
+
+	@POST
+	@Path("/{association}/checkAssociation")
+	public String checkAssociation(@PathParam("association") String association) {
+		logger.debug("IN");
+
+		JSONObject toReturn = new JSONObject();
+
+		logger.debug("Association to check " + association);
+
+		String field1 = null;
+		String field2 = null;
+
+		try {
+			JSONArray arrayAss = new JSONArray(association);
+
+			JSONObject firstDs = (JSONObject) arrayAss.get(0);
+			JSONObject secondDs = (JSONObject) arrayAss.get(1);
+
+			field1 = firstDs.getString("id");
+			field2 = secondDs.getString("id");
+
+			logger.debug("Checking association ");
+
+			String dsLabel1 = firstDs.getString("ds");
+			String dsLabel2 = secondDs.getString("ds");
+			boolean valid = getDatasetManagementAPI().checkAssociation(dsLabel1, dsLabel2, field1, field2);
+			logger.debug("The association is valid? " + valid);
+			toReturn.put("valid", valid);
+
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "Error while checking association among " + field1 + "=" + field2, e);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return toReturn.toString();
+	}
+
 }
