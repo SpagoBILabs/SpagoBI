@@ -227,6 +227,13 @@ Sbi.locale.ln['sbi.cockpit.association.editor.msg.differentType'] ='Not all fiel
 Sbi.locale.ln['sbi.cockpit.association.editor.msg.selectFields'] ='Please select fields for the association';
 Sbi.locale.ln['sbi.cockpit.association.editor.msg.confirmDelete'] ='Confirm delete of association ';
 
+Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.notValidAssociation'] ='Association defined takes too many record to be a valid one';
+Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.errorCheckingAssociation'] ='Error while checking association validity';
+
+
+
+
+
 //FILTERS
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.title'] = 'Filters editor';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.nameObj'] = 'Object Reference';

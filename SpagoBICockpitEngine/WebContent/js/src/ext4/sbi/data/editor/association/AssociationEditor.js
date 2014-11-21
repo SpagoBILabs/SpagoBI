@@ -121,7 +121,40 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 			}
 		}
 
-		toReturn = this.addAssociationToList(assToAdd);
+		// check association before adding them to list
+		//toReturn = this.addAssociationToList(assToAdd);
+
+		var jsonObj = Ext.JSON.encode(assToAdd);
+		var params = {association: jsonObj};
+
+    	Ext.Ajax.request({
+		    url: Sbi.config.serviceReg.getServiceUrl('checkAssociation', {
+				pathParams: params
+			}),
+		    method: 'POST',
+		    params: {
+		       requestParam: 'notInRequestBody'
+		    },
+		    success : function(result){
+
+		    	var JSONResult = Ext.JSON.decode(result.responseText);
+
+		    	if(JSONResult.valid == 'true' || JSONResult.valid == true){
+		    		Sbi.trace("[AssociationEditor.checkAssociation]: Association is valid");
+		    		toReturn = this.addAssociationToList(assToAdd);
+		    	}
+		    	else{
+		    		Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.data.editor.association.AssociationEditor.notValidAssociation'), 'Warning');
+		    	}
+
+		    },
+			failure: function(){
+				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.data.editor.association.AssociationEditor.errorCheckingAssociation'), 'Service Error');
+				},
+			scope: this
+		});
+
+
 
 		return toReturn;
 	}
