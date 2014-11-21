@@ -3,11 +3,11 @@
  * © 2005-2015 Engineering Group
  *
  * This file is part of SpagoBI. SpagoBI is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version. 
- * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version.
+ * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received
  * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
- * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
+ * The complete text of SpagoBI license is included in the COPYING.LESSER file.
  */
 package it.eng.spagobi.tools.dataset.cache;
 
@@ -40,7 +40,7 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JoinedDataSet extends AbstractDataSet {
 
@@ -198,7 +198,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getUserProfileAttributes()
 	 */
 	public Map getUserProfileAttributes() {
@@ -209,9 +209,7 @@ public class JoinedDataSet extends AbstractDataSet {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.dataset.bo.IDataSet#setUserProfileAttributes(java
-	 * .util.Map)
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setUserProfileAttributes(java .util.Map)
 	 */
 	public void setUserProfileAttributes(Map<String, Object> attributes) {
 		// TODO Auto-generated method stub
@@ -236,12 +234,12 @@ public class JoinedDataSet extends AbstractDataSet {
 		}
 
 		// qunado tutti i work sono finiti creo la tabella di join
-		joinedDataStore = cache.refresh(joinedDataSets, associationGroup);
+		joinedDataStore = cache.refresh(this, associationGroup);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getDataStore()
 	 */
 	public IDataStore getDataStore() {
@@ -250,7 +248,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setAbortOnOverflow(boolean)
 	 */
 	public void setAbortOnOverflow(boolean abortOnOverflow) {
@@ -261,9 +259,7 @@ public class JoinedDataSet extends AbstractDataSet {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.dataset.bo.IDataSet#addBinding(java.lang.String,
-	 * java.lang.Object)
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#addBinding(java.lang.String, java.lang.Object)
 	 */
 	public void addBinding(String bindingName, Object bindingValue) {
 		// TODO Auto-generated method stub
@@ -272,7 +268,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#test()
 	 */
 	public IDataStore test() {
@@ -282,7 +278,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#test(int, int, int)
 	 */
 	public IDataStore test(int offset, int fetchSize, int maxResults) {
@@ -292,7 +288,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getSignature()
 	 */
 	public String getSignature() {
@@ -306,9 +302,7 @@ public class JoinedDataSet extends AbstractDataSet {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.dataset.bo.IDataSet#decode(it.eng.spagobi.tools.
-	 * dataset.common.datastore.IDataStore)
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#decode(it.eng.spagobi.tools. dataset.common.datastore.IDataStore)
 	 */
 	public IDataStore decode(IDataStore datastore) {
 		throw new UnsupportedOperationException("Dataset implementation class [" + this.getClass().getName() + "] does not support method [decode]");
@@ -317,9 +311,7 @@ public class JoinedDataSet extends AbstractDataSet {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.dataset.bo.IDataSet#isCalculateResultNumberOnLoadEnabled
-	 * ()
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#isCalculateResultNumberOnLoadEnabled ()
 	 */
 	public boolean isCalculateResultNumberOnLoadEnabled() {
 		return false;
@@ -328,9 +320,7 @@ public class JoinedDataSet extends AbstractDataSet {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.dataset.bo.IDataSet#setCalculateResultNumberOnLoad
-	 * (boolean)
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setCalculateResultNumberOnLoad (boolean)
 	 */
 	public void setCalculateResultNumberOnLoad(boolean enabled) {
 		logger.warn("In [" + this.getClass().getName() + "] calculate result number on loadis always false");
@@ -340,9 +330,7 @@ public class JoinedDataSet extends AbstractDataSet {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.dataset.bo.IDataSet#setDataSource(it.eng.spagobi
-	 * .tools.datasource.bo.IDataSource)
+	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setDataSource(it.eng.spagobi .tools.datasource.bo.IDataSource)
 	 */
 	public void setDataSource(IDataSource dataSource) {
 		logger.warn("In [" + this.getClass().getName() + "] datasource is not used");
@@ -350,7 +338,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getDataSource()
 	 */
 	public IDataSource getDataSource() {
