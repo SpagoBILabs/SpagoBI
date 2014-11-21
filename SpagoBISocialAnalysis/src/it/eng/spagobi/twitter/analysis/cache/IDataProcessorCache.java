@@ -93,4 +93,6 @@ public interface IDataProcessorCache {
 
 	public TwitterUser getUserFromTweet(long searchID, long tweetID) throws DaoServiceException;
 
+	public long countUserTweetsFromSearchId(long searchID, long userId) throws DaoServiceException;
+
 }
