@@ -225,6 +225,13 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	            , resourcePath: 'cache/{datasetLabels}/cleanCache'
 	            , method: 'DELETE'
 	        }, 'spagobiServiceConf');
+	    
+	   Sbi.config.serviceReg.registerService('checkAssociation', {
+               name: 'checkAssociation'
+               , description: 'check if association is valid'
+               , resourcePath: 'datasets/{association}/checkAssociation'
+               , method: 'POST'
+           }, 'spagobiServiceConf');
 		
 		Sbi.config.serviceReg.registerService('loadJoinedDataSetStore', {
 			name: 'loadJoinedDataSetStore'
