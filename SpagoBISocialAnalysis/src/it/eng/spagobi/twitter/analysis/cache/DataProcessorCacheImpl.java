@@ -607,7 +607,7 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 		// String queryHQL =
 		// "select tu.userID as user, tu.followersCount, count(td.tweetID) from TwitterUser tu ,TwitterData td where tu.userID = td.twitterUser.userID and td.twitterSearch.searchID = ? GROUP by (td.twitterUser.userID)";
 
-		String queryHQL = "select new TwitterUser(tu.userID, tu.followersCount, count(td.tweetID)) from TwitterUser tu ,TwitterData td where tu.userID = td.twitterUser.userID and td.twitterSearch.searchID = ? GROUP by (td.twitterUser.userID)";
+		String queryHQL = "select distinct new TwitterUser(tu.userID, tu.followersCount) from TwitterUser tu ,TwitterData td where tu.userID = td.twitterUser.userID and td.twitterSearch.searchID = ? ";
 
 		// List<Object[]> result = daoService.listFromQuery(queryHQL, searchID);
 		// List<Map<String, Object>> result = null;
@@ -764,6 +764,32 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 
 		logger.debug("Method getUserFromTweet(): End");
 		return twitterUser;
+	}
+
+	@Override
+	public long countUserTweetsFromSearchId(long searchID, long userId) throws DaoServiceException {
+
+		logger.debug("Method countUserTweetsFromSearchId(): Start");
+
+		long initMills = System.currentTimeMillis();
+
+		if (this.daoService == null) {
+			this.daoService = new DaoService();
+		}
+
+		String queryHQL = "select count(td.tweetID) from TwitterData td where td.twitterSearch.searchID = ? and td.twitterUser.userID = ? ";
+
+		long tweets = daoService.singleResultQuery(queryHQL, searchID, userId);
+
+		// List<TwitterUser> result = daoService.listFromQuery(queryHQL, searchID);
+		// Annotation[] test = TwitterUser.class.getAnnotations();
+
+		long endMills = System.currentTimeMillis() - initMills;
+
+		logger.debug("Method countUserTweetsFromSearchId(): End in " + endMills + "ms");
+
+		return tweets;
+
 	}
 
 }
