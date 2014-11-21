@@ -67,7 +67,7 @@ import commonj.work.WorkItem;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
- * 
+ *
  */
 public class SQLDBCache implements ICache {
 
@@ -118,7 +118,7 @@ public class SQLDBCache implements ICache {
 
 	/**
 	 * Returns signature of joining dataset containing the dataset passed as parameter
-	 * 
+	 *
 	 * @param dataSet
 	 * @return
 	 */
@@ -558,13 +558,7 @@ public class SQLDBCache implements ICache {
 					names.add(alias);
 					sqlBuilder.column(tableAlias + "." + column + " as " + alias);
 				}
-				lastIndex += dataSet.getMetadata().getFieldCount() + 1; // +1
-																		// since
-																		// we
-																		// added
-																		// a
-																		// surrogated
-																		// key
+				lastIndex += dataSet.getMetadata().getFieldCount() + 1; // +1 since we added a surrogated key
 				columnBreakIndexes.add(lastIndex);
 				columnNames.put(dataSet.getLabel(), names);
 			}
@@ -698,7 +692,7 @@ public class SQLDBCache implements ICache {
 		logger.trace("IN");
 		try {
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
-			persistedTableManager.setRowCountColumIncluded(true);
+			persistedTableManager.setRowCountColumIncluded(!(dataset instanceof JoinedDataSet));
 			String tableName = persistedTableManager.generateRandomTableName(this.getMetadata().getTableNamePrefix());
 			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
 			return tableName;
@@ -867,10 +861,10 @@ public class SQLDBCache implements ICache {
 
 	/**
 	 * Erase existing tables that begins with the prefix
-	 * 
+	 *
 	 * @param prefix
 	 *            table name prefix
-	 * 
+	 *
 	 */
 	private void eraseExistingTables(String prefix) {
 		PersistedTableManager persistedTableManager = new PersistedTableManager();
@@ -898,7 +892,7 @@ public class SQLDBCache implements ICache {
 
 	/**
 	 * Test if the passed schema name is correct. Create a table in the database via the dataSource then try to select the table using the schema.table syntax
-	 * 
+	 *
 	 * @param schema
 	 *            the schema name
 	 * @param dataSource

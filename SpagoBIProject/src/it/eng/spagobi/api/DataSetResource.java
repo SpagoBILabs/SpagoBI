@@ -1,14 +1,8 @@
-/*
- * SpagoBI, the Open Source Business Intelligence suite
- * © 2005-2015 Engineering Group
- *
- * This file is part of SpagoBI. SpagoBI is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version. 
- * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received
- * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
- * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
- */
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.api;
 
 import it.eng.spago.error.EMFInternalError;
@@ -72,7 +66,7 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 @Path("/1.0/datasets")
 public class DataSetResource extends AbstractSpagoBIResource {
@@ -474,12 +468,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			int breakIndexNo = 0;
 			int breakIndex = breakIndexes.get(breakIndexNo);
 			JSONObject record = datasetRecord[0];
-			for (int j = 2, colNo = 0; j < props.length(); j++, colNo++) { // prima colonna id, seconda colonna cache_id del dataset di join, terza colonna
-																			// cache_id primo dataset
+			for (int j = 1, colNo = 0; j < props.length(); j++, colNo++) { // prima colonna cache_id del dataset di join, seconda colonna
+				// cache_id primo dataset
 				String p = props.getString(j);
 
-				if (j == breakIndex + 2) { // breakIndex + 1 is the last element of the previous dataset. breakIndex + 2 is the first one of the new dataset,
-											// but this contains the sbicache_row_id.
+				if (j == breakIndex + 1) { // breakIndex is the last element of the previous dataset. breakIndex + 1 is the first one of the new dataset
 
 					breakIndexNo++;
 					breakIndex = breakIndexes.get(breakIndexNo);
@@ -851,7 +844,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param profile
 	 * @param datasetsJSONArray
 	 * @param typeDocWizard
@@ -859,7 +852,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
 	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
 	 *            rifattorizzata al più presto.
-	 * 
+	 *
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
@@ -979,7 +972,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Check if the association passed is valid ',' is valid if number of record from association is lower than maximum of single datasets
-	 * 
+	 *
 	 * @param association
 	 */
 
