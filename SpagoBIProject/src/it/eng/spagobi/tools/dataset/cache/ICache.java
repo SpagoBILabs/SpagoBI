@@ -32,13 +32,13 @@ import java.util.List;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
- * 
+ *
  */
 public interface ICache {
 
 	/**
 	 * Enable disable the cache
-	 * 
+	 *
 	 * @param enable
 	 *            true to enable the cache, false to disable it.
 	 */
@@ -51,10 +51,10 @@ public interface ICache {
 
 	/**
 	 * Facility method. It is equivalent to contains(dataSet.getSignature) call.
-	 * 
+	 *
 	 * @param dataSet
 	 *            the dataSet that generate the resultSet
-	 * 
+	 *
 	 * @return true the dataset is cached, false elsewhere
 	 */
 	boolean contains(IDataSet dataSet);
@@ -65,20 +65,20 @@ public interface ICache {
 
 	/**
 	 * Facility method. It is equivalent to getMetadata().containsCacheItem(resultSetSignature) call.
-	 * 
+	 *
 	 * @param dataSet
 	 *            the signature of the dataset that generate the resultset
-	 * 
+	 *
 	 * @return true the dataset is cached, false elsewhere
 	 */
 	boolean contains(String resultsetSignature);
 
 	/**
 	 * Facility method. It is equivalent to get(dataSet.getSignature) call.
-	 * 
+	 *
 	 * @param dataSet
 	 *            the dataSet that generate the resultSet
-	 * 
+	 *
 	 * @return the resultSet if cached, null elsewhere
 	 */
 	IDataStore get(IDataSet dataSet);
@@ -86,14 +86,14 @@ public interface ICache {
 	/**
 	 * @param resultsetSignature
 	 *            the signature of the resultSet
-	 * 
+	 *
 	 * @return the resultSet if cached, null elsewhere
 	 */
 	IDataStore get(String resultsetSignature);
 
 	/**
 	 * Facility method. It is equivalent to get(dataSet.getSignature, groups, filters, projections) call.
-	 * 
+	 *
 	 * @param resultsetSignature
 	 *            the unique resultSet signature
 	 * @param groups
@@ -115,7 +115,7 @@ public interface ICache {
 	 *            filters used on the resultSet
 	 * @param projections
 	 *            (fields to select) on the resultSet
-	 * 
+	 *
 	 * @return the resultSet if cached, null elsewhere
 	 */
 	IDataStore get(String resultsetSignature, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections);
@@ -132,12 +132,12 @@ public interface ICache {
 	// =====================================================================================
 	/**
 	 * refresh the dataset and save the result dataStore in cache
-	 * 
+	 *
 	 * @param dataSet
 	 * @param wait
 	 *            true to wait until the dataStore is persisted in cache. false to return as soon as the dataStore is ready and persisting it in cache
 	 *            asynchronously
-	 * 
+	 *
 	 * @return the updated dataStore
 	 */
 	IDataStore refresh(IDataSet dataSet, boolean wait);
@@ -147,24 +147,24 @@ public interface ICache {
 	/**
 	 * refresh the store ignoring cache content
 	 */
-	IDataStore refresh(List<IDataSet> dataSets, AssociationGroup associationGroup);
+	IDataStore refresh(JoinedDataSet dataSet, AssociationGroup associationGroup);
 
 	/**
 	 * Facility method. It is equivalent to delete(dataSet.getSignature) call.
-	 * 
+	 *
 	 * @param resultsetSignature
 	 *            the unique resultSet signature
-	 * 
+	 *
 	 * @return true if resultSet is deleted from cache, false if resultSet wasn't cached
 	 */
 	boolean delete(IDataSet dataSet);
 
 	/**
 	 * Delete the specified resultSet
-	 * 
+	 *
 	 * @param resultsetSignature
 	 *            the unique resultSet signature
-	 * 
+	 *
 	 * @return true if resultSet is deleted from cache, false if resultSet wasn't cached
 	 */
 	boolean delete(String resultsetSignature);
@@ -181,7 +181,7 @@ public interface ICache {
 
 	/**
 	 * Insert a resultSet inside the cache using the resultsetSignature as an identifier
-	 * 
+	 *
 	 * @param signature
 	 *            the unique resultSet signature
 	 * @param dataset
@@ -198,7 +198,7 @@ public interface ICache {
 
 	/**
 	 * Register the listener on the specified event
-	 * 
+	 *
 	 * @param event
 	 *            the event type
 	 * @param listener
@@ -208,7 +208,7 @@ public interface ICache {
 
 	/**
 	 * Schedule the execution of an activity
-	 * 
+	 *
 	 * @param activity
 	 *            the type of activity
 	 * @param trigger
@@ -218,7 +218,7 @@ public interface ICache {
 
 	/**
 	 * delete cache of joined datasets referring to dataset passed as parameter
-	 * 
+	 *
 	 * @param signature
 	 */
 

@@ -46,8 +46,11 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.math.BigDecimal;
@@ -511,14 +514,11 @@ public class SQLDBCache implements ICache {
 		return dataStore;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see it.eng.spagobi.tools.dataset.cache.ICache#put(java.util.List, org.json.JSONArray, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
-	 */
-	public IDataStore refresh(List<IDataSet> dataSets, AssociationGroup associationGroup) {
+	public IDataStore refresh(JoinedDataSet joinedDataSet, AssociationGroup associationGroup) {
 		logger.trace("IN");
 		try {
+
+			List<IDataSet> dataSets = joinedDataSet.getDataSets();
 			SelectBuilder sqlBuilder = new SelectBuilder();
 
 			Map<String, String> datasetAliases = new HashMap<String, String>();
@@ -595,11 +595,37 @@ public class SQLDBCache implements ICache {
 
 			String queryText = sqlBuilder.toString();
 			logger.trace("Join query is equal to [" + queryText + "]");
-			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
-			dataStore.getMetaData().setProperty("BREAK_INDEXES", columnBreakIndexes);
-			dataStore.getMetaData().setProperty("COLUMN_NAMES", columnNames);
-			dataStore.getMetaData().setProperty("DATASET_ALIAS", datasetAliases);
+			IDataSetTableDescriptor descriptor = null;
+			String tableName = new PersistedTableManager().generateRandomTableName(this.getMetadata().getTableNamePrefix());
+			try {
+				logger.debug("Creating cache table [" + tableName + "] with base query [" + queryText + "] for joined dataset ...");
+				descriptor = TemporaryTableManager.createTable(null, queryText, tableName, getDataSource());
+				logger.debug("Created cache table [" + tableName + "] with base query [" + queryText + "] for joined dataset.");
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Error while creating cache table with base query [" + queryText + "]", e);
+			}
+
+			IDataStore dataStore = dataSource.executeStatement("SELECT * FROM " + descriptor.getTableName(), 0, 0);
+
+			// dataStore.getMetaData().setProperty("BREAK_INDEXES", columnBreakIndexes);
+			// dataStore.getMetaData().setProperty("COLUMN_NAMES", columnNames);
+			// dataStore.getMetaData().setProperty("DATASET_ALIAS", datasetAliases);
+
+			CacheItem item = getMetadata().addCacheItem(joinedDataSet.getSignature(), tableName, dataStore);
+			item.setProperty("BREAK_INDEXES", columnBreakIndexes);
+			item.setProperty("COLUMN_NAMES", columnNames);
+			item.setProperty("DATASET_ALIAS", datasetAliases);
+
+			logger.debug("dataset " + joinedDataSet.getLabel() + " is a joined dataset, add reference in map");
+			List<IDataSet> dsReferred = joinedDataSet.getDataSets();
+			// item.setProperty("DATASETS_REFERRED", datasetAlias);
+
+			for (Iterator iterator = dsReferred.iterator(); iterator.hasNext();) {
+				logger.debug("add reference");
+				IDataSet iDataSet = (IDataSet) iterator.next();
+				getMetadata().addJoinedDatasetReference(iDataSet.getSignature(), joinedDataSet.getSignature());
+			}
 
 			DataStore toReturn = (DataStore) dataStore;
 
