@@ -148,6 +148,11 @@ public class TwitterUser {
 		this.nTweets = nTweets;
 	}
 
+	public TwitterUser(long userID, int followersCount) {
+		this.userID = userID;
+		this.followersCount = followersCount;
+	}
+
 	public long getUserID() {
 		return userID;
 	}
