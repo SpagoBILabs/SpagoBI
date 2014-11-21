@@ -88,11 +88,11 @@ public class TwitterGeneralStatsDataProcessor {
 
 					totFollowers = totFollowers + userFollowers;
 
-					long tweetsNumber = user.getnTweets();
+					long tweetsNumber = dpCache.countUserTweetsFromSearchId(searchId, user.getUserID());
 
 					totalTweetsLong = totalTweetsLong + tweetsNumber;
 
-					impressionsLong = impressionsLong + (userFollowers * tweetsNumber);
+					impressionsLong = impressionsLong + (userFollowers * tweetsNumber) + 1;
 
 					// totalTweetsInt = totalTweetsInt + tweetsNumber;
 
