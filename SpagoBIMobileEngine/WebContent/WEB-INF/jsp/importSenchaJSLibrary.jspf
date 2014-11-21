@@ -32,7 +32,6 @@
 <script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.PagingToolbar.js"></script>
 <script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.CustomSelectField.js"></script>
 
-<script type="text/javascript" src="../js/sencha_2.1.1/ux/plugin/Pinchemu.js"></script>
 
 <script type="text/javascript" src="../js/sencha_2.1.1/ux/touch/graphics/ColorPatterns.js"></script>
 
