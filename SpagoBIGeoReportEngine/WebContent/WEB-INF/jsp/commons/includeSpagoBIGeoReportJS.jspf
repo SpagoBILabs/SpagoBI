@@ -19,7 +19,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 
 <!-- Include localized labels  -->
-<script type="text/javascript" src='./js/src/ext/sbi/locale/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/formats/<%=locale.getLanguage()%>.js'/></script>
 
 
 
@@ -30,7 +30,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/commons/Log.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/exception/ExceptionHandler.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/commons/Format.js'/></script>
-<script type="text/javascript" src='./js/src/ext/sbi/locale/LocaleUtils.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/formats/LocaleUtils.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/service/ServiceRegistry.js'/></script>
 
 <script type="text/javascript" src='./js/src/ext/sbi/geo/utils/ColorRgb.js'/></script>

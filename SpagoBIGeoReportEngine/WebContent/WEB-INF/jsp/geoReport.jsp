@@ -112,8 +112,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
             <link href="css/ie7.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
         <![endif]-->
         
+		<%@include file="commons/includeMessageResource.jspf" %>
         <%@include file="commons/includeGeoExt.jspf" %>
-		<%@include file="commons/includeExtensionsJS.jspf" %>	
+		<%@include file="commons/includeExtensionsJS.jspf" %>
 		<%@include file="commons/includeSpagoBIGeoReportJS.jspf" %>
     </head>
 	

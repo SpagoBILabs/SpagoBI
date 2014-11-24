@@ -36,7 +36,7 @@ if(Sbi.commons.Format){
 	}
 };
 
-
+/*
 Sbi.locale.localize = function(key, params) {
 	if(!Sbi.locale.ln) return key;
 	var msg = Sbi.locale.ln[key];
@@ -46,7 +46,12 @@ Sbi.locale.localize = function(key, params) {
 		msg = key;
 	}
 	return  msg;
+};*/
+Sbi.locale.localize = function(key) {
+	var value = messageResource.get(key, 'messages');
+	return value || key;
 };
+
 
 Sbi.locale.sobstituteParams = function(msg, params) {
 	if(params && params.length > 0) {
