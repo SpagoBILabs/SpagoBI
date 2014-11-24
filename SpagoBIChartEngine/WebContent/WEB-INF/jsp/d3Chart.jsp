@@ -42,15 +42,3 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
  	//response.sendRedirect("../WEB-INF/jsp/"+chartType+".jsp");
 
 %>
-
-<%-- ---------------------------------------------------------------------- --%>
-<%-- HTML	 																--%>
-<%-- ---------------------------------------------------------------------- --%>
-<html>
-	
-	
-	<body>		
-
-	</body>
-
-</html>

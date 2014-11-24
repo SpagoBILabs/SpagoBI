@@ -16,7 +16,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 2,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: '€',
+			//currencySymbol: 'ï¿½',
 			nullValue: ''
 		},
 		int: {
@@ -24,7 +24,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 0,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: '€',
+			//currencySymbol: 'ï¿½',
 			nullValue: ''
 		},
 		string: {
@@ -48,11 +48,3 @@ Sbi.locale.formats = {
     		nullValue: ''
 		}
 };
-
-//===================================================================
-// MESSAGE WINDOW
-//===================================================================
-Sbi.locale.ln['sbi.qbe.messagewin.warning.title'] = 'Warning';
-Sbi.locale.ln['sbi.qbe.messagewin.error.title'] = 'Messaggio di Errore';
-Sbi.locale.ln['sbi.qbe.messagewin.info.title'] = 'Informazione';
-

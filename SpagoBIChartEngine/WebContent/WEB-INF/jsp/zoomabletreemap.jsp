@@ -144,6 +144,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <html>
 	
 	<head>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeD3.jspf"%>
 		<link id="zoomabletreemap-style" rel="styleSheet" href ="../css/zoomabletreemap.css" type="text/css" />
 		

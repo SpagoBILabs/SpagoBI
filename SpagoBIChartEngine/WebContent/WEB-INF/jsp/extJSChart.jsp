@@ -97,6 +97,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	
 	<head>
 		<%@include file="commons/includeExtJS_410_RC.jspf" %>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSbiChartJS.jspf"%>
 	</head>
 	
