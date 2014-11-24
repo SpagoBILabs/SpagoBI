@@ -66,7 +66,7 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 @Path("/1.0/datasets")
 public class DataSetResource extends AbstractSpagoBIResource {
@@ -844,7 +844,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param profile
 	 * @param datasetsJSONArray
 	 * @param typeDocWizard
@@ -852,7 +852,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
 	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
 	 *            rifattorizzata al più presto.
-	 *
+	 * 
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
@@ -972,7 +972,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Check if the association passed is valid ',' is valid if number of record from association is lower than maximum of single datasets
-	 *
+	 * 
 	 * @param association
 	 */
 
@@ -985,28 +985,15 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 		logger.debug("Association to check " + association);
 
-		String field1 = null;
-		String field2 = null;
-
 		try {
 			JSONArray arrayAss = new JSONArray(association);
 
-			JSONObject firstDs = (JSONObject) arrayAss.get(0);
-			JSONObject secondDs = (JSONObject) arrayAss.get(1);
-
-			field1 = firstDs.getString("id");
-			field2 = secondDs.getString("id");
-
-			logger.debug("Checking association ");
-
-			String dsLabel1 = firstDs.getString("ds");
-			String dsLabel2 = secondDs.getString("ds");
-			boolean valid = getDatasetManagementAPI().checkAssociation(dsLabel1, dsLabel2, field1, field2);
+			boolean valid = getDatasetManagementAPI().checkAssociation(arrayAss);
 			logger.debug("The association is valid? " + valid);
 			toReturn.put("valid", valid);
 
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "Error while checking association among " + field1 + "=" + field2, e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "Error while checking association " + association, e);
 		} finally {
 			logger.debug("OUT");
 		}
