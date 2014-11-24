@@ -39,6 +39,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 	<head>
 		<title>Welcome to the sandbox</title>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeGeoExt.jspf" %>
 	</head>
 	
