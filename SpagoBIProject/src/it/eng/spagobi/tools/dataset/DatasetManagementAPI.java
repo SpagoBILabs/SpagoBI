@@ -1036,93 +1036,98 @@ public class DatasetManagementAPI {
 	 * @throws Exception
 	 */
 
-	public boolean checkAssociation(String dsLabel1, String dsLabel2, String field1, String field2) throws Exception {
+	public boolean checkAssociation(JSONArray arrayAss) throws Exception {
 		logger.debug("IN");
 
-		logger.debug("Check join for dataset " + dsLabel1 + " and " + dsLabel2 + " with condition " + field1 + "=" + field2);
+		logger.debug("Check join");
 		boolean toReturn = false;
 
-		String table1 = null;
-		String table2 = null;
+		String[] synonims = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "z" };
+		ArrayList<String> fields = new ArrayList<String>();
+		String where = "";
+
+		SelectBuilder joinSqlBuilder = new SelectBuilder();
+		joinSqlBuilder.column("count(*) counter");
+
 		try {
 
-			IDataSet ds1 = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel1);
-			IDataSet ds2 = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel2);
-
 			ICache cache = SpagoBICacheManager.getCache();
-
-			// check datasets are cached otherwise cache it
-			IDataStore cachedResultSet = cache.get(ds1);
-			if (cachedResultSet == null) {
-				logger.error("dataset " + ds1.getLabel() + " is not already cached, cache it");
-				IDataStore dataStore = dataStore = cache.refresh(ds1, false);
-			}
-			IDataStore cachedResultSet2 = cache.get(ds2);
-			if (cachedResultSet2 == null) {
-				logger.error("dataset " + ds2.getLabel() + " is not already cached, cache it");
-				IDataStore dataStore = dataStore = cache.refresh(ds2, false);
-			}
-
-			table1 = cache.getMetadata().getCacheItem(ds1.getSignature()).getTable();
-			table2 = cache.getMetadata().getCacheItem(ds2.getSignature()).getTable();
 			IDataSource dataSource = ((SQLDBCache) cache).getDataSource();
 
-			logger.debug("Tables involved are " + table1 + ", " + table2);
+			Long maxSingleCount = 0L;
 
-			SelectBuilder sqlBuilder = new SelectBuilder();
+			for (int i = 0; i < arrayAss.length(); i++) {
+				JSONObject objectDs = (JSONObject) arrayAss.get(i);
 
-			// Count query one
-			logger.debug("Count record on table " + table1);
-			sqlBuilder = new SelectBuilder();
-			sqlBuilder.column("count(*) counter");
-			sqlBuilder.from(table1 + " a");
-			String queryText1 = sqlBuilder.toString();
-			logger.debug("execute " + queryText1);
-			IDataStore dataStore = dataSource.executeStatement(queryText1, 0, 0);
-			Long count1 = (Long) ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
-			logger.debug("On query 1 counted " + count1 + " records");
+				String field = objectDs.getString("id");
+				fields.add(i, field);
+				logger.debug("Field " + field);
 
-			// Count query two
-			logger.debug("Count record on table " + table2);
-			sqlBuilder = new SelectBuilder();
-			sqlBuilder.column("count(*) counter");
-			sqlBuilder.from(table2 + " a");
-			String queryText2 = sqlBuilder.toString();
-			logger.debug("execute " + queryText2);
-			dataStore = dataSource.executeStatement(queryText2, 0, 0);
-			Long count2 = (Long) ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
-			logger.debug("On query 2 counted " + count2 + " records");
+				String dsLabel = objectDs.getString("ds");
+				logger.debug("Dataset with label " + dsLabel);
+				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
 
-			// count the Join
-			sqlBuilder = new SelectBuilder();
-			sqlBuilder.column("count(*) counter");
-			sqlBuilder.from(table1 + " a");
-			sqlBuilder.join(table2 + " b");
-			String where = "a." + field1 + " = " + "b." + field2;
-			sqlBuilder.where(where);
-			String queryText3 = sqlBuilder.toString();
-			logger.trace("Join query is equal to [" + queryText3 + "]");
-			dataStore = dataSource.executeStatement(queryText3, 0, 0);
-			Long joinCount = (Long) ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
+				// check datasets are cached otherwise cache it
+				IDataStore cachedResultSet = cache.get(dataset);
+				if (cachedResultSet == null) {
+					logger.error("dataset " + dataset.getLabel() + " is not already cached, cache it");
+					IDataStore dataStore = dataStore = cache.refresh(dataset, false);
+				}
+
+				String table = cache.getMetadata().getCacheItem(dataset.getSignature()).getTable();
+				logger.debug("Table " + table);
+
+				// count single value
+				SelectBuilder sqlBuilder = new SelectBuilder();
+				sqlBuilder = new SelectBuilder();
+				sqlBuilder.column("count(*) counter");
+				sqlBuilder.from(table + " a");
+				String queryText1 = sqlBuilder.toString();
+				logger.debug("execute " + queryText1);
+				IDataStore dataStore = dataSource.executeStatement(queryText1, 0, 0);
+				Long count1 = (Long) ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
+				logger.debug("On query on table " + table + " counted " + count1 + " records");
+
+				if (count1 > maxSingleCount) {
+					maxSingleCount = count1;
+				}
+
+				// build join
+				if (i == 0) {
+					joinSqlBuilder.from(table + " " + synonims[i]);
+				} else {
+					joinSqlBuilder.join(table + " " + synonims[i]);
+
+					// add where conditions
+					if (i == 1) {
+						where += synonims[i] + "." + field + "=" + synonims[i - 1] + "." + fields.get(i - 1);
+					} else {
+						where += " AND ";
+						where += synonims[i] + "." + field + "=" + synonims[i - 1] + "." + fields.get(i - 1);
+					}
+				}
+			}
+
+			logger.debug("Join where condition is " + where);
+			joinSqlBuilder.where(where);
+
+			String joinQueryText = joinSqlBuilder.toString();
+			logger.trace("Join query is equal to [" + joinQueryText + "]");
+			IDataStore joinDataStore = dataSource.executeStatement(joinQueryText, 0, 0);
+			Long joinCount = (Long) ((DataStore) joinDataStore).getRecordAt(0).getFieldAt(0).getValue();
 			logger.debug("On join counted " + joinCount + " records");
 
-			logger.debug("Join is valid is joinCOnut > MAX(count1, count2");
-
-			Long max = count1 > count2 ? count1 : count2;
-			if (joinCount > max) {
-				logger.warn("Chosen join among tables " + table1 + "," + table2 + " and fields " + field1 + "=" + field2 + " return too many rows");
+			if (joinCount > maxSingleCount) {
+				logger.warn("Chosen join among tables return too many rows");
 				toReturn = false;
 			} else {
-				logger.debug("Chosen join among tables " + table1 + "," + table2 + " and fields " + field1 + "=" + field2 + "is valid");
+				logger.debug("Chosen join among tables is valid");
 				toReturn = true;
 
 			}
 		} catch (Exception e) {
-			logger.error("Error while checking the join among tables " + table1 + "," + table2 + " and fields " + field1 + "=" + field2
-					+ " return too many rows", e);
-			throw new Exception("Error while checking the join among tables " + table1 + "," + table2 + " and fields " + field1 + "=" +
-
-			field2, e);
+			logger.error("Error while checking the join among tables return too many rows", e);
+			throw new Exception("Error while checking the join among tables", e);
 		} finally {
 			logger.debug("OUT");
 		}
