@@ -109,4 +109,6 @@ Sbi.locale.localize = function(key) {
 	return value || key;
 };
 
+//alias
+LN = Sbi.locale.localize;
 FORMATTERS = Sbi.locale.formatters;
