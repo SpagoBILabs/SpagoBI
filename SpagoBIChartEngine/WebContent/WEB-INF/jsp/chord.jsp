@@ -173,6 +173,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <html>
 	
 	<head>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeD3.jspf"%>
 	</head>
 	<style>

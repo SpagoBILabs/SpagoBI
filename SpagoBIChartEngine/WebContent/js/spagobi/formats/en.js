@@ -49,11 +49,3 @@ Sbi.locale.formats = {
     		nullValue: ''
 		}
 };
-
-//===================================================================
-// MESSAGE WINDOW
-//===================================================================
-Sbi.locale.ln['sbi.qbe.messagewin.warning.title'] = 'Warning message';
-Sbi.locale.ln['sbi.qbe.messagewin.error.title'] = 'Error message';
-Sbi.locale.ln['sbi.qbe.messagewin.info.title'] = 'Info message';
-
