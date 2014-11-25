@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -214,15 +215,16 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				filterCriteria = getFilterCriteria(label, selectionsObject);
 			}
 
+			HttpSession session = this.getServletRequest().getSession();
 			IDataStore dataStore = null;
-			if (groupCriteria.size() == 0 && projectionCriteria.size() == 0 && filterCriteria.size() == 0) {
-				dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters));
-			} else {
-				dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters), groupCriteria, filterCriteria,
-						projectionCriteria);
+			synchronized (session) {
+				if (groupCriteria.size() == 0 && projectionCriteria.size() == 0 && filterCriteria.size() == 0) {
+					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters));
+				} else {
+					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters), groupCriteria, filterCriteria,
+							projectionCriteria);
+				}
 			}
-
-			long recNo = dataStore.getRecordsCount();
 
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");

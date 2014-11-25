@@ -49,6 +49,7 @@ import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -112,7 +113,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(it.eng.spagobi.tools .dataset.bo.IDataSet)
 	 */
 	public boolean contains(IDataSet dataSet) {
@@ -132,7 +133,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.lang.String)
 	 */
 	public boolean contains(String resultsetSignature) {
@@ -141,7 +142,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.util.List)
 	 */
 	public boolean contains(List<IDataSet> dataSets) {
@@ -150,7 +151,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#getNotContained(java.util.List)
 	 */
 	public List<IDataSet> getNotContained(List<IDataSet> dataSets) {
@@ -169,7 +170,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet)
 	 */
 	public IDataStore get(IDataSet dataSet) {
@@ -204,7 +205,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String)
 	 */
 	public IDataStore get(String resultsetSignature) {
@@ -246,7 +247,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet, java.util.List, java.util.List, java.util.List)
 	 */
 	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections) {
@@ -255,8 +256,7 @@ public class SQLDBCache implements ICache {
 		logger.debug("IN");
 		try {
 			if (dataSet != null) {
-				String dataSetSignature = dataSet.getSignature();
-				dataStore = get(dataSetSignature, groups, filters, projections);
+				dataStore = getInternal(dataSet, groups, filters, projections);
 			} else {
 				logger.warn("Input parameter [dataSet] is null");
 			}
@@ -272,126 +272,316 @@ public class SQLDBCache implements ICache {
 		return dataStore;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String, java.util.List, java.util.List, java.util.List)
-	 */
-	public IDataStore get(String resultsetSignature, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections) {
+	public IDataStore getInternal(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections) {
 		logger.debug("IN");
 
-		if (getMetadata().containsCacheItem(resultsetSignature)) {
-			CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
-			String tableName = cacheItem.getTable();
-			logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
+		try {
 
-			SelectBuilder sqlBuilder = new SelectBuilder();
-			sqlBuilder.from(tableName);
-
-			// Columns to SELECT
-			if (projections != null) {
-				for (ProjectionCriteria projection : projections) {
-					String aggregateFunction = projection.getAggregateFunction();
-
-					Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-					String columnName = projection.getColumnName();
-					if (datasetAlias != null) {
-						columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
-					}
-					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-
-					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-						String aliasName = projection.getAliasName();
-						aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-						if (aliasName != null && !aliasName.isEmpty()) {
-							columnName = aggregateFunction + "(" + columnName + ") AS " + aliasName;
-						}
-					}
-					sqlBuilder.column(columnName);
-
-				}
+			String resultsetSignature = dataSet.getSignature();
+			if (!getMetadata().containsCacheItem(resultsetSignature)) {
+				logger.debug("Not found resultSet with signature [" + resultsetSignature + "] inside the Cache");
+				return null;
 			}
 
-			// WHERE conditions
-			if (filters != null) {
-				for (FilterCriteria filter : filters) {
-					String leftOperand = null;
-					if (filter.getLeftOperand().isCostant()) {
-						// why? warning!
-						leftOperand = filter.getLeftOperand().getOperandValueAsString();
-					} else { // it's a column
-						Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-						String datasetLabel = filter.getLeftOperand().getOperandDataSet();
-						leftOperand = filter.getLeftOperand().getOperandValueAsString();
-						if (datasetAlias != null) {
-							leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
-						}
-						leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
-					}
-
-					String operator = filter.getOperator();
-
-					String rightOperand = null;
-					if (filter.getRightOperand().isCostant()) {
-						if (filter.getRightOperand().isMultivalue()) {
-							rightOperand = "(";
-							String separator = "";
-							String stringDelimiter = "'";
-							List<String> values = filter.getRightOperand().getOperandValueAsList();
-							for (String value : values) {
-								rightOperand += separator + stringDelimiter + value + stringDelimiter;
-								separator = ",";
-							}
-							rightOperand += ")";
-						} else {
-							rightOperand = filter.getRightOperand().getOperandValueAsString();
-						}
-					} else { // it's a column
-						rightOperand = filter.getRightOperand().getOperandValueAsString();
-						rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
-					}
-
-					sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
-				}
+			if (dataSet instanceof JoinedDataSet) {
+				return queryJoinedCachedDataset((JoinedDataSet) dataSet, groups, filters, projections, resultsetSignature);
+			} else {
+				return queryStandardCachedDataset(groups, filters, projections, resultsetSignature);
 			}
 
-			// GROUP BY conditions
-			if (groups != null) {
-				for (GroupCriteria group : groups) {
-					String aggregateFunction = group.getAggregateFunction();
-
-					Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-					String columnName = group.getColumnName();
-					if (datasetAlias != null) {
-						columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
-					}
-					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-						columnName = aggregateFunction + "(" + columnName + ")";
-					}
-					sqlBuilder.groupBy(columnName);
-				}
-			}
-
-			String queryText = sqlBuilder.toString();
-			logger.debug("Cached dataset access query is equal to [" + queryText + "]");
-
-			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
-			DataStore toReturn = (DataStore) dataStore;
-
-			List<Integer> breakIndexes = (List<Integer>) cacheItem.getProperty("BREAK_INDEXES");
-			if (breakIndexes != null) {
-				dataStore.getMetaData().setProperty("BREAK_INDEXES", breakIndexes);
-			}
-
-			return toReturn;
-		} else {
-			logger.debug("Not found resultSet with signature [" + resultsetSignature + "] inside the Cache");
+		} finally {
+			logger.debug("OUT");
 		}
 
-		logger.debug("OUT");
-		return null;
+	}
 
+	private IDataStore queryJoinedCachedDataset(JoinedDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters,
+			List<ProjectionCriteria> projections, String resultsetSignature) {
+		CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
+		String tableName = cacheItem.getTable();
+		logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
+
+		// we assume that all projections refer to the same dataset: this is not 100% true!!! TODO fix this
+		List<ProjectionCriteria> projectionsForInLineView = null;
+		if (projections != null && !projections.isEmpty()) {
+			String dataSetName = projections.get(0).getDataset();
+			projectionsForInLineView = getProjectionsForInLineView(cacheItem, tableName, dataSetName);
+		}
+
+		String inLineViewSQL = getInLineViewSQLDefinition(projectionsForInLineView, filters, cacheItem, tableName);
+		String inLineViewAlias = "T" + Math.abs(new Random().nextInt());
+
+		InLineViewBuilder sqlBuilder = new InLineViewBuilder(inLineViewSQL, inLineViewAlias);
+
+		// Columns to SELECT
+		if (projections != null) {
+			for (ProjectionCriteria projection : projections) {
+				String aggregateFunction = projection.getAggregateFunction();
+
+				Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+				String columnName = projection.getColumnName();
+				if (datasetAlias != null) {
+					columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
+				}
+				columnName = inLineViewAlias + "." + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+
+				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+					columnName = aggregateFunction + "(" + columnName + ")";
+				}
+
+				String aliasName = projection.getAliasName();
+				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
+				if (aliasName != null && !aliasName.isEmpty()) {
+					columnName += " AS " + aliasName;
+				}
+
+				sqlBuilder.column(columnName);
+
+			}
+		}
+
+		// GROUP BY conditions
+		if (groups != null) {
+			for (GroupCriteria group : groups) {
+				String aggregateFunction = group.getAggregateFunction();
+
+				Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+				String columnName = group.getColumnName();
+				if (datasetAlias != null) {
+					columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
+				}
+				columnName = inLineViewAlias + "." + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+					columnName = aggregateFunction + "(" + columnName + ")";
+				}
+				sqlBuilder.groupBy(columnName);
+			}
+		}
+
+		String queryText = sqlBuilder.toString();
+		logger.debug("Cached dataset access query is equal to [" + queryText + "]");
+
+		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+		DataStore toReturn = (DataStore) dataStore;
+
+		List<Integer> breakIndexes = (List<Integer>) cacheItem.getProperty("BREAK_INDEXES");
+		if (breakIndexes != null) {
+			dataStore.getMetaData().setProperty("BREAK_INDEXES", breakIndexes);
+		}
+
+		return toReturn;
+	}
+
+	private List<ProjectionCriteria> getProjectionsForInLineView(CacheItem cacheItem, String tableName, String dataSet) {
+		IDataSetTableDescriptor descriptor = null;
+		try {
+			descriptor = TemporaryTableManager.getTableDescriptor(null, tableName, getDataSource());
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot read columns of table [" + tableName + "]", e);
+		}
+		Map<String, String> datasetsAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+		Assert.assertNotNull(datasetsAlias, "Datasets' aliases must be specified!!");
+		String dataSetAlias = datasetsAlias.get(dataSet);
+		Assert.assertNotNull(dataSetAlias, "Dataset's alias must be specified!!");
+
+		List<ProjectionCriteria> toReturn = new ArrayList<ProjectionCriteria>();
+		Set<String> columnsName = descriptor.getColumnNames();
+		Iterator<String> it = columnsName.iterator();
+		while (it.hasNext()) {
+			String column = it.next();
+			String prefix = dataSetAlias.toUpperCase() + " - ";
+			if (column.toUpperCase().startsWith(prefix)) {
+				String colunmName = column.substring(prefix.length());
+				ProjectionCriteria projection = new ProjectionCriteria(dataSet, colunmName, null, colunmName);
+				toReturn.add(projection);
+			}
+		}
+		return toReturn;
+	}
+
+	private String getInLineViewSQLDefinition(List<ProjectionCriteria> projections, List<FilterCriteria> filters, CacheItem cacheItem, String tableName) {
+
+		SelectBuilder sqlBuilder = new SelectBuilder();
+		sqlBuilder.from(tableName);
+		sqlBuilder.setDistinctEnabled(true);
+
+		// Columns to SELECT
+		if (projections != null) {
+			for (ProjectionCriteria projection : projections) {
+				String aggregateFunction = projection.getAggregateFunction();
+
+				Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+				String columnName = projection.getColumnName();
+				if (datasetAlias != null) {
+					columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
+				}
+				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+
+				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+					String aliasName = projection.getAliasName();
+					aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
+					if (aliasName != null && !aliasName.isEmpty()) {
+						columnName = aggregateFunction + "(" + columnName + ") AS " + aliasName;
+					}
+				}
+				sqlBuilder.column(columnName);
+
+			}
+		}
+
+		// WHERE conditions
+		if (filters != null) {
+			for (FilterCriteria filter : filters) {
+				String leftOperand = null;
+				if (filter.getLeftOperand().isCostant()) {
+					// why? warning!
+					leftOperand = filter.getLeftOperand().getOperandValueAsString();
+				} else { // it's a column
+					Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+					String datasetLabel = filter.getLeftOperand().getOperandDataSet();
+					leftOperand = filter.getLeftOperand().getOperandValueAsString();
+					if (datasetAlias != null) {
+						leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
+					}
+					leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
+				}
+
+				String operator = filter.getOperator();
+
+				String rightOperand = null;
+				if (filter.getRightOperand().isCostant()) {
+					if (filter.getRightOperand().isMultivalue()) {
+						rightOperand = "(";
+						String separator = "";
+						String stringDelimiter = "'";
+						List<String> values = filter.getRightOperand().getOperandValueAsList();
+						for (String value : values) {
+							rightOperand += separator + stringDelimiter + value + stringDelimiter;
+							separator = ",";
+						}
+						rightOperand += ")";
+					} else {
+						rightOperand = filter.getRightOperand().getOperandValueAsString();
+					}
+				} else { // it's a column
+					rightOperand = filter.getRightOperand().getOperandValueAsString();
+					rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
+				}
+
+				sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
+			}
+		}
+
+		String inLineViewSQL = sqlBuilder.toString();
+		return inLineViewSQL;
+	}
+
+	private IDataStore queryStandardCachedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
+			String resultsetSignature) {
+		CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
+		String tableName = cacheItem.getTable();
+		logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
+
+		SelectBuilder sqlBuilder = new SelectBuilder();
+		sqlBuilder.from(tableName);
+
+		// Columns to SELECT
+		if (projections != null) {
+			for (ProjectionCriteria projection : projections) {
+				String aggregateFunction = projection.getAggregateFunction();
+
+				Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+				String columnName = projection.getColumnName();
+				if (datasetAlias != null) {
+					columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
+				}
+				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+
+				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+					String aliasName = projection.getAliasName();
+					aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
+					if (aliasName != null && !aliasName.isEmpty()) {
+						columnName = aggregateFunction + "(" + columnName + ") AS " + aliasName;
+					}
+				}
+				sqlBuilder.column(columnName);
+
+			}
+		}
+
+		// WHERE conditions
+		if (filters != null) {
+			for (FilterCriteria filter : filters) {
+				String leftOperand = null;
+				if (filter.getLeftOperand().isCostant()) {
+					// why? warning!
+					leftOperand = filter.getLeftOperand().getOperandValueAsString();
+				} else { // it's a column
+					Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+					String datasetLabel = filter.getLeftOperand().getOperandDataSet();
+					leftOperand = filter.getLeftOperand().getOperandValueAsString();
+					if (datasetAlias != null) {
+						leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
+					}
+					leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
+				}
+
+				String operator = filter.getOperator();
+
+				String rightOperand = null;
+				if (filter.getRightOperand().isCostant()) {
+					if (filter.getRightOperand().isMultivalue()) {
+						rightOperand = "(";
+						String separator = "";
+						String stringDelimiter = "'";
+						List<String> values = filter.getRightOperand().getOperandValueAsList();
+						for (String value : values) {
+							rightOperand += separator + stringDelimiter + value + stringDelimiter;
+							separator = ",";
+						}
+						rightOperand += ")";
+					} else {
+						rightOperand = filter.getRightOperand().getOperandValueAsString();
+					}
+				} else { // it's a column
+					rightOperand = filter.getRightOperand().getOperandValueAsString();
+					rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
+				}
+
+				sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
+			}
+		}
+
+		// GROUP BY conditions
+		if (groups != null) {
+			for (GroupCriteria group : groups) {
+				String aggregateFunction = group.getAggregateFunction();
+
+				Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+				String columnName = group.getColumnName();
+				if (datasetAlias != null) {
+					columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
+				}
+				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+					columnName = aggregateFunction + "(" + columnName + ")";
+				}
+				sqlBuilder.groupBy(columnName);
+			}
+		}
+
+		String queryText = sqlBuilder.toString();
+		logger.debug("Cached dataset access query is equal to [" + queryText + "]");
+
+		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+		DataStore toReturn = (DataStore) dataStore;
+
+		List<Integer> breakIndexes = (List<Integer>) cacheItem.getProperty("BREAK_INDEXES");
+		if (breakIndexes != null) {
+			dataStore.getMetaData().setProperty("BREAK_INDEXES", breakIndexes);
+		}
+
+		return toReturn;
 	}
 
 	// ===================================================================================
@@ -400,7 +590,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
 	public IDataStore load(IDataSet dataSet, boolean wait) {
@@ -412,7 +602,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(java.util.List, boolean)
 	 */
 	public List<IDataStore> load(List<IDataSet> dataSets, boolean wait) {
@@ -484,7 +674,7 @@ public class SQLDBCache implements ICache {
 	// ===================================================================================
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
 	public IDataStore refresh(IDataSet dataSet, boolean wait) {
@@ -645,7 +835,7 @@ public class SQLDBCache implements ICache {
 	// ===================================================================================
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
 	 */
 	public synchronized void put(IDataSet dataSet, IDataStore dataStore) {
@@ -738,7 +928,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(it.eng.spagobi.tools.dataset .bo.IDataSet)
 	 */
 	public boolean delete(IDataSet dataSet) {
@@ -769,7 +959,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 	public boolean delete(String signature) {
@@ -839,7 +1029,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteQuota()
 	 */
 	public void deleteToQuota() {
@@ -864,7 +1054,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteAll()
 	 */
 	public void deleteAll() {
@@ -978,7 +1168,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#getCacheMetadata()
 	 */
 	public SQLDBCacheMetadata getMetadata() {
@@ -987,7 +1177,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#addListener(it.eng.spagobi. tools.dataset.cache.ICacheEvent,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheListener)
 	 */
@@ -998,7 +1188,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#scheduleActivity(it.eng.spagobi .tools.dataset.cache.ICacheActivity,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheTrigger)
 	 */
@@ -1009,7 +1199,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#enable(boolean)
 	 */
 	public void enable(boolean enable) {
@@ -1019,7 +1209,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#isEnabled()
 	 */
 	public boolean isEnabled() {
@@ -1036,7 +1226,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#refresh(java.util.List, boolean)
 	 */
 	public IDataStore refresh(List<IDataSet> dataSets, boolean wait) {
