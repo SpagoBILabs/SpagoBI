@@ -106,20 +106,6 @@ public interface ICache {
 	 */
 	IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections);
 
-	/**
-	 * @param resultsetSignature
-	 *            the unique resultSet signature
-	 * @param groups
-	 *            grouping criteria for the resultSet
-	 * @param filters
-	 *            filters used on the resultSet
-	 * @param projections
-	 *            (fields to select) on the resultSet
-	 *
-	 * @return the resultSet if cached, null elsewhere
-	 */
-	IDataStore get(String resultsetSignature, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections);
-
 	// =====================================================================================
 	// LOAD METHODS
 	// =====================================================================================
