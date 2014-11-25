@@ -200,9 +200,11 @@ public class ProfileFilter implements Filter {
 		UserProfile userProfile = (UserProfile) profile;
 		// retrieving tenant id
 		String tenantId = userProfile.getOrganization();
+		logger.debug("Retrieved tenantId from user profile object : [" + tenantId + "]");
 		// putting tenant id on thread local
 		Tenant tenant = new Tenant(tenantId);
 		TenantManager.setTenant(tenant);
+		logger.debug("Tenant [" + tenantId + "] set into TenantManager");
 	}
 
 	public void init(FilterConfig config) throws ServletException {
