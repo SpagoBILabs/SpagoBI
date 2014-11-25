@@ -11,7 +11,7 @@
 
 Ext.define('Item', {
     extend: 'Ext.data.Model',
-    fields: ['text','leafId']
+    fields: ['text','leafId','leafParentCode','leafParentName']
 })
 
 
@@ -85,6 +85,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		            	   //populate hierarchies combo
 		            	   this.comboHierarchies.setDisabled(false);
 		            	   this.comboHierarchies.clearValue();
+		            	   this.dateHierachies.setDisabled(false);
 		            	   var dimensionName = value[0].get('DIMENSION_NM');
 		            	   this.hierarchiesStore = this.createHierarchiesComboStore(dimensionName);
 		            	   this.comboHierarchies.bindStore(this.hierarchiesStore);
@@ -118,24 +119,68 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			editable : false,
 			style:'padding:5px',
 			disabled: true,
-			listeners: {
-				select:{
-		               fn:function(combo, value) {
-		            	  var hierarchy = value[0].get('HIERARCHY_NM');
+//			listeners: {
+//				select:{
+//		               fn:function(combo, value) {
+//		            	  var hierarchy = value[0].get('HIERARCHY_NM');
+//		            	  var dimension = this.comboDimensions.getValue();
+//		            	  this.automaticHierarchiesTreeStore = this.createAutomaticHierarchyTreeStore(dimension, hierarchy);
+//		            	  this.leftPanel.remove(Ext.getCmp('automaticTreePanel'));
+//		            	  var myTreePanel = this.createTreePanel(this.automaticHierarchiesTreeStore);
+//		            	  this.leftPanel.add(myTreePanel);
+//		            	  myTreePanel.expandAll();
+//
+//		               }
+//		           }
+//		        ,scope:this  
+//			}
+		});
+		
+		this.dateHierachies = new Ext.form.DateField({
+			id: 'hierarchiesDate',
+			fieldLabel: LN('sbi.hierarchies.date'),
+			style:'padding:5px',
+			width : 300,
+			disabled: true, 
+			format: Sbi.config.localizedDateFormat,
+			value: new Date() //default value is today
+		});
+		
+		this.refreshButton = Ext.create('Ext.Button', {
+		    renderTo: document.body,
+		    text    :  LN('sbi.hierarchies.refresh'),
+		    scale   : 'small',
+		    width 	: 300,
+		    listeners: {
+				click:{
+		               fn:function() {
+		            	  var hierarchy = this.comboHierarchies.getValue();
 		            	  var dimension = this.comboDimensions.getValue();
-		            	  this.automaticHierarchiesTreeStore = this.createAutomaticHierarchyTreeStore(dimension, hierarchy);
+		            	  var dateHierarchy =  Ext.Date.format(this.dateHierachies.getValue(),Sbi.config.clientServerDateFormat);
+		            	  if (hierarchy == null || hierarchy == undefined || 
+		            		  dimension == null || dimension == undefined ||
+		            		  dateHierarchy == null || dateHierarchy == undefined ){
+		            		  Ext.Msg.alert(LN('sbi.hierarchies.drag.wrong.action'), LN('sbi.hierarchies.new.create.wrong'));
+		            		  return;
+		            	  }
+		            	  this.automaticHierarchiesTreeStore = this.createAutomaticHierarchyTreeStore(dimension, hierarchy, dateHierarchy);
 		            	  this.leftPanel.remove(Ext.getCmp('automaticTreePanel'));
-		            	  var myTreePanel = this.createTreePanel(this.automaticHierarchiesTreeStore);
-		            	  this.leftPanel.add(myTreePanel);
-		            	  myTreePanel.expandAll();
-
+//		            	 alert(this.automaticHierarchiesTreeStore.getStore().getRootNode());
+//		            	  if (this.automaticHierarchiesTreeStore.getRootNode() != null){
+		            		  var myTreePanel = this.createTreePanel(this.automaticHierarchiesTreeStore);
+		            		  this.leftPanel.add(myTreePanel);
+//			            	  myTreePanel.expandAll();
+//		            	  }else{
+//		            		  var warningPanel = this.createWarningPanel();
+//		            		  this.leftPanel.add(warningPanel);
+//		            		  this.doLayout();
+//		            	  }		            	 
 		               }
 		           }
 		        ,scope:this  
 			}
 		});
-		
-		
+
 		this.automaticHierarchiesComboPanel =  Ext.create('Ext.panel.Panel', {
 			layout: {
 				   type: 'vbox',
@@ -144,7 +189,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			},
 	        bodyStyle:'padding:20px',
 	        height: 185,
-			items:[this.comboDimensions,this.comboHierarchies]
+			items:[this.comboDimensions,this.comboHierarchies,this.dateHierachies, this.refreshButton]
 		});		
 	}
 	
@@ -183,7 +228,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        text: LN('sbi.hierarchies.new.create'),
             margin: '0 0 0 10',
 	        listeners: {
-	            click: function() {
+	            click: function() {	            	
 	            	this.saveCustomHierarchyButton.setVisible(true);
 	            	this.cancelCustomHierarchyButton.setVisible(true);
 	        		this.saveChangesCustomHierarchyButton.setVisible(false);
@@ -200,7 +245,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        text: LN('sbi.generic.update'),
             margin: '0 0 0 10',
 	        listeners: {
-	            click: function() {
+	            click: function() {	            	
 	            	this.saveCustomHierarchy();
 	            	this.enableGUIElements();
 	            }
@@ -213,7 +258,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        text: LN('sbi.general.cancel'),
             margin: '0 0 0 10',
 	        listeners: {
-	            click: function() {
+	            click: function() {	            	
 	            	this.saveCustomHierarchyButton.setVisible(false);
 	            	this.cancelCustomHierarchyButton.setVisible(false);	 
 	            	this.cancelCustomHierarchy();
@@ -231,7 +276,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        text: LN('sbi.hierarchies.save.changes'),
             margin: '0 0 0 10',
 	        listeners: {
-	            click: function() {
+	            click: function() {	            	
 	            	this.modifyCustomHierarchy();
 	            }
 				,scope:this 
@@ -387,11 +432,11 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
     	return hierarchiesStore;		
 	}
 	
-	, createAutomaticHierarchyTreeStore: function(dimension, hierarchy){
+	, createAutomaticHierarchyTreeStore: function(dimension, hierarchy, dateHierarchy){
 		var baseParams = {}
 		baseParams.dimension = dimension;
 		baseParams.hierarchy = hierarchy;
-
+		baseParams.dateHierarchy = dateHierarchy;
 		
 		this.services["getAutomaticHierarchyTree"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'hierarchies/getAutomaticHierarchyTree',
@@ -501,6 +546,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		//Disable some GUI elements when editing a custom hierarchy to prevent inconsistency
 		this.comboHierarchies.setDisabled(true);
 		this.comboDimensions.setDisabled(true);
+		this.dateHierachies.setDisabled(true);
 		this.newCustomHierarchyTypeCombo.setDisabled(true);
 		this.newCustomHierarchyButton.setDisabled(true);
 		this.customHierarchiesGrid.setDisabled(true);
@@ -510,6 +556,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		//Enable some GUI elements after custom hierarchy save or cancel
 		this.comboHierarchies.setDisabled(false);
 		this.comboDimensions.setDisabled(false);
+		this.dateHierachies.setDisabled(false);
 		this.newCustomHierarchyTypeCombo.setDisabled(false);
 		this.newCustomHierarchyButton.setDisabled(false);
 		this.customHierarchiesGrid.setDisabled(false);
@@ -520,6 +567,10 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		
 		//check the end nodes
 		var customTreePanel = Ext.getCmp('customTreePanel');
+		if (customTreePanel == undefined || customTreePanel == null){
+			Ext.Msg.alert(LN('sbi.hierarchies.drag.wrong.action'), LN('sbi.hierarchies.save.wrong'));
+			return;
+		}
 		var myStore = customTreePanel.getStore();        	
 		var rootNode =  myStore.getRootNode();
 		if (!this.checkLeafNodes(rootNode)){
@@ -527,6 +578,16 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.hierarchies.custom.error.leaf'), LN('sbi.generic.error'));
 		} else {
 			//valid hierarchy
+			this.customHierarchyCode = new Ext.form.Text({
+				name: 'code',
+		        fieldLabel: LN('sbi.generic.code'),
+		        labelWidth: 130,
+				width : 300,
+		        allowBlank: false,
+		        enforceMaxLength: true,
+		        maxLength: 45
+			});
+			
 			this.customHierarchyName = new Ext.form.Text({
 				name: 'name',
 		        fieldLabel: LN('sbi.generic.name'),
@@ -588,7 +649,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 				        {
 							
 							bodyStyle:'padding:20px',
-				        	items: [this.customHierarchyName,this.customHierarchyDescription,this.scopeCombo,]
+				        	items: [this.customHierarchyCode,this.customHierarchyName,this.customHierarchyDescription,this.scopeCombo,]
 				        }),
 				        buttons:[
 				                 {
@@ -601,6 +662,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 				                		 
 				                		 var params = {};
 				                		 params.root = Ext.encode(myJson);
+				                		 params.code = this.customHierarchyCode.getValue();
 				                		 params.name = this.customHierarchyName.getValue();
 				                		 params.description = this.customHierarchyDescription.getValue();
 				                		 params.scope = this.scopeCombo.getValue();
@@ -664,13 +726,15 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	
 	, resetCurrentAutomaticHierarchy: function(){
 		//Reload current Automatic Hierarchy selected
+		var dateHierarchy = this.dateHierachies.getValue();
 		var hierarchy = this.comboHierarchies.getValue();
 		var dimension = this.comboDimensions.getValue();
-		this.automaticHierarchiesTreeStore = this.createAutomaticHierarchyTreeStore(dimension, hierarchy);
+		var dateHierarchy =  Ext.Date.format(this.dateHierachies.getValue(),Sbi.config.clientServerDateFormat);
+   	    this.automaticHierarchiesTreeStore = this.createAutomaticHierarchyTreeStore(dimension, hierarchy, dateHierarchy);
 		this.leftPanel.remove(Ext.getCmp('automaticTreePanel'));
 		var myTreePanel = this.createTreePanel(this.automaticHierarchiesTreeStore);
 		this.leftPanel.add(myTreePanel);
-		myTreePanel.expandAll();
+//		myTreePanel.expandAll();
 	}
 	
 	, createCustomHierarchyEmptyPanel: function(){
@@ -706,7 +770,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			           }
 			   ]
 			   ,listeners: {
-				   'afterrender': function () {
+				   'afterrender': function () {					  
 					   var customTreePanelTempDropTarget = new Ext.dd.DropTarget(thisPanel.treePanelRight.getEl(), {
 						   ddGroup    : 'DDhierarchiesTrees',
 						   copy       : false,
@@ -755,7 +819,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
   	  	this.rightPanel.remove(Ext.getCmp('customTreePanel'));
 		var customTreePanel = this.createCustomTreePanel(customTreeStore,false);
 		this.rightPanel.add(customTreePanel);
-		customTreePanel.expandAll();
+//		customTreePanel.expandAll();
 		
 		this.saveChangesCustomHierarchyButton.show();
 
@@ -821,7 +885,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        ,loadMask:true
 	        ,listeners: {           	
 	        	//listeners for drag & drop management           	
-	        	viewready: function (tree) {                   
+	        	viewready: function (tree) {      
 	        		tree.plugins[0].dropZone.notifyDrop = function(dd, e, data){
 	        			
 	        			var ddOnSameTree;
@@ -897,6 +961,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        border:false,
 	        bodyStyle: {border:0},
 	        bodyStyle:'padding:20px',
+	        emptyText: 'Hierarchies not found for the period specified, try with another date.',
 	        viewConfig: {
 	            plugins: {
 	               ptype: 'treeviewdragdrop',
@@ -910,6 +975,26 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	    });
 		return automaticTree;
 			
+	}
+	
+	, createWarningPanel: function(){
+		var warning = new Ext.Panel({
+	        id: 'automaticWarning',
+	        layout: 'vbox',
+	        align: 'center',
+			pack: 'center',
+	        height: 400,
+	        items: [{
+                xtype:'label',
+                text:  'Hierarchies not found for the period specified, try with another date.',
+                name: 'lblWarning',
+                style: 'font-weight:bold;color:grey;text-align:center;vertical-align:middle;',
+                height: 100,
+                margin: '20 20 20 20'
+//                anchor:'93%'
+             }]
+	    });
+		return warning;
 	}
 	
 	//clone a Ext.data.NodeInterface with deep copy
@@ -980,7 +1065,17 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 
 		json.children = [];
 		for (var i=0; i < node.childNodes.length; i++) {
-			json.children.push( this.getJson(node.childNodes[i]) );
+			if (this.newCustomHierarchyTypeCombo.getValue() == 'MANUAL'){
+				var jsonNode = this.getJson(node.childNodes[i]);
+				//for manual hierarchy get the new parent reference
+				if(node.childNodes[i].parentNode != null){
+					jsonNode.leafParentCode = jsonNode.parentId;
+					jsonNode.leafParentName = node.childNodes[i].parentNode.data.text;
+					json.children.push( jsonNode );
+				}
+			}else{			
+				json.children.push( this.getJson(node.childNodes[i]) );
+			}		
 		}
 		return json;
 	}

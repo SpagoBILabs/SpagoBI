@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
@@ -77,6 +78,15 @@ public class HierarchiesService {
 	private static String DIMENSION = "DIMENSION";
 	private static String NAME = "NAME";
 	private static String DATASOURCE = "DATASOURCE";
+	// dialects for correct definition of date's functions
+	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
+	public static final String DIALECT_TERADATA = "org.hibernate.dialect.TeradataDialect";
+	public static final String DIALECT_POSTGRES = "org.hibernate.dialect.PostgreSQLDialect";
+	public static final String DIALECT_ORACLE = "org.hibernate.dialect.OracleDialect";
+	public static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
+	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
+	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
+	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -164,7 +174,8 @@ public class HierarchiesService {
 	@GET
 	@Path("/getAutomaticHierarchyTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getAutomaticHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("hierarchy") String hierarchy) {
+	public String getAutomaticHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("hierarchy") String hierarchy,
+			@QueryParam("dateHierarchy") String dateHierarchy) {
 		HierarchyTreeNode hierarchyTree;
 		JSONObject treeJSONObject;
 		try {
@@ -181,13 +192,16 @@ public class HierarchiesService {
 			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
 			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
 			// 3 - execute query to get hierarchies leafs
-			String queryText = this.createQueryAutomaticHierarchy(dataSource, hierarchyFK, hierarchyPrefix, hierarchy);
+			String queryText = this.createQueryAutomaticHierarchy(dataSource, hierarchyFK, hierarchyPrefix, hierarchy, dateHierarchy);
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 			// 4 - Create ADT for Tree from datastore
 			hierarchyTree = createHierarchyTreeStructure(dataStore);
 
 			treeJSONObject = convertHierarchyTreeAsJSON(hierarchyTree);
+
+			if (treeJSONObject == null)
+				return null;
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while retriving hierarchy structure");
@@ -304,6 +318,7 @@ public class HierarchiesService {
 		try {
 			String root = req.getParameter("root");
 			JSONObject rootJSONObject = ObjectUtils.toJSONObject(root);
+			String hierarchyCode = req.getParameter("code");
 			String hierarchyName = req.getParameter("name");
 			String hierarchyDescription = req.getParameter("description");
 			String hierarchyScope = req.getParameter("scope");
@@ -327,7 +342,8 @@ public class HierarchiesService {
 			}
 
 			for (List<HierarchyTreeNodeData> path : paths) {
-				persistCustomHierarchyPath(hierarchyName, hierarchyDescription, hierarchyScope, hierarchyType, dataSource, hierarchyPrefix, hierarchyFK, path);
+				persistCustomHierarchyPath(hierarchyCode, hierarchyName, hierarchyDescription, hierarchyScope, hierarchyType, dataSource, hierarchyPrefix,
+						hierarchyFK, path);
 			}
 
 			return "{\"response\":\"ok\"}";
@@ -386,6 +402,7 @@ public class HierarchiesService {
 		// modify an existing custom hierarchy
 		try {
 			String dimension = req.getParameter("dimension");
+			String hierarchyCode = req.getParameter("code");
 			String hierarchyName = req.getParameter("name");
 			String root = req.getParameter("root");
 			String hierarchyDescription = req.getParameter("description");
@@ -417,8 +434,8 @@ public class HierarchiesService {
 	/**
 	 * Persist custom hierarchy paths to database
 	 */
-	private void persistCustomHierarchyPath(String hierarchyName, String hierarchyDescription, String hierarchyScope, String hierarchyType,
-			IDataSource dataSource, String hierarchyPrefix, String hierarchyFK, List<HierarchyTreeNodeData> path) throws SQLException {
+	private void persistCustomHierarchyPath(String hierarchyCode, String hierarchyName, String hierarchyDescription, String hierarchyScope,
+			String hierarchyType, IDataSource dataSource, String hierarchyPrefix, String hierarchyFK, List<HierarchyTreeNodeData> path) throws SQLException {
 		Connection connection = null;
 		try {
 			connection = dataSource.getConnection();
@@ -431,31 +448,35 @@ public class HierarchiesService {
 
 			// Valorization of prepared statement placeholder
 			// -----------------------------------------------
-			final int COLUMNSNUMBER = 37;
+			final int COLUMNSNUMBER = 40;
+			// HIER_CD column
+			preparedStatement.setString(1, hierarchyCode);
 			// HIER_NM column
-			preparedStatement.setString(1, hierarchyName);
+			preparedStatement.setString(2, hierarchyName);
 			// HIER_DS column
-			preparedStatement.setString(2, hierarchyDescription);
+			preparedStatement.setString(3, hierarchyDescription);
 			// HIER_TP column
-			preparedStatement.setString(3, hierarchyType);
+			preparedStatement.setString(4, hierarchyType);
 			// SCOPE column
-			preparedStatement.setString(4, hierarchyScope);
+			preparedStatement.setString(5, hierarchyScope);
 			// set all level column to null by default
-			for (int i = 5; i < COLUMNSNUMBER + 1; i++) {
+			for (int i = 6; i < COLUMNSNUMBER + 1; i++) {
 				preparedStatement.setNull(i, java.sql.Types.VARCHAR);
 			}
 
 			// explore the path and set the corresponding columns
 			// keeps the column number
-			int colIndex = 5;
+			int colIndex = 6;
 			for (int i = 0; i < path.size(); i++) {
 				HierarchyTreeNodeData node = path.get(i);
 
 				if (i == path.size() - 1) {
 					// last node is a leaf
-					preparedStatement.setString(COLUMNSNUMBER - 2, node.getNodeCode());
-					preparedStatement.setString(COLUMNSNUMBER - 1, node.getNodeName());
-					preparedStatement.setLong(COLUMNSNUMBER, Long.valueOf(node.getLeafId()));
+					preparedStatement.setString(COLUMNSNUMBER - 4, node.getNodeCode());
+					preparedStatement.setString(COLUMNSNUMBER - 3, node.getNodeName());
+					preparedStatement.setLong(COLUMNSNUMBER - 2, Long.valueOf(node.getLeafId()));
+					preparedStatement.setString(COLUMNSNUMBER - 1, node.getLeafParentCode());
+					preparedStatement.setString(COLUMNSNUMBER, node.getLeafParentName());
 				} else {
 					// not-leaf node
 					preparedStatement.setString(colIndex, node.getNodeCode());
@@ -488,11 +509,13 @@ public class HierarchiesService {
 	 */
 	private String createInsertStatement(String hierarchyPrefix, String hierarchyFK, IDataSource dataSource) {
 		String tableName = "HIER_" + hierarchyPrefix;
+		String hierarchyNameCode = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
 		String hierarchyNameCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 		String hierarchyDescriptionCol = AbstractJDBCDataset.encapsulateColumnName("HIER_DS", dataSource);
 		String hierarchyTypeCol = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
 		String hierarchyScopeCol = AbstractJDBCDataset.encapsulateColumnName("SCOPE", dataSource);
-		StringBuffer columns = new StringBuffer(hierarchyNameCol + "," + hierarchyDescriptionCol + "," + hierarchyTypeCol + "," + hierarchyScopeCol + ",");
+		StringBuffer columns = new StringBuffer(hierarchyNameCode + "," + hierarchyNameCol + "," + hierarchyDescriptionCol + "," + hierarchyTypeCol + ","
+				+ hierarchyScopeCol + ",");
 
 		for (int i = 1; i < 16; i++) {
 			String CD_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEV" + i, dataSource);
@@ -502,9 +525,12 @@ public class HierarchiesService {
 		String CD_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEAF", dataSource);
 		String NM_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEAF", dataSource);
 		String LEAF_ID = AbstractJDBCDataset.encapsulateColumnName(hierarchyFK, dataSource);
-		columns.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + " ");
+		columns.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + ", ");
+		String LEAF_PARENT_CD = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
+		String LEAF_PARENT_NM = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
+		columns.append(LEAF_PARENT_CD + "," + LEAF_PARENT_NM);
 		String insertQuery = "insert into " + tableName + "(" + columns.toString()
-				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		return insertQuery;
 	}
@@ -517,15 +543,18 @@ public class HierarchiesService {
 		try {
 			String nodeName = node.getString("text");
 			String nodeCode = node.getString("id");
+
 			String nodeLeafId = node.getString("leafId");
-			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, ""); // TODO:add
-																											// leafParentCode
+			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, "", "");
 
 			// current node is a leaf?
 			boolean isLeaf = node.getBoolean("leaf");
 			if (isLeaf) {
 				List<HierarchyTreeNodeData> aPath = new ArrayList<HierarchyTreeNodeData>();
-				nodeData.setNodeCode(nodeCode.replaceFirst("LEAF_", ""));
+				String nodeParentCode = node.getString("leafParentCode");
+				nodeData.setNodeCode(nodeCode.replaceFirst(nodeParentCode + "_", ""));
+				nodeData.setLeafParentCode(nodeParentCode);
+				nodeData.setLeafParentName(node.getString("leafParentName"));
 				aPath.add(nodeData);
 				collectionOfPaths.add(aPath);
 				return collectionOfPaths;
@@ -554,7 +583,7 @@ public class HierarchiesService {
 	/**
 	 * Create query for extracting automatic hierarchy rows
 	 */
-	private String createQueryAutomaticHierarchy(IDataSource dataSource, String hierarchyFK, String hierarchyPrefix, String hierarchyName) {
+	private String createQueryAutomaticHierarchy(IDataSource dataSource, String hierarchyFK, String hierarchyPrefix, String hierarchyName, String dateHierarchy) {
 
 		String tableName = "HIER_" + hierarchyPrefix;
 
@@ -569,17 +598,42 @@ public class HierarchiesService {
 		String NM_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEAF", dataSource);
 		String LEAF_ID = AbstractJDBCDataset.encapsulateColumnName(hierarchyFK, dataSource);
 		String LEAF_PARENT_CD = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
+		String LEAF_PARENT_NM = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
 
-		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + "," + LEAF_PARENT_CD + " ");
+		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + "," + LEAF_PARENT_CD + "," + LEAF_PARENT_NM + " ");
 		String selectClause = selectClauseBuffer.toString();
 
 		// where
 		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
+		String hierDateBeginColumn = AbstractJDBCDataset.encapsulateColumnName("BEGIN_DT", dataSource);
+		String hierDateEndColumn = AbstractJDBCDataset.encapsulateColumnName("END_DT", dataSource);
+
+		// defining date conversion cmd for filters on dates
+		String format = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+		String fnc = "";
+		String actualDialect = dataSource.getHibDialectClass();
+		if (DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
+			fnc = "STR_TO_DATE('" + dateHierarchy + "','" + format + "')";
+		} else if (DIALECT_POSTGRES.equalsIgnoreCase(actualDialect)) {
+			fnc = "TO_DATE('" + dateHierarchy + "','" + format + "')";
+		} else if (DIALECT_ORACLE.equalsIgnoreCase(actualDialect) || DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect)) {
+			fnc = "TO_DATE('" + dateHierarchy + "','" + format + "')";
+		} else if (DIALECT_HSQL.equalsIgnoreCase(actualDialect)) {
+			fnc = "TO_DATE('" + dateHierarchy + "','" + format + "')";
+		} else if (DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
+			fnc = "TO_DATE('" + dateHierarchy + "','" + format + "')";
+		} else if (DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
+			// fnc = "DATE('" + dateHierarchy + "','" + format + "')";
+			fnc = "DATE('" + dateHierarchy + "')";
+		} else if (DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
+			fnc = "'" + dateHierarchy + "',AS DATE FORMAT '" + format + "')";
+		}
 
 		String query = "SELECT " + selectClause + " FROM " + tableName + " WHERE " + hierNameColumn + " = \"" + hierarchyName + "\" AND " + hierTypeColumn
-				+ " = \"AUTO\" ";
+				+ " = \"AUTO\" AND " + fnc + " >= " + hierDateBeginColumn + " AND " + fnc + " <= " + hierDateEndColumn;
 
+		logger.debug("Query for AUTOMATIC hierarchies: " + query);
 		return query;
 	}
 
@@ -600,8 +654,10 @@ public class HierarchiesService {
 		String CD_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEAF", dataSource);
 		String NM_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEAF", dataSource);
 		String LEAF_ID = AbstractJDBCDataset.encapsulateColumnName(hierarchyFK, dataSource);
+		String LEAF_PARENT_CD = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
+		String LEAF_PARENT_NM = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
 
-		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + " ");
+		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + "," + LEAF_PARENT_CD + "," + LEAF_PARENT_NM + " ");
 		String selectClause = selectClauseBuffer.toString();
 
 		// where
@@ -611,6 +667,7 @@ public class HierarchiesService {
 		String query = "SELECT " + selectClause + " FROM " + tableName + " WHERE " + hierNameColumn + " = \"" + hierarchyName + "\" AND (" + hierTypeColumn
 				+ "=\"MANUAL\" OR " + hierTypeColumn + "=\"SEMIMANUAL\" )";
 
+		logger.debug("Query for CUSTOM hierarchies: " + query);
 		return query;
 	}
 
@@ -620,7 +677,7 @@ public class HierarchiesService {
 	private HierarchyTreeNode createHierarchyTreeStructure(IDataStore dataStore) {
 		HierarchyTreeNode root = null;
 
-		// TODO: to remove
+		// ONLY FOR DEBUG
 		Set<String> allNodeCodes = new HashSet<String>();
 
 		// contains the code of the last level node (not null) inserted in the
@@ -633,7 +690,7 @@ public class HierarchiesService {
 			List<IField> recordFields = record.getFields();
 			int fieldsCount = recordFields.size();
 
-			for (int i = 0; i < fieldsCount - 2; i = i + 2) {
+			for (int i = 0; i < fieldsCount - 4; i = i + 2) {
 				IField codeField = record.getFieldAt(i); // NODE CODE
 				IField nameField = record.getFieldAt(i + 1); // NODE NAME
 
@@ -650,9 +707,9 @@ public class HierarchiesService {
 						// first level (root)
 						if (root == null) {
 							root = new HierarchyTreeNode(data, nodeCode);
-							// TODO: to remove, only for test
+							// ONLY FOR DEBUG
 							if (allNodeCodes.contains(nodeCode)) {
-								System.out.println("COLLISION DETECTED ON: " + nodeCode);
+								logger.error("COLLISION DETECTED ON: " + nodeCode);
 							} else {
 								allNodeCodes.add(nodeCode);
 							}
@@ -666,9 +723,9 @@ public class HierarchiesService {
 							// node not already attached to the root
 							HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
 							root.add(aNode, nodeCode);
-							// TODO: to remove, only for test
+							// ONLY FOR DEBUG
 							if (allNodeCodes.contains(nodeCode)) {
-								System.out.println("COLLISION DETECTED ON: " + nodeCode);
+								logger.error("COLLISION DETECTED ON: " + nodeCode);
 							} else {
 								allNodeCodes.add(nodeCode);
 							}
@@ -707,6 +764,9 @@ public class HierarchiesService {
 							data.setNodeCode(leafParentCodeString + "_" + nodeCode);
 							nodeCode = leafParentCodeString + "_" + nodeCode;
 							data.setLeafParentCode(leafParentCodeString);
+							IField leafParentNameField = record.getFieldAt(i + 4);
+							String leafParentNameString = (String) leafParentNameField.getValue();
+							data.setLeafParentName(leafParentNameString);
 						}
 						attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
 						lastLevelFound = nodeCode;
@@ -719,7 +779,8 @@ public class HierarchiesService {
 
 		}
 
-		System.out.println(TreeString.toString(root));
+		if (root != null)
+			logger.debug(TreeString.toString(root));
 
 		return root;
 
@@ -745,19 +806,16 @@ public class HierarchiesService {
 			// node not already attached to the level
 
 			HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
-			/*boolean flag = true;
-			while (flag) {
-				// TODO: to remove, only for test
-				if (allNodeCodes.contains(nodeCode)) {
-					System.out.println("COLLISION DETECTED ON: " + nodeCode);
-				} else {
-					allNodeCodes.add(nodeCode);
-					flag = false;
-				}
+
+			// ONLY FOR DEBUG
+			if (allNodeCodes.contains(nodeCode)) {
+				logger.error("COLLISION DETECTED ON: " + nodeCode);
+			} else {
+				allNodeCodes.add(nodeCode);
 			}
 
 			// ------------------------
-*/
+
 			treeNode.add(aNode, nodeCode);
 
 		}
@@ -772,12 +830,16 @@ public class HierarchiesService {
 	 */
 	private JSONObject convertHierarchyTreeAsJSON(HierarchyTreeNode root) {
 		JSONObject rootJSONObject = new JSONObject();
+
+		if (root == null)
+			return null;
+
 		try {
 			HierarchyTreeNodeData rootData = (HierarchyTreeNodeData) root.getObject();
 			rootJSONObject.put("text", rootData.getNodeName());
 			rootJSONObject.put("id", rootData.getNodeCode());
 			// rootJSONObject.put("root", true);
-			rootJSONObject.put("expanded", true);
+			rootJSONObject.put("expanded", false);
 			rootJSONObject.put("leaf", false);
 
 			JSONArray childrenJSONArray = new JSONArray();
@@ -795,7 +857,7 @@ public class HierarchiesService {
 			mainObject.put("root", true);
 			mainObject.put("children", rootJSONObject);
 			mainObject.put("leaf", false);
-			mainObject.put("expanded", true);
+			mainObject.put("expanded", false);
 
 			return mainObject;
 
@@ -820,6 +882,8 @@ public class HierarchiesService {
 				nodeJSONObject.put("text", nodeData.getNodeName());
 				nodeJSONObject.put("id", nodeData.getNodeCode());
 				nodeJSONObject.put("leafId", nodeData.getLeafId());
+				nodeJSONObject.put("leafParentCode", nodeData.getLeafParentCode());
+				nodeJSONObject.put("leafParentName", nodeData.getLeafParentName());
 
 				JSONArray childrenJSONArray = new JSONArray();
 
@@ -830,7 +894,7 @@ public class HierarchiesService {
 				}
 				nodeJSONObject.put("children", childrenJSONArray);
 				nodeJSONObject.put("leaf", false);
-				nodeJSONObject.put("expanded", true);
+				nodeJSONObject.put("expanded", false);
 				return nodeJSONObject;
 
 			} else {
@@ -840,6 +904,8 @@ public class HierarchiesService {
 				nodeJSONObject.put("text", nodeData.getNodeName());
 				nodeJSONObject.put("id", nodeData.getNodeCode());
 				nodeJSONObject.put("leafId", nodeData.getLeafId());
+				nodeJSONObject.put("leafParentCode", nodeData.getLeafParentCode());
+				nodeJSONObject.put("leafParentName", nodeData.getLeafParentName());
 				nodeJSONObject.put("leaf", true);
 				return nodeJSONObject;
 
