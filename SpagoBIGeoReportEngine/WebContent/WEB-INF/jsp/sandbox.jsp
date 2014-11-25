@@ -28,6 +28,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <% 
 
+Locale locale;
+locale = engineInstance.getLocale();
 	
 %>
 
