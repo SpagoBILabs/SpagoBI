@@ -1190,7 +1190,9 @@ Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'The document was saved
 //Hierarchies Editor
 //===================================================================
 Sbi.locale.ln['sbi.hierarchies.dimensions']= 'Dimensions';			
-Sbi.locale.ln['sbi.hierarchies.hierarchies']= 'Hierarchies';			
+Sbi.locale.ln['sbi.hierarchies.hierarchies']= 'Hierarchies';
+Sbi.locale.ln['sbi.hierarchies.date']= 'State at the date';
+Sbi.locale.ln['sbi.hierarchies.refresh']= 'Refresh';	
 Sbi.locale.ln['sbi.hierarchies.editor']= 'Hierarchies Editor';		
 Sbi.locale.ln['sbi.hierarchies.automatic']= 'Automatic Hierarchies';		
 Sbi.locale.ln['sbi.hierarchies.custom']= 'Custom Hierarchies';
@@ -1201,12 +1203,14 @@ Sbi.locale.ln['sbi.hierarchies.type.semimanual']= 'Semi-Manual';
 Sbi.locale.ln['sbi.hierarchies.type.manual']= 'Manual';		
 Sbi.locale.ln['sbi.hierarchies.new.type']= 'New Hierarchy Type';		
 Sbi.locale.ln['sbi.hierarchies.new.create']= 'Create new Hierarchy';		
+Sbi.locale.ln['sbi.hierarchies.new.create.wrong']= 'Set all parameters to create the hierarchy';	
 Sbi.locale.ln['sbi.hierarchies.save.changes']= 'Save Changes';		
 Sbi.locale.ln['sbi.hierarchies.show.tree']= 'Show Hierarchy tree';		
 Sbi.locale.ln['sbi.hierarchies.custom.delete']= 'Delete custom Hierarchy';		
 Sbi.locale.ln['sbi.hierarchies.custom.error.leaf']= 'Nodes on last level must be all leafs';		
 Sbi.locale.ln['sbi.hierarchies.save.changes.confirm']= 'Save Changes?';		
 Sbi.locale.ln['sbi.hierarchies.save.correct']= 'Hierarchy correctly saved';		
+Sbi.locale.ln['sbi.hierarchies.save.wrong']= 'Before save is necessary to define the custom hierarchy!';
 Sbi.locale.ln['sbi.hierarchies.scope']= 'Hierarchy Scope';		
 Sbi.locale.ln['sbi.hierarchies.custom.save']= 'Save Custom Hierarchy';		
 Sbi.locale.ln['sbi.hierarchies.drag.root']= 'Drag here the root of the new hierarchy';		

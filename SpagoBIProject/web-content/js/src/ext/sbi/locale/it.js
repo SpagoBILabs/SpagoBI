@@ -1170,7 +1170,9 @@ Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'Il documento � stato
 //Hierarchies Editor
 //===================================================================
 Sbi.locale.ln['sbi.hierarchies.dimensions']= 'Dimensioni';			
-Sbi.locale.ln['sbi.hierarchies.hierarchies']= 'Gerarchie';			
+Sbi.locale.ln['sbi.hierarchies.hierarchies']= 'Gerarchie';
+Sbi.locale.ln['sbi.hierarchies.date']= 'Situazione alla data';	
+Sbi.locale.ln['sbi.hierarchies.refresh']= 'Aggiorna';	
 Sbi.locale.ln['sbi.hierarchies.editor']= 'Editor Gerarchie';		
 Sbi.locale.ln['sbi.hierarchies.automatic']= 'Gerarchie Automatiche';		
 Sbi.locale.ln['sbi.hierarchies.custom']= 'Gerarchie Custom';	
@@ -1181,12 +1183,14 @@ Sbi.locale.ln['sbi.hierarchies.type.semimanual']= 'Semi-Manuale';
 Sbi.locale.ln['sbi.hierarchies.type.manual']= 'Manuale';	
 Sbi.locale.ln['sbi.hierarchies.new.type']= 'Tipo nuova gerarchia';		
 Sbi.locale.ln['sbi.hierarchies.new.create']= 'Crea nuova gerarchia';		
+Sbi.locale.ln['sbi.hierarchies.new.create.wrong']= 'Impostare i parametri necessari per costruire la gerarchia';	
 Sbi.locale.ln['sbi.hierarchies.save.changes']= 'Salva modifiche';
 Sbi.locale.ln['sbi.hierarchies.show.tree']= 'Visualizza albero gerarchia';
 Sbi.locale.ln['sbi.hierarchies.custom.delete']= 'Elimina gerarchia custom';		
 Sbi.locale.ln['sbi.hierarchies.custom.error.leaf']= 'I nodi all\'ultimo livello devono essere tutti foglie';		
 Sbi.locale.ln['sbi.hierarchies.save.changes.confirm']= 'Salvare le modifiche?';		
-Sbi.locale.ln['sbi.hierarchies.save.correct']= 'Gerarchia correttamente salvata';		
+Sbi.locale.ln['sbi.hierarchies.save.correct']= 'Gerarchia correttamente salvata';
+Sbi.locale.ln['sbi.hierarchies.save.wrong']= 'Prima di procedere al salvamento � necessario definire la nuova gerarchia!';
 Sbi.locale.ln['sbi.hierarchies.scope']= 'Visibilit� Gerarchia';		
 Sbi.locale.ln['sbi.hierarchies.custom.save']= 'Salva gerarchia custom';		
 Sbi.locale.ln['sbi.hierarchies.drag.root']= 'Spostare qui la radice della nuova gerarchia';		
@@ -1194,7 +1198,8 @@ Sbi.locale.ln['sbi.hierarchies.drag.wrong']= 'Non � possibile usare una nodo f
 Sbi.locale.ln['sbi.hierarchies.drag.wrong.action']= 'Azione sbagliata';	
 Sbi.locale.ln['sbi.hierarchies.drag.node.exists']= 'Nodo gi� presente in questa gerarchia';	
 Sbi.locale.ln['sbi.hierarchies.drag.cannot.move']= 'Impossibile muovere nodi foglia in una gerarchia semimanuale';		
-Sbi.locale.ln['sbi.hierarchies.delete.ok']= 'Cancellazione avvenuta';		
+Sbi.locale.ln['sbi.hierarchies.delete.ok']= 'Cancellazione avvenuta';
+		
 //===================================================================
 //Hot Links
 //===================================================================
