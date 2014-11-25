@@ -28,6 +28,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <% 
 
+GeoReportEngineInstance engineInstance;
+engineInstance = (GeoReportEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
+
 Locale locale;
 locale = engineInstance.getLocale();
 	
