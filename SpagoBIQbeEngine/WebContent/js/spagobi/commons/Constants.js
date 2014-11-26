@@ -9,7 +9,7 @@
   
  
  Ext.ns("Sbi.constants");
-
+ 
 Sbi.constants.qbe = {
 		
 	// select clause field types (twins java constants are defined in class ISelectField)
@@ -33,7 +33,7 @@ Sbi.constants.qbe = {
 	, NODE_TYPE_INLINE_CALCULATED_FIELD: 'inLineCalculatedField'	
 		
 	, WHERE_CLAUSE_COMPARISON_FUNCTIONS: [
-	    ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), LN()],
+	    ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), LN('sbi.qbe.filtergridpanel.foperators.desc.none')],
 	    ['EQUALS TO', LN('sbi.qbe.filtergridpanel.foperators.name.eq'),  LN('sbi.qbe.filtergridpanel.foperators.desc.eq')],
 	    ['NOT EQUALS TO', LN('sbi.qbe.filtergridpanel.foperators.name.noteq'),  LN('sbi.qbe.filtergridpanel.foperators.desc.noteq')],
 	    ['GREATER THAN', LN('sbi.qbe.filtergridpanel.foperators.name.gt'),  LN('sbi.qbe.filtergridpanel.foperators.desc.gt')],
@@ -55,7 +55,7 @@ Sbi.constants.qbe = {
 	]
 
 	, HAVING_CLAUSE_COMPARISON_FUNCTIONS : [
-        ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), LN()],
+        ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), LN('sbi.qbe.filtergridpanel.foperators.desc.none')],
         ['EQUALS TO', LN('sbi.qbe.filtergridpanel.foperators.name.eq'),  LN('sbi.qbe.filtergridpanel.foperators.desc.eq')],
         ['NOT EQUALS TO', LN('sbi.qbe.filtergridpanel.foperators.name.noteq'),  LN('sbi.qbe.filtergridpanel.foperators.desc.noteq')],
         ['GREATER THAN', LN('sbi.qbe.filtergridpanel.foperators.name.gt'),  LN('sbi.qbe.filtergridpanel.foperators.desc.gt')],

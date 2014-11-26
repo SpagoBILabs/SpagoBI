@@ -89,6 +89,7 @@ end DOCTYPE declaration --%>
 
 	<head>
 		<%@include file="commons/includeExtJS.jspf" %>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSbiQbeJS.jspf"%>
 	</head>
 	

@@ -48,6 +48,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <html>
 	<head>
 		<%@include file="commons/includeExtJS.jspf" %>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSbiQbeJS.jspf"%>
 		
 		<title>Template Builder</title>

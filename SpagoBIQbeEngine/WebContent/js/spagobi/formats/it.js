@@ -9,12 +9,13 @@
   
  
  Ext.ns("Sbi.locale");
-Sbi.locale.ln = Sbi.locale.ln || new Array();
+ 
 
-Sbi.locale.ln['sbi.designertable.tableValidation.noElement'] = 'Inserire almeno un attributo o una misura';
-Sbi.locale.ln['sbi.designerchart.chartValidation.noSeries'] = 'Utilizzare almeno una misura come serie';
-Sbi.locale.ln['sbi.designerchart.chartValidation.noCategory'] = 'Utilizzare un attributo come categoria';
-
+//===================================================================
+//MESSAGE BOX BUTTONS
+//===================================================================
+Ext.Msg.buttonText.yes = 'Si'; 
+Ext.Msg.buttonText.no = 'No';
 
 Sbi.locale.formats = {
 		/*
@@ -23,7 +24,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 2,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: '€',
+			//currencySymbol: 'ï¿½',
 			nullValue: ''
 		},
 		*/
@@ -32,7 +33,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 2,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: '€',
+			//currencySymbol: 'ï¿½',
 			nullValue: ''
 		},
 		int: {
@@ -40,7 +41,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 0,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: '€',
+			//currencySymbol: 'ï¿½',
 			nullValue: ''
 		},
 		string: {

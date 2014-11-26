@@ -58,6 +58,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	
 	<head>
 		<%@include file="commons/includeExtJS_341.jspf" %>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSbiQbeJS.jspf"%>
 	</head>
 	
