@@ -8,13 +8,13 @@
  
   
  
- Ext.ns("Sbi.locale");
-Sbi.locale.ln = Sbi.locale.ln || new Array();
+Ext.ns("Sbi.locale");
 
-Sbi.locale.ln['sbi.designertable.tableValidation.noElement'] = 'au moins un attribut ou une mesure doit \u00EAtre choisi';
-Sbi.locale.ln['sbi.designerchart.chartValidation.noSeries'] = 'utiliser au moins une mesure comme s\u00E9rie';
-Sbi.locale.ln['sbi.designerchart.chartValidation.noCategory'] = 'utiliser un attribut comme cat\u00E9gorie ';
-
+//===================================================================
+//MESSAGE BOX BUTTONS
+//===================================================================
+Ext.Msg.buttonText.yes = 'Oui'; 
+Ext.Msg.buttonText.no = 'Non';
 
 Sbi.locale.formats = {
 		/*

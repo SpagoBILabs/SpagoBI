@@ -16,17 +16,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 
 <!-- Include localized labels  -->
-<script type="text/javascript" src='../js/spagobi/locale/commons/<%=locale.getLanguage()%>.js'></script>
-<script type="text/javascript" src='../js/spagobi/locale/qbe/<%=locale.getLanguage()%>.js'></script>
-<script type="text/javascript" src='../js/spagobi/locale/formbuilder/<%=locale.getLanguage()%>.js'></script>
-<script type="text/javascript" src='../js/spagobi/locale/formviewer/<%=locale.getLanguage()%>.js'></script>
-<script type="text/javascript" src='../js/spagobi/locale/widgets/lookupfield/<%=locale.getLanguage()%>.js'></script>
-<script type="text/javascript" src='../js/spagobi/locale/dataset/<%=locale.getLanguage()%>.js'></script>
-<script type="text/javascript" src='../js/spagobi/locale/crosstab/<%=locale.getLanguage()%>.js'></script>
-<script type="text/javascript" src='../js/spagobi/locale/worksheet/designer/<%=locale.getLanguage()%>.js'></script>
-<script type="text/javascript" src='../js/spagobi/locale/worksheet/runtime/<%=locale.getLanguage()%>.js'></script>
-<script type="text/javascript" src='../js/spagobi/locale/worksheet/config/<%=locale.getLanguage()%>.js'></script>
-<script type="text/javascript" src='../js/spagobi/locale/registry/<%=locale.getLanguage()%>.js'></script>
+<script type="text/javascript" src='../js/spagobi/formats/<%=locale.getLanguage()%>.js'></script>
 
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'></script>	
 
@@ -39,7 +29,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/commons/Format.js'></script>
 <script type="text/javascript" src='../js/spagobi/commons/Utils.js'></script>
 <script type="text/javascript" src='../js/spagobi/commons/JSON.js'></script>
-<script type="text/javascript" src='../js/spagobi/locale/LocaleUtils.js'></script>
+<script type="text/javascript" src='../js/spagobi/formats/LocaleUtils.js'></script>
 <script type="text/javascript" src='../js/spagobi/commons/Constants.js'></script>
 <script type="text/javascript" src='../js/spagobi/commons/Log.js'></script>
 
