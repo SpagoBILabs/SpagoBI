@@ -15,6 +15,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheItem;
@@ -68,9 +69,9 @@ import commonj.work.Work;
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
  * simple CRUD operations over the dataset. It also manages user's profilation and autorization. Other class must access dataset through this class and not
  * calling directly the DAO.
- * 
+ *
  * @author gavardi, gioia
- * 
+ *
  */
 
 public class DatasetManagementAPI {
@@ -283,7 +284,7 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param label
 	 * @param offset
 	 * @param fetchSize
@@ -332,7 +333,7 @@ public class DatasetManagementAPI {
 
 	/**
 	 * insert into data store last cache date if present
-	 * 
+	 *
 	 * @param cache
 	 * @param dataStore
 	 * @param dataSet
@@ -407,7 +408,7 @@ public class DatasetManagementAPI {
 	 * @param selections
 	 * @param parametersValues
 	 *            A map of map with the following structure: storeId->paramName->paramValue
-	 * 
+	 *
 	 * @return
 	 */
 	public IDataStore getJoinedDataStore(AssociationGroup associationGroup, JSONObject selections, Map<String, Map<String, String>> parametersValues) {
@@ -1027,7 +1028,7 @@ public class DatasetManagementAPI {
 
 	/**
 	 * The association is valid if number of records froma ssociation is less than Maximum of single datasets
-	 * 
+	 *
 	 * @param dsLabel1
 	 * @param dsLabel2
 	 * @param field1
@@ -1079,6 +1080,7 @@ public class DatasetManagementAPI {
 
 						logger.debug("Dataset with label " + dsLabel);
 						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
+						checkQbeDataset(dataset);
 
 						// check datasets are cached otherwise cache it
 						IDataStore cachedResultSet = cache.get(dataset);
@@ -1154,7 +1156,8 @@ public class DatasetManagementAPI {
 						String previousSynonim = tableSynonimMap.get(previousTable);
 
 						// add where conditions
-						where += synonim + "." + column + "=" + previousSynonim + "." + previousColumn;
+						where += synonim + "." + AbstractJDBCDataset.encapsulateColumnName(column, dataSource) + "=" + previousSynonim + "."
+								+ AbstractJDBCDataset.encapsulateColumnName(previousColumn, dataSource);
 					}
 				}
 			}
