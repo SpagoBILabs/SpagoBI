@@ -1043,67 +1043,127 @@ public class DatasetManagementAPI {
 		boolean toReturn = false;
 
 		String[] synonims = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "z" };
-		ArrayList<String> fields = new ArrayList<String>();
 		String where = "";
 
 		SelectBuilder joinSqlBuilder = new SelectBuilder();
 		joinSqlBuilder.column("count(*) counter");
 
 		try {
-
 			ICache cache = SpagoBICacheManager.getCache();
 			IDataSource dataSource = ((SQLDBCache) cache).getDataSource();
-
 			Long maxSingleCount = 0L;
 
-			for (int i = 0; i < arrayAss.length(); i++) {
-				JSONObject objectDs = (JSONObject) arrayAss.get(i);
+			// all arrays with fields of a single association
+			ArrayList<JSONArray> assFieldsJSONArray = new ArrayList<JSONArray>();
+			// mapping datasetLabel to table involved
+			Map<String, String> datasetsLabelsMap = new HashMap<String, String>();
+			// maps each table to the synonim used in the join clause
+			Map<String, String> tableSynonimMap = new HashMap<String, String>();
 
-				String field = objectDs.getString("id");
-				fields.add(i, field);
-				logger.debug("Field " + field);
+			logger.debug("cycle on associations");
+			for (int j = 0; j < arrayAss.length(); j++) {
 
-				String dsLabel = objectDs.getString("ds");
-				logger.debug("Dataset with label " + dsLabel);
-				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
+				logger.debug("this is an association");
 
-				// check datasets are cached otherwise cache it
-				IDataStore cachedResultSet = cache.get(dataset);
-				if (cachedResultSet == null) {
-					logger.error("dataset " + dataset.getLabel() + " is not already cached, cache it");
-					IDataStore dataStore = dataStore = cache.refresh(dataset, false);
+				JSONObject association = (JSONObject) arrayAss.get(j);
+				JSONArray fieldsAss = association.getJSONArray("fields");
+				assFieldsJSONArray.add(fieldsAss);
+
+				logger.debug("cycle on fields");
+				// Collect all tables involved
+				for (int z = 0; z < fieldsAss.length(); z++) {
+					JSONObject field = (JSONObject) fieldsAss.get(z);
+					String dsLabel = field.getString("store");
+
+					if (!datasetsLabelsMap.keySet().contains(dsLabel)) {
+
+						logger.debug("Dataset with label " + dsLabel);
+						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
+
+						// check datasets are cached otherwise cache it
+						IDataStore cachedResultSet = cache.get(dataset);
+						if (cachedResultSet == null) {
+							logger.error("dataset " + dataset.getLabel() + " is not already cached, cache it");
+							IDataStore dataStore = dataStore = cache.refresh(dataset, false);
+						}
+
+						String table = cache.getMetadata().getCacheItem(dataset.getSignature()).getTable();
+						logger.debug("Table " + table);
+						// dataset to table mapping
+						datasetsLabelsMap.put(dsLabel, table);
+
+						logger.debug("Execute dataset to count records and keep track of max");
+
+						// count single value
+						SelectBuilder sqlBuilder = new SelectBuilder();
+						sqlBuilder = new SelectBuilder();
+						sqlBuilder.column("count(*) counter");
+						sqlBuilder.from(table + " a");
+						String queryText1 = sqlBuilder.toString();
+						logger.debug("execute " + queryText1);
+						IDataStore dataStore = dataSource.executeStatement(queryText1, 0, 0);
+						Long count1 = (Long) ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
+						logger.debug("On query on table " + table + " counted " + count1 + " records");
+
+						if (count1 > maxSingleCount) {
+							maxSingleCount = count1;
+						}
+
+					}
+
 				}
 
-				String table = cache.getMetadata().getCacheItem(dataset.getSignature()).getTable();
-				logger.debug("Table " + table);
+				logger.debug("Maximum among tables count is " + maxSingleCount);
 
-				// count single value
-				SelectBuilder sqlBuilder = new SelectBuilder();
-				sqlBuilder = new SelectBuilder();
-				sqlBuilder.column("count(*) counter");
-				sqlBuilder.from(table + " a");
-				String queryText1 = sqlBuilder.toString();
-				logger.debug("execute " + queryText1);
-				IDataStore dataStore = dataSource.executeStatement(queryText1, 0, 0);
-				Long count1 = (Long) ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
-				logger.debug("On query on table " + table + " counted " + count1 + " records");
+			}
 
-				if (count1 > maxSingleCount) {
-					maxSingleCount = count1;
-				}
+			// Build join query
 
-				// build join
-				if (i == 0) {
-					joinSqlBuilder.from(table + " " + synonims[i]);
+			logger.debug("Write from and join clauses for join query");
+
+			int index = 0;
+			for (Iterator iterator = datasetsLabelsMap.keySet().iterator(); iterator.hasNext();) {
+				String dsLabel = (String) iterator.next();
+				String table = datasetsLabelsMap.get(dsLabel);
+				if (index == 0) {
+					joinSqlBuilder.from(table + " " + synonims[index]);
 				} else {
-					joinSqlBuilder.join(table + " " + synonims[i]);
+					joinSqlBuilder.join(table + " " + synonims[index]);
 
-					// add where conditions
-					if (i == 1) {
-						where += synonims[i] + "." + field + "=" + synonims[i - 1] + "." + fields.get(i - 1);
-					} else {
-						where += " AND ";
-						where += synonims[i] + "." + field + "=" + synonims[i - 1] + "." + fields.get(i - 1);
+				}
+				tableSynonimMap.put(table, synonims[index]);
+
+				index++;
+			}
+
+			// "fields":[{"store":"ds__4221948","column":"Citta"},{"store":"ALTRO_USER","column":"Regione"},{"store":"ds__3714475","column":"Citta"}]}]"
+			logger.debug("Build and write where clauses for join query");
+
+			for (int j = 0; j < assFieldsJSONArray.size(); j++) {
+				JSONArray fieldsJSOONArray = assFieldsJSONArray.get(j);
+				for (int i = 0; i < fieldsJSOONArray.length(); i++) {
+					JSONObject field = fieldsJSOONArray.getJSONObject(i);
+					String dsLabel = field.getString("store");
+					String column = field.getString("column");
+					String table = datasetsLabelsMap.get(dsLabel);
+					String synonim = tableSynonimMap.get(table);
+
+					if (i > 0) {
+						if (!where.equals("")) {
+							where += " AND ";
+						}
+						JSONObject previousField = fieldsJSOONArray.getJSONObject(i - 1);
+						String previousDsLabel = previousField.getString("store");
+						String previousColumn = previousField.getString("column");
+						String previousTable = datasetsLabelsMap.get(previousDsLabel);
+						String previousSynonim = tableSynonimMap.get(previousTable);
+
+						// add where conditions
+						if (i == 1) {
+							where += synonim + "." + column + "=" + previousSynonim + "." + previousColumn;
+						} else {
+							where += synonim + "." + column + "=" + previousSynonim + "." + previousColumn;
+						}
 					}
 				}
 			}
@@ -1123,7 +1183,6 @@ public class DatasetManagementAPI {
 			} else {
 				logger.debug("Chosen join among tables is valid");
 				toReturn = true;
-
 			}
 		} catch (Exception e) {
 			logger.error("Error while checking the join among tables return too many rows", e);
@@ -1133,5 +1192,4 @@ public class DatasetManagementAPI {
 		}
 		return toReturn;
 	}
-
 }
