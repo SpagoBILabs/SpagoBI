@@ -1125,12 +1125,7 @@ public class DatasetManagementAPI {
 			for (Iterator iterator = datasetsLabelsMap.keySet().iterator(); iterator.hasNext();) {
 				String dsLabel = (String) iterator.next();
 				String table = datasetsLabelsMap.get(dsLabel);
-				if (index == 0) {
-					joinSqlBuilder.from(table + " " + synonims[index]);
-				} else {
-					joinSqlBuilder.join(table + " " + synonims[index]);
-
-				}
+				joinSqlBuilder.from(table + " " + synonims[index]);
 				tableSynonimMap.put(table, synonims[index]);
 
 				index++;
@@ -1159,11 +1154,7 @@ public class DatasetManagementAPI {
 						String previousSynonim = tableSynonimMap.get(previousTable);
 
 						// add where conditions
-						if (i == 1) {
-							where += synonim + "." + column + "=" + previousSynonim + "." + previousColumn;
-						} else {
-							where += synonim + "." + column + "=" + previousSynonim + "." + previousColumn;
-						}
+						where += synonim + "." + column + "=" + previousSynonim + "." + previousColumn;
 					}
 				}
 			}
@@ -1172,7 +1163,7 @@ public class DatasetManagementAPI {
 			joinSqlBuilder.where(where);
 
 			String joinQueryText = joinSqlBuilder.toString();
-			logger.trace("Join query is equal to [" + joinQueryText + "]");
+			logger.debug("Join query is equal to [" + joinQueryText + "]");
 			IDataStore joinDataStore = dataSource.executeStatement(joinQueryText, 0, 0);
 			Long joinCount = (Long) ((DataStore) joinDataStore).getRecordAt(0).getFieldAt(0).getValue();
 			logger.debug("On join counted " + joinCount + " records");
