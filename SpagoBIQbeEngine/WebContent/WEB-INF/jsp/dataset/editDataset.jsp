@@ -98,6 +98,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	
 	<head>
 		<%@include file="../commons/includeExtJS.jspf" %>
+		<%@include file="../commons/includeMessageResource.jspf" %>
 		<%@include file="../commons/includeSbiQbeJS.jspf"%>
 		
 		<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
