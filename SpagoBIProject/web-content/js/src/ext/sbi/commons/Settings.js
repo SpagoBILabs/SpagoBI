@@ -98,7 +98,9 @@ Sbi.settings.myanalysis = {
 Sbi.settings.execution = {
 		
 		executionPanel : {
-			border : false    // true to display a border around document execution panel
+			border : false    	    // true to display a border around document execution panel
+		  , popupWindowHeight: 300 //#px for height of window when document is executed as a popup
+		  , popupWindowWidth:  500 //#px for width of window when document is executed as a popup
 		}
 
 		, parametersPanel: {
