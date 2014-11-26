@@ -436,11 +436,57 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: IN");
 		var wizardState = wizard.getWizardState();
 		if (Sbi.isValorized(wizardState.associations)){
-			Sbi.storeManager.setAssociationConfigurations(wizardState.associations);
-			Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associations) + "] succesfully added to store manager");
+
+			if(wizardState.associations.length == 0){
+				Sbi.storeManager.setAssociationConfigurations(wizardState.associations);
+				this.associationEditorWizard.close();
+				this.associationEditorWizard.destroy();
+				Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associations) + "] succesfully added to store manager");
+
+			}
+			else{
+				// check association is valid
+				var jsonObj = Ext.JSON.encode(wizardState.associations);
+				// clean id from character not valid for rest service
+				jsonObj = jsonObj.replace(/#/g,'');
+				var params = {association: jsonObj};
+
+				Ext.Ajax.request({
+					url: Sbi.config.serviceReg.getServiceUrl('checkAssociation', {
+						pathParams: params
+					}),
+					method: 'POST',
+					params: {
+						requestParam: 'notInRequestBody'
+					},
+					success : function(result){
+
+						var JSONResult = Ext.JSON.decode(result.responseText);
+
+						if(JSONResult.valid == 'true' || JSONResult.valid == true){
+							Sbi.trace("[MainPanel.checkAssociation]: onAssociationEditorWizardSubmit");
+
+							Sbi.storeManager.setAssociationConfigurations(wizardState.associations);
+
+							this.associationEditorWizard.close();
+							this.associationEditorWizard.destroy();
+
+							Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associations) + "] succesfully added to store manager");
+						}
+						else{
+							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.data.editor.association.AssociationEditor.notValidAssociation'), 'Warning');
+						}
+
+					},
+					failure: function(){
+						Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.data.editor.association.AssociationEditor.errorCheckingAssociation'), 'Service Error');
+					},
+					scope: this
+				});
+
+
+			}
 		}
-		this.associationEditorWizard.close();
-		this.associationEditorWizard.destroy();
 		Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: OUT");
 	}
 
