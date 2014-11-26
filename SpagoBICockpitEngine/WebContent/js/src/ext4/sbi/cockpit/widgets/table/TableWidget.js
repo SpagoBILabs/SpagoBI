@@ -160,9 +160,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 		for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
 			for(var i = 0; i < meta.fields.length; i++) {
-				if(meta.fields[i].header === this.wconf.visibleselectfields[j].id
-						//|| meta.fields[i].header === (this.wconf.visibleselectfields[j].funct+'('+this.wconf.visibleselectfields[j].id)+')'
-				) {
+				if(meta.fields[i].header === this.wconf.visibleselectfields[j].alias) {
 					if(this.wconf.visibleselectfields[j].funct != null &&
 							this.wconf.visibleselectfields[j].funct != 'NaN'
 								&& this.wconf.visibleselectfields[j].funct != ''){
@@ -582,7 +580,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
     	}
 
 		if(meta[fieldHeader].type.type === 'float') {
-			// Ignoriamo le colonne di tipo float perchè applicando un filtro di uguaglianza su di esse
+			// Ignoriamo le colonne di tipo float perchï¿½ applicando un filtro di uguaglianza su di esse
 			// in alcuni database (ex. mysql)non si hanno risultati per via di errori di approssimmazione
 			// @see http://stackoverflow.com/questions/5921584/cannot-achieve-a-where-clause-on-a-float-value
 			// TODO possibile soluzione pulita: quando si persiste la tabella in cache per i database problematici
@@ -640,7 +638,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
     		var fieldHeader = Sbi.storeManager.getFieldHeaderByName(meta, fieldName);
     		//alert(fieldHeader + " = " + meta[fieldHeader].type.type + " - " + (meta[fieldHeader].type.type === 'float'));
     		if(meta[fieldHeader].type.type === 'float') {
-    			// Ignoriamo le colonne di tipo float perchè applicando un filtro di uguaglianza su di esse
+    			// Ignoriamo le colonne di tipo float perchï¿½ applicando un filtro di uguaglianza su di esse
     			// in alcuni database (ex. mysql)non si hanno risultati per via di errori di approssimmazione
     			// @see http://stackoverflow.com/questions/5921584/cannot-achieve-a-where-clause-on-a-float-value
     			// TODO possibile soluzione pulita: quando si persiste la tabella in cache per i database problematici
