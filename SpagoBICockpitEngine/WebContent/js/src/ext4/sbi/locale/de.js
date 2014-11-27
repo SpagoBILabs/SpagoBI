@@ -225,6 +225,8 @@ Sbi.locale.ln['sbi.cockpit.association.editor.msg.duplicate'] = 'Association alr
 Sbi.locale.ln['sbi.cockpit.association.editor.msg.differentType'] ='Not all fields type are consistent. Do you want to continue with the addition of the association?';
 Sbi.locale.ln['sbi.cockpit.association.editor.msg.selectFields'] ='Please select fields for the association';
 Sbi.locale.ln['sbi.cockpit.association.editor.msg.confirmDelete'] ='Confirm delete of association ';
+Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.warning'] ='Warning';
+Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.notValidAssociation'] ='Association defined takes many record, add anyway?';
 
 //FILTERS
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.title'] = 'Filters editor';
