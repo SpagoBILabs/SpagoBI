@@ -672,6 +672,13 @@ public class SQLDBCache implements ICache {
 	// ===================================================================================
 	// REFRESH METHODS
 	// ===================================================================================
+
+	public synchronized void refreshIfNotContained(IDataSet dataSet, boolean wait) {
+		if (contains(dataSet) == false) {
+			refresh(dataSet, wait);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
