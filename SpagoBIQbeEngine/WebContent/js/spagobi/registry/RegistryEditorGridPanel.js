@@ -836,13 +836,17 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			   }
 			   if (t === 'float') {
 				   var dottedVal = '.00';
+				   var pointval = null;
 				   //replace , wirth . if there's a value
-				   if (!isNaN(e.value))					   
-					   dottedVal = e.value.replace(',', '.');
+				   if(e.value)
+					   pointval = e.value.replace(',', '.');
+				   // check it is a number otherwise goes to zero
+				   if (!isNaN(pointval))					   
+					   dottedVal = pointval;
+				   
 				   var f = parseFloat(dottedVal);
 				   e.record.data[e.field] = f;
 			   }
-			   
 			   
 			   // update total rows
 			   if(this.previousValueEdit != e.value){
