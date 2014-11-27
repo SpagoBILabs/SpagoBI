@@ -223,8 +223,9 @@ public class DatasetManagementAPI {
 			}
 
 			String strParams = dataSet.getParameters();
-			if (strParams == null)
+			if (strParams == null) {
 				return parametersList;
+			}
 
 			try {
 				SourceBean xmlParams = SourceBean.fromXMLString(strParams);
@@ -427,17 +428,19 @@ public class DatasetManagementAPI {
 			joinedDataSet.setParamsMaps(parametersValues);
 
 			ICache cache = SpagoBICacheManager.getCache();
-			if (cache.contains(joinedDataSet) == false) {
-				cache.refresh(joinedDataSet, true);
-			}
+			// if (cache.contains(joinedDataSet) == false) {
+			// cache.refresh(joinedDataSet, true);
+			// }
 
+			cache.refreshIfNotContained(joinedDataSet, true);
 			List<FilterCriteria> filters = new ArrayList<FilterCriteria>();
 			Iterator<String> it = selections.keys();
 			while (it.hasNext()) {
 				String associationName = it.next();
 				JSONArray values = selections.getJSONArray(associationName);
-				if (values.length() == 0)
+				if (values.length() == 0) {
 					continue;
+				}
 				List<String> valuesList = new ArrayList<String>();
 				for (int i = 0; i < values.length(); i++) {
 					valuesList.add(values.get(i).toString());
@@ -491,17 +494,19 @@ public class DatasetManagementAPI {
 			joinedDataSet.setParamsMaps(parametersValues);
 
 			ICache cache = SpagoBICacheManager.getCache();
-			if (cache.contains(joinedDataSet) == false) {
-				cache.refresh(joinedDataSet, true);
-			}
+			cache.refreshIfNotContained(joinedDataSet, true);
+			// if (cache.contains(joinedDataSet) == false) {
+			// cache.refresh(joinedDataSet, true);
+			// }
 
 			List<FilterCriteria> filters = (filterCriteria != null) ? filterCriteria : new ArrayList<FilterCriteria>();
 			Iterator<String> it = selections.keys();
 			while (it.hasNext()) {
 				String associationName = it.next();
 				JSONArray values = selections.getJSONArray(associationName);
-				if (values.length() == 0)
+				if (values.length() == 0) {
 					continue;
+				}
 				List<String> valuesList = new ArrayList<String>();
 				for (int i = 0; i < values.length(); i++) {
 					valuesList.add(values.get(i).toString());
@@ -555,11 +560,14 @@ public class DatasetManagementAPI {
 				// first we set parameters because they change the signature
 				dataSet.setParamsMap(parametersValues);
 
-				// then we verified if the store associated to the joined dtatset is in cache
-				if (cache.contains(dataSet))
+				// then we verified if the store associated to the joined
+				// dtatset is in cache
+				if (cache.contains(dataSet)) {
 					continue;
+				}
 
-				// if not we create a work to store it and we add it to works list
+				// if not we create a work to store it and we add it to works
+				// list
 
 				dataSet.loadData();
 				IDataStore dataStore = dataSet.getDataStore();
@@ -573,8 +581,9 @@ public class DatasetManagementAPI {
 				if (wait == true) {
 					workManager.waitForAll(workItemList, workManager.INDEFINITE);
 				} else {
-					for (Work work : workItemList)
+					for (Work work : workItemList) {
 						workManager.schedule(work);
+					}
 				}
 			}
 
@@ -610,8 +619,9 @@ public class DatasetManagementAPI {
 				if (wait == true) {
 					workManager.waitForAll(workItemList, workManager.INDEFINITE);
 				} else {
-					for (Work work : workItemList)
+					for (Work work : workItemList) {
 						workManager.schedule(work);
+					}
 				}
 			}
 
@@ -648,7 +658,10 @@ public class DatasetManagementAPI {
 			}
 
 			List<ProjectionCriteria> projectionCriteria = this.getProjectionCriteria(label, crosstabDefinition);
-			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>(); // empty in this case
+			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>(); // empty
+																					// in
+																					// this
+																					// case
 			List<GroupCriteria> groupCriteria = this.getGroupCriteria(label, crosstabDefinition);
 			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
 
@@ -725,8 +738,9 @@ public class DatasetManagementAPI {
 
 	public List<IDataSet> getOwnedDataSet(String userId) {
 		try {
-			if (userId == null)
+			if (userId == null) {
 				userId = this.getUserId();
+			}
 			List<IDataSet> dataSets = getDataSetDAO().loadDataSetsOwnedByUser(userId);
 			for (IDataSet dataSet : dataSets) {
 				checkQbeDataset(dataSet);
@@ -746,8 +760,9 @@ public class DatasetManagementAPI {
 
 	public List<IDataSet> getSharedDataSet(String userId) {
 		try {
-			if (userId == null)
+			if (userId == null) {
 				userId = this.getUserId();
+			}
 			List<IDataSet> dataSets = getDataSetDAO().loadDatasetsSharedWithUser(userId);
 			for (IDataSet dataSet : dataSets) {
 				checkQbeDataset(dataSet);
@@ -766,8 +781,9 @@ public class DatasetManagementAPI {
 
 	public List<IDataSet> getUncertifiedDataSet(String userId) {
 		try {
-			if (userId == null)
+			if (userId == null) {
 				userId = this.getUserId();
+			}
 			List<IDataSet> dataSets = getDataSetDAO().loadDatasetOwnedAndShared(userId);
 			for (IDataSet dataSet : dataSets) {
 				checkQbeDataset(dataSet);
@@ -786,8 +802,9 @@ public class DatasetManagementAPI {
 
 	public List<IDataSet> getMyDataDataSet(String userId) {
 		try {
-			if (userId == null)
+			if (userId == null) {
 				userId = this.getUserId();
+			}
 			List<IDataSet> dataSets = getDataSetDAO().loadMyDataDataSets(userId);
 			for (IDataSet dataSet : dataSets) {
 				checkQbeDataset(dataSet);
@@ -913,12 +930,14 @@ public class DatasetManagementAPI {
 			IAggregationFunction function = aMeasure.getAggregationFunction();
 			String columnName = aMeasure.getEntityId();
 			if (columnName == null) {
-				// when defining a crosstab inside the SmartFilter document, an additional COUNT field with id QBE_SMARTFILTER_COUNT
-				// is automatically added inside query fields, therefore the entity id is not found on base query selected fields
+				// when defining a crosstab inside the SmartFilter document, an
+				// additional COUNT field with id QBE_SMARTFILTER_COUNT
+				// is automatically added inside query fields, therefore the
+				// entity id is not found on base query selected fields
 
 				/*
-				 * columnName = "Count"; if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) {
-				 * toReturn.append(AggregationFunctions.COUNT_FUNCTION.apply("*")); } else { logger.error("Entity id " + aMeasure.getEntityId() +
+				 * columnName = "Count"; if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) { toReturn
+				 * .append(AggregationFunctions.COUNT_FUNCTION.apply("*")); } else { logger.error("Entity id " + aMeasure.getEntityId() +
 				 * " not found on the base query!!!!"); throw new RuntimeException("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
 				 * }
 				 */

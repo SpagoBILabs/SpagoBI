@@ -128,6 +128,18 @@ public interface ICache {
 	 */
 	IDataStore refresh(IDataSet dataSet, boolean wait);
 
+	/**
+	 * if the dataset is not contained in the cache, refresh the dataset and save the result dataStore in cache
+	 *
+	 * @param dataSet
+	 * @param wait
+	 *            true to wait until the dataStore is persisted in cache. false to return as soon as the dataStore is ready and persisting it in cache
+	 *            asynchronously
+	 *
+	 * @return the updated dataStore
+	 */
+	void refreshIfNotContained(IDataSet dataSet, boolean wait);
+
 	IDataStore refresh(List<IDataSet> dataSets, boolean wait);
 
 	/**
