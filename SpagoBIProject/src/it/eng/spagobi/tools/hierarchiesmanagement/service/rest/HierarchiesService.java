@@ -232,27 +232,31 @@ public class HierarchiesService {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
 			// 3- execute query to get hierarchies names
+			String hierarchyCodeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
 			String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 			String typeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
 			String hierarchyDescriptionColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_DS", dataSource);
 			String scopeColumn = AbstractJDBCDataset.encapsulateColumnName("SCOPE", dataSource);
 
-			String columns = typeColumn + "," + hierarchyDescriptionColumn + "," + scopeColumn + " ";
+			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + "," + scopeColumn + " ";
 
 			String tableName = "HIER_" + hierarchyPrefix;
-			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyNameColumn + ")," + columns + " FROM " + tableName + " WHERE "
+			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
 					+ typeColumn + "=\"MANUAL\" OR " + typeColumn + "=\"SEMIMANUAL\" ", 0, 0);
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 				IRecord record = (IRecord) iterator.next();
 				IField field = record.getFieldAt(0);
-				String hierarchyName = (String) field.getValue();
+				String hierarchyCode = (String) field.getValue();
 				field = record.getFieldAt(1);
-				String hierarchyType = (String) field.getValue();
+				String hierarchyName = (String) field.getValue();
 				field = record.getFieldAt(2);
-				String hierarchyDescription = (String) field.getValue();
+				String hierarchyType = (String) field.getValue();
 				field = record.getFieldAt(3);
+				String hierarchyDescription = (String) field.getValue();
+				field = record.getFieldAt(4);
 				String hierarchyScope = (String) field.getValue();
 				JSONObject hierarchy = new JSONObject();
+				hierarchy.put("HIERARCHY_CD", hierarchyCode);
 				hierarchy.put("HIERARCHY_NM", hierarchyName);
 				hierarchy.put("HIERARCHY_TP", hierarchyType);
 				hierarchy.put("HIERARCHY_DS", hierarchyDescription);
@@ -318,6 +322,7 @@ public class HierarchiesService {
 		try {
 			String root = req.getParameter("root");
 			JSONObject rootJSONObject = ObjectUtils.toJSONObject(root);
+			boolean isInsert = Boolean.valueOf(req.getParameter("isInsert"));
 			String hierarchyCode = req.getParameter("code");
 			String hierarchyName = req.getParameter("name");
 			String hierarchyDescription = req.getParameter("description");
@@ -325,6 +330,10 @@ public class HierarchiesService {
 			String hierarchyType = req.getParameter("type");
 
 			String dimension = req.getParameter("dimension");
+
+			if (!isInsert) {
+				deleteCustomHierarchy(req);
+			}
 
 			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject);
 
@@ -362,7 +371,7 @@ public class HierarchiesService {
 		Connection connection = null;
 		try {
 			String dimension = req.getParameter("dimension");
-			String hierarchyName = req.getParameter("name");
+			String hierarchyCode = req.getParameter("code");
 
 			// 1 - get hierarchy table postfix(ex: _CDC)
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
@@ -374,9 +383,9 @@ public class HierarchiesService {
 			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
 
 			// 3 - create query text
-			String hierarchyNameCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+			String hierarchyCodeCol = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
 			String tableName = "HIER_" + hierarchyPrefix;
-			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyNameCol + "=\"" + hierarchyName + "\" ";
+			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyCodeCol + "=\"" + hierarchyCode + "\" ";
 
 			// 4 - Execute DELETE statement
 			connection = dataSource.getConnection();
@@ -409,8 +418,8 @@ public class HierarchiesService {
 			String hierarchyScope = req.getParameter("scope");
 			String hierarchyType = req.getParameter("type");
 
-			if ((dimension == null) || (hierarchyName == null) || (root == null) || (hierarchyDescription == null) || (hierarchyScope == null)
-					|| (hierarchyType == null)) {
+			if ((dimension == null) || (hierarchyCode == null) || (hierarchyName == null) || (root == null) || (hierarchyDescription == null)
+					|| (hierarchyScope == null) || (hierarchyType == null)) {
 				throw new SpagoBIServiceException("An unexpected error occured while modifing custom hierarchy", "wrong request parameters");
 			}
 
@@ -640,7 +649,7 @@ public class HierarchiesService {
 	/**
 	 * Create query for extracting automatic hierarchy rows
 	 */
-	private String createQueryCustomHierarchy(IDataSource dataSource, String hierarchyFK, String hierarchyPrefix, String hierarchyName) {
+	private String createQueryCustomHierarchy(IDataSource dataSource, String hierarchyFK, String hierarchyPrefix, String hierarchyCode) {
 
 		String tableName = "HIER_" + hierarchyPrefix;
 
@@ -661,10 +670,10 @@ public class HierarchiesService {
 		String selectClause = selectClauseBuffer.toString();
 
 		// where
-		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
 		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
 
-		String query = "SELECT " + selectClause + " FROM " + tableName + " WHERE " + hierNameColumn + " = \"" + hierarchyName + "\" AND (" + hierTypeColumn
+		String query = "SELECT " + selectClause + " FROM " + tableName + " WHERE " + hierNameColumn + " = \"" + hierarchyCode + "\" AND (" + hierTypeColumn
 				+ "=\"MANUAL\" OR " + hierTypeColumn + "=\"SEMIMANUAL\" )";
 
 		logger.debug("Query for CUSTOM hierarchies: " + query);
