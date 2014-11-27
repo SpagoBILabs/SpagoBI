@@ -63,11 +63,11 @@ public class JavaClassDataProxy  extends AbstractDataProxy {
 			
 			result = javaClass.getValues( getProfile(), getParameters());
 			result = result.trim();
-			boolean toconvert = JavaClassUtils.checkSintax(result);
-			// check if the result must be converted into the right xml sintax
-			if(toconvert) { 
-				result = JavaClassUtils.convertResult(result);
-			}
+//			boolean toconvert = JavaClassUtils.checkSintax(result);
+//			// check if the result must be converted into the right xml sintax
+//			if(toconvert) { 
+//				result = JavaClassUtils.convertResult(result);
+//			}
 			dataStore = dataReader.read(result);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to load dataset", t);
