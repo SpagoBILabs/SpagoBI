@@ -463,18 +463,34 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 
 						var JSONResult = Ext.JSON.decode(result.responseText);
 
-						if(JSONResult.valid == 'true' || JSONResult.valid == true){
+						// if not valid ask user if wants to
+						if(JSONResult.valid == 'false' || JSONResult.valid == false){
+
+							Ext.Msg.show({
+								   title: LN('sbi.data.editor.association.AssociationEditor.warning'),
+								   msg: LN('sbi.data.editor.association.AssociationEditor.notValidAssociation'),
+								   buttons: Ext.Msg.YESNO,
+								   icon: Ext.MessageBox.QUESTION,
+								   modal: true,
+								   fn: function(btn) {
+										if(btn === 'yes') {
+											Sbi.trace("[MainPanel.checkAssociation]: onAssociationEditorWizardSubmit");
+											Sbi.storeManager.setAssociationConfigurations(wizardState.associations);
+											this.associationEditorWizard.close();
+											this.associationEditorWizard.destroy();
+											Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associations) + "] succesfully added to store manager");
+											}
+								   		}
+
+
+						 });
+						}
+						else{		// valid case
 							Sbi.trace("[MainPanel.checkAssociation]: onAssociationEditorWizardSubmit");
-
 							Sbi.storeManager.setAssociationConfigurations(wizardState.associations);
-
 							this.associationEditorWizard.close();
 							this.associationEditorWizard.destroy();
-
 							Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associations) + "] succesfully added to store manager");
-						}
-						else{
-							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.data.editor.association.AssociationEditor.notValidAssociation'), 'Warning');
 						}
 
 					},

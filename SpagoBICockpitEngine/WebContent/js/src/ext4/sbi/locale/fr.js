@@ -218,7 +218,8 @@ Sbi.locale.ln['sbi.cockpit.association.editor.wizard.list.delete'] = 'Delete';
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.list.delete.tooltip'] = 'Delete Association';
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.list.autodetect'] = 'Auto Detect';
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.list.autodetect.tooltip'] = 'Auto Detect Association';
-Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.notValidAssociation'] ='Association defined takes too many record to be a valid one';
+Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.warning'] ='Warning';
+Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.notValidAssociation'] ='Association defined takes many record, add anyway?';
 Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.errorCheckingAssociation'] ='Error while checking association validity';
 
 

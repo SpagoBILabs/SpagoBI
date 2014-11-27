@@ -218,7 +218,8 @@ Sbi.locale.ln['sbi.cockpit.association.editor.wizard.list.delete'] = 'Cancella';
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.list.delete.tooltip'] = 'Cancella Associazione';
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.list.autodetect'] = 'Rilevamento automatico';
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.list.autodetect.tooltip'] = 'Rilevamento automatico delle Associazioni';
-Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.notValidAssociation'] ='L\'associazione definita ritorna troppi record per essere significativa';
+Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.warning'] ='Avviso';
+Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.notValidAssociation'] ='L\'associazione definita ritorna molti record, aggiungerla comunque?';
 Sbi.locale.ln['sbi.data.editor.association.AssociationEditor.errorCheckingAssociation'] ='Errore durante il controllo dell\'associazione';
 
 
