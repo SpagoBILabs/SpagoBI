@@ -238,7 +238,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	            		  dateHierarchy == null || dateHierarchy == undefined ){
 	            		  Ext.Msg.alert(LN('sbi.hierarchies.drag.wrong.action'), LN('sbi.hierarchies.new.create.wrong'));
 	            		  return;
-	            	}
+	            	}            	    
 	            	//this.saveCustomHierarchyButton.setVisible(true);
 	            	this.saveCustomHierarchyButton.setDisabled(false);
 //	            	this.cancelCustomHierarchyButton.setVisible(true);
@@ -576,6 +576,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		this.newCustomHierarchyTypeCombo.setDisabled(true);
 		this.newCustomHierarchyButton.setDisabled(true);
 		this.customHierarchiesGrid.setDisabled(true);
+		this.selectedRecord = undefined; // reset selection previous records
 	}
 	
 	, enableGUIElements: function(){
@@ -596,6 +597,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		if (!rec){
 			rec = this.customHierarchiesGrid.getSelectionModel().getSelection(); //through the selected record of the grid
 			if (rec.length > 0) rec = rec[0];
+			else rec = null;
 		}			
 		if (rec != null && rec != undefined){
 			this.isInsert = false;			
@@ -1009,7 +1011,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        border:false,
 	        bodyStyle: {border:0},
 	        bodyStyle:'padding:20px',
-	        emptyText: 'Hierarchies not found for the period specified, try with another date.',
+//	        emptyText: 'Hierarchies not found for the period specified, try with another date.',
 	        viewConfig: {
 	            plugins: {
 	               ptype: 'treeviewdragdrop',
