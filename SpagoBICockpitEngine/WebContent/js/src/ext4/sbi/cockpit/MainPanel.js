@@ -462,9 +462,10 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 					success : function(result){
 
 						var JSONResult = Ext.JSON.decode(result.responseText);
-
 						// if not valid ask user if wants to
 						if(JSONResult.valid == 'false' || JSONResult.valid == false){
+
+							var associationEditorWizard = this.associationEditorWizard;
 
 							Ext.Msg.show({
 								   title: LN('sbi.data.editor.association.AssociationEditor.warning'),
@@ -476,8 +477,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 										if(btn === 'yes') {
 											Sbi.trace("[MainPanel.checkAssociation]: onAssociationEditorWizardSubmit");
 											Sbi.storeManager.setAssociationConfigurations(wizardState.associations);
-											this.associationEditorWizard.close();
-											this.associationEditorWizard.destroy();
+											associationEditorWizard.close();
+											associationEditorWizard.destroy();
 											Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associations) + "] succesfully added to store manager");
 											}
 								   		}
