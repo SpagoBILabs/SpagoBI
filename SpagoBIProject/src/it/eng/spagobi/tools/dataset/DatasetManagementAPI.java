@@ -1104,7 +1104,9 @@ public class DatasetManagementAPI {
 						String queryText1 = sqlBuilder.toString();
 						logger.debug("execute " + queryText1);
 						IDataStore dataStore = dataSource.executeStatement(queryText1, 0, 0);
-						Long count1 = (Long) ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
+						Object countO = ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
+						Long count1 = (countO instanceof Long) ? (Long) countO : Long.valueOf(((Number) countO).longValue());
+
 						logger.debug("On query on table " + table + " counted " + count1 + " records");
 
 						if (count1 > maxSingleCount) {
@@ -1168,8 +1170,8 @@ public class DatasetManagementAPI {
 			String joinQueryText = joinSqlBuilder.toString();
 			logger.debug("Join query is equal to [" + joinQueryText + "]");
 			IDataStore joinDataStore = dataSource.executeStatement(joinQueryText, 0, 0);
-			Long joinCount = (Long) ((DataStore) joinDataStore).getRecordAt(0).getFieldAt(0).getValue();
-			logger.debug("On join counted " + joinCount + " records");
+			Object joinCountO = ((DataStore) joinDataStore).getRecordAt(0).getFieldAt(0).getValue();
+			Long joinCount = (joinCountO instanceof Long) ? (Long) joinCountO : Long.valueOf(((Number) joinCountO).longValue());
 
 			if (joinCount > maxSingleCount) {
 				logger.warn("Chosen join among tables return too many rows");
