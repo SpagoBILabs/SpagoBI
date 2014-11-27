@@ -229,7 +229,16 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        text: LN('sbi.hierarchies.new.create'),
             margin: '0 0 0 10',
 	        listeners: {
-	            click: function() {	            	
+	            click: function() {	    
+	               var hierarchy = this.comboHierarchies.getValue();
+	               var dimension = this.comboDimensions.getValue();
+	               var dateHierarchy =  Ext.Date.format(this.dateHierachies.getValue(),Sbi.config.clientServerDateFormat);
+            	   if (hierarchy == null || hierarchy == undefined || 
+	            		  dimension == null || dimension == undefined ||
+	            		  dateHierarchy == null || dateHierarchy == undefined ){
+	            		  Ext.Msg.alert(LN('sbi.hierarchies.drag.wrong.action'), LN('sbi.hierarchies.new.create.wrong'));
+	            		  return;
+	            	}
 	            	//this.saveCustomHierarchyButton.setVisible(true);
 	            	this.saveCustomHierarchyButton.setDisabled(false);
 //	            	this.cancelCustomHierarchyButton.setVisible(true);
