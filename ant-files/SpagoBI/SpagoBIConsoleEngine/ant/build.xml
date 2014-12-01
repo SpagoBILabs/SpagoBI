@@ -169,7 +169,7 @@
 				<file name='./spagobi/commons/Format.js' />
 				<file name='./spagobi/commons/Utils.js' />
 				<file name='./spagobi/commons/JSON.js' />
-				<file name='./spagobi/locale/LocaleUtils.js' />
+				<file name='./spagobi/formats/LocaleUtils.js' />
 				<file name='./spagobi/data/StorePlugin.js' />
 
 				<file name='./spagobi/data/PagingStore.js' />
