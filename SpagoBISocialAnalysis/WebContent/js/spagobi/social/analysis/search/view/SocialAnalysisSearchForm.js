@@ -323,6 +323,27 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	        	}],
 	        },
 	        {
+                xtype: 'fieldset',
+                title: LN('sbi.social.analysis.advancedoptions'),
+                collapsible: true,
+                collapsed: true,
+                defaults: {
+                    labelWidth: 89,
+                    layout: {
+                        type: 'anchor',
+                        defaultMargins: {top: 0, right: 5, bottom: 0, left: 0}
+                    }
+                },
+	        	anchor: '50%',
+                items: [
+                    {
+                        xtype: 'fieldcontainer',
+                        items: [
+                            {xtype: 'checkboxfield',    name: 'ranalysis', boxLabel  : LN('sbi.social.analysis.ranalysis')},
+                        ]
+                    }]
+            },
+	        {
 	        	xtype: 'fieldcontainer',
 	            defaultType: 'checkboxfield',
 	            layout: 'hbox',
@@ -351,7 +372,15 @@ Ext.define('Sbi.social.analysis.search.view.SocialAnalysisSearchForm', {
 	                    disabled   : true,
 	                    id        : 'checkboxLinkedin',
 	                    padding: '0 0 0 20'
-	                }
+	                },
+//	                {
+//	                	xtype: 'fieldcontainer',
+//	                	fieldLabel: 'Advanced',
+//	                    boxLabel  : LN('sbi.social.analysis.ranalysis'),
+//	                    name      : 'rAnalysis',
+//	                    inputValue: '1',
+//	                    id        : 'checkboxRAnalysis',
+//	                }
 	            ]
 	        },
 	        {
