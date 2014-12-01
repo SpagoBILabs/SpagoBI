@@ -99,6 +99,8 @@ Sbi.locale.ln['sbi.social.analysis.searchfailedmessage'] = ' - ricerca fallita a
 Sbi.locale.ln['sbi.social.analysis.and'] = 'AND';
 Sbi.locale.ln['sbi.social.analysis.or'] = 'OR';
 Sbi.locale.ln['sbi.social.analysis.free'] = 'Libero';
+Sbi.locale.ln['sbi.social.analysis.ranalysis'] = 'Analisi R';
+Sbi.locale.ln['sbi.social.analysis.advancedoptions'] = 'Opzioni Avanzate';
 
 
 //===================================================================
