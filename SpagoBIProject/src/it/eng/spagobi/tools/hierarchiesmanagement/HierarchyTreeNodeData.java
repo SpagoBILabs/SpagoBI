@@ -31,6 +31,7 @@ public class HierarchyTreeNodeData {
 	String nodeName;
 	String leafId;
 	String leafParentCode;
+	String leafOriginalParentCode;
 	String leafParentName;
 
 	/**
@@ -38,16 +39,17 @@ public class HierarchyTreeNodeData {
 	 * @param nodeName
 	 */
 	public HierarchyTreeNodeData(String nodeCode, String nodeName) {
-		this(nodeCode, nodeName, "", "", "");
+		this(nodeCode, nodeName, "", "", "", "");
 	}
 
-	public HierarchyTreeNodeData(String nodeCode, String nodeName, String leafId, String leafParentCode, String leafParentName) {
+	public HierarchyTreeNodeData(String nodeCode, String nodeName, String leafId, String leafParentCode, String leafParentName, String leafOriginalParentCode) {
 		super();
 		this.nodeCode = nodeCode;
 		this.nodeName = nodeName;
 		this.leafId = leafId;
 		this.leafParentCode = leafParentCode;
 		this.leafParentName = leafParentName;
+		this.leafOriginalParentCode = leafOriginalParentCode;
 	}
 
 	/**
@@ -123,6 +125,21 @@ public class HierarchyTreeNodeData {
 	 */
 	public void setLeafParentName(String leafParentName) {
 		this.leafParentName = leafParentName;
+	}
+
+	/**
+	 * @return the leafOriginalParentCode
+	 */
+	public String getLeafOriginalParentCode() {
+		return leafOriginalParentCode;
+	}
+
+	/**
+	 * @param leafOriginalParentCode
+	 *            the leafOriginalParentCode to set
+	 */
+	public void setLeafOriginalParentCode(String leafOriginalParentCode) {
+		this.leafOriginalParentCode = leafOriginalParentCode;
 	}
 
 }

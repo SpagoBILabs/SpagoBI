@@ -1199,6 +1199,8 @@ Sbi.locale.ln['sbi.hierarchies.drag.wrong.action']= 'Azione sbagliata';
 Sbi.locale.ln['sbi.hierarchies.drag.node.exists']= 'Nodo gi� presente in questa gerarchia';	
 Sbi.locale.ln['sbi.hierarchies.drag.cannot.move']= 'Impossibile muovere nodi foglia in una gerarchia semimanuale';		
 Sbi.locale.ln['sbi.hierarchies.delete.ok']= 'Cancellazione avvenuta';
+Sbi.locale.ln['sbi.hierarchies.node.added']= 'Nodo aggiunto';
+Sbi.locale.ln['sbi.hierarchies.node.add']= 'Aggiungi nodo';
 		
 //===================================================================
 //Hot Links
