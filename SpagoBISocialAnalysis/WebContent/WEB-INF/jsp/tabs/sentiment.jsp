@@ -61,6 +61,8 @@
 	JSONArray positiveRadar = sentimentDP.getPositiveRadar();
 	JSONArray neutralRadar = sentimentDP.getNeutralRadar();
 	JSONArray negativeRadar = sentimentDP.getNegativeRadar();
+	
+	boolean rAnalysis = sentimentDP.isrAnalysis();
 	 
 %>
 
@@ -99,8 +101,15 @@
 	    <% } %>
 	    <li class="navtabs" style="float:right;"><a href="<%= application.getContextPath() %>/index.jsp"> <label id="searchome"></label> </a></li>
 	</ul>
-        	
+	
+	<% if (!rAnalysis) { %>
+	<center>
+    	<h1 style="border: 1px white solid;">Sentiment Analysis disabled for this Search</h1>
+    </center>
+    <% } %>
     
+    
+    <% if (rAnalysis) { %>
     <div id="twitterPolarity" class="blank_box twitterPolarityMain_box" >
 			
 		<div class="twitterPolarityTitle_box">
@@ -153,8 +162,10 @@
 		
 		</div>
 			
-	</div> 
+	</div>
+	<% } %>
 	
+	 <% if (rAnalysis) { %>
 	<div class="blank_box" style="float:left; margin-left: 10px; margin-bottom: 30px;">
 		
 			<div class="twitterSentimentRadarTitle_box">
@@ -165,8 +176,9 @@
 
 		<div id="chart"></div>
 	</div>
+	<% } %>
 	
-	
+	 <% if (rAnalysis) { %>
 	<div style="width: 90%; float:left;">
 	
 		<div class="blank_box polarity_barchartMain">
@@ -209,6 +221,7 @@
 		</div>	
 	
 	</div>
+	<% } %>
 			
 </div>
 
