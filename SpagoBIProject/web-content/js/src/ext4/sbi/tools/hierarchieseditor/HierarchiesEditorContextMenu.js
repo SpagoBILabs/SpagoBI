@@ -22,6 +22,84 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorContextMenu', {
 	    },
 	    iconCls: 'button-remove',
 	    itemId: 'myAction'
-	})]
+	}),
+	new Ext.Action({
+	    text: LN('sbi.hierarchies.node.add'),
+	    handler: function(){
+	    	var tree = Ext.getCmp('customTreePanel');
+	    	var selectedNode = tree.selModel.getSelection()[0];
+	    	
+			this.newNodeCode = new Ext.form.Text({
+				name: 'code',
+		        fieldLabel: LN('sbi.generic.code'),
+		        labelWidth: 130,
+				width : 300,
+		        allowBlank: false,
+		        enforceMaxLength: true,
+		        maxLength: 45
+			});
+			
+			this.newNodeName = new Ext.form.Text({
+				name: 'name',
+		        fieldLabel: LN('sbi.generic.name'),
+		        labelWidth: 130,
+				width : 300,
+		        allowBlank: false,
+		        enforceMaxLength: true,
+		        maxLength: 45
+			});
+	    	
+			var win = new Ext.Window(
+				    {
+				        layout: 'fit',
+				        width: 400,
+				        height: 200,
+				        modal: true,
+				        closeAction: 'destroy',
+				        title:LN('sbi.hierarchies.node.add'),
+				        items: new Ext.Panel(
+				        {
+							
+							bodyStyle:'padding:20px',
+				        	items: [this.newNodeCode,this.newNodeName]
+				        }),
+				        buttons:[
+				                 {
+				                	 text:'OK',
+				                	 handler:function() {
+				                		 var newNodeCode = this.newNodeCode.getValue(); //must be unique in the tree!
+				                		 var newNodeName = this.newNodeName.getValue();
+				                		 
+				                		 selectedNode.appendChild({
+					           	    	      text: newNodeName,
+					           	    	      id: newNodeCode,
+					           	    	      leaf: false,
+					           	    	      children:[]
+				                		 });  
+				                		 
+				                		 win.close();
+				                	 }
+				                 	 ,scope:this 
+				                 },
+				                 {
+				                	 text:LN('sbi.general.cancel'),
+				                	 handler:function() {
+				                		 win.close();
+				                	 }
+				                 }
+				      ]
+				    });
+			win.show();	
+	    	
+	    	
+	    	
+	    	
+	    	
+	    	
+	    },
+	    iconCls: 'icon-add',
+	    itemId: 'myActionAdd'
+	})
+	]
 
 });

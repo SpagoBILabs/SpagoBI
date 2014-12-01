@@ -1218,7 +1218,9 @@ Sbi.locale.ln['sbi.hierarchies.drag.wrong']= 'Cannot use a leaf node as a new ro
 Sbi.locale.ln['sbi.hierarchies.drag.wrong.action']= 'Wrong Action';		
 Sbi.locale.ln['sbi.hierarchies.drag.node.exists']= 'Node already added to this hierarchy';	
 Sbi.locale.ln['sbi.hierarchies.drag.cannot.move']= 'Cannot move a leaf node in a semimanual hierarchy';		
-Sbi.locale.ln['sbi.hierarchies.delete.ok']= 'Delete successfull';		
+Sbi.locale.ln['sbi.hierarchies.delete.ok']= 'Delete successfull';	
+Sbi.locale.ln['sbi.hierarchies.node.added']= 'Node added';
+Sbi.locale.ln['sbi.hierarchies.node.add']= 'Add node';
 //===================================================================
 //Hot Links
 //===================================================================

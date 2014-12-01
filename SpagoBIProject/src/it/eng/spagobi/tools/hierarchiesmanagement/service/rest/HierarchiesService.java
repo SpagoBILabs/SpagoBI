@@ -554,16 +554,18 @@ public class HierarchiesService {
 			String nodeCode = node.getString("id");
 
 			String nodeLeafId = node.getString("leafId");
-			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, "", "");
+			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, "", "", "");
 
 			// current node is a leaf?
 			boolean isLeaf = node.getBoolean("leaf");
 			if (isLeaf) {
 				List<HierarchyTreeNodeData> aPath = new ArrayList<HierarchyTreeNodeData>();
 				String nodeParentCode = node.getString("leafParentCode");
-				nodeData.setNodeCode(nodeCode.replaceFirst(nodeParentCode + "_", ""));
+				String nodeOriginalParentCode = node.getString("originalLeafParentCode");
+				nodeData.setNodeCode(nodeCode.replaceFirst(nodeOriginalParentCode + "_", ""));
 				nodeData.setLeafParentCode(nodeParentCode);
 				nodeData.setLeafParentName(node.getString("leafParentName"));
+				nodeData.setLeafOriginalParentCode(nodeOriginalParentCode);
 				aPath.add(nodeData);
 				collectionOfPaths.add(aPath);
 				return collectionOfPaths;
@@ -773,6 +775,8 @@ public class HierarchiesService {
 							data.setNodeCode(leafParentCodeString + "_" + nodeCode);
 							nodeCode = leafParentCodeString + "_" + nodeCode;
 							data.setLeafParentCode(leafParentCodeString);
+							data.setLeafOriginalParentCode(leafParentCodeString); // backup
+																					// code
 							IField leafParentNameField = record.getFieldAt(i + 4);
 							String leafParentNameString = (String) leafParentNameField.getValue();
 							data.setLeafParentName(leafParentNameString);
@@ -892,6 +896,7 @@ public class HierarchiesService {
 				nodeJSONObject.put("id", nodeData.getNodeCode());
 				nodeJSONObject.put("leafId", nodeData.getLeafId());
 				nodeJSONObject.put("leafParentCode", nodeData.getLeafParentCode());
+				nodeJSONObject.put("originalLeafParentCode", nodeData.getLeafOriginalParentCode());
 				nodeJSONObject.put("leafParentName", nodeData.getLeafParentName());
 
 				JSONArray childrenJSONArray = new JSONArray();
@@ -914,6 +919,7 @@ public class HierarchiesService {
 				nodeJSONObject.put("id", nodeData.getNodeCode());
 				nodeJSONObject.put("leafId", nodeData.getLeafId());
 				nodeJSONObject.put("leafParentCode", nodeData.getLeafParentCode());
+				nodeJSONObject.put("originalLeafParentCode", nodeData.getLeafOriginalParentCode());
 				nodeJSONObject.put("leafParentName", nodeData.getLeafParentName());
 				nodeJSONObject.put("leaf", true);
 				return nodeJSONObject;
@@ -924,5 +930,4 @@ public class HierarchiesService {
 		}
 
 	}
-
 }

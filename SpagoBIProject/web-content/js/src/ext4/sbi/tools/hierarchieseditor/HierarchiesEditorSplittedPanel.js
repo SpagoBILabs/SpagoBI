@@ -11,7 +11,7 @@
 
 Ext.define('Item', {
     extend: 'Ext.data.Model',
-    fields: ['text','leafId','leafParentCode','leafParentName']
+    fields: ['text','leafId','leafParentCode','originalLeafParentCode','leafParentName']
 })
 
 
@@ -600,7 +600,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			else rec = null;
 		}			
 		if (rec != null && rec != undefined){
-			this.isInsert = false;			
+			this.isInsert = false;		
 		}
 	
 		//check the end nodes
@@ -705,7 +705,8 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			                			 //this is the real root node
 			                			 rootNode = rootNode.getChildAt(0);
 			                		 }
-			                		 var myJson= this.getJson(rootNode);
+			                		 var hierarchyType = (!this.isInsert)? rec.data.HIERARCHY_TP : this.newCustomHierarchyTypeCombo.getValue();
+			                		 var myJson= this.getJson(rootNode, hierarchyType);
 			                		 
 			                		 var params = {};
 			                		 params.root = Ext.encode(myJson);
@@ -714,7 +715,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 			                		 params.description = this.customHierarchyDescription.getValue();
 			                		 params.scope = this.scopeCombo.getValue();
 			                		 params.dimension = this.comboDimensions.getValue();
-			                		 params.type = this.newCustomHierarchyTypeCombo.getValue();
+			                		 params.type = hierarchyType;
 			                		 params.isInsert = this.isInsert;
 			                		 
 			                		 //Call ajax function
@@ -1109,14 +1110,14 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	
 	//Transform the Tree structure in a JSON form that can be converted to a string
 	//node is the rootNode
-	,getJson: function(node) {
+	,getJson: function(node,hierarchyType) {
 		// Should deep copy so we don't affect the tree
 		var json = node.data;
 
 		json.children = [];
 		for (var i=0; i < node.childNodes.length; i++) {
-			if (this.newCustomHierarchyTypeCombo.getValue() == 'MANUAL'){
-				var jsonNode = this.getJson(node.childNodes[i]);
+			if ((hierarchyType != undefined) && (hierarchyType == 'MANUAL')){
+				var jsonNode = this.getJson(node.childNodes[i],hierarchyType);
 				//for manual hierarchy get the new parent reference
 				if(node.childNodes[i] !== undefined && node.childNodes[i].parentNode != null){
 					jsonNode.leafParentCode = jsonNode.parentId;
