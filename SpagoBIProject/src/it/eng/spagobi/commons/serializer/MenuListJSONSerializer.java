@@ -433,6 +433,18 @@ public class MenuListJSONSerializer implements Serializer {
 				url = url.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
 				path = path.replace("#", "");
 
+				// code to manage SpagoBISocialAnalysis link in admin menu
+				if (url.contains("${SPAGOBI_SOCIAL_ANALYSIS_URL}")) {
+					url = url.substring(0, url.length() - 1);
+					url = url.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
+					if (!GeneralUtilities.isSSOEnabled()) {
+						url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&"
+								+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "'";
+					} else {
+						url = url + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "'";
+					}
+				}
+
 				temp2.put(HREF, url + ", '" + path + "')");
 			}
 
