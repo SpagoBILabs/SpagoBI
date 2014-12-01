@@ -54,12 +54,17 @@ public class HistoricalSearchJob implements Job {
 			searchAPI.collectTweets();
 
 			// historical search completed, loading = false;
-			logger.debug("Method startHistoricalSearchThread(): Historical Search completed. Processing results for topics and sentiment..");
 
-			TwitterRScriptUtility.callTopicsRScript(twitterSearch.getSearchID());
-			TwitterRScriptUtility.callSentimentRScript(twitterSearch.getSearchID());
+			if (twitterSearch.isrAnalysis()) {
 
-			logger.debug("Method startHistoricalSearchThread(): R Scripts called. Update search loading field. Results ready");
+				logger.debug("Method startHistoricalSearchThread(): Historical Search completed. Processing results for topics and sentiment..");
+
+				TwitterRScriptUtility.callTopicsRScript(twitterSearch.getSearchID());
+				TwitterRScriptUtility.callSentimentRScript(twitterSearch.getSearchID());
+
+				logger.debug("Method startHistoricalSearchThread(): R Scripts called. Update search loading field. Results ready");
+
+			}
 
 			twitterSearch.setLastActivationTime(GregorianCalendar.getInstance());
 			twitterSearch.setLoading(false);
