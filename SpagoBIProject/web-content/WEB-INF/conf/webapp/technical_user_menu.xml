@@ -220,7 +220,10 @@
 					<!--url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=JobManagementPage&amp;MESSAGEDET=MESSAGE_GET_ALL_JOBS&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"-->
 	  		<ITEM	title="#menu.HierarchiesEditor"
 					functionality="HierarchiesManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp" />	
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp" />
+			<ITEM	title="#menu.SocialAnalysis"
+					functionality="CreateSocialAnalysis"
+					url="${SPAGOBI_SOCIAL_ANALYSIS_URL}" />
 	  		 </ITEM>
 					
 
