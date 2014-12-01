@@ -367,6 +367,13 @@ public class TwitterStreamingSearchAPI {
 		twitterSearch.setCreationDate(GregorianCalendar.getInstance());
 		twitterSearch.setLastActivationTime(GregorianCalendar.getInstance());
 
+		// check if advanced option "R Analysis" is checked
+		if (req.getParameter("ranalysis") != null) {
+			twitterSearch.setrAnalysis(true);
+		} else {
+			twitterSearch.setrAnalysis(false);
+		}
+
 		// if user is not specifying the label, create it with the keywords
 		if (label == null || label.trim().equals("")) {
 
