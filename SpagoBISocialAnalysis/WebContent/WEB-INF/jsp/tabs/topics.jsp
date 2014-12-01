@@ -52,6 +52,8 @@
 	
 	String hTagCloud = tCloudDP.getHashtagsCloud().toString();
 	String topicsCloud = tCloudDP.getTopicsCloud().toString();
+	
+	boolean rAnalysis = tCloudDP.isrAnalysis();
 	 
 %>
 
@@ -109,6 +111,7 @@
 		
 	</div>
 	
+	 <% if (rAnalysis) { %>
 	<div id="tagcloud" class="blank_box tagCloudMain_box" style="margin-left: 20px;">
 			
 		<div class="tagCloudTitle_box">
@@ -123,6 +126,7 @@
 		
 		
 	</div>
+	<% } %>
 	
 	</div>
 		
