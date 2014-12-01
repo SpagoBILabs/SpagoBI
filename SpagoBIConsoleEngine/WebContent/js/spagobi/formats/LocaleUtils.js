@@ -49,8 +49,9 @@ if(Sbi.console.commons.Format){
 
 
 Sbi.locale.localize = function(key) {
-	if(!Sbi.locale.ln) {return key;}
-	return Sbi.locale.ln[key] || key;
+	var value = messageResource.get(key, 'messages');
+	debugger
+	return value || key;
 };
 
 Sbi.locale.getLNValue = function(obj){

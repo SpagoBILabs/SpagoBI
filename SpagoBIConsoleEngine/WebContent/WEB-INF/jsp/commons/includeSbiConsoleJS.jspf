@@ -7,8 +7,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <link rel="styleSheet" href ="../css/console.css" type="text/css" />
 
 <!-- Include localized labels  -->
-<script type="text/javascript" src='../js/spagobi/locale/<%=locale.getLanguage()%>.js'/></script>
-<script type="text/javascript" src='../user_messages/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formats/<%=locale.getLanguage()%>.js'/></script>
 
 
 <!-- START-DEBUG -->
@@ -20,7 +19,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
 <script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
 <script type="text/javascript" src='../js/spagobi/commons/JSON.js'/></script>
-<script type="text/javascript" src='../js/spagobi/locale/LocaleUtils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formats/LocaleUtils.js'/></script>
 <script type="text/javascript" src='../js/spagobi/data/StorePlugin.js'/></script>
 <script type="text/javascript" src='../js/spagobi/data/PagingStore.js'/></script>
 <script type="text/javascript" src='../js/spagobi/data/MemoryStore.js'/></script>
