@@ -7,6 +7,9 @@ package it.eng.spagobi.twitter.analysis.dataprocessors;
 
 import it.eng.spagobi.twitter.analysis.cache.DataProcessorCacheImpl;
 import it.eng.spagobi.twitter.analysis.cache.IDataProcessorCache;
+import it.eng.spagobi.twitter.analysis.cache.ITwitterCache;
+import it.eng.spagobi.twitter.analysis.cache.TwitterCacheImpl;
+import it.eng.spagobi.twitter.analysis.entities.TwitterSearch;
 import it.eng.spagobi.twitter.analysis.utilities.AnalysisUtility;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -31,9 +34,12 @@ public class TwitterTagCloudDataProcessor {
 	private static final Logger logger = Logger.getLogger(TwitterTagCloudDataProcessor.class);
 
 	private final IDataProcessorCache dpCache = new DataProcessorCacheImpl();
+	private final ITwitterCache twitterCache = new TwitterCacheImpl();
 
 	private JSONArray hashtagsCloud = new JSONArray();
 	private JSONArray topicsCloud = new JSONArray();
+
+	private boolean rAnalysis = false;
 
 	public TwitterTagCloudDataProcessor() {
 
@@ -120,33 +126,43 @@ public class TwitterTagCloudDataProcessor {
 		try {
 
 			JSONArray jsonTagCloudArr = new JSONArray();
-			List<String> globalTopics = new ArrayList<String>();
+			TwitterSearch twitterSearch = twitterCache.findTwitterSearch(searchId);
 
-			List<String> topicsList = dpCache.getTopics(searchId);
+			if (twitterSearch != null && twitterSearch.isrAnalysis()) {
 
-			for (String topicsFromDb : topicsList) {
+				this.rAnalysis = true;
 
-				if (topicsFromDb != null && !topicsFromDb.equals("")) {
-					topicsFromDb = topicsFromDb.toLowerCase();
-					String[] topicsSplitted = topicsFromDb.split(";");
+				List<String> globalTopics = new ArrayList<String>();
 
-					for (int i = 0; i < topicsSplitted.length; i++) {
-						String word = topicsSplitted[i];
-						String topicWords = word.substring(word.lastIndexOf(":") + 1).trim();
+				List<String> topicsList = dpCache.getTopics(searchId);
 
-						String[] topicWordsArray = topicWords.split(",");
+				for (String topicsFromDb : topicsList) {
 
-						for (int j = 0; j < topicWordsArray.length; j++)
+					if (topicsFromDb != null && !topicsFromDb.equals("")) {
+						topicsFromDb = topicsFromDb.toLowerCase();
+						String[] topicsSplitted = topicsFromDb.split(";");
 
-							globalTopics.add(topicWordsArray[j]);
+						for (int i = 0; i < topicsSplitted.length; i++) {
+							String word = topicsSplitted[i];
+							String topicWords = word.substring(word.lastIndexOf(":") + 1).trim();
+
+							String[] topicWordsArray = topicWords.split(",");
+
+							for (int j = 0; j < topicWordsArray.length; j++)
+
+								globalTopics.add(topicWordsArray[j]);
+						}
 					}
 				}
-			}
 
-			Map<String, Integer> htagWeghtMap = generateHtagWeight(globalTopics);
+				Map<String, Integer> htagWeghtMap = generateHtagWeight(globalTopics);
 
-			if (htagWeghtMap != null) {
-				jsonTagCloudArr = tweetIntoJSON(htagWeghtMap);
+				if (htagWeghtMap != null) {
+					jsonTagCloudArr = tweetIntoJSON(htagWeghtMap);
+				}
+			} else {
+				this.rAnalysis = false;
+				logger.debug("Method topicsCloudCreate(): R analysis disabled for search [ " + searchId + " ]");
 			}
 
 			logger.debug("Method topicsCloudCreate(): End");
@@ -205,6 +221,14 @@ public class TwitterTagCloudDataProcessor {
 
 	public JSONArray getTopicsCloud() {
 		return topicsCloud;
+	}
+
+	public boolean isrAnalysis() {
+		return rAnalysis;
+	}
+
+	public void setrAnalysis(boolean rAnalysis) {
+		this.rAnalysis = rAnalysis;
 	}
 
 }
