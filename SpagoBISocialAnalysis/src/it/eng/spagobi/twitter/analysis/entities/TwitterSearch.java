@@ -97,6 +97,10 @@ public class TwitterSearch implements Serializable {
 	@Column(name = "days_ago")
 	private Integer daysAgo;
 
+	@Column(name = "r_analysis", columnDefinition = "boolean", length = 1)
+	@NotNull
+	private boolean rAnalysis = false;
+
 	@OneToOne(mappedBy = "twitterSearch", cascade = { CascadeType.PERSIST })
 	private TwitterSearchScheduler twitterSearchScheduler;
 
@@ -111,7 +115,7 @@ public class TwitterSearch implements Serializable {
 	}
 
 	public TwitterSearch(long searchID, String label, String keywords, Calendar creationDate, Calendar lastActivationTime, SearchTypeEnum type,
-			boolean loading, boolean deleted, boolean failed, String failMessage, BooleanOperatorEnum booleanOperator, Integer daysAgo,
+			boolean loading, boolean deleted, boolean failed, String failMessage, BooleanOperatorEnum booleanOperator, Integer daysAgo, boolean rAnalysis,
 			TwitterSearchScheduler twitterSearchScheduler, TwitterMonitorScheduler twitterMonitorScheduler) {
 
 		this.searchID = searchID;
@@ -126,6 +130,7 @@ public class TwitterSearch implements Serializable {
 		this.failMessage = failMessage;
 		this.booleanOperator = booleanOperator;
 		this.daysAgo = daysAgo;
+		this.rAnalysis = rAnalysis;
 		this.twitterSearchScheduler = twitterSearchScheduler;
 		this.twitterMonitorScheduler = twitterMonitorScheduler;
 	}
@@ -226,6 +231,14 @@ public class TwitterSearch implements Serializable {
 		this.daysAgo = daysAgo;
 	}
 
+	public boolean isrAnalysis() {
+		return rAnalysis;
+	}
+
+	public void setrAnalysis(boolean rAnalysis) {
+		this.rAnalysis = rAnalysis;
+	}
+
 	public TwitterSearchScheduler getTwitterSearchScheduler() {
 		return twitterSearchScheduler;
 	}
@@ -251,15 +264,17 @@ public class TwitterSearch implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		TwitterSearch other = (TwitterSearch) obj;
-		if (booleanOperator == null) {
-			if (other.booleanOperator != null)
-				return false;
-		} else if (!booleanOperator.equals(other.booleanOperator))
+		if (booleanOperator != other.booleanOperator)
 			return false;
 		if (creationDate == null) {
 			if (other.creationDate != null)
 				return false;
 		} else if (!creationDate.equals(other.creationDate))
+			return false;
+		if (daysAgo == null) {
+			if (other.daysAgo != null)
+				return false;
+		} else if (!daysAgo.equals(other.daysAgo))
 			return false;
 		if (deleted != other.deleted)
 			return false;
@@ -286,6 +301,8 @@ public class TwitterSearch implements Serializable {
 		} else if (!lastActivationTime.equals(other.lastActivationTime))
 			return false;
 		if (loading != other.loading)
+			return false;
+		if (rAnalysis != other.rAnalysis)
 			return false;
 		if (searchID != other.searchID)
 			return false;
