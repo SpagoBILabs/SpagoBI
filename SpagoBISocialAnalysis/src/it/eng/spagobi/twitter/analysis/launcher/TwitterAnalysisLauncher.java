@@ -357,12 +357,15 @@ public class TwitterAnalysisLauncher {
 			twitterStream.clearListeners();
 			twitterStream.cleanUp();
 
-			logger.debug("Method stopStreamingSearch(): Streaming Search stopped. Processing results for topics and sentiment..");
+			if (twitterSearch.isrAnalysis()) {
 
-			TwitterRScriptUtility.callTopicsRScript(twitterSearch.getSearchID());
-			TwitterRScriptUtility.callSentimentRScript(twitterSearch.getSearchID());
+				logger.debug("Method stopStreamingSearch(): Streaming Search stopped. Processing results for topics and sentiment..");
 
-			logger.debug("Method stopStreamingSearch(): R Scripts called. Update search loading field. Results ready");
+				TwitterRScriptUtility.callTopicsRScript(twitterSearch.getSearchID());
+				TwitterRScriptUtility.callSentimentRScript(twitterSearch.getSearchID());
+
+				logger.debug("Method stopStreamingSearch(): R Scripts called. Update search loading field. Results ready");
+			}
 
 			twitterSearch.setLoading(false);
 
@@ -1021,12 +1024,15 @@ public class TwitterAnalysisLauncher {
 				twitterStream.clearListeners();
 				twitterStream.cleanUp();
 
-				logger.debug("Method previousStreamAndMonitorManager(): Streaming Search stopped. Processing results for topics and sentiment..");
+				if (previousEnabledTwitterSearch.isrAnalysis()) {
 
-				TwitterRScriptUtility.callTopicsRScript(previousEnabledTwitterSearch.getSearchID());
-				TwitterRScriptUtility.callSentimentRScript(previousEnabledTwitterSearch.getSearchID());
+					logger.debug("Method previousStreamAndMonitorManager(): Streaming Search stopped. Processing results for topics and sentiment..");
 
-				logger.debug("Method previousStreamAndMonitorManager(): R Scripts called. Update search loading field. Results ready");
+					TwitterRScriptUtility.callTopicsRScript(previousEnabledTwitterSearch.getSearchID());
+					TwitterRScriptUtility.callSentimentRScript(previousEnabledTwitterSearch.getSearchID());
+
+					logger.debug("Method previousStreamAndMonitorManager(): R Scripts called. Update search loading field. Results ready");
+				}
 
 				previousEnabledTwitterSearch.setLoading(false);
 
