@@ -9,8 +9,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- Include localized labels  -->
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>
 <script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>		
-<script type="text/javascript" src='../js/spagobi/locale/LocaleUtils.js'/></script>
-<script type="text/javascript" src='../js/spagobi/locale/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formats/LocaleUtils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formats/<%=locale.getLanguage()%>.js'/></script>
 
 
 

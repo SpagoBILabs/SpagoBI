@@ -87,6 +87,7 @@ author:...
 	
 	<head>
 		<%@include file="commons/includeExtJS.jspf" %>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSbiDataMiningJS.jspf"%>
 		
 		<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
