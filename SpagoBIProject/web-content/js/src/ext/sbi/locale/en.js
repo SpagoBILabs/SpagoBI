@@ -1221,6 +1221,8 @@ Sbi.locale.ln['sbi.hierarchies.drag.cannot.move']= 'Cannot move a leaf node in a
 Sbi.locale.ln['sbi.hierarchies.delete.ok']= 'Delete successfull';	
 Sbi.locale.ln['sbi.hierarchies.node.added']= 'Node added';
 Sbi.locale.ln['sbi.hierarchies.node.add']= 'Add node';
+Sbi.locale.ln['sbi.hierarchies.node.add.leaf.error']= 'Cannot add a node to a leaf node';
+
 //===================================================================
 //Hot Links
 //===================================================================
