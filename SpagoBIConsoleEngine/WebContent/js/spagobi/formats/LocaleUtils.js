@@ -50,7 +50,11 @@ if(Sbi.console.commons.Format){
 
 Sbi.locale.localize = function(key) {
 	var value = messageResource.get(key, 'messages');
-	debugger
+	
+	//If the message is not defined in the current language the english message is used
+	if (value == key){
+		value = messageResource.get(key, 'messages', 'en_US');
+	}
 	return value || key;
 };
 
