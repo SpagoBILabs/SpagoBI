@@ -14,8 +14,8 @@ Sbi.locale.ln['sbi.general.close']='Fermer';
 Sbi.locale.ln['sbi.general.ok'] = 'OK';
 Sbi.locale.ln['sbi.general.cancel'] = 'Annuler';
 Sbi.locale.ln['sbi.general.continue'] = 'Continuer';
-Sbi.locale.ln['sbi.general.sessionexpired.title'] = 'La session a expir�!';
-Sbi.locale.ln['sbi.general.sessionexpired.message'] = 'La session a expir�, s\'il vous plait se connecter � nouveau';
+Sbi.locale.ln['sbi.general.sessionexpired.title'] = 'La session a expir\u00ef\u00bf\u0153!';
+Sbi.locale.ln['sbi.general.sessionexpired.message'] = 'La session a expir\u00ef\u00bf\u0153, s\'il vous plait se connecter \u00ef\u00bf\u0153 nouveau';
 
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node']='Noeud G\u00e9n\u00e9rique';
@@ -328,17 +328,17 @@ Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Recherche par mots cl\u0
 Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Document/s deleted succesfully';
 Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Document cloned succesfully';
 Sbi.locale.ln['sbi.execution.saveDocument']  = 'Remplir la Forme et Enregistrer votre document';        
-Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Avant de partager le document s�lectionner au moins un dossier ou une community o� le d�poser'; 
+Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Avant de partager le document s\u00ef\u00bf\u0153lectionner au moins un dossier ou une community o\u00ef\u00bf\u0153 le d\u00ef\u00bf\u0153poser'; 
 
 Sbi.locale.ln['sbi.browser.document.share.win.title']  = 'Partager Document';
-Sbi.locale.ln['sbi.browser.document.share.win.titleDetail']  = 'S�lectionner les dossiers ou les community o� partager le document';
+Sbi.locale.ln['sbi.browser.document.share.win.titleDetail']  = 'S\u00ef\u00bf\u0153lectionner les dossiers ou les community o\u00ef\u00bf\u0153 partager le document';
 Sbi.locale.ln['sbi.browser.document.share.win.btn']  = 'Partager';
 Sbi.locale.ln['sbi.browser.document.share.win.tooltip']  = 'Cliquer pour partager un document';
-Sbi.locale.ln['sbi.browser.document.unshare.success']  = 'Ne plus partager un document d�pos� correctement!';
+Sbi.locale.ln['sbi.browser.document.unshare.success']  = 'Ne plus partager un document d\u00ef\u00bf\u0153pos\u00ef\u00bf\u0153 correctement!';
 Sbi.locale.ln['sbi.generic.confirmUnshare'] = 'Confirmer de ne plus partager le document?';
-Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Avant de partager le document s�lectionner au moins un dossier o� le deposer';
+Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Avant de partager le document s\u00ef\u00bf\u0153lectionner au moins un dossier o\u00ef\u00bf\u0153 le deposer';
 Sbi.locale.ln['sbi.generic.confirmShare']  = 'Confirmer de partager le document?';
-Sbi.locale.ln['sbi.browser.document.share.success']  = 'Partager le document d�poser correctement';
+Sbi.locale.ln['sbi.browser.document.share.success']  = 'Partager le document d\u00ef\u00bf\u0153poser correctement';
 
 
 Sbi.locale.ln['sbi.browser.defaultRole.title']='selectiones une default r\u00f4le';
@@ -383,8 +383,8 @@ Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserM
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']  = 'Riemplir la fiche ci-dessous et appouyer sur le bouton de mise \u00e0 jour pour re-ex\u00e9cuter le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Appuyer sur le bouton de mise \u00e0 jour pour re-ex\u00e9cuter le document';
 
-Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.message'] = 'Ex�cuter';
-Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.tooltip'] = 'Remplir la forme suivante et cliquer ici pour ex�cuter le document';
+Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.message'] = 'Ex\u00ef\u00bf\u0153cuter';
+Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.tooltip'] = 'Remplir la forme suivante et cliquer ici pour ex\u00ef\u00bf\u0153cuter le document';
 
 
 Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.title']  = 'Ins\u00e9rer les valeurs ou copier une partie d\'un document xls';
@@ -426,9 +426,9 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas']='Enregistrer sous...
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.view']='Voir Document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit']='Editer';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.breadcrumbback'] = 'Retour au document pr\u00e9cedent';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'La s�lection des Param�tres a �t� chang�;  Vourriez-vous ex�cuter le document de la s�lection pr�c�dente ou de celle courrente?';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'La s\u00ef\u00bf\u0153lection des Param\u00ef\u00bf\u0153tres a \u00ef\u00bf\u0153t\u00ef\u00bf\u0153 chang\u00ef\u00bf\u0153;  Vourriez-vous ex\u00ef\u00bf\u0153cuter le document de la s\u00ef\u00bf\u0153lection pr\u00ef\u00bf\u0153c\u00ef\u00bf\u0153dente ou de celle courrente?';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.usecurrentselection'] = 'Utiliser le courrent';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.usepreviousselection'] = 'Utiliser le pr�c�dent';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.usepreviousselection'] = 'Utiliser le pr\u00ef\u00bf\u0153c\u00ef\u00bf\u0153dent';
 
 
 Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'Le nombre de documents ouverts a atteint le maximum. Fermez la pr\u00e9c\u00e9dente ex\u00e8cution et r\u00e8-ex\u00e9cuter le rapport';
@@ -562,7 +562,7 @@ Sbi.locale.ln['sbi.roles.createSocialAnalysis'] = 'Create analysis on social net
 Sbi.locale.ln['sbi.roles.viewSocialAnalysis'] = 'View analysis on social networks';
 Sbi.locale.ln['sbi.roles.hierarchiesManagement'] = 'Hierarchies editor';
 Sbi.locale.ln['sbi.roles.allKpiComment'] = 'Tous les commentaires sur les kpi';
-Sbi.locale.ln['sbi.roles.myKpiComment'] = 'Commentaires priv�s sur les kpi';
+Sbi.locale.ln['sbi.roles.myKpiComment'] = 'Commentaires priv\u00ef\u00bf\u0153s sur les kpi';
 Sbi.locale.ln['sbi.roles.kpiComment'] = 'Commmentaires sur les Kpi ';
 Sbi.locale.ln['sbi.roles.delete'] = 'Effacer';
 
@@ -805,7 +805,7 @@ Sbi.locale.ln['sbi.ds.failedToUpload']= 'Impossible de t\u00e9l\u00e9charger ';
 Sbi.locale.ln['sbi.ds.skip.checks']='Ecraser';
 Sbi.locale.ln['sbi.ds.changedon']='Modifi\u00e9 ';
 Sbi.locale.ln['sbi.ds.metadata.msgKO']='Erreurs dans la validation. ';
-Sbi.locale.ln['sbi.ds.metadata.msgKO']='La validation a trouv� des erreurs. Pour voir plus d�tails passer la souris sur les cellules rouges. ';
+Sbi.locale.ln['sbi.ds.metadata.msgKO']='La validation a trouv\u00ef\u00bf\u0153 des erreurs. Pour voir plus d\u00ef\u00bf\u0153tails passer la souris sur les cellules rouges. ';
 Sbi.locale.ln['sbi.ds.metadata.addProperty']='Ajouter une propri\u00e9t\u00e9';
 Sbi.locale.ln['sbi.ds.metadata.deleteProperty']='Supprimer une propri\u00e9t\u00e9';
 Sbi.locale.ln['sbi.ds.metadata.clear']='Nettoyer';
@@ -815,16 +815,16 @@ Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Attribut';
 Sbi.locale.ln['sbi.ds.metadata.column.value']='Valeur';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Metadonn\u00e9e du dataset';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title2']='Type de metadonn\u00e9es';
-Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.column']='Colonne Hi�rarchie';
-Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.level']='Niveau Hi�rarchie';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.column']='Colonne Hi\u00ef\u00bf\u0153rarchie';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.level']='Niveau Hi\u00ef\u00bf\u0153rarchie';
 Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.clear']='Nettoyer';
 Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.expert']='Mode Expert';
 Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.simple']='Mode Simple';
 
 Sbi.locale.ln['sbi.multitenant.delete.title']= 'Effacer Tenants?';
-Sbi.locale.ln['sbi.multitenant.delete.msg']= 'Etes-vous s�r vous voulez effacer le Tenant et toutes ses donn�es?';
+Sbi.locale.ln['sbi.multitenant.delete.msg']= 'Etes-vous s\u00ef\u00bf\u0153r vous voulez effacer le Tenant et toutes ses donn\u00ef\u00bf\u0153es?';
 
-Sbi.locale.ln['multitenant.error.association'] = 'Impossible de modifier l\'association. V�rifiez les d�pendances de';
+Sbi.locale.ln['multitenant.error.association'] = 'Impossible de modifier l\'association. V\u00ef\u00bf\u0153rifiez les d\u00ef\u00bf\u0153pendances de';
 
 
 Sbi.locale.ln['sbi.datasource.label']= 'Libell\u00e9';
@@ -851,17 +851,17 @@ Sbi.locale.ln['sbi.datasource.validation.error']= 'Erreurs de validation. Contro
 Sbi.locale.ln['sbi.datasource.test.failed']= 'Erreur dans les test de la source de donn\u00e9es';
 Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ' : source de donn\u00e9es d\u00e9j\u00e0 pr\u00e9sente avec fonction d\'\u00e9criture par defaut. Remplacer avec la nouvelle?';
 
-Sbi.locale.ln['sbi.datasource.delete.forbidden']= 'Vous ne pouvez pas effacer la Source des donn�es!';
+Sbi.locale.ln['sbi.datasource.delete.forbidden']= 'Vous ne pouvez pas effacer la Source des donn\u00ef\u00bf\u0153es!';
 
 
 //Multitenant
-Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant enregistr� correctement';
-Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant effac� correctement';
-Sbi.locale.ln['sbi.multitenant.validation.error']= 'Il y a des erreur(s) dans la configuration du tenant. Contr�ler les champs soulign�s.';
-Sbi.locale.ln["error.mesage.name.multitenant.cannot.be.null"]= "Le nom du Tenant ne peut pas �tre vide";
-Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Impossible effacer le tenant parce qu\'il est en train d\'�tre utilis�";
-Sbi.locale.ln["error.mesage.multitenant.saving.duplicated"]="Impossible enregistrer le Tenant parce qu\'il y en a un autre avec le m�me nom";
-Sbi.locale.ln['sbi.multitenant.theme']= 'Th�me';
+Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant enregistr\u00ef\u00bf\u0153 correctement';
+Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant effac\u00ef\u00bf\u0153 correctement';
+Sbi.locale.ln['sbi.multitenant.validation.error']= 'Il y a des erreur(s) dans la configuration du tenant. Contr\u00ef\u00bf\u0153ler les champs soulign\u00ef\u00bf\u0153s.';
+Sbi.locale.ln["error.mesage.name.multitenant.cannot.be.null"]= "Le nom du Tenant ne peut pas \u00ef\u00bf\u0153tre vide";
+Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Impossible effacer le tenant parce qu\'il est en train d\'\u00ef\u00bf\u0153tre utilis\u00ef\u00bf\u0153";
+Sbi.locale.ln["error.mesage.multitenant.saving.duplicated"]="Impossible enregistrer le Tenant parce qu\'il y en a un autre avec le m\u00ef\u00bf\u0153me nom";
+Sbi.locale.ln['sbi.multitenant.theme']= 'Th\u00ef\u00bf\u0153me';
 Sbi.locale.ln['sbi.multitenant.id'] = 'Identifier';
 
 
@@ -889,38 +889,38 @@ Sbi.locale.ln['sbi.tools.dataset.qbedatasetbuilder.title']='Concepteur jeux de d
 //===================================================================
 //MESSAGE FOR SCHEDULER
 //===================================================================
-Sbi.locale.ln['sbi.scheduler.alert'] = 'Attention! Entrer une nouvelle date-heure de d�part apr�s l�actuel pour �viter un r��chelonnement.';
-Sbi.locale.ln['sbi.scheduler.overview'] = 'Aper�u d\'activit� ';
+Sbi.locale.ln['sbi.scheduler.alert'] = 'Attention! Entrer une nouvelle date-heure de d\u00ef\u00bf\u0153part apr\u00ef\u00bf\u0153s l\u00ef\u00bf\u0153actuel pour \u00ef\u00bf\u0153viter un r\u00ef\u00bf\u0153\u00ef\u00bf\u0153chelonnement.';
+Sbi.locale.ln['sbi.scheduler.overview'] = 'Aper\u00ef\u00bf\u0153u d\'activit\u00ef\u00bf\u0153 ';
 Sbi.locale.ln['sbi.scheduler.documents'] = 'Documents';
 Sbi.locale.ln['sbi.scheduler.name'] = 'Nom';
-Sbi.locale.ln['sbi.scheduler.parameters'] = 'Param�ters';
+Sbi.locale.ln['sbi.scheduler.parameters'] = 'Param\u00ef\u00bf\u0153ters';
 Sbi.locale.ln['sbi.scheduler.schedulations'] = 'Schedulations';
 Sbi.locale.ln['sbi.scheduler.type'] = 'Type';
-Sbi.locale.ln['sbi.scheduler.startdate'] = 'Date de d�but';
-Sbi.locale.ln['sbi.scheduler.starttime'] = 'Heure de d�but';
-Sbi.locale.ln['sbi.scheduler.enddate'] = 'Date de fin�';
+Sbi.locale.ln['sbi.scheduler.startdate'] = 'Date de d\u00ef\u00bf\u0153but';
+Sbi.locale.ln['sbi.scheduler.starttime'] = 'Heure de d\u00ef\u00bf\u0153but';
+Sbi.locale.ln['sbi.scheduler.enddate'] = 'Date de fin\u00ef\u00bf\u0153';
 Sbi.locale.ln['sbi.scheduler.endtime'] = 'Heure de fin';
 Sbi.locale.ln['sbi.scheduler.addschedulation'] = 'Ajouter Schedulation';
 Sbi.locale.ln['sbi.scheduler.schedulationtype'] = 'Type Schedulation';
-Sbi.locale.ln['sbi.scheduler.schedulation.detail'] = 'D�tail Schedulation';
+Sbi.locale.ln['sbi.scheduler.schedulation.detail'] = 'D\u00ef\u00bf\u0153tail Schedulation';
 Sbi.locale.ln['sbi.scheduler.schedulation.delete'] = 'Effacer Schedulation';
-Sbi.locale.ln['sbi.scheduler.activity.detailactivity'] = 'D�tail d�activit�';
+Sbi.locale.ln['sbi.scheduler.activity.detailactivity'] = 'D\u00ef\u00bf\u0153tail d\u00ef\u00bf\u0153activit\u00ef\u00bf\u0153';
 Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Liste Schedulations';
-Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Activit� Effac�e';
-Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Schedulation Effac�e';
-Sbi.locale.ln['sbi.scheduler.schedulation.execute'] = 'Ex�cuter maintenant';
-Sbi.locale.ln['sbi.scheduler.schedulation.executed'] = 'Schedulation ex�cut�e';
-Sbi.locale.ln['sbi.scheduler.schedulation.pause'] = 'Arr�ter la schedulation';
-Sbi.locale.ln['sbi.scheduler.schedulation.resume'] = 'R�sumer schedulation';
-Sbi.locale.ln['sbi.schedulation.pauseConfirm'] = 'Vourriez-vous arr�ter la schedulation?';
-Sbi.locale.ln['sbi.scheduler.schedulation.paused'] = 'Schedulation arr�t�';
-Sbi.locale.ln['sbi.schedulation.resumeConfirm'] = 'Vourriez-vous r�sumer la schedulation?';
-Sbi.locale.ln['sbi.scheduler.schedulation.resumed'] = 'Schedulation r�sum�e';
+Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Activit\u00ef\u00bf\u0153 Effac\u00ef\u00bf\u0153e';
+Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Schedulation Effac\u00ef\u00bf\u0153e';
+Sbi.locale.ln['sbi.scheduler.schedulation.execute'] = 'Ex\u00ef\u00bf\u0153cuter maintenant';
+Sbi.locale.ln['sbi.scheduler.schedulation.executed'] = 'Schedulation ex\u00ef\u00bf\u0153cut\u00ef\u00bf\u0153e';
+Sbi.locale.ln['sbi.scheduler.schedulation.pause'] = 'Arr\u00ef\u00bf\u0153ter la schedulation';
+Sbi.locale.ln['sbi.scheduler.schedulation.resume'] = 'R\u00ef\u00bf\u0153sumer schedulation';
+Sbi.locale.ln['sbi.schedulation.pauseConfirm'] = 'Vourriez-vous arr\u00ef\u00bf\u0153ter la schedulation?';
+Sbi.locale.ln['sbi.scheduler.schedulation.paused'] = 'Schedulation arr\u00ef\u00bf\u0153t\u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.schedulation.resumeConfirm'] = 'Vourriez-vous r\u00ef\u00bf\u0153sumer la schedulation?';
+Sbi.locale.ln['sbi.scheduler.schedulation.resumed'] = 'Schedulation r\u00ef\u00bf\u0153sum\u00ef\u00bf\u0153e';
 Sbi.locale.ln['sbi.scheduler.schedulation.info'] = ' Informations Schedulation';
-Sbi.locale.ln['sbi.scheduler.schedulation.mailto'] = 'Mail �';
-Sbi.locale.ln['sbi.scheduler.schedulation.attachedzip'] = 'Nom zip Attach�';
+Sbi.locale.ln['sbi.scheduler.schedulation.mailto'] = 'Mail \u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.scheduler.schedulation.attachedzip'] = 'Nom zip Attach\u00ef\u00bf\u0153';
 Sbi.locale.ln['sbi.scheduler.schedulation.mailsubject'] = 'Sujet Mail';
-Sbi.locale.ln['sbi.scheduler.schedulation.containedfilename'] = 'Nom du ficher ins�r� ';
+Sbi.locale.ln['sbi.scheduler.schedulation.containedfilename'] = 'Nom du ficher ins\u00ef\u00bf\u0153r\u00ef\u00bf\u0153 ';
 Sbi.locale.ln['sbi.scheduler.schedulation.mailtext'] = 'Text Mail';
 
 
@@ -1017,7 +1017,7 @@ Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = '
 //OFFICE DOCUMENTS - ZOOM 
 Sbi.locale.ln['Sbi.office.zoomIn'] = 'Augmente les dimensions';
 Sbi.locale.ln['Sbi.office.zoomOut'] = 'D\u00e9cr\u00e9mente les dimensions';
-Sbi.locale.ln['sbi.kpi.nokpi']= 'Aucun KPI associ�';
+Sbi.locale.ln['sbi.kpi.nokpi']= 'Aucun KPI associ\u00ef\u00bf\u0153';
 
 Sbi.locale.ln['sbi.kpi.accordionmenu.desciption']= 'Description';
 Sbi.locale.ln['sbi.kpi.accordionmenu.linkeddoc']=  'Document li\u00e9';
@@ -1194,13 +1194,13 @@ Sbi.locale.ln['sbi.mydata.alldataset'] = 'Tous les Data Set';
 Sbi.locale.ln['sbi.mydata.sharedataset'] = 'Partager Data Set';
 Sbi.locale.ln['sbi.mydata.unsharedataset'] = 'Rendre le  Data Set priv\u00e9';
 Sbi.locale.ln['sbi.myanalysis.wizard.wizardname'] = "Mes Analyses Wizard";
-Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisselection'] = "S�lectionner Type de Mes Analyses";
-Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisdetail'] = "D�finir les d�tails";
-Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "S�lection des donn�es";
+Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisselection'] = "S\u00ef\u00bf\u0153lectionner Type de Mes Analyses";
+Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisdetail'] = "D\u00ef\u00bf\u0153finir les d\u00ef\u00bf\u0153tails";
+Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "S\u00ef\u00bf\u0153lection des donn\u00ef\u00bf\u0153es";
 Sbi.locale.ln['sbi.myanalysis.delete.everywhere']= 'Effacer tout';
 Sbi.locale.ln['sbi.myanalysis.delete.personalfolder']= 'Effacer seulement mon dossier personnel';
 Sbi.locale.ln['sbi.myanalysis.delete.cancel']= 'Annuler';
-Sbi.locale.ln['sbi.myanalysis.noEngines']= 'Apr�s l�installation, il n\'y a pas de drivers nec�ssaires pour continuer . S\'il vous pla�t, contactez l\'Administrateur du syst�me.';
+Sbi.locale.ln['sbi.myanalysis.noEngines']= 'Apr\u00ef\u00bf\u0153s l\u00ef\u00bf\u0153installation, il n\'y a pas de drivers nec\u00ef\u00bf\u0153ssaires pour continuer . S\'il vous pla\u00ef\u00bf\u0153t, contactez l\'Administrateur du syst\u00ef\u00bf\u0153me.';
 Sbi.locale.ln['sbi.myanalysis.analysis'] = "Analyses";
 Sbi.locale.ln['sbi.myanalysis.report'] = "Report";
 Sbi.locale.ln['sbi.myanalysis.cockpit'] = "Cockpit";
@@ -1212,7 +1212,7 @@ Sbi.locale.ln['sbi.myanalysis.unsharedocument'] = "Ne plus partger le Document";
 //===================================================================
 //Sbi.execution.SaveDocumentWindow
 //===================================================================
-Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'Le document a �t� enregistr� correctement, il est disponible dans la section "Mes Analyses" ';
+Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'Le document a \u00ef\u00bf\u0153t\u00ef\u00bf\u0153 enregistr\u00ef\u00bf\u0153 correctement, il est disponible dans la section "Mes Analyses" ';
 
 
 if(Ext.DatePicker){
