@@ -520,16 +520,16 @@
 			<fileset dir="${tomcat.home}/webapps/SpagoBICockpitEngine/js">
 			</fileset>
 		</copy>
-		<copy todir="${apache.dir}/SpagoBICockpitEngine/themes/sbi_default/css" >
-			<fileset dir="${tomcat.home}/webapps/SpagoBICockpitEngine/themes/sbi_default/css">
+		<copy todir="${apache.dir}/SpagoBICockpitEngine/css" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBICockpitEngine/css">
 			</fileset>
 		</copy>
-		<copy todir="${apache.dir}/SpagoBICockpitEngine/themes/sbi_default/img" >
-			<fileset dir="${tomcat.home}/webapps/SpagoBICockpitEngine/themes/sbi_default/img">
+		<copy todir="${apache.dir}/SpagoBICockpitEngine/img" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBICockpitEngine/img">
 			</fileset>
 		</copy>
-		<copy todir="${apache.dir}/SpagoBICockpitEngine/themes/sbi_default/html" >
-			<fileset dir="${tomcat.home}/webapps/SpagoBICockpitEngine/themes/sbi_default/html">
+		<copy todir="${apache.dir}/SpagoBICockpitEngine/html" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBICockpitEngine/html">
 			</fileset>
 		</copy>	
 
@@ -537,16 +537,16 @@
 			<fileset dir="${tomcat.home}/webapps/SpagoBIQbeEngine/js">
 			</fileset>
 		</copy>
-		<copy todir="${apache.dir}/SpagoBIQbeEngine/themes/sbi_default/css" >
-			<fileset dir="${tomcat.home}/webapps/SpagoBIQbeEngine/themes/sbi_default/css">
+		<copy todir="${apache.dir}/SpagoBIQbeEngine/css" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBIQbeEngine/css">
 			</fileset>
 		</copy>
-		<copy todir="${apache.dir}/SpagoBIQbeEngine/themes/sbi_default/img" >
-			<fileset dir="${tomcat.home}/webapps/SpagoBIQbeEngine/themes/sbi_default/img">
+		<copy todir="${apache.dir}/SpagoBIQbeEngine/img" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBIQbeEngine/img">
 			</fileset>
 		</copy>
-		<copy todir="${apache.dir}/SpagoBIQbeEngine/themes/sbi_default/html" >
-			<fileset dir="${tomcat.home}/webapps/SpagoBIQbeEngine/themes/sbi_default/html">
+		<copy todir="${apache.dir}/SpagoBIQbeEngine/html" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBIQbeEngine/html">
 			</fileset>
 		</copy>
 	</target>
