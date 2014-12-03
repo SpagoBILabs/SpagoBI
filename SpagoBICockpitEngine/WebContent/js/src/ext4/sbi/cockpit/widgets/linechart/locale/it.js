@@ -29,3 +29,5 @@ Sbi.locale.ln['sbi.widget.attributescontainerpanel.cannotdrophere.attributealrea
 Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.colorarea.title'] = 'Color area';
 Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showvalues.title'] = 'Show values';
 Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showlegend.title'] = 'Show legend';
+
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.options.title'] = 'Opzioni';
