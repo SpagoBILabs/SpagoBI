@@ -32,6 +32,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     String fromMyAnalysis = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_MYANALYSIS);
     String fromDocBrowser = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_DOCBROWSER);
     String contextName = ChannelUtilities.getSpagoBIContextName(request);
+    String userCanPersist = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.USER_CAN_PERSIST);
 
 %>
 
@@ -51,6 +52,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
             , user: Sbi.user.userUniqueIdentifier
             , typeDoc: '<%=typeDoc%>'
             , fromMyAnalysis: '<%=fromMyAnalysis%>'
+            , userCanPersist: '<%=userCanPersist%>'
             , fromDocBrowser: '<%=fromDocBrowser%>'
             , datasetsServicePath: 'selfservicedataset'
             , contextName: '<%=StringEscapeUtils.escapeJavaScript(contextName)%>'
