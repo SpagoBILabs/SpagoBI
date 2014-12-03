@@ -41,3 +41,4 @@ Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'Votre session a expir\u00E9. Essa
 //===================================================================
 //PIECHART WIDGET PANEL
 //===================================================================
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.options.title'] = 'Options';
