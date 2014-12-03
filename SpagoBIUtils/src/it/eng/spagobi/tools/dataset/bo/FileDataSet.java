@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Angelo Bernabei angelo.bernabei@eng.it Giulio Gavardi giulio.gavardi@eng.it Andrea Gioia andrea.gioia@eng.it Davide Zerbetto davide.zerbetto@eng.it
- * 
+ *
  */
 public class FileDataSet extends ConfigurableDataSet {
 
@@ -35,6 +35,8 @@ public class FileDataSet extends ConfigurableDataSet {
 	public String fileType;
 
 	public boolean useTempFile = false; // if true we use a file in resources\dataset\files\temp for reading
+
+	private int maxResults = -1; // number of rows to read in a file, default -1 equals to no limits
 
 	private static transient Logger logger = Logger.getLogger(FileDataSet.class);
 
@@ -86,7 +88,7 @@ public class FileDataSet extends ConfigurableDataSet {
 
 	/**
 	 * try to guess the proper dataReader to use depending on the file extension
-	 * 
+	 *
 	 * @param fileName
 	 *            the target filename
 	 */
@@ -228,6 +230,14 @@ public class FileDataSet extends ConfigurableDataSet {
 	 */
 	public void setUseTempFile(boolean useTempFile) {
 		this.useTempFile = useTempFile;
+	}
+
+	public int getMaxResults() {
+		return maxResults;
+	}
+
+	public void setMaxResults(int maxResults) {
+		this.maxResults = maxResults;
 	}
 
 	@Override
