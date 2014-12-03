@@ -233,31 +233,36 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	        	checkFields.push(this.colorAreaCheck);
 	        	checkFields.push(this.showValuesCheck);
 		}
-
+		
 		checkFields.push(this.showLegendCheck);
+		checkFields.push(this.categoryAxisText);
+		checkFields.push(this.seriesAxisText);
 		checkFields.push(this.legendPositionCombo);
+		checkFields.push(this.sortOrderCombo);
 
 
 		this.optionsPanel = new Ext.Panel({
-			layout: 'column'
-			, padding: '10 10 10 10'
+			layout: 'anchor'
+			, padding: '5 10 0 10'
 			, border: false
-			, items: [{
+			, items: [
+			{
 				xtype: 'fieldset'
-				, columnWidth : .4
+				, fieldDefaults: { margin: '0 7 5 0'}
+				, layout: {type: 'table', columns: 3}
+			    , collapsible: true
+			    , collapsed: true
+			    , title: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.options.title')
+				, margin: '0 0 20 0'
+				, items: checkFields
+			},
+			{
+				xtype: 'fieldset'
+//				, columnWidth : .4
+				, margin: '0 0 0 0'
 				, border: false
 				, items: [this.typeRadioGroup]
-			}, {
-				xtype: 'fieldset'
-				, columnWidth : .3
-				, border: false
-				, items: checkFields
-			}, {
-				xtype: 'fieldset'
-					, columnWidth : .3
-					, border: false
-					, items: [this.categoryAxisText,this.seriesAxisText, this.sortOrderCombo]
-				}]
+			} ]
 		});
 	}
 
@@ -298,8 +303,10 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 			displayField:   'description',
 			valueField:     'name',
 			value:			'ASC',
-			anchor:			'95%',
-			store:          this.sortOrderComboStore
+//			anchor:			'95%',
+			store:          this.sortOrderComboStore,
+			labelWidth: 120,
+			width: 250
 		});
 	}
 
@@ -307,6 +314,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		this.colorAreaCheck = new Ext.form.Checkbox({
 			checked: false
 			, fieldLabel: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.colorarea.title')
+			, labelWidth: 120
 		});
 		this.colorAreaCheck.on('check', this.onColorAreaCheck, this);
 
@@ -328,7 +336,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 					, ['right', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right')]]
 		});
 		this.legendPositionCombo = new Ext.form.ComboBox({
-			width:			180,
+//			width:			180,
 			queryMode:      'local',
 			triggerAction:  'all',
 			forceSelection: true,
@@ -339,7 +347,8 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 			displayField:   'description',
 			valueField:     'name',
 			value:			'bottom',
-			store:          this.legendPositionStore
+			store:          this.legendPositionStore,
+			width: 180
 		});
 	}
 
@@ -347,13 +356,16 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		this.categoryAxisText = new Ext.form.Text({
 			 name: 'categoryAxis',
 			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'),
-			 allowBlank: true
+			 allowBlank: true,
+			 labelWidth: 120,
+			 width: 250
 		});
 
 		this.seriesAxisText = new Ext.form.Text({
 			 name: 'seriesAxis',
 			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'),
-			 allowBlank: true
+			 allowBlank: true,
+			 width: 200
 		});
 	}
 
@@ -366,9 +378,9 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	    this.axisDefinitionPanel = new Ext.Panel({
 	        layout: 'table'
 	        , baseCls:'x-plain'
-	        , cls: 'centered-panel' //for center the panel
+	        , cls: 'x-axis-definition-table'
 	        , width: this.seriesContainerPanel.width+this.imageContainerPanel.width+20 //for center the panel
-	        , padding: '10 10 10 10'
+	        , padding: '0 10 10 10'
 	        , layoutConfig: {columns : 2}
 	        , items:[
 	            this.seriesContainerPanel
@@ -434,7 +446,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	, initSeriesContainerPanel: function() {
 		this.seriesContainerPanel = new Sbi.cockpit.widgets.chart.ChartSeriesPanel({
             width: 430
-            , height: 120
+            , height: 100
             , initialData: []
             , crosstabConfig: {}
             , ddGroup: this.ddGroup
@@ -445,7 +457,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	, initImageContainerPanel: function() {
 		this.imageContainerPanel = new Ext.Panel({
             width: 200
-            , height: 120
+            , height: 100
             , html: this.imageTemplate.apply(['side-by-side-linechart', 'line'])
 		});
 	}
