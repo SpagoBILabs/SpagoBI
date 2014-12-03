@@ -11,6 +11,7 @@ import it.eng.spagobi.writeback4j.SbiScenario;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
@@ -28,6 +29,7 @@ public class WhatIfTemplate {
 	private List<String> toolbarVisibleButtons;
 	private List<String> toolbarMenuButtons;
 	private IDataSource standAloneConnection;
+	private Map<String, String> xmlaServerProperties;
 
 	public WhatIfTemplate() {
 		properties = new HashMap<String, Object>();
@@ -130,6 +132,14 @@ public class WhatIfTemplate {
 
 	public boolean isStandAlone() {
 		return this.standAloneConnection != null;
+	}
+
+	public Map<String, String> getXmlaServerProperties() {
+		return xmlaServerProperties;
+	}
+
+	public void setXmlaServerProperties(Map<String, String> xmlaServerProperties) {
+		this.xmlaServerProperties = xmlaServerProperties;
 	}
 
 	public class Parameter {

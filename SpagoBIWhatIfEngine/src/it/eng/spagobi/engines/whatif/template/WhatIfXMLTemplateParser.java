@@ -19,8 +19,10 @@ import it.eng.spagobi.writeback4j.SbiScenarioVariable;
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -70,6 +72,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static final String TAG_CONNECTIONSTRING = "CONNECTIONSTRING";
 	public static final String TAG_DRIVER = "DRIVER";
 	public static final String TAG_DIALECT = "DIALECT";
+	public static final String TAG_XMLA_DATASOURCE = "xmlaserver";
 
 	public static final String STAD_ALONE_DS_LABEL = "STAD_ALONE_DS_LABEL";
 
@@ -125,6 +128,9 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			// init stand alone configuration
 			initStandAlone(template, toReturn);
 
+			// init the xmla datasource
+			initXMLADataSource(template, toReturn);
+
 			List<WhatIfTemplate.Parameter> parameters = new ArrayList<WhatIfTemplate.Parameter>();
 			List parametersSB = mdxSB.getAttributeAsList(TAG_PARAMETER);
 			Iterator it = parametersSB.iterator();
@@ -172,6 +178,37 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			}
 		}
 		toReturn.setProfilingUserAttributes(attributes);
+	}
+
+	public static void initXMLADataSource(SourceBean template, WhatIfTemplate toReturn) {
+		List<SourceBeanAttribute> xmlaConnectionProperties;
+		Map<String, String> xmlaConnectionPropertiesMap = new HashMap<String, String>();
+		SourceBeanAttribute aXmlaConnectionProperty;
+		String name;
+		String value;
+
+		logger.debug("IN. loading the xmla datasource config");
+		SourceBean xmlaSB = (SourceBean) template.getAttribute(TAG_XMLA_DATASOURCE);
+		if (xmlaSB != null) {
+
+			logger.debug(TAG_XMLA_DATASOURCE + ": " + xmlaSB);
+			xmlaConnectionProperties = xmlaSB.getContainedAttributes();
+			if (xmlaConnectionProperties != null) {
+				for (int i = 0; i < xmlaConnectionProperties.size(); i++) {
+					aXmlaConnectionProperty = xmlaConnectionProperties.get(i);
+					name = aXmlaConnectionProperty.getKey();
+					value = ((SourceBean) aXmlaConnectionProperty.getValue()).getCharacters();
+					xmlaConnectionPropertiesMap.put(name, value);
+				}
+
+				logger.debug("Updating the xmla datasource in the template");
+				toReturn.setXmlaServerProperties(xmlaConnectionPropertiesMap);
+
+			}
+		} else {
+			logger.debug(TAG_XMLA_DATASOURCE + ": no xmla data source defined in the template");
+		}
+
 	}
 
 	public static void initToolbar(SourceBean template, WhatIfTemplate toReturn) {
