@@ -92,7 +92,6 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 
 		this.showLegendCheck = new Ext.form.Checkbox({
 			checked: false
-			, width: 200
 			, fieldLabel: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.showlegend.title')
 		});
 
@@ -104,7 +103,6 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 					, ['right', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right')]]
 		});
 		this.legendPositionCombo = new Ext.form.ComboBox({
-			width:			200,
 			queryMode:      'local',
 			triggerAction:  'all',
 			forceSelection: true,
@@ -120,14 +118,13 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 
 		this.showPercentageCheck = new Ext.form.Checkbox({
 			checked: false
-			, width: 200
+			, labelWidth: 150
 			, fieldLabel: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.showpercentage.title')
 		});
 
 		this.seriesPalette = new Sbi.cockpit.widgets.chart.SeriesPalette({
 			title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.categorypalette.title')
 			, height: 300
-			, width: 150
 			, closeAction: 'hide'
 		});
 
@@ -181,7 +178,8 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	    this.axisDefinitionPanel = new Ext.Panel({
 	        layout: 'table'
 	        , baseCls:'x-plain'
-		    , cls: 'centered-panel' //for center the panel
+//		    , cls: 'centered-panel' //for center the panel
+	        , cls: 'x-axis-definition-table'
 			, width: this.seriesContainerPanel.width+this.imageContainerPanel.width+20 //for center the panel
 	        , padding: '0 10 10 10'
 	        , layoutConfig: {columns : 2}
@@ -211,9 +209,12 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		*/
 
     	controlsItems.push(this.showValuesCheck);
+    	controlsItems.push(this.showPercentageCheck);
     	controlsItems.push(this.showLegendCheck);
     	controlsItems.push(this.legendPositionCombo);
-//    	controlsItems.push(this.showPercentageCheck);
+    	
+    	
+    	
 
 		this.form = new Ext.Panel({
 			border: false
@@ -222,21 +223,22 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			, items: [
 				{
 					xtype: 'fieldset'
-					, bodyStyle:'padding:5px!important;'
-					, layout: 'column'
-					, columnWidth : .4
-					, style: 'padding: 10px 0px 0px 15px;'
-					, border: false
+					, fieldDefaults: { margin: '10 10 10 0'}
+					, layout: {type: 'table', columns: 2}
+		            , collapsible: true
+		            , collapsed: true
+		            , title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.options.title')
+	            	, margin: '0 0 20 0'
 					, items: controlsItems
 				}
-				,{
-					xtype: 'fieldset'
-					, layout: 'column'
-					, columnWidth : .9
-					, style: 'padding: 10px 0px 0px 15px;'
-					, border: false
-					, items: [this.showPercentageCheck]
-				}
+//				,{
+//					xtype: 'fieldset'
+//					, layout: 'column'
+//					, columnWidth : .9
+//					, style: 'padding: 10px 0px 0px 15px;'
+//					, border: false
+//					, items: [this.showPercentageCheck]
+//				}
 				,
 				this.axisDefinitionPanel
 			]
