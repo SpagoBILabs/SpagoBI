@@ -100,8 +100,9 @@ public class WhatIfEngineConfig {
 	private final static String CLASS_ATTRIBUTE = "class";
 	private final static String INMEMORY_ATTRIBUTE = "inMemory";
 	private final static String PERSISTENT_ATTRIBUTE = "persistent";
+	private final static String XMLA_URL = "url";
 	private final static String DEFAULT_ATTRIBUTE = "default";
-
+	
 	public String getTemplateFilePath() {
 		String templatePath = "";
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("TEMPLATE");
@@ -112,25 +113,56 @@ public class WhatIfEngineConfig {
 	}
 
 	public OlapDataSource getOlapDataSource(IDataSource ds, String reference, WhatIfTemplate template, IEngUserProfile profile, Locale locale) {
-		Properties connectionProps = new Properties();
+
 		String connectionString = null;
-		if (ds.checkIsJndi()) {
-			connectionProps.put("DataSource", ds.getJndi());
-			connectionString = "jdbc:mondrian:DataSource=" + ds.getJndi();
+		Properties connectionProps = new Properties();
+
+		if (template.getXmlaServerProperties() != null && !template.getXmlaServerProperties().isEmpty()) {
+
+			logger.debug("The datasource is XMLA");
+			try {
+				Class.forName("org.olap4j.driver.xmla.XmlaOlap4jDriver");
+			} catch (ClassNotFoundException e) {
+				logger.error("Error loading the class org.olap4j.driver.xmla.XmlaOlap4jDriver");
+			}
+
+			String url = template.getXmlaServerProperties().get(XMLA_URL);
+
+			Iterator<String> keysIter = template.getXmlaServerProperties().keySet().iterator();
+
+			while (keysIter.hasNext()) {
+				String key = keysIter.next();
+				if (!key.equals(XMLA_URL)) {
+					connectionProps.put(key, template.getXmlaServerProperties().get(key));
+				}
+
+			}
+			connectionString = "jdbc:xmla:Server=" + url;
+			connectionProps.put("Locale", locale.toString());
+
 		} else {
-			connectionProps.put("JdbcUser", ds.getUser());
-			connectionProps.put("JdbcPassword", ds.getPwd());
-			connectionProps.put("JdbcDrivers", ds.getDriver());
-			connectionString = "jdbc:mondrian:Jdbc=" + ds.getUrlConnection();
+			logger.debug("The datasource is jdbc");
+			if (ds.checkIsJndi()) {
+				connectionProps.put("DataSource", ds.getJndi());
+				connectionString = "jdbc:mondrian:DataSource=" + ds.getJndi();
+			} else {
+				connectionProps.put("JdbcUser", ds.getUser());
+				connectionProps.put("JdbcPassword", ds.getPwd());
+				connectionProps.put("JdbcDrivers", ds.getDriver());
+				connectionString = "jdbc:mondrian:Jdbc=" + ds.getUrlConnection();
+			}
+			connectionProps.put("Catalog", reference);
+			connectionProps.put("Provider", "Mondrian");
+			connectionProps.put("Locale", locale.toString());
+
 		}
 
-		connectionProps.put("Catalog", reference);
-		connectionProps.put("Provider", "Mondrian");
-		connectionProps.put("Locale", locale.toString());
+		logger.debug("The connection string is " + connectionString);
 
 		this.defineSchemaProcessorProperties(connectionProps, template, profile);
 
 		OlapDataSource olapDataSource = new SimpleOlapDataSource();
+
 		((SimpleOlapDataSource) olapDataSource).setConnectionString(connectionString);
 		((SimpleOlapDataSource) olapDataSource).setConnectionProperties(connectionProps);
 
