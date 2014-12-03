@@ -779,3 +779,11 @@
 }
 	
 } /* END MEDIA SCREEN*/		
+
+
+/* ------- LAYOUT CHANGE 01/12/2014 ------- */	
+
+.x-axis-definition-table td
+{
+	padding: 2px 3px 2px 3px;
+}
