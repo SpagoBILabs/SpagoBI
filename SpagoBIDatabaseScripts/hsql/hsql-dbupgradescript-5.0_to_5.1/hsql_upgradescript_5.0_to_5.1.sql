@@ -30,3 +30,20 @@ values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHO
 'server',  current_timestamp) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
 commit;
+
+INSERT INTO SBI_AUTHORIZATIONS
+(ID, NAME, USER_IN, TIME_IN)
+values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS'),
+'ENABLE_DATASET_PERSISTENCE',
+'server', current_timestamp) ;
+commit;
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_AUTHORIZATIONS';
+commit; 
+
+
+INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALUE_TYPE_ID, CATEGORY, USER_IN, TIME_IN) VALUES 
+((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_CONFIG'), 
+'SPAGOBI.DATASET.PREVIEW_ROWS', 'Number of rows to show for dataset preview', 'Number of rows to show for dataset preview', true, '1000',
+(select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'NUM' AND DOMAIN_CD = 'PAR_TYPE'), 'GENERIC_CONFIGURATION', 'biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
+commit;
