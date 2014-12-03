@@ -84,7 +84,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 			throw new RuntimeException("Cannot load Mondrian Olap4j Driver", e);
 		}
 
-		String reference;
+		String reference = null;
 
 		if (template.isStandAlone()) {
 			String schema = (String) this.getEnv().get(EngineConstants.ENV_OLAP_SCHEMA);
@@ -92,14 +92,14 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 			if (schema != null) {
 				// gets the schema from env. Used by the test cases.
 				reference = schema;
-			} else {
+			} else if (template.getMondrianSchema() != null) {
 				// gets the schema path the template. Used in the stand alone
 				// modality.
 				String resourcesPath = WhatIfEngineConfig.getInstance().getEngineResourcePath();
 				reference = resourcesPath + template.getMondrianSchema();
 			}
 
-		} else {
+		} else if (template.getMondrianSchema() != null) {
 			// gets the schema path the template. Used when the engine is
 			// executed in SpagoBI
 			reference = initMondrianSchema(env);
