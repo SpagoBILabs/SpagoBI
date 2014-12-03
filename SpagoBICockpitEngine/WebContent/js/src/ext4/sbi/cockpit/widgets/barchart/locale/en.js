@@ -24,3 +24,4 @@ Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.titl
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.ascending'] = 'ascending';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.descending'] = 'descending';
 Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.sortorder.title'] = 'Sort Order';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.options.title'] = 'Options';
