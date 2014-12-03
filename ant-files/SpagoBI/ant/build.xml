@@ -498,20 +498,55 @@
 	</target>
 
 	<target name="copy.ss" >
-		<copy todir="${apache.dir}/js" >
+		<copy todir="${apache.dir}/SpagoBI/js" >
 			<fileset dir="${tomcat.home}/webapps/SpagoBI/js">
 			</fileset>
 		</copy>
-		<copy todir="${apache.dir}/themes/sbi_default/css" >
+		<copy todir="${apache.dir}/SpagoBI/themes/sbi_default/css" >
 			<fileset dir="${tomcat.home}/webapps/SpagoBI/themes/sbi_default/css">
 			</fileset>
 		</copy>
-		<copy todir="${apache.dir}/themes/sbi_default/img" >
+		<copy todir="${apache.dir}/SpagoBI/themes/sbi_default/img" >
 			<fileset dir="${tomcat.home}/webapps/SpagoBI/themes/sbi_default/img">
 			</fileset>
 		</copy>
-		<copy todir="${apache.dir}/themes/sbi_default/html" >
+		<copy todir="${apache.dir}/SpagoBI/themes/sbi_default/html" >
 			<fileset dir="${tomcat.home}/webapps/SpagoBI/themes/sbi_default/html">
+			</fileset>
+		</copy>
+		
+		
+		<copy todir="${apache.dir}/SpagoBICockpitEngine/js" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBICockpitEngine/js">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/SpagoBICockpitEngine/themes/sbi_default/css" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBICockpitEngine/themes/sbi_default/css">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/SpagoBICockpitEngine/themes/sbi_default/img" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBICockpitEngine/themes/sbi_default/img">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/SpagoBICockpitEngine/themes/sbi_default/html" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBICockpitEngine/themes/sbi_default/html">
+			</fileset>
+		</copy>	
+
+		<copy todir="${apache.dir}/SpagoBIQbeEngine/js" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBIQbeEngine/js">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/SpagoBIQbeEngine/themes/sbi_default/css" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBIQbeEngine/themes/sbi_default/css">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/SpagoBIQbeEngine/themes/sbi_default/img" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBIQbeEngine/themes/sbi_default/img">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/SpagoBIQbeEngine/themes/sbi_default/html" >
+			<fileset dir="${tomcat.home}/webapps/SpagoBIQbeEngine/themes/sbi_default/html">
 			</fileset>
 		</copy>
 	</target>
