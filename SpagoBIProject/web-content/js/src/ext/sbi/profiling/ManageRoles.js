@@ -128,6 +128,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'createSocialAnalysis'
 	                        	          , 'viewSocialAnalysis'
 	                        	          , 'hierarchiesManagement'
+	                        	          , 'enableDatasetPersistence'
 	                        	        ];
 		
 		this.configurationObject.emptyRecToAdd = new Ext.data.Record({
@@ -162,6 +163,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		                        	        createSocialAnalysis: true,
 		                        	        viewSocialAnalysis: true,
 		                        	        hierarchiesManagement: true,
+		                        	        enableDatasetPersistence: true,
 											bmCategories: []
 										});
 		
@@ -523,6 +525,17 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		        },
 		        {
 		            xtype: 'checkboxgroup',
+		            columns: 1,
+		            boxMinWidth  : 150,
+		            hideLabel  : false,
+		            fieldLabel: LN('sbi.roles.enable'),
+		            itemId: 'isAbleToEnableDatasetPersistence',
+		            items: [
+		                    {boxLabel: LN('sbi.roles.enableDatasetPersistence'), name: 'enableDatasetPersistence', checked:'enableDatasetPersistence',inputValue: 1}
+		            ]
+		        },
+		        {
+		            xtype: 'checkboxgroup',
 		            itemId: 'finalUserCan',
 		            columns: 1,
 		            boxMinWidth  : 150,
@@ -585,6 +598,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
             		  item.setValue('kpiCommentEditMy', rec.get('kpiCommentEditMy'));
         		  }else if(item.getItemId() == 'isAbleTokpiCommentEditAll'){
             		  item.setValue('kpiCommentEditAll', rec.get('kpiCommentEditAll'));
+            	  }else if(item.getItemId() == 'isAbleToEnableDatasetPersistence'){
+        			  item.setValue('enableDatasetPersistence', rec.get('enableDatasetPersistence'));
         		  }else  if(item.getItemId() == 'finalUserCan'){
         			  item.setValue('seeDocBrowser', rec.get('seeDocBrowser'));
         			  item.setValue('seeMyData', rec.get('seeMyData'));
@@ -669,6 +684,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
                     	        createSocialAnalysis: true,
                     	        viewSocialAnalysis: true,
                     	        hierarchiesManagement: true,
+                    	        enableDatasetPersistence: true,
 								bmCategories: []
 							});
 		
@@ -708,7 +724,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         var hierarchiesManagement =values['hierarchiesManagement'];
         var kpiCommentEditAll =values['kpiCommentEditAll'];  
         var kpiCommentEditMy =values['kpiCommentEditMy'];  
-        var kpiCommentDelete =values['kpiCommentDelete'];  
+        var kpiCommentDelete =values['kpiCommentDelete'];
+        var enableDatasetPersistence =values['enableDatasetPersistence'];  
 
 		if(savePf == 1){
         	record.set('savePersonalFolder', true);
@@ -839,7 +856,12 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         	record.set('hierarchiesManagement', true);
         }else{
         	record.set('hierarchiesManagement', false);
-        }        
+        }
+        if(enableDatasetPersistence == 1){
+        	record.set('enableDatasetPersistence', true);
+        }else{
+        	record.set('enableDatasetPersistence', false);
+        }
         
         //Find selected business models categories
 		var bmCategoriesArray = [];
@@ -926,6 +948,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			kpiCommentEditAll: newRec.data.kpiCommentEditAll,
 			kpiCommentEditMy: newRec.data.kpiCommentEditMy,
 			kpiCommentDelete: newRec.data.kpiCommentDelete,
+			enableDatasetPersistence: newRec.data.enableDatasetPersistence,
 			bmCategories: newRec.data.bmCategories
         };
         if(idRec){
