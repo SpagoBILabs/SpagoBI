@@ -72,6 +72,7 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_LOGOUT = "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
 	private static final String HREF_SOCIAL_ANALYSIS = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL");
 	private static final String HREF_HIERARCHIES_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp";
+	private static final String HREF_USERS = "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 
 	public String contextName = "";
 	public String defaultThemePath = "/themes/sbi_default";
@@ -235,6 +236,11 @@ public class MenuListJSONSerializer implements Serializer {
 			JSONObject favourites = createMenuItem("bookmark", HREF_BOOKMARK, messageBuilder.getMessage("menu.MyFavorites", locale), true, null);
 			tempMenuList.put(favourites);
 		}
+		if (isAbleTo(SpagoBIConstants.FINAL_USERS_MANAGEMENT, funcs)) {
+			JSONObject createDoc = createMenuItem("users", HREF_USERS, messageBuilder.getMessage("menu.Users", locale), true, null);
+			tempMenuList.put(createDoc);
+		}
+
 		if (isAbleTo(SpagoBIConstants.CREATE_DOCUMENT, funcs)) {
 			JSONObject createDoc = createMenuItem("pencil", HREF_PENCIL, messageBuilder.getMessage("menu.MyAnalysis", locale), true, null);
 			tempMenuList.put(createDoc);
@@ -395,8 +401,10 @@ public class MenuListJSONSerializer implements Serializer {
 			}
 		}
 		/*
-		 * Cannot set a static ID as a random number!!!! See https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
-		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following line was the cause of the above issues!!
+		 * Cannot set a static ID as a random number!!!! See
+		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
+		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following
+		 * line was the cause of the above issues!!
 		 */
 		// temp2.put(ID, new Double(Math.random()).toString());
 
