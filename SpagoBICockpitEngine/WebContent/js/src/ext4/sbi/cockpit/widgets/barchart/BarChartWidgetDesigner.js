@@ -134,7 +134,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			displayField:   'description',
 			valueField:     'name',
 			value:			'vertical',
-			anchor:			'95%',
+			labelWidth:		120,
 			store:          this.orientationComboStore
 		});
 		this.orientationCombo.on('change', this.changeBarChartImage, this);
@@ -142,12 +142,14 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 
 		this.showValuesCheck = new Ext.form.Checkbox({
 			name: 'showvalues'
+			, labelWidth: 80
 			, checked: false
 			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.title')
 		});
 
 		this.showLegendCheck = new Ext.form.Checkbox({
 			name: 'showlegend'
+			, labelWidth: 80
 			, checked: false
 			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title')
 		});
@@ -160,7 +162,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 					, ['right', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right')]]
 		});
 		this.legendPositionCombo = new Ext.form.ComboBox({
-			width:			160,
+//			width:			160,
 			queryMode:      'local',
 			triggerAction:  'all',
 			forceSelection: true,
@@ -171,19 +173,22 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			displayField:   'description',
 			valueField:     'name',
 			value:			'bottom',
+			labelWidth:		100,
 			store:          this.legendPositionStore
 		});
 
 		this.categoryAxisText = new Ext.form.Text({
 			 name: 'categoryAxis',
 			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'),
-			 allowBlank: true
+			 allowBlank: true,
+			 labelWidth:		120,
 		});
 
 		this.seriesAxisText = new Ext.form.Text({
 			 name: 'seriesAxis',
 			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'),
-			 allowBlank: true
+			 allowBlank: true,
+			 labelWidth:		100,
 		});
 
 		this.sortOrderComboStore = new Ext.data.ArrayStore({
@@ -202,8 +207,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			displayField:   'description',
 			valueField:     'name',
 			value:			'ASC',
-			anchor:			'95%',
-			store:          this.sortOrderComboStore
+			store:          this.sortOrderComboStore,
+			labelWidth:		120
 		});
 
 		this.categoryContainerPanel = new Sbi.cockpit.widgets.chart.ChartCategoryPanel({
@@ -257,7 +262,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 
 		this.seriesContainerPanel = new Sbi.cockpit.widgets.chart.ChartSeriesPanel({
             width: 430
-            , height: 120
+            , height: 110
             , initialData: []
             , crosstabConfig: {}
             , ddGroup: this.ddGroup
@@ -267,14 +272,15 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 
 		this.imageContainerPanel = new Ext.Panel({
             width: 200
-            , height: 120
+            , height: 110
             , html: this.imageTemplate.apply(['side-by-side-barchart', 'vertical'])
 		});
 
 	    this.axisDefinitionPanel = new Ext.Panel({
 	        baseCls:'x-plain'
-		    , cls: 'centered-panel' //for center the panel
-			 ,width: '100%'
+//		    , cls: 'centered-panel' //for center the panel
+	        , cls: 'x-axis-definition-table'	
+			, width: '100%'
 	        , padding: '0 10 10 10'
 	        , layout: {type: 'table', columns : 2}
 	    	//, items: axisDefinitionPanelItems
@@ -290,6 +296,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		var controlsItems = new Array();
 
 		controlsItems.push(this.orientationCombo);
+		
+		controlsItems.push(this.legendPositionCombo);
 		/*
 		switch (this.chartLib) {
 	        case 'ext3':
@@ -299,45 +307,59 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		}*/
 
 		controlsItems.push(this.showValuesCheck);
+		
+		controlsItems.push(this.categoryAxisText);
+		
+		controlsItems.push(this.seriesAxisText);
 
     	controlsItems.push(this.showLegendCheck);
+    	
 
-    	controlsItems.push(this.legendPositionCombo);
-
-    	//controlsItems.push(this.categoryAxisText);
-
-    	//controlsItems.push(this.seriesAxisText);
-
-    	//controlsItems.push(this.sortOrderCombo);
+    	controlsItems.push(this.sortOrderCombo);
 
 
 		this.form = new Ext.form.FormPanel({
 			border: false
+			,layout: 'anchor'
 			, items: [
 			    {
-			    	layout: 'column'
-			    	, padding: '10 10 10 10'
+			    	
+			    	padding: '5 10 5 10'
 			    	, border: false
 			    	, items: [
+		    	          {
+							  xtype: 'fieldset'
+							, fieldDefaults: { margin: '0 9 5 0'}
+							, layout: {type: 'table', columns: 3}
+				            , collapsible: true
+				            , collapsed: true
+				            , title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.options.title')
+			            	, margin: '0 0 10 0'
+//								, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
+							, columnWidth : .275
+//								, border: false
+							, items: controlsItems
+						},
 		  			    {
 							xtype: 'fieldset'
+							, margin: '0 0 0 0'
 //							, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.type')
 							, columnWidth : .430
 							, border: false
 							, items: [this.typeRadioGroup]
 						}
-						, {
-							xtype: 'fieldset'
-//							, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
-							, columnWidth : .275
-							, border: false
-							, items: controlsItems
-						}, {
-							xtype: 'fieldset'
-								, columnWidth : .275
-								, border: false
-								, items: [this.categoryAxisText,this.seriesAxisText,this.sortOrderCombo]
-							}
+						
+//						{
+//							xtype: 'fieldset'
+//								, layout: 'hbox'
+//								, collapsible: true
+//					            , collapsed: true
+//					            , margin: '5 0 5 0'
+//					            , title: 'Axis Options'
+//								, columnWidth : .275
+//								, border: false
+//								, items: [this.categoryAxisText,this.seriesAxisText,this.sortOrderCombo]
+//							}
 			    	]
 			    }
 				, this.axisDefinitionPanel
