@@ -397,7 +397,8 @@ Sbi.locale.ln['sbi.roles.delete'] = 'Eliminar';
 Sbi.locale.ln['sbi.roles.finalUserCan'] = 'Items para el men\u00ef\u00bf\u0153 de usuario';
 Sbi.locale.ln['sbi.roles.createSocialAnalysis'] = 'Create analysis on social networks';
 Sbi.locale.ln['sbi.roles.hierarchiesManagement'] = 'Hierarchies editor';
-
+Sbi.locale.ln['sbi.roles.enableDatasetPersistence'] = 'Dataset Persistence';
+Sbi.locale.ln['sbi.roles.enable'] = 'Enable';
 Sbi.locale.ln['sbi.users.fullName'] = 'Nombre Completo';
 Sbi.locale.ln['sbi.users.userId'] = 'ID de usuario';
 Sbi.locale.ln['sbi.users.pwd'] = 'Contrase\u00f1a';
