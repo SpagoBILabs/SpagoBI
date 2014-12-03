@@ -64,3 +64,4 @@ Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.b
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.top'] = 'Arriba';
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.left'] = 'Izquierda ';
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right'] = 'Derecha';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.options.title'] = 'Opciones';
