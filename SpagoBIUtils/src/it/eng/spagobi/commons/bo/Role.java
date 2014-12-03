@@ -51,6 +51,8 @@ public class Role implements Serializable {
 	private boolean isAbleToEditMyKpiComm;
 	private boolean isAbleToDeleteKpiComm;
 
+	private boolean isAbleToEnableDatasetPersistence;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -591,6 +593,14 @@ public class Role implements Serializable {
 
 	public void setIsAbleToHierarchiesManagement(boolean isAbleToHierarchiesManagement) {
 		this.isAbleToHierarchiesManagement = isAbleToHierarchiesManagement;
+	}
+
+	public boolean isAbleToEnableDatasetPersistence() {
+		return isAbleToEnableDatasetPersistence;
+	}
+
+	public void setIsAbleToEnableDatasetPersistence(boolean isAbleToEnableDatasetPersistence) {
+		this.isAbleToEnableDatasetPersistence = isAbleToEnableDatasetPersistence;
 	}
 
 }
