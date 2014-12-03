@@ -94,12 +94,17 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 			toReturn = new WhatIfTemplate();
 
-			SourceBean cubeSB = (SourceBean) template.getAttribute(TAG_CUBE);
-			logger.debug(TAG_CUBE + ": " + cubeSB);
-			Assert.assertNotNull(cubeSB, "Template is missing " + TAG_CUBE + " tag");
-			String reference = (String) cubeSB.getAttribute(PROP_SCHEMA_REFERENCE);
-			logger.debug(PROP_SCHEMA_REFERENCE + ": " + reference);
-			toReturn.setMondrianSchema(reference);
+			// init the xmla datasource
+			boolean isXMLA = initXMLADataSource(template, toReturn);
+
+			if (!isXMLA) {
+				SourceBean cubeSB = (SourceBean) template.getAttribute(TAG_CUBE);
+				logger.debug(TAG_CUBE + ": " + cubeSB);
+				Assert.assertNotNull(cubeSB, "Template is missing " + TAG_CUBE + " tag");
+				String reference = (String) cubeSB.getAttribute(PROP_SCHEMA_REFERENCE);
+				logger.debug(PROP_SCHEMA_REFERENCE + ": " + reference);
+				toReturn.setMondrianSchema(reference);
+			}
 
 			SourceBean mdxSB = (SourceBean) template.getAttribute(TAG_MDX_QUERY);
 			logger.debug(TAG_MDX_QUERY + ": " + mdxSB);
@@ -127,9 +132,6 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 			// init stand alone configuration
 			initStandAlone(template, toReturn);
-
-			// init the xmla datasource
-			initXMLADataSource(template, toReturn);
 
 			List<WhatIfTemplate.Parameter> parameters = new ArrayList<WhatIfTemplate.Parameter>();
 			List parametersSB = mdxSB.getAttributeAsList(TAG_PARAMETER);
@@ -180,7 +182,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		toReturn.setProfilingUserAttributes(attributes);
 	}
 
-	public static void initXMLADataSource(SourceBean template, WhatIfTemplate toReturn) {
+	public static boolean initXMLADataSource(SourceBean template, WhatIfTemplate toReturn) {
 		List<SourceBeanAttribute> xmlaConnectionProperties;
 		Map<String, String> xmlaConnectionPropertiesMap = new HashMap<String, String>();
 		SourceBeanAttribute aXmlaConnectionProperty;
@@ -203,12 +205,12 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 				logger.debug("Updating the xmla datasource in the template");
 				toReturn.setXmlaServerProperties(xmlaConnectionPropertiesMap);
-
+				return true;
 			}
 		} else {
 			logger.debug(TAG_XMLA_DATASOURCE + ": no xmla data source defined in the template");
 		}
-
+		return false;
 	}
 
 	public static void initToolbar(SourceBean template, WhatIfTemplate toReturn) {
