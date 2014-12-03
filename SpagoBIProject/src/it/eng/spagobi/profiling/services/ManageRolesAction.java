@@ -82,6 +82,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	private final String CREATE_SOCIAL_ANALYSIS = "createSocialAnalysis";
 	private final String VIEW_SOCIAL_ANALYSIS = "viewSocialAnalysis";
 	private final String HIERARCHIES_MANAGEMENT = "hierarchiesManagement";
+	private final String ENABLE_DATASET_PERSISTENCE = "enableDatasetPersistence";
 
 	private final String BM_CATEGORY_ID = "bmCategoryId";
 	private final String BM_CATEGORIES = "bmCategories";
@@ -175,6 +176,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 			Boolean createAnalysisSocial = getAttributeAsBoolean(CREATE_SOCIAL_ANALYSIS);
 			Boolean viewAnalysisSocial = getAttributeAsBoolean(VIEW_SOCIAL_ANALYSIS);
 			Boolean hierarchiesManagement = getAttributeAsBoolean(HIERARCHIES_MANAGEMENT);
+			Boolean enableDatasetPersistence = getAttributeAsBoolean(ENABLE_DATASET_PERSISTENCE);
 
 			List<String> bmCategoryIds = getAttributeAsList(BM_CATEGORIES);
 			if (bmCategoryIds.size() == 1) {
@@ -262,6 +264,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				role.setIsAbleToCreateSocialAnalysis(createAnalysisSocial);
 				role.setIsAbleToViewSocialAnalysis(viewAnalysisSocial);
 				role.setIsAbleToHierarchiesManagement(hierarchiesManagement);
+				role.setIsAbleToEnableDatasetPersistence(enableDatasetPersistence);
 
 				try {
 					String id = getAttributeAsString(ID);
