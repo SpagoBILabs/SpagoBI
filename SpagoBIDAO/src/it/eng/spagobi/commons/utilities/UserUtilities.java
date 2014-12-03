@@ -496,6 +496,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToHierarchiesManagement()) {
 				roleFunctionalities.add(SpagoBIConstants.HIERARCHIES_MANAGEMENT);
 			}
+			if (virtualRole.isAbleToEnableDatasetPersistence()) {
+				roleFunctionalities.add(SpagoBIConstants.ENABLE_DATASET_PERSISTENCE);
+			}
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
 				roleFunctionalities.addAll(roleTypeFunctionalities);
@@ -556,6 +559,7 @@ public class UserUtilities {
 		virtualRole.setIsAbleToCreateSocialAnalysis(false);
 		virtualRole.setIsAbleToViewSocialAnalysis(false);
 		virtualRole.setIsAbleToHierarchiesManagement(false);
+		virtualRole.setIsAbleToEnableDatasetPersistence(false);
 
 		if (roles != null) {
 			for (int i = 0; i < roles.length; i++) {
@@ -669,6 +673,10 @@ public class UserUtilities {
 						logger.debug("User has role " + roleName + " that is able to manage hierarchies");
 						virtualRole.setIsAbleToHierarchiesManagement(true);
 					}
+					if (anotherRole.isAbleToEnableDatasetPersistence()) {
+						logger.debug("User has role " + roleName + " that is able to persist dataset.");
+						virtualRole.setIsAbleToEnableDatasetPersistence(true);
+					}
 				}
 			}
 		}
@@ -695,7 +703,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 * 
+	 *
 	 * is this method in the right place?
 	 */
 
