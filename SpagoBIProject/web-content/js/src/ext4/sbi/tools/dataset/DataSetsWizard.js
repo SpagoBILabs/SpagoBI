@@ -24,6 +24,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		fileUpload:null,
 		metaInfo:null,
 		isOwner: false,
+		userCanPersist: false,
 		isTabbedPanel:false //if false rendering as 'card layout (without tabs)
 	}
 
@@ -75,12 +76,18 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		steps.push({itemId:'0', title:item1Label, items: this.fieldsStep1});
 		steps.push({itemId:'1', title:item2Label, items: this.fieldsStep2});
 		steps.push({itemId:'2', title:item3Label, items: this.fieldsStep3});
-		steps.push({itemId:'3', title:item4Label, items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep4)});
-		
+		//steps.push({itemId:'3', title:item4Label, items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep4)});
+		steps.push({itemId:'3', title:item4Label, items: this.fieldsStep4});
 		return steps;
 	}
 	
 	, getFieldsTab4: function(){
+		var hidePersistFields = "true";
+		if ((this.userCanPersist != undefined) && (this.userCanPersist == 'true')){
+			hidePersistFields = "false";
+		}
+		
+		
 		//General tab
 		var toReturn = [];
 		
@@ -88,9 +95,36 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
          {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'File'},
          {label: LN('sbi.ds.label'), name:"label", type:"text",hidden:"true", /*mandatory:true, readOnly:(this.isNew || this.isOwner)?false:true,*/ value:this.record.label}, 
          {label: LN('sbi.ds.name'), name:"name", type:"text", mandatory:true, readOnly:(!this.isOwner), value:this.record.name},
-         {label: LN('sbi.ds.description'), name:"description", type:"textarea", readOnly:(!this.isOwner), value:this.record.description}];
+         {label: LN('sbi.ds.description'), name:"description", type:"textarea", readOnly:(!this.isOwner), value:this.record.description},
+         {label: LN('sbi.ds.isPersisted'), name:"persist", type:"checkbox", value:false, hidden: hidePersistFields},
+         {label: LN('sbi.ds.persistTableName'), name:"tableName", type:"text", hidden: hidePersistFields, id:"tableNameId", disabled: true }
+         ];
+		
+		var fields = Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(toReturn);
+		
+		//listener for persist checkbox
+		for(var i=0; i < fields.length; i++){
+			if (fields[i].name == 'persist'){
+				fields[i].on("change", function(cb, checked) {
+					if (checked){
+				         Ext.getCmp('tableNameId').allowBlank = false;
+					     Ext.getCmp('tableNameId').setDisabled(!checked);
+					     Ext.getCmp('tableNameId').regexText = "Invalid table name";
+					     Ext.getCmp('tableNameId').regex = /^([a-zA-Z0-9_-]+)$/;
+				         Ext.getCmp('tableNameId').validate();
+					} else {
+				         Ext.getCmp('tableNameId').allowBlank = true;
+					     Ext.getCmp('tableNameId').setDisabled(!checked);
+					     Ext.getCmp('tableNameId').regex = '';
+				         Ext.getCmp('tableNameId').validate();
 
-		return toReturn;
+					}
+				 });
+				break;
+			}
+		}
+		
+		return fields;
 	}
 	
 	, getFieldsTab1: function(){
@@ -128,6 +162,23 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			}
 		});
 		
+		//checkbox for limited preview
+		this.checkLimitPreview = new Ext.form.Checkbox({
+			boxLabel  : LN('sbi.ds.wizard.limitPreview'),
+            name      : 'limitPreview',
+            id        : 'limitPreview',
+    		margin: 5
+
+        })
+		
+		this.containerPanel = new Ext.panel.Panel({
+			border: false,
+			layout: {
+		        type: 'table',
+		        columns: 2
+		    },
+			items:[this.cmbCategory,this.checkLimitPreview]
+		})
 		//upload details tab
 		this.fileUpload = new Sbi.tools.dataset.FileDatasetPanel({fromExt4:true, isOwner: this.isOwner});
 		if (this.record !== undefined){
@@ -148,7 +199,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	          height: 330,
 	          border: false,
 	          trackResetOnLoad: true,
-	          items: [this.cmbCategory, this.fileUpload]
+	          items: [this.containerPanel, this.fileUpload]
 	      }); 
 		
 		
@@ -229,7 +280,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 					values.fileUploaded = this.fileUploaded;
 					this.fireEvent('getMetaValues', values);
 					
-					var categoryName = this.getFieldsStep1().getComponent('dsCategoryCombo').getRawValue();
+					var categoryName = Ext.getCmp('dsCategoryCombo').getRawValue();
 					this.metaInfo.setDatasetCategory(categoryName);
 					
 				}
@@ -247,7 +298,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 				 values.isPublicDS = valueScope;
 				 var datasetMetadata = this.fieldsStep2.getFormState();
 				 values.datasetMetadata = Ext.JSON.encode(datasetMetadata) ;
-
+				 values.limitPreview = this.checkLimitPreview.getValue();
 				 this.fieldsStep3.createDynamicGrid(values);
 			 }
 		 }else{			
@@ -371,6 +422,17 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			success : function(form, action) {
 				Ext.MessageBox.updateProgress(1);
 				Ext.MessageBox.hide();
+				var fileExt = action.result.fileExtension;
+
+				if(fileNameUploaded.split('.').pop() == 'zip')
+				{    
+					fileNameUploaded = fileNameUploaded.replace('zip', fileExt);
+				}
+				else if(fileNameUploaded.split('.').pop() == 'gz')
+				{
+					fileNameUploaded = fileNameUploaded.replace('.gz', '');
+				}
+				
 				Ext.getCmp('fileNameField').setValue(fileNameUploaded); //hidden field
 				Ext.getCmp('fileDetailText').setText(LN('sbi.ds.wizard.file') +" "+fileNameUploaded + LN('sbi.ds.wizard.successLoad') );
 //				Ext.getCmp('fileUploadField').hide();

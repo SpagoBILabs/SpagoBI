@@ -19,7 +19,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		PUBLIC_USER: 'public_user',
 	    //id:'this',
 	    isTech: false, //for only certified datasets
-	    qbeEditDatasetUrl : ''
+	    qbeEditDatasetUrl : '',
+	    userCanPersist: ''
 	}
 
 	,
@@ -341,6 +342,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.scopeStore = this.scopeStore;
 		config.user = this.user;
 		config.isNew = true;
+		config.userCanPersist = this.userCanPersist;
 		this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);	
 		this.wizardWin.on('save', this.saveDataset, this);
 		this.wizardWin.on('getMetaValues', this.getMetaValues, this);
@@ -360,6 +362,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			config.record = rec;
 			config.isNew = false;
 			config.qbeEditDatasetUrl = this.qbeEditDatasetUrl;
+			config.userCanPersist = this.userCanPersist;
 			switch (rec.dsTypeCd) {
 				case 'File' : 
 					this.wizardWin = Ext.create('Sbi.tools.dataset.DataSetsWizard', config);	
