@@ -431,4 +431,6 @@ public class SpagoBIConstants {
 	public static final String DATAMART_RETRIEVER = "DATAMART_RETRIEVER";
 
 	public static final String DS_SCOPE_USER = "USER";
+
+	public static final String ENABLE_DATASET_PERSISTENCE = "EnableDatasetPersistence";
 }
