@@ -26,3 +26,5 @@ Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showle
 
 
 Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.title'] = 'Diseñador grñafico de línea';
+
+Sbi.locale.ln['sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.options.title'] = 'Opciones';
