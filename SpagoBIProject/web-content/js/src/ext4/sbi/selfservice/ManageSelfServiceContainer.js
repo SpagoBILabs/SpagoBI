@@ -23,7 +23,8 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
         user : '',
         datasetsServicePath: '',
         qbeEditDatasetUrl : '',
-        typeDoc: ''
+        typeDoc: '',
+        userCanPersist: ''
 	},
 
 	/**
@@ -57,6 +58,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			, datasetsServicePath : config.datasetsServicePath
 			, qbeEditDatasetUrl : config.qbeEditDatasetUrl
 			, typeDoc : config.typeDoc
+			, userCanPersist: config.userCanPersist
 		}); 
 		
 					
