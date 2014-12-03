@@ -8,8 +8,8 @@ Sbi.locale.ln['sbi.general.yes'] = 'S\u00ed';
 Sbi.locale.ln['sbi.general.No'] = 'No';
 Sbi.locale.ln['sbi.general.cancel'] = 'Cancelar';
 Sbi.locale.ln['sbi.general.continue'] = 'Continuar';
-Sbi.locale.ln['sbi.general.sessionexpired.title'] = 'La sesi�n ha expirado !';
-Sbi.locale.ln['sbi.general.sessionexpired.message'] = 'La sesi�n ha caducado, por favor iniciar sesi�n de nuevo ';
+Sbi.locale.ln['sbi.general.sessionexpired.title'] = 'La sesi\u00ef\u00bf\u0153n ha expirado !';
+Sbi.locale.ln['sbi.general.sessionexpired.message'] = 'La sesi\u00ef\u00bf\u0153n ha caducado, por favor iniciar sesi\u00ef\u00bf\u0153n de nuevo ';
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Nodo Gen\u00e9rico';
 Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Ra\u00edz Gen\u00e9rico';
@@ -230,10 +230,10 @@ Sbi.locale.ln['sbi.browser.document.share.win.title']  = 'Compartir Documento';
 Sbi.locale.ln['sbi.browser.document.share.win.titleDetail']  = 'Seleccionar las carpetas o la comunidad donde compartir el documento';
 Sbi.locale.ln['sbi.browser.document.share.win.btn']  = 'Compartir';
 Sbi.locale.ln['sbi.browser.document.share.win.tooltip']  = 'Hacer clic para compartir el documento';
-Sbi.locale.ln['sbi.browser.document.unshare.success']  = 'Eliminaci�n de la compartici�n finalizada correctamente';
-Sbi.locale.ln['sbi.generic.confirmUnshare'] = '�Confirmar la eliminaci�n de la compartici�n del documento?';
-Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Antes de compartir el documento, seleccione al menos una carpeta d�nde colocarlo ';
-Sbi.locale.ln['sbi.generic.confirmShare']  = '�Confirmar la compartici�n del documento?';
+Sbi.locale.ln['sbi.browser.document.unshare.success']  = 'Eliminaci\u00ef\u00bf\u0153n de la compartici\u00ef\u00bf\u0153n finalizada correctamente';
+Sbi.locale.ln['sbi.generic.confirmUnshare'] = '\u00ef\u00bf\u0153Confirmar la eliminaci\u00ef\u00bf\u0153n de la compartici\u00ef\u00bf\u0153n del documento?';
+Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Antes de compartir el documento, seleccione al menos una carpeta d\u00ef\u00bf\u0153nde colocarlo ';
+Sbi.locale.ln['sbi.generic.confirmShare']  = '\u00ef\u00bf\u0153Confirmar la compartici\u00ef\u00bf\u0153n del documento?';
 Sbi.locale.ln['sbi.browser.document.share.success']  = 'Documento compartido correctamente';
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Antes de guardar el documento complete Nombre y Etiqueta y seleccione al menos una carpeta d\u00f3nde colocarla';
 Sbi.locale.ln['sbi.document.saveWarning2']  = 'Antes de guardar el documento complete Nombre del documento';
@@ -273,13 +273,13 @@ Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefres
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Haga clic en el bot\u00f3n Actualizar de la barra de herramientas para volver a ejecutar el documento';
 
 Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.message'] = 'Ejecutar';
-Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.tooltip'] = 'Completar el siguiente formulario y haga clic aqu� para ejecutar el documento';
+Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.tooltip'] = 'Completar el siguiente formulario y haga clic aqu\u00ef\u00bf\u0153 para ejecutar el documento';
 
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Volver a la p\u00e1gina de selecci\u00f3n par\u00e1metros';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Volver a la p\u00e1gina de selecci\u00f3n documentos';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Recargar ejecuci\u00f3n documento';
 
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'La selecci�n de Par�metros 'fue cambiada; �Deseas ejecutar el documento con la selecci�n anterior o la actual? ';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'La selecci\u00ef\u00bf\u0153n de Par\u00ef\u00bf\u0153metros 'fue cambiada; \u00ef\u00bf\u0153Deseas ejecutar el documento con la selecci\u00ef\u00bf\u0153n anterior o la actual? ';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.usecurrentselection'] = 'Usar actual;
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.usepreviousselection'] = 'Usar previo';
 
@@ -394,7 +394,7 @@ Sbi.locale.ln['sbi.roles.allKpiComment'] = 'Todos los comentarios del KPI';
 Sbi.locale.ln['sbi.roles.myKpiComment'] = 'Owned kpi comments';
 Sbi.locale.ln['sbi.roles.kpiComment'] = 'comentarios Kpi';
 Sbi.locale.ln['sbi.roles.delete'] = 'Eliminar';
-Sbi.locale.ln['sbi.roles.finalUserCan'] = 'Items para el men� de usuario';
+Sbi.locale.ln['sbi.roles.finalUserCan'] = 'Items para el men\u00ef\u00bf\u0153 de usuario';
 Sbi.locale.ln['sbi.roles.createSocialAnalysis'] = 'Create analysis on social networks';
 Sbi.locale.ln['sbi.roles.hierarchiesManagement'] = 'Hierarchies editor';
 
@@ -615,8 +615,8 @@ Sbi.locale.ln['sbi.ds.metadata.column.column']='Columna';
 Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Atributos';
 Sbi.locale.ln['sbi.ds.metadata.column.value']='Valor';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Dataset Metadata';
-Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.column']='Columna jerarqu�a';
-Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.level']='Nivel jerarqu�a';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.column']='Columna jerarqu\u00ef\u00bf\u0153a';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.level']='Nivel jerarqu\u00ef\u00bf\u0153a';
 Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.clear']='Limpiar';
 Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.expert']='Modo experto;
 Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.simple']='Modo simple';
@@ -625,9 +625,9 @@ Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.simple']='Modo simple';
 //Multitenant
 Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant guardado correctamente';
 Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant eliminado correctamente;
-Sbi.locale.ln['sbi.multitenant.validation.error']= 'Hay errores en la configuraci�n del tenant. Confirmar los campos marcados.';
+Sbi.locale.ln['sbi.multitenant.validation.error']= 'Hay errores en la configuraci\u00ef\u00bf\u0153n del tenant. Confirmar los campos marcados.';
 Sbi.locale.ln["error.mesage.name.multitenant.cannot.be.null"]= "El nombre del tenant no puede ser null";
-Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Imposible eliminar el tenant porque est� siendo usado";
+Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Imposible eliminar el tenant porque est\u00ef\u00bf\u0153 siendo usado";
 Sbi.locale.ln["error.mesage.multitenant.saving.duplicated"]="Imposible guardar el tenant porque hay otro con el mismo nombre";
 Sbi.locale.ln['sbi.multitenant.theme']= 'Tema';
 Sbi.locale.ln['sbi.multitenant.id'] = 'Identificador';
@@ -648,34 +648,34 @@ Sbi.locale.ln['sbi.generic.confirmDeleteDataset'] = 'La cancelaci\u00f3n del dat
 //===================================================================
 //MESSAGE FOR SCHEDULER
 //===================================================================
-Sbi.locale.ln['sbi.scheduler.alert'] = '�Atenci�n! Introduzca una nueva programaci�n de fecha y hora de inicio despu�s de la actual, para evitar la reprogramaci�n. ';
-Sbi.locale.ln['sbi.scheduler.overview'] = 'Informaci�n general Actividad';
+Sbi.locale.ln['sbi.scheduler.alert'] = '\u00ef\u00bf\u0153Atenci\u00ef\u00bf\u0153n! Introduzca una nueva programaci\u00ef\u00bf\u0153n de fecha y hora de inicio despu\u00ef\u00bf\u0153s de la actual, para evitar la reprogramaci\u00ef\u00bf\u0153n. ';
+Sbi.locale.ln['sbi.scheduler.overview'] = 'Informaci\u00ef\u00bf\u0153n general Actividad';
 Sbi.locale.ln['sbi.scheduler.documents'] = 'Documentos';
 Sbi.locale.ln['sbi.scheduler.name'] = 'Nombre';
-Sbi.locale.ln['sbi.scheduler.parameters'] = 'Par�metros';
-Sbi.locale.ln['sbi.scheduler.schedulations'] = 'Planificaci�n';
+Sbi.locale.ln['sbi.scheduler.parameters'] = 'Par\u00ef\u00bf\u0153metros';
+Sbi.locale.ln['sbi.scheduler.schedulations'] = 'Planificaci\u00ef\u00bf\u0153n';
 Sbi.locale.ln['sbi.scheduler.type'] = 'Tipo';
 Sbi.locale.ln['sbi.scheduler.startdate'] = 'Fecha de inicio';
 Sbi.locale.ln['sbi.scheduler.starttime'] = 'Hora de inicio';
-Sbi.locale.ln['sbi.scheduler.enddate'] = 'Fecha de finalizaci�n 
-Sbi.locale.ln['sbi.scheduler.endtime'] = 'Hora de finalizaci�n ';
-Sbi.locale.ln['sbi.scheduler.addschedulation'] = 'A�adir planificaci�n';
-Sbi.locale.ln['sbi.scheduler.schedulationtype'] = 'Tipos de planificaci�n';
-Sbi.locale.ln['sbi.scheduler.schedulation.detail'] = 'Detalles de planificaci�n';
-Sbi.locale.ln['sbi.scheduler.schedulation.delete'] = 'Eliminar planificaci�n';
+Sbi.locale.ln['sbi.scheduler.enddate'] = 'Fecha de finalizaci\u00ef\u00bf\u0153n 
+Sbi.locale.ln['sbi.scheduler.endtime'] = 'Hora de finalizaci\u00ef\u00bf\u0153n ';
+Sbi.locale.ln['sbi.scheduler.addschedulation'] = 'A\u00ef\u00bf\u0153adir planificaci\u00ef\u00bf\u0153n';
+Sbi.locale.ln['sbi.scheduler.schedulationtype'] = 'Tipos de planificaci\u00ef\u00bf\u0153n';
+Sbi.locale.ln['sbi.scheduler.schedulation.detail'] = 'Detalles de planificaci\u00ef\u00bf\u0153n';
+Sbi.locale.ln['sbi.scheduler.schedulation.delete'] = 'Eliminar planificaci\u00ef\u00bf\u0153n';
 Sbi.locale.ln['sbi.scheduler.activity.detailactivity'] = 'Detalles de la actividad';
-Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Lista de planificaci�n';
+Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Lista de planificaci\u00ef\u00bf\u0153n';
 Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Actividad eliminada';
-Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Planifiaci�n eliminada';
+Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Planifiaci\u00ef\u00bf\u0153n eliminada';
 Sbi.locale.ln['sbi.scheduler.schedulation.execute'] = 'Ejecutar ahora';
-Sbi.locale.ln['sbi.scheduler.schedulation.executed'] = 'Planifiaci�n ejecutada';
-Sbi.locale.ln['sbi.scheduler.schedulation.pause'] = 'Pausa Planificaci�n';
-Sbi.locale.ln['sbi.scheduler.schedulation.resume'] = 'Resumen planificaci�n';
-Sbi.locale.ln['sbi.schedulation.pauseConfirm'] = '�Quieres poner pausa en la planificaci�n?';
-Sbi.locale.ln['sbi.scheduler.schedulation.paused'] = 'Planificaci�n en pausa';
-Sbi.locale.ln['sbi.schedulation.resumeConfirm'] = '�Quieres resumir la planificaci�n?';
-Sbi.locale.ln['sbi.scheduler.schedulation.resumed'] = 'Planificaci�n resumida';
-Sbi.locale.ln['sbi.scheduler.schedulation.info'] = 'Informaci�n de la planificaci�n';
+Sbi.locale.ln['sbi.scheduler.schedulation.executed'] = 'Planifiaci\u00ef\u00bf\u0153n ejecutada';
+Sbi.locale.ln['sbi.scheduler.schedulation.pause'] = 'Pausa Planificaci\u00ef\u00bf\u0153n';
+Sbi.locale.ln['sbi.scheduler.schedulation.resume'] = 'Resumen planificaci\u00ef\u00bf\u0153n';
+Sbi.locale.ln['sbi.schedulation.pauseConfirm'] = '\u00ef\u00bf\u0153Quieres poner pausa en la planificaci\u00ef\u00bf\u0153n?';
+Sbi.locale.ln['sbi.scheduler.schedulation.paused'] = 'Planificaci\u00ef\u00bf\u0153n en pausa';
+Sbi.locale.ln['sbi.schedulation.resumeConfirm'] = '\u00ef\u00bf\u0153Quieres resumir la planificaci\u00ef\u00bf\u0153n?';
+Sbi.locale.ln['sbi.scheduler.schedulation.resumed'] = 'Planificaci\u00ef\u00bf\u0153n resumida';
+Sbi.locale.ln['sbi.scheduler.schedulation.info'] = 'Informaci\u00ef\u00bf\u0153n de la planificaci\u00ef\u00bf\u0153n';
 Sbi.locale.ln['sbi.scheduler.schedulation.mailto'] = 'Mail para';
 Sbi.locale.ln['sbi.scheduler.schedulation.attachedzip'] = 'Nombre zip adjunto ';
 Sbi.locale.ln['sbi.scheduler.schedulation.mailsubject'] = 'Asunto Mail ';
@@ -762,7 +762,7 @@ Sbi.locale.ln['sbi.widgets.datastorepanel.title'] = 'Resultados';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.displaymsg'] = 'Mostrando {0} - {1} de {2}';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.emptymsg'] = 'No hay datos para mostrar';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.emptywarningmsg'] = 'Consulta no devuelve ning\u00FAn dato';
-Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforeoverflow'] = 'El l�mite m\u00E1ximo n\u00FAmero de registros';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforeoverflow'] = 'El l\u00ef\u00bf\u0153mite m\u00E1ximo n\u00FAmero de registros';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.afteroverflow'] = 'superado';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforepagetext'] = 'P\u00E1ina';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.afterpagetext'] = 'de {0}';
@@ -856,7 +856,7 @@ monthNames : ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto",
 dayNames : ["Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"],
 nextText: 'Mes Siguiente (Control+Right)',
 prevText: 'Mes Anterior (Control+Left)',
-monthYearText: 'Elija un Mes (Control+Up/Down moverse entre años)',
+monthYearText: 'Elija un Mes (Control+Up/Down moverse entre a\u00c3\u00b1os)',
 todayTip : "{0} (Spacebar)",
 okText : " OK ",
 cancelText : "Cancelar",
@@ -896,24 +896,24 @@ Sbi.locale.ln['sbi.tools.layer.props.options']= "Opciones";
 //===================================================================
 //MYANALYSIS
 //===================================================================
-Sbi.locale.ln['sbi.myanalysis.analysis'] = "An�lisis";
+Sbi.locale.ln['sbi.myanalysis.analysis'] = "An\u00ef\u00bf\u0153lisis";
 Sbi.locale.ln['sbi.myanalysis.report'] = "Report";
 Sbi.locale.ln['sbi.myanalysis.cockpit'] = "Cockpit";
 Sbi.locale.ln['sbi.myanalysis.map'] = "Mapa";
 Sbi.locale.ln['sbi.myanalysis.all'] = "Todo";
 Sbi.locale.ln['sbi.myanalysis.sharedocument'] = "Compartir Documento";
 Sbi.locale.ln['sbi.myanalysis.unsharedocument'] = "Dejar de compartir Documento";
-Sbi.locale.ln['sbi.myanalysis.wizard.wizardname'] = "Mi Asistente de An�lisis";
-Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisselection'] = "Mi an�lisis de selecci�n de tipos";
+Sbi.locale.ln['sbi.myanalysis.wizard.wizardname'] = "Mi Asistente de An\u00ef\u00bf\u0153lisis";
+Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisselection'] = "Mi an\u00ef\u00bf\u0153lisis de selecci\u00ef\u00bf\u0153n de tipos";
 Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisdetail'] = "Definir detalles";
-Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "Selecci�n de datos";
+Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "Selecci\u00ef\u00bf\u0153n de datos";
 Sbi.locale.ln['sbi.myanalysis.delete.everywhere']= 'Eliminar en todas partes';
-Sbi.locale.ln['sbi.myanalysis.delete.personalfolder']= 'Eliminar s�lo en mi carpeta personal';
+Sbi.locale.ln['sbi.myanalysis.delete.personalfolder']= 'Eliminar s\u00ef\u00bf\u0153lo en mi carpeta personal';
 Sbi.locale.ln['sbi.myanalysis.delete.cancel']= 'Cancelar';
-Sbi.locale.ln['sbi.myanalysis.noEngines']= 'En esta instalaci�n faltan drivers necesarios para continuar. Por favor, p�ngase en contacto con el administrador del sistema.';
+Sbi.locale.ln['sbi.myanalysis.noEngines']= 'En esta instalaci\u00ef\u00bf\u0153n faltan drivers necesarios para continuar. Por favor, p\u00ef\u00bf\u0153ngase en contacto con el administrador del sistema.';
 
 
 //===================================================================
 //Sbi.execution.SaveDocumentWindow
 //===================================================================
-Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'El documento se guard� correctamente. Est� disponible en la secci�n "Mi an�lisis" ';
+Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'El documento se guard\u00ef\u00bf\u0153 correctamente. Est\u00ef\u00bf\u0153 disponible en la secci\u00ef\u00bf\u0153n "Mi an\u00ef\u00bf\u0153lisis" ';
