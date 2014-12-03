@@ -175,14 +175,18 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
   		} else if (obj.type == 'group'){
 			//group radio management
   			tmpField = this.createRadioGroupField(obj);        			
-  		} 
+  		} else if (obj.type == 'checkbox'){
+  			//single checkbox management
+  			tmpField = this.createCheckBoxField(obj)
+  		}
 		
 		return tmpField;
 	}
 
 	, createTextField: function(f){
 		var field = new Ext.form.TextField({
-  		  fieldLabel: f.label 
+  		  fieldLabel: f.label
+  		  	  , id: f.id 
   		  	  , name: f.name
 	          , width: 500 
 	          , height: 30
@@ -193,6 +197,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 	          , readOnly: f.readOnly || false
 //	          , labelStyle:'font-weight:bold;' //usare itemCls : <tagstyle>
 	          , value: f.value || f.defaultValue || ""
+	          , disabled: f.disabled || false
 	        });
 		return field;
 	}
@@ -265,6 +270,16 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 			value:  f.value
 		});
 		
+		return field;
+	}
+		
+	, createCheckBoxField: function(f){
+		var field = new Ext.form.Checkbox({
+			fieldLabel: f.label,
+			name: f.name,
+	        value: f.value,
+	        margin: '2 0 0 10'
+		})
 		return field;
 	}
 
