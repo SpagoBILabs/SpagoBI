@@ -648,7 +648,13 @@ refreshWorksheetPreview : function () {
 		// get the initial worksheet template
 		worksheetDefinition = this.worksheetDesignerPanel.worksheetTemplate;
 	}
-	//this.addAdditionalData(worksheetDefinition);
+	try{
+		this.addAdditionalData(worksheetDefinition);
+	} catch(e) {
+		//if an exception occours do not add the additional data
+		Sbi.error("Error adding the additional data");
+	}
+	
 	var template = Ext.util.JSON.encode({
 		'OBJECT_WK_DEFINITION' : worksheetDefinition,
 		'OBJECT_QUERY' : queriesCatalogue
@@ -667,12 +673,8 @@ refreshWorksheetPreview : function () {
 			if(additionalData!=undefined && additionalData!=null){
 				var sheets = sheetTemplate.sheets;
 				for(var i=0; i<sheets.length; i++){
-					if(additionalData[i]!=undefined && 
-							additionalData[i]!=null && 
-								additionalData[i].data!=undefined && 
-									additionalData[i].data!=null && 
-										!Ext.isEmpty(additionalData[i].data) && 
-											sheets[i].content.crosstabDefinition!=undefined && 
+					if(additionalData[i]!=undefined && 	additionalData[i]!=null && 	additionalData[i].data!=undefined && 
+									additionalData[i].data!=null && !Ext.isEmpty(additionalData[i].data) &&  sheets[i].content.crosstabDefinition!=undefined && 
 												sheets[i].content.crosstabDefinition!=null){
 						if (additionalData[i].data.crosstabDefinition) {
 							var crosstabDefinition = additionalData[i].data.crosstabDefinition;
