@@ -98,6 +98,7 @@ author: Alberto Ghedin
 	
 	<head>
 		<%@include file="commons/includeExtJS.jspf" %>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeCytoscapeJS.jspf" %>
 		<%@include file="commons/includeSbiNetworkJS.jspf"%>
 		
