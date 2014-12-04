@@ -15,14 +15,14 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <link rel="styleSheet" href ="../css/network.css" type="text/css" />
 
 <!-- Include localized labels  -->
-<script type="text/javascript" src='../js/spagobi/locale/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formats/<%=locale.getLanguage()%>.js'/></script>
 
 <!-- START-DEBUG -->
 <script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
 <script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
 <script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
 <script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
-<script type="text/javascript" src='../js/spagobi/locale/LocaleUtils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formats/LocaleUtils.js'/></script>
 <script type="text/javascript" src='../js/spagobi/network/NetworkObject.js'/></script>
 <script type="text/javascript" src='../js/spagobi/network/NetworkInfoPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/network/NetworkContainerPanel.js'/></script>
