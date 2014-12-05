@@ -100,8 +100,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
- *
+ * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini
+ *          (monica.franceschini@eng.it)
+ * 
  */
 @Path("/selfservicedataset")
 public class SelfServiceDataSetCRUD {
@@ -210,7 +211,8 @@ public class SelfServiceDataSetCRUD {
 				}
 			}
 			boolean isGeoDataset = false;
-			// all execution action are added ONLY if the relative engine (getted throught the driver) exists.
+			// all execution action are added ONLY if the relative engine
+			// (getted throught the driver) exists.
 			if (geoEngine != null && typeDocWizard == null || typeDocWizard.equalsIgnoreCase("GEO")) {
 				try {
 					String meta = datasetJSON.getString("meta");
@@ -219,7 +221,8 @@ public class SelfServiceDataSetCRUD {
 					logger.error("Error during ceck of Geo spatial column", e);
 				}
 				if (isGeoDataset)
-					actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
+					actions.put(georeportAction); // Annotated view map action
+													// to release SpagoBI 4
 			}
 			if (wsEngine != null && typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT")) {
 				actions.put(worksheetAction);
@@ -231,7 +234,8 @@ public class SelfServiceDataSetCRUD {
 
 			datasetJSON.put("actions", actions);
 			if (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("GEO")) {
-				// if is caming from myAnalysis - create Geo Document - must shows only ds geospatial --> isGeoDataset == true
+				// if is caming from myAnalysis - create Geo Document - must
+				// shows only ds geospatial --> isGeoDataset == true
 				if (geoEngine != null && isGeoDataset)
 					datasetsJSONReturn.put(datasetJSON);
 			} else
@@ -262,7 +266,8 @@ public class SelfServiceDataSetCRUD {
 
 			try {
 
-				// ATTENTION! This Delete Dataset Also if there are documents using it, this could lead to missing link in documents
+				// ATTENTION! This Delete Dataset Also if there are documents
+				// using it, this could lead to missing link in documents
 				DAOFactory.getDataSetDAO().deleteDataSetNoChecks(ds.getId());
 				deleteDatasetFile(ds);
 
@@ -336,6 +341,7 @@ public class SelfServiceDataSetCRUD {
 			String meta = request.getParameter(DataSetConstants.METADATA);
 			// attributes for persisting dataset
 			String persist = request.getParameter("persist");
+			String persistTablePrefix = request.getParameter("tablePrefix");
 			String persistTableName = request.getParameter("tableName");
 
 			IDataSet ds = dao.loadDataSetByLabel(label);
@@ -376,7 +382,8 @@ public class SelfServiceDataSetCRUD {
 			}
 
 			// Dataset persistence
-			// Manage persistence of dataset if required. On modify it will drop and create the destination table!
+			// Manage persistence of dataset if required. On modify it will drop
+			// and create the destination table!
 			if ((persist != null) && (persist.equalsIgnoreCase("true"))) {
 				logger.debug("Start persistence...");
 				// gets the dataset object informations
@@ -384,7 +391,7 @@ public class SelfServiceDataSetCRUD {
 				dataset.setPersisted(true);
 				if ((persistTableName != null) && (persistTableName.length() > 0)) {
 					// use specified name
-					dataset.setPersistTableName(persistTableName);
+					dataset.setPersistTableName(persistTablePrefix.toUpperCase() + persistTableName.toUpperCase());
 				} else {
 					// otherwise use dataset name as table name
 					String name = request.getParameter("name");
@@ -424,7 +431,8 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	/*
-	 * Change the scope of the dataset. If the dataset is private change it to public (SHARE) If the dataset is public change it to private (UNSHARE)
+	 * Change the scope of the dataset. If the dataset is private change it to
+	 * public (SHARE) If the dataset is public change it to private (UNSHARE)
 	 */
 	@POST
 	@Path("/share")
@@ -442,7 +450,8 @@ public class SelfServiceDataSetCRUD {
 
 			logParam.put("LABEL", ds.getLabel());
 			if (ds.isPublic()) {
-				// If dataset is shared change it to unshared (from public to private)
+				// If dataset is shared change it to unshared (from public to
+				// private)
 				ds.setPublic(false);
 			} else {
 				// Share dataset (from private to public)
@@ -484,23 +493,28 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 
-	// Modifiy the original file associated to the dataset adding a column with correct values to use for geo hierarchy
-	// then set this column as the hierarchy level column inside the dataset metadata
+	// Modifiy the original file associated to the dataset adding a column with
+	// correct values to use for geo hierarchy
+	// then set this column as the hierarchy level column inside the dataset
+	// metadata
 	private IDataSet normalizeDataset(IDataSet dataSet, String datasetMetadata) {
 		try {
 
-			// Check if the .sibling file is present (required for normalization)
+			// Check if the .sibling file is present (required for
+			// normalization)
 			MeasureCatalogue measureCatalogue = MeasureCatalogueSingleton.getMeasureCatologue();
 			if (measureCatalogue.isValid()) {
 				MetaModelWrapper metamodelWrapper = measureCatalogue.getMetamodelWrapper();
 				SiblingsFileWrapper siblingsFile = metamodelWrapper.getSiblingsFileWrapper();
 				if (siblingsFile != null) {
-					// Siblings file found, proceed with the validation of the dataset
+					// Siblings file found, proceed with the validation of the
+					// dataset
 					dataSet.loadData(0, 10, GeneralUtilities.getDatasetMaxResults());
 					IDataStore dataStore = dataSet.getDataStore();
 
 					if (datasetMetadata != null) {
-						// validation of columns with specified Hierarchies and with numeric Type
+						// validation of columns with specified Hierarchies and
+						// with numeric Type
 						Map<String, HierarchyLevel> hierarchiesColumnsToCheck = getHierarchiesColumnsToCheck(datasetMetadata);
 
 						GeoSpatialDimensionDatasetNormalizer geoDatasetNormalizer = new GeoSpatialDimensionDatasetNormalizer();
@@ -521,14 +535,16 @@ public class SelfServiceDataSetCRUD {
 			logger.debug(ex.getMessage());
 		}
 
-		return dataSet; // could return the original dataSet or a modified version
+		return dataSet; // could return the original dataSet or a modified
+						// version
 
 	}
 
 	private void notificationManagement(HttpServletRequest req, IDataSet currentDataset, IDataSet updatedDataset) {
 
 		try {
-			// DatasetNotificationManager dsNotificationManager = new DatasetNotificationManager();
+			// DatasetNotificationManager dsNotificationManager = new
+			// DatasetNotificationManager();
 			IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 
 			DatasetNotificationManager dsNotificationManager = new DatasetNotificationManager(msgBuilder);
@@ -761,7 +777,8 @@ public class SelfServiceDataSetCRUD {
 					}
 				}
 			} else {
-				// no currentLicence, then check if licence is set for the first time
+				// no currentLicence, then check if licence is set for the first
+				// time
 				if ((updatedLicence != null) && (!updatedLicence.isEmpty())) {
 					return true;
 				}
@@ -849,7 +866,8 @@ public class SelfServiceDataSetCRUD {
 			dao.setUserProfile(profile);
 			String datasetMetadata = req.getParameter("datasetMetadata");
 			IDataSet dataSet;
-			// check if configuration for limit dataset preview is active then use it
+			// check if configuration for limit dataset preview is active then
+			// use it
 			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
 			Config previewRowsConfig = configDao.loadConfigParametersByLabel(previewRowsConfigLabel);
 			String limitPreview = req.getParameter("limitPreview");
@@ -884,7 +902,8 @@ public class SelfServiceDataSetCRUD {
 			JSONDataWriter dataSetWriter = new JSONDataWriter();
 			dataSetWriter.setSetRenderer(true);
 			JSONObject gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
-			// remove the recNo inside fields that is not managed by DynamicGridPanel
+			// remove the recNo inside fields that is not managed by
+			// DynamicGridPanel
 			JSONObject metadata = gridDataFeed.getJSONObject("metaData");
 			if (metadata != null) {
 				JSONArray fieldsArray = metadata.getJSONArray("fields");
@@ -907,11 +926,13 @@ public class SelfServiceDataSetCRUD {
 			if (datasetMetadata != null) {
 				ValidationErrors validationErrors = new ValidationErrors();
 
-				// validation of columns with specified Hierarchies and with numeric Type
+				// validation of columns with specified Hierarchies and with
+				// numeric Type
 				Map<String, HierarchyLevel> hierarchiesColumnsToCheck = getHierarchiesColumnsToCheck(datasetMetadata);
 
 				if (!hierarchiesColumnsToCheck.isEmpty()) {
-					// We get the category of the dataset and with this we search the appropriate validator
+					// We get the category of the dataset and with this we
+					// search the appropriate validator
 					Integer categoryId = dataSet.getCategoryId();
 
 					if (categoryId != null) {
@@ -929,7 +950,8 @@ public class SelfServiceDataSetCRUD {
 							Locale locale = msgBuild.getLocale(req);
 							geoValidator.setLocale(locale);
 
-							// Validate the dataset and return the fields not valid
+							// Validate the dataset and return the fields not
+							// valid
 							ValidationErrors hierarchiesColumnsValidationErrors = geoValidator.validateDataset(dataStore, hierarchiesColumnsToCheck);
 							if (!hierarchiesColumnsValidationErrors.isEmpty()) {
 								validationErrors.addAll(hierarchiesColumnsValidationErrors);
@@ -941,7 +963,8 @@ public class SelfServiceDataSetCRUD {
 
 				}
 				if (!validationErrors.isEmpty()) {
-					// this create an array containing the fields with error for each rows
+					// this create an array containing the fields with error for
+					// each rows
 					JSONArray errorsArray = validationErrorsToJSONObject(validationErrors);
 					gridDataFeed.put("validationErrors", errorsArray);
 
@@ -1243,7 +1266,8 @@ public class SelfServiceDataSetCRUD {
 		}
 
 		if (id == -1) {
-			// creating a new dataset, the file uploaded has to be renamed and moved
+			// creating a new dataset, the file uploaded has to be renamed and
+			// moved
 			toReturn.setUseTempFile(true);
 
 			if (savingDataset) {
@@ -1322,7 +1346,8 @@ public class SelfServiceDataSetCRUD {
 		return jsonDsConfig;
 	}
 
-	// This method rename a file and move it from resources\dataset\files\temp to resources\dataset\files
+	// This method rename a file and move it from resources\dataset\files\temp
+	// to resources\dataset\files
 	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath, String fileType) {
 		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
 		String fileNewPath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
@@ -1331,8 +1356,10 @@ public class SelfServiceDataSetCRUD {
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
-			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to
+			 * the specified destination file. The directory holding the
+			 * destination file is created if it does not exist. If the
+			 * destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
@@ -1464,7 +1491,14 @@ public class SelfServiceDataSetCRUD {
 			if (dataSet instanceof FileDataSet) {
 				FileDataSet fileDataSet = (FileDataSet) dataSet;
 				FileDataProxy fileDataProxy = fileDataSet.getDataProxy();
-				fileDataProxy.setUseTempFile(fileDataSet.useTempFile); // inform the DataProxy to use a tempFile or not
+				fileDataProxy.setUseTempFile(fileDataSet.useTempFile); // inform
+																		// the
+																		// DataProxy
+																		// to
+																		// use a
+																		// tempFile
+																		// or
+																		// not
 			}
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
@@ -1493,7 +1527,8 @@ public class SelfServiceDataSetCRUD {
 
 				String gussedType = guessColumnType(dataStore, i);
 
-				// Setting mandatory property to defaults, if specified they will be overridden
+				// Setting mandatory property to defaults, if specified they
+				// will be overridden
 				if ("Double".equalsIgnoreCase(gussedType)) {
 					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 					Class type = Class.forName("java.lang.Double");
@@ -1558,7 +1593,9 @@ public class SelfServiceDataSetCRUD {
 
 			}
 
-			dsMetadata = dsp.metadataToXML(dataStore.getMetaData()); // using new parser
+			dsMetadata = dsp.metadataToXML(dataStore.getMetaData()); // using
+																		// new
+																		// parser
 		} catch (Exception e) {
 			logger.error("Error while executing dataset for test purpose", e);
 			throw new RuntimeException("Error while executing dataset for test purpose", e);

@@ -33,6 +33,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     String fromDocBrowser = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_DOCBROWSER);
     String contextName = ChannelUtilities.getSpagoBIContextName(request);
     String userCanPersist = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.USER_CAN_PERSIST);
+	String tablePrefix = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.TABLE_NAME_PREFIX);
 
 %>
 
@@ -50,6 +51,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
             , qbeEditDatasetUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditDatasetActionUrl) %>'
             , georeportEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(georeportEditActionUrl) %>'
             , user: Sbi.user.userUniqueIdentifier
+            , tablePrefix: '<%=tablePrefix%>'            
             , typeDoc: '<%=typeDoc%>'
             , fromMyAnalysis: '<%=fromMyAnalysis%>'
             , userCanPersist: '<%=userCanPersist%>'

@@ -25,6 +25,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		metaInfo:null,
 		isOwner: false,
 		userCanPersist: false,
+		tablePrefix: '',
 		isTabbedPanel:false //if false rendering as 'card layout (without tabs)
 	}
 
@@ -87,18 +88,22 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			hidePersistFields = "false";
 		}
 		
+		//30 characters are the maximum for Oracle tables
+		var tableNamePrefix = this.tablePrefix+this.user+"_"
+		var maxTableNameLength = 30 - (tableNamePrefix.length);
 		
 		//General tab
 		var toReturn = [];
 		
 		toReturn = [{label:"Id", name:"id",type:"text",hidden:"true", value:this.record.id},
-         {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'File'},
-         {label: LN('sbi.ds.label'), name:"label", type:"text",hidden:"true", /*mandatory:true, readOnly:(this.isNew || this.isOwner)?false:true,*/ value:this.record.label}, 
-         {label: LN('sbi.ds.name'), name:"name", type:"text", mandatory:true, readOnly:(!this.isOwner), value:this.record.name},
-         {label: LN('sbi.ds.description'), name:"description", type:"textarea", readOnly:(!this.isOwner), value:this.record.description},
-         {label: LN('sbi.ds.isPersisted'), name:"persist", type:"checkbox", value:false, hidden: hidePersistFields},
-         {label: LN('sbi.ds.persistTableName'), name:"tableName", type:"text", hidden: hidePersistFields, id:"tableNameId", disabled: true }
-         ];
+		            {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'File'},
+		            {label: LN('sbi.ds.label'), name:"label", type:"text",hidden:"true", /*mandatory:true, readOnly:(this.isNew || this.isOwner)?false:true,*/ value:this.record.label}, 
+		            {label: LN('sbi.ds.name'), name:"name", type:"text", mandatory:true, readOnly:(!this.isOwner), value:this.record.name},
+		            {label: LN('sbi.ds.description'), name:"description", type:"textarea", readOnly:(!this.isOwner), value:this.record.description},
+		            {label: LN('sbi.ds.isPersisted'), name:"persist", type:"checkbox", value:false, hidden: hidePersistFields},
+		            {label: LN('sbi.ds.persistTablePrefix'), name:"tablePrefix",type:"text",hidden: hidePersistFields,readOnly:true, value:tableNamePrefix, id:"tablePrefixId", disabled:true, hideBorder:true },       
+		            {label: LN('sbi.ds.persistTableName'), name:"tableName", type:"text", hidden: hidePersistFields, id:"tableNameId", disabled: true, maxLength: maxTableNameLength, msgTarget:'under' }
+		            ];
 		
 		var fields = Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(toReturn);
 		
@@ -107,17 +112,22 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			if (fields[i].name == 'persist'){
 				fields[i].on("change", function(cb, checked) {
 					if (checked){
+						 Ext.getCmp('tableNameId').validationEvent = true;
 				         Ext.getCmp('tableNameId').allowBlank = false;
 					     Ext.getCmp('tableNameId').setDisabled(!checked);
-					     Ext.getCmp('tableNameId').regexText = "Invalid table name";
-					     Ext.getCmp('tableNameId').regex = /^([a-zA-Z0-9_-]+)$/;
+					     Ext.getCmp('tableNameId').regexText = LN('sbi.ds.persistTableName.error');
+					     Ext.getCmp('tableNameId').regex = /^([a-zA-Z0-9_]+)$/;
 				         Ext.getCmp('tableNameId').validate();
+				         
+					     Ext.getCmp('tablePrefixId').setDisabled(!checked);
 					} else {
+						 Ext.getCmp('tableNameId').validationEvent = false;
 				         Ext.getCmp('tableNameId').allowBlank = true;
 					     Ext.getCmp('tableNameId').setDisabled(!checked);
 					     Ext.getCmp('tableNameId').regex = '';
 				         Ext.getCmp('tableNameId').validate();
-
+				         
+					     Ext.getCmp('tablePrefixId').setDisabled(!checked);
 					}
 				 });
 				break;
