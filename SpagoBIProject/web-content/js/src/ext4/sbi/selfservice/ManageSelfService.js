@@ -50,6 +50,7 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 			, typeDoc : config.typeDoc
 			, fromMyAnalysis: config.fromMyAnalysis
 			, userCanPersist: config.userCanPersist
+			, tablePrefix: config.tablePrefix
 		};
 		
 		if (Sbi.settings.browser.showTitle !== undefined && Sbi.settings.browser.showTitle){

@@ -189,15 +189,20 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
   		  	  , id: f.id 
   		  	  , name: f.name
 	          , width: 500 
-	          , height: 30
+	          //, height: 30
 			  , activeError: this.isError(f)
 			  , validationEvent: f.mandatory || false
 			  , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
-	          , margin: '0 0 0 10'
+			  , blankText: LN('sbi.ds.field.mandatory')		  
+			  , margin: '5 0 0 10'
+			  , maxLength: f.maxLength
+			  , enforceMaxLength: (f.maxLength !== undefined)? true: false 
+			  , msgTarget: f.msgTarget || 'qtip'
 	          , readOnly: f.readOnly || false
 //	          , labelStyle:'font-weight:bold;' //usare itemCls : <tagstyle>
 	          , value: f.value || f.defaultValue || ""
 	          , disabled: f.disabled || false
+	          , fieldStyle: (f.hideBorder !== undefined && f.hideBorder == true)? "border:none 0px black; background-image:none;":""	          
 	        });
 		return field;
 	}
@@ -215,7 +220,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 			  , activeError:   this.isError(f)
 			  , validationEvent: f.mandatory || false
 			  , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
-	          , margin: '0 0 0 10'
+	          , margin: '5 0 0 10'
 	          , readOnly: f.readOnly || false
 //	          , labelStyle:'font-weight:bold;' //usare itemCls : <tagstyle>
 	          , value: f.value || f.defaultValue || ""
@@ -231,7 +236,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		  fieldLabel: f.label 
 		  , name: f.name
           , width: 250  
-          , margin: '0 0 0 10'
+          , margin: '5 0 0 10'
           , validationEvent: f.mandatory || false
           , allowBlank : (f.mandatory !== undefined && f.mandatory==true)?false:true
     	  , activeError:   this.isError(f)
@@ -253,7 +258,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 			store :tmpStore,
 			name : f.name,			
 			width : 500,
-			 margin: '2 0 0 10',
+			margin: '2 0 0 10',
 			displayField : tmpValueText,
 			valueField : tmpValueField,
 			readOnly: f.readOnly || false,
@@ -311,7 +316,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 			var tmpField = this.fieldMap[f];
 			if (tmpField.validationEvent !== undefined && tmpField.validationEvent == true && 
 				tmpField.allowBlank !== undefined && tmpField.allowBlank == false &&
-				(tmpField.value == undefined || tmpField.value == "")){
+				(tmpField.value == undefined || tmpField.value == "" || tmpField.validate() == false)){
 				toReturn = false;
 				break;
 			}			   		 	
