@@ -179,6 +179,7 @@
 
 <CONFIG label="SPAGOBI.SOCIAL_ANALYSIS_URL" name="SPAGOBI SOCIAL ANALYSIS URL" description="SPAGOBI SOCIAL ANALYSIS URL" isActive="true" valueCheck="/SpagoBISocialAnalysis/restful-services/start" valueType="STRING" category="SOCIAL_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE" name="SPAGOBI SOCIAL ANALYSIS STATUS" description="SPAGOBI SOCIAL ANALYSIS STATUS" isActive="true" valueCheck="true" valueType="STRING" category="SOCIAL_CONFIGURATION"/>
-
+<CONFIG label="SPAGOBI.DATASET.PREVIEW_ROWS" name="Number of rows to show for dataset preview" description="Number of rows to show for dataset preview" isActive="true" valueCheck="1000" valueType="NUM" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.DATASET.PERSIST.TABLE_PREFIX" name="Table name prefix for dataset persistence" description="Table name prefix for dataset persistence" isActive="true" valueCheck="D_" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 </CONFIGS>
 
