@@ -12,15 +12,14 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/commons/common.css", currTheme)%>' />
 <LINK rel='StyleSheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/domain/domain.css",currTheme)%>' />
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/commons/" + locale.getLanguage() + ".js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/" + locale.getLanguage() + ".js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/" + locale.getLanguage() + ".js")%>'></script>
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Settings.js")%>'></script>
 
 <!-- START-DEBUG -->
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Log.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Format.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/LocaleUtils.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/LocaleUtils.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/exception/ExceptionHandler.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Session.js")%>'></script>	
@@ -158,4 +157,4 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
  <%-- js custom overrides --%>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/customization/custom.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLinkByTheme(request, "js/commons/Settings.js",currTheme)%>"></script> 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLinkByTheme(request, "js/locale/"+locale.getLanguage()+".js",currTheme)%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLinkByTheme(request, "js/formats/"+locale.getLanguage()+".js",currTheme)%>"></script>

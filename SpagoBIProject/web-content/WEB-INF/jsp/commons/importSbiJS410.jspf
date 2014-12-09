@@ -15,15 +15,14 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/commons/" + locale.getLanguage() + ".js")%>'></script>	
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/" + locale.getLanguage() + ".js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/" + locale.getLanguage() + ".js")%>'></script>
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Settings.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/DatasetMetadataEditorMapping.js")%>'></script>
 
 <!-- START-DEBUG -->
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Format.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/LocaleUtils.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/LocaleUtils.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/exception/ExceptionHandler.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/decorator/LoadMask.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Format.js")%>'></script>
@@ -141,7 +140,7 @@ END-PRODUCTION -->
  
 <%-- js custom overrides --%>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLinkByTheme(request, "js/commons/Settings.js",currTheme)%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLinkByTheme(request, "js/locale/"+locale.getLanguage()+".js",currTheme)%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLinkByTheme(request, "js/formats/"+locale.getLanguage()+".js",currTheme)%>"></script>
 <!-- 
 <script type="text/javascript">
 Ext.Ajax.timeout = 300000;

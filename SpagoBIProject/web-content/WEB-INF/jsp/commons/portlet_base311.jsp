@@ -369,7 +369,8 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <LINK rel='StyleSheet' 
       href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/overrides/resources/css/overrides.css")%>' 
       type='text/css' />
-      
+    
+<%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>  
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS311.jspf"%>
 
 <script>

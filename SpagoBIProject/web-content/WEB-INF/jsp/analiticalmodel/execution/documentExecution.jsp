@@ -36,6 +36,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%! private static transient Logger logger = Logger.getLogger(ExecuteDocumentAction.class);%>
 
+	<%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
 	<%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
 	
 	<script type="text/javascript">

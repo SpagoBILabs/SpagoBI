@@ -4,7 +4,9 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
-Ext.ns("Sbi.locale");
+  
+ 
+ Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
 Sbi.locale.formats = {
@@ -23,7 +25,6 @@ Sbi.locale.formats = {
 			groupingSize: 3,
 			nullValue: ''
 		},
-	
 		string: {
 			trim: true,
     		maxLength: null,
@@ -47,5 +48,10 @@ Sbi.locale.formats = {
     		falseSymbol: 'falso',
     		nullValue: ''
 		}
-		
 };
+
+//===================================================================
+//MESSAGE BOX BUTTONS
+//===================================================================
+Ext.Msg.buttonText.yes = 'S\u00ec'; 
+Ext.Msg.buttonText.no = 'No';
