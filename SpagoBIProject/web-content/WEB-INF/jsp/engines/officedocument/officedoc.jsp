@@ -14,6 +14,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="java.net.URLEncoder"%>
 <%@page import="java.util.Locale"%>
 
+<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
 <% 
@@ -51,8 +52,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	<%-- ---------------------------------------------------------------------- --%>
 	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-3.1.1/ux/imageeditor/ImageEditor.js")%>'></script>
 	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-3.1.1/ux/imageeditor/PanPanel.js")%>'></script>
-	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/"+ locale.getLanguage() +".js")%>'></script>
-	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/LocaleUtils.js")%>'></script> 
+	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/"+ locale.getLanguage() +".js")%>'></script>
+	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/LocaleUtils.js")%>'></script> 
 	<script type="text/javascript">
 		Ext.onReady(function() { 
 			Ext.QuickTips.init();		
