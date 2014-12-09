@@ -24,9 +24,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.analiticalmodel.document.service.ExecuteBIObjectModule"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.analiticalmodel.execution.service.ExecuteDocumentAction"%>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/LocaleUtils.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/commons/" + locale.getLanguage() + ".js")%>'></script>	
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/" + locale.getLanguage() + ".js")%>'></script>
+
+<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/LocaleUtils.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/" + locale.getLanguage() + ".js")%>'></script>
 
 
 <%

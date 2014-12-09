@@ -13,6 +13,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
+<%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
 
 <script type="text/javascript"

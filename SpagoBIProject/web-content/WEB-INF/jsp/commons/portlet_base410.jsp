@@ -385,5 +385,6 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 </script>
 
 
+<%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/overrides.js"/></script>

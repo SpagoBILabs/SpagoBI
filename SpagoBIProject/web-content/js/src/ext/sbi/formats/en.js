@@ -1,4 +1,12 @@
-Ext.ns("Sbi.locale");
+/** SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+ 
+  
+ 
+ Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
 Sbi.locale.formats = {
@@ -14,17 +22,17 @@ Sbi.locale.formats = {
 		*/
 		
 		float: {
-			decimalSeparator: ',',
+			decimalSeparator: '.',
 			decimalPrecision: 2,
-			groupingSeparator: ' ',
+			groupingSeparator: ',',
 			groupingSize: 3,
 			//currencySymbol: '$',
 			nullValue: ''
 		},
 		int: {
-			decimalSeparator: ',',
+			decimalSeparator: '.',
 			decimalPrecision: 0,
-			groupingSeparator: ' ',
+			groupingSeparator: ',',
 			groupingSize: 3,
 			//currencySymbol: '$',
 			nullValue: ''
@@ -41,12 +49,12 @@ Sbi.locale.formats = {
 		},
 		
 		date: {
-			dateFormat: 'd/m/Y',
+			dateFormat: 'm/Y/d',
     		nullValue: ''
 		},
 		
 		timestamp: {
-			dateFormat: 'd/m/Y H:i:s',
+			dateFormat: 'm/Y/d H:i:s',
     		nullValue: ''
 		},
 		
@@ -56,3 +64,10 @@ Sbi.locale.formats = {
     		nullValue: ''
 		}
 };
+
+
+//===================================================================
+//MESSAGE BOX BUTTONS
+//===================================================================
+Ext.Msg.buttonText.yes = 'Yes'; 
+Ext.Msg.buttonText.no = 'No';

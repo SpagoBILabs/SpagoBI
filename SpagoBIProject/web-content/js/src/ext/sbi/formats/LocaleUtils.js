@@ -6,7 +6,7 @@
  
   
  
- Ext.ns("Sbi.locale");
+Ext.ns("Sbi.locale");
 Ext.ns("Sbi.commons");
 
 Sbi.locale.dummyFormatter = function(v){return v;};
@@ -43,8 +43,13 @@ if(Sbi.commons.Format){
 };
 
 Sbi.locale.localize = function(key) {
-	if(!Sbi.locale.ln) return key;
-	return Sbi.locale.ln[key] || key;
+	var value = messageResource.get(key, 'messages');
+	
+	//If the message is not defined in the current language the english message is used
+	if (value == key){
+		value = messageResource.get(key, 'messages', 'en_US');
+	}
+	return value || key;
 };
 
 // alias

@@ -11,7 +11,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	<%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 	
 	<% if ( "WEB".equalsIgnoreCase(sbiMode) ) { %>
-   
+		
+		<%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
 	   	<%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
 	   	 
 	    <%
