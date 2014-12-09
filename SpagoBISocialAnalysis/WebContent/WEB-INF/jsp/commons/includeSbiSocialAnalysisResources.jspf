@@ -6,9 +6,9 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
  <script type="text/javascript" src="<%= application.getContextPath() %>/js/lib/extjs-4/ext-all-debug.js"/></script>
 
 <!-- Include localized labels  -->
-<script type="text/javascript" src="<%= application.getContextPath() %>/js/spagobi/locale/<%=locale %>.js"/></script>
+<script type="text/javascript" src="<%= application.getContextPath() %>/js/spagobi/formats/<%=locale %>.js"/></script>
 
-<script type="text/javascript" src="<%= application.getContextPath() %>/js/spagobi/locale/LocaleUtils.js"></script>
+<script type="text/javascript" src="<%= application.getContextPath() %>/js/spagobi/formats/LocaleUtils.js"></script>
 
 <!-- Include SOCIALANALYSIS stylesheets -->
 <link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/twitter.css" />

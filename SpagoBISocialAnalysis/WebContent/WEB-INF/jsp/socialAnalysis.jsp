@@ -42,8 +42,8 @@ Giorgio Federici (giorgio.federici@eng.it)
 <html>
 	
 	<head>
-	
 		<%@include file="commons/includeExtJS.jspf" %>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSbiSocialAnalysisJS.jspf"%>
 	
 	</head>
