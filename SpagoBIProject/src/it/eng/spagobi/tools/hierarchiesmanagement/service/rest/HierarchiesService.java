@@ -458,16 +458,13 @@ public class HierarchiesService {
 			// Valorization of prepared statement placeholder
 			// -----------------------------------------------
 			final int COLUMNSNUMBER = 40;
-			// HIER_CD column
-			preparedStatement.setString(1, hierarchyCode);
-			// HIER_NM column
-			preparedStatement.setString(2, hierarchyName);
+
 			// HIER_DS column
-			preparedStatement.setString(3, hierarchyDescription);
+			preparedStatement.setString(1, hierarchyDescription);
 			// HIER_TP column
-			preparedStatement.setString(4, hierarchyType);
+			preparedStatement.setString(2, hierarchyType);
 			// SCOPE column
-			preparedStatement.setString(5, hierarchyScope);
+			preparedStatement.setString(3, hierarchyScope);
 			// set all level column to null by default
 			for (int i = 6; i < COLUMNSNUMBER + 1; i++) {
 				preparedStatement.setNull(i, java.sql.Types.VARCHAR);
@@ -475,7 +472,9 @@ public class HierarchiesService {
 
 			// explore the path and set the corresponding columns
 			// keeps the column number
-			int colIndex = 6;
+			int colIndex = 4;
+			// HIER_CD e HIER_NM are the columns 4 and 5
+
 			for (int i = 0; i < path.size(); i++) {
 				HierarchyTreeNodeData node = path.get(i);
 
@@ -523,8 +522,8 @@ public class HierarchiesService {
 		String hierarchyDescriptionCol = AbstractJDBCDataset.encapsulateColumnName("HIER_DS", dataSource);
 		String hierarchyTypeCol = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
 		String hierarchyScopeCol = AbstractJDBCDataset.encapsulateColumnName("SCOPE", dataSource);
-		StringBuffer columns = new StringBuffer(hierarchyNameCode + "," + hierarchyNameCol + "," + hierarchyDescriptionCol + "," + hierarchyTypeCol + ","
-				+ hierarchyScopeCol + ",");
+		StringBuffer columns = new StringBuffer(hierarchyDescriptionCol + "," + hierarchyTypeCol + "," + hierarchyScopeCol + "," + hierarchyNameCode + ","
+				+ hierarchyNameCol + ",");
 
 		for (int i = 1; i < 16; i++) {
 			String CD_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEV" + i, dataSource);
@@ -600,6 +599,10 @@ public class HierarchiesService {
 
 		// select
 		StringBuffer selectClauseBuffer = new StringBuffer(" ");
+		String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+		String hierarchyCodeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
+		selectClauseBuffer.append(hierarchyCodeColumn + "," + hierarchyNameColumn + ",");
+
 		for (int i = 1; i < 16; i++) {
 			String CD_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEV" + i, dataSource);
 			String NM_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEV" + i, dataSource);
@@ -657,6 +660,10 @@ public class HierarchiesService {
 
 		// select
 		StringBuffer selectClauseBuffer = new StringBuffer(" ");
+		String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+		String hierarchyCodeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
+		selectClauseBuffer.append(hierarchyCodeColumn + "," + hierarchyNameColumn + ",");
+
 		for (int i = 1; i < 16; i++) {
 			String CD_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEV" + i, dataSource);
 			String NM_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEV" + i, dataSource);
@@ -758,7 +765,8 @@ public class HierarchiesService {
 					case 26:
 					case 28:
 					case 30:
-						if (i == 30) {
+					case 32:
+						if (i == 32) {
 							// inject leafID into node
 							IField leafIdField = record.getFieldAt(i + 2);
 							String leafIdString = null;
