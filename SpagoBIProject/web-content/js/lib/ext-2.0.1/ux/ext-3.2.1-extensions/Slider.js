@@ -542,7 +542,7 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
     	if(containerCurrentValues){
 
     		var containerCurr = containerCurrentValues.first();
-    		currValue1 = 'Current value slider: '+currValue1; 
+    		currValue1 = 'Current value: '+currValue1; 
     		containerCurr.dom.innerHTML = currValue1;  
 
     		if(currValue2){
