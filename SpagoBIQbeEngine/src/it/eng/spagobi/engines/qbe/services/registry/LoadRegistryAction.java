@@ -205,7 +205,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			BigDecimal currValB = new BigDecimal(currValF.doubleValue());
 			BigDecimal prevValB = new BigDecimal(prevValF.doubleValue());
 			BigDecimal newValB = prevValB.add(currValB);
-			newValB.setScale(2, RoundingMode.CEILING);
+			newValB = newValB.setScale(2, RoundingMode.CEILING);
 			Float result = new Float(newValB.floatValue());
 			resultToReturn = result;
 		} else if (currentValue instanceof Double) {
@@ -215,14 +215,14 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			BigDecimal currValB = new BigDecimal(currValD.doubleValue());
 			BigDecimal prevValB = new BigDecimal(prevValD.doubleValue());
 			BigDecimal newValB = prevValB.add(currValB);
-			newValB.setScale(2, RoundingMode.CEILING);
+			newValB = newValB.setScale(2, RoundingMode.CEILING);
 			Double result = new Double(newValB.doubleValue());
 			resultToReturn = result;
 		} else if (currentValue instanceof BigDecimal) {
 			BigDecimal currVal = (BigDecimal) currentValue;
 			BigDecimal prevVal = (BigDecimal) previousValue;
 			BigDecimal result = prevVal.add(currVal);
-			result.setScale(2, RoundingMode.CEILING);
+			result = result.setScale(2, RoundingMode.CEILING);
 			resultToReturn = result;
 		} else {
 			logger.error("Error in measure type: trying to sum a value that is not a number");
