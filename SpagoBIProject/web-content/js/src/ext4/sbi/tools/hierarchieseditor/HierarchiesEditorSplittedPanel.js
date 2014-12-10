@@ -763,7 +763,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 							//this is the real root node
 							rootNode = rootNode.getChildAt(0);
 						}
-						var myJson= this.getJson(rootNode, this.newCustomHierarchyConfig.hierarchyType);
+						var myJson= this.getJson(rootNode, this.newCustomHierarchyConfig.type);
 						//add hierarchy structure to params
 						params.root = Ext.encode(myJson);
 						
