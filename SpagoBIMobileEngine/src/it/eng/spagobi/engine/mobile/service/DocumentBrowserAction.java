@@ -5,21 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.mobile.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
@@ -37,6 +22,21 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
 import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Monica Franceschini
@@ -120,9 +120,12 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction {
 			functionalities = DAOFactory.getLowFunctionalityDAO()
 					.loadUserFunctionalities(Integer.valueOf(functID), false,
 							profile);
-			HashMap<Integer, Integer> functToRet = new HashMap<Integer, Integer>();
+			HashMap<Integer, String> functToRet = new HashMap<Integer, String>();
 
 			List toRet = new ArrayList();
+			
+			List toExplore = new ArrayList();
+			
 			toRet.addAll(functionalities);
 			for (int i = 0; i < functionalities.size(); i++) {
 				LowFunctionality lf = (LowFunctionality)functionalities.get(i);
@@ -136,17 +139,31 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction {
 					toRet.remove(functI);
 				}
 			}
-
-			while (toRet != null && toRet.size() == 1) {
-				Integer lonelyFolderId = ((LowFunctionality) toRet
-						.get(0)).getId();
-				toRet = DAOFactory
-						.getLowFunctionalityDAO()
-						.loadUserFunctionalities(lonelyFolderId, false, profile);
-				ArrayList innerobjects = fillInnerDocuments(lonelyFolderId.toString(), isHome,
-						profile);
-				objects.addAll(innerobjects);
+			List toremove = new ArrayList<LowFunctionality>();
+			List toreplace = new ArrayList<LowFunctionality>();
+			for(int i =0; i< toRet.size(); i++){
+				Integer folderId = ((LowFunctionality) toRet.get(i)).getId();
+				ArrayList innerobjects = fillInnerDocuments(folderId.toString(), isHome,profile);
+				if(innerobjects == null || innerobjects.isEmpty()){
+					String innerFolderIds = functToRet.get(folderId);
+					
+					String [] ids = innerFolderIds.split(",");
+					
+					for (int j = 0; j < ids.length; j++) {
+						if(ids[j] != null && !ids[j].equals("")){
+							Integer innerFolderId = Integer.valueOf(ids[j]);
+							LowFunctionality innerFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(innerFolderId, false);
+							innerobjects = fillInnerDocuments(innerFolderId.toString(), isHome, profile);
+							toremove.add((LowFunctionality) toRet.get(i));
+							toRet.add(innerFolder);
+						}
+					}
+				}
 			}
+			toRet.removeAll(toremove);
+
+			
+			
 
 			JSONArray documentsJSON = (JSONArray) SerializerFactory
 					.getSerializer("application/json").serialize(objects,
@@ -190,7 +207,8 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction {
 		if (tmpObjects != null) {
 			for (Iterator it = tmpObjects.iterator(); it.hasNext();) {
 				BIObject obj = (BIObject) it.next();
-				if (ObjectsAccessVerifier.checkProfileVisibility(obj, profile))
+				if (ObjectsAccessVerifier.checkProfileVisibility(obj, profile) && (obj.getEngine().getDriverName()
+						.indexOf("Mobile") != -1))
 					objects.add(obj);
 			}
 		}
@@ -211,8 +229,22 @@ public class DocumentBrowserAction extends AbstractBaseHttpAction {
 							profile)
 							&& (biobj.getEngine().getDriverName()
 									.indexOf("Mobile") != -1)) {
-
-						toReturn.put(origin, lf.getId());
+						
+						String ids = (String)toReturn.get(origin);
+						if(ids == null){
+							ids =","+lf.getId()+",";
+						}else{
+							String [] idsArr = ids.split(",");
+							
+							if (!ArrayUtils.contains( idsArr, lf.getId()+"") ){
+								ids+=lf.getId()+",";
+							}else{
+								ids+="";
+							}
+						}
+						
+						
+						toReturn.put(origin, ids);
 					}
 				}
 			}
