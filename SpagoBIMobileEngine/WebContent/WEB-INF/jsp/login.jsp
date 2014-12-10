@@ -15,12 +15,15 @@ authors: Monica Franceschini
 <%@page import="it.eng.spago.base.RequestContainer"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+<%@page import="java.util.Locale"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
 	     pageEncoding="UTF-8"
 	     import="it.eng.spagobi.commons.SingletonConfig"%>
 
 <%
+Locale locale=new Locale("en","US");
+
 SingletonConfig serverConfig = SingletonConfig.getInstance();
 String roleToCheckLbl  =  SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
 String roleToCheckVal = "";
@@ -39,6 +42,7 @@ boolean logged = (previousProfile!=null);
 	<head>
 	
 
+		<%@ include file="/WEB-INF/jsp/includeMessageResource.jspf" %>
 		<%@ include file="/WEB-INF/jsp/importSenchaJSLibrary.jspf" %>
 		<%@ include file="/WEB-INF/jsp/constants.jspf" %>
 		<%@ include file="/WEB-INF/jsp/env.jspf" %>
