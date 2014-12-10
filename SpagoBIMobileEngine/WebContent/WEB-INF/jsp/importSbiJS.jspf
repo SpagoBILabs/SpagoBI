@@ -44,3 +44,5 @@
 <script type="text/javascript" src="../js/spagobi/execution/ParametersController.js"></script>
 <script type="text/javascript" src="../js/spagobi/widgets/Slider.js"></script>
 <script type="text/javascript" src="../js/spagobi/widgets/CustomToolbar.js"></script>
+<script type="text/javascript" src='../js/spagobi/formats/LocaleUtils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formats/<%=locale.getLanguage()%>.js'/></script>
