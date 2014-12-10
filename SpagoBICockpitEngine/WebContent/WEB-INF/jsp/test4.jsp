@@ -28,10 +28,14 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%
+	WhatIfEngineInstance whatIfEngineInstance;
+	Locale locale;
+	whatIfEngineInstance = (WhatIfEngineInstance)es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE );
+	locale = whatIfEngineInstance.getLocale();
+	
 	/**
 	WhatIfEngineInstance whatIfEngineInstance;
 	UserProfile profile;
-	Locale locale;
 	String isFromCross;
 	String spagobiServerHost;
 	String spagobiContext;
@@ -60,6 +64,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	
 	<head>
 		<%@include file="commons/includeExtJS4.jspf" %>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSpagoBICockpitJS4.jspf" %>
 
 		<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->

@@ -40,15 +40,14 @@ if(Sbi.commons.Format){
 };
 
 
-Sbi.locale.localize = function(key, params) {
-	if(!Sbi.locale.ln) return key;
-	var msg = Sbi.locale.ln[key];
-	if(msg) {
-		msg = Sbi.locale.sobstituteParams(Sbi.locale.ln[key], params);
-	} else {
-		msg = key;
+Sbi.locale.localize = function(key) {
+	var value = messageResource.get(key, 'messages');
+	
+	//If the message is not defined in the current language the english message is used
+	if (value == key){
+		value = messageResource.get(key, 'messages', 'en_US');
 	}
-	return  msg;
+	return value || key;
 };
 
 Sbi.locale.sobstituteParams = function(msg, params) {

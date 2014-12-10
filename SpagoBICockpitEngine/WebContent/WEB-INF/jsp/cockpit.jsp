@@ -95,6 +95,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		<title><%=docName.trim().length() > 0? docName: "SpagoBICockpitEngine"%></title>
        
         <%@include file="commons/includeExtJS4.jspf" %>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSpagoBICockpitJS4.jspf" %>
     </head>
 	
