@@ -198,9 +198,22 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			Integer result = currVal + prevVal;
 			resultToReturn = result;
 		} else if (currentValue instanceof Float) {
-			Float currVal = (Float) currentValue;
-			Float prevVal = (Float) previousValue;
-			Float result = currVal + prevVal;
+			Float currValF = (Float) currentValue;
+			Float prevValF = (Float) previousValue;
+			// have to pass through BigDecimal because java Math sometimes break on decimal count with float and double
+			BigDecimal currValB = new BigDecimal(currValF.doubleValue());
+			BigDecimal prevValB = new BigDecimal(prevValF.doubleValue());
+			BigDecimal newValB = prevValB.add(currValB);
+			Float result = new Float(newValB.floatValue());
+			resultToReturn = result;
+		} else if (currentValue instanceof Double) {
+			Double currValD = (Double) currentValue;
+			Double prevValD = (Double) previousValue;
+			// have to pass through BigDecimal because java Math sometimes break on decimal count with float and double
+			BigDecimal currValB = new BigDecimal(currValD.doubleValue());
+			BigDecimal prevValB = new BigDecimal(prevValD.doubleValue());
+			BigDecimal newValB = prevValB.add(currValB);
+			Double result = new Double(newValB.doubleValue());
 			resultToReturn = result;
 		} else if (currentValue instanceof BigDecimal) {
 			BigDecimal currVal = (BigDecimal) currentValue;
