@@ -105,6 +105,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
        
         <%@include file="commons/includeExtJS4.jspf" %>
+		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSpagoBICockpitJS4.jspf" %>
     </head>
 	

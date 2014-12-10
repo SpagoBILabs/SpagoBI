@@ -12,7 +12,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- script type="text/javascript" src='./SpagoBICockpitEngine/js/spagobi/commons/Settings.js'/></script-->	
 
 <!-- Include localized labels  -->
-<!-- script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext/sbi/locale/[...locale.getLanguage()...].js'/></script-->
+<!-- script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext/sbi/formats/[...locale.getLanguage()...].js'/></script-->
 
 
 <!-- START-DEBUG -->
