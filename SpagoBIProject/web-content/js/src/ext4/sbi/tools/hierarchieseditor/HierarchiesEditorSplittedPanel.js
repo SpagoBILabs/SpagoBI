@@ -753,17 +753,27 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 						}
 						
 						//valid hierarchy
-						var params;
-						if ((this.newCustomHierarchyConfig != undefined) && (this.newCustomHierarchyConfig != null )){
-							params = this.newCustomHierarchyConfig;
+						var params = {};
+						if (this.isInsert == true){
+							//creating a new hierarchy
+							if ((this.newCustomHierarchyConfig != undefined) && (this.newCustomHierarchyConfig != null )){
+								params = this.newCustomHierarchyConfig;
+							}
 						}
-
-						if (!this.isInsert){
+						else if (this.isInsert == false){
+							//editing an existing hierarchy
 							params.isInsert = this.isInsert;
+							params.code = rec.get("HIERARCHY_CD");
+							params.description = rec.get("HIERARCHY_DS");
+							params.name = rec.get("HIERARCHY_NM");
+							params.scope = rec.get("HIERARCHY_SC");
+							params.type = rec.get("HIERARCHY_TP");
+							params.dimension = this.comboDimensions.getValue();
+
 							//this is the real root node
 							rootNode = rootNode.getChildAt(0);
 						}
-						var myJson= this.getJson(rootNode, this.newCustomHierarchyConfig.type);
+						var myJson= this.getJson(rootNode, params.type);
 						//add hierarchy structure to params
 						params.root = Ext.encode(myJson);
 						
