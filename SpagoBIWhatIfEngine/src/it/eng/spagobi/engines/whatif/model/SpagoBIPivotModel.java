@@ -10,6 +10,8 @@
 
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMember;
+import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMemberManager;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
@@ -20,12 +22,14 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
+import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
@@ -39,6 +43,8 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	public static transient Logger logger = Logger.getLogger(SpagoBIPivotModel.class);
 	private final CellTransformationsStack pendingTransformations = new CellTransformationsStack();
 	private SpagoBICellSetWrapper wrapper = null;
+	private List<CalculatedMember> calculatedFields;
+	private String queryWithOutCC;
 
 	@Override
 	public synchronized CellSet getCellSet() {
@@ -65,8 +71,31 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		return wrapper;
 	}
 
+	public void applyCal() {
+		queryWithOutCC = getCurrentMdx();
+		try {
+			String queryString = CalculatedMemberManager.injectCalculatedFieldsIntoMdxQuery(this);
+			setMdx(queryString);
+		} catch (Exception e) {
+			throw new SpagoBIEngineRuntimeException("Error calculating the field", e);
+		}
+	}
+
+	/**
+	 * Restores the query without calculated fields
+	 */
+	public void restoreQuery() {
+		try {
+			setMdx(queryWithOutCC);
+		} catch (Exception e) {
+			throw new SpagoBIEngineRuntimeException("Error calculating the field", e);
+		}
+
+	}
+
 	public SpagoBIPivotModel(OlapDataSource dataSource) {
 		super(dataSource);
+		this.calculatedFields = new ArrayList<CalculatedMember>();
 	}
 
 	public SpagoBICellSetWrapper getCellSetWrapper() {
@@ -178,6 +207,22 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		logger.debug("The actual version is " + slicerValue);
 		logger.debug("OUT");
 		return new Integer(slicerValue);
+	}
+
+	public List<CalculatedMember> getCalculatedFields() {
+		return calculatedFields;
+	}
+
+	public void setCalculatedFields(List<CalculatedMember> calculatedFields) {
+		this.calculatedFields = calculatedFields;
+	}
+
+	public void addCalculatedField(CalculatedMember calculatedField) {
+		this.calculatedFields.add(calculatedField);
+	}
+
+	public OlapConnection getOlapConnection() {
+		return getConnection();
 	}
 
 }

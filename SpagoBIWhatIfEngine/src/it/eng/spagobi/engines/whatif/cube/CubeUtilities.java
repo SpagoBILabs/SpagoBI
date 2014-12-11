@@ -38,6 +38,7 @@ import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 
 import com.eyeq.pivot4j.PivotModel;
+import com.eyeq.pivot4j.transform.PlaceMembersOnAxes;
 
 public class CubeUtilities {
 
@@ -494,6 +495,34 @@ public class CubeUtilities {
 
 		member.setProperty(WhatIfConstants.MEMBER_PROPERTY_LEAF, leafs);
 		return leafs;
+	}
+
+	/**
+	 * Checks if the member is visible in the cube
+	 * 
+	 * @param model
+	 *            the pivot model
+	 * @param member
+	 *            the member to check
+	 * @param axis
+	 *            the axis that contains the member
+	 * @return true if the model is visible
+	 */
+	public static boolean isMemberVisible(PivotModel model, Member member, Axis axis) {
+
+		List<Member> visibleMembers = null;
+
+		PlaceMembersOnAxes pm = model.getTransform(PlaceMembersOnAxes.class);
+		visibleMembers = pm.findVisibleMembers(axis);
+
+		for (int i = 0; i < visibleMembers.size(); i++) {
+			Member m = visibleMembers.get(i);
+			if (m.equals(member)) {
+				return true;
+			}
+		}
+		return false;
+
 	}
 
 }

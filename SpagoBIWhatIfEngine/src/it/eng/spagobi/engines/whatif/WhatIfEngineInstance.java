@@ -314,6 +314,10 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		return pivotModel;
 	}
 
+	public SpagoBIPivotModel getSpagoBIPivotModel() {
+		return (SpagoBIPivotModel) pivotModel;
+	}
+
 	public IDataSource getDataSource() {
 		return (IDataSource) this.getEnv().get(EngineConstants.ENV_DATASOURCE);
 	}
