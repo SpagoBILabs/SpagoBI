@@ -119,8 +119,8 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 		case Value:
 			styleClass = getCellStyleClass();
 
-			//add the style to odd and even columns
-			
+			// add the style to odd and even columns
+
 			int index = context.getColumnIndex() - context.getRowHeaderCount();
 			if (index < 0) {
 				index = context.getColumnIndex();

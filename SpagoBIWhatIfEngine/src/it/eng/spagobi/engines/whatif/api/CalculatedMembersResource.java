@@ -7,10 +7,12 @@
 package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMemberManager;
+import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMember;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
+import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
@@ -25,7 +27,11 @@ import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
 import org.olap4j.Axis;
+import org.olap4j.CellSet;
+import org.olap4j.CellSetAxis;
 import org.olap4j.OlapException;
+import org.olap4j.metadata.Dimension;
+import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
@@ -46,12 +52,11 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 	public String initializeData() {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		CalculatedMemberManager cm = new CalculatedMemberManager(ei);
 		PivotModel model = ei.getPivotModel();
 		List<SbiDimension> dimensions = new ArrayList<SbiDimension>();
 		String serializedNames = new String();
 		try {
-			dimensions = cm.getDimensions(model);
+			dimensions = getDimensions(model, ei.getModelConfig());
 			serializedNames = serialize(dimensions);
 		} catch (Exception e) {
 			logger.error("Error serializing dimensions");
@@ -59,6 +64,49 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 		}
 		logger.debug("OUT");
 		return serializedNames;
+	}
+
+	/**
+	 * Service to get the dimensions
+	 * 
+	 * @return The SbiDimension List
+	 */
+	public List<SbiDimension> getDimensions(PivotModel model, ModelConfig modelConfig) throws SpagoBIEngineException {
+		logger.debug("IN");
+		CellSet cellSet = model.getCellSet();
+		List<CellSetAxis> axis = cellSet.getAxes();
+		List<Dimension> otherHDimensions;
+		List<SbiDimension> dimensions = new ArrayList<SbiDimension>();
+		try {
+			List<Hierarchy> axisHierarchies = axis.get(0).getAxisMetaData().getHierarchies();
+			axisHierarchies.addAll(axis.get(1).getAxisMetaData().getHierarchies());
+			otherHDimensions = CubeUtilities.getDimensions(model.getCube().getHierarchies());
+			for (int i = 0; i < otherHDimensions.size(); i++) {
+				Dimension aDimension = otherHDimensions.get(i);
+				SbiDimension myDimension = new SbiDimension(aDimension, -1, i);
+				List<Hierarchy> dimensionHierarchies = aDimension.getHierarchies();
+				String selectedHierarchyName = modelConfig.getDimensionHierarchyMap().get(myDimension.getUniqueName());
+				if (selectedHierarchyName == null) {
+					selectedHierarchyName = aDimension.getDefaultHierarchy().getUniqueName();
+				}
+				myDimension.setSelectedHierarchyUniqueName(selectedHierarchyName);
+				for (int j = 0; j < dimensionHierarchies.size(); j++) {
+					Hierarchy hierarchy = dimensionHierarchies.get(j);
+					SbiHierarchy hierarchyObject = new SbiHierarchy(hierarchy, i);
+					myDimension.getHierarchies().add(hierarchyObject);
+					// set the position of the selected hierarchy
+					if (selectedHierarchyName.equals(hierarchy.getUniqueName())) {
+						myDimension.setSelectedHierarchyPosition(j);
+					}
+				}
+				dimensions.add(myDimension);
+			}
+		} catch (Exception e) {
+			logger.error("Error getting dimensions", e);
+			throw new SpagoBIEngineException("Error getting dimensions", e);
+		}
+		logger.debug("OUT");
+		return dimensions;
 	}
 
 	/**
@@ -78,7 +126,6 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 		Member parentMember;
 		logger.debug("expression= " + calculateFieldFormula);
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		CalculatedMemberManager cm = new CalculatedMemberManager(ei);
 		Axis axis;
 		String calculateFieldFormulaParsed = new String();
 		try {
@@ -97,11 +144,11 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.celculated.definition.error", getLocale(),
 					"Error getting the parent of the calculated field. The unique name of the parent is " + parentMemberUniqueName, e);
 		}
-		try {
-			cm.injectCalculatedIntoMdxQuery(calculateFieldName, calculateFieldFormulaParsed, parentMember, axis);
-		} catch (SpagoBIEngineException e) {
-			logger.error("Error injecting calculated member inside mdx query", e);
-		}
+
+		logger.debug("Adding the calculated fields into the model");
+		CalculatedMember cc = new CalculatedMember(calculateFieldName, calculateFieldFormulaParsed, parentMember, axis);
+		ei.getSpagoBIPivotModel().addCalculatedField(cc);
+
 		String table = renderModel(ei.getPivotModel());
 		logger.debug("OUT");
 		return table;

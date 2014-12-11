@@ -11,6 +11,7 @@ package it.eng.spagobi.engines.whatif.common;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.member.SbiMember;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.serializer.SerializationException;
 import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -61,7 +62,14 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 		String serializedModel = null;
 
 		try {
-			serializedModel = serialize(model);
+			SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) model;
+
+			// adds the calculated fields before rendering the model
+			sbiModel.applyCal();
+			serializedModel = serialize(sbiModel);
+
+			// restore the query without calculated fields
+			sbiModel.restoreQuery();
 		} catch (SerializationException e) {
 			logger.error("Error serializing the pivot", e);
 			throw new SpagoBIEngineRuntimeException("Error serializing the pivot", e);
