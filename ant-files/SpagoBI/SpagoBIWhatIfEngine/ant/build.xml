@@ -171,7 +171,7 @@
 				<file name='./spagobi/commons/Log.js' />
 
 				<file name='./spagobi/widgets/Help.js'/>
-					
+
 				<file name='./spagobi/exception/ExceptionHandler.js' />
 
 				<file name='./spagobi/olap/model/DimensionModel.js' />
@@ -214,6 +214,18 @@
 				<file name='./spagobi/olap/tools/OlapViewMeasuresSelector.js' />
 				<file name='./spagobi/olap/tools/OlapViewDimensionsSelector.js' />
 				<file name='./spagobi/olap/tools/OlapViewDefinitionTools.js' />
+
+
+				<file name='./spagobi/olap/calculatedmembers/CalculatedMembersWizard.js' />
+				<file name='./spagobi/olap/calculatedmembers/CalculatedOperationPanel.js' />
+				<file name='./spagobi/olap/calculatedmembers/CalculatedMembersLeftSide.js' />
+				<file name='./spagobi/olap/calculatedmembers/CalculatedMembersRightSide.js' />
+				<file name='./spagobi/olap/calculatedmembers/CalculatedDataPanel.js' />
+				<file name='./spagobi/olap/calculatedmembers/CalculatedOperatorsPanel.js' />
+				<file name='./spagobi/olap/calculatedmembers/CalculatedAggregatorsPanel.js' />
+				<file name='./spagobi/olap/calculatedmembers/CalculatedDimensionsPanel.js' />
+				<file name='./spagobi/olap/calculatedmembers/CalculatedMembersFunctionsPanel.js' />
+				<file name='./spagobi/olap/calculatedmembers/CalculatedSetFunctionsPanel.js' />
 
 				<file name='./spagobi/olap/control/Controller.js' />
 				<file name='./spagobi/olap/control/EventManager.js' />
