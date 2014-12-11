@@ -1434,16 +1434,16 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 				if (functIdAssSet.contains(expId)) {
 
-					Integer existingId = (Integer) functIdAss.get(expId);
-					SbiFunctions existingFunc = (SbiFunctions) sessionCurrDB.load(SbiFunctions.class, existingId);
-					existingFunc.setName(funct.getName());
-					existingFunc.setDescr(funct.getDescr());
-					// existingFunc.setPath(funct.getPath());
-					this.updateSbiCommonInfo4Insert(existingFunc);
-					sessionCurrDB.update(existingFunc);
-					sessionCurrDB.flush();
-					logger.debug("Update new functionality " + existingFunc.getName() + " with path " + existingFunc.getPath());
-					metaLog.log("Update new functionality " + existingFunc.getName() + " with path " + existingFunc.getPath());
+					// Integer existingId = (Integer) functIdAss.get(expId);
+					// SbiFunctions existingFunc = (SbiFunctions) sessionCurrDB.load(SbiFunctions.class, existingId);
+					// existingFunc.setName(funct.getName());
+					// existingFunc.setDescr(funct.getDescr());
+					// // existingFunc.setPath(funct.getPath());
+					// this.updateSbiCommonInfo4Insert(existingFunc);
+					// sessionCurrDB.update(existingFunc);
+					// sessionCurrDB.flush();
+					// logger.debug("Update new functionality " + existingFunc.getName() + " with path " + existingFunc.getPath());
+					// metaLog.log("Update new functionality " + existingFunc.getName() + " with path " + existingFunc.getPath());
 
 				} else {
 
