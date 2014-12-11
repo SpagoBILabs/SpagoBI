@@ -165,7 +165,7 @@
 				<exclude name="**/*.svn" />
 				<exclude name="**/*.xml" />
 				<exclude name="**/*.properties" />
-        <exclude name="js/src/ext/sbi/locale/*.js" /> <!-- js messages files must be encoded, see below when native2ascii is invoked -->
+        <exclude name="js/src/ext/sbi/formats/*.js" /> <!-- js messages files must be encoded, see below when native2ascii is invoked -->
 			</fileset>
 		</copy>
 		<!-- copies artifacts with filter (*.xml, *.properties) -->
@@ -180,7 +180,7 @@
 
     <!-- converting messages file from ISO-8859-15 to ASCII -->
     <native2ascii encoding="ISO-8859-15" src="${src}/MessageFiles" dest="${build}/${webapp_name}/WEB-INF/classes/MessageFiles"  includes="**/*.properties" />
-    <native2ascii encoding="ISO-8859-15" src="${web.dir}/js/src/ext/sbi/locale" dest="${build}/${webapp_name}/js/src/ext/sbi/locale"  includes="**/*.js" />
+    <native2ascii encoding="ISO-8859-15" src="${web.dir}/js/src/ext/sbi/formats" dest="${build}/${webapp_name}/js/src/ext/sbi/formats"  includes="**/*.js" />
 
 	</target>
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -376,7 +376,7 @@
 		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 				<file name="./src/ext/sbi/commons/Format.js" />
-				<file name="./src/ext/sbi/locale/LocaleUtils.js" />
+				<file name="./src/ext/sbi/formats/LocaleUtils.js" />
 				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
 				<file name="./src/ext/sbi/commons/Log.js" />
 				<file name="./src/ext/sbi/service/ServiceRegistry.js" />
@@ -467,7 +467,7 @@
 
 				<file name="./src/ext/sbi/commons/Log.js" />
 				<file name="./src/ext/sbi/commons/Format.js" />
-				<file name="./src/ext/sbi/locale/LocaleUtils.js" />
+				<file name="./src/ext/sbi/formats/LocaleUtils.js" />
 				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
 				<file name="./src/ext/sbi/service/ServiceRegistry.js" />
 				<file name="./src/ext/sbi/commons/Session.js" />	
@@ -604,7 +604,7 @@
 			<filelist dir="${build}/${webapp_name}/js">
 
 				<file name="./src/ext/sbi/commons/Format.js" />
-				<file name="./src/ext/sbi/locale/LocaleUtils.js" />
+				<file name="./src/ext/sbi/formats/LocaleUtils.js" />
 				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
 				<file name="./src/ext/sbi/decorator/LoadMask.js" />
 				<file name="./src/ext/sbi/commons/Format.js" />
