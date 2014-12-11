@@ -352,7 +352,7 @@ public class HierarchiesService {
 
 			for (List<HierarchyTreeNodeData> path : paths) {
 				persistCustomHierarchyPath(hierarchyCode, hierarchyName, hierarchyDescription, hierarchyScope, hierarchyType, dataSource, hierarchyPrefix,
-						hierarchyFK, path);
+						hierarchyFK, path, isInsert);
 			}
 
 			return "{\"response\":\"ok\"}";
@@ -444,7 +444,8 @@ public class HierarchiesService {
 	 * Persist custom hierarchy paths to database
 	 */
 	private void persistCustomHierarchyPath(String hierarchyCode, String hierarchyName, String hierarchyDescription, String hierarchyScope,
-			String hierarchyType, IDataSource dataSource, String hierarchyPrefix, String hierarchyFK, List<HierarchyTreeNodeData> path) throws SQLException {
+			String hierarchyType, IDataSource dataSource, String hierarchyPrefix, String hierarchyFK, List<HierarchyTreeNodeData> path, boolean isInsert)
+			throws SQLException {
 		Connection connection = null;
 		try {
 			connection = dataSource.getConnection();
@@ -457,7 +458,7 @@ public class HierarchiesService {
 
 			// Valorization of prepared statement placeholder
 			// -----------------------------------------------
-			final int COLUMNSNUMBER = 40;
+			final int COLUMNSNUMBER = 41;
 
 			// HIER_DS column
 			preparedStatement.setString(1, hierarchyDescription);
@@ -480,11 +481,22 @@ public class HierarchiesService {
 
 				if (i == path.size() - 1) {
 					// last node is a leaf
-					preparedStatement.setString(COLUMNSNUMBER - 4, node.getNodeCode());
-					preparedStatement.setString(COLUMNSNUMBER - 3, node.getNodeName());
-					preparedStatement.setLong(COLUMNSNUMBER - 2, Long.valueOf(node.getLeafId()));
-					preparedStatement.setString(COLUMNSNUMBER - 1, node.getLeafParentCode());
-					preparedStatement.setString(COLUMNSNUMBER, node.getLeafParentName());
+					preparedStatement.setString(COLUMNSNUMBER - 5, node.getNodeCode());
+					preparedStatement.setString(COLUMNSNUMBER - 4, node.getNodeName());
+					preparedStatement.setLong(COLUMNSNUMBER - 3, Long.valueOf(node.getLeafId()));
+					preparedStatement.setString(COLUMNSNUMBER - 2, node.getLeafParentCode());
+					preparedStatement.setString(COLUMNSNUMBER - 1, node.getLeafParentName());
+					if (isInsert) {
+						preparedStatement.setLong(COLUMNSNUMBER, Long.valueOf(node.getDepth()));
+					} else {
+						// editing an existing hierarchy, we must take note that
+						// depth is +1 because of the fake root
+						preparedStatement.setLong(COLUMNSNUMBER, Long.valueOf(node.getDepth()) - 1);
+					}
+					// insert leaf node also as a (last) level
+					preparedStatement.setString(colIndex, node.getNodeCode());
+					preparedStatement.setString(colIndex + 1, node.getNodeName());
+
 				} else {
 					// not-leaf node
 					preparedStatement.setString(colIndex, node.getNodeCode());
@@ -536,9 +548,10 @@ public class HierarchiesService {
 		columns.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + ", ");
 		String LEAF_PARENT_CD = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
 		String LEAF_PARENT_NM = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
-		columns.append(LEAF_PARENT_CD + "," + LEAF_PARENT_NM);
+		String maxDepthCol = AbstractJDBCDataset.encapsulateColumnName("MAX_DEPTH", dataSource);
+		columns.append(LEAF_PARENT_CD + "," + LEAF_PARENT_NM + "," + maxDepthCol);
 		String insertQuery = "insert into " + tableName + "(" + columns.toString()
-				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		return insertQuery;
 	}
@@ -565,6 +578,7 @@ public class HierarchiesService {
 				nodeData.setLeafParentCode(nodeParentCode);
 				nodeData.setLeafParentName(node.getString("leafParentName"));
 				nodeData.setLeafOriginalParentCode(nodeOriginalParentCode);
+				nodeData.setDepth(node.getString("depth"));
 				aPath.add(nodeData);
 				collectionOfPaths.add(aPath);
 				return collectionOfPaths;
@@ -599,9 +613,10 @@ public class HierarchiesService {
 
 		// select
 		StringBuffer selectClauseBuffer = new StringBuffer(" ");
+		String maxDepthColumn = AbstractJDBCDataset.encapsulateColumnName("MAX_DEPTH", dataSource);
 		String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 		String hierarchyCodeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
-		selectClauseBuffer.append(hierarchyCodeColumn + "," + hierarchyNameColumn + ",");
+		selectClauseBuffer.append(maxDepthColumn + "," + hierarchyCodeColumn + "," + hierarchyNameColumn + ",");
 
 		for (int i = 1; i < 16; i++) {
 			String CD_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEV" + i, dataSource);
@@ -660,9 +675,10 @@ public class HierarchiesService {
 
 		// select
 		StringBuffer selectClauseBuffer = new StringBuffer(" ");
+		String maxDepthColumn = AbstractJDBCDataset.encapsulateColumnName("MAX_DEPTH", dataSource);
 		String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 		String hierarchyCodeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
-		selectClauseBuffer.append(hierarchyCodeColumn + "," + hierarchyNameColumn + ",");
+		selectClauseBuffer.append(maxDepthColumn + "," + hierarchyCodeColumn + "," + hierarchyNameColumn + ",");
 
 		for (int i = 1; i < 16; i++) {
 			String CD_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEV" + i, dataSource);
@@ -708,11 +724,24 @@ public class HierarchiesService {
 			List<IField> recordFields = record.getFields();
 			int fieldsCount = recordFields.size();
 
-			for (int i = 0; i < fieldsCount - 4; i = i + 2) {
+			// MAX_DEPTH, must be equal to the level of the leaf (that we skip)
+			IField maxDepthField = record.getFieldAt(0);
+			int maxDepth = 0;
+			if (maxDepthField.getValue() instanceof Integer) {
+				Integer maxDepthValue = (Integer) maxDepthField.getValue();
+				maxDepth = maxDepthValue;
+			} else if (maxDepthField.getValue() instanceof Long) {
+				Long maxDepthValue = (Long) maxDepthField.getValue();
+				maxDepth = (int) (long) maxDepthValue;
+			}
+
+			int currentLevel = 0;
+			for (int i = 1; i < fieldsCount - 4; i = i + 2) {
 				IField codeField = record.getFieldAt(i); // NODE CODE
 				IField nameField = record.getFieldAt(i + 1); // NODE NAME
 
-				if ((codeField.getValue() == null) || (codeField.getValue().equals(""))) {
+				if ((currentLevel == maxDepth) || (codeField.getValue() == null) || (codeField.getValue().equals(""))) {
+					currentLevel++;
 					continue; // skip to next iteration
 				} else {
 					String nodeCode = (String) codeField.getValue();
@@ -720,7 +749,8 @@ public class HierarchiesService {
 					HierarchyTreeNodeData data = new HierarchyTreeNodeData(nodeCode, nodeName);
 
 					// Here I will construct the nodes of the tree
-					switch (i) {
+					int j = i - 1;
+					switch (j) {
 					case 0:
 						// first level (root)
 						if (root == null) {
@@ -766,7 +796,7 @@ public class HierarchiesService {
 					case 28:
 					case 30:
 					case 32:
-						if (i == 32) {
+						if (j == 32) {
 							// inject leafID into node
 							IField leafIdField = record.getFieldAt(i + 2);
 							String leafIdString = null;
@@ -795,7 +825,7 @@ public class HierarchiesService {
 						break;
 					}
 				}
-
+				currentLevel++;
 			}
 
 		}

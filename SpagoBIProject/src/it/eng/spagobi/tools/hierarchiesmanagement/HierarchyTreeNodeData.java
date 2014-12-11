@@ -33,6 +33,7 @@ public class HierarchyTreeNodeData {
 	String leafParentCode;
 	String leafOriginalParentCode;
 	String leafParentName;
+	String depth;
 
 	/**
 	 * @param nodeCode
@@ -140,6 +141,21 @@ public class HierarchyTreeNodeData {
 	 */
 	public void setLeafOriginalParentCode(String leafOriginalParentCode) {
 		this.leafOriginalParentCode = leafOriginalParentCode;
+	}
+
+	/**
+	 * @return the depth
+	 */
+	public String getDepth() {
+		return depth;
+	}
+
+	/**
+	 * @param depth
+	 *            the depth to set
+	 */
+	public void setDepth(String depth) {
+		this.depth = depth;
 	}
 
 }
