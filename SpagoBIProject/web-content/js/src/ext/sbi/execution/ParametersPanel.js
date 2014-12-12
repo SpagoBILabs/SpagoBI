@@ -937,24 +937,33 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				|| theField.behindParameter.selectionType === 'SLIDER') {
 				this.fields[p].on('change', this.onUpdateDependentFields, this);
 			} else if(theField.behindParameter.typeCode == 'MAN_IN') {
-				// if input field has an element (it means that the field was displayed)
-				if (theField.el !== undefined) {
-					
-					theField.el.on('keydown', 
-						this.updateDependentFields.createDelegate(this, [theField]), this, {buffer: 350});
-					
-					
-					var onKeyDown = function(event, element, options , field){
-						if( event.keyCode == 38 || event.keyCode == 40 ) {
-							if(!this.moveInMementoUsingCtrlKey || event.ctrlKey == true) {
-								var moveDown = (event.keyCode == 40);
-								this.setValueFromMemento(field, moveDown);
-							}
-						} 
+				
+				if(theField.behindParameter.type == "DATE"){
+					this.fields[p].on('change', function(field, record, index) {
+						this.updateDependentFields( field );
+					} , this);
+				}else{
+					// if input field has an element (it means that the field was displayed)
+					if (theField.el !== undefined) {
+						
+						theField.el.on('keydown', 
+							this.updateDependentFields.createDelegate(this, [theField]), this, {buffer: 350});
+						
+						
+						var onKeyDown = function(event, element, options , field){
+							if( event.keyCode == 38 || event.keyCode == 40 ) {
+								if(!this.moveInMementoUsingCtrlKey || event.ctrlKey == true) {
+									var moveDown = (event.keyCode == 40);
+									this.setValueFromMemento(field, moveDown);
+								}
+							} 
+						}
+						
+						theField.el.on( 'keydown', onKeyDown.createDelegate(this, theField, true), this );
 					}
-					
-					theField.el.on( 'keydown', onKeyDown.createDelegate(this, theField, true), this );
 				}
+				
+				
 			} else {
 				alert("Unable to manage dependencies on input field of type [" + theField.behindParameter.selectionType + "]");
 			}
