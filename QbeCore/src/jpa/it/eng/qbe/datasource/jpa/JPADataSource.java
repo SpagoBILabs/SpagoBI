@@ -31,29 +31,28 @@ import javax.persistence.Persistence;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
-	
+public class JPADataSource extends AbstractDataSource implements IJpaDataSource {
+
 	private EntityManagerFactory factory;
-	private boolean classLoaderExtended = false;	
-	
+	private final boolean classLoaderExtended = false;
+
 	private static transient Logger logger = Logger.getLogger(JPADataSource.class);
 
 	protected JPADataSource(String dataSourceName, IDataSourceConfiguration configuration) {
 		logger.debug("Creating a new JPADataSource");
-		setName( dataSourceName );
+		setName(dataSourceName);
 		dataMartModelAccessModality = new AbstractModelAccessModality();
-		
+
 		// validate and set configuration
-		if(configuration instanceof FileDataSourceConfiguration){
+		if (configuration instanceof FileDataSourceConfiguration) {
 			this.configuration = configuration;
-		} else if(configuration instanceof CompositeDataSourceConfiguration){
-			IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration)configuration).getSubConfigurations().get(0);
-			if(subConf instanceof FileDataSourceConfiguration){
-				this.configuration  = (FileDataSourceConfiguration)subConf;
+		} else if (configuration instanceof CompositeDataSourceConfiguration) {
+			IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration) configuration).getSubConfigurations().get(0);
+			if (subConf instanceof FileDataSourceConfiguration) {
+				this.configuration = subConf;
 				this.configuration.loadDataSourceProperties().putAll(configuration.loadDataSourceProperties());
 			} else {
 				Assert.assertUnreachable("Not suitable configuration to create a JPADataSource");
@@ -63,96 +62,112 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		}
 		logger.debug("Created a new JPADataSource");
 	}
-	
+
 	public FileDataSourceConfiguration getFileDataSourceConfiguration() {
-		return (FileDataSourceConfiguration)configuration;
+		return (FileDataSourceConfiguration) configuration;
 	}
-	
-	protected void initEntityManagerFactory(String name){
+
+	protected void initEntityManagerFactory(String name) {
 		factory = Persistence.createEntityManagerFactory(name, buildEmptyConfiguration());
 	}
 
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang
+	 * .String)
 	 */
 	public EntityManagerFactory getEntityManagerFactory(String dmName) {
 		return getEntityManagerFactory();
-	}	
-	
-	/* (non-Javadoc)
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.qbe.datasource.jpa.IJPAataSource#getEntityManagerFactory()
 	 */
 	public EntityManagerFactory getEntityManagerFactory() {
-		if(factory == null) {
+		if (factory == null) {
 			open();
 		}
 		return factory;
-	}	
-	
-	/* (non-Javadoc)
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.qbe.datasource.jpa.IJPAataSource#getEntityManager()
 	 */
 	public EntityManager getEntityManager() {
-		if(factory == null) {
+		if (factory == null) {
 			open();
 		}
 		EntityManager entityManager = factory.createEntityManager();
 		return entityManager;
 	}
-	
-
 
 	public void open() {
 		File jarFile = null;
-		
+
 		FileDataSourceConfiguration configuration = getFileDataSourceConfiguration();
-		
+
 		jarFile = configuration.getFile();
-		if(jarFile == null) return;
-		
-		if (!classLoaderExtended){
+		if (jarFile == null) {
+			return;
+		}
+
+		if (!classLoaderExtended) {
 			updateCurrentClassLoader(jarFile);
-		}	
-		
-		initEntityManagerFactory( getConfiguration().getModelName() );
-		
+		}
+
+		initEntityManagerFactory(getConfiguration().getModelName());
+
 	}
-	
+
 	public boolean isOpen() {
 		return factory != null;
 	}
-	
+
 	public void close() {
 		factory = null;
 	}
-	
+
+	@Override
 	public IDataSource getToolsDataSource() {
-		IDataSource dataSource = (IDataSource)configuration.loadDataSourceProperties().get("datasource");
-		//FOR SPAGOBIMETA
-		if(dataSource==null){
-			ConnectionDescriptor connectionDescriptor = (ConnectionDescriptor)configuration.loadDataSourceProperties().get("connection");
-			if(connectionDescriptor!=null){
+		IDataSource dataSource = (IDataSource) configuration.loadDataSourceProperties().get("datasource");
+		// FOR SPAGOBIMETA
+		if (dataSource == null) {
+			ConnectionDescriptor connectionDescriptor = (ConnectionDescriptor) configuration.loadDataSourceProperties().get("connection");
+			if (connectionDescriptor != null) {
 				dataSource = connectionDescriptor.getDataSource();
 			}
 		}
 		return dataSource;
 	}
-	
+
 	public IModelStructure getModelStructure() {
 		IModelStructureBuilder structureBuilder;
-		if(dataMartModelStructure == null) {			
+		if (dataMartModelStructure == null) {
 			structureBuilder = new JPAModelStructureBuilder(this);
 			dataMartModelStructure = structureBuilder.build();
 		}
-		
+
 		return dataMartModelStructure;
 	}
-	
-	protected Map<String,Object> buildEmptyConfiguration() {
-		Map<String,Object> cfg = new HashMap<String,Object>();
-		if(getToolsDataSource().checkIsJndi()) {
+
+	protected Map<String, Object> buildEmptyConfiguration() {
+		Map<String, Object> cfg = new HashMap<String, Object>();
+		String dialect = getToolsDataSource().getHibDialectClass();
+
+		// to solve http://spagoworld.org/jira/browse/SPAGOBI-1934
+		if (dialect != null && dialect.contains("SQLServerDialect")) {
+			dialect = "org.hibernate.dialect.ExtendedSQLServerDialect";
+		}
+
+		if (getToolsDataSource().checkIsJndi()) {
 			cfg.put("javax.persistence.nonJtaDataSource", getToolsDataSource().getJndi());
-			cfg.put("hibernate.dialect", getToolsDataSource().getHibDialectClass());
+			cfg.put("hibernate.dialect", dialect);
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");
 		} else {
@@ -160,19 +175,19 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 			cfg.put("javax.persistence.jdbc.password", getToolsDataSource().getPwd());
 			cfg.put("javax.persistence.jdbc.user", getToolsDataSource().getUser());
 			cfg.put("javax.persistence.jdbc.driver", getToolsDataSource().getDriver());
-			cfg.put("hibernate.dialect", getToolsDataSource().getHibDialectClass());
+			cfg.put("hibernate.dialect", dialect);
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");
 		}
 		return cfg;
 	}
-	
-	public ITransaction getTransaction(){
-		if(getEntityManager() instanceof org.eclipse.persistence.jpa.JpaEntityManager){
+
+	public ITransaction getTransaction() {
+		if (getEntityManager() instanceof org.eclipse.persistence.jpa.JpaEntityManager) {
 			return new JPAEclipseLinkTransaction(this);
-		} else{ 
+		} else {
 			return new JPAHibernateTransaction(this);
-		} 
+		}
 	}
 
 	public IPersistenceManager getPersistenceManager() {
@@ -180,6 +195,4 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		return new JPAPersistenceManager(this);
 	}
 
-	
-	
 }
