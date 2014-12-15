@@ -262,10 +262,11 @@ public class MenuListJSONSerializer implements Serializer {
 			socialAnalysis.put(TARGET, "_self");
 			if (!GeneralUtilities.isSSOEnabled()) {
 				socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "="
-						+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "');");
+						+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&"
+						+ SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');");
 			} else {
 				socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage()
-						+ "');");
+						+ "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');");
 			}
 			tempMenuList.put(socialAnalysis);
 		}
@@ -401,10 +402,8 @@ public class MenuListJSONSerializer implements Serializer {
 			}
 		}
 		/*
-		 * Cannot set a static ID as a random number!!!! See
-		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
-		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following
-		 * line was the cause of the above issues!!
+		 * Cannot set a static ID as a random number!!!! See https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
+		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following line was the cause of the above issues!!
 		 */
 		// temp2.put(ID, new Double(Math.random()).toString());
 
@@ -447,9 +446,11 @@ public class MenuListJSONSerializer implements Serializer {
 					url = url.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
 					if (!GeneralUtilities.isSSOEnabled()) {
 						url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&"
-								+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "'";
+								+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry()
+								+ "'";
 					} else {
-						url = url + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "'";
+						url = url + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "="
+								+ locale.getCountry() + "'";
 					}
 				}
 
