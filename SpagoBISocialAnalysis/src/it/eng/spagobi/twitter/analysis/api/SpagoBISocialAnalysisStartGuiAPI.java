@@ -33,6 +33,7 @@ public class SpagoBISocialAnalysisStartGuiAPI {
 		try {
 
 			request.getSession().setAttribute(SpagoBIConstants.SBI_LANGUAGE, request.getParameter(SpagoBIConstants.SBI_LANGUAGE));
+			request.getSession().setAttribute(SpagoBIConstants.SBI_COUNTRY, request.getParameter(SpagoBIConstants.SBI_COUNTRY));
 			response.sendRedirect(request.getContextPath() + "/index.jsp");
 
 		} catch (Throwable t) {
