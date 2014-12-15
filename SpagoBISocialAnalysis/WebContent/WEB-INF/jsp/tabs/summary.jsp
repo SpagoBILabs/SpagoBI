@@ -5,6 +5,7 @@
  License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.  If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/. --%>
 
+<%@page import="org.apache.tomcat.jni.Local"%>
 <%@ page language="java"
          contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"
@@ -20,6 +21,7 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="java.util.Locale"%>
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -28,7 +30,20 @@
 
 <%
 
-	String locale = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE); 
+	String language = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE);
+	String country = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_COUNTRY);
+	
+	if(language == null || language.equals(""))
+	{
+		language = "en";
+	}
+	
+	if(country == null || country.equals(""))
+	{
+		country = "US";
+	}
+	
+	Locale locale = new Locale(language, country);
 
 	String searchId = request.getParameter("searchID");
 	boolean withDocs = "TRUE".equalsIgnoreCase(request.getParameter("withDocs"));
@@ -108,7 +123,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
-	
+	<%@include file="../commons/includeMessageResource.jspf" %>
 	<%@include file="../commons/includeSbiSocialAnalysisResources.jspf"%>
 	
 	<title>Twitter Analysis</title>
