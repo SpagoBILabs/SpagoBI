@@ -194,7 +194,10 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		if(!name){
 			name = "sbiNoDescription";
-			descr = "sbiNoDescription";
+		}
+
+		if(!descr){
+			descr = " ";
 		}
 
 		var service = Ext.create("Sbi.service.RestService", {
