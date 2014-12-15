@@ -140,7 +140,6 @@ END-PRODUCTION -->
  
 <%-- js custom overrides --%>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLinkByTheme(request, "js/commons/Settings.js",currTheme)%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLinkByTheme(request, "js/formats/"+locale.getLanguage()+".js",currTheme)%>"></script>
 <!-- 
 <script type="text/javascript">
 Ext.Ajax.timeout = 300000;
