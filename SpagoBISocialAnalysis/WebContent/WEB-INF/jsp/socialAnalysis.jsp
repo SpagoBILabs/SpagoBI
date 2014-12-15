@@ -29,7 +29,21 @@ Giorgio Federici (giorgio.federici@eng.it)
 
 <%
 
-	String locale = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE); 
+	String language = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE);
+	String country = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_COUNTRY);
+	
+	if(language == null || language.equals(""))
+	{
+		language = "en";
+	}
+	
+	if(country == null || country.equals(""))
+	{
+		country = "US";
+	}
+	
+	Locale locale = new Locale(language, country);
+	
 	UserProfile profile = (UserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	
 	String profileJSONStr = new ObjectMapper().writeValueAsString(profile);	
