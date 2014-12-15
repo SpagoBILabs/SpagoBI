@@ -83,42 +83,28 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 			logger.debug("Creating engine instance ...");
 
 			try {
-				whatIfEngineInstance = WhatIfEngine
-						.createInstance(templateBean, getEnv());
+				whatIfEngineInstance = WhatIfEngine.createInstance(templateBean, getEnv());
 			} catch (WhatIfTemplateParseException e) {
-				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(
-						getEngineName(), "Template not valid",
-						e);
-				engineException
-						.setDescription(e.getCause().getMessage());
-				engineException
-						.addHint("Check the document's template");
+				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Template not valid", e);
+				engineException.setDescription(e.getCause().getMessage());
+				engineException.addHint("Check the document's template");
 				throw engineException;
 			} catch (SpagoBIEngineRuntimeException e) {
 				throw e;
 			} catch (Exception e) {
-				logger.error(
-						"Error starting the What-If engine: error while generating the engine instance.",
-						e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while generating the engine instance.",
-						e);
+				logger.error("Error starting the What-If engine: error while generating the engine instance.", e);
+				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while generating the engine instance.", e);
 			}
 			logger.debug("Engine instance succesfully created");
 
-			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE,
-					whatIfEngineInstance);
+			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, whatIfEngineInstance);
 
 			try {
-				servletRequest.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL)
-						.forward(servletRequest, response);
+				servletRequest.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 			} catch (Exception e) {
-				logger.error(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ SUCCESS_REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ SUCCESS_REQUEST_DISPATCHER_URL, e);
+				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
+				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
+						+ SUCCESS_REQUEST_DISPATCHER_URL, e);
 			}
 
 			if (getAuditServiceProxy() != null) {
@@ -133,18 +119,13 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 
 			SpagoBIEngineStartupException serviceException = this.getWrappedException(e);
 
-			getExecutionSession().setAttributeInSession(STARTUP_ERROR,
-					serviceException);
+			getExecutionSession().setAttributeInSession(STARTUP_ERROR, serviceException);
 			try {
-				servletRequest.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL)
-						.forward(servletRequest, response);
+				servletRequest.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 			} catch (Exception ex) {
-				logger.error(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ FAILURE_REQUEST_DISPATCHER_URL, ex);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ FAILURE_REQUEST_DISPATCHER_URL, ex);
+				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
+				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
+						+ FAILURE_REQUEST_DISPATCHER_URL, ex);
 			}
 		} finally {
 			logger.debug("OUT");
@@ -166,8 +147,7 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 				rootException = rootException.getCause();
 			}
 			String str = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
-			String message = "An unpredicted error occurred while executing " + getEngineName() + " service."
-					+ "\nThe root cause of the error is: " + str;
+			String message = "An unpredicted error occurred while executing " + getEngineName() + " service." + "\nThe root cause of the error is: " + str;
 			serviceException = new SpagoBIEngineStartupException(getEngineName(), message, e);
 		}
 		return serviceException;
@@ -182,14 +162,11 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 		env.put(EngineConstants.ENV_DATASOURCE, ds);
 
 		env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
-		env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY,
-				getContentServiceProxy());
+		env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
 		env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy());
 		env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
-		env.put(EngineConstants.ENV_DATASOURCE_PROXY,
-				getDataSourceServiceProxy());
-		env.put(EngineConstants.ENV_ARTIFACT_PROXY,
-				getArtifactServiceProxy());
+		env.put(EngineConstants.ENV_DATASOURCE_PROXY, getDataSourceServiceProxy());
+		env.put(EngineConstants.ENV_ARTIFACT_PROXY, getArtifactServiceProxy());
 		env.put(EngineConstants.ENV_LOCALE, this.getLocale());
 		env.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, this.getServletRequest().getParameter(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID));
 		env.put(SpagoBIConstants.SBI_ARTIFACT_ID, this.getServletRequest().getParameter(SpagoBIConstants.SBI_ARTIFACT_ID));
@@ -201,8 +178,7 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 		return env;
 	}
 
-	private void copyRequestParametersIntoEnv(Map env,
-			HttpServletRequest servletRequest) {
+	private void copyRequestParametersIntoEnv(Map env, HttpServletRequest servletRequest) {
 		Set parameterStopList = null;
 
 		logger.debug("IN");
@@ -254,14 +230,11 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 			if (StringUtils.isNotEmpty(language) && StringUtils.isNotEmpty(country)) {
 				toReturn = new Locale(language, country);
 			} else {
-				logger.warn("Language and country not specified in request. Considering default locale that is "
-						+ DEFAULT_LOCALE.toString());
+				logger.warn("Language and country not specified in request. Considering default locale that is " + DEFAULT_LOCALE.toString());
 				toReturn = DEFAULT_LOCALE;
 			}
 		} catch (Exception e) {
-			logger.error(
-					"An error occurred while retrieving locale from request, using default locale that is "
-							+ DEFAULT_LOCALE.toString(), e);
+			logger.error("An error occurred while retrieving locale from request, using default locale that is " + DEFAULT_LOCALE.toString(), e);
 			toReturn = DEFAULT_LOCALE;
 		}
 		logger.debug("OUT");

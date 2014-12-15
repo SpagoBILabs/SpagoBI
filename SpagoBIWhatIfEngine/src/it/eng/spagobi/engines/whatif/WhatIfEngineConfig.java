@@ -35,8 +35,7 @@ import sun.misc.BASE64Encoder;
 import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
 
 /**
- * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin
- *         (alberto.ghedin@eng.it)
+ * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public class WhatIfEngineConfig {
 
@@ -102,7 +101,7 @@ public class WhatIfEngineConfig {
 	private final static String PERSISTENT_ATTRIBUTE = "persistent";
 	private final static String XMLA_URL = "url";
 	private final static String DEFAULT_ATTRIBUTE = "default";
-	
+
 	public String getTemplateFilePath() {
 		String templatePath = "";
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("TEMPLATE");
@@ -112,7 +111,7 @@ public class WhatIfEngineConfig {
 		return templatePath;
 	}
 
-	public OlapDataSource getOlapDataSource(IDataSource ds, String reference, WhatIfTemplate template, IEngUserProfile profile, Locale locale) {
+	public OlapDataSource getOlapDataSource(IDataSource ds, String reference, WhatIfTemplate template, IEngUserProfile profile, Locale locale, Map env) {
 
 		String connectionString = null;
 		Properties connectionProps = new Properties();
@@ -159,7 +158,7 @@ public class WhatIfEngineConfig {
 
 		logger.debug("The connection string is " + connectionString);
 
-		this.defineSchemaProcessorProperties(connectionProps, template, profile);
+		this.defineSchemaProcessorProperties(connectionProps, template, profile, env);
 
 		OlapDataSource olapDataSource = new SimpleOlapDataSource();
 
@@ -169,8 +168,7 @@ public class WhatIfEngineConfig {
 		return olapDataSource;
 	}
 
-	private void defineSchemaProcessorProperties(Properties connectionProps,
-			WhatIfTemplate template, IEngUserProfile profile) {
+	private void defineSchemaProcessorProperties(Properties connectionProps, WhatIfTemplate template, IEngUserProfile profile, Map env) {
 		List<String> userProfileAttributes = template.getProfilingUserAttributes();
 		// SpagoBIFilterDynamicSchemaProcessor extends
 		// LocalizingDynamicSchemaProcessor, that is responsible for i18n,
@@ -178,43 +176,90 @@ public class WhatIfEngineConfig {
 		// in the connection properties anyway
 		connectionProps.put("DynamicSchemaProcessor", "it.eng.spagobi.engines.whatif.schema.SpagoBIFilterDynamicSchemaProcessor");
 		if (!userProfileAttributes.isEmpty()) {
+			// adds profile attributes values
 			logger.debug("Template contains data access restriction based on user's attributes");
 			Iterator<String> it = userProfileAttributes.iterator();
 			while (it.hasNext()) {
 				String attributeName = it.next();
 				String value = this.getUserProfileEncodedValue(attributeName, profile);
-				logger.debug("Adding profile attribute [" + attributeName + "]"
-						+ " with encoded value [" + value + "]");
+				logger.debug("Adding profile attribute [" + attributeName + "]" + " with encoded value [" + value + "]");
 				connectionProps.put(attributeName, value);
+			}
+		} else {
+			logger.debug("Template does not contain any data access restriction based on user's attributes");
+		}
+		if (!env.isEmpty()) {
+			// adds parameters values
+			logger.debug("Template contains data access restriction based on user's attributes");
+			Iterator<String> it = env.keySet().iterator();
+			while (it.hasNext()) {
+				String attributeName = it.next();
+				Object value = env.get(attributeName);
+
+				if (value == null)
+					continue;
+
+				String cl = value.getClass().getName();
+				if (cl.contains("String") && !"".equals(value)) {
+					// Adds String types
+					logger.debug("Adding environment value [" + attributeName + "]" + " with encoded value [" + value + "]");
+					String valueBase64 = encodeValue(value.toString());
+					connectionProps.put(attributeName, valueBase64);
+				} else if (cl.contains("[Ljava.lang.Object")) {
+					// Adds list of String (uses implicit cast of DBs) for multiple values.
+					Object[] arrList = (Object[]) value;
+					String totalString = "";
+					String quote = "'";
+					for (int i = 0; i < arrList.length; i++) {
+						String el = (String) arrList[i];
+						totalString += quote + el + quote;
+						totalString += (i < arrList.length - 1) ? "," : "";
+					}
+					String valueBase64 = encodeValue(totalString);
+					logger.debug("Adding environment value [" + attributeName + "]" + " with encoded value [" + valueBase64 + "]");
+					connectionProps.put(attributeName, valueBase64);
+				}
 			}
 		} else {
 			logger.debug("Template does not contain any data access restriction based on user's attributes");
 		}
 	}
 
-	private String getUserProfileEncodedValue(String attributeName,
-			IEngUserProfile profile) {
+	private String getUserProfileEncodedValue(String attributeName, IEngUserProfile profile) {
 		String value;
 		try {
 			value = profile.getUserAttribute(attributeName) != null ? profile.getUserAttribute(attributeName).toString() : null;
 		} catch (EMFInternalError e) {
 			throw new SpagoBIEngineRuntimeException("Error while retrieving user profile [" + attributeName + "]", e);
 		}
-		logger.debug("Found profile attribute [" + attributeName + "]"
-				+ " with value [" + value + "]");
+		logger.debug("Found profile attribute [" + attributeName + "]" + " with value [" + value + "]");
 
 		// encoding value in Base64
+		String valueBase64 = encodeValue(value);
+		// if (value != null) {
+		// try {
+		// valueBase64 = ENCODER.encode(value.getBytes("UTF-8"));
+		// } catch (UnsupportedEncodingException e) {
+		// logger.error("UTF-8 encoding not supported!!!!!", e);
+		// valueBase64 = ENCODER.encode(value.getBytes());
+		// }
+		// }
+		// logger.debug("Attribute value in Base64 encoding is " + valueBase64);
+
+		return valueBase64;
+	}
+
+	private String encodeValue(String v) {
+		// encoding value in Base64
 		String valueBase64 = null;
-		if (value != null) {
+		if (v != null) {
 			try {
-				valueBase64 = ENCODER.encode(value.getBytes("UTF-8"));
+				valueBase64 = ENCODER.encode(v.getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException e) {
 				logger.error("UTF-8 encoding not supported!!!!!", e);
-				valueBase64 = ENCODER.encode(value.getBytes());
+				valueBase64 = ENCODER.encode(v.getBytes());
 			}
 		}
-		logger.debug("Attribute value in Base64 encoding is " + valueBase64);
-
 		return valueBase64;
 	}
 

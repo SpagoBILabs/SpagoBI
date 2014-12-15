@@ -115,7 +115,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 			this.getEnv().put(EngineConstants.ENV_DATASOURCE, ds);
 		}
 
-		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource(ds, reference, template, profile, this.getLocale());
+		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource(ds, reference, template, profile, this.getLocale(), this.getEnv());
 
 		// pivotModel = new PivotModelImpl(olapDataSource);
 		pivotModel = new SpagoBIPivotModel(olapDataSource);
@@ -166,7 +166,8 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getMondrianSchemaFilePath()));
 			} catch (SpagoBIEngineException e) {
 				logger.debug("Exception creating the whatif component", e);
-				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(), "Exception creating the whatif component", e);
+				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(),
+						"Exception creating the whatif component", e);
 			}
 			// init the default algorithm
 			try {
