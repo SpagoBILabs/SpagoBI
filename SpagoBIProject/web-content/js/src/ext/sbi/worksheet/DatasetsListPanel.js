@@ -40,7 +40,7 @@ Sbi.worksheet.DatasetsListPanel = function(config) {
 
 	var defaultSettings = {
 		frame : true
-		, pagingSize : 15
+		, pagingSize : 20
 		, keyPressedDelay : 400
 	};
 		
