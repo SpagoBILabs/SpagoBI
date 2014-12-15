@@ -17,6 +17,7 @@
 <%@ page import="it.eng.spagobi.twitter.analysis.dataprocessors.*" %>
 <%@ page import="twitter4j.JSONArray" %>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="java.util.Locale"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -24,7 +25,20 @@
 
 <%
 
-	String locale = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE);
+String language = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE);
+String country = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_COUNTRY);
+
+if(language == null || language.equals(""))
+{
+	language = "en";
+}
+
+if(country == null || country.equals(""))
+{
+	country = "US";
+}
+
+Locale locale = new Locale(language, country);
 	
 	String searchId = request.getParameter("searchID");
 	boolean withDocs = "TRUE".equalsIgnoreCase(request.getParameter("withDocs"));
@@ -75,6 +89,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
+	<%@include file="../commons/includeMessageResource.jspf" %>
 	<%@include file="../commons/includeSbiSocialAnalysisResources.jspf"%>
 
 	 
@@ -104,7 +119,7 @@
 	
 	<% if (!rAnalysis) { %>
 	<center>
-    	<h1 style="border: 1px white solid;">Sentiment Analysis disabled for this Search</h1>
+		<h1 style="border: 1px white solid;"><span><label id="sentimentanalysisdisabled"></label></span></h1>
     </center>
     <% } %>
     

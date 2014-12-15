@@ -20,6 +20,7 @@
 <%@page import="java.util.List"%>
 <%@page import="twitter4j.JSONObject"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="java.util.Locale"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -27,7 +28,20 @@
 
 <%
 
-	String locale = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE);
+	String language = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE);
+	String country = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_COUNTRY);
+	
+	if(language == null || language.equals(""))
+	{
+		language = "en";
+	}
+	
+	if(country == null || country.equals(""))
+	{
+		country = "US";
+	}
+	
+	Locale locale = new Locale(language, country);
 
 	String searchId = request.getParameter("searchID");
 	boolean withDocs = "TRUE".equalsIgnoreCase(request.getParameter("withDocs"));
@@ -63,6 +77,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	
+	<%@include file="../commons/includeMessageResource.jspf" %>
 	<%@include file="../commons/includeSbiSocialAnalysisResources.jspf"%>
 	
 	<title>Twitter Analysis</title>

@@ -19,6 +19,7 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="java.util.Locale"%>
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -27,7 +28,20 @@
 	
 <%
 
-	String locale = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE);
+	String language = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_LANGUAGE);
+	String country = (String) request.getSession().getAttribute(SpagoBIConstants.SBI_COUNTRY);
+	
+	if(language == null || language.equals(""))
+	{
+		language = "en";
+	}
+	
+	if(country == null || country.equals(""))
+	{
+		country = "US";
+	}
+	
+	Locale locale = new Locale(language, country);
 
 	String searchId = request.getParameter("searchID");
 	boolean withDocs = "TRUE".equalsIgnoreCase(request.getParameter("withDocs"));
@@ -140,6 +154,7 @@
 			
 </div>      
 
+	<%@include file="../commons/includeMessageResource.jspf" %>
 	<%@include file="../commons/includeSbiSocialAnalysisComponents.jspf"%>
 			
 	<script type="text/javascript">
