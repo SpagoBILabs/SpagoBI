@@ -661,6 +661,9 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 					var parameters =  JSON.parse(executionInstance.PARAMETERS); // Produces a SyntaxError
 					if(parameters.outputType){
 						outputType = parameters.outputType;
+						if(outputType != null){
+							outputType = outputType.toUpperCase();
+						}
 					}
 				} catch (error) {}
 			}
