@@ -474,6 +474,27 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		this.documentPage.on('closeDocument', function(config) {
 			this.fireEvent('closeDocument', config);
 		},this);
+		// called when output type is defined and is not HTML or PDF and document type is among REPORT; OLAP; DATAMART and MAP
+		this.documentPage.on('directExport', function(outputType, contentUrl, typeCode) {
+			// call directly export function
+			if(typeCode == 'REPORT'){
+				this.toolbar.exportersMenu.exportReportTo(outputType, contentUrl);
+				}
+			else if(typeCode == 'OLAP'){
+				this.toolbar.exportersMenu.exportOlapTo(outputType, contentUrl);
+			}
+			else if(typeCode == 'MAP'){
+				this.toolbar.exportersMenu.exportGeoTo(outputType, contentUrl);
+			}
+			else if(typeCode == 'DATAMART'){
+				this.toolbar.exportersMenu.exportQbeTo(outputType, contentUrl);
+			}
+			else{
+				// should never reach this code
+				Sbi.exception.ExceptionHandler.showWarningMessage('Error','An uncorrect output type han been passed');
+			}
+			
+			},this);
 		
 		
 		

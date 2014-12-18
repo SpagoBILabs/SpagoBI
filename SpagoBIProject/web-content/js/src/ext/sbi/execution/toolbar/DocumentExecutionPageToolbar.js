@@ -108,6 +108,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    
 	, isInsert: false
 	
+	, exportersMenu : null
+	
 	// =================================================================================================================
 	// CONSTANTS
 	// =================================================================================================================
@@ -508,6 +510,9 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			    toolbar: this
 				, executionInstance: this.executionInstance
 			});
+			
+			this.exportersMenu = m;
+			
 			menuItems.push({
 				text: LN('sbi.execution.executionpage.toolbar.export')
 				, path: 'Export'	
