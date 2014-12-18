@@ -25,7 +25,7 @@ Sbi.execution.DocumentPage = function(config, doc) {
 	Ext.apply(this, c);
 		
 	// add events
-    this.addEvents('beforesynchronize', 'loadurlfailure', 'crossnavigation', 'closeDocument');
+    this.addEvents('beforesynchronize', 'loadurlfailure', 'crossnavigation', 'closeDocument', 'directExport');
 
 	// declare exploited services
 	this.initServices();
@@ -653,6 +653,18 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		
 			Sbi.trace('[DocumentPage.synchronize]: Executing document with these parameters: ' + this.executionInstance.PARAMETERS);
 			
+			// check if output type is defined
+			var typeCode = executionInstance.document.typeCode;
+			var outputType = null;
+			if(executionInstance.PARAMETERS){
+				try {
+					var parameters =  JSON.parse(executionInstance.PARAMETERS); // Produces a SyntaxError
+					if(parameters.outputType){
+						outputType = parameters.outputType;
+					}
+				} catch (error) {}
+			}
+			
 			Ext.Ajax.request({
 		        url: this.services['getUrlForExecutionService'],
 		        params: this.executionInstance,
@@ -665,8 +677,25 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		      					this.fireEvent('loadurlfailure', content.errors);
 		      				} else {
 		      					Sbi.trace('[DocumentPage.synchronize]: Url for execution is equal to: ' + content.url);
-		      					this.state = 'LOADING';
-		      					this.miframe.getFrame().setSrc( content.url );
+		      					
+		      					
+		      					if(outputType == null || outputType == 'HTML' || outputType == 'HTM' || outputType == 'PDF'){
+		      						// if output type is not specified or is HTML or PDF normal execution
+		      						this.state = 'LOADING';
+		      						this.miframe.getFrame().setSrc( content.url );	
+		      					}
+		      					else{
+		      						// else make direct export (only in cases where direct export is provided)
+		      						if(typeCode=='REPORT' || typeCode=='MAP' || typeCode=='DATAMART' || typeCode=='OLAP'){
+		      							this.fireEvent("directExport", outputType, content.url, typeCode); 
+		      						}
+		      						else{
+		      							// else proceede with normal execution
+		      	 						this.state = 'LOADING';
+			      						this.miframe.getFrame().setSrc( content.url );	
+		      						}
+		      					}
+
 		      				}
 		      			} 
 		      		} else {

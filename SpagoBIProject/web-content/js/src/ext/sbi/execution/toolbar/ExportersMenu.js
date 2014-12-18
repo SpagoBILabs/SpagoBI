@@ -226,7 +226,7 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	, getExportationUrl: function(format, documentType){
+	, getExportationUrl: function(format, documentType, contentUrl){
 			Sbi.debug('[ExportersMenu.getExportationUrl] : format = [' + format + '], documentType = [' + documentType + ']');
 		 	if (!this.exportationHandlers[documentType]) {
 		 		Sbi.error('[ExportersMenu.getExportationUrl] : no available exporters for documentType = [' + documentType + ']');
@@ -240,7 +240,13 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 		 	}
 		 	
 			if(documentType != null && documentType == 'REPORT'){
-				var documentUrl = this.getDocumentUrl();
+				var documentUrl = null;
+				if(contentUrl == null){
+					documentUrl = this.getDocumentUrl();
+				}
+				else{
+					documentUrl = contentUrl;
+				}
 				var exportationUrl = this.getUrlWithAddedParameters(documentUrl, {'outputType': format}, true);
 				if(exportationUrl == null) {
 					alert("Impossible to build exportation url");
@@ -248,8 +254,15 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 				}
 				return exportationUrl;
 			}else if(documentType != null && documentType == 'OLAP'){
-			    var documentUrl = this.getDocumentUrl();
-			    var documentBaseUrl = this.getBaseUrlPart(documentUrl);
+				var documentUrl = null;
+				if(contentUrl == null){
+					documentUrl = this.getDocumentUrl();
+				}
+				else{
+					documentUrl = contentUrl;
+				}
+
+				var documentBaseUrl = this.getBaseUrlPart(documentUrl);
 			    var exportationBaseUrl = this.getUrlWithReplacedEndpoint(documentBaseUrl, 'Print', false);
 			    
 			    parameters = {cube: '01'};
@@ -270,7 +283,15 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 			}*/else if(documentType != null && documentType == 'MAP'){
 				if(format == 'PDF') {format = 'pdf';  }
 				if(format == 'JPG') {format = 'jpeg'; }
-				var documentUrl = this.getDocumentUrl();
+				
+				var documentUrl = null;
+				if(contentUrl == null){
+					documentUrl = this.getDocumentUrl();
+				}
+				else{
+					documentUrl = contentUrl;
+				}
+				
 				var documentBaseUrl = this.getBaseUrlPart(documentUrl);
 				var exportationUrl = this.getUrlWithAddedParameters(documentBaseUrl, {
 					ACTION_NAME: 'DRAW_MAP_ACTION'
@@ -360,7 +381,15 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 				if(format == 'CSV') {format = 'text/csv'; }
 				if(format == 'JRXML') {format = 'text/jrxml'; }
 				if(format == 'JSON' ) {format = 'application/json'; }
-				var documentUrl = this.getDocumentUrl();
+				
+				var documentUrl = null;
+				if(contentUrl == null){
+					documentUrl = this.getDocumentUrl();
+				}
+				else{
+					documentUrl = contentUrl;
+				}
+				
 			    var exportationUrl = this.getUrlWithAddedParameters(documentUrl, {
 			    	ACTION_NAME: 'EXPORT_RESULT_ACTION'
 			    	, SBI_EXECUTION_ID: this.executionInstance.SBI_EXECUTION_ID
@@ -615,9 +644,9 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * 
 	 * @param {format} target exportation format
 	 */
-	, exportReportTo: function(format) {
+	, exportReportTo: function(format, contentUrl) {
 
-		var exportationUrl =  this.getExportationUrl(format, 'REPORT');
+		var exportationUrl =  this.getExportationUrl(format, 'REPORT', contentUrl);
 		window.open(exportationUrl, 'name', 'resizable=1,height=750,width=1000');
 	}
 	
@@ -626,9 +655,9 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * 
 	 * @param {format} target exportation format
 	 */
-	, exportOlapTo: function (format) {
+	, exportOlapTo: function (format, contentUrl) {
 
-	    var exportationUrl = this.getExportationUrl(format, 'OLAP');	    
+	    var exportationUrl = this.getExportationUrl(format, 'OLAP', contentUrl);	    
 		window.open(exportationUrl,'name','resizable=1,height=750,width=1000');
 	}
 	
@@ -649,9 +678,9 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * 
 	 * @param {format} target exportation format
 	 */
-	, exportGeoTo: function (format) {	
+	, exportGeoTo: function (format, contentUrl) {	
 
-		var exportationUrl = this.getExportationUrl(format, 'MAP');	 
+		var exportationUrl = this.getExportationUrl(format, 'MAP', contentUrl);	 
 		window.open(exportationUrl,'name','resizable=1,height=750,width=1000');
 	}
 	
@@ -742,9 +771,10 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * 
 	 * @param {mimeType} target exportation mimeType
 	 */
-	, exportQbeTo: function (mimeType) {	
+	, exportQbeTo: function (mimeType, contentUrl) {
+		
 		var documentUrl = this.getDocumentUrl();
-	    var exportationUrl = this.getExportationUrl(mimeType, 'DATAMART');	 
+	    var exportationUrl = this.getExportationUrl(mimeType, 'DATAMART', contentUrl);	 
 	   
 	    if(Ext.isIE6) {
 		    var form = document.getElementById('export-form');
