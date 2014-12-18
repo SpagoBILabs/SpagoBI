@@ -152,7 +152,12 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		renderer.setHideSpans(hideSpans);
 		// /show properties
 		Boolean showProperties = modelConfig.getShowProperties();
-		// renderer.set(showProperties); ??????????????????????????
+		// if(showProperties){
+		// renderer.setPropertyCollector(new NonInternalPropertyCollector());
+		// }else{
+		//
+		// }
+
 		// /suppress empty rows/columns
 		Boolean suppressEmpty = modelConfig.getSuppressEmpty();
 		NonEmpty transformNonEmpty = value.getTransform(NonEmpty.class);
