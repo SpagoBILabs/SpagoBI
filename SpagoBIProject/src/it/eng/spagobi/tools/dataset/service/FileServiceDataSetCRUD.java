@@ -238,10 +238,15 @@ public class FileServiceDataSetCRUD {
 			qbeContext = qbeContext.substring(1);
 		}
 
-		// Build locale
-		Object languageO = req.getSession().getAttribute(SpagoBIConstants.AF_LANGUAGE);
-		Object countryO = req.getSession().getAttribute(SpagoBIConstants.AF_COUNTRY);
+		// Build locale (try taking in request otherwse in session)
 
+		Object languageO = req.getParameter(SpagoBIConstants.AF_LANGUAGE);
+		Object countryO = req.getParameter(SpagoBIConstants.AF_COUNTRY);
+
+		if (languageO == null || countryO == null) {
+			languageO = req.getSession().getAttribute(SpagoBIConstants.AF_LANGUAGE);
+			countryO = req.getSession().getAttribute(SpagoBIConstants.AF_COUNTRY);
+		}
 		String sbiLanguage = languageO != null ? languageO.toString() : "en";
 		String sbiCountry = countryO != null ? countryO.toString() : "En";
 
