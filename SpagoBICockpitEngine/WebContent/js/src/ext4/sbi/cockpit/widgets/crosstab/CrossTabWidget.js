@@ -38,8 +38,7 @@ Sbi.cockpit.widgets.crosstab.CrossTabWidget = function(config) {
 
 	//manage the load events
 	this.getStore().on("load", this.loadCrosstab, this);
-	this.getStore().on("refreshData", this.updateCrosstab, this);
-	this.getStore().cc = 1;
+	this.getStore().on("refreshData", this.updateCrosstabAfterLinkedNavigation, this);
 	Sbi.trace("[CrossTabWidget.constructor]: OUT");
 };
 
@@ -48,8 +47,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
-
-	crosstabDefinition: null
+	crosstabDefinitionvar: null
 	, requestParameters: null // contains the parameters to be sent to the server on the crosstab load invocation
 	, crosstab: null
 	, calculatedFields: null
@@ -57,7 +55,6 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	, autoScroll: true
 	, sortOptions: null
 	, myGlobalId: null
-	, crosstabDefinition: null
 	, linked: false//used to understand if the dataset of the crosstab is linked to another object. We need this information in order to reload data the custom service or using the data taken from the store manager
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -71,17 +68,16 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	, load: function(crosstabDefinition, filters) {
 		Sbi.trace("[CrossTabWidget.load]: IN");
 
-		var crosstabDefinitionEncoded = Ext.JSON.encode(crosstabDefinition);
+		this.crosstabDefinitionvar = this.getCrosstabDefinition();
 		var datasetLabelEncoded = this.getStoreId();
 
 		this.requestParameters = {
-			crosstabDefinition: crosstabDefinitionEncoded,
+			crosstabDefinition: this.crosstabDefinition,
 			datasetLabel: datasetLabelEncoded
 		};
 		if(filters!=undefined && filters!=null){
 			this.requestParameters.FILTERS = Ext.util.JSON.encode(filters);
 		}
-		this.crosstabDefinition = crosstabDefinitionEncoded;
 
 		Sbi.storeManager.loadStore(this.getStore());
 		this.linked = false;
@@ -109,9 +105,15 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 		Ext.defer(this.updateCrosstab, 600, this, [dataStore, store.myStoreMetaData]);
 	}
 
+	, updateCrosstabAfterLinkedNavigation: function(storedata, metadata){
+		this.linked = true;
+		this.updateCrosstab(storedata, metadata);
+	}
+
+
 	, updateCrosstab: function(storedata, metadata){
 
-		this.linked = true;
+		this.crosstabDefinition = this.getCrosstabDefinition();
 
 		var params={
 				crosstabDefinition: this.crosstabDefinition
@@ -146,8 +148,6 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	}
 
 	, loadCrosstabAjaxRequest: function(){
-
-		crosstabDefinition = this.crosstabDefinition;
 
 		this.showLoadingMask();
 
@@ -185,12 +185,12 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	, getCrosstabDefinition: function() {
 		var crosstabDef = {};
 		crosstabDef.config = this.wconf.config;
-		crosstabDef.config.maxcellnumber = 2000;
+		//crosstabDef.config.maxcellnumber = 2000;
 		crosstabDef.rows = this.wconf.rows;
 		crosstabDef.columns = this.wconf.columns;
 		crosstabDef.measures = this.wconf.measures;
-
-		return crosstabDef;
+		var crosstabDefinitionEncoded = Ext.JSON.encode(crosstabDef);
+		return crosstabDefinitionEncoded;
 	}
 
 	, hideMask: function() {
@@ -213,9 +213,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
     // init methods
     // -----------------------------------------------------------------------------------------------------------------
 	, init: function() {
-		this.crosstabDefinition = this.getCrosstabDefinition();
-
-		this.load(this.crosstabDefinition,null);
+		this.load(null,null);
 	}
 });
 
