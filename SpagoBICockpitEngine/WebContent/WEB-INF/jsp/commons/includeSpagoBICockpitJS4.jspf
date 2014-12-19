@@ -95,6 +95,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/MeasuresContainerPanel.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/HTMLCrossTab.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabStore.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrosstabDetailsWizard.js'/></script>
 
 
 <!-- NEW Abstract Chart widget -->

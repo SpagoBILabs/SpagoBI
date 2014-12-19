@@ -155,7 +155,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.Panel, 
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
-			for (i = 0; i < this.initialData.length; i++) {
+			for (var i = 0; i < this.initialData.length; i++) {
 				var record = new this.Record(this.initialData[i]);
 	  			this.addMeasure(record);
 			}
@@ -387,7 +387,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.Panel, 
 
 	, getContainedMeasures: function () {
 		var measures = [];
-		for(i = 0; i < this.store.getCount(); i++) {
+		for(var i = 0; i < this.store.getCount(); i++) {
 			var record = this.store.getAt(i);
 			measures.push(record.data);
 		}
@@ -410,7 +410,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.Panel, 
 
 	, openDetailsWizard: function(event, toolEl, panel) {
 	  	if (this.detailsWizard === undefined) {
-	  		this.detailsWizard = new Sbi.crosstab.CrosstabDetailsWizard({
+	  		this.detailsWizard = new Sbi.cockpit.widgets.crosstab.CrosstabDetailsWizard({
 	  			isStatic: this.isStatic
 	  		});
 	  		this.detailsWizard.on('apply', function(values, theWizard) {
