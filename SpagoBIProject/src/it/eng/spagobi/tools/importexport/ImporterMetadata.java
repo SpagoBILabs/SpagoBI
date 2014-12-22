@@ -702,9 +702,18 @@ public class ImporterMetadata {
 			} else if (hibObj instanceof SbiObjMetadata) {
 				param = "SbiObjMetadata";
 				String metaName = (String) unique;
-				hql = "from SbiObjMetadata er where er.label = '" + metaName + "'";
-				hqlQuery = sessionCurrDB.createQuery(hql);
-				SbiObjMetadata hibMeta = (SbiObjMetadata) hqlQuery.uniqueResult();
+				SbiObjMetadata hibMeta = null;
+				try {
+					hql = "from SbiObjMetadata er where UCASE(er.label) = '" + metaName.toUpperCase() + "'";
+					hqlQuery = sessionCurrDB.createQuery(hql);
+					hibMeta = (SbiObjMetadata) hqlQuery.uniqueResult();
+				} catch (Exception E) {
+					// try differente syntax for upper
+					hql = "from SbiObjMetadata er where UPPER(er.label) = '" + metaName.toUpperCase() + "'";
+					hqlQuery = sessionCurrDB.createQuery(hql);
+					hibMeta = (SbiObjMetadata) hqlQuery.uniqueResult();
+				}
+
 				return hibMeta;
 			} else if (hibObj instanceof SbiKpiRel) {
 				param = "SbiKpiRel";
