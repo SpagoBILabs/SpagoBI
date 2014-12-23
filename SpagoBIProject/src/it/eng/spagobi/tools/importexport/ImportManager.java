@@ -1070,6 +1070,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 				checkIfCanImportDataSource(dataSource, existingDatasourceId);
 
+				// check if there is a write default
+				boolean isThereWriteDefault = true;
+				IDataSource dataSourceWriteDefault = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault(sessionCurrDB);
+				if (dataSourceWriteDefault == null) {
+					isThereWriteDefault = false;
+				}
+
 				if (engIdAssSet.contains(oldId) && !overwrite) {
 					logger.debug("Exported dataSource " + dataSource.getLabel() + " not inserted" + " because exist dataSource with the same label ");
 					metaLog.log("Exported dataSource " + dataSource.getLabel() + " not inserted" + " because exist dataSource with the same label ");
@@ -1088,6 +1095,12 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				} else {
 
 					SbiDataSource newDS = importUtilities.makeNew(dataSource);
+
+					if (isThereWriteDefault) {
+						logger.debug("There is already a write default on target system, do not make present as write default");
+						newDS.setWriteDefault(false);
+					}
+
 					importUtilities.associateWithExistingEntities(newDS, dataSource, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Insert(newDS);
 					Integer newId = (Integer) sessionCurrDB.save(newDS);
