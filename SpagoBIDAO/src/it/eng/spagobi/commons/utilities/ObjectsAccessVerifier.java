@@ -836,7 +836,7 @@ public class ObjectsAccessVerifier {
 						|| profile.isAbleToExecuteAction(SpagoBIConstants.PARAMETER_MANAGEMENT)) { // for behavioral model administrators
 					canSee = true;
 				} else {
-					if (obj.isPublicDoc() || (!obj.isPublicDoc() && profile.getUserUniqueIdentifier().equals(obj.getCreationUser()))) {
+					if (obj.isPublicDoc()|| (!obj.isPublicDoc() && profile.getUserUniqueIdentifier().equals(obj.getCreationUser()) || isUserPersonalFolder(folderId, profile))) {
 						canSee = checkProfileVisibility(obj, profile);
 					}
 				}
@@ -1234,6 +1234,26 @@ public class ObjectsAccessVerifier {
 		monitor.stop();
 		logger.debug("OUT.canExec=" + canExec);
 		return canExec;
+	}
+
+	static boolean isUserPersonalFolder(Integer folderId, IEngUserProfile profile) {
+		logger.debug("IN");
+		boolean toReturn = false;
+		try {
+			LowFunctionality folder = null;
+			folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
+			if (folder.getCodType().equalsIgnoreCase("USER_FUNCT") && folder.getName().equalsIgnoreCase(profile.getUserUniqueIdentifier().toString())) {
+				toReturn = true;
+				logger.debug("User " + profile.getUserUniqueIdentifier() + " is in its personal folder");
+			}
+
+		} catch (Exception e) {
+			logger.error("Exception in loadLowFunctionalityByID", e);
+			return false;
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
 	}
 
 }
