@@ -18,6 +18,8 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting an engine.
  */
@@ -117,6 +119,8 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 */
 
 	public IDataSource loadDataSourceWriteDefault() throws EMFUserError;
+
+	public IDataSource loadDataSourceWriteDefault(Session session) throws EMFUserError;
 
 	/**
 	 * Method called by superadmin to associate a datasource to a tenant
