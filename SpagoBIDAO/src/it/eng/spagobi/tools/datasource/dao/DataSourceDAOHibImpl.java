@@ -158,13 +158,12 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			SbiDataSource hibDataSource = loadSbiDataSourceWriteDefault(tmpSession);
-			if (hibDataSource == null)
+			IDataSource dataSource = loadDataSourceWriteDefault(tmpSession);
+			if (dataSource == null)
 				return null;
-			toReturn = toDataSource(hibDataSource);
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("Error  while loading the data source with write default = true: check there are no more than one (incorrect situation)", he);
+			logger.error("Error while loading the data source with write default = true: check there are no more than one (incorrect situation)", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -173,6 +172,22 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				if (tmpSession.isOpen())
 					tmpSession.close();
 			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	public IDataSource loadDataSourceWriteDefault(Session aSession) throws EMFUserError {
+		logger.debug("IN");
+		IDataSource toReturn = null;
+		try {
+			SbiDataSource hibDataSource = loadSbiDataSourceWriteDefault(aSession);
+			if (hibDataSource == null)
+				return null;
+			toReturn = toDataSource(hibDataSource);
+		} catch (HibernateException he) {
+			logger.error("Error while loading the data source with write default = true: check there are no more than one (incorrect situation)", he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		logger.debug("OUT");
 		return toReturn;
