@@ -241,8 +241,9 @@ public class HierarchiesService {
 			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + "," + scopeColumn + " ";
 
 			String tableName = "HIER_" + hierarchyPrefix;
-			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
-					+ typeColumn + "=\"MANUAL\" OR " + typeColumn + "=\"SEMIMANUAL\" ORDER BY " + hierarchyCodeColumn, 0, 0);
+			IDataStore dataStore = dataSource
+					.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE " + typeColumn
+							+ "=\"MANUAL\" OR " + typeColumn + "=\"SEMIMANUAL\" OR " + typeColumn + "=\"TECHNICAL\" ORDER BY " + hierarchyCodeColumn, 0, 0);
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 				IRecord record = (IRecord) iterator.next();
 				IField field = record.getFieldAt(0);
@@ -323,6 +324,8 @@ public class HierarchiesService {
 			String root = req.getParameter("root");
 			JSONObject rootJSONObject = ObjectUtils.toJSONObject(root);
 			boolean isInsert = Boolean.valueOf(req.getParameter("isInsert"));
+			boolean customTreeInMemorySaved = Boolean.valueOf(req.getParameter("customTreeInMemorySaved"));
+
 			String hierarchyCode = req.getParameter("code");
 			String hierarchyName = req.getParameter("name");
 			String hierarchyDescription = req.getParameter("description");
@@ -331,7 +334,7 @@ public class HierarchiesService {
 
 			String dimension = req.getParameter("dimension");
 
-			if (!isInsert) {
+			if (!isInsert || customTreeInMemorySaved) {
 				deleteCustomHierarchy(req);
 			}
 
@@ -699,7 +702,7 @@ public class HierarchiesService {
 		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
 
 		String query = "SELECT " + selectClause + " FROM " + tableName + " WHERE " + hierNameColumn + " = \"" + hierarchyCode + "\" AND (" + hierTypeColumn
-				+ "=\"MANUAL\" OR " + hierTypeColumn + "=\"SEMIMANUAL\" )";
+				+ "=\"MANUAL\" OR " + hierTypeColumn + "=\"SEMIMANUAL\" OR " + hierTypeColumn + "=\"TECHNICAL\" )";
 
 		logger.debug("Query for CUSTOM hierarchies: " + query);
 		return query;
