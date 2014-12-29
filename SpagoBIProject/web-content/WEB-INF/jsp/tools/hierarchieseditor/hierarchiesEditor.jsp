@@ -5,17 +5,22 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
  
   
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
 
-
+<%
+	boolean isAdmin = UserUtilities.isAdministrator(userProfile);
+%>
 
 
 
 <script type="text/javascript">
 	
 Ext.onReady(function(){
-	var hierarchyEditor = Ext.create('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel',{}); //by alias
+	var hierarchyEditor = Ext.create('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel',{
+		isAdmin: '<%= StringEscapeUtils.escapeJavaScript(Boolean.toString(isAdmin)) %>'
+	}); //by alias
 	var hierarchyEditorViewport = Ext.create('Ext.container.Viewport', {
 		layout:'fit',
      	items: [hierarchyEditor]
