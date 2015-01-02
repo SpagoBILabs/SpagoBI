@@ -38,7 +38,7 @@ Sbi.template = {
 			, columnWidths: [.2, .2, .2, .4]
 		}
 
-    	// ogni dataset può avere più grafici associati (1..N)
+    	// ogni dataset puÃ² avere piÃ¹ grafici associati (1..N)
     	, charts: [
         {
         	dataset: 'testStore'
@@ -408,7 +408,7 @@ Sbi.template = {
 							}, {
 								name: 'errors'
 								, hidden: false
-								, titleWin: 'La sessione non esegue operazioni da più di 20 minuti. Operazioni compiute: ' 
+								, titleWin: 'La sessione non esegue operazioni da piÃ¹ di 20 minuti. Operazioni compiute: ' 
 								, checkColumn: 'errors_check'
 								, flagColumn: 'errors_flag'
 								, tooltipActive: 'View unchecked error messages'
