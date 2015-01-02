@@ -1,19 +1,18 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.behaviouralmodel.lov.service;
 
-
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,22 +26,22 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
  *
  */
 public class GridMetadataContainer {
-	private String rootPropery ;
+	private String rootPropery;
 	private String totalProperty;
 	private List<Object> fields;
 	private List<Map<String, String>> values;
 	private Map<String, String> metaData;
 	private int results;
-	
-	public GridMetadataContainer(){
+
+	public GridMetadataContainer() {
 		rootPropery = "root";
 		totalProperty = "results";
-		values = new ArrayList<Map<String,String>>();
-		metaData = new HashMap<String,String>();
+		values = new ArrayList<Map<String, String>>();
+		metaData = new HashMap<String, String>();
 		fields = new ArrayList<Object>();
 	}
-	
-	public void setProperty(String propertyName, String propertyValue){
+
+	public void setProperty(String propertyName, String propertyValue) {
 		metaData.put(propertyName, propertyValue);
 	}
 
@@ -53,7 +52,7 @@ public class GridMetadataContainer {
 	public void setRootPropery(String rootPropery) {
 		this.rootPropery = rootPropery;
 	}
-	
+
 	public Map<String, String> getMetaData() {
 		return metaData;
 	}
@@ -90,43 +89,41 @@ public class GridMetadataContainer {
 		this.results = results;
 	}
 
-	
 	/**
 	 * JSON serializer for this object
+	 *
 	 * @return the network serialized
 	 * @throws SerializationException
 	 */
 	@JsonIgnore
-	public String toJSONString() throws it.eng.spagobi.commons.serializer.SerializationException{
+	public String toJSONString() throws it.eng.spagobi.commons.serializer.SerializationException {
 		ObjectMapper mapper = new ObjectMapper();
-		String s ="";
+		String s = "";
 		try {
-			SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
+			SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1, 0, 0, null));
 			simpleModule.addSerializer(GridMetadataContainer.class, new GridMetadataContainerJSONSerializer());
 			mapper.registerModule(simpleModule);
-			s = mapper.writeValueAsString((GridMetadataContainer)this);
-
-			
+			s = mapper.writeValueAsString(this);
 		} catch (Exception e) {
-			
-			throw new org.apache.commons.lang.SerializationException("Error serializing the network",e);
+			throw new SpagoBIRuntimeException("Error while transforming into a JSON object", e);
 		}
-		s = StringEscapeUtils.unescapeJavaScript(s);
-		return  s; 
+		// s = StringEscapeUtils.unescapeJavaScript(s);
+		return s;
 	}
-	
-	public JSONObject toJSON() throws JSONException{
+
+	public JSONObject toJSON() throws JSONException {
 		return GridMetadataContainerJSONSerializer.serialize(this);
 	}
-	
+
 	/**
 	 * Builds a list of maps of type {"header":"...", "name":"..." }
+	 *
 	 * @param colNames
 	 * @return
 	 */
-	public static List<Object> buildHeaderMap(List<String> colNames){
+	public static List<Object> buildHeaderMap(List<String> colNames) {
 		List<Object> toReturn = new ArrayList<Object>();
-		for(int i=0; i<colNames.size(); i++){
+		for (int i = 0; i < colNames.size(); i++) {
 			Map<String, String> headerMap = new HashMap<String, String>();
 			headerMap.put("name", colNames.get(i));
 			headerMap.put("header", colNames.get(i));
@@ -134,15 +131,16 @@ public class GridMetadataContainer {
 		}
 		return toReturn;
 	}
-	
+
 	/**
 	 * Builds a list of maps of type {"header":"...", "name":"..." }
+	 *
 	 * @param colNames
 	 * @return
 	 */
-	public static List<Object> buildHeaderMapForGrid(List<String> colNames){
+	public static List<Object> buildHeaderMapForGrid(List<String> colNames) {
 		List<Object> toReturn = new ArrayList<Object>();
-		for(int i=0; i<colNames.size(); i++){
+		for (int i = 0; i < colNames.size(); i++) {
 			Map<String, String> headerMap = new HashMap<String, String>();
 			headerMap.put("header", colNames.get(i));
 			headerMap.put("name", colNames.get(i));
@@ -151,12 +149,12 @@ public class GridMetadataContainer {
 		}
 		return toReturn;
 	}
-	
-	public static void main(String args[]){
-		GridMetadataContainer gmc= new GridMetadataContainer();
-		
+
+	public static void main(String args[]) {
+		GridMetadataContainer gmc = new GridMetadataContainer();
+
 		gmc.setResults(2);
-		
+
 		gmc.getFields().add("strNumber");
 		HashMap am = new HashMap<String, String>();
 		am.put("a", "a");
@@ -166,7 +164,7 @@ public class GridMetadataContainer {
 		am2.put("1", "1");
 		am2.put("2", "2");
 		gmc.getFields().add(am2);
-		
+
 		HashMap am3 = new HashMap<String, String>();
 		am3.put("11a", "11a");
 		am3.put("11b", "11b");
