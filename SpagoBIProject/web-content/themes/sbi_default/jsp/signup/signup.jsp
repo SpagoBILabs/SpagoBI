@@ -307,7 +307,7 @@ a:hover{
 								</tr>
 								<tr class='header-row-portlet-section'>
 									<td class='login-label' width="90px" align="left">*
-										 <%=defaultUsername%>:</td>
+										<%=defaultUsername%>:</td>
 									<td width="25px"></td>
 									<td class='login-label'>*&nbsp;<%=defaultEmail%>:</td>
 

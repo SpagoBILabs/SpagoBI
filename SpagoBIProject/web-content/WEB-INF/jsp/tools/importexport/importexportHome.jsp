@@ -493,7 +493,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	 	
 	 	function somethingWentWrongSaveAss() {
 	        divres = document.getElementById('divshowresultsave');
-			divres.innerHTML="Non è possibile invocare il servizio di salvataggio";
+			divres.innerHTML="Non Ã¨ possibile invocare il servizio di salvataggio";
      	}
      
 	    function showSaveAssResult(response) {

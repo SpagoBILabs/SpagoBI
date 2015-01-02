@@ -849,7 +849,7 @@ function saveDocument(goBack) {
 				
 				
 			    <!-- TEMPLATE LABEL AND BUTTONS FOR DOSSIER AND OLAP -->
-			    <%
+				 <%
 			     String styleDivLinkConf = " ";
 			     String BIobjTypecode = obj.getBiObjectTypeCode();
 			     String EngineDriverClass = null;
@@ -862,7 +862,7 @@ function saveDocument(goBack) {
 			     	styleDivLinkConf = " style='display:inline' ";
 			     else
 			     	styleDivLinkConf = " style='display:none' ";
-			    %> 	
+			    %>
 			    <!-- LINK FOR OBJECT CONFIGURATION -->
 			    <div id="link_obj_conf" <%=styleDivLinkConf%>>
 					<div class='div_detail_label'>
