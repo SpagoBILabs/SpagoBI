@@ -106,7 +106,10 @@ Sbi.settings.formviewer = {
 		}
 };
 
+
 Sbi.settings.worksheet = {
+		
+	
 		runtime : {
 			table : {
 				height: 400
@@ -123,10 +126,16 @@ Sbi.settings.worksheet = {
 				//if not present (or commented) the worksheet will take the
 				//aggregation function of the query. If no aggregation 
 				//function is available in the query a windows with the choices will appear
-				defaultAggregationFunction : "SUM"
+				defaultAggregationFunction : "SUM",
+				fontTypes:[["Times New Roman","Times New Roman"],["Verdana","Verdana"],["Arial","Arial"]],
+				fontSizes:[[6,"6"],[8,"8"],[10,"10"],[12,"12"],[14,"14"],[16,"16"],[18,"18"],[20,"20"],[22,"22"]]
 			}
 		}
 		//Chart library:
 		//possible values: ext3, highchart
 		, chartlib : 'highchart'
+			
+			
+			
+			
 };
