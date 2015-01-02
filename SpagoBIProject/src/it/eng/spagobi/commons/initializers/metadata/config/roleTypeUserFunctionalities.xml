@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ROLE_TYPE_USER_FUNCTIONALITIES>
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ConstraintManagement" roleType="ADMIN" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ConstraintManagement" roleType="MODEL_ADMIN" />

@@ -1362,7 +1362,7 @@ public class ExporterMetadata {
 				while(iterObjParuse.hasNext()) {
 					ObjParuse objparuse = (ObjParuse)iterObjParuse.next();
 					Transaction tx = session.beginTransaction();
-					// TODO controllare perché serve questo controllo: le dipendenze non dovrebbero essere riutilizzabili, per 
+					// TODO controllare perchÃ© serve questo controllo: le dipendenze non dovrebbero essere riutilizzabili, per 
 					// cui vengono inseriti una sola volta
 					Query hibQuery = session.createQuery(" from SbiObjParuse where id.sbiObjPar.objParId = " + objparuse.getObjParId() + 
 							" and id.sbiParuse.useId = " + objparuse.getParuseId() + 
@@ -1422,7 +1422,7 @@ public class ExporterMetadata {
 				while(iterObjParview.hasNext()) {
 					ObjParview objParview = (ObjParview)iterObjParview.next();
 					Transaction tx = session.beginTransaction();
-					// TODO controllare perché serve questo controllo: le dipendenze non dovrebbero essere riutilizzabili, per 
+					// TODO controllare perchÃ© serve questo controllo: le dipendenze non dovrebbero essere riutilizzabili, per 
 					// cui vengono inseriti una sola volta
 					Query hibQuery = session.createQuery(" from SbiObjParview where id.sbiObjPar.objParId = " + objParview.getObjParId() + 
 							" and id.sbiObjParFather.objParId = " + objParview.getObjParFatherId() + 

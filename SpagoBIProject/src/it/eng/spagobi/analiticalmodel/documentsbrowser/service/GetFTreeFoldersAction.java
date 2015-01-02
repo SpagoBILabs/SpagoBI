@@ -81,7 +81,7 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 			
 			ILowFunctionalityDAO lfDao = DAOFactory.getLowFunctionalityDAO();
 			if (nodeId.equalsIgnoreCase(ROOT_NODE_ID)) {
-				//getting all I° level folders
+				//getting all IÂ° level folders
 				if(permission_on_folder!=null && permission_on_folder.equals(PERMISSION_CREATION)){
 					folders = lfDao.loadUserFunctionalitiesFiltered(null, false, profile, PERMISSION_CREATION); 
 //					List<LowFunctionality> tmpFolders = lfDao.loadUserFunctionalitiesFiltered(null, false, profile, PERMISSION_CREATION);

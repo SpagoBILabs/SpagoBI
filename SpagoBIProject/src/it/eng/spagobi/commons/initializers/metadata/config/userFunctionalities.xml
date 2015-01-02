@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <USER_FUNCTIONALITIES>
 <USER_FUNCTIONALITY name="EnginesManagement" description="EnginesManagement"/>
 <USER_FUNCTIONALITY name="ReadEnginesManagement" description="ReadEnginesManagement"/>

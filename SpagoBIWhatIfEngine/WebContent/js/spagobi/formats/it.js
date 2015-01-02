@@ -14,7 +14,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 2,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: '�',
+			//currencySymbol: '€',
 			nullValue: ''
 		},
 		int: {
@@ -22,7 +22,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 0,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: '�',
+			//currencySymbol: '€',
 			nullValue: ''
 		},
 		string: {

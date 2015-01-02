@@ -47,7 +47,7 @@ public class DiffAllFile {
 		//Path della cartella che contiene la vecchia versione dei progetti
 		String oldPath = "/home/spinelli/Scrivania/OldprogettiSpago";
 		
-		/*Cartella che conterrà i file presenti nella gerarchia
+		/*Cartella che conterrÃ  i file presenti nella gerarchia
 		 * prodotta da ExtractAllFile, ma non presenti nella versione vecchia 
 		 * dei programmi (oldPath)
 		 */
@@ -141,7 +141,7 @@ public class DiffAllFile {
 		}
 		else
 		{
-			//Viene eseguito nel caso in cui il file è presente solo nella nuova versione
+			//Viene eseguito nel caso in cui il file Ã¨ presente solo nella nuova versione
 			String diff = master+subPath;
 			File f1 = new File(diff);
 			f1.mkdirs();

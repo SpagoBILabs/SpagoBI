@@ -115,7 +115,7 @@ public class AuditLogUtilities {
 	            if (utenzaApplicativa == null) {
 	            	utenzaApplicativa = request.getHeader(OPERATOR2_KEY);
 	                if (utenzaApplicativa == null) {
-	                	utenzaApplicativa = userName;			// se l'utenza applicativa ÃƒÂ¨ vuota inserisco lo user id di spagobi
+	                	utenzaApplicativa = userName;			// se l'utenza applicativa ÃƒÆ’Ã‚Â¨ vuota inserisco lo user id di spagobi
 	                }
 	            }
 	            
@@ -126,7 +126,7 @@ public class AuditLogUtilities {
 	            if (profiloApplicativo == null) {
 	            	profiloApplicativo = request.getHeader(PROFILE2_KEY);
 	                if (profiloApplicativo == null) {
-	                	profiloApplicativo = userRoles;			// se il profilo applicativo ÃƒÂ¨ vuoto inserisco i ruoli di spagobi
+	                	profiloApplicativo = userRoles;			// se il profilo applicativo ÃƒÆ’Ã‚Â¨ vuoto inserisco i ruoli di spagobi
 	                }
 	            }	        
 		        strbuf.append(profiloApplicativo.replaceAll(";", ","));					// PROFILO UTENTE

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <PRESENTATION>
 
 <MAPPING business_type="ACTION" business_name="MANAGE_USER_ACTION" publisher_name="ManageUsersPublisher"/>

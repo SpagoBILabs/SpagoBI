@@ -191,7 +191,7 @@ public class FakeDataset extends AbstractCustomDataSet {
 		meta.addFiedMeta(regione);
 		
 		FieldMetadata citta = new FieldMetadata("citta", String.class);
-		citta.setAlias("Città");
+		citta.setAlias("CittÃ ");
 		citta.setProperty("size", 20);
 		meta.addFiedMeta(citta);
 		

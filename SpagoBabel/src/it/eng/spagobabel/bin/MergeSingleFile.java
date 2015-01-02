@@ -51,7 +51,7 @@ public class MergeSingleFile
 			//Path della cartella che contiene la vecchia versione dei progetti
 			//String oldPath = "/home/spinelli/Scrivania/";
 			
-			/*Cartella che conterrà i file presenti nella gerarchia
+			/*Cartella che conterrÃ  i file presenti nella gerarchia
 			 * prodotta da ExtractAllFile, ma non presenti nella versione vecchia 
 			 * dei programmi (oldPath)
 			 */
@@ -76,7 +76,7 @@ public class MergeSingleFile
 						merge.createNewFile();
 			        	//Caso in cui sovrascrivo le chiavi che hanno la stessa label
 			        	
-			        	//Creo una copia del file perchè dovrò poi sovrascriverlo
+			        	//Creo una copia del file perchÃ¨ dovrÃ² poi sovrascriverlo
 			        	File inputFile = new File(path);
 						File outputFile = new File(mergePath);
 						InputStream finput;
@@ -168,7 +168,7 @@ public class MergeSingleFile
 			}
 			else
 			{
-				//Viene eseguito nel caso in cui il file è presente solo nella nuova versione
+				//Viene eseguito nel caso in cui il file Ã¨ presente solo nella nuova versione
 				String diff = master+subPath;
 				File f1 = new File(diff);
 				f1.mkdirs();

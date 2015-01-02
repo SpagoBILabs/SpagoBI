@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <PRESENTATION>
 <MAPPING business_name="ReportsLookupPage" business_type="PAGE" publisher_name="ReportsLookupPublisher"/>	
 <MAPPING business_name="MyFolderManagementPage" business_type="PAGE" publisher_name="BIObjectsPubJ"/> 

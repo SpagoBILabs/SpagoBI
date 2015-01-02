@@ -406,7 +406,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 
 	, onShowAssociationEditorWizard: function(){
 		if (Sbi.storeManager.getStoreIds().length == 0){
-			alert('Per gestire le associazioni è necessario creare prima dei widget!');
+			alert('Per gestire le associazioni Ã¨ necessario creare prima dei widget!');
 			return;
 		}
 		var config = {};

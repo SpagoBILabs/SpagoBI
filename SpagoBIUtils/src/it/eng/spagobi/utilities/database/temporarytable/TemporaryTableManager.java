@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
  * 
- *         DATE CONTRIBUTOR/DEVELOPER NOTE 24-06-2013 Zerbetto Davide/Andrea Fantappiè Tablespace management on Oracle and DB2
+ *         DATE CONTRIBUTOR/DEVELOPER NOTE 24-06-2013 Zerbetto Davide/Andrea FantappiÃ¨ Tablespace management on Oracle and DB2
  * 
  */
 public class TemporaryTableManager {
@@ -178,7 +178,7 @@ public class TemporaryTableManager {
 				/*
 				 * If table are on other schema must set catalog name as schema name otherwise it look for table [schema].[name] on datasource db
 				 * 
-				 * Andrea Fantappiè
+				 * Andrea FantappiÃ¨
 				 */
 				if (driverName.contains("MySQL"))
 					catalog = schema;

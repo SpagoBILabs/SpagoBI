@@ -1,6 +1,6 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
-* © 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+* Â© 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -21,7 +21,7 @@ import it.eng.spago.dbaccess.EngDateFormatter;
 import it.eng.spago.tracing.TracerSingleton;
 
 /**
-* Questa classe è responsabile per la conversione da oggetti a stringa e viceversa per gli oggetti di tipo
+* Questa classe Ã¨ responsabile per la conversione da oggetti a stringa e viceversa per gli oggetti di tipo
 * sql.DATE e sql.TIMESTAMP che non sono standard e variano a seconda del vendor
 * Questa classe implementa il Mapper per Database ORACLE
 *
@@ -120,7 +120,7 @@ public class OracleSQLMapper implements SQLMapper {
         } // if (objectTimeStampValue == null)
         if (!(objectTimeStampValue instanceof Timestamp)) {
             TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-                "OracleSQLMapper::getStringValueForTimeStamp: objectTimeStampValue non è di tipo java.sql.Timestamp");
+                "OracleSQLMapper::getStringValueForTimeStamp: objectTimeStampValue non Ã¨ di tipo java.sql.Timestamp");
             return objectTimeStampValue.toString();
         } // if (!(objectTimeStampValue instanceof java.sql.Timestamp)))
         String result = null;
@@ -171,7 +171,7 @@ public class OracleSQLMapper implements SQLMapper {
         } // if (objectDateValue == null)
         if (!(objectDateValue instanceof Date)) {
             TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-                "OracleSQLMapper::getStringValueForDate: objectDateValue non è di tipo java.sql.Date");
+                "OracleSQLMapper::getStringValueForDate: objectDateValue non Ã¨ di tipo java.sql.Date");
             return objectDateValue.toString();
         } // if (!(objectDateValue instanceof Date))
         String result = null;

@@ -334,7 +334,7 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 				}
 			}
 
-			// per il momento metto le join anche se non ce n'è bisogno
+			// per il momento metto le join anche se non ce n'Ã¨ bisogno
 			for(String viewName : viewToInnerEntitiesMap.keySet()) {
 				ModelViewEntity view = (ModelViewEntity)parentStatement.getDataSource().getModelStructure().getEntity( viewName );
 				List<Join> joins = view.getJoins();

@@ -4814,7 +4814,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					IEngUserProfile userProfile = this.getUserProfile();
 					SbiKpi existingKpi = importUtilities.modifyExisting(exportedKpi, sessionCurrDB, existingKpiId, metaAss);
 					existingKpi.setSbiKpiDocumentses(new HashSet(0));
-					// TODO manca da associare il kpi alle nuove realt‡
+					// TODO manca da associare il kpi alle nuove realt√†
 					// importUtilities.associateWithExistingEntities(existingParameter, exportedParameter, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Update(existingKpi);
 					sessionCurrDB.update(existingKpi);

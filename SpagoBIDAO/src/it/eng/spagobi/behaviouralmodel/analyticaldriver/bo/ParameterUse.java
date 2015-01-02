@@ -16,7 +16,7 @@ import java.util.List;
 public class ParameterUse  implements Serializable  {
 	
 	Integer useID;
-	Integer id; // in realt‡ questo Ë par_id nella tabella
+	Integer id; // in realt√† questo √® par_id nella tabella
 	Integer idLov;
 	Integer idLovForDefault;
 	String name = "";

@@ -165,7 +165,7 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 							alertSendingSessionList);
 				}
 
-				// Se l'event è autodisabilitante
+				// Se l'event Ã¨ autodisabilitante
 				if (sbiAlarm.isAutoDisabled()) {
 					// if(sbiAlarm.isSingleEvent()){
 					if (logger.isDebugEnabled())

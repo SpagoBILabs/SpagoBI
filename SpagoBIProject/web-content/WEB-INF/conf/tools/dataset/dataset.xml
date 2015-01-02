@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <DATASET>
 	<READER type="it.eng.spagobi.tools.dataset.bo.FileDataSet" class="it.eng.spagobi.tools.dataset.common.reader.FileReader" />
 	<READER type="it.eng.spagobi.tools.dataset.bo.QueryDataSet" class="it.eng.spagobi.tools.dataset.common.reader.SQLResultSetReader" />

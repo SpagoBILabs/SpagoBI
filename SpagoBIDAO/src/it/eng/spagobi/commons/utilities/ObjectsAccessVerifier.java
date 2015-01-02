@@ -96,7 +96,7 @@ public class ObjectsAccessVerifier {
 	}
 
 	/**
-	 * Metodo che verifica se nell'elenco delle funzionalit‡ ne esiste almeno una con diritto di esecuzione
+	 * Metodo che verifica se nell'elenco delle funzionalit√† ne esiste almeno una con diritto di esecuzione
 	 * 
 	 * @param state
 	 * @param profile
@@ -127,7 +127,7 @@ public class ObjectsAccessVerifier {
 	}
 
 	/**
-	 * Metodo che verifica se nell'elenco delle funzionalit‡ ne esiste almeno una con diritto di esecuzione
+	 * Metodo che verifica se nell'elenco delle funzionalit√† ne esiste almeno una con diritto di esecuzione
 	 * 
 	 * @param state
 	 * @param profile
@@ -161,7 +161,7 @@ public class ObjectsAccessVerifier {
 	}
 
 	/**
-	 * Metodo che verifica se nell'elenco delle funzionalit‡ ne esiste almeno una con diritto di esecuzione
+	 * Metodo che verifica se nell'elenco delle funzionalit√† ne esiste almeno una con diritto di esecuzione
 	 * 
 	 * @param state
 	 * @param profile

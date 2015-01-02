@@ -172,7 +172,7 @@ public class SpagoBIValidationImpl implements ValidationEngineIFace {
 //			
 //		}
 		
-		// Nello stesso elemento service ci possono essere pi� buste validation
+		// Nello stesso elemento service ci possono essere piï¿½ buste validation
 		// dipendenti dalle condizioni
 		// Viene eseguita una sola
 		List validations = _serviceValidations

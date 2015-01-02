@@ -353,7 +353,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 			return;
 		}
 
-		// TODO cancellare quando anche la check list è nella finestra di lookup
+		// TODO cancellare quando anche la check list Ã¨ nella finestra di lookup
 		Map paramsDescriptionMap = new HashMap();
 		List biparams = obj.getBiObjectParameters();
 		Iterator iterParams = biparams.iterator();

@@ -22,7 +22,7 @@ import sun.misc.BASE64Decoder;
  * 
  * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
  * 26/03/2013      Davide Zerbetto (davide.zerbetto@eng.it)		SpagoBIFilterDynamicSchemaProcessor now extends 
- * 				   Andrea Fantappiè (andrea.fantappiè@eng.it)	LocalizingDynamicSchemaProcessor (instead of FilterDynamicSchemaProcessor) 
+ * 				   Andrea FantappiÃ¨ (andrea.fantappiÃ¨@eng.it)	LocalizingDynamicSchemaProcessor (instead of FilterDynamicSchemaProcessor) 
  * 																to support i18n 
  */
 public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchemaProcessor

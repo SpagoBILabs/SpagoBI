@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
  * 
  * DATE          CONTRIBUTOR/DEVELOPER                         NOTE
  * 19-04-2013    Antonella Giachino (antonella.giachino@eng.it)
- * 				 Andrea Fantappiè (andrea.fantappiè@eng.it)    Added internationalization management 
+ * 				 Andrea FantappiÃ¨ (andrea.fantappiÃ¨@eng.it)    Added internationalization management 
  * 															   for highchart engine
  * 
  */

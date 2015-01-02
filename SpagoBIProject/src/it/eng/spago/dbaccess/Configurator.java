@@ -1,6 +1,6 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
-* © 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+* Â© 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
 * You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -23,8 +23,8 @@ import it.eng.spagobi.commons.SingletonConfig;
 * 										    
 **/
 /**
- * Questa Classe ha la responsabilità di effettuare il parser del file indicato dal Tag <DATA_ACCESS_CONFIGURATION_FILE_PATH> nel file xml principale dell'applicazione e di mettere
- * a disposizione del sosttosistema di accesso ai dati queste infomrazioni in particolare è possibile:
+ * Questa Classe ha la responsabilitÃ  di effettuare il parser del file indicato dal Tag <DATA_ACCESS_CONFIGURATION_FILE_PATH> nel file xml principale dell'applicazione e di mettere
+ * a disposizione del sosttosistema di accesso ai dati queste infomrazioni in particolare Ã¨ possibile:
  * <li> Recuperare l'oggetto <B>ConnectionPoolDescriptor</B> dato un nome simbolico
  * <li> Recuperare la lista dei nomi dei pool registrati dall'applicativo
  *

@@ -96,7 +96,7 @@ public class BIObjectValidator {
 			_serviceValidations = (SourceBean) objServices;
 		
 		// (AZ): CHE COSA SERVE
-		// PERCHE CI PU� essere un servizio con lo stesso nome censito come page
+		// PERCHE CI PUï¿½ essere un servizio con lo stesso nome censito come page
 		
 		//
 		else if (objServices instanceof List) {
@@ -157,7 +157,7 @@ public class BIObjectValidator {
 			
 		}
 		
-		// Nello stesso elemento service ci possono essere pi� buste validation
+		// Nello stesso elemento service ci possono essere piï¿½ buste validation
 		// dipendenti dalle condizioni
 		// Viene eseguita una sola
 		List validations = _serviceValidations
@@ -348,7 +348,7 @@ public class BIObjectValidator {
 				}
 			}
 
-			// Verifico se � stata prodotta una richiesta di conferma
+			// Verifico se ï¿½ stata prodotta una richiesta di conferma
 			if (!errorHandler.getErrors().isEmpty()) {
 				responseContainer.getServiceResponse().setAttribute(
 						ASK_CONFIRM, "TRUE");

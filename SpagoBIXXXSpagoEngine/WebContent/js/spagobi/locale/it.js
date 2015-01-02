@@ -8,7 +8,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 2,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: 'Ä',
+			//currencySymbol: '‚Ç¨',
 			nullValue: ''
 		},
 		*/
@@ -17,7 +17,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 2,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: 'Ä',
+			//currencySymbol: '‚Ç¨',
 			nullValue: ''
 		},
 		int: {
@@ -25,7 +25,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 0,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: 'Ä',
+			//currencySymbol: '‚Ç¨',
 			nullValue: ''
 		},
 		string: {
@@ -72,7 +72,7 @@ Sbi.locale.ln['sbi.qbe.queryeditor.westregion.tools.addcalculated'] = 'Aggiungi 
 Sbi.locale.ln['sbi.qbe.queryeditor.savequery'] = 'Salvare la query ...';
 Sbi.locale.ln['sbi.qbe.queryeditor.querysaved'] = 'Query salvata';
 Sbi.locale.ln['sbi.qbe.queryeditor.querysavedsucc'] = 'Query salvata correttamente';
-Sbi.locale.ln['sbi.qbe.queryeditor.msgwarning'] = 'La query Ë incorreta; vuoi salvarla lo stesso?';
+Sbi.locale.ln['sbi.qbe.queryeditor.msgwarning'] = 'La query √® incorreta; vuoi salvarla lo stesso?';
 Sbi.locale.ln['sbi.qbe.queryeditor.saveqasview'] = 'Salvare la query come vista...';
 
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.title'] = 'Editor delle query';
@@ -143,7 +143,7 @@ Sbi.locale.ln['sbi.qbe.savewindow.cancel'] = 'Cancellare';
 Sbi.locale.ln['sbi.qbe.savewindow.public'] = 'Pubblico';
 Sbi.locale.ln['sbi.qbe.savewindow.private'] = 'Privato';
 Sbi.locale.ln['sbi.qbe.savewindow.publicdesc'] = 'Tutti coloro che possono eseguire questo documento vedranno il tuo subobject salvato';
-Sbi.locale.ln['sbi.qbe.savewindow.privatedesc'] = 'Il subobject salvato sar‡ visibile solo da te';
+Sbi.locale.ln['sbi.qbe.savewindow.privatedesc'] = 'Il subobject salvato sar√† visibile solo da te';
 
 //===================================================================
 //FILTER GRID

@@ -44,7 +44,7 @@ public class Estensione
 	//il path indica da dove iniziare la ricerca dei file
     public static void makeDir(String path, String copyPath) throws IOException
     {
-    	//Coda che conterrà tutte le directory da esplorare
+    	//Coda che conterrÃ  tutte le directory da esplorare
     	Queue<String> codaPath = new LinkedList<String>();
     	
     	//inserisco nella coda il path di partenza da cui iniziare la ricerca dei file
@@ -52,7 +52,7 @@ public class Estensione
     	
     	String percorso="";
     	
-    	//Finchè ci sono path nella coda esploro le cartelle
+    	//FinchÃ¨ ci sono path nella coda esploro le cartelle
     	while(!codaPath.isEmpty())
     	{	
     		//Rimuovo il path dalla coda e cerco al suo interno i file properties
@@ -142,7 +142,7 @@ class FileExtFilter implements FilenameFilter
 	
 	private String estensione;
 
-	//Controlla qual è l'estensione del file e che sia quello della lingua di interesse
+	//Controlla qual Ã¨ l'estensione del file e che sia quello della lingua di interesse
     public FileExtFilter (String estensione, String REFERENCE_LANGUAGE_JS, String REFERENCE_LANGUAGE_P)
     {
     	if("js".equals(estensione))
@@ -163,7 +163,7 @@ class FileExtFilterExt implements FilenameFilter
 {
 	private String estensione;
 
-	//Controlla qual è l'estensione del file e che sia quello della lingua di interesse
+	//Controlla qual Ã¨ l'estensione del file e che sia quello della lingua di interesse
     public FileExtFilterExt (String estensione)
     {
     	this.estensione = "." + estensione;
