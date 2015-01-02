@@ -137,7 +137,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts, Sbi.worksheet.r
 			pie: {
 				dataLabels: {
 					enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
-					formatter: this.getDataLabelsFormatter()
+					formatter: this.getDataLabelsFormatter(),
+					style: this.getValueStyle()
 				},
 				showInLegend: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true
 			}

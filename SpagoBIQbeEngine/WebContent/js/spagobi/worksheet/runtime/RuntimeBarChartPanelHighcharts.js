@@ -81,6 +81,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 	
 	
 	, init : function () {
+		
+		
+		this.initStyles(this.chartConfig);
+		
 		this.loadChartData({
 			'rows':[this.chartConfig.category]
 			, 'measures': this.chartConfig.series
@@ -95,60 +99,65 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 		  this.update(' <div id="' + this.chartDivId + '" style="width: ' + size.width + '; height: ' + size.height + ';"></div>');
 		  
 		  var thisPanel = this;
-		  this.chart = new Highcharts.Chart({
-			exporting : {
-				//url : this.services['exportChart']
-				buttons : {
-					exportButton : {enabled : false}
-		  			, printButton : {enabled : false}
-				}
-			},
-			chart : {
-				renderTo : this.chartDivId,
-				defaultSeriesType : (this.chartConfig.orientation === 'horizontal') ?  'bar' : 'column',
-				spacingTop : 25,
-				spacingRight : 75,
-				spacingBottom : 25,
-				spacingLeft : 75,
-				zoomType: 'x'
-			},
-			plotOptions: this.getPlotOptions(),
-			legend: {
-				enabled: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true,
-				labelFormatter: function() {
-					return thisPanel.formatLegendWithScale(this.name)
-				},
-				layout: 'vertical',
-				align: 'right',
-				itemStyle: {
-					fontSize: this.legendFontSize + 'px'
-				}
-			},
-			tooltip: {
-				enabled: true,
-				formatter: this.getTooltipFormatter()
-			},
-			colors: this.getColors(),
-			title : {
-				text : ''
-			},
-			yAxis : {
-				title : {
-					text : ''
-				}
-			},
-			xAxis : {
-				categories : this.getCategories(),
-				title : {
-					text : this.chartConfig.category.alias
-				}, 
-				maxZoom: 1  // minRange: 1 for Highcharts 2.2+
-			},
-			series : this.getSeries(),
-			credits : {
-				enabled : false
-			}
-		});
+		  
+		  var chartConf = {
+					exporting : {
+						//url : this.services['exportChart']
+						buttons : {
+							exportButton : {enabled : false}
+				  			, printButton : {enabled : false}
+						}
+					},
+					chart : {
+						renderTo : this.chartDivId,
+						defaultSeriesType : (this.chartConfig.orientation === 'horizontal') ?  'bar' : 'column',
+						spacingTop : 25,
+						spacingRight : 75,
+						spacingBottom : 25,
+						spacingLeft : 75,
+						zoomType: 'x'
+					},
+					plotOptions: this.getPlotOptions(),
+					legend: {
+						enabled: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true,
+						labelFormatter: function() {
+							return thisPanel.formatLegendWithScale(this.name)
+						},
+						layout: 'vertical',
+						align: 'right',
+						itemStyle: {
+							fontSize: this.legendFontSize + 'px'
+						}
+					},
+					tooltip: {
+						enabled: true,
+						formatter: this.getTooltipFormatter()
+					},
+					colors: this.getColors(),
+					title : {
+						text : ''
+					},
+					yAxis : {
+						title : {
+							text : ''
+						}
+					},
+					xAxis : {
+						categories : this.getCategories(),
+						title : {
+							text : this.chartConfig.category.alias
+						}, 
+						maxZoom: 1  // minRange: 1 for Highcharts 2.2+
+					},
+					series : this.getSeries(),
+					credits : {
+						enabled : false
+					}
+				};
+		  
+		  this.addStyle(chartConf);
+		  
+		  this.chart = new Highcharts.Chart(chartConf);
 	}
 	
 	, getPlotOptions : function () {
@@ -160,7 +169,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 					stacking: this.getStacking(),
 					dataLabels: {
 						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
-						formatter: this.getDataLabelsFormatter()
+						formatter: this.getDataLabelsFormatter(),
+						style: this.getValueStyle()
 					}
 				}
 			};
@@ -171,7 +181,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 					stacking: this.getStacking(),
 					dataLabels: {
 						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
-						formatter: this.getDataLabelsFormatter()
+						formatter: this.getDataLabelsFormatter(),
+						style: this.getValueStyle()
 					}
 				}
 			};

@@ -161,7 +161,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts, Sbi.worksheet.
 					stacking: this.getStacking(),
 					dataLabels: {
 						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
-						formatter: this.getDataLabelsFormatter()
+						formatter: this.getDataLabelsFormatter(),
+						style: this.getValueStyle()
 					}
 				}
 			};
@@ -171,7 +172,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts, Sbi.worksheet.
 					stacking: this.getStacking(),
 					dataLabels: {
 						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
-						formatter: this.getDataLabelsFormatter()
+						formatter: this.getDataLabelsFormatter(),
+						style: this.getValueStyle()
 					}
 				}
 			};
