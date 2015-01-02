@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ACTIONS>
 
   <ACTION name="DOWNLOAD_ZIP" class="it.eng.spagobi.tools.files.service.DownloadZipAction" scope="REQUEST">

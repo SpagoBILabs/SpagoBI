@@ -34,12 +34,12 @@ import java.util.Iterator;
  * will print a string like
  * 
  * <pre>
- * └ a
- *   ├ b
- *   ├ c
- *   │ ├ e
- *   │ └ f
- *   └ d
+ * â”” a
+ *   â”œ b
+ *   â”œ c
+ *   â”‚ â”œ e
+ *   â”‚ â”” f
+ *   â”” d
  * </pre>
  * 
  */
@@ -81,11 +81,11 @@ public class TreeString {
 		return sb.toString();
 	}
 
-	// │
+	// â”‚
 	public static final String BAR = "|";
-	// └
+	// â””
 	public static final String END = "->";
-	// ├
+	// â”œ
 	public static final String MIDDLE = "+-";
 
 	private static String bar(int i) {

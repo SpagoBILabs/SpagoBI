@@ -35,7 +35,7 @@ import com.tonbeller.wcf.controller.RequestContext;
  * 
  * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
  * 26/03/2013      Davide Zerbetto (davide.zerbetto@eng.it)     SpagoBIFilterDynamicSchemaProcessor now extends 
- * 				   / Andrea Fantappiè (andrea.fantappiè@eng.it) LocalizingDynamicSchemaProcessor (instead of FilterDynamicSchemaProcessor) 
+ * 				   / Andrea FantappiÃ¨ (andrea.fantappiÃ¨@eng.it) LocalizingDynamicSchemaProcessor (instead of FilterDynamicSchemaProcessor) 
  * 																to support i18n
  * 
  *  jsp tag that defines a mondrian query
@@ -69,7 +69,7 @@ public class MondrianOlapModelTag extends OlapModelTag
 		if (schemaUrl == null)
 			throw new JspException("could not find Catalog \"" + catalogUri + "\"");
 		
-		// custom call to add locale information on request string (Andrea Fantappiè)
+		// custom call to add locale information on request string (Andrea FantappiÃ¨)
 		setDynLocale(context.getLocale().getLanguage());
 
 		cfg.setMdxQuery(getBodyContent().getString());

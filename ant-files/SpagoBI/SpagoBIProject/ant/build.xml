@@ -178,9 +178,9 @@
 
 		<copy file="${web.dir}/${license}" todir="${dist}" overwrite="true" />
 
-    <!-- converting messages file from ISO-8859-15 to ASCII -->
-    <native2ascii encoding="ISO-8859-15" src="${src}/MessageFiles" dest="${build}/${webapp_name}/WEB-INF/classes/MessageFiles"  includes="**/*.properties" />
-    <native2ascii encoding="ISO-8859-15" src="${web.dir}/js/src/ext/sbi/formats" dest="${build}/${webapp_name}/js/src/ext/sbi/formats"  includes="**/*.js" />
+    <!-- converting messages file from UTF-8 to ASCII -->
+    <native2ascii encoding="UTF-8" src="${src}/MessageFiles" dest="${build}/${webapp_name}/WEB-INF/classes/MessageFiles"  includes="**/*.properties" />
+    <native2ascii encoding="UTF-8" src="${web.dir}/js/src/ext/sbi/formats" dest="${build}/${webapp_name}/js/src/ext/sbi/formats"  includes="**/*.js" />
 
 	</target>
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

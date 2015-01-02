@@ -40,7 +40,7 @@ public class TestTwitterAnalysisLauncher {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		// TODO: è solo una classe di test per provare tutto il giro
+		// TODO: Ã¨ solo una classe di test per provare tutto il giro
 		// TODO: istanzio un oggetto TwitterAnalysisLauncher per lanciare una
 		// tipologia di ricerca (magari prendendo argomenti dagli args)
 		// String html = "<a href=\"http://www.techwars.io\" rel=\"nofollow\">TechWars</a>";

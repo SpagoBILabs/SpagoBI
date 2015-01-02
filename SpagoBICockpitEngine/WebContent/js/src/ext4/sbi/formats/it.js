@@ -64,5 +64,5 @@ Sbi.locale.formats = {
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
-Ext.Msg.buttonText.yes = 'Sì';
+Ext.Msg.buttonText.yes = 'SÃ¬';
 Ext.Msg.buttonText.no = 'No';

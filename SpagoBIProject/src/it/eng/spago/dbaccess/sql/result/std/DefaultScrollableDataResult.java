@@ -44,7 +44,7 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 /**
- * Questa classe Ë l'implementazione dell'interfaccia ScrollableDataResult implementata basandosi sun un result set jdbc 2.0
+ * Questa classe √® l'implementazione dell'interfaccia ScrollableDataResult implementata basandosi sun un result set jdbc 2.0
  * 
  * @author Andrea Zoppello
  * @version 1.0
@@ -75,7 +75,7 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	/**
 	 * Costruttore
 	 * 
-	 * @param <B>SQLCommand</B> sqlCommand - l'oggetto sqlCommand che ha generato per la quale l'oggetto Ë il risultato
+	 * @param <B>SQLCommand</B> sqlCommand - l'oggetto sqlCommand che ha generato per la quale l'oggetto √® il risultato
 	 * @param <B>List</B> inputParameters - I Parametri di input del comando che ha generato questo risultato
 	 * @param <B>ResultSet</B> rs _ Il result set wrapperizzato da questo ScrollableDataResult
 	 * @throws <B>EMFInternalError</B> - Se si verifica qualche problema nella costruzione dell'oggetto.
@@ -110,9 +110,9 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 
 	/**
 	 * Questo metodo viene usato per scorrere l'oggetto in maniera sequenziale in modo simile all'operatore il metodo ritorna true se l'oggetto ha altre righe
-	 * in avanti rispetto alla posizione corrente in cui si Ë posizionati
+	 * in avanti rispetto alla posizione corrente in cui si √® posizionati
 	 * 
-	 * @return true se l'oggetto ha altre righe in avanti rispetto alla posizione corrente in cui si Ë posizionati false altrimenti
+	 * @return true se l'oggetto ha altre righe in avanti rispetto alla posizione corrente in cui si √® posizionati false altrimenti
 	 * @throws <B>EMFInternalError</B> - Se qualche errore si verifica
 	 */
 	public boolean hasRows() throws EMFInternalError {
@@ -125,9 +125,9 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	} // public boolean hasRows() throws EMFInternalError
 
 	/**
-	 * Questo metodo ritorna la riga corrente su cui il cursore Ë posizionato
+	 * Questo metodo ritorna la riga corrente su cui il cursore √® posizionato
 	 * 
-	 * @return <B>DataRow</B> - l'oggetto rappresentante la riga del resultset su cui il cursore Ë posizionato
+	 * @return <B>DataRow</B> - l'oggetto rappresentante la riga del resultset su cui il cursore √® posizionato
 	 * @throws <B>EMFInternalError</B> - Se qualche errore si verifica
 	 */
 	public DataRow getDataRow() throws EMFInternalError {
@@ -142,7 +142,7 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 				if (conn != null) {
 					mapper = conn.getSQLMapper();
 					if (conn.isClosed()) {
-						TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "DataConnection::createDataField: connessione gi‡ chiusa");
+						TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "DataConnection::createDataField: connessione gi√† chiusa");
 						return null;
 					} // if (_closed)
 				}
@@ -166,7 +166,7 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	 * Questo metodo ritorna la riga della posizione i-esima dell'oggetto scrollableDataResult
 	 * 
 	 * @param int position - il numero della riga che si vuole ottenere
-	 * @return <B>DataRow</B> - l'oggetto rappresentante la riga del resultset su cui il cursore Ë posizionato
+	 * @return <B>DataRow</B> - l'oggetto rappresentante la riga del resultset su cui il cursore √® posizionato
 	 * @throws <B>EMFInternalError</B> - Se qualche errore si verifica
 	 */
 	public DataRow getDataRow(int position) throws EMFInternalError {

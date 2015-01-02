@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ENGINES>
 <ENGINE label="SpagoBIDashboardEng" name="Dashboard Engine" descr="Dashboard Engine" mainUrl="" driverNm="" engineTypeCd="INT" classNm="it.eng.spagobi.engines.dashboard.SpagoBIDashboardInternalEngine" biobjTypeCd="DASH" useDataSet="true" useDataSource="false" encrypt="0" />
 <ENGINE label="SpagoBIJFreeChartEng" name="JFreeChart Engine" descr="JFree Chart Engine" mainUrl="" driverNm=""  engineTypeCd="INT" classNm="it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine" biobjTypeCd="DASH" useDataSet="true" useDataSource="false" encrypt="0" />

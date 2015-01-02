@@ -84,8 +84,8 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 			
 			String type = parentEntity.getType();
 			
-			// e se il nome della classe Ë nel package di default?
-			// TODO: mettere un metodo DataMartIModelStructure che, dato una entit‡ annidata, restituisce quella di primo livello
+			// e se il nome della classe √® nel package di default?
+			// TODO: mettere un metodo DataMartIModelStructure che, dato una entit√† annidata, restituisce quella di primo livello
 			String entityName = type + "::" + type.substring(type.lastIndexOf(".") + 1);
 			
 			dimensionalEntity = this.getDatamartModel().getDataMartIModelStructure().getEntity(entityName);

@@ -42,7 +42,7 @@ Sbi.settings.georeport = {
 	        
 			/**
 			 * {String} Set in the map options to override the default projection string this map - also set maxExtent, maxResolution, 
-			 * and units if appropriate.  Default is ìEPSG:4326î.
+			 * and units if appropriate.  Default is ‚ÄúEPSG:4326‚Äù.
 			 */
 			projection: 'EPSG:900913',
 	        

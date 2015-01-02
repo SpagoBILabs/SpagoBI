@@ -26,15 +26,15 @@ public class SqlServerTypeTranslator implements INativeDBTypeable{
 	static{
 		sqlServerTypeMapping = new HashMap<String, String>();
 		sqlServerTypeMapping.put("java.lang.Integer", "int");//no param
-		sqlServerTypeMapping.put("java.lang.String", "char");//  oppure varchar  [ ( n | max ) ]  Dati di tipo carattere a lunghezza variabile non Unicode. n può essere un valore compreso tra 1 e 8.000. max indica che le dimensioni massime dello spazio di archiviazione sono 2^31-1 byte.
+		sqlServerTypeMapping.put("java.lang.String", "char");//  oppure varchar  [ ( n | max ) ]  Dati di tipo carattere a lunghezza variabile non Unicode. n puÃ² essere un valore compreso tra 1 e 8.000. max indica che le dimensioni massime dello spazio di archiviazione sono 2^31-1 byte.
 		//sqlServerTypeMapping("java.lang.String4001", "CLOB");
 		sqlServerTypeMapping.put("java.lang.Boolean", "bit");//1,0 o null
-		sqlServerTypeMapping.put("java.lang.Float", "float");//n può non essere specificato Dove n è il numero di bit utilizzato per archiviare la mantissa del numero float nella notazione scientifica
+		sqlServerTypeMapping.put("java.lang.Float", "float");//n puÃ² non essere specificato Dove n Ã¨ il numero di bit utilizzato per archiviare la mantissa del numero float nella notazione scientifica
 		sqlServerTypeMapping.put("java.lang.Double", "real");//no param
 		sqlServerTypeMapping.put("java.util.Date", "date");//no param
 		sqlServerTypeMapping.put("java.sql.Date", "date");//no param
-		sqlServerTypeMapping.put("java.sql.Timestamp", "datetime");//oppure datetime2 AAAA-MM-GG hh:mm:ss[se datetime2 .secondi frazionari] Definisce una data costituita dalla combinazione con un'ora del giorno espressa nel formato 24 ore. datetime2 può essere considerato un'estensione del tipo datetime esistente con un più ampio intervallo di date, una maggiore precisione frazionaria predefinita e una precisione specificata dall'utente facoltativa.
-		sqlServerTypeMapping.put("java.math.BigDecimal", "decimal");// facoltativi (p,s) p (precisione) Numero massimo totale di cifre decimali che è possibile archiviare, sia a destra che a sinistra del separatore decimale.s (scala) Numero massimo di cifre decimali che è possibile archiviare a destra del separatore decimale. La scala deve essere un valore compreso tra 0 e p.
+		sqlServerTypeMapping.put("java.sql.Timestamp", "datetime");//oppure datetime2 AAAA-MM-GG hh:mm:ss[se datetime2 .secondi frazionari] Definisce una data costituita dalla combinazione con un'ora del giorno espressa nel formato 24 ore. datetime2 puÃ² essere considerato un'estensione del tipo datetime esistente con un piÃ¹ ampio intervallo di date, una maggiore precisione frazionaria predefinita e una precisione specificata dall'utente facoltativa.
+		sqlServerTypeMapping.put("java.math.BigDecimal", "decimal");// facoltativi (p,s) p (precisione) Numero massimo totale di cifre decimali che Ã¨ possibile archiviare, sia a destra che a sinistra del separatore decimale.s (scala) Numero massimo di cifre decimali che Ã¨ possibile archiviare a destra del separatore decimale. La scala deve essere un valore compreso tra 0 e p.
 	}
 	
 	@SuppressWarnings("rawtypes")

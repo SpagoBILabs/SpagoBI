@@ -3,11 +3,11 @@ package it.eng.spagobi.utilities.messages;
 import java.util.Locale;
 
 /**
- * @author Andrea Fantappiè (andrea.fantappiè@eng.it)
+ * @author Andrea FantappiÃ¨ (andrea.fantappiÃ¨@eng.it)
  * 
  * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
  * 19-04-2013   Antonella Giachino (antonella.giachino@eng.it)      
- * 				Andrea Fantappiè (andrea.fantappiè@eng.it) 		Added internationalization management
+ * 				Andrea FantappiÃ¨ (andrea.fantappiÃ¨@eng.it) 		Added internationalization management
  *  														  	for highchart engine
  *
  */

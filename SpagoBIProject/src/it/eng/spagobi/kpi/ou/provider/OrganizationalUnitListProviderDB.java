@@ -54,9 +54,9 @@ public class OrganizationalUnitListProviderDB extends
 	 * ag_tab nome gerarchia 
 	 * ag_cetabl1.....15 codici uo 
 	 * ag_detabl1....15 sono i nomi delle UO 
-	 * 15 livelli di profondit‡ 
-	 * AG_DIM Ë il codice foglia 
-	 * cd_az Ë il codice azienda
+	 * 15 livelli di profondit√† 
+	 * AG_DIM √® il codice foglia 
+	 * cd_az √® il codice azienda
 	 */	
 	@Override
 	public void initialize() {		

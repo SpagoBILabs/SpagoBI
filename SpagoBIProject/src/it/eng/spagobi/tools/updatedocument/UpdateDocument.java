@@ -23,7 +23,7 @@ import javax.activation.FileDataSource;
  * @author Monia Spinelli
  */
 
-//Questa classe permette di aggiornare i templete dei documenti già caricati in SpagoBI
+//Questa classe permette di aggiornare i templete dei documenti giÃ  caricati in SpagoBI
 public class UpdateDocument 
 {
 	static public void main(String [] args){ 

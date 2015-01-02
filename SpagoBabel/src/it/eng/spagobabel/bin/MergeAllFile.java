@@ -50,7 +50,7 @@ public class MergeAllFile
 		//path della directory contenente le nuove versioni dei progetti
 		String versPath = "/home/spinelli/Scrivania/progettiSpago";
 	
-		//Coda che conterrà tutte le directory da esplorare
+		//Coda che conterrÃ  tutte le directory da esplorare
 		Queue<String> codaPath = new LinkedList<String>();
 	
 		//inserisco nella coda il path di partenza da cui iniziare la ricerca dei file
@@ -58,7 +58,7 @@ public class MergeAllFile
 	
 		String percorso="";
 	
-		//Finchè ci sono path nella coda esploro le cartelle
+		//FinchÃ¨ ci sono path nella coda esploro le cartelle
 		while(!codaPath.isEmpty())
 		{	
 			//Rimuovo il path dalla coda e cerco al suo interno i file properties

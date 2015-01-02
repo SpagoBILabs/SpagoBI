@@ -136,7 +136,7 @@ public class WorkConfiguration {
 				Object obj = clazz.newInstance();
 				logger.debug("class loaded "+classToLoad);
 				SpagoBIWork workToLaunch=null;
-				// class loaded could be instance of CmdExecWork o di Work, testa se è il primo, se no è l'altra
+				// class loaded could be instance of CmdExecWork o di Work, testa se Ã¨ il primo, se no Ã¨ l'altra
 				if (obj instanceof CmdExecWork) {
 					logger.debug("Class specified extends CmdExecWork");
 					workToLaunch = (CmdExecWork) obj;

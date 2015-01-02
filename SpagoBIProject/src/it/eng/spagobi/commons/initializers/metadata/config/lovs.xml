@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <LOVS>
 <LOV label="CURRENT_MONTH_YEAR" name="Current month of the year" descr="Current month of the year format mm" inputTypeCd="SCRIPT" defaultVal="" profileAttr="">
 <LOV_PROVIDER>

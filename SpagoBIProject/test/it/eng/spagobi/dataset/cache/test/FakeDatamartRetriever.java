@@ -28,7 +28,7 @@ import it.eng.spagobi.tools.dataset.utils.datamart.IQbeDataSetDatamartRetriever;
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
- *	DatamartRetriever fittizio usato soltanto in caso di Test in quanto non è possibile utilizzare altri IQbeDataSetDatamartRetriever
+ *	DatamartRetriever fittizio usato soltanto in caso di Test in quanto non Ã¨ possibile utilizzare altri IQbeDataSetDatamartRetriever
  */
 public class FakeDatamartRetriever implements IQbeDataSetDatamartRetriever {
 

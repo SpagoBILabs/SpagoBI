@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CHECKS>
 <CHECK label="CK-FIX-01" name="Internet Address" descr="Control if parameter is an Internet Address" valueTypeCd="INTERNET ADDRESS" value1="" value2="" />
 <CHECK label="CK-FIX-02" name="Numeric" descr="Control if  a parameter is Numeric" valueTypeCd="NUMERIC" value1="" value2="" />
