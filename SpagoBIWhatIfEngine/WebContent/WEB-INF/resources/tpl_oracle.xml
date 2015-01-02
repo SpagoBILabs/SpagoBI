@@ -12,8 +12,8 @@
 	
 	<STANDALONE>
 		<CONNECTION>
-		<USR>foodmart_key</USR>
-		<PWD>foodmart_key</PWD>
+		<USR>xxx</USR>
+		<PWD>xxx</PWD>
 		<CATALOG>\resources\Olap\FoodMartOracleSQLTest.xml</CATALOG>
 		<CONNECTIONSTRING>jdbc:oracle:thin:@172.27.1.83:1521:repo</CONNECTIONSTRING>
 		<DRIVER>oracle.jdbc.OracleDriver</DRIVER>
