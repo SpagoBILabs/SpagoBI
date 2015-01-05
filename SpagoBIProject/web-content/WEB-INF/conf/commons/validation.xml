@@ -56,7 +56,7 @@
 					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
 				</FIELD>
 				<FIELD name="DESCRIPTION" label="#config.definitionForm.fields.description">
-					<VALIDATOR validatorName="MANDATORY" />
+					<!--  <VALIDATOR validatorName="MANDATORY" /> -->
 					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
 					<VALIDATOR validatorName="MAXLENGTH" arg0="500" />
 				</FIELD>
