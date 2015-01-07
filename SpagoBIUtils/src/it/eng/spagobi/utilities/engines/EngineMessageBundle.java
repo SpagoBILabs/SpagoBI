@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.utilities.engines;
 
+import it.eng.spagobi.utilities.messages.UTF8Control;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -45,7 +47,7 @@ public class EngineMessageBundle {
         } else {
             // First access to this bundle
             try {
-                messages = ResourceBundle.getBundle(bundle, userLocale);
+                messages = ResourceBundle.getBundle(bundle, userLocale, new UTF8Control());
             } catch (java.util.MissingResourceException ex) {
                 //logger.error("ResourceBundle with bundle = [" + bundle + "] and locale = " +
                 //		"[" + userLocale + "] missing.");
