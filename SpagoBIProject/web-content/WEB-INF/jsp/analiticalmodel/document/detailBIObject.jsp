@@ -1712,7 +1712,7 @@ if(isSlider || isCombo){
     Integer thickPerc = objPar.getThickPerc() != null ? objPar.getThickPerc() : 0;
 %>
    <div class='div_detail_label'>
-        <span class='portlet-form-field-label'>
+        <span class='portlet-form-field-label' title="My tip">
             <spagobi:message key = "SBIDev.docConf.docDet.colSpan" />
         </span>
    </div>
@@ -1722,6 +1722,9 @@ if(isSlider || isCombo){
             <option value = "2" <%if (colspan == 2) out.print(" selected='selected' ");%>> 2 </option>    
             <option value = "3" <%if (colspan == 3) out.print(" selected='selected' ");%>> 3 </option>    
         </select>   
+
+        <img src="<%=urlBuilder.getResourceLinkByTheme(request,
+                		  "/img/info16.png", currTheme)%>" title='<spagobi:message key = "SBIDev.docConf.docDet.colSpanInfo" />'  alt="Colspan" />
     </div>
 <% // only for slider
 if(isSlider){
@@ -1733,6 +1736,10 @@ if(isSlider){
    </div>
      <div class='div_detail_form'>
         <input type="text" value="<%=thickPerc%>" style="width:130px;"  name="thickPerc" id="doc_thickPerc" />
+    
+            <img src="<%=urlBuilder.getResourceLinkByTheme(request,
+                          "/img/info16.png", currTheme)%>" title='<spagobi:message key = "SBIDev.docConf.docDet.thickPercInfo" />' alt="ThickPercentage" />
+    
     </div>
 <% 
 } // END SLIDER CASE
