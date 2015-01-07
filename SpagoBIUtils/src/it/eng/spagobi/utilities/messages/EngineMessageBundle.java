@@ -45,7 +45,7 @@ public class EngineMessageBundle {
         } else {
             // First access to this bundle
             try {
-                messages = ResourceBundle.getBundle(bundle, userLocale);
+                messages = ResourceBundle.getBundle(bundle, userLocale, new UTF8Control());
             } catch (java.util.MissingResourceException ex) {
                 //logger.error("ResourceBundle with bundle = [" + bundle + "] and locale = " +
                 //		"[" + userLocale + "] missing.");
