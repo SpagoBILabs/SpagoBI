@@ -10,7 +10,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.engine.cockpit.api.crosstable.CrossTab.CellType;
 import it.eng.spagobi.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
 import it.eng.spagobi.engine.cockpit.api.crosstable.CrosstabDefinition.Row;
-import it.eng.spagobi.utilities.engines.EngineMessageBundle;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.ArrayList;
