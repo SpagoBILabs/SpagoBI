@@ -1,6 +1,6 @@
 package it.eng.spagobi.utilities.exceptions;
 
-import it.eng.spagobi.utilities.engines.EngineMessageBundle;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
 import java.util.Locale;
 
