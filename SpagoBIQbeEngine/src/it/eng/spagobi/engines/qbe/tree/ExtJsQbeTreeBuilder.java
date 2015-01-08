@@ -20,7 +20,7 @@ import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.serializer.json.QbeSerializationConstants;
-import it.eng.spagobi.utilities.engines.EngineMessageBundle;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 

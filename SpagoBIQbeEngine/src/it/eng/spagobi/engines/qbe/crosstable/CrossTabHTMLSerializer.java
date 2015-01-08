@@ -13,7 +13,7 @@ import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.bo.MeasureScaleFactorOption;
 import it.eng.spagobi.engines.worksheet.services.export.MeasureFormatter;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Row;
-import it.eng.spagobi.utilities.engines.EngineMessageBundle;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.ArrayList;

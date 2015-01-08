@@ -12,7 +12,7 @@ package it.eng.spagobi.utilities.exceptions;
 
 import java.util.Locale;
 
-import it.eng.spagobi.utilities.engines.EngineMessageBundle;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
 
 public class SpagoBIEngineRestServiceRuntimeException extends SpagoBIRuntimeException {
