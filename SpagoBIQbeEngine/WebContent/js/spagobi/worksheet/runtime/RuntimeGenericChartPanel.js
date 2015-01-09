@@ -83,6 +83,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	valueStyle: null,
 	legendFontSize : Sbi.settings.worksheet.runtime.chart.legend.fontSize || 10
 
+	
+	, initGeneric: function(){
+		this.initStyles(this.chartConfig);
+	}
 
 	/**
 	 * Loads the data for the chart.. Call the action which loads the crosstab 
@@ -491,6 +495,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	if(!this.customStyles.yAxis.title.style){
 		this.customStyles.yAxis.title.style = {};
 	}
+	
 	Ext.apply(this.customStyles.yAxis.labels.style , this.axisValueStyle||{});
 	Ext.apply(this.customStyles.yAxis.title.style , this.axisTitleStyle||{});
 
@@ -506,13 +511,17 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			fontType : chartConfig.outerFontType
 	};
 	this.axisValueStyle= {
-			fontSize : chartConfig.outerFontSize,
-			fontType : chartConfig.outerFontType
+			fontSize : chartConfig.innerFontSize,
+			fontType : chartConfig.innerFontType
 	};
 	this.valueStyle= {
 			fontSize : chartConfig.innerFontSize,
 			fontType : chartConfig.innerFontType
 	};
+	
+	if(this.axisTitleStyle && this.axisTitleStyle.fontSize && this.axisTitleStyle.fontSize!=null){
+		this.legendFontSize = this.axisTitleStyle.fontSize;
+	}
 }
 
 , getValueStyle: function(){

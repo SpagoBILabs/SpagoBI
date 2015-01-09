@@ -61,6 +61,7 @@ Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts = function(config) {
 
 Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts, Sbi.worksheet.runtime.RuntimeGenericChartPanel, {
 	
+
 	chartDivId : null
 	, chart : null
 	, chartConfig : null // mandatory object to be passed as a property of the constructor input object. The template is:
@@ -79,40 +80,45 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts, Sbi.worksheet.r
 	
 	
 	, init : function () {
+		this.initGeneric();
 		this.loadChartData({'rows':[this.chartConfig.category],'measures':this.chartConfig.series});
 	}
 
 	
 	, createChart: function () {
-		  this.chart = new Highcharts.Chart({
-			exporting : {
-				//url : this.services['exportChart']
-				buttons : {
-					exportButton : {enabled : false}
-		  			, printButton : {enabled : false}
+		var chartConf = {
+				exporting : {
+					//url : this.services['exportChart']
+					buttons : {
+						exportButton : {enabled : false}
+			  			, printButton : {enabled : false}
+					}
+				},
+				chart : {
+					renderTo : this.chartDivId,
+					spacingTop : 25,
+					spacingRight : 75,
+					spacingBottom : 25,
+					spacingLeft : 75
+				},
+				plotOptions: this.getPlotOptions(),
+				tooltip: {
+					enabled: true,
+					formatter: this.getTooltipFormatter()
+				},
+				title : {
+					text : this.getTitle()
+				},
+				series : this.getSeries(),
+				colors : this.getColors(),
+				credits : {
+					enabled : false
 				}
-			},
-			chart : {
-				renderTo : this.chartDivId,
-				spacingTop : 25,
-				spacingRight : 75,
-				spacingBottom : 25,
-				spacingLeft : 75
-			},
-			plotOptions: this.getPlotOptions(),
-			tooltip: {
-				enabled: true,
-				formatter: this.getTooltipFormatter()
-			},
-			title : {
-				text : this.getTitle()
-			},
-			series : this.getSeries(),
-			colors : this.getColors(),
-			credits : {
-				enabled : false
-			}
-		});
+			};
+
+		  this.addStyle(chartConf);
+		  
+		  this.chart = new Highcharts.Chart(chartConf);
 	}
 	
 //	, getTooltipFormatter: function () {
@@ -170,6 +176,14 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelHighcharts, Sbi.worksheet.r
 		var theSerie = superSeries[0];
 		var title = this.formatTextWithMeasureScaleFactor(theSerie.name, theSerie.name);
 		return title;
+	}
+	
+	, getFontTypeColumnWidth: function(){
+		return "20px";
+	}
+	
+	, getFontTypeColumnWidth: function(){
+		return "50px";
 	}
 	
 });

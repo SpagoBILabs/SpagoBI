@@ -81,9 +81,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelHighcharts, Sbi.worksheet.r
 	
 	
 	, init : function () {
-		
-		
-		this.initStyles(this.chartConfig);
+			
+		this.initGeneric();
 		
 		this.loadChartData({
 			'rows':[this.chartConfig.category]

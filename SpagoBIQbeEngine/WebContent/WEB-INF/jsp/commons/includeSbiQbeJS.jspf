@@ -176,6 +176,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/ChartCategoryPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/SeriesGroupingPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/ChartSeriesPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/GenericChartDesignerPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/BarChartDesignerPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/LineChartDesignerPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/PieChartDesignerPanel.js'></script>

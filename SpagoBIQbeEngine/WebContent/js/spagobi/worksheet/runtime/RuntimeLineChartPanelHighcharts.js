@@ -80,6 +80,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts, Sbi.worksheet.
 	
 	
 	, init : function () {
+		this.initGeneric();
 		this.loadChartData({
 			'rows':[this.chartConfig.category]
 			, 'measures': this.chartConfig.series
@@ -97,59 +98,65 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts, Sbi.worksheet.
 		  var categories = this.getCategories();
 		  
 		  var thisPanel = this;
-		  this.chart = new Highcharts.Chart({
-			exporting : {
-				//url : this.services['exportChart']
-				buttons : {
-					exportButton : {enabled : false}
-		  			, printButton : {enabled : false}
-				}
-			},
-			chart : {
-				renderTo : this.chartDivId,
-				defaultSeriesType : (this.chartConfig.colorarea === true) ?  'area' : 'line',
-				spacingTop : 25,
-				spacingRight : 75,
-				spacingBottom : 25,
-				spacingLeft : 75
-			},
-			plotOptions: this.getPlotOptions(),
-			legend: {
-				enabled: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true,
-				labelFormatter: function() {
-					return thisPanel.formatLegendWithScale(this.name)
-				},
-				layout: 'vertical',
-				align: 'right',
-				itemStyle: {
-					fontSize: this.legendFontSize + 'px'
-				}
-			},
-			tooltip: {
-				enabled: true,
-				formatter: this.getTooltipFormatter()
-			},
-			colors: this.getColors(),
-			title : {
-				text : ''
-			},
-			yAxis : {
-				title : {
-					text : ''
-				}
-			},
-			xAxis : {
-				type:'linear',
-				categories : categories,
-				title : {
-					text : this.chartConfig.category.alias
-				}
-			},
-			series : series,
-			credits : {
-				enabled : false
-			}
-		});
+		  
+		  var  chartConf = {
+					exporting : {
+						//url : this.services['exportChart']
+						buttons : {
+							exportButton : {enabled : false}
+				  			, printButton : {enabled : false}
+						}
+					},
+					chart : {
+						renderTo : this.chartDivId,
+						defaultSeriesType : (this.chartConfig.colorarea === true) ?  'area' : 'line',
+						spacingTop : 25,
+						spacingRight : 75,
+						spacingBottom : 25,
+						spacingLeft : 75
+					},
+					plotOptions: this.getPlotOptions(),
+					legend: {
+						enabled: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true,
+						labelFormatter: function() {
+							return thisPanel.formatLegendWithScale(this.name)
+						},
+						layout: 'vertical',
+						align: 'right',
+						itemStyle: {
+							fontSize: this.legendFontSize + 'px'
+						}
+					},
+					tooltip: {
+						enabled: true,
+						formatter: this.getTooltipFormatter()
+					},
+					colors: this.getColors(),
+					title : {
+						text : ''
+					},
+					yAxis : {
+						title : {
+							text : ''
+						}
+					},
+					xAxis : {
+						type:'linear',
+						categories : categories,
+						title : {
+							text : this.chartConfig.category.alias
+						}
+					},
+					series : series,
+					credits : {
+						enabled : false
+					}
+				};
+		  this.addStyle(chartConf);
+		  
+		  this.chart = new Highcharts.Chart(chartConf);
+		  
+		 
 	}
 	
 	, getPlotOptions : function () {

@@ -35,22 +35,15 @@ Ext.ns("Sbi.worksheet.runtime");
 
 Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3  = function(config) { 
 	
-	this.legendStyle = {
-		display : 'right',
-		border : {
-			color : "bcbcbc",
-			size : 1
-		},
-		padding : 5,
-		font : {
-			family : 'Tahoma',
-			size : Sbi.settings.worksheet.runtime.chart.legend.fontSize || 10
-		}
-	};
+	var defaultSettings = {
+			defaultFontSize: 10
+		};
+	
+	var c = Ext.apply(defaultSettings, config || {});
 	
 	this.addEvents();
 	
-	Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3.superclass.constructor.call(this, config);	 	
+	Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3.superclass.constructor.call(this, c);	 	
 
 };
 
@@ -59,6 +52,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 	ieChartHeight: 400,
 	charts: null, //the list of charts of the panel. Should be 1 for bar and line and can be more than one for pie
 	
+
 	exportContent: function() {
 		var chartsByteArrays = new Array();
 //		if(this.charts!=undefined && this.charts!=null){
@@ -190,6 +184,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 	
 	
 	, addChartConfExt3: function(chartConf, showTipMask){
+		
+		
+		this.addStyle(chartConf);
+		
 		if((this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true){
 			if (chartConf.extraStyle === undefined || chartConf.extraStyle == null) {
 				chartConf.extraStyle = {};
@@ -198,6 +196,61 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanelExt3, Sbi.worksheet.run
 		}
 		chartConf.tipRenderer = this.getTooltipFormatter();
 	}
+	
+	, addStyle: function(chart){
+		this.addFontStyles();
+
+		
+		var axisTitleStyleFontSize = this.defaultFontSize;
+		var axisValueStylefontSize = this.defaultFontSize;
+			
+		if(this.axisTitleStyle && this.axisTitleStyle.fontSize && this.axisTitleStyle.fontSize!=""){
+			axisTitleStyleFontSize = this.axisTitleStyle.fontSize;
+		}
+		
+		if(this.axisValueStyle && this.axisValueStyle.fontSize && this.axisValueStyle.fontSize!=""){
+			axisValueStylefontSize = this.axisValueStyle.fontSize;
+		}
+		
+		var extraStyle ={};
+		
+		if(this.axisTitleStyle){
+			extraStyle.font = {
+				size: axisTitleStyleFontSize
+
+			};
+		}
+		
+		if(this.axisValueStyle){
+			extraStyle.dataTip = {
+				font:{
+					size: axisValueStylefontSize
+				}
+			};
+		}
+		
+		this.legendStyle = {
+				display : 'right',
+				border : {
+					color : "bcbcbc",
+					size : 1
+				},
+				padding : 5,
+				font : {
+					family : 'Tahoma',
+					size : this.axisTitleStyle.fontSize || Sbi.settings.worksheet.runtime.chart.legend.fontSize || 10
+				}
+			};
+
+		if(!chart.extraStyle){
+			chart.extraStyle={};
+		}
+
+		return Ext.apply(chart.extraStyle, extraStyle);
+	}
+
+	
+	
 
 
 });

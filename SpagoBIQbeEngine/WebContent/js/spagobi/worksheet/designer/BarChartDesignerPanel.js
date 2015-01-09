@@ -47,7 +47,9 @@ Sbi.worksheet.designer.BarChartDesignerPanel = function(config) {
 	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.barChartDesignerPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.barChartDesignerPanel);
 	}
-
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.genericChartDesignerPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.genericChartDesignerPanel);
+	}
 
 
 	var c = Ext.apply(defaultSettings, config || {});
@@ -62,6 +64,7 @@ Sbi.worksheet.designer.BarChartDesignerPanel = function(config) {
 
 	this.addEvents("attributeDblClick", "attributeRemoved");
 
+	
 	this.init();
 
 	c = {
@@ -69,7 +72,7 @@ Sbi.worksheet.designer.BarChartDesignerPanel = function(config) {
 	};
 
 	Sbi.worksheet.designer.BarChartDesignerPanel.superclass.constructor.call(this, c);
-
+	
 	if(Ext.isIE){
 		this.on('resize', function(a,b,c,d){try{ this.form.setWidth(b-50);}catch(r){}}, this);
 	}
@@ -81,7 +84,7 @@ Sbi.worksheet.designer.BarChartDesignerPanel = function(config) {
 
 };
 
-Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Sbi.worksheet.designer.GenericChartDesignerPanel, {
 
 	form: null
 	, items: null
@@ -102,7 +105,7 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 		this.initTemplate();
 
 		this.radioGroupIds = [Ext.id(), Ext.id(), Ext.id()]; // generate random id
-
+		
 		this.typeRadioGroup = new Ext.form.RadioGroup({
 			hideLabel: true,
 			columns: 3,
@@ -235,87 +238,8 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 
 		controlsItems.push(this.showLegendCheck);
 
-
 		//creates the font options
-		this.innerFontSize= new Ext.form.ComboBox({
-			columnWidth : .2,
-			typeAhead: true,
-			triggerAction: 'all',
-			lazyRender:true,
-			mode: 'local',
-			store: new Ext.data.ArrayStore({
-				fields: ['myId','displayText'],
-				data: this.fontSizes
-			}
-			),    
-			valueField: 'myId',
-			displayField: 'displayText'
-		});
-
-
-		this.innerFontType = new Ext.form.ComboBox({
-			columnWidth : .7,
-			typeAhead: true,
-			triggerAction: 'all',
-			lazyRender:true,
-			mode: 'local',
-			store: new Ext.data.ArrayStore({
-				fields: ['myId','displayText'],
-				data:   this.fontTypes
-			}),  
-			valueField: 'myId',
-			displayField: 'displayText'
-
-		});
-
-
-		//creates the font options
-		this.outerFontSize= new Ext.form.ComboBox({
-			columnWidth : .3,
-			typeAhead: true,
-			triggerAction: 'all',
-			lazyRender:true,
-			mode: 'local',
-			store: new Ext.data.ArrayStore({
-				fields: ['myId','displayText'],
-				data: this.fontSizes
-			}
-			),    
-			valueField: 'myId',
-			displayField: 'displayText'
-		});
-
-		this.outerFontType = new Ext.form.ComboBox({
-			columnWidth : .7,
-			typeAhead: true,
-			triggerAction: 'all',
-			lazyRender:true,
-			mode: 'local',
-			store: new Ext.data.ArrayStore({
-				fields: ['myId','displayText'],
-				data:   this.fontTypes
-			}),  
-			valueField: 'myId',
-			displayField: 'displayText'
-
-		});
-
-
-
-		controlsItems.push( {
-			layout: 'column',
-			fieldLabel:   LN('sbi.worksheet.designer.form.font.titles'),
-			border:false,
-			items: [this.innerFontType, this.innerFontSize]
-		});
-
-		controlsItems.push( {
-			layout: 'column',
-			fieldLabel:    LN('sbi.worksheet.designer.form.font.inner'),
-			border:false,
-			items: [this.outerFontType, this.outerFontSize]
-		});
-
+		this.addFontStyleCombos(controlsItems);
 
 		this.form = new Ext.form.FormPanel({
 			border: false
@@ -365,6 +289,7 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 		target: 'x-form-el-' + this.radioGroupIds[2],
 		html: LN('sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.percent-stacked')
 	}, sharedConf));
+	
 }
 
 , initTemplate: function () {
@@ -389,10 +314,7 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 	state.category = this.categoryContainerPanel.getCategory();
 	state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
 	state.series = this.seriesContainerPanel.getContainedMeasures();
-	state.outerFontSize = this.outerFontSize.getValue();
-	state.outerFontType =this.outerFontType.getValue();
-	state.innerFontSize = this.innerFontSize.getValue();
-	state.innerFontType =this.innerFontType.getValue();
+	this.getGenericFormState(state);
 	return state;
 }
 
@@ -404,10 +326,7 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 	if (state.category) this.categoryContainerPanel.setCategory(state.category);
 	if (state.groupingVariable) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
 	if (state.series) this.seriesContainerPanel.setMeasures(state.series);
-	if (state.outerFontSize) this.outerFontSize.setValue(state.outerFontSize);
-	if (state.outerFontType) this.outerFontType.setValue(state.outerFontType);
-	if (state.innerFontSize) this.innerFontSize.setValue(state.innerFontSize);
-	if (state.innerFontType) this.innerFontType.setValue(state.innerFontType);
+	this.setGenericFormState(state);
 }
 
 , validate: function(validFields){
@@ -460,5 +379,7 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 	}
 	return true;
 }
+
+
 
 });
