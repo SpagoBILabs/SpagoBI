@@ -64,6 +64,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 	, chartConfig : null 	
 	
 	, init : function () {
+		this.initGeneric();
 		this.loadChartData({
 			'rows':[this.chartConfig.category]
 			, 'measures': this.chartConfig.series

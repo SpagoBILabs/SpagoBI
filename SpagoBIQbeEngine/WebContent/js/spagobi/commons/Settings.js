@@ -108,8 +108,7 @@ Sbi.settings.formviewer = {
 
 
 Sbi.settings.worksheet = {
-		
-	
+			
 		runtime : {
 			table : {
 				height: 400
@@ -130,10 +129,14 @@ Sbi.settings.worksheet = {
 				fontTypes:[["Times New Roman","Times New Roman"],["Verdana","Verdana"],["Arial","Arial"]],
 				fontSizes:[[6,"6"],[8,"8"],[10,"10"],[12,"12"],[14,"14"],[16,"16"],[18,"18"],[20,"20"],[22,"22"]]
 			}
+			genericChartDesignerPanel: {
+				fontTypes:[["Times New Roman","Times New Roman"],["Verdana","Verdana"],["Arial","Arial"]],
+				fontSizes:[[6,"6"],[8,"8"],[10,"10"],[12,"12"],[14,"14"],[16,"16"],[18,"18"],[22,"22"],[24,"24"],[28,"28"],[32,"32"],[36,"36"],[40,"40"]]
+			}
 		}
 		//Chart library:
-		//possible values: ext3, highchart
-		, chartlib : 'highchart'
+		//possible values: ext3, highcharts
+		, chartlib : 'highcharts'
 			
 			
 			

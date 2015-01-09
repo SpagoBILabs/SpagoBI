@@ -43,8 +43,13 @@ Sbi.worksheet.designer.LineChartDesignerPanel = function(config) {
 	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.lineChartDesignerPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.lineChartDesignerPanel);
 	}
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.genericChartDesignerPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.genericChartDesignerPanel);
+	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
+	
+	
 	
 	this.chartLib = 'highcharts';
 	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.chartlib) {
@@ -55,6 +60,7 @@ Sbi.worksheet.designer.LineChartDesignerPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
+
 	this.addEvents("attributeDblClick", "attributeRemoved");
 	
 	this.init();
@@ -63,11 +69,13 @@ Sbi.worksheet.designer.LineChartDesignerPanel = function(config) {
 		items: [this.form]
 	};
 	
-	Sbi.worksheet.designer.LineChartDesignerPanel.superclass.constructor.call(this, c);
+	
 	
 	if(Ext.isIE){
 		this.on('resize', function(a,b,c,d){try{ this.form.setWidth(b-40);}catch(r){}}, this);
 	}
+	
+	Sbi.worksheet.designer.LineChartDesignerPanel.superclass.constructor.call(this, c);
 	
 	this.on('afterLayout', this.addToolTips, this);
 	
@@ -76,7 +84,7 @@ Sbi.worksheet.designer.LineChartDesignerPanel = function(config) {
 	
 };
 
-Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel,Sbi.worksheet.designer.GenericChartDesignerPanel, {
 
 	form: null
 	, items: null
@@ -215,6 +223,9 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 		} 
 		fieldsetItems.push(this.showLegendCheck);
 	    
+		//creates the font options
+		this.addFontStyleCombos(fieldsetItems);
+		
 		this.form = new Ext.form.FormPanel({
 			border: false
 			, items: [
@@ -289,6 +300,7 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 		state.category = this.categoryContainerPanel.getCategory();
 		state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
 		state.series = this.seriesContainerPanel.getContainedMeasures();
+		this.getGenericFormState(state);
 		return state;
 	}
 	
@@ -313,6 +325,7 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 		 * is null or the this.imageContainerPanel.update(newHtml) instruction does not work).
 		 * Suspending the events and deferring the this.changeLineChartImage solve the issue.
 		 */
+		this.setGenericFormState(state);
 	}
 	, validate: function(validFields){
 		var valErr='';
@@ -364,5 +377,6 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 		}
 		return true;
 	}
+	
 
 });

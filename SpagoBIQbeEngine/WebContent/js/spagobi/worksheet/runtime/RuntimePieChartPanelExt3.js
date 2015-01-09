@@ -67,6 +67,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 
 	
 	, init : function () {
+		this.initGeneric();
 		this.loadChartData({'rows':[this.chartConfig.category],'measures':this.chartConfig.series});
 	}
 
@@ -116,6 +117,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 				border: false,
 				html: '<div style=\"padding-top: 5px; color: rgb(255, 102, 0);\" align=\"center\"><font size=\"4\"><b>'+itemChart.serieName+'</b></font></div>'
 			});
+			
 			
 			var chartPanel =  new Ext.chart.PieChart(itemChart);
 			

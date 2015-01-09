@@ -43,6 +43,9 @@ Sbi.worksheet.designer.PieChartDesignerPanel = function(config) {
 	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.pieChartDesignerPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.pieChartDesignerPanel);
 	}
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.genericChartDesignerPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.genericChartDesignerPanel);
+	}
 	
 	this.chartLib = 'highcharts';
 	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.chartlib) {
@@ -66,7 +69,7 @@ Sbi.worksheet.designer.PieChartDesignerPanel = function(config) {
 	
 };
 
-Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Sbi.worksheet.designer.GenericChartDesignerPanel, {
 
 	form: null
 	, items: null
@@ -178,6 +181,9 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 		
     	controlsItems.push(this.showLegendCheck);
     	controlsItems.push(this.showPercentageCheck);
+    	
+		//creates the font options
+		this.addFontStyleCombos(controlsItems);
 		
 		this.form = new Ext.Panel({
 			border: false
@@ -205,6 +211,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 		state.category = this.categoryContainerPanel.getCategory();
 		state.series = this.seriesContainerPanel.getContainedMeasures();
 		state.colors = this.seriesPalette.getColors();
+		this.getGenericFormState(state);
 		return state;
 	}
 	
@@ -215,6 +222,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 		if (state.colors) this.seriesPalette.setColors(state.colors);
+		this.setGenericFormState(state);
 	}
 	, validate: function(validFields){
 		var valErr='';	
@@ -248,5 +256,10 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 			return this.categoryContainerPanel.category.id == attributeId;
 		}
 	}
+	
+	, getFontFormWidth: function(){
+		return 300;
+	}
+
 	
 });

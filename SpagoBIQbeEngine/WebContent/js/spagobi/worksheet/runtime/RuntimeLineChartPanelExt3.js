@@ -37,7 +37,7 @@ Ext.ns("Sbi.worksheet.runtime");
 Sbi.worksheet.runtime.RuntimeLineChartPanelExt3 = function(config) {
 	
 	var defaultSettings = {
-		
+
 	};
 
 	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.runtime.runtimeLineChartPanel) {
@@ -68,6 +68,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 	, chartConfig : null 
 	
 	, init : function () {
+		this.initGeneric();
 		this.loadChartData({
 			'rows':[this.chartConfig.category]
 			, 'measures': this.chartConfig.series
@@ -115,6 +116,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 		
 		this.addChartConfExt3(items);
 		items.region= 'center';
+
+		
 		var lineChartPanel = new Ext.chart.LineChart(items);
 
 		var thispanel = this;
