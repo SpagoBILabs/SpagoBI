@@ -90,16 +90,88 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorContextMenu', {
 					                 }
 					      ]
 					    });
-				win.show();		    		
+				win.show();	
 	    	} else {
 				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.hierarchies.node.add.leaf.error'), LN('sbi.generic.error'));
 
 	    	}
-
 	    },
 	    iconCls: 'icon-add',
 	    itemId: 'myActionAdd'
-	})
+	  }),
+	  new Ext.Action({
+		    text: LN('sbi.hierarchies.node.edit'),
+		    handler: function(){
+		    	var tree = Ext.getCmp('customTreePanel');
+		    	var selectedNode = tree.selModel.getSelection()[0];
+		    	if (!selectedNode.isLeaf()){
+		    
+					this.newNodeCode = new Ext.form.Text({
+						name: 'code',
+				        fieldLabel: LN('sbi.generic.code'),
+				        labelWidth: 130,
+						width : 300,
+				        allowBlank: false,
+				        enforceMaxLength: true,
+				        maxLength: 45,
+				        value:  selectedNode.get( "id" ) // selectedNode.raw.id || '' 
+					});
+					
+					this.newNodeName = new Ext.form.Text({
+						name: 'name',
+				        fieldLabel: LN('sbi.generic.name'),
+				        labelWidth: 130,
+						width : 300,
+				        allowBlank: false,
+				        enforceMaxLength: true,
+				        maxLength: 45,
+				        value:  selectedNode.get( "text" )  // selectedNode.raw.text || ''
+					});
+			    	
+					var win = new Ext.Window(
+						    {
+						        layout: 'fit',
+						        width: 400,
+						        height: 200,
+						        modal: true,
+						        closeAction: 'destroy',
+						        title:LN('sbi.hierarchies.node.add'),
+						        items: new Ext.Panel(
+						        {
+									
+									bodyStyle:'padding:20px',
+						        	items: [this.newNodeCode,this.newNodeName]
+						        }),
+						        buttons:[
+						                 { 
+						                	 text:'OK',
+						                	 handler:function() {
+						                		 var newNodeCode = this.newNodeCode.getValue(); //must be unique in the tree!
+						                		 var newNodeName = this.newNodeName.getValue();
+						                		
+						                		 selectedNode.set( "id", newNodeCode ); 
+						                		 selectedNode.set( "text", newNodeName );  						                		 
+						                		 win.close();
+						                	 }
+						                 	 ,scope:this 
+						                 },
+						                 {
+						                	 text:LN('sbi.general.cancel'),
+						                	 handler:function() {
+						                		 win.close();
+						                	 }
+						                 }
+						      ]
+						    });
+					win.show();	
+		    	} else {
+					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.hierarchies.node.edit.leaf.error'), LN('sbi.generic.error'));
+
+		    	}
+		    },
+		    iconCls: 'icon-edit',
+		    itemId: 'myActionEdit'
+		})
 	]
 
 });
