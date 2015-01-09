@@ -56,6 +56,13 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		this.treeContextMenu = Ext.create('Sbi.tools.hierarchieseditor.HierarchiesEditorContextMenu',{});
 		
 		this.callParent(arguments);
+		
+		//invokes before each ajax request 
+	    Ext.Ajax.on('beforerequest', this.showMask, this);   
+	    // invokes after request completed 
+	    Ext.Ajax.on('requestcomplete', this.hideMask, this);            
+	    // invokes if exception occured 
+	    Ext.Ajax.on('requestexception', this.hideMask, this); 
 
 	}
 
@@ -254,18 +261,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
             	   //Create New Hierarchy popup window   
             	   //------------------------------------------------------
            		   this.isInsert = true;
-            	   //get selectedRecord of the grid if it selected
-            	   /*
-           		   var rec = this.selectedRecord; //through the detail icon
-            	   if (!rec){
-            		   rec = this.customHierarchiesGrid.getSelectionModel().getSelection(); //through the selected record of the grid
-            		   if (rec.length > 0) rec = rec[0];
-            		   else rec = null;
-            	   }			
-            	   if (rec != null && rec != undefined){
-            		   this.isInsert = false;		
-            	   }*/
-          		  
+
             	   var hierarchyType = (!this.isInsert)? rec.data.HIERARCHY_TP : this.newCustomHierarchyTypeCombo.getValue();
             	   
             	   this.customHierarchyCode = new Ext.form.Text({
@@ -275,7 +271,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
             		   width : 300,
             		   allowBlank: false,
             		   enforceMaxLength: true,
-            		   maxLength: 45,
+            		   maxLength: 20,
             		   value: ''
             	   });
 
@@ -286,7 +282,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
             		   width : 300,
             		   allowBlank: false,
             		   enforceMaxLength: true,
-            		   maxLength: 45,
+            		   maxLength: 100,
             		   value: ''
             	   });
 
@@ -297,7 +293,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
             		   width : 300,
             		   allowBlank: false,
             		   enforceMaxLength: true,
-            		   maxLength: 45,
+            		   maxLength: 255,
             		   value: ''
             	   });
 
@@ -370,7 +366,6 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
             							            	this.createCustomHierarchyEmptyPanel(this.newCustomHierarchyConfig);
             							            	this.disableGUIElements();
             							            	
-            							           		this.isInsert = false;
             						            		win.close();
             						            	}
             						            ,scope:this 
@@ -489,6 +484,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 					tooltip: LN('sbi.hierarchies.show.tree'),
 					iconCls   : 'button-detail',  
 					handler: function(grid, rowIndex, colIndex) {
+						thisPanel.isInsert = false;
 						thisPanel.selectedRecord =  grid.store.getAt(rowIndex);
 						thisPanel.onShowCustomHierarchyTree(thisPanel.selectedRecord);
 					}
@@ -741,7 +737,6 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 				function(btn, text){
 					if (btn=='yes') {
 						
-						this.isInsert = true;
 						//get selectedRecord of the grid if it selected
 						var rec = this.selectedRecord; //through the detail icon
 						if (!rec){
@@ -749,9 +744,6 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 							if (rec.length > 0) rec = rec[0];
 							else rec = null;
 						}			
-						if (rec != null && rec != undefined){
-							this.isInsert = false;		
-						}
 					
 						//check the end nodes
 						var customTreePanel = Ext.getCmp('customTreePanel');
@@ -1231,7 +1223,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        			}
 	        			var isLeafNode = data.records[0].isLeaf();
 
-	        			if  (((customHierarchyType != "SEMIMANUAL") || (!isLeafNode) )
+	        			if  (((customHierarchyType != "SEMIMANUAL" && customHierarchyType != "TECHNICAL") || (!isLeafNode) )
 	        					|| (!isLeafNode && ddOnSameTree)) {
 	        				//Original code from Ext source
 	        				if(this.lastOverNode){
@@ -1445,6 +1437,28 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		});		
 		
 	}	
+	
+	/**
+	 * Opens the loading mask 
+	*/
+    , showMask : function(){
+    	this.un('afterlayout',this.showMask,this);
+    	if (this.loadMask == null) {    		
+    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "  Wait...  "});
+    	}
+    	if (this.loadMask){
+    		this.loadMask.show();
+    	}
+    }
+
+	/**
+	 * Closes the loading mask
+	*/
+	, hideMask: function() {
+    	if (this.loadMask && this.loadMask != null) {	
+    		this.loadMask.hide();
+    	}
+	} 
 
 });
 
