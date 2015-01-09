@@ -326,6 +326,7 @@
 <file name='./spagobi/worksheet/designer/ChartCategoryPanel.js' />
 <file name='./spagobi/worksheet/designer/SeriesGroupingPanel.js' />
 <file name='./spagobi/worksheet/designer/ChartSeriesPanel.js' />
+<file name='./spagobi/worksheet/designer/GenericChartDesignerPanel.js' />
 <file name='./spagobi/worksheet/designer/BarChartDesignerPanel.js' />
 <file name='./spagobi/worksheet/designer/LineChartDesignerPanel.js' />
 <file name='./spagobi/worksheet/designer/PieChartDesignerPanel.js' />
