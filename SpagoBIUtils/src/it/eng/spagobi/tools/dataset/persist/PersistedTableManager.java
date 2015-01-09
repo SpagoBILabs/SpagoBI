@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.persist;
 
@@ -23,6 +23,7 @@ import it.eng.spagobi.utilities.database.DataBase;
 import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.math.BigDecimal;
@@ -42,9 +43,9 @@ import org.safehaus.uuid.UUIDGenerator;
 
 /**
  * Functions that manage the persistence of the dataset
- * 
+ *
  * @author Antonella Giachino (antonella.giachino@eng.it)
- * 
+ *
  */
 
 public class PersistedTableManager {
@@ -102,10 +103,10 @@ public class PersistedTableManager {
 		this.setDialect(dsPersist.getHibDialectClass());
 		logger.debug("DataSource target dialect is [" + getDialect() + "]");
 		// for the first version not all target dialect are enable
-		if (getDialect().contains(DIALECT_SQLSERVER) || getDialect().contains(DIALECT_DB2) ||
-				getDialect().contains(DIALECT_INGRES) || getDialect().contains(DIALECT_TERADATA)) {
-			logger.debug("Persistence management isn't able for " + getDialect() + ".");
-			throw new SpagoBIServiceException("", "sbi.ds.dsCannotPersistDialect");
+		if (getDialect().contains(DIALECT_SQLSERVER) || getDialect().contains(DIALECT_DB2) || getDialect().contains(DIALECT_INGRES)
+				|| getDialect().contains(DIALECT_TERADATA)) {
+			logger.error("Persistence management not implemented for dialect " + getDialect() + ".");
+			throw new SpagoBIRuntimeException("Persistence management not implemented for dialect " + getDialect() + ".");
 		}
 		String signature = dataset.getSignature();
 		logger.debug("Dataset signature : " + signature);
@@ -134,8 +135,7 @@ public class PersistedTableManager {
 
 		logger.debug("DataSource target dialect is [" + getDialect() + "]");
 		// for the first version not all target dialect are enable
-		if (getDialect().contains(DIALECT_DB2) ||
-				getDialect().contains(DIALECT_INGRES) || getDialect().contains(DIALECT_TERADATA)) {
+		if (getDialect().contains(DIALECT_DB2) || getDialect().contains(DIALECT_INGRES) || getDialect().contains(DIALECT_TERADATA)) {
 			logger.debug("Persistence management isn't implemented for " + getDialect() + ".");
 			throw new SpagoBIServiceException("", "sbi.ds.dsCannotPersistDialect");
 		}
@@ -324,8 +324,8 @@ public class PersistedTableManager {
 									toParse = toParse.replace(",", "");
 								} else {
 									toParse = toParse.replace(",", ".");// use the .
-																// instead of
-																// the comma
+									// instead of
+									// the comma
 								}
 
 							}
@@ -335,8 +335,8 @@ public class PersistedTableManager {
 
 					}
 				} catch (Throwable t) {
-					throw new RuntimeException("An unexpected error occured while converting to double measure field [" + fieldMeta.getName() + "] whose value is ["
-							+ field.getValue() + "]", t);
+					throw new RuntimeException("An unexpected error occured while converting to double measure field [" + fieldMeta.getName()
+							+ "] whose value is [" + field.getValue() + "]", t);
 				}
 			} else if (fieldMeta.getType().toString().contains("String")) {
 				Integer lenValue = (field.getValue() == null) ? new Integer("0") : new Integer(field.getValue().toString().length());
@@ -418,8 +418,8 @@ public class PersistedTableManager {
 				logger.debug("Cannot setting the column " + fieldMeta.getName() + " with type " + fieldMeta.getType().toString());
 			}
 		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while adding to statement value [" + field.getValue() + "] of field [" + fieldMeta.getName()
-					+ "] whose type is equal to [" + fieldMeta.getType().toString() + "]", t);
+			throw new RuntimeException("An unexpected error occured while adding to statement value [" + field.getValue() + "] of field ["
+					+ fieldMeta.getName() + "] whose type is equal to [" + fieldMeta.getType().toString() + "]", t);
 		}
 	}
 
@@ -490,25 +490,22 @@ public class PersistedTableManager {
 			}
 		} else if (type.contains("java.lang.Double")) {
 			toReturn = " DOUBLE ";
-			if (getDialect().contains(DIALECT_POSTGRES) || getDialect().contains(DIALECT_SQLSERVER) ||
-					getDialect().contains(DIALECT_TERADATA)) {
+			if (getDialect().contains(DIALECT_POSTGRES) || getDialect().contains(DIALECT_SQLSERVER) || getDialect().contains(DIALECT_TERADATA)) {
 				toReturn = " NUMERIC ";
 			} else if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
 				toReturn = " NUMBER ";
 			}
 		} else if (type.contains("java.lang.Float")) {
 			toReturn = " DOUBLE ";
-			if (getDialect().contains(DIALECT_POSTGRES) || getDialect().contains(DIALECT_SQLSERVER) ||
-					getDialect().contains(DIALECT_TERADATA)) {
+			if (getDialect().contains(DIALECT_POSTGRES) || getDialect().contains(DIALECT_SQLSERVER) || getDialect().contains(DIALECT_TERADATA)) {
 				toReturn = " NUMERIC ";
 			} else if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
 				toReturn = " NUMBER ";
 			}
 		} else if (type.contains("java.lang.Boolean")) {
 			toReturn = " BOOLEAN ";
-			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g) ||
-					getDialect().contains(DIALECT_TERADATA) ||
-					getDialect().contains(DIALECT_DB2)) {
+			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g) || getDialect().contains(DIALECT_TERADATA)
+					|| getDialect().contains(DIALECT_DB2)) {
 				toReturn = " SMALLINT ";
 			} else if (getDialect().contains(DIALECT_SQLSERVER)) {
 				toReturn = " BIT ";
@@ -552,8 +549,7 @@ public class PersistedTableManager {
 
 		if (this.isRowCountColumIncluded()) {
 			IDataBase dataBase = DataBase.getDataBase(dataSource);
-			toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(this.getRowCountColumnName(), dataSource)
-					+ " " + dataBase.getDataBaseType(Long.class)
+			toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(this.getRowCountColumnName(), dataSource) + " " + dataBase.getDataBaseType(Long.class)
 					+ " , ";
 		}
 
@@ -678,17 +674,12 @@ public class PersistedTableManager {
 
 		// get the list of tables names
 		if (dialect.contains(DIALECT_ORACLE) || dialect.contains(DIALECT_ORACLE9i10g)) {
-			statement = "SELECT TABLE_NAME " +
-					"FROM USER_TABLES " +
-					"WHERE TABLE_NAME LIKE '" + prefix.toUpperCase() + "%'";
+			statement = "SELECT TABLE_NAME " + "FROM USER_TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toUpperCase() + "%'";
 		} else if (dialect.contains(DIALECT_SQLSERVER) || (dialect.contains(DIALECT_MYSQL) || dialect.contains(DIALECT_POSTGRES))) {
-			statement = "SELECT TABLE_NAME " +
-					"FROM INFORMATION_SCHEMA.TABLES " +
-					"WHERE TABLE_NAME LIKE '" + prefix.toLowerCase() + "%'";
+			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toLowerCase() + "%'";
 		} else if (dialect.contains(DIALECT_HSQL) || dialect.contains(DIALECT_HSQL_PRED)) {
-			statement = "SELECT TABLE_NAME " +
-					"FROM INFORMATION_SCHEMA.SYSTEM_TABLES  " +
-					"WHERE TABLE_TYPE = 'TABLE' AND TABLE_NAME LIKE '" + prefix.toUpperCase() + "%'";
+			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.SYSTEM_TABLES  " + "WHERE TABLE_TYPE = 'TABLE' AND TABLE_NAME LIKE '"
+					+ prefix.toUpperCase() + "%'";
 		}
 
 		if ((statement != null) && (!statement.isEmpty())) {
@@ -719,7 +710,7 @@ public class PersistedTableManager {
 
 	/**
 	 * Create a random unique name for a creating a new table
-	 * 
+	 *
 	 * @param prefix
 	 *            an optional prefix to use for the generated table name
 	 */
