@@ -10,12 +10,14 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.DocumentsJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.indexing.IndexingConstants;
 import it.eng.spagobi.commons.utilities.indexing.LuceneSearcher;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -175,7 +177,21 @@ public class SearchContentAction extends AbstractSpagoBIAction {
 				showmetadataAction.put("description", "Show Metadata");
 				for (int i = 0; i < documentsJSON.length(); i++) {
 					JSONObject documentJSON = documentsJSON.getJSONObject(i);
-					documentJSON.getJSONArray("actions").put(showmetadataAction);
+					documentJSON.getJSONArray(DocumentsJSONSerializer.ACTIONS).put(showmetadataAction);
+				}
+			}
+			// add detail functionality when user has
+			if (func.contains("DocumentDetailManagement")) {
+				JSONObject detailAction = new JSONObject();
+				MessageBuilder msgBuild = new MessageBuilder();
+				detailAction.put("name", "detail");
+				detailAction.put("description", msgBuild.getMessage("sbiobjects.actions.detail.description", getLocale()));
+				for (int i = 0; i < documentsJSON.length(); i++) {
+					JSONObject documentJSON = documentsJSON.getJSONObject(i);
+					// check user can dev on this object
+					if (ObjectsAccessVerifier.canDevBIObject(documentJSON.getInt(DocumentsJSONSerializer.ID), profile)) {
+						documentJSON.getJSONArray(DocumentsJSONSerializer.ACTIONS).put(detailAction);
+					}
 				}
 			}
 			JSONObject documentsResponseJSON = createJSONResponseDocuments(documentsJSON);
