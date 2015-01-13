@@ -159,7 +159,12 @@ public class MessageBundle {
      */
     public static String getMessage(final String code, final String bundle, final Locale userLocale) {
         
-        String bundleKey = bundle + "_" + userLocale.getLanguage()+ userLocale.getCountry();
+    	String bundleKey;
+    	if(userLocale.equals(Locale.US)) {
+    		bundleKey = bundle;
+    	} else {
+    		bundleKey = bundle + "_" + userLocale.getLanguage()+ "_" + userLocale.getCountry();
+    	}
         ResourceBundle messages = null;
         if (bundles.containsKey(bundleKey)) {
             messages = (ResourceBundle)bundles.get(bundleKey);
