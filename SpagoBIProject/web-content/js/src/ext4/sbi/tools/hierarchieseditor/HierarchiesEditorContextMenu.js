@@ -16,8 +16,11 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorContextMenu', {
 	    text: LN('sbi.hierarchies.node.delete'),
 	    handler: function(){
 	    	var tree = Ext.getCmp('customTreePanel');
-	    	var selectedNode = tree.selModel.getSelection()[0];
-	    	selectedNode.remove();
+	    	var selectedNodes = tree.selModel.getSelection();
+	    	for (var i=0; i < selectedNodes.length; i++){
+		    	var selectedNode = tree.selModel.getSelection()[i];
+		    	selectedNode.remove();
+	    	}
 	    	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.hierarchies.node.deleted'));
 	    },
 	    iconCls: 'button-remove',
