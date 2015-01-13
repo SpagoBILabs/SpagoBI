@@ -38,7 +38,12 @@ public class EngineMessageBundle {
     		bundle = DEFAULT_BUNDLE;
     	}
     	
-        String bundleKey = bundle + "_" + userLocale.getLanguage() + "_" + userLocale.getCountry();
+    	String bundleKey;
+    	if(userLocale.equals(Locale.US)) {
+    		bundleKey = bundle;
+    	} else {
+    		bundleKey = bundle + "_" + userLocale.getLanguage()+ "_" + userLocale.getCountry();
+    	}
         ResourceBundle messages = null;
         if (bundles.containsKey(bundleKey)) {
             messages = (ResourceBundle) bundles.get(bundleKey);
