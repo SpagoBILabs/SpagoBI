@@ -1,11 +1,12 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.pivot4j.ui;
 
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -46,17 +47,26 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 	private boolean initialized = false;
 	private String evenColumnStyleClass = "";
 	private String oddColumnStyleClass = "";
+	// if the member stay in the columns this is the rowPosition of all the occurrence of the member.. Viceversa for the rows
+	private Map<Member, Integer> memberPositions;
+	private boolean showProperties = false;
 
 	public static transient Logger logger = Logger.getLogger(HtmlRenderer.class);
 
 	@Override
 	public void render(PivotModel model) {
+
 		super.render(model);
 		initialized = false;
+
 	}
 
-	public WhatIfHTMLRenderer(Writer writer) {
+	public WhatIfHTMLRenderer(Writer writer, ModelConfig modelConfig) {
 		super(writer);
+		if (modelConfig.getShowProperties()) {
+			memberPositions = new HashMap<Member, Integer>();
+			showProperties = true;
+		}
 	}
 
 	@Override
@@ -98,10 +108,10 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			} else {
 				styleClass = getRowHeaderStyleClass();
 
-				if (getRowHeaderLevelPadding() > 0) {
+				// if its a property cell no span needed
+				if (getRowHeaderLevelPadding() > 0 && !isProperyCell(context)) {
 
-					int padding = getRowHeaderLevelPadding()
-							* context.getMember().getDepth();
+					int padding = getRowHeaderLevelPadding() * context.getMember().getDepth();
 
 					cssWriter.writeStyle("padding-left", padding + "px");
 				}
@@ -150,8 +160,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 		PropertySupport properties = getProperties(context);
 
 		if (properties != null) {
-			cssWriter.writeStyle("color",
-					getPropertyValue("fgColor", properties, context));
+			cssWriter.writeStyle("color", getPropertyValue("fgColor", properties, context));
 
 			String bgColor = getPropertyValue("bgColor", properties, context);
 			if (bgColor != null) {
@@ -159,13 +168,10 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 				cssWriter.writeStyle("background-image", "none");
 			}
 
-			cssWriter.writeStyle("font-family",
-					getPropertyValue("fontFamily", properties, context));
-			cssWriter.writeStyle("font-size",
-					getPropertyValue("fontSize", properties, context));
+			cssWriter.writeStyle("font-family", getPropertyValue("fontFamily", properties, context));
+			cssWriter.writeStyle("font-size", getPropertyValue("fontSize", properties, context));
 
-			String fontStyle = getPropertyValue("fontStyle", properties,
-					context);
+			String fontStyle = getPropertyValue("fontStyle", properties, context);
 			if (fontStyle != null) {
 				if (fontStyle.contains("bold")) {
 					cssWriter.writeStyle("font-weight", "bold");
@@ -176,8 +182,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 				}
 			}
 
-			String styleClassValue = getPropertyValue("styleClass", properties,
-					context);
+			String styleClassValue = getPropertyValue("styleClass", properties, context);
 
 			if (styleClassValue != null) {
 				if (styleClass == null) {
@@ -190,7 +195,8 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 
 		if (styleClass != null) {
 			// adds the proper style (depending if it was collapsed or expanded)
-			if (context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Value")) {
+			if (context.getMember() != null && context.getMember().getMemberType() != null
+					&& !context.getMember().getMemberType().name().equalsIgnoreCase("Value")) {
 
 				try {
 					int childrenNum = context.getMember().getChildMemberCount();
@@ -241,8 +247,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 		}
 
 		if (context.getColumnSpan() > 1) {
-			attributes
-					.put("colspan", Integer.toString(context.getColumnSpan()));
+			attributes.put("colspan", Integer.toString(context.getColumnSpan()));
 		}
 
 		if (context.getRowSpan() > 1) {
@@ -307,62 +312,68 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 		if (link == null) {
 			Map<String, String> attributes = new TreeMap<String, String>();
 			String drillMode = this.getDrillDownMode();
-			if (context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
 
-				List<CellCommand<?>> commands = getCommands(context);
+			if (!isEmptyNonProperyCell(context)) {
+				// (previousAnalyzedMember != null && previousAnalyzedMember.equals(context.getMember())
+				// && (context.getColumnIndex() + context.getRowIndex()) == (previousAnalyzedMemberPosition + 1)) {
 
-				if (commands != null && !commands.isEmpty()) {
-					for (CellCommand<?> command : commands) {
-						String cmd = command.getName();
+				if (context.getMember() != null && context.getMember().getMemberType() != null
+						&& !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
 
-						// /spagobi whatif engine
+					List<CellCommand<?>> commands = getCommands(context);
 
-						int colIdx = context.getColumnIndex();
-						int rowIdx = context.getRowIndex();
+					if (commands != null && !commands.isEmpty()) {
+						for (CellCommand<?> command : commands) {
+							String cmd = command.getName();
 
-						int axis = 0;
-						if (context.getAxis() != null) {
-							axis = context.getAxis().axisOrdinal();
-						}
-						int memb = 0;
-						if (context.getPosition() != null) {
-							memb = context.getPosition().getOrdinal();
-						}
-						int pos = 0;
-						if (context.getAxis() == Axis.COLUMNS) {
-							pos = rowIdx;
-						} else {
-							pos = colIdx;
-						}
-						if (cmd != null) {
-							CellParameters parameters = command.createParameters(context);
+							// /spagobi whatif engine
 
-							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember")) &&
-									(!drillMode.equals(DrillDownCommand.MODE_REPLACE))) {
-								attributes.put("src", "../img/minus.gif");
-								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp(" + axis + " , " + pos + " , " + memb + ")");
-								getWriter().startElement("img", attributes);
-								getWriter().endElement("img");
-							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
-								attributes.put("src", "../img/plus.gif");
-								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown(" + axis + " , " + pos + " , " + memb + ")");
-								getWriter().startElement("img", attributes);
-								getWriter().endElement("img");
+							int colIdx = context.getColumnIndex();
+							int rowIdx = context.getRowIndex();
+
+							int axis = 0;
+							if (context.getAxis() != null) {
+								axis = context.getAxis().axisOrdinal();
 							}
-						}
+							int memb = 0;
+							if (context.getPosition() != null) {
+								memb = context.getPosition().getOrdinal();
+							}
+							int pos = 0;
+							if (context.getAxis() == Axis.COLUMNS) {
+								pos = rowIdx;
+							} else {
+								pos = colIdx;
+							}
+							if (cmd != null) {
+								CellParameters parameters = command.createParameters(context);
 
-					}
-				} else {
-					if (context.getAxis() == Axis.ROWS) {
-						// adding a transparent image to get a higher
-						// indentation on rows headers
-						attributes.put("src", "../img/nodrill.png");
-						attributes.put("style", "padding : 2px");
-						getWriter().startElement("img", attributes);
-						getWriter().endElement("img");
+								if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
+										&& (!drillMode.equals(DrillDownCommand.MODE_REPLACE))) {
+									attributes.put("src", "../img/minus.gif");
+									attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp(" + axis + " , " + pos + " , " + memb + ")");
+									getWriter().startElement("img", attributes);
+									getWriter().endElement("img");
+								} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
+									attributes.put("src", "../img/plus.gif");
+									attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown(" + axis + " , " + pos + " , " + memb + ")");
+									getWriter().startElement("img", attributes);
+									getWriter().endElement("img");
+								}
+							}
+
+						}
+					} else {
+						if (context.getAxis() == Axis.ROWS && !isProperyCell(context)) {
+							// adding a transparent image to get a higher
+							// indentation on rows headers
+							attributes.put("src", "../img/nodrill.png");
+							attributes.put("style", "padding : 2px");
+							getWriter().startElement("img", attributes);
+							getWriter().endElement("img");
+						}
 					}
 				}
-
 			}
 
 			if ((context.getCellType() == CellType.Title) && !label.equalsIgnoreCase("Measures")) {
@@ -422,7 +433,52 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			getWriter().writeContent(label);
 			getWriter().endElement("a");
 		}
+		// previousAnalyzedMember = context.getMember();
+		// previousAnalyzedMemberPosition = context.getColumnIndex() + context.getRowIndex();
+	}
 
+	private boolean isProperyCell(RenderContext context) {
+		if (showProperties && this.getPropertyCollector() != null && context.getLevel() != null && isEmptyNonProperyCell(context)) {
+			List<org.olap4j.metadata.Property> propertieds = this.getPropertyCollector().getProperties(context.getLevel());
+			return (propertieds != null && propertieds.size() > 0);// check if contains properties..
+
+		}
+		return false;
+	}
+
+	private boolean isEmptyNonProperyCell(RenderContext context) {
+
+		Member member = context.getMember();
+
+		// if the member stays in the rows, if there is more than one occurrence in the same row, than its a property cell
+		if (member != null && showProperties) {
+
+			Integer memberPosition = null;
+
+			if (context.getAxis().axisOrdinal() == (Axis.ROWS.axisOrdinal())) {
+				memberPosition = context.getColumnIndex();
+			} else {
+				memberPosition = context.getRowIndex();
+			}
+
+			if (!memberPositions.containsKey(member)) {
+				memberPositions.put(member, memberPosition);
+			}
+
+			Integer previousPositions = memberPositions.get(member);
+
+			if (previousPositions == memberPosition) {
+				return false;
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	protected String getPropertyValue(String key, PropertySupport properties, RenderContext context) {
+		return super.getPropertyValue(key, properties, context);
 	}
 
 	public String getEvenColumnStyleClass() {
