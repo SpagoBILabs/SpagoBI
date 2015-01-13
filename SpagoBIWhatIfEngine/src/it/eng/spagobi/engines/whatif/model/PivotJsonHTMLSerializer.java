@@ -1,14 +1,14 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * 
+ *
  * Renderer of the model...
  * It uses the WhatIfHTMLRenderer to render the table in a HTML format
- * 
- * @author Alberto Ghedin (alberto.ghedin@eng.it) 
+ *
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
 package it.eng.spagobi.engines.whatif.model;
 
@@ -51,6 +51,7 @@ import com.eyeq.pivot4j.ui.command.DrillDownReplaceCommand;
 import com.eyeq.pivot4j.ui.command.DrillExpandMemberCommand;
 import com.eyeq.pivot4j.ui.command.DrillExpandPositionCommand;
 import com.eyeq.pivot4j.ui.command.DrillUpReplaceCommand;
+import com.eyeq.pivot4j.ui.impl.NonInternalPropertyCollector;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -90,7 +91,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 		logger.debug("Creating the renderer");
 		StringWriter writer = new StringWriter();
-		WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer(writer);
+		WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer(writer, modelConfig);
 
 		logger.debug("Setting the properties of the renderer");
 
@@ -152,11 +153,12 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		renderer.setHideSpans(hideSpans);
 		// /show properties
 		Boolean showProperties = modelConfig.getShowProperties();
-		// if(showProperties){
-		// renderer.setPropertyCollector(new NonInternalPropertyCollector());
-		// }else{
-		//
-		// }
+
+		if (showProperties) {
+			renderer.setPropertyCollector(new NonInternalPropertyCollector());
+		} else {
+			renderer.setPropertyCollector(null);
+		}
 
 		// /suppress empty rows/columns
 		Boolean suppressEmpty = modelConfig.getSuppressEmpty();
@@ -233,8 +235,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 	}
 
-	private void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModel model) throws JSONException,
-			JsonGenerationException, IOException {
+	private void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModel model)
+			throws JSONException, JsonGenerationException, IOException {
 
 		QueryAdapter qa = null;
 		ChangeSlicer ph = null;
