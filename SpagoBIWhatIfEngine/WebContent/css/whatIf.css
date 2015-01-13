@@ -273,7 +273,9 @@ td[contenteditable="true"]:focus {
 .BUTTON_CALCULATED_MEMBERS{
 background-image: url(../img/cubesmall.png);
 }
-
+.EXPORT_XLS{
+background-image: url(../img/xls16.png);
+}
 
 /*------------------*/
 /* Multi hierarchy */

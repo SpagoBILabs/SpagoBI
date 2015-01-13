@@ -1,18 +1,18 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Alberto Ghedin (alberto.ghedin@eng.it) 
- * 
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ *
  * @class ModelTransformer
- * 
+ *
  * Services that manage the model:
  * <ul>
  * <li>/model/mdx/{mdx}: executes the mdx query</li>
  * </ul>
- * 
+ *
  */
 package it.eng.spagobi.engines.whatif.api;
 
@@ -32,6 +32,7 @@ import it.eng.spagobi.engines.whatif.parser.parser;
 import it.eng.spagobi.engines.whatif.version.VersionManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -85,9 +86,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	}
 
 	/**
-	 * Executes the mdx query. If the mdx is null it executes the query of the
-	 * model
-	 * 
+	 * Executes the mdx query. If the mdx is null it executes the query of the model
+	 *
 	 * @param mdx
 	 *            the query to execute
 	 * @return the htm table representing the cellset
@@ -97,7 +97,6 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 	public String setMdx(@PathParam("mdx") String mdx) {
 		logger.debug("IN");
-		Map m = this.getServletRequest().getParameterMap();
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 
@@ -161,8 +160,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			allocationAlgorithm = AllocationAlgorithmFactory.getAllocationAlgorithm(algorithm, ei, properties);
 		} catch (SpagoBIEngineException e) {
 			logger.error(e);
-			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.error",
-					getLocale(), e);
+			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.error", getLocale(), e);
 		}
 
 		CellTransformation transformation = new CellTransformation(value, cellWrapper.getValue(), cellWrapper, allocationAlgorithm);
@@ -240,9 +238,9 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Service to increase Version
-	 * 
+	 *
 	 * @return
-	 * 
+	 *
 	 */
 	@POST
 	@Path("/saveAs/{name}/{descr}")
@@ -287,7 +285,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Gets the active mdx statement
-	 * 
+	 *
 	 * @return the mdx active statement
 	 */
 	@GET
@@ -308,70 +306,72 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	}
 
 	/**
-	 * Exports the actual model in a xls format.. Since it takes the actual
-	 * model, it takes also the pending transformations (what you see it's what
-	 * you get)
-	 * 
+	 * Exports the actual model in a xls format.. Since it takes the actual model, it takes also the pending transformations (what you see it's what you get)
+	 *
 	 * @return the response with the file embedded
 	 */
 	@GET
 	@Path("/export/{format}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response export()
-	{
+	public Response export() {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		ExcelExporter exporter = new ExcelExporter(out);
-		exporter.render(model);
 
+		// adds the calculated fields before rendering the model
+		model.applyCal();
+
+		exporter.render(model);
+		// restore the query without calculated fields
+		model.restoreQuery();
 		byte[] outputByte = out.toByteArray();
 
 		String fileName = exportFileName + "-" + (new Date()).toLocaleString() + ".xls";
 
-		return Response
-				.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM)
-				.header("content-disposition", "attachment; filename = " + fileName)
-				.build();
+		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 	}
 
 	/**
-	 * Exports the actual model in a xls format.. Since it takes the actual
-	 * model, it takes also the pendingg transformations (what you see it's what
-	 * you get)
-	 * 
+	 * Exports the actual model in a xls format.. Since it takes the actual model, it takes also the pendingg transformations (what you see it's what you get)
+	 *
 	 * @return the response with the file embedded
 	 */
 	@GET
 	@Path("/serialize")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response serializeModel()
-	{
+	public Response serializeModel() {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream stream;
+		ObjectOutputStream stream = null;
 		try {
 			stream = new ObjectOutputStream(out);
 			Serializable state = model.saveState();
 			stream.writeObject(state);
 		} catch (IOException e) {
 			logger.error("Error while serializing model", e);
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+				logger.error("Impossible to close the stream for the serialization of the model");
+				throw new SpagoBIEngineRuntimeException("Impossible to close the stream for the serialization of the model");
+
+			}
 		}
 
 		byte[] outputByte = out.toByteArray();
 
 		String fileName = exportFileName + "-" + (new Date()).toLocaleString() + ".txt";
 
-		return Response
-				.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM)
-				.header("content-disposition", "attachment; filename = " + fileName)
-				.build();
+		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 	}
 
 	public void logTransormations() {
