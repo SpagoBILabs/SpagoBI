@@ -304,7 +304,7 @@ Ext.define('Sbi.olap.control.Controller', {
 			pathParams: ["export","X"]
 		});
 
-		service.callService(this);
+		service.callServiceInNewWindow(this);
 	}
 
 	,lockModel: function() {
