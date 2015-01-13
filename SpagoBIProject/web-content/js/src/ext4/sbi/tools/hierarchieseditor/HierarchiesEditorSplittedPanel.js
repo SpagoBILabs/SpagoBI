@@ -110,7 +110,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 		            	   //populate customHierarchies grid 
 		            	   this.customHierarchiesGridStore = this.createCustomHierarchiesGridStore(dimensionName);
 		            	   this.customHierarchiesGrid.reconfigure(this.customHierarchiesGridStore);
-		            	   this.customHierarchiesGrid.setTitle(LN('sbi.hierarchies.custom.for')+dimensionName);
+		            	   this.customHierarchiesGrid.setTitle(LN('sbi.hierarchies.custom.for')+" "+dimensionName);
 		               }
 		           }
 		        ,scope:this   
@@ -286,7 +286,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
             		   value: ''
             	   });
 
-            	   this.customHierarchyDescription = new Ext.form.Text({
+            	   this.customHierarchyDescription = new Ext.form.TextArea({
             		   name: 'description',
             		   fieldLabel: LN('sbi.generic.descr'),
             		   labelWidth: 130,
@@ -331,7 +331,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
             			   {
             				   layout: 'fit',
             				   width: 400,
-            				   height: 200,
+            				   height: 250,
             				   modal: true,
             				   closeAction: 'destroy',
             				   title:LN('sbi.hierarchies.new.create'),
@@ -464,15 +464,18 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        columns: [{
 	            header: 'Code',
 	            dataIndex: 'HIERARCHY_CD',
-	            flex: 1
+	            flex: 1,
+	            renderer: this.renderTip
 	        },{
 	            header: 'Name',
 	            dataIndex: 'HIERARCHY_NM',
-	            flex: 1
+	            flex: 1,
+	            renderer: this.renderTip
 	        }, {
 	            header: 'Type',
 	            dataIndex: 'HIERARCHY_TP',
-	            width: 100
+	            width: 100,
+	            renderer: this.renderTip
 	        }, {
 				//SHOW TREE BUTTON
 	        	menuDisabled: true,
@@ -611,7 +614,14 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 				reader: {
 					type: 'json'
 				}
-			}
+			},
+			sorters: [{
+				property: 'leaf',
+				direction: 'ASC'
+			}, {
+				property: 'text',
+				direction: 'ASC'
+			}]		
 			,autoload:true
 		});
 		return automaticHierarchyTreeStore;
@@ -1177,6 +1187,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        height: 400,
 	        store: store,
 	        rootVisible: rootVisible,
+	        multiSelect: true,
 	        frame: false,
 	        border:false,
 	        bodyStyle: {border:0},
@@ -1265,6 +1276,7 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	        rootVisible: false,
 	        frame: false,
 	        border:false,
+	        multiSelect: true,
 	        bodyStyle: {border:0},
 	        bodyStyle:'padding:20px',
 //	        emptyText: 'Hierarchies not found for the period specified, try with another date.',
@@ -1302,6 +1314,18 @@ Ext.define('Sbi.tools.hierarchieseditor.HierarchiesEditorSplittedPanel', {
 	    });
 		return warning;
 	}
+	
+    , renderTip: function(val, meta, rec, rowIndex, colIndex, store) {
+        meta.tdAttr = 'data-qtip="'+ 
+        	"<b>"+LN('sbi.generic.code')+": </b>"+rec.get('HIERARCHY_CD') + "<br> "+
+        	"<b>"+LN('sbi.generic.name')+": </b>"+rec.get('HIERARCHY_NM') + "<br> "+
+        	"<b>"+LN('sbi.generic.type')+": </b>"+rec.get('HIERARCHY_TP')+"<br> " +
+        	"<b>"+LN('sbi.generic.descr')+": </b>"+rec.get('HIERARCHY_DS')+"<br> " +
+        	"<b>"+LN('sbi.hierarchies.scope')+": </b>"+rec.get('HIERARCHY_SC')
+        	+'"';
+
+        return val;
+    }
 	
 	//clone a Ext.data.NodeInterface with deep copy
 	, cloneNode: function(node) {
