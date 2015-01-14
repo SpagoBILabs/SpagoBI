@@ -65,7 +65,10 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) {
 //	serviceName: 'EXPORT_CHART_ACTION'
 //	, baseParams: params
 //	});
-
+	
+	
+	this.legendFontSize =  Sbi.settings.worksheet.runtime.chart.legend.fontSize || 10;
+	
 	this.addEvents('contentloaded');
 	Sbi.worksheet.runtime.RuntimeGenericChartPanel.superclass.constructor.call(this, c);	 	
 };
@@ -81,7 +84,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	axisTitleStyle: null,
 	axisValueStyle: null,
 	valueStyle: null,
-	legendFontSize : Sbi.settings.worksheet.runtime.chart.legend.fontSize || 10
+	legendFontSize : null
 
 	
 	, initGeneric: function(){
