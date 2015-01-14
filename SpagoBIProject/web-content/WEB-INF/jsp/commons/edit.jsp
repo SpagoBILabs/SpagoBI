@@ -86,7 +86,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	prefNames = (String[]) map.keySet().toArray(prefNames);
 	// order the preferences by name
 	Arrays.sort(prefNames);
-	String prefPrefix = "PORTLET_PREF_";
+	String prefPrefix = renderResponse.getNamespace() + "PORTLET_PREF_";
   	for (int i = 0; i < prefNames.length; i++) {
   		String prefName = prefNames[i];
 		String[] prefValues = prefs.getValues(prefName, null);

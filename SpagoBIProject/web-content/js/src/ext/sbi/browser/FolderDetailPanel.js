@@ -678,12 +678,14 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     
     , createBannerHtml: function(communities){
     	var communityString = '';
-        for(i=0; i< communities.root.length; i++){
-        	var funct = communities.root[i].functId;
-        	communityString += '<li  id="'+ communities.root[i].name +'" ><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder('+funct+', null, \''+communities.root[i].name+'\')">';
-        	communityString += communities.root[i].name;
-        	communityString +='</a></li>';
-        }
+    	if (communities.root != undefined) {
+	        for(i=0; i< communities.root.length; i++){
+	        	var funct = communities.root[i].functId;
+	        	communityString += '<li  id="'+ communities.root[i].name +'" ><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder('+funct+', null, \''+communities.root[i].name+'\')">';
+	        	communityString += communities.root[i].name;
+	        	communityString +='</a></li>';
+	        }
+    	}
         
         var createButton = '';
         if (Sbi.settings.browser.showCreateButton == true){
