@@ -40,6 +40,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -65,9 +66,9 @@ import org.json.JSONObject;
 
 /**
  * REST Service for Hierarchies Management
- * 
+ *
  * @author Marco Cortella (marco.cortella@eng.it)
- * 
+ *
  */
 
 @Path("/hierarchies")
@@ -316,6 +317,116 @@ public class HierarchiesService {
 	}
 
 	@POST
+	@Path("/cloneCustomHierarchy")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String cloneCustomHierarchyTree(@Context HttpServletRequest req) {
+		// Clone an existing custom hierarchy
+		try {
+
+			// dimension of hierarchy to clone
+			String dimension = req.getParameter("dimension");
+			// code of hierarchy to clone
+			String hierarchy = req.getParameter("hierarchy");
+			// Attributes of the clone
+			String hierarchyCode = req.getParameter("code");
+			String hierarchyName = req.getParameter("name");
+			String hierarchyDescription = req.getParameter("description");
+			String hierarchyScope = req.getParameter("scope");
+			String hierarchyType = req.getParameter("type");
+
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+
+			// 1 - get datasource label name
+			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
+			if (dataSource == null) {
+				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
+			}
+			// 2 -get hierarchy table postfix
+			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
+
+			// 3 - execute query to get hierarchies leafs
+			String tableName = "HIER_" + hierarchyPrefix;
+			String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
+
+			String queryText = "SELECT " + columnsToInsert(hierarchyPrefix, hierarchyFK, dataSource) + " FROM " + tableName + " WHERE " + hierNameColumn
+					+ " = \"" + hierarchy + "\" ";
+			Connection databaseConnection = dataSource.getConnection();
+			Statement stmt = databaseConnection.createStatement();
+			ResultSet rs = stmt.executeQuery(queryText);
+
+			// Retrieve original values and duplicate nodes
+			String insertQuery = createInsertStatement(hierarchyPrefix, hierarchyFK, dataSource);
+			final int COLUMNSNUMBER = 41;
+
+			// iterate each row to clone
+			while (rs.next()) {
+				PreparedStatement preparedStatement = databaseConnection.prepareStatement(insertQuery);
+
+				// CHANGED FIELDS
+				// ----------------------------------------------
+				// HIER_DS column
+				preparedStatement.setString(1, hierarchyDescription);
+				// HIER_TP column
+				preparedStatement.setString(2, hierarchyType);
+				// SCOPE column
+				preparedStatement.setString(3, hierarchyScope);
+				// HIER_CD
+				preparedStatement.setString(4, hierarchyCode);
+				// HIER_NM
+				preparedStatement.setString(5, hierarchyName);
+				// ----------------------------------------------
+
+				// set all level column to null by default
+				for (int i = 6; i < COLUMNSNUMBER + 1; i++) {
+					preparedStatement.setNull(i, java.sql.Types.VARCHAR);
+				}
+
+				for (int i = 6; i < COLUMNSNUMBER + 1; i++) {
+
+					if (i == COLUMNSNUMBER - 5) {
+						// last node is a leaf
+						// _CD_LEAF
+						preparedStatement.setString(COLUMNSNUMBER - 5, rs.getString(COLUMNSNUMBER - 5));
+						// _NM_LEAF
+						preparedStatement.setString(COLUMNSNUMBER - 4, rs.getString(COLUMNSNUMBER - 4));
+						// LEAF_ID
+						preparedStatement.setLong(COLUMNSNUMBER - 3, rs.getLong(COLUMNSNUMBER - 3));
+						// LEAF_PARENT_CD
+						preparedStatement.setString(COLUMNSNUMBER - 2, rs.getString(COLUMNSNUMBER - 2));
+						// LEAF_PARENT_NM
+						preparedStatement.setString(COLUMNSNUMBER - 1, rs.getString(COLUMNSNUMBER - 1));
+						// MAX_DEPTH
+						preparedStatement.setLong(COLUMNSNUMBER, rs.getLong(COLUMNSNUMBER));
+						// exit loop
+						break;
+					} else {
+						// not-leaf node
+						// _CD_LEV
+						preparedStatement.setString(i, rs.getString(i));
+						// _NM_LEV
+						preparedStatement.setString(i + 1, rs.getString(i + 1));
+					}
+				}
+
+				// Execution of prepared statement
+				// ----------------------------------------
+				preparedStatement.executeUpdate();
+				preparedStatement.close();
+
+			}
+
+			return "{\"response\":\"ok\"}";
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while cloning custom hierarchy structure");
+			throw new SpagoBIServiceException("An unexpected error occured while cloning custom hierarchy structure", t);
+		}
+	}
+
+	@POST
 	@Path("/saveCustomHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String saveCustomHierarchy(@Context HttpServletRequest req) {
@@ -441,8 +552,8 @@ public class HierarchiesService {
 	/*----------------------------------------------
 	 * Utilities functions
 	 *----------------------------------------------/
-	
-	
+
+
 	/**
 	 * Persist custom hierarchy paths to database
 	 */
@@ -524,7 +635,7 @@ public class HierarchiesService {
 
 	/**
 	 * Create insert statement for hierarchy path persistence
-	 * 
+	 *
 	 * @param hierarchyPrefix
 	 * @param hierarchyFK
 	 * @param dataSource
@@ -532,6 +643,30 @@ public class HierarchiesService {
 	 */
 	private String createInsertStatement(String hierarchyPrefix, String hierarchyFK, IDataSource dataSource) {
 		String tableName = "HIER_" + hierarchyPrefix;
+		/*
+		 * String hierarchyNameCode = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource); String hierarchyNameCol =
+		 * AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource); String hierarchyDescriptionCol =
+		 * AbstractJDBCDataset.encapsulateColumnName("HIER_DS", dataSource); String hierarchyTypeCol = AbstractJDBCDataset.encapsulateColumnName("HIER_TP",
+		 * dataSource); String hierarchyScopeCol = AbstractJDBCDataset.encapsulateColumnName("SCOPE", dataSource); StringBuffer columns = new
+		 * StringBuffer(hierarchyDescriptionCol + "," + hierarchyTypeCol + "," + hierarchyScopeCol + "," + hierarchyNameCode + "," + hierarchyNameCol + ",");
+		 *
+		 * for (int i = 1; i < 16; i++) { String CD_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEV" + i, dataSource); String NM_LEV
+		 * = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEV" + i, dataSource); columns.append(CD_LEV + "," + NM_LEV + ","); } String
+		 * CD_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEAF", dataSource); String NM_LEAF =
+		 * AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEAF", dataSource); String LEAF_ID =
+		 * AbstractJDBCDataset.encapsulateColumnName(hierarchyFK, dataSource); columns.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + ", "); String
+		 * LEAF_PARENT_CD = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource); String LEAF_PARENT_NM =
+		 * AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource); String maxDepthCol = AbstractJDBCDataset.encapsulateColumnName("MAX_DEPTH",
+		 * dataSource); columns.append(LEAF_PARENT_CD + "," + LEAF_PARENT_NM + "," + maxDepthCol);
+		 */
+		String columns = columnsToInsert(hierarchyPrefix, hierarchyFK, dataSource);
+		String insertQuery = "insert into " + tableName + "(" + columns
+				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+		return insertQuery;
+	}
+
+	private String columnsToInsert(String hierarchyPrefix, String hierarchyFK, IDataSource dataSource) {
 		String hierarchyNameCode = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
 		String hierarchyNameCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 		String hierarchyDescriptionCol = AbstractJDBCDataset.encapsulateColumnName("HIER_DS", dataSource);
@@ -553,10 +688,7 @@ public class HierarchiesService {
 		String LEAF_PARENT_NM = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
 		String maxDepthCol = AbstractJDBCDataset.encapsulateColumnName("MAX_DEPTH", dataSource);
 		columns.append(LEAF_PARENT_CD + "," + LEAF_PARENT_NM + "," + maxDepthCol);
-		String insertQuery = "insert into " + tableName + "(" + columns.toString()
-				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
-		return insertQuery;
+		return columns.toString();
 	}
 
 	/**
@@ -877,7 +1009,7 @@ public class HierarchiesService {
 
 	/**
 	 * Serialize HierarchyTreeNode to JSON
-	 * 
+	 *
 	 * @param root
 	 *            the root of the tree structure
 	 * @return a JSONObject representing the tree
@@ -923,7 +1055,7 @@ public class HierarchiesService {
 
 	/**
 	 * get the JSONObject representing the tree having the passed node as a root
-	 * 
+	 *
 	 * @param node
 	 *            the root of the subtree
 	 * @return JSONObject representing the subtree
