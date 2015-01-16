@@ -36,7 +36,7 @@ public class CSVDocument{
 		super();
 		header = new Vector<String>();
 		rows = new Vector<Row>();
-		separator = ',';
+		separator = ';';
 	}
 
 	public Vector<String> getHeader() {
