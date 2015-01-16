@@ -433,6 +433,7 @@
 				<file name="./src/ext/sbi/execution/ParametersSelectionPage.js" />
 				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" />
 				<file name="./src/ext/sbi/execution/toolbar/ExportersMenu.js" />
+				<file name="./src/ext/sbi/execution/toolbar/SaveSubObjectWindow.js" />
 				<file name="./src/ext/sbi/execution/toolbar/DocumentExecutionPageToolbar.js" />
 				<file name="./src/ext/sbi/execution/DocumentExecutionPage.js" />
 				<file name="./src/ext/sbi/execution/ExecutionWizard.js" />
