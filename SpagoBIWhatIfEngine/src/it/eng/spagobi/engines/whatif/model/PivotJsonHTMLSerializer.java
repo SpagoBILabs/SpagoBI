@@ -148,6 +148,9 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		// /show parent members
 		Boolean showParentMembers = modelConfig.getShowParentMembers();
 		renderer.setShowParentMembers(showParentMembers);
+		if (showParentMembers) {
+			renderer.setShowDimensionTitle(true);
+		}
 		// /hide spans
 		Boolean hideSpans = modelConfig.getHideSpans();
 		renderer.setHideSpans(hideSpans);

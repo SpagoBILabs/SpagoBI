@@ -38,13 +38,13 @@
 	</SCENARIO>
 
 	<TOOLBAR>
-		<BUTTON_MDX visible="true" menu="true" />
-		<BUTTON_CALCULATED_MEMBERS visible="true" menu="true" />
-		<BUTTON_EDIT_MDX visible="true" menu="true" />                                        
-		<BUTTON_FATHER_MEMBERS visible="true" menu="true"/>                  
-		<BUTTON_HIDE_SPANS visible="true" menu="true"/>                     
-		<BUTTON_SHOW_PROPERTIES visible="true" menu="true"/>               
-		<BUTTON_HIDE_EMPTY visible="true" menu="true" />                   
+		<BUTTON_MDX visible="true" menu="false" />
+		<BUTTON_CALCULATED_MEMBERS visible="true" menu="false" />
+		<BUTTON_EDIT_MDX visible="true" menu="false" />                                        
+		<BUTTON_FATHER_MEMBERS visible="true" menu="false"/>                  
+		<BUTTON_HIDE_SPANS visible="true" menu="false"/>                     
+		<BUTTON_SHOW_PROPERTIES visible="true" menu="false"/>               
+		<BUTTON_HIDE_EMPTY visible="true" menu="false" />                   
         <BUTTON_FLUSH_CACHE visible="true" menu="false"  />                 
         <BUTTON_SAVE visible="true" menu="false" />                       
         <BUTTON_SAVE_NEW visible="true" menu="false" />
