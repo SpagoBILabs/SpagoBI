@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.utilities.engines.rest;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * The Class AbstractRestService.
- * 
+ *
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public abstract class AbstractRestService {
@@ -27,7 +27,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Creates the context manager
-	 * 
+	 *
 	 * @return ExecutionSession container of the execution manager
 	 */
 	public ExecutionSession getExecutionSession() {
@@ -39,7 +39,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Gets the what if engine instance.
-	 * 
+	 *
 	 * @return the console engine instance
 	 */
 	public IEngineInstance getEngineInstance() {
@@ -48,7 +48,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Check if the number is null
-	 * 
+	 *
 	 * @param value
 	 *            the value to check
 	 * @return true if the value is null
@@ -59,7 +59,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Check if the string is null
-	 * 
+	 *
 	 * @param value
 	 *            the value to check
 	 * @return true if the value is null
@@ -70,7 +70,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Check if the string is null or ""
-	 * 
+	 *
 	 * @param value
 	 *            the value to check
 	 * @return true if the value is null or ""
@@ -101,11 +101,11 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Gets the HttpServletRequest.. A standard implementation is to get the HttpServletRequest from the context.. The implementing class can be:
-	 * 
+	 *
 	 * public class XXXEngineService extends AbstractRestService{
-	 * 
+	 *
 	 * @Context protected HttpServletRequest servletRequest;
-	 * 
+	 *
 	 *          public HttpServletRequest getServletRequest(){ return servletRequest; }
 	 * @return the HttpServletRequest
 	 */
@@ -131,7 +131,19 @@ public abstract class AbstractRestService {
 		return getExecutionSession().requestContainsAttribute(attrName);
 	}
 
+	public boolean requestContainsAttribute(String attrName, String attrValue) {
+		return (requestContainsAttribute(attrName) && getAttribute(attrName).toString().equalsIgnoreCase(attrValue));
+	}
+
+	public Object getAttribute(String attrName) {
+		return getExecutionSession().getAttribute(attrName);
+	}
+
 	public String getAttributeAsString(String attrName) {
 		return getExecutionSession().getAttributeAsString(attrName);
+	}
+
+	public Integer getAttributeAsInteger(String attrName) {
+		return getExecutionSession().getAttributeAsInteger(attrName);
 	}
 }

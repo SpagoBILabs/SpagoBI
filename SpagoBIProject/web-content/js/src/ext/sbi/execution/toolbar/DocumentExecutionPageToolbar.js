@@ -680,6 +680,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
     	
     	menuItems.push('-'); 
     	
+    	
+    	
     	// ADD/VIEW Customized view
     	itemConfig = Ext.apply(baseMenuItemConfig, {
 			text: LN('sbi.execution.executionpage.toolbar.showview')
@@ -709,12 +711,21 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	    	menuItems.push(	
 				new Ext.menu.Item(itemConfig)
 			); 
-		} else if (this.executionInstance.document.typeCode === 'OLAP' 
+		} else if (this.executionInstance.document.typeCode === 'OLAP' && this.executionInstance.document.engine.indexOf("What")>=0){
+			itemConfig = Ext.apply(baseMenuItemConfig, {
+				text: LN('sbi.execution.executionpage.toolbar.saveview')
+				, iconCls: 'icon-add-subobject' 
+				, handler : this.saveSubObject.createDelegate(this, ["whatIfPanel"])
+	        });    	
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+		} else if ((this.executionInstance.document.typeCode === 'OLAP' && this.executionInstance.document.engine.indexOf("What")<0) 
 			    || this.executionInstance.document.typeCode === 'MAP') {
 			itemConfig = Ext.apply(baseMenuItemConfig, {
 				text: LN('sbi.execution.executionpage.toolbar.saveview')
 				, iconCls: 'icon-add-subobject' 
-				, handler : function(){alert("Use the save button conatined in the executed docuemnt");}
+				, handler : function(){alert("Use the save button conatined in the executed document");}
 	        });    	
 	    	menuItems.push(	
 				new Ext.menu.Item(itemConfig)
@@ -764,6 +775,19 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		
 		this.add(menuButton);
     }
+    
+    , saveSubObject: function(container){
+    
+    	var thisPanel = this;
+    	var window = new Sbi.execution.toolbar.SaveSubObjectWindow();
+    	window.show();
+    	window.on("save",function(state){
+			var iframe = thisPanel.controller.getFrame().getWindow();
+			iframe[container].saveSubObject(state.name, state.description, state.scope);
+			window.destroy();
+    	});
+    	
+    } 
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// private methods
