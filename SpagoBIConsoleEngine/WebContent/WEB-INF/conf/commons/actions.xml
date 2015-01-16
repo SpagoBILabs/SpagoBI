@@ -105,6 +105,12 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 
+	<ACTION name="WEB_SERVICE_GEN_ORDERS_ACTION" 
+			class="it.eng.spagobi.engines.console.services.WebServiceGenOrdersAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+
 	<!-- ================================================================================= -->
 	<!-- TRAPS																			   -->
 	<!-- ================================================================================= -->
