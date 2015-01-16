@@ -134,8 +134,11 @@ author:...
    		    Sbi.config.ajaxBaseParams = params;
    	    	
    		    Sbi.olap.eventManager={};
+   		    
+   		 	var whatIfPanel;
+   		    
    	        Ext.onReady(function(){
-   	    		var whatIfPanel = Ext.create('Sbi.olap.OlapPanel',{}); //by alias
+   	    		whatIfPanel = Ext.create('Sbi.olap.OlapPanel',{}); //by alias
    	    		var whatIfPanelViewport = Ext.create('Ext.container.Viewport', {
    	    			layout:'fit',
    	    	     	items: [whatIfPanel]

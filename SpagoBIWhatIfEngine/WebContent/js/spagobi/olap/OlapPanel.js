@@ -103,6 +103,12 @@ Ext.define('Sbi.olap.OlapPanel', {
 	appyConfigChanges: function(changes){
 		this.modelConfig = Ext.apply(this.modelConfig,changes||{});
 		Sbi.olap.eventManager.setModelConfig(this.modelConfig);
+	},
+	
+	
+	// perform the save action
+	saveSubObject: function(name, description, scope){
+		Sbi.olap.eventManager.saveSubObject(name, description, scope);				
 	}
 
 

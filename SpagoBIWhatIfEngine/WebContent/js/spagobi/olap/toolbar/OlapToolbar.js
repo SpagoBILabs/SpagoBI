@@ -448,7 +448,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			}
 		}
 
-		this.updateDrillMode();
+		this.updateDrillMode(modelConfig);
 	}
 
 	/**
@@ -510,8 +510,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	/**
 	 * Update the drill mode
 	 */
-	,updateDrillMode: function(){
-		var pressedBtn = this.toolbarConfig.drillType;
+	,updateDrillMode: function(modelConfig){
+		var pressedBtn = modelConfig.drillType;
 
 		this.drillMode.items.items[0].toggle(false);
 		this.drillMode.items.items[1].toggle(false);

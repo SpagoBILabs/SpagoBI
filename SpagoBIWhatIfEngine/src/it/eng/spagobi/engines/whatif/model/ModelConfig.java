@@ -1,10 +1,10 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Alberto Ghedin (alberto.ghedin@eng.it) 
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
 package it.eng.spagobi.engines.whatif.model;
 
@@ -222,6 +222,27 @@ public class ModelConfig implements Serializable {
 
 	// for the deserializer
 	public void setWhatIfScenario(boolean bool) {
+	}
+
+	/**
+	 * Updates the values of the object coping the values of another configuration..
+	 * Not all the modification are copied, id est Scenario and aliases 
+	 */
+	public void update(ModelConfig source) {
+		this.drillType = source.drillType;
+		this.showParentMembers = source.showParentMembers;
+		this.hideSpans = source.hideSpans;
+		this.showProperties = source.showProperties;
+		this.suppressEmpty = source.suppressEmpty;
+		this.actualVersion = source.actualVersion = null;
+
+		this.status = source.status;
+		this.locker = source.locker;
+
+		this.toolbarVisibleButtons = source.toolbarVisibleButtons;
+		this.toolbarMenuButtons = source.toolbarMenuButtons;
+
+		this.dimensionHierarchyMap = source.dimensionHierarchyMap;
 	}
 
 }
