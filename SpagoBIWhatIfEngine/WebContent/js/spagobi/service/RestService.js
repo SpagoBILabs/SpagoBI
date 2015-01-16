@@ -117,7 +117,7 @@ Ext.define('Sbi.service.RestService', {
 	},
 	
 	callServiceInNewWindow: function(){
-				window.open(this.getRestUrlWithParameters(),'_blank');
+				window.open(this.getRestUrlWithParameters(true),'_blank');
 	},
 
 	callService:function(scope, successCallBack, failureCallBack, keepState, keepStateIfFails){
