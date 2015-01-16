@@ -355,7 +355,6 @@ Ext.define('Sbi.olap.control.Controller', {
 		);
 	}
 
-
 	, setAllocationAlgorithm: function(className){
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "allocationalgorithm",
@@ -365,45 +364,70 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		service.callService(this, function(){Sbi.olap.eventManager.hideLoadingMask();});
 	}
-
+	
 	/**
-	* Call the rest service to execute calculated member expression
-	*/
-	//author: Maria Caterina Russo from Osmosit
-	,executeCalculatedMemberExpression: function(name,expression,ccParentUniqueName,ccAxis){
-		var newExpression = expression.replace(/\//gi, this.DIVISION_SIGN);
+	 * Save a subobject
+	 */
+	, saveSubObject: function(name, description, scope){
+		
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "subobject",
+			method: 'POST',
+			pathParams: [name, description, scope],
+			async: true,
+		});
 
-		var	service = Ext.create("Sbi.service.RestService", {
-				url: "calculatedmembers",
-				method: 'POST',
-				longExecution: true,
-				pathParams: ["execute",name, newExpression,ccParentUniqueName,ccAxis]
-			});
+
+		service.on("executedAsync", function(status, response){
+			if(status){
+				Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.olap.subobject.save.ok'));
+			}else{
+				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.olap.subobject.save.ko'));
+			}
+		}, this);
 
 		service.callService(this);
 	}
 
-	,DIVISION_SIGN: "{spagobi.operator.division}"
 
 	/**
-	* Opens the calculated members wizard by double click
-	*/
+	 * Call the rest service to execute calculated member expression
+	 */
 	//author: Maria Caterina Russo from Osmosit
-	,getData: function() {
+	, executeCalculatedMemberExpression: function(name,expression,ccParentUniqueName,ccAxis){
+		var newExpression = expression.replace(/\//gi, this.DIVISION_SIGN);
+
+		var	service = Ext.create("Sbi.service.RestService", {
+			url: "calculatedmembers",
+			method: 'POST',
+			longExecution: true,
+			pathParams: ["execute",name, newExpression,ccParentUniqueName,ccAxis]
+		});
+
+		service.callService(this);
+	}
+	
+	,DIVISION_SIGN: "{spagobi.operator.division}"
+
+		/**
+		 * Opens the calculated members wizard by double click
+		 */
+		//author: Maria Caterina Russo from Osmosit
+		,getData: function() {
 			var controller = this;
 			var service = Ext.create("Sbi.service.RestService", {
 				url: "calculatedmembers/initializeData",
 				async: true
 			});
 			Ext.Ajax.request({
-			   url: service.getRestUrlWithParameters(),
-			   params: service.getRequestParams(),
-			   method: 'GET',
-			   success: function(response){
-			       var data = response.responseText;
-			       controller.eventManager.openCalculatedMembersWindow(data);
+				url: service.getRestUrlWithParameters(),
+				params: service.getRequestParams(),
+				method: 'GET',
+				success: function(response){
+					var data = response.responseText;
+					controller.eventManager.openCalculatedMembersWindow(data);
 
-			   }
+				}
 			});
 		}
 

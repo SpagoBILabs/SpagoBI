@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
@@ -19,7 +19,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.rest.AbstractEngineRestService;
 import it.eng.spagobi.utilities.engines.rest.ExecutionSession;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.util.ArrayList;
@@ -29,8 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
@@ -38,12 +35,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 
-	private static final String ENGINE_NAME = "SpagoBIWhatIfEngine";
-
 	private static final String OUTPUTFORMAT = "OUTPUTFORMAT";
 	private static final String OUTPUTFORMAT_JSONHTML = "application/json";
-
-	private String successString;
 
 	public static transient Logger logger = Logger.getLogger(AbstractWhatIfEngineService.class);
 
@@ -52,7 +45,7 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 
 	/**
 	 * Renders the model and return the HTML table
-	 * 
+	 *
 	 * @param request
 	 * @return the String that contains the HTML table
 	 */
@@ -87,7 +80,7 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 
 	/**
 	 * Gets the what if engine instance.
-	 * 
+	 *
 	 * @return the console engine instance
 	 */
 	public WhatIfEngineInstance getWhatIfEngineInstance() {
@@ -154,26 +147,7 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 
 	@Override
 	public String getEngineName() {
-		return ENGINE_NAME;
-	}
-
-	/**
-	 * Builds a simple success json {result: ok}
-	 * 
-	 * @return
-	 */
-	public String getJsonSuccess() {
-		if (successString == null) {
-			JSONObject obj = new JSONObject();
-			try {
-				obj.put("result", "ok");
-			} catch (JSONException e) {
-				logger.error("Error building the success string");
-				throw new SpagoBIRuntimeException("Error building the success string");
-			}
-			successString = obj.toString();
-		}
-		return successString;
+		return WhatIfConstants.ENGINE_NAME;
 	}
 
 }

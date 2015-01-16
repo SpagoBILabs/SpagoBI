@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
@@ -58,7 +58,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	private final List<String> includes;
 	private final OlapDataSource olapDataSource;
 	private final PivotModel pivotModel;
-	private final ModelConfig modelConfig;
+	private ModelConfig modelConfig;
 	private String mondrianSchemaFilePath;
 	private WriteBackManager writeBackManager;
 	private boolean standalone = false;
@@ -303,6 +303,10 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		return modelConfig;
 	}
 
+	public void updateModelConfig(ModelConfig modelConfig) {
+		this.modelConfig.update(modelConfig);
+	}
+
 	public OlapDataSource getOlapDataSource() {
 		return olapDataSource;
 	}
@@ -343,15 +347,18 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		return (EventServiceProxy) this.getEnv().get(EngineConstants.ENV_EVENT_SERVICE_PROXY);
 	}
 
+	public void setAnalysisState(IEngineAnalysisState analysisState) {
+		((WhatIfEngineAnalysisState) analysisState).getAnalysisState(this);
+	}
+
 	// -- unimplemented methods
 	// ------------------------------------------------------------
 
 	public IEngineAnalysisState getAnalysisState() {
-		throw new WhatIfEngineRuntimeException("Unsupported method [getAnalysisState]");
-	}
-
-	public void setAnalysisState(IEngineAnalysisState analysisState) {
-		throw new WhatIfEngineRuntimeException("Unsupported method [setAnalysisState]");
+		WhatIfEngineAnalysisState analysisState = null;
+		analysisState = new WhatIfEngineAnalysisState();
+		analysisState.setAnalysisState(this);
+		return analysisState;
 	}
 
 	public void validate() throws SpagoBIEngineException {

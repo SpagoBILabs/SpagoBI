@@ -477,6 +477,10 @@ Ext.define('Sbi.olap.control.EventManager', {
 	, setAllocationAlgorithm: function(className){
 		this.olapController.setAllocationAlgorithm(className);
 	}
+	
+	, saveSubObject: function(name, description, scope){
+		this.olapController.saveSubObject(name, description, scope);
+	}
 
 });
 
