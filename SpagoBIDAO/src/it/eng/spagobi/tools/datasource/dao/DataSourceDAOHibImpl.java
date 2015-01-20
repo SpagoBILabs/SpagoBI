@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /*
  * Created on 20-giu-2005
@@ -53,15 +53,15 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Load data source by id.
-	 * 
+	 *
 	 * @param dsID
 	 *            the ds id
-	 * 
+	 *
 	 * @return the data source
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadDataSourceByID(java.lang.Integer)
 	 */
 	@Override
@@ -99,15 +99,15 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Load data source by label.
-	 * 
+	 *
 	 * @param label
 	 *            the label
-	 * 
+	 *
 	 * @return the data source
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadDataSourceByLabel(string)
 	 */
 	@Override
@@ -158,9 +158,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			IDataSource dataSource = loadDataSourceWriteDefault(tmpSession);
-			if (dataSource == null)
-				return null;
+			toReturn = loadDataSourceWriteDefault(tmpSession);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while loading the data source with write default = true: check there are no more than one (incorrect situation)", he);
@@ -177,6 +175,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		return toReturn;
 	}
 
+	@Override
 	public IDataSource loadDataSourceWriteDefault(Session aSession) throws EMFUserError {
 		logger.debug("IN");
 		IDataSource toReturn = null;
@@ -195,12 +194,12 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Load all data sources.
-	 * 
+	 *
 	 * @return the list
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadAllDataSources()
 	 */
 	@Override
@@ -285,13 +284,13 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Modify data source.
-	 * 
+	 *
 	 * @param aDataSource
 	 *            the a data source
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#modifyDataSource(it.eng.spagobi.tools.datasource.bo.DataSource)
 	 */
 	@Override
@@ -465,13 +464,13 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Insert data source.
-	 * 
+	 *
 	 * @param aDataSource
 	 *            the a data source
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#insertDataSource(it.eng.spagobi.tools.datasource.bo.DataSource)
 	 */
 	@Override
@@ -556,13 +555,13 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Erase data source.
-	 * 
+	 *
 	 * @param aDataSource
 	 *            the a data source
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#eraseDataSource(it.eng.spagobi.tools.datasource.bo.DataSource)
 	 */
 	@Override
@@ -596,10 +595,10 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * From the hibernate DataSource at input, gives the corrispondent <code>DataSource</code> object.
-	 * 
+	 *
 	 * @param hibDataSource
 	 *            The hybernate data source
-	 * 
+	 *
 	 * @return The corrispondent <code>DataSource</code> object
 	 */
 	public static DataSourceModel toDataSource(SbiDataSource hibDataSource) {
@@ -628,15 +627,15 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Checks for bi obj associated.
-	 * 
+	 *
 	 * @param dsId
 	 *            the ds id
-	 * 
+	 *
 	 * @return true, if checks for bi obj associated
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#hasBIObjAssociated(java.lang.String)
 	 */
 	@Override
