@@ -335,8 +335,9 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 					BIObject obj = (BIObject) it.next();
 					if (ObjectsAccessVerifier.canSee(obj, profile)) {
 						SDKDocument aDoc = new SDKObjectsConverter().fromBIObjectToSDKDocument(obj);
-						if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) && obj.getVisible().equals(0)) {
-							logger.debug("Cannot view " + obj.getLabel() + " because user is not admin and document is not visible");
+						if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
+								&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV) && obj.getVisible().equals(0)) {
+							logger.debug("Cannot view " + obj.getLabel() + " because user is not admin or dev and document is not visible");
 						} else {
 							toReturn.add(aDoc);
 						}
