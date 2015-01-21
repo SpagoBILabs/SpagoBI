@@ -335,14 +335,19 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 					BIObject obj = (BIObject) it.next();
 					if (ObjectsAccessVerifier.canSee(obj, profile)) {
 						SDKDocument aDoc = new SDKObjectsConverter().fromBIObjectToSDKDocument(obj);
-						toReturn.add(aDoc);
+						if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) && obj.getVisible().equals(0)) {
+							logger.debug("Cannot view " + obj.getLabel() + " because user is not admin and document is not visible");
+						} else {
+							toReturn.add(aDoc);
+						}
+
 					}
 				}
 			}
 			documents = new SDKDocument[toReturn.size()];
 			documents = (SDKDocument[]) toReturn.toArray(documents);
 		} catch (Exception e) {
-			logger.error("Error while loading  documents as list", e);
+			logger.error("Error while loading documents as list", e);
 		} finally {
 			this.unsetTenant();
 			logger.debug("OUT");
