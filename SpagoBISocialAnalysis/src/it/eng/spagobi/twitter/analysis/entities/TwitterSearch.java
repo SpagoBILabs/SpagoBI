@@ -86,7 +86,7 @@ public class TwitterSearch implements Serializable {
 	private boolean failed = false;
 
 	@Column(name = "fail_message")
-	@Length(max = 500)
+	//@Length(max = 1000)
 	private String failMessage;
 
 	@Column(name = "boolean_operator")
