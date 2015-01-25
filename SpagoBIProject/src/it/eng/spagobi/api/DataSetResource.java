@@ -67,7 +67,7 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 @Path("/1.0/datasets")
 public class DataSetResource extends AbstractSpagoBIResource {
@@ -424,16 +424,22 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				datasetRecords[j] = new JSONArray();
 			}
 
-			String[] lastRowNo = new String[datasetNo];
+			// String[] lastRowNo = new String[datasetNo];
+			Map<Integer, List<String>> lastRowNo = new HashMap<Integer, List<String>>();
+			for (int j = 0; j < datasetRecords.length; j++) {
+				lastRowNo.put(j, new ArrayList<String>());
+			}
 			for (int i = 0; i < gridDataFeed.length(); i++) {
 				JSONObject originalRecord = gridDataFeed.getJSONObject(i);
 				JSONObject[] datasetRecord = splitRecord(originalRecord, datasetLabels, breakIndexes);
 				for (int j = 0; j < datasetRecords.length; j++) {
 					String currentRowNoName = "column_0";
 					String currentRowNo = datasetRecord[j].getString(currentRowNoName);
-					if (currentRowNo == null || !currentRowNo.equals(lastRowNo[j])) {
+					// if (currentRowNo == null || !currentRowNo.equals(lastRowNo[j])) {
+					if (currentRowNo == null || !lastRowNo.get(j).contains(currentRowNo)) {
 						datasetRecords[j].put(datasetRecord[j]);
-						lastRowNo[j] = currentRowNo;
+						// lastRowNo[j] = currentRowNo;
+						lastRowNo.get(j).add(currentRowNo);
 					}
 				}
 			}
@@ -846,7 +852,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param profile
 	 * @param datasetsJSONArray
 	 * @param typeDocWizard
@@ -854,7 +860,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
 	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
 	 *            rifattorizzata al più presto.
-	 * 
+	 *
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
@@ -974,7 +980,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Check if the association passed is valid ',' is valid if number of record from association is lower than maximum of single datasets
-	 * 
+	 *
 	 * @param association
 	 */
 
