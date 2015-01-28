@@ -251,6 +251,9 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		if (name.equals(VERSION_FAKE_DESCR)) {
 			name = null;
+		}
+
+		if (descr.equals(VERSION_FAKE_DESCR)) {
 			descr = null;
 		}
 
