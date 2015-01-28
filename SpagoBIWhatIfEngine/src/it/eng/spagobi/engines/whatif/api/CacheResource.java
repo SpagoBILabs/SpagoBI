@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
@@ -35,6 +35,13 @@ public class CacheResource extends AbstractWhatIfEngineService {
 		OlapDataSource olapDataSource = ei.getOlapDataSource();
 
 		CacheManager.flushCache(olapDataSource);
+
+		logger.debug("Cleaning the cache and restoring the model");
+		CacheManager.flushCache(olapDataSource);
+		String mdx = ei.getPivotModel().getCurrentMdx();
+		ei.getPivotModel().setMdx(mdx);
+		ei.getPivotModel().initialize();
+		logger.debug("Finish to clean the cache and restoring the model");
 
 		PivotModel model = ei.getPivotModel();
 		String table = renderModel(model);
