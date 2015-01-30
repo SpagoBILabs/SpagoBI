@@ -66,7 +66,27 @@
   <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
 </filter>
   
- END-CAS -->   
+ END-CAS -->
+ 
+ 
+ 	<!-- START OAUTH 2
+ 	<filter>
+		<filter-name>OAuthFilter</filter-name>
+		<filter-class>it.eng.spagobi.commons.filters.OAuthFilter</filter-class>
+		<init-param>
+			<param-name>clientId</param-name>
+			<param-value>1942</param-value>
+		</init-param>
+		<init-param>
+			<param-name>secret</param-name>
+			<param-value>efda8ccc5829ed325e28e497463b95acb146c4fc18fb6d989eb888057a85dc8149d97d0631192acc62ee9e18445cd87d91020dc5444bcb3b4d43234192f82db1</param-value>
+		</init-param>
+		<init-param>
+			<param-name>redirectUri</param-name>
+			<param-value>http%3A%2F%2Flocalhost%3A8080%2FSpagoBI%2Fservlet%2FAdapterHTTP%3FPAGE%3DLoginPage%26NEW_SESSION%3DTRUE</param-value>
+		</init-param>
+	</filter>
+ 	END OAUTH 2 -->
     
   	<!-- This filter tries to create the user profile object before AdapterHTTP servlet execution -->
  	<filter>
@@ -78,6 +98,7 @@
 		<filter-name>AntiInjectionFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.AntiInjectionFilter</filter-class>
 	</filter>
+	
 
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
@@ -100,6 +121,13 @@
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>  
  END-CAS --> 
+
+ 	<!-- START OAUTH 2
+	<filter-mapping>
+		<filter-name>OAuthFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+	</filter-mapping>
+ 	END OAUTH 2 -->
 
 	<filter-mapping>
 		<filter-name>ProfileFilter</filter-name>
