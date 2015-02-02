@@ -92,7 +92,7 @@ Ext.define('Sbi.olap.toolbar.CalculatedMembersWindow', {
 			frame: false,
 			layout: {
 				align : 'stretch',
-				type: 'vbox',
+				type: 'vbox'
 			},
 			height: 300,
 		   items: [editorName, editorFormula, button]

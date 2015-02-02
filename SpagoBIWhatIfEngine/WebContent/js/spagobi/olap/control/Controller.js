@@ -374,7 +374,7 @@ Ext.define('Sbi.olap.control.Controller', {
 			url: "subobject",
 			method: 'POST',
 			pathParams: [name, description, scope],
-			async: true,
+			async: true
 		});
 
 
