@@ -1,14 +1,12 @@
 package it.eng.spagobi.security.OAuth2;
 
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -29,23 +27,6 @@ public class OAuthFilter implements Filter {
 	String clientId;
 	String secret;
 	String redirectUri;
-
-	/**
-	 * Default constructor.
-	 */
-	public OAuthFilter() {
-		System.setProperty("https.proxyHost", "proxy.eng.it");
-		System.setProperty("https.proxyPort", "3128");
-		System.setProperty("https.proxyUser", "aldaniel");
-		System.setProperty("https.proxyPassword", "5JYMu17.");
-
-		Authenticator.setDefault(new Authenticator() {
-			@Override
-			public PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication("aldaniel", "5JYMu17.".toCharArray());
-			}
-		});
-	}
 
 	/**
 	 * @see Filter#destroy()
@@ -118,22 +99,5 @@ public class OAuthFilter implements Filter {
 		clientId = fConfig.getInitParameter("clientId");
 		secret = fConfig.getInitParameter("secret");
 		redirectUri = fConfig.getInitParameter("redirectUri");
-	}
-
-	private void setRole(Role role, int userIdInt) {
-		SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
-		SbiExtUserRolesId id = new SbiExtUserRolesId();
-		try {
-			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
-			Integer extRoleId = role.getId();
-			id.setExtRoleId(extRoleId); // role Id
-			id.setId(userIdInt); // user Id
-			sbiExtUserRole.setId(id);
-			userDAO.updateSbiUserRoles(sbiExtUserRole);
-			RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
-			userDAO.updateSbiUserRoles(sbiExtUserRole);
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("An unexpected error occurred while associating role [" + role.getName() + "] to user with id " + userIdInt, e);
-		}
 	}
 }
