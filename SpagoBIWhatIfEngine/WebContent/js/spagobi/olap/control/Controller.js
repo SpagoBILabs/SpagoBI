@@ -197,7 +197,7 @@ Ext.define('Sbi.olap.control.Controller', {
 		}
 
 		if(!descr){
-			descr = " ";
+			descr = "sbiNoDescription";
 		}
 
 		var service = Ext.create("Sbi.service.RestService", {
@@ -374,7 +374,7 @@ Ext.define('Sbi.olap.control.Controller', {
 			url: "subobject",
 			method: 'POST',
 			pathParams: [name, description, scope],
-			async: true,
+			async: true
 		});
 
 
