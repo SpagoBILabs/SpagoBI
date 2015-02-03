@@ -232,13 +232,13 @@
 				
 				// append '/' to file path if not exists
 				filePath = config.filePath || '';
-				if (filePath && filePath[filePath.length - 1] !== '/'){
+				if (filePath && filePath.charAt(filePath.length - 1) !== '/'){
 					filePath = filePath + '/';
 				}
 				
 				// prepend '.' to file extension if not exists
 				fileExtension = config.fileExtension || DEFAULT_EXTENSION;
-				if (fileExtension[0] !== '.'){
+				if (fileExtension.charAt(0) !== '.'){
 					fileExtension = '.' + fileExtension;
 				}
 
