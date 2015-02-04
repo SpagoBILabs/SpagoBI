@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.exporters;
 
@@ -100,18 +100,11 @@ public class DocumentCompositionExporter {
 					String tmpContent = tmpSvg.get("SVG_" + label).toString();
 
 					/*
-					 * //create the png file using the svg String svg =
-					 * tmpContent; svgInputStream = new
-					 * ByteArrayInputStream(svg.getBytes("UTF-8")); File dir =
-					 * new File(System.getProperty("java.io.tmpdir")); Random
-					 * generator = new Random(); int randomInt =
-					 * generator.nextInt(); File imgFile =
-					 * File.createTempFile(Integer
-					 * .valueOf(randomInt).toString(), ".png", dir);
-					 * svgOutputStream = new FileOutputStream(imgFile);
-					 * ExportHighCharts.transformSVGIntoPNG(svgInputStream,
-					 * svgOutputStream); // read input from file pngInputStream
-					 * = new FileInputStream(imgFile);
+					 * //create the png file using the svg String svg = tmpContent; svgInputStream = new ByteArrayInputStream(svg.getBytes("UTF-8")); File dir =
+					 * new File(System.getProperty("java.io.tmpdir")); Random generator = new Random(); int randomInt = generator.nextInt(); File imgFile =
+					 * File.createTempFile(Integer .valueOf(randomInt).toString(), ".png", dir); svgOutputStream = new FileOutputStream(imgFile);
+					 * ExportHighCharts.transformSVGIntoPNG(svgInputStream, svgOutputStream); // read input from file pngInputStream = new
+					 * FileInputStream(imgFile);
 					 */
 					String svg = tmpContent;
 					svgInputStream = new ByteArrayInputStream(svg.getBytes("UTF-8"));
@@ -165,7 +158,7 @@ public class DocumentCompositionExporter {
 					} else {
 						output = "JPG";
 					}
-					returnByteArray = proxy.exec(profile, "EXPORT", output);
+					returnByteArray = proxy.exec(profile, ExecutionProxy.EXPORT_MODALITY, output);
 				}
 				// add content retrieved to Document Container
 				logger.debug("add content retrieved to Document Container");
@@ -222,9 +215,8 @@ public class DocumentCompositionExporter {
 	}
 
 	/**
-	 * function used to get attribute parsed from i frame URL and insert the
-	 * values into BIObject
-	 * 
+	 * function used to get attribute parsed from i frame URL and insert the values into BIObject
+	 *
 	 * @param object
 	 * @param currentConf
 	 */
