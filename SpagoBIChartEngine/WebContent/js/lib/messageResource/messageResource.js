@@ -8,6 +8,13 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
  
+ //For old version of Internet Explorer
+ if(!String.prototype.trim) {
+	String.prototype.trim = function() {
+		return this.replace(/^\s+|\s+$/g, '');
+	}
+}
+ 
 /**
  * @author Suhaib Khan http://khansuhaib.wordpress.com
  * @version 1.0
@@ -94,7 +101,7 @@
 					
 					// discard empty lines and lines 
 					// starting with #, which is considered as a comment
-					if (line === '' || line[0] === '#'){
+					if (line === '' || line.charAt(0) === '#'){
 						return;
 					}
 					
@@ -232,13 +239,13 @@
 				
 				// append '/' to file path if not exists
 				filePath = config.filePath || '';
-				if (filePath && filePath[filePath.length - 1] !== '/'){
+				if (filePath && filePath.charAt(filePath.length - 1) !== '/'){
 					filePath = filePath + '/';
 				}
 				
 				// prepend '.' to file extension if not exists
 				fileExtension = config.fileExtension || DEFAULT_EXTENSION;
-				if (fileExtension[0] !== '.'){
+				if (fileExtension.charAt(0) !== '.'){
 					fileExtension = '.' + fileExtension;
 				}
 
@@ -399,6 +406,7 @@
 				// if specified locale - module combination is not
 				// loaded return defaultValue or key which is valid.
 				if (isModuleLoaded(validModule, validLocale)){
+				
 					moduleObj = properties[validLocale][validModule];
 					value = moduleObj[key] || value;
 				}
