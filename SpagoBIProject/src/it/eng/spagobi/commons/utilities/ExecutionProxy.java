@@ -51,8 +51,9 @@ public class ExecutionProxy {
 
 	static private Logger logger = Logger.getLogger(ExecutionProxy.class);
 	static private String backEndExtension = "BackEnd";
-	static private String sendMailOperation = "SEND_MAIL";
-	static private String exportOperation = "EXPORT";
+	static public String SEND_MAIL_MODALITY = "SEND_MAIL";
+	static public String EXPORT_MODALITY = "EXPORT";
+	static public String MASSIVE_EXPORT_MODALITY = SpagoBIConstants.MASSIVE_EXPORT_MODALITY;
 
 	private BIObject biObject = null;
 
@@ -265,7 +266,7 @@ public class ExecutionProxy {
 			}
 
 			// set userId in particular cases (backend operations)
-			if (sendMailOperation.equals(modality) || exportOperation.equals(modality) || SpagoBIConstants.MASSIVE_EXPORT_MODALITY.equals(modality)) {
+			if (SEND_MAIL_MODALITY.equals(modality) || EXPORT_MODALITY.equals(modality) || MASSIVE_EXPORT_MODALITY.equals(modality)) {
 				mapPars.put(SsoServiceInterface.USER_ID, ((UserProfile) profile).getUserUniqueIdentifier());
 			}
 
