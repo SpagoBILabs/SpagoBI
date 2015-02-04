@@ -8,6 +8,13 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
  
+ //For old version of Internet Explorer
+ if(!String.prototype.trim) {
+	String.prototype.trim = function() {
+		return this.replace(/^\s+|\s+$/g, '');
+	}
+}
+ 
 /**
  * @author Suhaib Khan http://khansuhaib.wordpress.com
  * @version 1.0
@@ -94,7 +101,7 @@
 					
 					// discard empty lines and lines 
 					// starting with #, which is considered as a comment
-					if (line === '' || line[0] === '#'){
+					if (line === '' || line.charAt(0) === '#'){
 						return;
 					}
 					
@@ -399,6 +406,7 @@
 				// if specified locale - module combination is not
 				// loaded return defaultValue or key which is valid.
 				if (isModuleLoaded(validModule, validLocale)){
+				
 					moduleObj = properties[validLocale][validModule];
 					value = moduleObj[key] || value;
 				}
