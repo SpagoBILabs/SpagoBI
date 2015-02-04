@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.utilities;
 
@@ -52,22 +52,19 @@ public class ExecutionProxy {
 	static private Logger logger = Logger.getLogger(ExecutionProxy.class);
 	static private String backEndExtension = "BackEnd";
 	static private String sendMailOperation = "SEND_MAIL";
-	static private String  exportOperation = "EXPORT";
+	static private String exportOperation = "EXPORT";
 
- 
-	
 	private BIObject biObject = null;
 
 	private String returnedContentType = null;
 	String mimeType = null;
-	
+
 	// used for worksheetExecution
-	private boolean splittingFilter = false; 
-	
+	private boolean splittingFilter = false;
 
 	/**
 	 * Gets the bi object.
-	 * 
+	 *
 	 * @return the bi object
 	 */
 	public BIObject getBiObject() {
@@ -76,8 +73,9 @@ public class ExecutionProxy {
 
 	/**
 	 * Sets the bi object.
-	 * 
-	 * @param biObject the new bi object
+	 *
+	 * @param biObject
+	 *            the new bi object
 	 */
 	public void setBiObject(BIObject biObject) {
 		this.biObject = biObject;
@@ -85,12 +83,14 @@ public class ExecutionProxy {
 
 	/**
 	 * Executes a document in background with the given profile.
-	 * 
-	 * @param profile The user profile
-	 * @param modality The execution modality (for auditing)
-	 * @param defaultOutputFormat The default output format (optional)
-	 * , considered if the document has no output format parameter set
-	 * 
+	 *
+	 * @param profile
+	 *            The user profile
+	 * @param modality
+	 *            The execution modality (for auditing)
+	 * @param defaultOutputFormat
+	 *            The default output format (optional) , considered if the document has no output format parameter set
+	 *
 	 * @return the byte[]
 	 */
 	public byte[] exec(IEngUserProfile profile, String modality, String defaultOutputFormat) {
@@ -104,7 +104,7 @@ public class ExecutionProxy {
 			// if engine is not an external it's not possible to call it using
 			// url
 			if (!EngineUtilities.isExternal(eng))
-				if(eng.getClassName().equals("it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine")){
+				if (eng.getClassName().equals("it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine")) {
 					SourceBean request = null;
 					SourceBean resp = null;
 					EMFErrorHandler errorHandler = null;
@@ -119,22 +119,20 @@ public class ExecutionProxy {
 					ResponseContainer resContainer = new ResponseContainer();
 					reqContainer.setServiceRequest(request);
 					resContainer.setServiceResponse(resp);
-					DefaultRequestContext defaultRequestContext = new DefaultRequestContext(
-							reqContainer, resContainer);
+					DefaultRequestContext defaultRequestContext = new DefaultRequestContext(reqContainer, resContainer);
 					resContainer.setErrorHandler(new EMFErrorHandler());
 					RequestContainer.setRequestContainer(reqContainer);
 					ResponseContainer.setResponseContainer(resContainer);
-					Locale locale = new Locale("it","IT","");
+					Locale locale = new Locale("it", "IT", "");
 					SessionContainer session = new SessionContainer(true);
 					reqContainer.setSessionContainer(session);
 					SessionContainer permSession = session.getPermanentContainer();
-					//IEngUserProfile profile = new AnonymousCMSUserProfile();
+					// IEngUserProfile profile = new AnonymousCMSUserProfile();
 					permSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 					errorHandler = defaultRequestContext.getErrorHandler();
 
 					String className = eng.getClassName();
-					logger.debug("Try instantiating class " + className
-							+ " for internal engine " + eng.getName() + "...");
+					logger.debug("Try instantiating class " + className + " for internal engine " + eng.getName() + "...");
 					InternalEngineIFace internalEngine = null;
 					// tries to instantiate the class for the internal engine
 					try {
@@ -142,19 +140,15 @@ public class ExecutionProxy {
 							throw new ClassNotFoundException();
 						internalEngine = (InternalEngineIFace) Class.forName(className).newInstance();
 					} catch (ClassNotFoundException cnfe) {
-						logger.error("The class ['" + className
-								+ "'] for internal engine " + eng.getName()
-								+ " was not found.", cnfe);
+						logger.error("The class ['" + className + "'] for internal engine " + eng.getName() + " was not found.", cnfe);
 						Vector params = new Vector();
 						params.add(className);
 						params.add(eng.getName());
-						errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR,
-								2001, params));
+						errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 2001, params));
 						return response;
 					} catch (Exception e) {
 						logger.error("Error while instantiating class " + className, e);
-						errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR,
-								100));
+						errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 100));
 						return response;
 					}
 					try {
@@ -165,12 +159,10 @@ public class ExecutionProxy {
 						errorHandler.addError(e);
 					} catch (Exception e) {
 						logger.error("Error while engine execution", e);
-						errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR,
-								100));
+						errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 100));
 					}
 					return response;
-				}
-				else if(eng.getClassName().equals("it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine")){
+				} else if (eng.getClassName().equals("it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine")) {
 					SourceBean request = null;
 					EMFErrorHandler errorHandler = null;
 					try {
@@ -179,10 +171,10 @@ public class ExecutionProxy {
 						e1.printStackTrace();
 					}
 					RequestContainer reqContainer = new RequestContainer();
-					SpagoBIChartInternalEngine sbcie=new SpagoBIChartInternalEngine();
+					SpagoBIChartInternalEngine sbcie = new SpagoBIChartInternalEngine();
 
 					// Call chart engine
-					File file=sbcie.executeChartCode(reqContainer, biObject, null, profile);
+					File file = sbcie.executeChartCode(reqContainer, biObject, null, profile);
 
 					// read input from file
 					InputStream is = new FileInputStream(file);
@@ -196,13 +188,12 @@ public class ExecutionProxy {
 					}
 
 					// Create the byte array to hold the data
-					byte[] bytes = new byte[(int)length];
+					byte[] bytes = new byte[(int) length];
 
 					// Read in the bytes
 					int offset = 0;
 					int numRead = 0;
-					while (offset < bytes.length
-							&& (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+					while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
 						offset += numRead;
 					}
 
@@ -213,8 +204,8 @@ public class ExecutionProxy {
 					// Close the input stream and return bytes
 					is.close();
 					return bytes;
-				}  // end chart case
-				else{
+				} // end chart case
+				else {
 					return response;
 				}
 			// get driver class
@@ -244,14 +235,13 @@ public class ExecutionProxy {
 				}
 			}
 
-
-			adjustParametersForExecutionProxy(aEngineDriver,mapPars, modality);
+			adjustParametersForExecutionProxy(aEngineDriver, mapPars, modality);
 
 			// pass ticket ...
 			String pass = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.PASS");
-			if (pass==null) logger.warn("Pass Ticket is null");
-			mapPars.put(SpagoBIConstants.PASS_TICKET,pass);
-
+			if (pass == null)
+				logger.warn("Pass Ticket is null");
+			mapPars.put(SpagoBIConstants.PASS_TICKET, pass);
 
 			// TODO merge with ExecutionInstance.addSystemParametersForExternalEngines for SBI_CONTEXT, locale parameters, etc...
 
@@ -261,7 +251,7 @@ public class ExecutionProxy {
 				if (sbicontext != null) {
 					mapPars.put(SpagoBIConstants.SBI_CONTEXT, sbicontext);
 				}
-			}    
+			}
 
 			// set country and language (locale)
 			Locale locale = GeneralUtilities.getDefaultLocale();
@@ -274,14 +264,14 @@ public class ExecutionProxy {
 				mapPars.put(SpagoBIConstants.SBI_LANGUAGE, language);
 			}
 
-			//set userId if it's a send mail operation (backend operation)
-			if (sendMailOperation.equals(modality) || exportOperation.equals(modality)) {
+			// set userId in particular cases (backend operations)
+			if (sendMailOperation.equals(modality) || exportOperation.equals(modality) || SpagoBIConstants.MASSIVE_EXPORT_MODALITY.equals(modality)) {
 				mapPars.put(SsoServiceInterface.USER_ID, ((UserProfile) profile).getUserUniqueIdentifier());
 			}
 
 			// adding SBI_EXECUTION_ID parameter
 			if (!mapPars.containsKey("SBI_EXECUTION_ID")) {
-				UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+				UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 				UUID uuidObj = uuidGen.generateTimeBasedUUID();
 				String executionId = uuidObj.toString();
 				executionId = executionId.replaceAll("-", "");
@@ -311,9 +301,9 @@ public class ExecutionProxy {
 			}
 			// sent request to the engine
 			int statusCode = client.executeMethod(httppost);
-			logger.debug("statusCode="+statusCode);
+			logger.debug("statusCode=" + statusCode);
 			response = httppost.getResponseBody();
-			logger.debug("response="+response.toString());
+			logger.debug("response=" + response.toString());
 			Header headContetType = httppost.getResponseHeader("Content-Type");
 			if (headContetType != null) {
 				returnedContentType = headContetType.getValue();
@@ -321,7 +311,7 @@ public class ExecutionProxy {
 				returnedContentType = "application/octet-stream";
 			}
 
-			auditManager.updateAudit(auditId,null , new Long(GregorianCalendar.getInstance().getTimeInMillis()), "EXECUTION_PERFORMED", null, null);
+			auditManager.updateAudit(auditId, null, new Long(GregorianCalendar.getInstance().getTimeInMillis()), "EXECUTION_PERFORMED", null, null);
 			httppost.releaseConnection();
 		} catch (Exception e) {
 			logger.error("Error while executing object ", e);
@@ -341,7 +331,7 @@ public class ExecutionProxy {
 		}
 		logger.debug("Engine url is " + urlEngine);
 		Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
-		urlEngine=resolveRelativeUrls(urlEngine);
+		urlEngine = resolveRelativeUrls(urlEngine);
 		// ADD this extension because this is a BackEnd engine invocation
 		urlEngine = urlEngine + backEndExtension;
 		logger.debug("OUT: returning " + urlEngine);
@@ -363,7 +353,7 @@ public class ExecutionProxy {
 
 	/**
 	 * Gets the returned content type.
-	 * 
+	 *
 	 * @return the returned content type
 	 */
 	public String getReturnedContentType() {
@@ -372,8 +362,9 @@ public class ExecutionProxy {
 
 	/**
 	 * Sets the returned content type.
-	 * 
-	 * @param returnedContentType the new returned content type
+	 *
+	 * @param returnedContentType
+	 *            the new returned content type
 	 */
 	public void setReturnedContentType(String returnedContentType) {
 		this.returnedContentType = returnedContentType;
@@ -381,9 +372,10 @@ public class ExecutionProxy {
 
 	/**
 	 * Gets the file extension from cont type.
-	 * 
-	 * @param contentType the content type
-	 * 
+	 *
+	 * @param contentType
+	 *            the content type
+	 *
 	 * @return the file extension from cont type
 	 */
 	public String getFileExtensionFromContType(String contentType) {
@@ -422,18 +414,18 @@ public class ExecutionProxy {
 		return extension;
 	}
 
-	/** Adjust paramters set by driver for use by Execution proxy
-	 * 
+	/**
+	 * Adjust paramters set by driver for use by Execution proxy
+	 *
 	 */
 
-	public void adjustParametersForExecutionProxy(IEngineDriver driver, Map mapPars, String modality){
-		if(driver instanceof GeoDriver){
+	public void adjustParametersForExecutionProxy(IEngineDriver driver, Map mapPars, String modality) {
+		if (driver instanceof GeoDriver) {
 			mapPars.remove("ACTION_NAME");
 			mapPars.put("ACTION_NAME", "EXECUTION_PROXY_GEO_ACTION");
 			mapPars.remove("outputType");
 			mapPars.put("outputType", "JPEG");
-		}
-		else if(driver instanceof WorksheetDriver && modality.equals(SpagoBIConstants.MASSIVE_EXPORT_MODALITY)){
+		} else if (driver instanceof WorksheetDriver && modality.equals(SpagoBIConstants.MASSIVE_EXPORT_MODALITY)) {
 			mapPars.remove("ACTION_NAME");
 			mapPars.put("ACTION_NAME", WorksheetDriver.MASSIVE_EXPORT_PARAM_ACTION_NAME);
 			mapPars.remove("MIME_TYPE");
@@ -447,7 +439,7 @@ public class ExecutionProxy {
 	}
 
 	private String getTemporaryTableName() {
-		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 		UUID uuidObj = uuidGen.generateTimeBasedUUID();
 		String executionId = uuidObj.toString();
 		return executionId.replaceAll("-", "");
