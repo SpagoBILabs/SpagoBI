@@ -192,7 +192,7 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 
 		}
 
-		documentBytes = proxy.exec(profile, "SEND_MAIL", null);
+		documentBytes = proxy.exec(profile, ExecutionProxy.SEND_MAIL_MODALITY, null);
 		returnedContentType = proxy.getReturnedContentType();
 		fileextension = proxy.getFileExtensionFromContType(returnedContentType);
 	    //} end if (execCtrl.directExecution()) {
