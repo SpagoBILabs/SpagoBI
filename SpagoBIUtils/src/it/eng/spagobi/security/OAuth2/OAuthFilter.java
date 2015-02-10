@@ -2,7 +2,11 @@ package it.eng.spagobi.security.OAuth2;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -34,6 +38,17 @@ public class OAuthFilter implements Filter {
 	public void destroy() {
 		// TODO Auto-generated method stub
 	}
+
+	/*
+	 * Per ottenere il token dell'applicazione!
+	 * 
+	 * curl -x https://proxy.eng.it:3128 --proxy-user aldaniel:[password] --data "email=c4327965@trbvm.com&password=provaSP"
+	 * https://account.lab.fiware.org/api/v1/tokens.json -k
+	 * 
+	 * 
+	 * Per ottenere le informazioni dell'applicazione (compresi i ruoli): curl -x https://proxy.eng.it:3128 --proxy-user aldaniel:[password]
+	 * https://account.lab.fiware.org/applications/sbi.json?auth_token=ybVEszzhikm3UWZe4fQg -k
+	 */
 
 	/*
 	 * login user: c4327965@trbvm.com password: provaSP login user: dnozs3un.fhf@20mail.it password: password jbk31676@kiois.com
@@ -68,20 +83,15 @@ public class OAuthFilter implements Filter {
 
 				OutputStreamWriter out = new OutputStreamWriter(con.getOutputStream());
 				String body = "grant_type=authorization_code&code=" + ((HttpServletRequest) request).getParameter("code") + "&redirect_uri=" + redirectUri;
-
 				out.write(body);
 				out.close();
-
 				JsonReader r = Json.createReader(con.getInputStream());
 				JsonObject j = r.readObject();
 				con.disconnect();
 
-				System.out.println(j);
-				System.out.println();
 				String access_token = j.getString("access_token");
 				String refresh_token = j.getString("refresh_token"); // TODO
 				r.close();
-
 				session = ((HttpServletRequest) request).getSession();
 				session.setAttribute("access_token", access_token);
 				((HttpServletResponse) response).sendRedirect("http://localhost:8080/SpagoBI/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE");
@@ -99,5 +109,35 @@ public class OAuthFilter implements Filter {
 		clientId = fConfig.getInitParameter("clientId");
 		secret = fConfig.getInitParameter("secret");
 		redirectUri = fConfig.getInitParameter("redirectUri");
+
+		ResourceBundle rb = null;
+
+		try {
+			rb = ResourceBundle.getBundle("it.eng.spagobi.security.OAuth2.proxy");
+		} catch (MissingResourceException e) {
+			// TODO
+		}
+
+		if (rb != null) {
+			final String proxyUrl = rb.getString("PROXY_URL");
+			final String proxyPort = rb.getString("PROXY_PORT");
+			final String proxyUser = rb.getString("PROXY_USER");
+			final String proxyPassword = rb.getString("PROXY_PASSWORD");
+
+			if (proxyUrl != null && proxyPort != null) {
+				System.setProperty("https.proxyHost", proxyUrl);
+				System.setProperty("https.proxyPort", proxyPort);
+			}
+			if (proxyUser != null && proxyPassword != null) {
+				Authenticator authenticator = new Authenticator() {
+
+					@Override
+					public PasswordAuthentication getPasswordAuthentication() {
+						return (new PasswordAuthentication(proxyUser, proxyPassword.toCharArray()));
+					}
+				};
+				Authenticator.setDefault(authenticator);
+			}
+		}
 	}
 }
