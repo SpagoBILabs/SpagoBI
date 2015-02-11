@@ -159,6 +159,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 			toReturn = loadDataSourceWriteDefault(tmpSession);
+			logger.debug("Datasource write default found : " + toReturn);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while loading the data source with write default = true: check there are no more than one (incorrect situation)", he);
@@ -184,6 +185,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			if (hibDataSource == null)
 				return null;
 			toReturn = toDataSource(hibDataSource);
+			logger.debug("Datasource write default found in session: " + toReturn);
 		} catch (HibernateException he) {
 			logger.error("Error while loading the data source with write default = true: check there are no more than one (incorrect situation)", he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -459,6 +461,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		Criteria criteria = aSession.createCriteria(SbiDataSource.class);
 		criteria.add(labelCriterrion);
 		SbiDataSource hibDataSource = (SbiDataSource) criteria.uniqueResult();
+		logger.debug("Hibernate datasource write default found in session: " + hibDataSource);
 		return hibDataSource;
 	}
 
