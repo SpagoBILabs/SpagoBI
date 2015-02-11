@@ -454,72 +454,70 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	return text;
 }
 
-, addStyle: function(chart){
-	this.addFontStyles();
-	return Ext.apply(chart, this.customStyles);
+, addStyle: function(chartConfig){
+	this.addFontStyles(chartConfig);
 }
 
-, addFontStyles: function(){
+, addFontStyles: function(chartConfig) {
 
-	if(!this.customStyles){
-		this.customStyles = {};
+	if (!chartConfig) {
+		chartConfig = {};
 	}
+	if(!chartConfig.xAxis) {
+		chartConfig.xAxis = {};
+	}
+	if(!chartConfig.xAxis.labels){
+		chartConfig.xAxis.labels = {};
+	}
+	if(!chartConfig.xAxis.labels.style){
+		chartConfig.xAxis.labels.style = {};
+	}
+	if(!chartConfig.xAxis.title){
+		chartConfig.xAxis.title = {};
+	}
+	if(!chartConfig.xAxis.title.style){
+		chartConfig.xAxis.title.style = {};
+	}
+	Ext.apply(chartConfig.xAxis.labels.style , this.axisValueStyle || {});
+	Ext.apply(chartConfig.xAxis.title.style , this.axisTitleStyle || {});
 
-	if(!this.customStyles.xAxis){
-		this.customStyles.xAxis = {};
+	if(!chartConfig.yAxis){
+		chartConfig.yAxis = {};
 	}
-	if(!this.customStyles.xAxis.labels){
-		this.customStyles.xAxis.labels = {};
+	if(!chartConfig.yAxis.labels){
+		chartConfig.yAxis.labels = {};
 	}
-	if(!this.customStyles.xAxis.labels.style){
-		this.customStyles.xAxis.labels.style = {};
+	if(!chartConfig.yAxis.labels.style){
+		chartConfig.yAxis.labels.style = {};
 	}
-	if(!this.customStyles.xAxis.title){
-		this.customStyles.xAxis.title = {};
+	if(!chartConfig.yAxis.title){
+		chartConfig.yAxis.title = {};
 	}
-	if(!this.customStyles.xAxis.title.style){
-		this.customStyles.xAxis.title.style = {};
-	}
-	Ext.apply(this.customStyles.xAxis.labels.style , this.axisValueStyle||{});
-	Ext.apply(this.customStyles.xAxis.title.style , this.axisTitleStyle||{});
-
-	if(!this.customStyles.yAxis){
-		this.customStyles.yAxis = {};
-	}
-	if(!this.customStyles.yAxis.labels){
-		this.customStyles.yAxis.labels = {};
-	}
-	if(!this.customStyles.yAxis.labels.style){
-		this.customStyles.yAxis.labels.style = {};
-	}
-	if(!this.customStyles.yAxis.title){
-		this.customStyles.yAxis.title = {};
-	}
-	if(!this.customStyles.yAxis.title.style){
-		this.customStyles.yAxis.title.style = {};
+	if(!chartConfig.yAxis.title.style){
+		chartConfig.yAxis.title.style = {};
 	}
 	
-	Ext.apply(this.customStyles.yAxis.labels.style , this.axisValueStyle||{});
-	Ext.apply(this.customStyles.yAxis.title.style , this.axisTitleStyle||{});
+	Ext.apply(chartConfig.yAxis.labels.style , this.axisValueStyle||{});
+	Ext.apply(chartConfig.yAxis.title.style , this.axisTitleStyle||{});
 
 }
 
 , initStyles: function(chartConfig){
 	this.titleStyle= {
 			fontSize : chartConfig.outerFontSize,
-			fontType : chartConfig.outerFontType
+			fontFamily : chartConfig.outerFontType
 	};
 	this.axisTitleStyle= {
 			fontSize : chartConfig.outerFontSize,
-			fontType : chartConfig.outerFontType
+			fontFamily : chartConfig.outerFontType
 	};
 	this.axisValueStyle= {
 			fontSize : chartConfig.innerFontSize,
-			fontType : chartConfig.innerFontType
+			fontFamily : chartConfig.innerFontType
 	};
 	this.valueStyle= {
 			fontSize : chartConfig.innerFontSize,
-			fontType : chartConfig.innerFontType
+			fontFamily : chartConfig.innerFontType
 	};
 	
 	if(this.axisTitleStyle && this.axisTitleStyle.fontSize && this.axisTitleStyle.fontSize!=null){
