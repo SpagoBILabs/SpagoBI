@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.tomcat.util.codec.binary.Base64;
+import sun.misc.BASE64Encoder;
 
 /**
  * Servlet Filter implementation class OAuthFilter
@@ -41,11 +41,11 @@ public class OAuthFilter implements Filter {
 
 	/*
 	 * Per ottenere il token dell'applicazione!
-	 * 
+	 *
 	 * curl -x https://proxy.eng.it:3128 --proxy-user aldaniel:[password] --data "email=c4327965@trbvm.com&password=provaSP"
 	 * https://account.lab.fiware.org/api/v1/tokens.json -k
-	 * 
-	 * 
+	 *
+	 *
 	 * Per ottenere le informazioni dell'applicazione (compresi i ruoli): curl -x https://proxy.eng.it:3128 --proxy-user aldaniel:[password]
 	 * https://account.lab.fiware.org/applications/sbi.json?auth_token=ybVEszzhikm3UWZe4fQg -k
 	 */
@@ -66,7 +66,7 @@ public class OAuthFilter implements Filter {
 				((HttpServletResponse) response).sendRedirect(url);
 			} else {
 				String e1 = clientId + ":" + secret;
-				String e = new String(Base64.encodeBase64(e1.getBytes()));
+				String e = new String(new BASE64Encoder().encode(e1.getBytes()));
 				URL url = new URL("https://account.lab.fiware.org/token");
 
 				// HttpsURLConnection
