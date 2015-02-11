@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.bo;
 
@@ -54,8 +54,9 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * The Constructor.
-	 * 
-	 * @param profile SpagoBIUserProfile
+	 *
+	 * @param profile
+	 *            SpagoBIUserProfile
 	 */
 	public UserProfile(SpagoBIUserProfile profile) {
 		logger.debug("IN");
@@ -118,9 +119,8 @@ public class UserProfile implements IEngUserProfile {
 	}
 
 	/**
-	 * To be user by SpagoBI core ONLY.
-	 * The user identifier in the output object will match this syntax:
-	 * WORKFLOW_USER_ID_PREFIX + tenant name
+	 * To be user by SpagoBI core ONLY. The user identifier in the output object will match this syntax: WORKFLOW_USER_ID_PREFIX + tenant name
+	 * 
 	 * @return the user profile for the workflow
 	 */
 	public static final UserProfile createWorkFlowUserProfile() {
@@ -137,9 +137,8 @@ public class UserProfile implements IEngUserProfile {
 	}
 
 	/**
-	 * To be user by SpagoBI core ONLY.
-	 * The user identifier in the output object will match this syntax:
-	 * SCHEDULER_USER_ID_PREFIX + tenant name
+	 * To be user by SpagoBI core ONLY. The user identifier in the output object will match this syntax: SCHEDULER_USER_ID_PREFIX + tenant name
+	 * 
 	 * @return the user profile for the scheduler
 	 */
 	public static final UserProfile createSchedulerUserProfile() {
@@ -157,37 +156,42 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * Checks if is scheduler user.
-	 * 
-	 * @param userId String
-	 * 
+	 *
+	 * @param userId
+	 *            String
+	 *
 	 * @return true, if checks if is scheduler user
 	 */
 	public static boolean isWorkflowUser(String userId) {
-		//return WORKFLOW_USER_NAME.equals(userid);
+		// return WORKFLOW_USER_NAME.equals(userid);
 		return userId != null && userId.startsWith(WORKFLOW_USER_ID_PREFIX);
 	}
 
 	/**
 	 * Checks if is scheduler user.
-	 * 
-	 * @param userId String
-	 * 
+	 *
+	 * @param userId
+	 *            String
+	 *
 	 * @return true, if checks if is scheduler user
 	 */
 	public static boolean isSchedulerUser(String userId) {
-		//return SCHEDULER_USER_NAME.equals(userid);
+		// return SCHEDULER_USER_NAME.equals(userid);
 		return userId != null && userId.startsWith(SCHEDULER_USER_ID_PREFIX);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#getFunctionalities()
 	 */
 	public Collection getFunctionalities() throws EMFInternalError {
 		return functionalities;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#getFunctionalitiesByRole(java.lang.String)
 	 */
 	public Collection getFunctionalitiesByRole(String arg0) throws EMFInternalError {
@@ -195,137 +199,154 @@ public class UserProfile implements IEngUserProfile {
 
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#getRoles()
 	 */
 	public Collection getRoles() throws EMFInternalError {
 		return this.roles;
 	}
 
-	/* 
-	 *  if a role default is assigned return it, else returns all roles
+	/*
+	 * if a role default is assigned return it, else returns all roles
 	 */
 	public Collection getRolesForUse() throws EMFInternalError {
 		logger.debug("IN");
 		Collection toReturn = null;
-		logger.debug("look if default role is selected");		
-		if (defaultRole != null){
-			logger.debug("default role selected is "+defaultRole);				
-			toReturn=new ArrayList<String>();
-			toReturn.add(defaultRole); 
-		}
-		else{
+		logger.debug("look if default role is selected");
+		if (defaultRole != null) {
+			logger.debug("default role selected is " + defaultRole);
+			toReturn = new ArrayList<String>();
+			toReturn.add(defaultRole);
+		} else {
 			logger.debug("default role not selected");
 
 			toReturn = this.roles;
 		}
-		
-		
+
 		logger.debug("OUT");
 		return toReturn;
 	}
 
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#getUserAttribute(java.lang.String)
 	 */
 	public Object getUserAttribute(String attributeName) throws EMFInternalError {
 		return userAttributes.get(attributeName);
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#getUserAttributeNames()
 	 */
 	public Collection getUserAttributeNames() {
 		return userAttributes.keySet();
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#getUserUniqueIdentifier()
 	 */
 	public Object getUserUniqueIdentifier() {
 		return userUniqueIdentifier;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#getUserName()
 	 */
 	public Object getUserName() {
 		String retVal = userName;
-		if (retVal == null) retVal = userUniqueIdentifier;
+		if (retVal == null)
+			retVal = userUniqueIdentifier;
 		return retVal;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#getUserId()
 	 */
 	public Object getUserId() {
 		String retVal = userId;
-		if (retVal == null) retVal = userUniqueIdentifier;
+		if (retVal == null)
+			retVal = userUniqueIdentifier;
 		return retVal;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#hasRole(java.lang.String)
 	 */
 	public boolean hasRole(String roleName) throws EMFInternalError {
 		return this.roles.contains(roleName);
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteAction(java.lang.String)
 	 */
 	public boolean isAbleToExecuteAction(String actionName) throws EMFInternalError {
 		// first check if the actionName is a functionality...
-		if ( this.functionalities.contains(actionName) ){
+		if (this.functionalities.contains(actionName)) {
 			return true;
 		}
 		List<String> businessProcessNames = AuthorizationsBusinessMapper.getInstance().mapActionToBusinessProcess(actionName);
-		if (businessProcessNames != null){
-			for (String businessProcess : businessProcessNames){
-				if (this.functionalities.contains(businessProcess)){
+		if (businessProcessNames != null) {
+			for (String businessProcess : businessProcessNames) {
+				if (this.functionalities.contains(businessProcess)) {
 					return true;
 				}
 			}
 		}
-		return false;    
+		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteAction(java.lang.String)
 	 */
 	public boolean isAbleToExecuteService(String serviceUrl) throws EMFInternalError {
 		// first check if the actionName is a functionality...
-		if ( this.functionalities.contains(serviceUrl) ){
+		if (this.functionalities.contains(serviceUrl)) {
 			return true;
 		}
 		String functionality = AuthorizationsBusinessMapper.getInstance().mapServiceToBusinessProcess(serviceUrl);
 
-		if (functionality != null){
-			if(functionality.equals(PUBLIC_FUNCTIONALITY)){
+		if (functionality != null) {
+			if (functionality.equals(PUBLIC_FUNCTIONALITY)) {
 				return true;
 			}
 			return this.functionalities.contains(functionality);
-		}else return false;    
+		} else
+			return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteModuleInPage(java.lang.String, java.lang.String)
 	 */
 	public boolean isAbleToExecuteModuleInPage(String pageName, String moduleName) throws EMFInternalError {
 		String functionality = AuthorizationsBusinessMapper.getInstance().mapPageModuleToBusinessProcess(pageName, moduleName);
-		if (functionality != null){
+		if (functionality != null) {
 			return this.functionalities.contains(functionality);
-		}else return false;  
+		} else
+			return false;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#setApplication(java.lang.String)
 	 */
 	public void setApplication(String arg0) throws EMFInternalError {
@@ -333,8 +354,9 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * Sets the functionalities.
-	 * 
-	 * @param functs the new functionalities
+	 *
+	 * @param functs
+	 *            the new functionalities
 	 */
 	public void setFunctionalities(Collection functs) {
 		this.functionalities = functs;
@@ -342,8 +364,9 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * Sets the attributes.
-	 * 
-	 * @param attrs the new attributes
+	 *
+	 * @param attrs
+	 *            the new attributes
 	 */
 	public void setAttributes(Map attrs) {
 		this.userAttributes = attrs;
@@ -351,8 +374,9 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * Adds an attribute.
-	 * 
-	 * @param attrs the new attributes
+	 *
+	 * @param attrs
+	 *            the new attributes
 	 */
 	public void addAttributes(String key, Object value) {
 		this.userAttributes.put(key, value);
@@ -360,19 +384,20 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * Modify an attribute value
-	 * 
-	 * @param attrs the new attributes
+	 *
+	 * @param attrs
+	 *            the new attributes
 	 */
 	public void setAttributeValue(String key, Object value) {
 		this.userAttributes.remove(key);
 		this.userAttributes.put(key, value);
 	}
 
-
 	/**
 	 * Sets the roles.
-	 * 
-	 * @param rols the new roles
+	 *
+	 * @param rols
+	 *            the new roles
 	 */
 	public void setRoles(Collection rols) {
 		this.roles = rols;
@@ -382,9 +407,8 @@ public class UserProfile implements IEngUserProfile {
 		return defaultRole;
 	}
 
-
 	public void setDefaultRole(String defaultRole) {
-		logger.debug("IN "+defaultRole);
+		logger.debug("IN " + defaultRole);
 		this.defaultRole = defaultRole;
 		logger.debug("OUT");
 	}
@@ -392,7 +416,6 @@ public class UserProfile implements IEngUserProfile {
 	public Map getUserAttributes() {
 		return userAttributes;
 	}
-
 
 	public String getOrganization() {
 		return organization;
@@ -409,7 +432,7 @@ public class UserProfile implements IEngUserProfile {
 	public void setSpagoBIUserProfile(SpagoBIUserProfile spagoBIUserProfile) {
 		this.spagoBIUserProfile = spagoBIUserProfile;
 	}
-	
+
 	public Boolean getIsSuperadmin() {
 		return isSuperadmin;
 	}
@@ -417,11 +440,12 @@ public class UserProfile implements IEngUserProfile {
 	public void setIsSuperadmin(Boolean isSuperadmin) {
 		this.isSuperadmin = isSuperadmin;
 	}
+
 	/**
-	 * To be user by external engines ONLY.
-	 * The user identifier must match this syntax:
-	 * SCHEDULER_USER_ID_PREFIX + tenant name
-	 * @param userUniqueIdentifier The user identifier (SCHEDULER_USER_ID_PREFIX + tenant name)
+	 * To be user by external engines ONLY. The user identifier must match this syntax: SCHEDULER_USER_ID_PREFIX + tenant name
+	 * 
+	 * @param userUniqueIdentifier
+	 *            The user identifier (SCHEDULER_USER_ID_PREFIX + tenant name)
 	 * @return the user profile for the scheduler
 	 */
 	public static UserProfile createSchedulerUserProfile(String userUniqueIdentifier) {
@@ -439,12 +463,12 @@ public class UserProfile implements IEngUserProfile {
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+
 	/**
-	 * To be user by external engines ONLY.
-	 * The user identifier must match this syntax:
-	 * WORKFLOW_USER_ID_PREFIX + tenant name
-	 * @param userUniqueIdentifier The user identifier (WORKFLOW_USER_ID_PREFIX + tenant name)
+	 * To be user by external engines ONLY. The user identifier must match this syntax: WORKFLOW_USER_ID_PREFIX + tenant name
+	 * 
+	 * @param userUniqueIdentifier
+	 *            The user identifier (WORKFLOW_USER_ID_PREFIX + tenant name)
 	 * @return the user profile for the workflow
 	 */
 	public static UserProfile createWorkflowUserProfile(String userUniqueIdentifier) {
@@ -462,5 +486,12 @@ public class UserProfile implements IEngUserProfile {
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "UserProfile [userUniqueIdentifier=" + userUniqueIdentifier + ", userId=" + userId + ", userName=" + userName + ", userAttributes="
+				+ userAttributes + ", roles=" + roles + ", defaultRole=" + defaultRole + ", organization=" + organization + ", isSuperadmin=" + isSuperadmin
+				+ "]";
+	}
+
 }
