@@ -38,6 +38,7 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -980,6 +981,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		JSONArray filteredFoldersJSON = new JSONArray();
 		// if(getAttributeAsJSONArray("folders") == null){
+		boolean foldersPassed = false;
+		Integer userFolderId = null;
+
 		if (getAttributeAsJSONArray("functs") == null) {
 			IEngUserProfile profile = getUserProfile();
 			// add personal folder for default
@@ -992,16 +996,35 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
 			}
 			filteredFoldersJSON.put(userFunc.getId());
+			userFolderId = userFunc.getId();
 		} else {
 			// filteredFoldersJSON =
 			// filterFolders(getAttributeAsJSONArray("folders"));
 			filteredFoldersJSON = filterFolders(getAttributeAsJSONArray("functs"));
+			foldersPassed = true;
 		}
 
 		byte[] content = getTemplateContent();
 		ObjTemplate objTemp = createNewTemplate(content);
 		ExecutionInstance executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
 		BIObject biobj = executionInstance.getBIObject();
+
+		// if folders where not passed and user default is used keep previous
+		// folder do not overwrite,
+		if (foldersPassed == false) {
+			List functs = biobj.getFunctionalities();
+			for (Iterator iterator = functs.iterator(); iterator.hasNext();) {
+				Object functO = iterator.next();
+				if (functO != null) {
+					Integer functId = (Integer) functO;
+					if (!functId.equals(userFolderId)) {
+						filteredFoldersJSON.put(functId);
+					}
+				}
+			}
+
+		}
+
 		// update document informations
 		biobj = syncronizeDocument(biobj, filteredFoldersJSON);
 
