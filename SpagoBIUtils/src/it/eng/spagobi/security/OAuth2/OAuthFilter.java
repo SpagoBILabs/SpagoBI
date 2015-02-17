@@ -1,4 +1,11 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.security.OAuth2;
+
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -22,12 +29,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import sun.misc.BASE64Encoder;
 
 /**
  * Servlet Filter implementation class OAuthFilter
  */
 public class OAuthFilter implements Filter {
+	static private Logger logger = Logger.getLogger(OAuthFilter.class);
+
 	String clientId;
 	String secret;
 	String redirectUri;
@@ -38,21 +49,6 @@ public class OAuthFilter implements Filter {
 	public void destroy() {
 		// TODO Auto-generated method stub
 	}
-
-	/*
-	 * Per ottenere il token dell'applicazione!
-	 *
-	 * curl -x https://proxy.eng.it:3128 --proxy-user aldaniel:[password] --data "email=c4327965@trbvm.com&password=provaSP"
-	 * https://account.lab.fiware.org/api/v1/tokens.json -k
-	 *
-	 *
-	 * Per ottenere le informazioni dell'applicazione (compresi i ruoli): curl -x https://proxy.eng.it:3128 --proxy-user aldaniel:[password]
-	 * https://account.lab.fiware.org/applications/sbi.json?auth_token=ybVEszzhikm3UWZe4fQg -k
-	 */
-
-	/*
-	 * login user: c4327965@trbvm.com password: provaSP login user: dnozs3un.fhf@20mail.it password: password jbk31676@kiois.com
-	 */
 
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
@@ -65,35 +61,42 @@ public class OAuthFilter implements Filter {
 				String url = "https://account.lab.fiware.org/authorize?response_type=code&client_id=" + clientId;
 				((HttpServletResponse) response).sendRedirect(url);
 			} else {
-				String e1 = clientId + ":" + secret;
-				String e = new String(new BASE64Encoder().encode(e1.getBytes()));
+				String authorizationCredentials = clientId + ":" + secret;
+				String encoded = new String(new BASE64Encoder().encode(authorizationCredentials.getBytes()));
+				encoded = encoded.replaceAll("\n", "");
+
 				URL url = new URL("https://account.lab.fiware.org/token");
 
 				// HttpsURLConnection
-				HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+				HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
-				// add request header
-				con.setDoOutput(true);
-				con.setRequestProperty("Authorization", "Basic " + e);
-				con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-				con.setRequestMethod("POST");
+				// Add request header
+				connection.setDoOutput(true);
+				connection.setRequestProperty("Authorization", "Basic " + encoded);
+				connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				connection.setRequestMethod("POST");
 
-				con.setConnectTimeout(10000);
-				con.setReadTimeout(10000);
+				connection.setConnectTimeout(10000);
+				connection.setReadTimeout(10000);
 
-				OutputStreamWriter out = new OutputStreamWriter(con.getOutputStream());
+				// Add request body
+				OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
 				String body = "grant_type=authorization_code&code=" + ((HttpServletRequest) request).getParameter("code") + "&redirect_uri=" + redirectUri;
 				out.write(body);
 				out.close();
-				JsonReader r = Json.createReader(con.getInputStream());
-				JsonObject j = r.readObject();
-				con.disconnect();
 
-				String access_token = j.getString("access_token");
-				String refresh_token = j.getString("refresh_token"); // TODO
-				r.close();
+				JsonReader jsonReader = Json.createReader(connection.getInputStream());
+				JsonObject jsonObject = jsonReader.readObject();
+				jsonReader.close();
+				connection.disconnect();
+
+				String accessToken = jsonObject.getString("access_token");
+
+				// TODO: right now refreshToken is not used
+				String refreshToken = jsonObject.getString("refresh_token");
+
 				session = ((HttpServletRequest) request).getSession();
-				session.setAttribute("access_token", access_token);
+				session.setAttribute("access_token", accessToken);
 				((HttpServletResponse) response).sendRedirect("http://localhost:8080/SpagoBI/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE");
 			}
 		} else {
@@ -106,38 +109,39 @@ public class OAuthFilter implements Filter {
 	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
-		clientId = fConfig.getInitParameter("clientId");
-		secret = fConfig.getInitParameter("secret");
-		redirectUri = fConfig.getInitParameter("redirectUri");
-
-		ResourceBundle rb = null;
+		ResourceBundle resourceBundle = null;
+		String configFile = "it.eng.spagobi.security.OAuth2.configs";
 
 		try {
-			rb = ResourceBundle.getBundle("it.eng.spagobi.security.OAuth2.proxy");
-		} catch (MissingResourceException e) {
-			// TODO
-		}
+			resourceBundle = ResourceBundle.getBundle(configFile);
 
-		if (rb != null) {
-			final String proxyUrl = rb.getString("PROXY_URL");
-			final String proxyPort = rb.getString("PROXY_PORT");
-			final String proxyUser = rb.getString("PROXY_USER");
-			final String proxyPassword = rb.getString("PROXY_PASSWORD");
+			clientId = resourceBundle.getString("CLIENT_ID");
+			secret = resourceBundle.getString("SECRET");
+			redirectUri = resourceBundle.getString("REDIRECT_URI");
+
+			final String proxyUrl = resourceBundle.getString("PROXY_URL");
+			final String proxyPort = resourceBundle.getString("PROXY_PORT");
+			final String proxyUser = resourceBundle.getString("PROXY_USER");
+			final String proxyPassword = resourceBundle.getString("PROXY_PASSWORD");
 
 			if (proxyUrl != null && proxyPort != null) {
 				System.setProperty("https.proxyHost", proxyUrl);
 				System.setProperty("https.proxyPort", proxyPort);
-			}
-			if (proxyUser != null && proxyPassword != null) {
-				Authenticator authenticator = new Authenticator() {
 
-					@Override
-					public PasswordAuthentication getPasswordAuthentication() {
-						return (new PasswordAuthentication(proxyUser, proxyPassword.toCharArray()));
-					}
-				};
-				Authenticator.setDefault(authenticator);
+				if (proxyUser != null && proxyPassword != null) {
+					Authenticator authenticator = new Authenticator() {
+
+						@Override
+						public PasswordAuthentication getPasswordAuthentication() {
+							return (new PasswordAuthentication(proxyUser, proxyPassword.toCharArray()));
+						}
+					};
+					Authenticator.setDefault(authenticator);
+				}
 			}
+		} catch (MissingResourceException e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIRuntimeException("Impossible to find configurations file [" + configFile + "]", e);
 		}
 	}
 }
