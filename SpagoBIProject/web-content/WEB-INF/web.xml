@@ -73,18 +73,6 @@
  	<filter>
 		<filter-name>OAuthFilter</filter-name>
 		<filter-class>it.eng.spagobi.security.OAuth2.OAuthFilter</filter-class>
-		<init-param>
-			<param-name>clientId</param-name>
-			<param-value>1942</param-value>
-		</init-param>
-		<init-param>
-			<param-name>secret</param-name>
-			<param-value>efda8ccc5829ed325e28e497463b95acb146c4fc18fb6d989eb888057a85dc8149d97d0631192acc62ee9e18445cd87d91020dc5444bcb3b4d43234192f82db1</param-value>
-		</init-param>
-		<init-param>
-			<param-name>redirectUri</param-name>
-			<param-value>http%3A%2F%2Flocalhost%3A8080%2FSpagoBI%2Fservlet%2FAdapterHTTP%3FPAGE%3DLoginPage%26NEW_SESSION%3DTRUE</param-value>
-		</init-param>
 	</filter>
  	END OAUTH 2 -->
     
