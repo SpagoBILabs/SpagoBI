@@ -91,6 +91,9 @@ THRESHOLD_VALUE		VARCHAR2	50
 KPI_NAME			VARCHAR2	100
 RESOURCES			VARCHAR2	200
  -->    
-    
+    	<filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>
