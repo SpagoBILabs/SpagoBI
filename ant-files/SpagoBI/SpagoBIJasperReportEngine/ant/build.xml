@@ -70,6 +70,9 @@
 			<classpath refid="web.classpath" />
 			<compilerarg value="-XDignore.symbol.file"/>
 		</javac>
+		<exec dir="${project.dir}" executable="svn" output="${build}/${webapp_name}/svn.properties">
+			<arg value="info" />
+		</exec>
 	</target>
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

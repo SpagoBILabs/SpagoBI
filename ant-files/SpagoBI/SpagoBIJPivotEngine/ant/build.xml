@@ -59,6 +59,9 @@
 		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on" encoding="${encoding}">
 			<classpath refid="web.classpath" />
 		</javac>
+		<exec dir="${project.dir}" executable="svn" output="${build}/${webapp_name}/svn.properties">
+			<arg value="info" />
+		</exec>
 	</target>
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
