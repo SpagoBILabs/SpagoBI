@@ -10,6 +10,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,36 +27,48 @@ import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.log4j.Logger;
 
+/**
+ * @author Alessandro Daniele (alessandro.daniele@eng.it)
+ *
+ */
 public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 	static private Logger logger = Logger.getLogger(OAuth2SecurityInfoProvider.class);
 
-	private String applicationName;
-	private String email;
-	private String password;
+	private static String adminEmail = null;
+	private static String adminPassword = null;
+	private static String applicationName = null;
+	// Token for access admin information in fi-ware
+	private static String token = null;
+	// It contains data about the application, such its name and its roles
+	private static JsonObject jsonApplicationData = null;
+	private static List<String> tenants = null;
 
 	@Override
 	public List getRoles() {
-		loadConfigs();
-
-		JsonObject jsonObject;
-		try {
-			jsonObject = getJSon();
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while trying to obtain application's information from fi-ware", e);
-		}
+		logger.debug("IN");
+		// Initialize all the static properties if they have not been already initialized
+		calculateJSonApplicationData();
+		getTenants();
 
 		List<Role> roles = new ArrayList<Role>();
-		JsonArray jsonRolesArray = jsonObject.getJsonArray("roles");
+		JsonArray jsonRolesArray = jsonApplicationData.getJsonArray("roles");
 
 		String name;
 		for (JsonValue jsonValue : jsonRolesArray) {
 			name = ((JsonObject) jsonValue).getString("name");
 			if (!name.equals("Provider") && !name.equals("Purchaser")) {
-				roles.add(new Role(name, name));
+				Role role = new Role(name, name);
+				role.setOrganization("SPAGOBI");
+				roles.add(role);
+
+				for (String tenant : tenants) {
+					role = new Role(name, name);
+					role.setOrganization(tenant);
+					roles.add(role);
+				}
 			}
 		}
-
+		logger.debug("OUT");
 		return roles;
 	}
 
@@ -67,57 +81,163 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 		return attributes;
 	}
 
-	// It loads the authentication credentials used for retrieving the application's information
-	private void loadConfigs() {
+	public static List<String> getTenants() {
+		logger.debug("IN");
+		if (tenants != null) {
+			logger.debug("OUT");
+			return tenants;
+		}
+
+		if (token == null) {
+			loadConfigs();
+		}
+
+		tenants = new ArrayList<String>();
+
+		HttpsURLConnection connection = null;
+		JsonReader jsonReader = null;
+		try {
+			URL url = new URL("https://account.lab.fiware.org/applications/" + applicationName + "/actors?auth_token=" + token);
+			connection = (HttpsURLConnection) url.openConnection();
+			connection.setRequestMethod("GET");
+
+			connection.setConnectTimeout(10000);
+			connection.setReadTimeout(10000);
+
+			jsonReader = Json.createReader(connection.getInputStream());
+			JsonArray actorList = jsonReader.readObject().getJsonArray("actors");
+
+			for (JsonValue jsonValue : actorList) {
+				if (((JsonObject) jsonValue).getString("actor_type").equals("Group")) {
+					tenants.add(((JsonObject) jsonValue).getString("name"));
+				}
+			}
+
+			return tenants;
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIRuntimeException("Error while trying to obtain tenants' informations from fi-ware", e);
+		} finally {
+			logger.debug("OUT");
+
+			if (connection != null) {
+				connection.disconnect();
+			}
+			if (jsonReader != null) {
+				jsonReader.close();
+			}
+		}
+	}
+
+	// It looks for informations about the application, such its name and its roles and initialize jsonApplicationData with them
+	private static void calculateJSonApplicationData() {
+		if (jsonApplicationData == null) {
+			logger.debug("IN");
+			if (token == null) {
+				loadConfigs();
+			}
+
+			HttpsURLConnection connection = null;
+			JsonReader jsonReader = null;
+			try {
+				URL url = new URL("https://account.lab.fiware.org/applications/" + applicationName + ".json?auth_token=" + token);
+				connection = (HttpsURLConnection) url.openConnection();
+				connection.setRequestMethod("GET");
+
+				connection.setConnectTimeout(10000);
+				connection.setReadTimeout(10000);
+
+				jsonReader = Json.createReader(connection.getInputStream());
+				jsonApplicationData = jsonReader.readObject();
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+				throw new SpagoBIRuntimeException("Error while trying to obtain application's informations from fi-ware", e);
+			} finally {
+				logger.debug("OUT");
+
+				if (connection != null) {
+					connection.disconnect();
+				}
+				if (jsonReader != null) {
+					jsonReader.close();
+				}
+			}
+		}
+
+	}
+
+	// It loads the authentication credentials used for retrieving the application's information and retrieve the token for the admin user
+	private static void loadConfigs() {
+		logger.debug("IN");
+
 		ResourceBundle resourceBundle = null;
 		String configFile = "it.eng.spagobi.security.OAuth2.configs";
 
+		HttpsURLConnection connection = null;
+		JsonReader jsonReader = null;
 		try {
 			resourceBundle = ResourceBundle.getBundle(configFile);
 
 			applicationName = resourceBundle.getString("APPLICATION_NAME");
-			email = resourceBundle.getString("ADMIN_EMAIL");
-			password = resourceBundle.getString("ADMIN_PASSWORD");
+			adminEmail = resourceBundle.getString("ADMIN_EMAIL");
+			adminPassword = resourceBundle.getString("ADMIN_PASSWORD");
+
+			final String proxyUrl = resourceBundle.getString("PROXY_URL");
+			final String proxyPort = resourceBundle.getString("PROXY_PORT");
+			final String proxyUser = resourceBundle.getString("PROXY_USER");
+			final String proxyPassword = resourceBundle.getString("PROXY_PASSWORD");
+
+			if (proxyUrl != null && proxyPort != null) {
+				System.setProperty("https.proxyHost", proxyUrl);
+				System.setProperty("https.proxyPort", proxyPort);
+
+				if (proxyUser != null && proxyPassword != null) {
+					Authenticator authenticator = new Authenticator() {
+
+						@Override
+						public PasswordAuthentication getPasswordAuthentication() {
+							return (new PasswordAuthentication(proxyUser, proxyPassword.toCharArray()));
+						}
+					};
+					Authenticator.setDefault(authenticator);
+				}
+			}
+
+			URL url = new URL("https://account.lab.fiware.org/api/v1/tokens.json");
+
+			// HttpsURLConnection
+			connection = (HttpsURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+
+			connection.setDoOutput(true);
+			connection.setConnectTimeout(10000);
+			connection.setReadTimeout(10000);
+
+			OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+			String body = "email=" + adminEmail + "&password=" + adminPassword;
+			out.write(body);
+			out.close();
+
+			jsonReader = Json.createReader(connection.getInputStream());
+			JsonObject jsonObject = jsonReader.readObject();
+
+			token = jsonObject.getString("token");
 		} catch (MissingResourceException e) {
+			logger.error(e.getMessage(), e);
 			throw new SpagoBIRuntimeException("Impossible to find configurations file [" + configFile + "]", e);
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIRuntimeException("Error while trying to contact fi-ware", e);
+		} finally {
+			logger.debug("OUT");
+
+			if (connection != null) {
+				connection.disconnect();
+			}
+			if (jsonReader != null) {
+				jsonReader.close();
+			}
 		}
 	}
 
-	// The returned Json contains the application's informations, such its name and its roles
-	private JsonObject getJSon() throws IOException {
-		URL url;
-		url = new URL("https://account.lab.fiware.org/api/v1/tokens.json");
-
-		// HttpsURLConnection
-		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-		connection.setRequestMethod("POST");
-
-		connection.setDoOutput(true);
-		connection.setConnectTimeout(10000);
-		connection.setReadTimeout(10000);
-
-		OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
-		String body = "email=" + email + "&password=" + password;
-		out.write(body);
-		out.close();
-
-		JsonReader jsonReader = Json.createReader(connection.getInputStream());
-		JsonObject jsonObject = jsonReader.readObject();
-		connection.disconnect();
-
-		String token = jsonObject.getString("token");
-
-		url = new URL("https://account.lab.fiware.org/applications/" + applicationName + ".json?auth_token=" + token);
-		connection = (HttpsURLConnection) url.openConnection();
-		connection.setRequestMethod("GET");
-
-		connection.setConnectTimeout(10000);
-		connection.setReadTimeout(10000);
-
-		jsonReader = Json.createReader(connection.getInputStream());
-		JsonObject result = jsonReader.readObject();
-		connection.disconnect();
-
-		return result;
-	}
 }

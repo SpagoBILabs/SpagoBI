@@ -21,5 +21,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIDAO"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
