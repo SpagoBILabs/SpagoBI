@@ -9,8 +9,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -35,9 +33,11 @@ import sun.misc.BASE64Encoder;
 
 /**
  * Servlet Filter implementation class OAuthFilter
+ *
+ * @author Alessandro Daniele (alessandro.daniele@eng.it)
  */
-public class OAuthFilter implements Filter {
-	static private Logger logger = Logger.getLogger(OAuthFilter.class);
+public class OAuth2Filter implements Filter {
+	static private Logger logger = Logger.getLogger(OAuth2Filter.class);
 
 	String clientId;
 	String secret;
@@ -54,6 +54,8 @@ public class OAuthFilter implements Filter {
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		logger.debug("IN");
+
 		HttpSession session = ((HttpServletRequest) request).getSession();
 
 		if (session.isNew() || session.getAttribute("access_token") == null) {
@@ -92,9 +94,6 @@ public class OAuthFilter implements Filter {
 
 				String accessToken = jsonObject.getString("access_token");
 
-				// TODO: right now refreshToken is not used
-				String refreshToken = jsonObject.getString("refresh_token");
-
 				session = ((HttpServletRequest) request).getSession();
 				session.setAttribute("access_token", accessToken);
 				((HttpServletResponse) response).sendRedirect("http://localhost:8080/SpagoBI/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE");
@@ -103,12 +102,16 @@ public class OAuthFilter implements Filter {
 			// pass the request along the filter chain
 			chain.doFilter(request, response);
 		}
+
+		logger.debug("OUT");
 	}
 
 	/**
 	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
+		logger.debug("IN");
+
 		ResourceBundle resourceBundle = null;
 		String configFile = "it.eng.spagobi.security.OAuth2.configs";
 
@@ -118,30 +121,11 @@ public class OAuthFilter implements Filter {
 			clientId = resourceBundle.getString("CLIENT_ID");
 			secret = resourceBundle.getString("SECRET");
 			redirectUri = resourceBundle.getString("REDIRECT_URI");
-
-			final String proxyUrl = resourceBundle.getString("PROXY_URL");
-			final String proxyPort = resourceBundle.getString("PROXY_PORT");
-			final String proxyUser = resourceBundle.getString("PROXY_USER");
-			final String proxyPassword = resourceBundle.getString("PROXY_PASSWORD");
-
-			if (proxyUrl != null && proxyPort != null) {
-				System.setProperty("https.proxyHost", proxyUrl);
-				System.setProperty("https.proxyPort", proxyPort);
-
-				if (proxyUser != null && proxyPassword != null) {
-					Authenticator authenticator = new Authenticator() {
-
-						@Override
-						public PasswordAuthentication getPasswordAuthentication() {
-							return (new PasswordAuthentication(proxyUser, proxyPassword.toCharArray()));
-						}
-					};
-					Authenticator.setDefault(authenticator);
-				}
-			}
 		} catch (MissingResourceException e) {
 			logger.error(e.getMessage(), e);
 			throw new SpagoBIRuntimeException("Impossible to find configurations file [" + configFile + "]", e);
+		} finally {
+			logger.debug("OUT");
 		}
 	}
 }
