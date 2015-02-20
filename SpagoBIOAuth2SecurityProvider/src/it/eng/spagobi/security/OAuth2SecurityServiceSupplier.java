@@ -68,7 +68,7 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 				throw new SpagoBIRuntimeException("Impossible to find configurations file [" + configFile + "]", e);
 			}
 
-			profile.setIsSuperadmin(adminEmail.equals(email));
+			profile.setIsSuperadmin(email.equals(adminEmail.toLowerCase()));
 
 			JsonArray jsonRolesArray = jsonObject.getJsonArray("roles");
 			List<String> roles = new ArrayList<String>();
@@ -85,18 +85,20 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			if (roles.size() == 0) {
 				JsonArray organizations = jsonObject.getJsonArray("organizations");
 
-				// For each organization
-				for (int i = 0; i < organizations.size(); i++) {
-					String organizationName = organizations.getJsonObject(i).getString("displayName");
-					jsonRolesArray = organizations.getJsonObject(i).getJsonArray("roles");
+				if (organizations != null) {
+					// For each organization
+					for (int i = 0; i < organizations.size(); i++) {
+						String organizationName = organizations.getJsonObject(i).getString("displayName");
+						jsonRolesArray = organizations.getJsonObject(i).getJsonArray("roles");
 
-					// For each role in the current organization
-					for (int k = 0; k < jsonRolesArray.size(); k++) {
-						name = jsonRolesArray.getJsonObject(k).getString("name");
+						// For each role in the current organization
+						for (int k = 0; k < jsonRolesArray.size(); k++) {
+							name = jsonRolesArray.getJsonObject(k).getString("name");
 
-						if (!name.equals("Provider") && !name.equals("Purchaser")) {
-							profile.setOrganization(organizationName);
-							roles.add(name);
+							if (!name.equals("Provider") && !name.equals("Purchaser")) {
+								profile.setOrganization(organizationName);
+								roles.add(name);
+							}
 						}
 					}
 				}
