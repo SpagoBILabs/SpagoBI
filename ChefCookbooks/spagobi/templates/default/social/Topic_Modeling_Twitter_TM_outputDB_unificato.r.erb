@@ -1,0 +1,439 @@
+# Topic Modeling with topicmodels package - script unificato
+
+# Ultima modifica Isabella Iennaco 20-10-2014
+
+##############################################
+## Packages
+##############################################
+
+library(RMySQL)
+library(reshape2)
+library(topicmodels)
+library(slam)
+library(stringr)
+library(tau)
+library(tm)
+#library(Rmpfr) NOT USED!!!
+#library(pbapply)
+library(plyr)
+
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+#                                           PrepareDataHash                                                    #
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+
+##############################################
+##  Code
+##############################################
+
+PrepareDataHash <- function(whole_dataset){
+  
+  # Seleziono i dati in lingua inglese
+  whole_data<-whole_dataset[whole_dataset$LANGUAGE_CODE == "en",]
+  
+  # Estraggo solo i dati che non sono catalogati come reTweet
+  # whole_data<-whole_data[whole_data$isRetweet == "0",]
+  
+  # Estraggo le colonne id e testo
+  data <- whole_data[,c("TWEET_ID","TWEET_TEXT","HASHTAGS")]
+  data<-rename(data,c("TWEET_ID"="tweet_id","TWEET_TEXT"="tweettext","HASHTAGS"="hashtags"))
+  
+  # Fix Enconding
+  data$tweettext <- as.character(data$tweettext)
+  isutf8 <- is.utf8(data$tweettext)
+  #print(paste("UTF8 ?? ",is.utf8(data$tweettext)))
+  
+  data$tweettext <- iconv(data$tweettext, from = "latin1", to = "UTF-8")
+  #print(paste("2 UTF8 ?? ",is.utf8(data$tweettext)))
+  
+  data$tweettext<-fixEncoding(data$tweettext,latin1=FALSE)
+  data$hashtags <- as.character(data$hashtags)
+  data$hashtags<-fixEncoding(data$hashtags,latin1=FALSE)
+  data$hashtags <- iconv(data$hashtags, from = "latin1", to = "UTF-8")
+  #print(paste("2 UTF8 ?? ",is.utf8(data$hashtags)))
+  # Rimuovo tweet vuoti
+  delete_index<-!is.na(data$tweettext) & data$tweettext!=""
+  data<-data[delete_index,]
+  remove(delete_index)
+  
+  return(data)
+}
+
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+#                                           AggregateTweets                                                    #
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+
+# Last Update: Letizia Pernigotti 07/10/2014
+
+AggregateTweets <- function(data){
+  
+  print(paste("UTF8 ?? ",is.utf8(data$hashtags)))
+  print("Data hashtags")
+  print(head(data$hashtags))
+  
+  data$hashtags <- iconv(data$hashtags, from = "latin1", to = "UTF-8")
+  print(paste("2 UTF8 ?? ",is.utf8(data$hashtags)))
+  
+  hashtags <- str_extract_all(data$hashtags, "#(\\d|\\w)+")
+  
+  hashtags <- removePunctuation(tolower(unlist(hashtags)))
+  
+  hash_freq <- sort(table(hashtags),TRUE)
+  hash_freq[1:4]
+  
+  hashfreq <- as.data.frame.table(hash_freq)
+  hashfreq$hashtags <- as.character(hashfreq$hashtags)
+  hashfreq <- hashfreq[hashfreq$Freq>=1,]
+  
+  unique_hashtags <- unique((unlist(hashfreq$hashtags)))
+  
+  # Remove most frequent hashtag (che potrebbe coincidere con la parola chiave..)
+  unique_hashtags <- unique_hashtags[-match(hashfreq[1,1],unique_hashtags)]
+  
+  # Create docs for a corpus in which each document is the union 
+  # of tweets containinga fixed hashtags
+  
+  # Merge tweet with same hashtags
+  docs = list()
+  data$documents <- ""
+  for (j in 1:length(unique_hashtags)){
+    ht <- unique_hashtags[j]
+    doc = list()
+    for (i in 1:nrow(data)){
+      if (grepl(paste("",ht,""),paste("",removePunctuation(tolower(data$tweettext[i])),""))
+          || grepl(paste("#",ht,sep=""), tolower(data$tweettext[i])) 
+          || grepl(paste("#",ht,sep=""), tolower(data$hashtags[i])) ) {
+        # if (grepl(ht,tolower(data$hashtags[i])))
+        doc <- paste(doc,data$tweettext[i],sep=" ")
+        data$documents[i] <- paste(data$documents[i],j,sep=" ")
+        data
+      }
+    }
+    docs <- c(docs, doc)
+  }
+  toreturn <- list("docs" = docs, "data" = data)
+  return(toreturn)
+  
+}
+
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+#                                            CleanData                                                         #
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+
+##############################################
+## Functions
+##############################################
+
+removeUser <- function(x) gsub("@.*?(\\s|$)"," ",x)
+removeURL <- function(x) gsub("http.*?(\\s|$)"," " ,x)
+removeLeadingTrailingWhitespace <- function(x) 
+  gsub("^\\s+|\\s+$", "", x)
+removeRT <- function(x) gsub("(RT |RT:)"," ",x)
+removeMultipleLetters <- function(x) 
+  gsub ("( a | b | c | d | e | f | g | h | i | l | m |
+        n | o | p | q | r | s | t | u | v | z | j | k | w | x | y ){3,} " ," \\1\\1 " , x )
+
+##############################################
+## Code
+##############################################
+
+# http://www.endmemo.com/program/R/gsub.php
+
+CleanData <- function(datacorpus){
+  
+  data_corpus <- tm_map(datacorpus, content_transformer(removeUser))
+  data_corpus <- tm_map(data_corpus, content_transformer(removePunctuation))
+  data_corpus <- tm_map(data_corpus, content_transformer(removeURL))
+  data_corpus <- tm_map(data_corpus, content_transformer(tolower))
+  data_corpus <- tm_map(data_corpus, content_transformer(removeNumbers))
+  data_corpus <- tm_map(data_corpus, content_transformer(removeMultipleLetters))
+  data_corpus <- tm_map(data_corpus, content_transformer(removeWords), stopwords("english"))
+  #data_corpus <- tm_map(data_corpus, content_transformer(removeWords), "spagobi")
+  data_corpus <- tm_map(data_corpus, content_transformer(stripWhitespace))
+  
+  data_corpus <- tm_map(data_corpus, content_transformer(removeLeadingTrailingWhitespace))
+  
+  return(data_corpus)
+}
+
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+#                                          ModNumberOfTopics                                                   #
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+
+##########################################
+## Function 01 - with LogLikelihood
+##########################################
+
+ModNumberOfTopics <- function(dtm,trial){
+  
+  bestk <- vector()
+  bestLog <- vector()
+  bestMod <- vector()
+  
+  message("Computing optimal number of topics...", appendLF=TRUE)
+  
+  for (iteration in 1:3){
+    print(dim(dtm))
+    x<-LDA(dtm, 5, method = "Gibbs")
+    print("DONE!!!")
+    best.model <- lapply(seq(2,trial, by=1), 
+                         function(k){LDA(dtm, k, method = "Gibbs")})
+    
+    
+    best.model.logLik <- as.data.frame(
+      as.matrix(lapply(best.model, logLik)))
+    
+    best.model.logLik.df <- data.frame(
+      topics=c(2:trial), 
+      LL=as.numeric(as.matrix(best.model.logLik)))
+    
+    # qplot(topics, LL, stat="identity"
+    #      , ylab="Log likelihood of the model"
+    #     , xlab="Number of topics" 
+    #    , data=best.model.logLik.df, geom="line")
+    
+    best.model.logLik.df[which.max(best.model.logLik.df$LL),]
+    best_index <- which.max(best.model.logLik.df$LL)
+    
+    # k <- best.model.logLik.df[best_index,1]
+    bestk <- c(bestk,best.model.logLik.df$topics[best_index])
+    bestLog <- c(bestLog, best.model.logLik.df$LL[best_index])
+    bestMod <- c(bestMod, best.model[[best_index]])
+    
+  }
+  
+  mod <- bestMod[[which.max(bestLog)]]
+  
+  return(mod)
+}
+
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+#                                                      Sink reset                                              #
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+
+
+sink.reset <- function(){
+  for(i in seq_len(sink.number())){
+    sink(NULL)
+  }
+}
+
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+#                                                      Main                                                    #
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+
+##############################################
+## Code
+##############################################
+search_id<-$P{search_id}
+
+# Reset all sink connection and delete log file
+closeAllConnections()
+unlink(paste("Topic_Modeling","_",search_id,".log",sep=""))
+
+sink.reset()
+
+# Create new sink connection
+
+con_log<-file(paste("Topic_Modeling","_",search_id,".log",sep=""))
+sink(con_log,append=TRUE,type="output")
+sink(con_log,append=TRUE,type="message")
+print(paste("Log of last execution:",Sys.time()))
+print(paste("R home:",R.home()))
+
+## Connection to the database
+connection_flag<-dbListConnections( dbDriver( drv = "MySQL"))
+
+if(length(connection_flag)==0){
+  print("No database connection active")
+}else{
+  disconnected<-lapply(c(1:1:length(connection_flag)), function(x) dbDisconnect(connection_flag[[x]]))
+    print(paste("Disconnected",disconnected))
+}
+
+con <- dbConnect(MySQL(), user="<%= node['spagobi']['db_username'] %>", password="<%= node['spagobi']['db_password'] %>", dbname="<%= node['spagobi']['db_name'] %>", host="<%= node['spagobi']['public_ip'] %>")
+whole_dataset <- dbReadTable(con, "TWITTER_DATA")
+# Set search parameter and filter data according to this parameter
+
+whole_dataset<-whole_dataset[whole_dataset$SEARCH_ID == search_id,]
+# Check if the dataframe is empty and stop the execution
+if(nrow(whole_dataset)==0){
+  stop("The search return no data.")
+}
+# Prepare data and aggregate tweet according to hashtags
+data <- PrepareDataHash(whole_dataset)
+temp <- AggregateTweets(data)
+docs <- temp$docs
+data <- temp$data
+rm(temp)
+
+if(length(docs)==0){
+  stop("Not enough data.")
+}
+# Define data structure Corpus and clean data
+datacorpus <- Corpus(VectorSource(docs))
+data_corpus <- CleanData(datacorpus)
+
+print(lapply(data_corpus, nchar))
+
+#################################
+## Create Document-Term Matrix ##
+#################################
+
+
+## ignore terms that appear only once in the whole corpus
+dtm <- DocumentTermMatrix(data_corpus, 
+                          control=list(bounds=list(global=c(2,Inf))))
+dim(dtm)
+
+
+matrix <- as.matrix(dtm)
+termfrequency <- colSums(matrix)
+max_freq <- max(termfrequency)
+
+## find frequent terms and associations
+# findFreqTerms(dtm,max_freq-max_freq*20/100)
+print("find frequent terms and associations")
+
+# Look at the mean term frequency-inverse document frequency (tf-idf) 
+term_tfidf <- tapply(dtm$v/row_sums(dtm)[dtm$i],dtm$j, 
+                     mean)*log2(nDocs(dtm)/col_sums(dtm > 0))
+summary(term_tfidf)
+
+print("Look at the mean term frequency-inverse document frequency (tf-idf) ")
+# The mean term frequency-inverse document frequency (tf-idf) 
+# over documents containing this term is used to select the vocabulary. 
+# This measure allows to omit terms which have low
+# frequency as well as those occurring in many documents. 
+# We only include terms which have a tf-idf value of at least 1.36
+# which is a bit more than the median and ensures that the very
+# frequent terms are omitted.
+
+dtm <- dtm[,term_tfidf > median(term_tfidf)]
+dtm <- dtm[row_sums(dtm) > 0,]
+summary(col_sums(dtm))
+dim(dtm)
+
+# Find index of documents not discared during the preprocessing
+docs_index<-(strtoi(rownames(as.matrix(dtm)))) 
+docs_new<-unlist(docs)[docs_index]
+print("Find index of documents not discared during the preprocessing")
+
+############################################
+## LDA Algorithm with topicmodels package ##
+############################################
+
+## Try number of topics between 2 and 30
+res <- ModNumberOfTopics(dtm,30)
+k<- res@k
+print("LDA")
+
+#### Topics representation
+
+#View(terms(res,10))
+
+
+#######################################
+### Mapping single tweets to topics
+#######################################
+
+# Retrieving topics names
+# i.e. "Topic 1: new,olap"
+
+topicsnames <- as.character(apply(terms(res,3), 2, paste, collapse=","))
+for (i in 1:k){  
+  topicsnames[i] <- paste("Topic ",i,": ",topicsnames[i],sep="")
+}
+print("Retrieving topics names")
+
+# topics_per_doc is a list with N elements (N = num of docs in the corpus)
+# in which, each elements, contains a list of numbers, corresponding
+# to the first topics of the corresponding doc
+topics_per_doc <- lapply(seq(1,res@wordassignments$nrow,by=1)
+                         , function(i) {
+                           names(sort(table(res@wordassignments[i,]$v),decreasing=TRUE))[1:1]
+                         })
+
+topics_per_doc <- lapply(topics_per_doc, function(x) x[x!="0"])
+topics_per_doc <- lapply(topics_per_doc, function(x) x[!is.na(x)])
+
+
+map.document.index<-cbind(res@documents,c(1:1:length(res@documents)))
+# Attaching to the tweet dataframe a column named "topics" with
+# entries of the form "Topic 1: new,olap - Topic 4: engine,eveloping ..."
+print("Attaching to the tweet dataframe a column named topics...")
+for (i in 1:nrow(data)){
+  if (data$documents[i]!=""){
+    # Documents associated with the i-th tweet
+    docs_of_tweet <- unlist(strsplit(data$documents[i], "[ ]"))
+    docs_of_tweet <- docs_of_tweet[docs_of_tweet!=""]
+    index<-unlist(sapply(c(1:1:length(docs_of_tweet)),function(x) which(docs_of_tweet[x]==map.document.index[,1])))
+    docs_of_tweet_new<-map.document.index[index,2]
+    # Topics associate with the output documents
+    top <- vector()
+    if(length(docs_of_tweet_new)!=0){
+      for (j in 1:length(docs_of_tweet_new)){
+          top <- c(top,as.integer(topics_per_doc[[as.integer(docs_of_tweet_new[j])]]))
+      }
+    }
+    data$topics[i] <- paste(topicsnames[unique(top)], collapse="; ")
+  } 
+}
+
+
+#######################################
+### Defining output file
+#######################################
+print("Defining output file")
+output_data <- data[,c(1,5)]
+data_temp<-paste("data_temp_topic","_",search_id, sep="")
+dbWriteTable(con, data_temp,  output_data )
+query_update<- paste("update TWITTER_DATA tb,", data_temp, "dt set tb.TOPICS=dt.topics",
+                     "where tb.TWEET_ID=dt.tweet_id", sep=" ")
+dbSendQuery(con, query_update)
+query_drop<-paste("drop table",data_temp, sep=" ")
+dbSendQuery(con,query_drop)
+print("update TWITTER_DATA")
+
+dbDisconnect(con)
+print("END")
+
+sink()
+#sink(type="output")
+#sink(type="message")
+#cat(readLines("Sentimet.log"),sep="\n")

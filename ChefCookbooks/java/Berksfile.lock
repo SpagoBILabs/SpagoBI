@@ -1,0 +1,15 @@
+DEPENDENCIES
+  apt (~> 2.0)
+  java
+    path: .
+    metadata: true
+  windows (~> 1.12)
+  yum
+
+GRAPH
+  apt (2.4.0)
+  chef_handler (1.1.6)
+  java (1.29.0)
+  windows (1.34.2)
+    chef_handler (>= 0.0.0)
+  yum (3.3.2)
