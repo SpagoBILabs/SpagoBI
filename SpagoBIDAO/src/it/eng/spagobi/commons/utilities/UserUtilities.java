@@ -32,6 +32,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -401,7 +402,6 @@ public class UserUtilities {
 			superadminFunctionalities.add(SpagoBIConstants.ENGINES_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.READ_ENGINES_MANAGEMENT);
 		}
-		String[] a = new String[] { "" };
 		return superadminFunctionalities;
 	}
 
@@ -703,7 +703,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 *
+	 * 
 	 * is this method in the right place?
 	 */
 
@@ -735,6 +735,20 @@ public class UserUtilities {
 		}
 
 		return securityServiceSupplier;
+	}
+
+	/**
+	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
+	 * therefore, when generating the class we may lost that method.
+	 *
+	 * @param profile
+	 *            The input SpagoBIUserProfile object
+	 * @return a clone of the input SpagoBIUserProfile object
+	 */
+	public static SpagoBIUserProfile clone(SpagoBIUserProfile profile) {
+		SpagoBIUserProfile clone = new SpagoBIUserProfile((HashMap) profile.getAttributes().clone(), profile.getFunctions().clone(), profile.getIsSuperadmin(),
+				profile.getOrganization(), profile.getRoles().clone(), profile.getUniqueIdentifier(), profile.getUserId(), profile.getUserName());
+		return clone;
 	}
 
 }
