@@ -11,8 +11,6 @@ import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
-import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
@@ -20,7 +18,6 @@ import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -33,17 +30,7 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 
 	public static final String SERVICE_NAME = "SET_DEFAULT_ROLE_ACTION";
 	// REQUEST PARAMETERS
-	public static final String MESSAGE = "MESSAGE";
 	public static final String SELECTED_ROLE = "SELECTED_ROLE";
-
-	// static public String[] funcsToRemove = {
-	// SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN
-	// , SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV
-	// , SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST
-	// , SpagoBIConstants.DOCUMENT_MANAGEMENT_USER
-	// , SpagoBIConstants.DISTRIBUTIONLIST_MANAGEMENT
-	// //, SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT
-	// };
 
 	/**
 	 * Returns Default role if present
@@ -56,8 +43,8 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 
 			IEngUserProfile profile = this.getUserProfile();
 
-			String selRole = this.getAttributeAsString(SELECTED_ROLE);
-			logger.debug("Selected role " + selRole);
+			String defaultRole = this.getAttributeAsString(SELECTED_ROLE);
+			logger.debug("Selected role " + defaultRole);
 
 			// check if selected role is part of the user ones
 			ArrayList<String> roles = (ArrayList<String>) profile.getRoles();
@@ -66,11 +53,11 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 				logger.debug("user roles " + roles.get(i));
 			}
 
-			if (selRole.equals("")) {
-				selRole = null;
+			if (defaultRole.equals("")) {
+				defaultRole = null;
 			}
 
-			if (selRole != null && !roles.contains(selRole)) {
+			if (defaultRole != null && !roles.contains(defaultRole)) {
 				logger.error("Security alert. Role not among the user ones");
 				throw new SpagoBIServiceException(SERVICE_NAME, "Role selected is not permitted for user " + userProfile.getUserId());
 			}
@@ -78,54 +65,28 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 			// set this role as default one, or clear default role if not present
 			String previousDefault = ((UserProfile) profile).getDefaultRole();
 			logger.debug("previous default role " + previousDefault);
-			logger.debug("new default role " + selRole);
-			((UserProfile) profile).setDefaultRole(selRole);
+			logger.debug("new default role " + defaultRole);
+			((UserProfile) profile).setDefaultRole(defaultRole);
 			logger.debug("default role set! ");
 
-			// now I must refresh userProfile functions
+			// now I must refresh userProfile functionalities
 
-			// if new selROle is null refresh all the functionalities!
-			if (selRole == null) {
+			// if new defaultRole is null refresh all the functionalities!
+			if (defaultRole == null) {
 				logger.debug("Selected role is null, refresh all functionalities");
 				IEngUserProfile newProfile = UserUtilities.getUserProfile(profile.getUserUniqueIdentifier().toString());
-				Collection coll = newProfile.getFunctionalities();
-				LogMF.debug(logger, "User functionalities: {0}", new String[] { coll.toString() });
-				((UserProfile) profile).setFunctionalities(coll);
+				Collection functionalities = newProfile.getFunctionalities();
+				LogMF.debug(logger, "User functionalities: {0}", new String[] { functionalities.toString() });
+				((UserProfile) profile).setFunctionalities(functionalities);
 			} else {
 				// there is a default role selected so filter only its functionalities
 				logger.debug("Selected role is not null, put right functionality");
-				String[] selRoleArray = new String[1];
-				selRoleArray[0] = selRole;
-
-				String userId = (String) profile.getUserUniqueIdentifier();
-				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-
-				SpagoBIUserProfile spagobiUserProfile = supplier.createUserProfile(userId);
-				String[] arrayFuncs = UserUtilities.readFunctionality(spagobiUserProfile);
-
-				// String[] arrayFuncs = dao.readUserFunctionality(selRoleArray);
-				// String[] arrayFuncs = UserUtilities.readFunctionality(selRoleArray);
-
-				Collection coll = StringUtilities.convertArrayInCollection(arrayFuncs);
-
-				for (Iterator iterator = coll.iterator(); iterator.hasNext();) {
-					Object object = iterator.next();
-					logger.debug("functionality to add " + object.toString());
-				}
-
-				((UserProfile) profile).setFunctionalities(coll);
-
+				Collection functionalities = this.getFunctionalitiesForDefaultRole(profile, defaultRole);
+				LogMF.error(logger, "User functionalities considering default role [{0}]: {1}", new String[] { defaultRole, functionalities.toString() });
+				((UserProfile) profile).setFunctionalities(functionalities);
 				logger.debug("set functionalities for default role");
-				// check if single functionality is included in role, else remove it
-				// for (int i = 0; i < funcsToRemove.length; i++) {
-				// String funcToRem = funcsToRemove[i];
-				// if(!coll.contains(funcToRem)){
-				// ((UserProfile)profile).getFunctionalities().remove(funcToRem);
-				// }
-				// }
-
 			}
-			logger.debug("FIltered functionalities for selected role " + selRole);
+			logger.debug("Filtered functionalities for selected role " + defaultRole);
 
 			try {
 				writeBackToClient(new JSONAcknowledge());
@@ -140,5 +101,22 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 			logger.debug("OUT");
 		}
 
+	}
+
+	private Collection getFunctionalitiesForDefaultRole(IEngUserProfile engUserProfile, String defaultRole) {
+		logger.debug("IN: defaultRole is [" + defaultRole + "]");
+		Collection toReturn = null;
+		try {
+			String[] roles = new String[] { defaultRole };
+			SpagoBIUserProfile profile = ((UserProfile) engUserProfile).getSpagoBIUserProfile();
+			SpagoBIUserProfile clone = UserUtilities.clone(profile);
+			// we limit the roles to the clone object and recalculate functionalities
+			clone.setRoles(roles);
+			String[] functionalitiesArray = UserUtilities.readFunctionality(clone);
+			toReturn = StringUtilities.convertArrayInCollection(functionalitiesArray);
+		} finally {
+			LogMF.error(logger, "Returning: {0}", new String[] { toReturn.toString() });
+		}
+		return toReturn;
 	}
 }
