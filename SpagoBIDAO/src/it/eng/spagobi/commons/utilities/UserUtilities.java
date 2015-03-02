@@ -401,7 +401,6 @@ public class UserUtilities {
 			superadminFunctionalities.add(SpagoBIConstants.ENGINES_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.READ_ENGINES_MANAGEMENT);
 		}
-		String[] a = new String[] { "" };
 		return superadminFunctionalities;
 	}
 
