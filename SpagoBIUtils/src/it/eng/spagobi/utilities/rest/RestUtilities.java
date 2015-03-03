@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.utilities.rest;
 
@@ -22,7 +22,7 @@ public class RestUtilities {
 
 	/**
 	 * Reads the body of a request and return it as a string
-	 * 
+	 *
 	 * @param request
 	 *            the HttpServletRequest request
 	 * @return the body
@@ -53,9 +53,9 @@ public class RestUtilities {
 	}
 
 	/**
-	 * 
+	 *
 	 * Reads the body of a request and return it as a JSONObject
-	 * 
+	 *
 	 * @param request
 	 *            the HttpServletRequest request
 	 * @return
@@ -64,13 +64,16 @@ public class RestUtilities {
 	 */
 	public static JSONObject readBodyAsJSONObject(HttpServletRequest request) throws IOException, JSONException {
 		String requestBody = RestUtilities.readBody(request);
-		return JSONUtils.toJSONObject(requestBody);
+		if (requestBody == null || requestBody.equals("")) {
+			return new JSONObject();
+		}
+		return new JSONObject(requestBody);
 	}
 
 	/**
-	 * 
+	 *
 	 * Reads the body of a request and return it as a JSONOArray
-	 * 
+	 *
 	 * @param request
 	 *            the HttpServletRequest request
 	 * @return
