@@ -77,7 +77,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelExt3, Sbi.worksheet.runtim
 	}
 
 	, createChart: function () {
-		
+		Ext.get(this.chartDivId).update(""); 
 		var retriever = new Sbi.worksheet.runtime.DefaultChartDimensionRetrieverStrategy();
 		var size = retriever.getChartDimension(this);
 		this.update(' <div id="' + this.chartDivId + '" style="width: ' + size.width + '; height: ' + size.height + ';"></div>');
