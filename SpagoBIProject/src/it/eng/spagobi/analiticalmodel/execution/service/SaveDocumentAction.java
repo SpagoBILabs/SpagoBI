@@ -995,8 +995,10 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
 				throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
 			}
-			filteredFoldersJSON.put(userFunc.getId());
-			userFolderId = userFunc.getId();
+			if(userFunc != null){
+				filteredFoldersJSON.put(userFunc.getId());
+				userFolderId = userFunc.getId();
+			}
 		} else {
 			// filteredFoldersJSON =
 			// filterFolders(getAttributeAsJSONArray("folders"));
@@ -1017,7 +1019,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				Object functO = iterator.next();
 				if (functO != null) {
 					Integer functId = (Integer) functO;
-					if (!functId.equals(userFolderId)) {
+					if (userFolderId == null || !functId.equals(userFolderId)) {
 						filteredFoldersJSON.put(functId);
 					}
 				}
