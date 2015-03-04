@@ -251,6 +251,9 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		if (name.equals(VERSION_FAKE_DESCR)) {
 			name = null;
+		}
+
+		if (descr.equals(VERSION_FAKE_DESCR)) {
 			descr = null;
 		}
 
@@ -330,7 +333,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		model.restoreQuery();
 		byte[] outputByte = out.toByteArray();
 
-		String fileName = exportFileName + "-" + (new Date()).toLocaleString() + ".xls";
+		Date d = new Date();
+		String fileName = exportFileName + d.getYear() + d.getMonth() + d.getDay() + "_" + d.getHours() + d.getMinutes() + ".xls";
 
 		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 	}
@@ -369,7 +373,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		byte[] outputByte = out.toByteArray();
 
-		String fileName = exportFileName + "-" + (new Date()).toLocaleString() + ".txt";
+		Date d = new Date();
+		String fileName = exportFileName + "_" + d.getYear() + d.getMonth() + d.getDay() + d.getHours() + d.getMinutes() + ".txt";
 
 		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 	}
