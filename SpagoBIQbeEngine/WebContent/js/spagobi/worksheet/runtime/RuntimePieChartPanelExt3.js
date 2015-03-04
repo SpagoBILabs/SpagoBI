@@ -72,6 +72,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanelExt3, Sbi.worksheet.runtime
 	}
 
 	, createChart: function () {
+		Ext.get(this.chartDivId).update("");
 		var storeObject = this.getJsonStoreExt3();
 		var extraStyle ={};
 		var items = new Array();

@@ -80,7 +80,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanelExt3, Sbi.worksheet.runtime
 	}
 	
 	, createChart: function () {
-		
+		Ext.get(this.chartDivId).update(""); 
 		var retriever = new Sbi.worksheet.runtime.DefaultChartDimensionRetrieverStrategy();
 		var size = retriever.getChartDimension(this);
 		this.update(' <div id="' + this.chartDivId + '" style="width: ' + size.width + '; height: ' + size.height + ';"></div>');
