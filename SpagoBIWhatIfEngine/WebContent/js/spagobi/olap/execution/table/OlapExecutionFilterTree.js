@@ -69,12 +69,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 				name: 'member',
 				id: 'root',
 				expanded: true
-			},
-			folderSort: true,
-			sorters: [{
-				property: 'text',
-				direction: 'ASC'
-			}]
+			}
 		});
 
 		//Initialize the filter
