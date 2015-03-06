@@ -90,8 +90,8 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	/**
 	 * @property {String} the definition of cross navigation function
 	 */
-	, EXEC_CROSSNAVIGATION_FN_BODY: "parent.execCrossNavigation = function(d,l,p,s,ti,t) {" +
-	"	sendMessage({'label': l, parameters: p, windowName: d, subobject: s, target: t, title: ti},'crossnavigation');" +
+	, EXEC_CROSSNAVIGATION_FN_BODY: "parent.execCrossNavigation = function(d,l,p,s,ti,t,pw,ph) {" +
+	"	sendMessage({'label': l, parameters: p, windowName: d, subobject: s, target: t, title: ti, width: pw, height: ph},'crossnavigation');" +
 	"};"
 	
 	
