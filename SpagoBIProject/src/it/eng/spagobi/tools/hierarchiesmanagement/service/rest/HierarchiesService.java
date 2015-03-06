@@ -39,6 +39,7 @@ import it.eng.spagobi.tools.hierarchiesmanagement.TreeString;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -359,7 +360,7 @@ public class HierarchiesService {
 
 			// Retrieve original values and duplicate nodes
 			String insertQuery = createInsertStatement(hierarchyPrefix, hierarchyFK, dataSource);
-			final int COLUMNSNUMBER = 41;
+			final int COLUMNSNUMBER = 58; // total columns number (with signs and dates)
 
 			// iterate each row to clone
 			while (rs.next()) {
@@ -386,18 +387,38 @@ public class HierarchiesService {
 
 				for (int i = 6; i < COLUMNSNUMBER + 1; i++) {
 
-					if (i == COLUMNSNUMBER - 5) {
+					if (i == COLUMNSNUMBER - 22) {
 						// last node is a leaf
 						// _CD_LEAF
-						preparedStatement.setString(COLUMNSNUMBER - 5, rs.getString(COLUMNSNUMBER - 5));
+						preparedStatement.setString(COLUMNSNUMBER - 22, rs.getString(COLUMNSNUMBER - 22));
 						// _NM_LEAF
-						preparedStatement.setString(COLUMNSNUMBER - 4, rs.getString(COLUMNSNUMBER - 4));
+						preparedStatement.setString(COLUMNSNUMBER - 21, rs.getString(COLUMNSNUMBER - 21));
 						// LEAF_ID
-						preparedStatement.setLong(COLUMNSNUMBER - 3, rs.getLong(COLUMNSNUMBER - 3));
+						preparedStatement.setLong(COLUMNSNUMBER - 20, rs.getLong(COLUMNSNUMBER - 20));
 						// LEAF_PARENT_CD
-						preparedStatement.setString(COLUMNSNUMBER - 2, rs.getString(COLUMNSNUMBER - 2));
+						preparedStatement.setString(COLUMNSNUMBER - 19, rs.getString(COLUMNSNUMBER - 19));
 						// LEAF_PARENT_NM
-						preparedStatement.setString(COLUMNSNUMBER - 1, rs.getString(COLUMNSNUMBER - 1));
+						preparedStatement.setString(COLUMNSNUMBER - 18, rs.getString(COLUMNSNUMBER - 18));
+						// BEGIN_DT
+						preparedStatement.setDate(COLUMNSNUMBER - 17, rs.getDate(COLUMNSNUMBER - 17));
+						// END_DT
+						preparedStatement.setDate(COLUMNSNUMBER - 16, rs.getDate(COLUMNSNUMBER - 16));
+						// SIGNS from level 1 to level 15
+						preparedStatement.setInt(COLUMNSNUMBER - 15, rs.getInt(COLUMNSNUMBER - 15));
+						preparedStatement.setInt(COLUMNSNUMBER - 14, rs.getInt(COLUMNSNUMBER - 14));
+						preparedStatement.setInt(COLUMNSNUMBER - 13, rs.getInt(COLUMNSNUMBER - 13));
+						preparedStatement.setInt(COLUMNSNUMBER - 12, rs.getInt(COLUMNSNUMBER - 12));
+						preparedStatement.setInt(COLUMNSNUMBER - 11, rs.getInt(COLUMNSNUMBER - 11));
+						preparedStatement.setInt(COLUMNSNUMBER - 10, rs.getInt(COLUMNSNUMBER - 10));
+						preparedStatement.setInt(COLUMNSNUMBER - 9, rs.getInt(COLUMNSNUMBER - 9));
+						preparedStatement.setInt(COLUMNSNUMBER - 8, rs.getInt(COLUMNSNUMBER - 8));
+						preparedStatement.setInt(COLUMNSNUMBER - 7, rs.getInt(COLUMNSNUMBER - 7));
+						preparedStatement.setInt(COLUMNSNUMBER - 6, rs.getInt(COLUMNSNUMBER - 6));
+						preparedStatement.setInt(COLUMNSNUMBER - 5, rs.getInt(COLUMNSNUMBER - 5));
+						preparedStatement.setInt(COLUMNSNUMBER - 4, rs.getInt(COLUMNSNUMBER - 4));
+						preparedStatement.setInt(COLUMNSNUMBER - 3, rs.getInt(COLUMNSNUMBER - 3));
+						preparedStatement.setInt(COLUMNSNUMBER - 2, rs.getInt(COLUMNSNUMBER - 2));
+						preparedStatement.setInt(COLUMNSNUMBER - 1, rs.getInt(COLUMNSNUMBER - 1));
 						// MAX_DEPTH
 						preparedStatement.setLong(COLUMNSNUMBER, rs.getLong(COLUMNSNUMBER));
 						// exit loop
@@ -572,7 +593,7 @@ public class HierarchiesService {
 
 			// Valorization of prepared statement placeholder
 			// -----------------------------------------------
-			final int COLUMNSNUMBER = 41;
+			final int COLUMNSNUMBER = 58; // total columns number (with signs and dates)
 
 			// HIER_DS column
 			preparedStatement.setString(1, hierarchyDescription);
@@ -595,11 +616,29 @@ public class HierarchiesService {
 
 				if (i == path.size() - 1) {
 					// last node is a leaf
-					preparedStatement.setString(COLUMNSNUMBER - 5, node.getNodeCode());
-					preparedStatement.setString(COLUMNSNUMBER - 4, node.getNodeName());
-					preparedStatement.setLong(COLUMNSNUMBER - 3, Long.valueOf(node.getLeafId()));
-					preparedStatement.setString(COLUMNSNUMBER - 2, node.getLeafParentCode());
-					preparedStatement.setString(COLUMNSNUMBER - 1, node.getLeafParentName());
+					preparedStatement.setString(COLUMNSNUMBER - 22, node.getNodeCode());
+					preparedStatement.setString(COLUMNSNUMBER - 21, node.getNodeName());
+					preparedStatement.setLong(COLUMNSNUMBER - 20, Long.valueOf(node.getLeafId()));
+					preparedStatement.setString(COLUMNSNUMBER - 19, node.getLeafParentCode());
+					preparedStatement.setString(COLUMNSNUMBER - 18, node.getLeafParentName());
+					preparedStatement.setDate(COLUMNSNUMBER - 17, node.getBeginDt());
+					preparedStatement.setDate(COLUMNSNUMBER - 16, node.getEndDt());
+					preparedStatement.setInt(COLUMNSNUMBER - 15, node.getSignLev1());
+					preparedStatement.setInt(COLUMNSNUMBER - 14, node.getSignLev2());
+					preparedStatement.setInt(COLUMNSNUMBER - 13, node.getSignLev3());
+					preparedStatement.setInt(COLUMNSNUMBER - 12, node.getSignLev4());
+					preparedStatement.setInt(COLUMNSNUMBER - 11, node.getSignLev5());
+					preparedStatement.setInt(COLUMNSNUMBER - 10, node.getSignLev6());
+					preparedStatement.setInt(COLUMNSNUMBER - 9, node.getSignLev7());
+					preparedStatement.setInt(COLUMNSNUMBER - 8, node.getSignLev8());
+					preparedStatement.setInt(COLUMNSNUMBER - 7, node.getSignLev9());
+					preparedStatement.setInt(COLUMNSNUMBER - 6, node.getSignLev10());
+					preparedStatement.setInt(COLUMNSNUMBER - 5, node.getSignLev11());
+					preparedStatement.setInt(COLUMNSNUMBER - 4, node.getSignLev12());
+					preparedStatement.setInt(COLUMNSNUMBER - 3, node.getSignLev13());
+					preparedStatement.setInt(COLUMNSNUMBER - 2, node.getSignLev14());
+					preparedStatement.setInt(COLUMNSNUMBER - 1, node.getSignLev15());
+
 					if (isInsert) {
 						preparedStatement.setLong(COLUMNSNUMBER, Long.valueOf(node.getDepth()));
 					} else {
@@ -643,25 +682,9 @@ public class HierarchiesService {
 	 */
 	private String createInsertStatement(String hierarchyPrefix, String hierarchyFK, IDataSource dataSource) {
 		String tableName = "HIER_" + hierarchyPrefix;
-		/*
-		 * String hierarchyNameCode = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource); String hierarchyNameCol =
-		 * AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource); String hierarchyDescriptionCol =
-		 * AbstractJDBCDataset.encapsulateColumnName("HIER_DS", dataSource); String hierarchyTypeCol = AbstractJDBCDataset.encapsulateColumnName("HIER_TP",
-		 * dataSource); String hierarchyScopeCol = AbstractJDBCDataset.encapsulateColumnName("SCOPE", dataSource); StringBuffer columns = new
-		 * StringBuffer(hierarchyDescriptionCol + "," + hierarchyTypeCol + "," + hierarchyScopeCol + "," + hierarchyNameCode + "," + hierarchyNameCol + ",");
-		 *
-		 * for (int i = 1; i < 16; i++) { String CD_LEV = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEV" + i, dataSource); String NM_LEV
-		 * = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEV" + i, dataSource); columns.append(CD_LEV + "," + NM_LEV + ","); } String
-		 * CD_LEAF = AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_CD_LEAF", dataSource); String NM_LEAF =
-		 * AbstractJDBCDataset.encapsulateColumnName(hierarchyPrefix + "_NM_LEAF", dataSource); String LEAF_ID =
-		 * AbstractJDBCDataset.encapsulateColumnName(hierarchyFK, dataSource); columns.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + ", "); String
-		 * LEAF_PARENT_CD = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource); String LEAF_PARENT_NM =
-		 * AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource); String maxDepthCol = AbstractJDBCDataset.encapsulateColumnName("MAX_DEPTH",
-		 * dataSource); columns.append(LEAF_PARENT_CD + "," + LEAF_PARENT_NM + "," + maxDepthCol);
-		 */
 		String columns = columnsToInsert(hierarchyPrefix, hierarchyFK, dataSource);
 		String insertQuery = "insert into " + tableName + "(" + columns
-				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?," + "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		return insertQuery;
 	}
@@ -686,8 +709,30 @@ public class HierarchiesService {
 		columns.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + ", ");
 		String LEAF_PARENT_CD = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
 		String LEAF_PARENT_NM = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
+		columns.append(LEAF_PARENT_CD + "," + LEAF_PARENT_NM + ",");
+
+		String BEGIN_DT = AbstractJDBCDataset.encapsulateColumnName("BEGIN_DT", dataSource);
+		String END_DT = AbstractJDBCDataset.encapsulateColumnName("END_DT", dataSource);
+		String G_SIGN_LIV1 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV1", dataSource);
+		String G_SIGN_LIV2 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV2", dataSource);
+		String G_SIGN_LIV3 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV3", dataSource);
+		String G_SIGN_LIV4 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV4", dataSource);
+		String G_SIGN_LIV5 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV5", dataSource);
+		String G_SIGN_LIV6 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV6", dataSource);
+		String G_SIGN_LIV7 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV7", dataSource);
+		String G_SIGN_LIV8 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV8", dataSource);
+		String G_SIGN_LIV9 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV9", dataSource);
+		String G_SIGN_LIV10 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV10", dataSource);
+		String G_SIGN_LIV11 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV11", dataSource);
+		String G_SIGN_LIV12 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV12", dataSource);
+		String G_SIGN_LIV13 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV13", dataSource);
+		String G_SIGN_LIV14 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV14", dataSource);
+		String G_SIGN_LIV15 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV15", dataSource);
 		String maxDepthCol = AbstractJDBCDataset.encapsulateColumnName("MAX_DEPTH", dataSource);
-		columns.append(LEAF_PARENT_CD + "," + LEAF_PARENT_NM + "," + maxDepthCol);
+		columns.append(BEGIN_DT + "," + END_DT + "," + G_SIGN_LIV1 + "," + G_SIGN_LIV2 + "," + G_SIGN_LIV3 + "," + G_SIGN_LIV4 + "," + G_SIGN_LIV5 + ","
+				+ G_SIGN_LIV6 + "," + G_SIGN_LIV7 + "," + G_SIGN_LIV8 + "," + G_SIGN_LIV9 + "," + G_SIGN_LIV10 + "," + G_SIGN_LIV11 + "," + G_SIGN_LIV12 + ","
+				+ G_SIGN_LIV13 + "," + G_SIGN_LIV14 + "," + G_SIGN_LIV15 + ", " + maxDepthCol);
+
 		return columns.toString();
 	}
 
@@ -714,6 +759,23 @@ public class HierarchiesService {
 				nodeData.setLeafParentName(node.getString("leafParentName"));
 				nodeData.setLeafOriginalParentCode(nodeOriginalParentCode);
 				nodeData.setDepth(node.getString("depth"));
+				nodeData.setBeginDt(Date.valueOf(node.getString("beginDt")));
+				nodeData.setEndDt(Date.valueOf(node.getString("endDt")));
+				nodeData.setSignLev1(Integer.valueOf(node.getString("signLev1")));
+				nodeData.setSignLev2(Integer.valueOf(node.getString("signLev2")));
+				nodeData.setSignLev3(Integer.valueOf(node.getString("signLev3")));
+				nodeData.setSignLev4(Integer.valueOf(node.getString("signLev4")));
+				nodeData.setSignLev5(Integer.valueOf(node.getString("signLev5")));
+				nodeData.setSignLev6(Integer.valueOf(node.getString("signLev6")));
+				nodeData.setSignLev7(Integer.valueOf(node.getString("signLev7")));
+				nodeData.setSignLev8(Integer.valueOf(node.getString("signLev8")));
+				nodeData.setSignLev9(Integer.valueOf(node.getString("signLev9")));
+				nodeData.setSignLev10(Integer.valueOf(node.getString("signLev10")));
+				nodeData.setSignLev11(Integer.valueOf(node.getString("signLev11")));
+				nodeData.setSignLev12(Integer.valueOf(node.getString("signLev12")));
+				nodeData.setSignLev13(Integer.valueOf(node.getString("signLev13")));
+				nodeData.setSignLev14(Integer.valueOf(node.getString("signLev14")));
+				nodeData.setSignLev15(Integer.valueOf(node.getString("signLev15")));
 				aPath.add(nodeData);
 				collectionOfPaths.add(aPath);
 				return collectionOfPaths;
@@ -764,7 +826,30 @@ public class HierarchiesService {
 		String LEAF_PARENT_CD = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
 		String LEAF_PARENT_NM = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
 
-		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + "," + LEAF_PARENT_CD + "," + LEAF_PARENT_NM + " ");
+		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + "," + LEAF_PARENT_CD + "," + LEAF_PARENT_NM + ",");
+
+		String BEGIN_DT = AbstractJDBCDataset.encapsulateColumnName("BEGIN_DT", dataSource);
+		String END_DT = AbstractJDBCDataset.encapsulateColumnName("END_DT", dataSource);
+		String G_SIGN_LIV1 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV1", dataSource);
+		String G_SIGN_LIV2 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV2", dataSource);
+		String G_SIGN_LIV3 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV3", dataSource);
+		String G_SIGN_LIV4 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV4", dataSource);
+		String G_SIGN_LIV5 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV5", dataSource);
+		String G_SIGN_LIV6 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV6", dataSource);
+		String G_SIGN_LIV7 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV7", dataSource);
+		String G_SIGN_LIV8 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV8", dataSource);
+		String G_SIGN_LIV9 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV9", dataSource);
+		String G_SIGN_LIV10 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV10", dataSource);
+		String G_SIGN_LIV11 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV11", dataSource);
+		String G_SIGN_LIV12 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV12", dataSource);
+		String G_SIGN_LIV13 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV13", dataSource);
+		String G_SIGN_LIV14 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV14", dataSource);
+		String G_SIGN_LIV15 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV15", dataSource);
+
+		selectClauseBuffer.append(BEGIN_DT + "," + END_DT + "," + G_SIGN_LIV1 + "," + G_SIGN_LIV2 + "," + G_SIGN_LIV3 + "," + G_SIGN_LIV4 + "," + G_SIGN_LIV5
+				+ "," + G_SIGN_LIV6 + "," + G_SIGN_LIV7 + "," + G_SIGN_LIV8 + "," + G_SIGN_LIV9 + "," + G_SIGN_LIV10 + "," + G_SIGN_LIV11 + "," + G_SIGN_LIV12
+				+ "," + G_SIGN_LIV13 + "," + G_SIGN_LIV14 + "," + G_SIGN_LIV15 + " ");
+
 		String selectClause = selectClauseBuffer.toString();
 
 		// where
@@ -826,7 +911,30 @@ public class HierarchiesService {
 		String LEAF_PARENT_CD = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
 		String LEAF_PARENT_NM = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
 
-		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + "," + LEAF_PARENT_CD + "," + LEAF_PARENT_NM + " ");
+		selectClauseBuffer.append(CD_LEAF + "," + NM_LEAF + "," + LEAF_ID + "," + LEAF_PARENT_CD + "," + LEAF_PARENT_NM + ",");
+
+		String BEGIN_DT = AbstractJDBCDataset.encapsulateColumnName("BEGIN_DT", dataSource);
+		String END_DT = AbstractJDBCDataset.encapsulateColumnName("END_DT", dataSource);
+		String G_SIGN_LIV1 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV1", dataSource);
+		String G_SIGN_LIV2 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV2", dataSource);
+		String G_SIGN_LIV3 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV3", dataSource);
+		String G_SIGN_LIV4 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV4", dataSource);
+		String G_SIGN_LIV5 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV5", dataSource);
+		String G_SIGN_LIV6 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV6", dataSource);
+		String G_SIGN_LIV7 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV7", dataSource);
+		String G_SIGN_LIV8 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV8", dataSource);
+		String G_SIGN_LIV9 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV9", dataSource);
+		String G_SIGN_LIV10 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV10", dataSource);
+		String G_SIGN_LIV11 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV11", dataSource);
+		String G_SIGN_LIV12 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV12", dataSource);
+		String G_SIGN_LIV13 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV13", dataSource);
+		String G_SIGN_LIV14 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV14", dataSource);
+		String G_SIGN_LIV15 = AbstractJDBCDataset.encapsulateColumnName("G_SIGN_LIV15", dataSource);
+
+		selectClauseBuffer.append(BEGIN_DT + "," + END_DT + "," + G_SIGN_LIV1 + "," + G_SIGN_LIV2 + "," + G_SIGN_LIV3 + "," + G_SIGN_LIV4 + "," + G_SIGN_LIV5
+				+ "," + G_SIGN_LIV6 + "," + G_SIGN_LIV7 + "," + G_SIGN_LIV8 + "," + G_SIGN_LIV9 + "," + G_SIGN_LIV10 + "," + G_SIGN_LIV11 + "," + G_SIGN_LIV12
+				+ "," + G_SIGN_LIV13 + "," + G_SIGN_LIV14 + "," + G_SIGN_LIV15 + " ");
+
 		String selectClause = selectClauseBuffer.toString();
 
 		// where
@@ -871,7 +979,7 @@ public class HierarchiesService {
 			}
 
 			int currentLevel = 0;
-			for (int i = 1; i < fieldsCount - 4; i = i + 2) {
+			for (int i = 1; i < fieldsCount - 21; i = i + 2) {
 				IField codeField = record.getFieldAt(i); // NODE CODE
 				IField nameField = record.getFieldAt(i + 1); // NODE NAME
 
@@ -932,27 +1040,7 @@ public class HierarchiesService {
 					case 30:
 					case 32:
 						if (j == 32) {
-							// inject leafID into node
-							IField leafIdField = record.getFieldAt(i + 2);
-							String leafIdString = null;
-							if (leafIdField.getValue() instanceof Integer) {
-								Integer leafId = (Integer) leafIdField.getValue();
-								leafIdString = String.valueOf(leafId);
-							} else if (leafIdField.getValue() instanceof Long) {
-								Long leafId = (Long) leafIdField.getValue();
-								leafIdString = String.valueOf(leafId);
-							}
-							data.setLeafId(leafIdString);
-							IField leafParentCodeField = record.getFieldAt(i + 3);
-							String leafParentCodeString = (String) leafParentCodeField.getValue();
-							data.setNodeCode(leafParentCodeString + "_" + nodeCode);
-							nodeCode = leafParentCodeString + "_" + nodeCode;
-							data.setLeafParentCode(leafParentCodeString);
-							data.setLeafOriginalParentCode(leafParentCodeString); // backup
-																					// code
-							IField leafParentNameField = record.getFieldAt(i + 4);
-							String leafParentNameString = (String) leafParentNameField.getValue();
-							data.setLeafParentName(leafParentNameString);
+							data = setDataValues(nodeCode, data, record, i);
 						}
 						attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
 						lastLevelFound = nodeCode;
@@ -970,6 +1058,103 @@ public class HierarchiesService {
 
 		return root;
 
+	}
+
+	/**
+	 * Sets records' value to the tree structure (leaf informations, date and strings)
+	 */
+	private HierarchyTreeNodeData setDataValues(String nodeCode, HierarchyTreeNodeData data, IRecord record, int i) {
+		// inject leafID into node
+		IField leafIdField = record.getFieldAt(i + 2);
+		String leafIdString = null;
+		if (leafIdField.getValue() instanceof Integer) {
+			Integer leafId = (Integer) leafIdField.getValue();
+			leafIdString = String.valueOf(leafId);
+		} else if (leafIdField.getValue() instanceof Long) {
+			Long leafId = (Long) leafIdField.getValue();
+			leafIdString = String.valueOf(leafId);
+		}
+		data.setLeafId(leafIdString);
+		IField leafParentCodeField = record.getFieldAt(i + 3);
+		String leafParentCodeString = (String) leafParentCodeField.getValue();
+		data.setNodeCode(leafParentCodeString + "_" + nodeCode);
+		nodeCode = leafParentCodeString + "_" + nodeCode;
+		data.setLeafParentCode(leafParentCodeString);
+		data.setLeafOriginalParentCode(leafParentCodeString); // backup
+																// code
+		IField leafParentNameField = record.getFieldAt(i + 4);
+		String leafParentNameString = (String) leafParentNameField.getValue();
+		data.setLeafParentName(leafParentNameString);
+
+		IField beginDtField = record.getFieldAt(i + 5);
+		Date beginDtDate = (Date) beginDtField.getValue();
+		data.setBeginDt(beginDtDate);
+
+		IField endDtField = record.getFieldAt(i + 6);
+		Date endDtDate = (Date) endDtField.getValue();
+		data.setEndDt(endDtDate);
+
+		IField signLev1Field = record.getFieldAt(i + 7);
+		Integer signLev1Int = (Integer) signLev1Field.getValue();
+		data.setSignLev1(signLev1Int);
+
+		IField signLev2Field = record.getFieldAt(i + 8);
+		Integer signLev2Int = (Integer) signLev2Field.getValue();
+		data.setSignLev2(signLev2Int);
+
+		IField signLev3Field = record.getFieldAt(i + 9);
+		Integer signLev3Int = (Integer) signLev3Field.getValue();
+		data.setSignLev3(signLev3Int);
+
+		IField signLev4Field = record.getFieldAt(i + 10);
+		Integer signLev4Int = (Integer) signLev4Field.getValue();
+		data.setSignLev4(signLev4Int);
+
+		IField signLev5Field = record.getFieldAt(i + 11);
+		Integer signLev5Int = (Integer) signLev5Field.getValue();
+		data.setSignLev5(signLev5Int);
+
+		IField signLev6Field = record.getFieldAt(i + 12);
+		Integer signLev6Int = (Integer) signLev6Field.getValue();
+		data.setSignLev6(signLev6Int);
+
+		IField signLev7Field = record.getFieldAt(i + 13);
+		Integer signLev7Int = (Integer) signLev7Field.getValue();
+		data.setSignLev7(signLev7Int);
+
+		IField signLev8Field = record.getFieldAt(i + 14);
+		Integer signLev8Int = (Integer) signLev8Field.getValue();
+		data.setSignLev8(signLev8Int);
+
+		IField signLev9Field = record.getFieldAt(i + 15);
+		Integer signLev9Int = (Integer) signLev9Field.getValue();
+		data.setSignLev9(signLev9Int);
+
+		IField signLev10Field = record.getFieldAt(i + 16);
+		Integer signLev10Int = (Integer) signLev10Field.getValue();
+		data.setSignLev10(signLev10Int);
+
+		IField signLev11Field = record.getFieldAt(i + 17);
+		Integer signLev11Int = (Integer) signLev11Field.getValue();
+		data.setSignLev11(signLev11Int);
+
+		IField signLev12Field = record.getFieldAt(i + 18);
+		Integer signLev12Int = (Integer) signLev12Field.getValue();
+		data.setSignLev12(signLev12Int);
+
+		IField signLev13Field = record.getFieldAt(i + 19);
+		Integer signLev13Int = (Integer) signLev13Field.getValue();
+		data.setSignLev13(signLev13Int);
+
+		IField signLev14Field = record.getFieldAt(i + 20);
+		Integer signLev14Int = (Integer) signLev14Field.getValue();
+		data.setSignLev14(signLev14Int);
+
+		IField signLev15Field = record.getFieldAt(i + 21);
+		Integer signLev15Int = (Integer) signLev15Field.getValue();
+		data.setSignLev15(signLev15Int);
+
+		return data;
 	}
 
 	/**
@@ -1082,6 +1267,8 @@ public class HierarchiesService {
 				nodeJSONObject.put("children", childrenJSONArray);
 				nodeJSONObject.put("leaf", false);
 				nodeJSONObject.put("expanded", false);
+
+				nodeJSONObject = setDetailsInfo(nodeJSONObject, nodeData);
 				return nodeJSONObject;
 
 			} else {
@@ -1095,11 +1282,42 @@ public class HierarchiesService {
 				nodeJSONObject.put("originalLeafParentCode", nodeData.getLeafOriginalParentCode());
 				nodeJSONObject.put("leafParentName", nodeData.getLeafParentName());
 				nodeJSONObject.put("leaf", true);
+
+				nodeJSONObject = setDetailsInfo(nodeJSONObject, nodeData);
 				return nodeJSONObject;
 
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while serializing hierarchy structure to JSON", t);
+		}
+
+	}
+
+	private JSONObject setDetailsInfo(JSONObject nodeJSONObject, HierarchyTreeNodeData nodeData) {
+		try {
+			JSONObject toReturn = nodeJSONObject;
+
+			toReturn.put("beginDt", nodeData.getBeginDt());
+			toReturn.put("endDt", nodeData.getEndDt());
+			toReturn.put("signLev1", nodeData.getSignLev1());
+			toReturn.put("signLev2", nodeData.getSignLev2());
+			toReturn.put("signLev3", nodeData.getSignLev3());
+			toReturn.put("signLev4", nodeData.getSignLev4());
+			toReturn.put("signLev5", nodeData.getSignLev5());
+			toReturn.put("signLev6", nodeData.getSignLev6());
+			toReturn.put("signLev7", nodeData.getSignLev7());
+			toReturn.put("signLev8", nodeData.getSignLev8());
+			toReturn.put("signLev9", nodeData.getSignLev9());
+			toReturn.put("signLev10", nodeData.getSignLev10());
+			toReturn.put("signLev11", nodeData.getSignLev11());
+			toReturn.put("signLev12", nodeData.getSignLev12());
+			toReturn.put("signLev13", nodeData.getSignLev13());
+			toReturn.put("signLev14", nodeData.getSignLev14());
+			toReturn.put("signLev15", nodeData.getSignLev15());
+
+			return toReturn;
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while serializing hierarchy details structure to JSON", t);
 		}
 
 	}
