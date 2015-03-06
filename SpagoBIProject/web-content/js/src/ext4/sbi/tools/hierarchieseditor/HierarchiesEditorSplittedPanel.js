@@ -11,7 +11,9 @@
 
 Ext.define('Item', {
     extend: 'Ext.data.Model',
-    fields: ['text','leafId','leafParentCode','originalLeafParentCode','leafParentName']
+    fields: ['text','leafId','leafParentCode','originalLeafParentCode','leafParentName','beginDt','endDt',
+             'signLev1','signLev2','signLev3','signLev4','signLev5','signLev6','signLev7','signLev8','signLev9',
+             'signLev10','signLev11','signLev12','signLev13','signLev14','signLev15']
 })
 
 
