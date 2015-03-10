@@ -862,7 +862,7 @@ public class SQLDBCache implements ICache {
 			}
 
 			// check again if there is enough space for the resultset
-			if (getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
+			if (!getMetadata().isCleaningEnabled() || getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
 				String signature = dataSet.getSignature();
 				String tableName = persistStoreInCache(dataSet, signature, dataStore);
 				CacheItem item = getMetadata().addCacheItem(signature, tableName, dataStore);

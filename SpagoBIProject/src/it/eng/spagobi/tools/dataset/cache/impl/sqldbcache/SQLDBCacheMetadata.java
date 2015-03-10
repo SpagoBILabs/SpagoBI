@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
- * 
+ *
  */
 public class SQLDBCacheMetadata implements ICacheMetadata {
 
@@ -93,7 +93,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			throw new CacheException("An unexpected error occured while initializing cache metadata: SPAGOBI.CACHE.NAMEPREFIX cannot be empty");
 		}
 
-		if (totalMemory != null && cachePercentageToClean != null) {
+		// TotalMemory = -1 -> Caching with no cleaning action, TotalMemory = 0 -> No caching action, TotalMemory > 0 -> Caching with cleaning action
+		if (totalMemory != null && (totalMemory.intValue()) != -1 && cachePercentageToClean != null) {
 			isActiveCleanAction = true;
 		}
 	}

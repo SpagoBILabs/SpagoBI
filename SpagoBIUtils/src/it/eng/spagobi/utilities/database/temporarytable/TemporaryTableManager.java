@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.utilities.database.temporarytable;
 
@@ -31,9 +31,9 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
- * 
+ *
  *         DATE CONTRIBUTOR/DEVELOPER NOTE 24-06-2013 Zerbetto Davide/Andrea Fantappiè Tablespace management on Oracle and DB2
- * 
+ *
  */
 public class TemporaryTableManager {
 
@@ -196,8 +196,8 @@ public class TemporaryTableManager {
 			} else {
 				logger.debug("Table [" + actualTableName + "] in schema [" + schema + "] was not found at firts attempt.");
 				logger.debug("Driver name is [" + driverName + "]");
-				if (driverName.contains("HSQL") || driverName.contains("Oracle") || driverName.contains("DB2")) {
-					logger.debug("Driver name recognized as for HSQL or Oracle or DB2.");
+				if (driverName.contains("HSQL") || driverName.contains("Oracle") || driverName.contains("DB2") || driverName.contains("voltdb")) {
+					logger.debug("Driver name recognized as for HSQL or Oracle or DB2 or VoltDB.");
 					/*
 					 * HSQL, Oracle and DB2 have this problem: when creating a table with name, for example, "TMPSBIQBE_biadmin", it creates a table with actual
 					 * name "TMPSBIQBE_BIADMIN" (all upper case) but the getColumns method is case sensitive, therefore we try also with putting the table name
@@ -364,6 +364,14 @@ public class TemporaryTableManager {
 			// command INSERT INTO table_name SELECT ....
 			sql = "INSERT INTO " + tableName + " " + baseQuery;
 			executeStatement(sql, dataSource);
+		} else if (dialect.contains("VOLTDB")) {
+			// command CREATE TABLE table_name AS ( SELECT .... ) WITH DATA
+			String sql = "CREATE TABLE " + tableName + " AS ( " + baseQuery + " ) WITH DATA";
+			executeStatement(sql, dataSource);
+			// Actually, no data are inserted...
+			// command INSERT INTO table_name SELECT ....
+			sql = "INSERT INTO " + tableName + " " + baseQuery;
+			executeStatement(sql, dataSource);
 		} else {
 			// command CREATE TABLE table_name AS SELECT ....
 			String sql = "CREATE TABLE " + tableName + " AS " + baseQuery;
@@ -375,7 +383,7 @@ public class TemporaryTableManager {
 
 	/**
 	 * Add tablespace to sql statement Only for DB2 and Oracle
-	 * 
+	 *
 	 * @param dialect
 	 * @param sql
 	 * @return SQL statement with tablespace information
@@ -432,6 +440,21 @@ public class TemporaryTableManager {
 					throw e;
 				}
 			}
+			// VoltDB v4.x does not support DROP TABLE via JDBC at all! Drop statements can only be send through
+			// UPDATE: VoltDB v5.x does support DROP TABLE via standard SQL statement!
+		} else if (dialect.contains("VoltDB")) {
+			// VoltDBDataBase.callStoredProcedure("@AdHoc", "DROP TABLE " + tableName + " IF EXISTS", dataSource);
+			try {
+				executeStatement("DROP TABLE " + tableName + " IF EXISTS", dataSource);
+			} catch (SQLException e) {
+				if (e.getErrorCode() != 0) {
+					logger.debug("Error " + e.getErrorCode() + " trying to drop a VoltDB table: " + e.getMessage());
+				} else {
+					throw e;
+				}
+			} catch (NullPointerException npe) {
+				logger.debug("NullPointerException but everything seems to work fine with VoltDB...");
+			}
 		} else {
 			executeStatement("DROP TABLE IF EXISTS " + tableName, dataSource);
 		}
@@ -441,16 +464,21 @@ public class TemporaryTableManager {
 	private static void executeStatement(String sql, IDataSource dataSource) throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
+		String dialect = dataSource.getHibDialectClass();
 		try {
 			connection = dataSource.getConnection();
-			connection.setAutoCommit(false);
+			if (!dialect.contains("VoltDB")) {
+				connection.setAutoCommit(false);
+			}
 			Statement stmt = connection.createStatement();
 			logger.debug("Executing sql " + sql);
 			stmt.execute(sql);
-			connection.commit();
+			if (!dialect.contains("VoltDB")) {
+				connection.commit();
+			}
 			logger.debug("Sql " + sql + " executed successfully");
 		} catch (Exception e) {
-			if (connection != null) {
+			if (connection != null && !dialect.contains("VoltDB")) {
 				connection.rollback();
 			}
 			throw e;
