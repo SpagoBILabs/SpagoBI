@@ -68,6 +68,7 @@ public class PersistedTableManager {
 	public static final String DIALECT_DB2 = "DB2";
 	public static final String DIALECT_INGRES = "Ingres";
 	public static final String DIALECT_TERADATA = "Teradata";
+	public static final String DIALECT_VOLTDB = "VoltDBDialect";
 
 	static final String Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -184,9 +185,12 @@ public class PersistedTableManager {
 	public void persistDataset(IDataStore datastore, IDataSource datasource) throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
+		String dialect = datasource.getHibDialectClass();
 		try {
 			connection = getConnection(datasource);
-			connection.setAutoCommit(false);
+			if (!dialect.contains("VoltDB")) {
+				connection.setAutoCommit(false);
+			}
 			// Steps #1: define prepared statement (and max column size for
 			// strings type)
 			PreparedStatement statement = defineStatements(datastore, datasource, connection);
@@ -198,11 +202,13 @@ public class PersistedTableManager {
 			// Step #4: execute batch with insert statements
 			statement.executeBatch();
 			statement.close();
-			connection.commit();
+			if (!dialect.contains("VoltDB")) {
+				connection.commit();
+			}
 			logger.debug("Insertion of records on persistable table executed successfully!");
 		} catch (Exception e) {
 			logger.error("Error persisting the dataset into table", e);
-			if (connection != null) {
+			if (connection != null && !dialect.contains("VoltDB")) {
 				connection.rollback();
 			}
 			throw new SpagoBIEngineRuntimeException("Error persisting the dataset into table", e);
@@ -593,17 +599,22 @@ public class PersistedTableManager {
 	private void executeStatement(String sql, IDataSource dataSource) throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
+		String dialect = dataSource.getHibDialectClass();
 		try {
 			// connection = dataSource.getConnection();
 			connection = getConnection(dataSource);
-			connection.setAutoCommit(false);
+			if (!dialect.contains("VoltDB")) {
+				connection.setAutoCommit(false);
+			}
 			Statement stmt = connection.createStatement();
 			logger.debug("Executing sql " + sql);
 			stmt.execute(sql);
-			connection.commit();
+			if (!dialect.contains("VoltDB")) {
+				connection.commit();
+			}
 			logger.debug("Sql " + sql + " executed successfully");
 		} catch (Exception e) {
-			if (connection != null) {
+			if (connection != null && !dialect.contains("VoltDB")) {
 				connection.rollback();
 			}
 			throw e;
@@ -618,20 +629,25 @@ public class PersistedTableManager {
 	private void executeBatch(List queryInsert, IDataSource datasource) throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
+		String dialect = datasource.getHibDialectClass();
 		try {
 			// connection = datasource.getConnection();
 			connection = getConnection(datasource);
-			connection.setAutoCommit(false);
+			if (!dialect.contains("VoltDB")) {
+				connection.setAutoCommit(false);
+			}
 			Statement statement = connection.createStatement();
 			for (int i = 0, l = queryInsert.size(); i < l; i++) {
 				statement.addBatch(queryInsert.get(i).toString());
 			}
 			statement.executeBatch();
 			statement.close();
-			connection.commit();
+			if (!dialect.contains("VoltDB")) {
+				connection.commit();
+			}
 			logger.debug("Insertion of records on persistable table executed successfully!");
 		} catch (Exception e) {
-			if (connection != null) {
+			if (connection != null && !dialect.contains("VoltDB")) {
 				connection.rollback();
 			}
 			throw e;

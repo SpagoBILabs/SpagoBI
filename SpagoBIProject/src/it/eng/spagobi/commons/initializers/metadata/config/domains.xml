@@ -70,6 +70,7 @@
 <DOMAIN valueCd="org.hibernate.dialect.MySQLInnoDBDialect" valueNm="sbidomains.nm.mysql" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.mysql"/>
 <DOMAIN valueCd="org.hibernate.dialect.PostgreSQLDialect" valueNm="sbidomains.nm.postgresql" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.postgresql"/>
 <DOMAIN valueCd="org.hibernate.dialect.IngresDialect" valueNm="sbidomains.nm.ingres" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.ingres"/>
+<DOMAIN valueCd="VoltDBDialect" valueNm="sbidomains.nm.voltdb" domainCd="DIALECT_HIB" domainNm="VoltDB dialect" valueDs="sbidomains.ds.voltdb"/>
 <DOMAIN valueCd="MongoDialect" valueNm="sbidomains.nm.mongo" domainCd="DIALECT_HIB" domainNm="MongoDB dialect" valueDs="sbidomains.ds.mongo"/>
 <DOMAIN valueCd="hbase" valueNm="sbidomains.nm.hbase" domainCd="DIALECT_HIB" domainNm="HBQL HBase dialect" valueDs="sbidomains.ds.hbase"/>
 <DOMAIN valueCd="hive" valueNm="sbidomains.nm.hive" domainCd="DIALECT_HIB" domainNm="HQL Hive dialect" valueDs="sbidomains.ds.hive"/>

@@ -28,6 +28,7 @@ public class DataBase {
 	public static final String DIALECT_DB2 = "DB2";
 	public static final String DIALECT_INGRES = "Ingres";
 	public static final String DIALECT_TERADATA = "Teradata";
+	public static final String DIALECT_VOLTDB = "VoltDB";
 	
 	public static IDataBase getDataBase(IDataSource dataSource) {
 		IDataBase dataBase = null;
@@ -42,6 +43,8 @@ public class DataBase {
 			dataBase = new HSQLDataBase(dataSource);
 		} else if(dialect.contains(DIALECT_SQLSERVER)) {
 			dataBase = new SQLServerDataBase(dataSource);
+		} else if (dialect.contains(DIALECT_VOLTDB)) {
+			dataBase = new VoltDBDataBase(dataSource);
 		}
 		
 		return dataBase;
