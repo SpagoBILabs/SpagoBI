@@ -93,6 +93,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			throw new CacheException("An unexpected error occured while initializing cache metadata: SPAGOBI.CACHE.NAMEPREFIX cannot be empty");
 		}
 
+		// Modified by Alessandro Portosa
+		// Cleaning behaviour now is dominated by totalMemory value
 		// TotalMemory = -1 -> Caching with no cleaning action, TotalMemory = 0 -> No caching action, TotalMemory > 0 -> Caching with cleaning action
 		if (totalMemory != null && (totalMemory.intValue()) != -1 && cachePercentageToClean != null) {
 			isActiveCleanAction = true;
@@ -249,7 +251,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheMetadata#getSignatures()
 	 */
 	public List<String> getSignatures() {

@@ -177,7 +177,7 @@ public class TemporaryTableManager {
 
 				/*
 				 * If table are on other schema must set catalog name as schema name otherwise it look for table [schema].[name] on datasource db
-				 * 
+				 *
 				 * Andrea Fantappiè
 				 */
 				if (driverName.contains("MySQL"))
@@ -440,7 +440,7 @@ public class TemporaryTableManager {
 					throw e;
 				}
 			}
-			// VoltDB v4.x does not support DROP TABLE via JDBC at all! Drop statements can only be send through
+			// VoltDB v4.x does not support DROP TABLE via JDBC at all! Drop statements can only be send through Stored Procedure.
 			// UPDATE: VoltDB v5.x does support DROP TABLE via standard SQL statement!
 		} else if (dialect.contains("VoltDB")) {
 			// VoltDBDataBase.callStoredProcedure("@AdHoc", "DROP TABLE " + tableName + " IF EXISTS", dataSource);
