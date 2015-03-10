@@ -1,7 +1,17 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.utilities.database;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
+/**
+ * VoltDB implementation
+ *
+ * @author Alessandro Portosa (alessandro.portosa@eng.it)
+ *
+ */
 import org.apache.log4j.Logger;
 
 public class VoltDBDataBase extends AbstractDataBase {
@@ -48,7 +58,7 @@ public class VoltDBDataBase extends AbstractDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
 	 */
 	public String getAliasDelimiter() {
@@ -57,12 +67,11 @@ public class VoltDBDataBase extends AbstractDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		// TODO: have to find this!
 		logger.debug("Cannot find this information in VoltDB using standard query. Need to call @Statistics(Memory) stored procedure.");
 		String query = "Not supported from standard SQL statement.";
 		return query;

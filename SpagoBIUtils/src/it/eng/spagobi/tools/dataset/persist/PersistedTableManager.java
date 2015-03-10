@@ -188,6 +188,10 @@ public class PersistedTableManager {
 		String dialect = datasource.getHibDialectClass();
 		try {
 			connection = getConnection(datasource);
+
+			// VoltDB does not allow explicit commit/rollback actions.
+			// It uses an internal transaction committing mechanism.
+			// More tests to see the consistency has to be done on this.
 			if (!dialect.contains("VoltDB")) {
 				connection.setAutoCommit(false);
 			}
