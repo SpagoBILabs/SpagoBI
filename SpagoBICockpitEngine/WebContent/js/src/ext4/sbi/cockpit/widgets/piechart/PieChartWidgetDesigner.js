@@ -25,6 +25,17 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	, showPercentageCheck: null
 	, seriesPalette: null
 	, chartLib: null
+	
+	//field to select widget font type
+	, fontTypeCombo: null
+	//field to select widget font size
+	, fontSizeCombo: null
+	//field to select chart legend font size
+	, legendFontSizeCombo: null
+	//field to select chart tooltip font size
+	, tooltipLabelFontSizeCombo: null
+	//panel to show font size options
+	, fontConfigurationPanel: null
 
 	, constructor : function(config) {
 		Sbi.trace("[PieChartWidgetDesigner.constructor]: IN");
@@ -67,6 +78,10 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 					state.category = thePanel.category;
 					state.series = thePanel.series;
 					state.colors = thePanel.colors;
+					state.fontType = thePanel.fontType;
+					state.fontSize = thePanel.fontSize;
+					state.legendFontSize = thePanel.legendFontSize;
+					state.tooltipLabelFontSize = thePanel.tooltipLabelFontSize;
 					state.wtype = 'piechart';
 					this.setDesignerState(state);
 				},
@@ -86,13 +101,15 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		this.initTemplate();
 
 		this.showValuesCheck = new Ext.form.Checkbox({
-			checked: false
-			, fieldLabel: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.showvalues.title')
+			checked: 		false
+			, fieldLabel: 	LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.showvalues.title')
+			, labelWidth: 150
 		});
 
 		this.showLegendCheck = new Ext.form.Checkbox({
-			checked: false
-			, fieldLabel: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.showlegend.title')
+			checked: 		false
+			, fieldLabel: 	LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.showlegend.title')
+			, labelWidth: 150
 		});
 
 		this.legendPositionStore = new Ext.data.ArrayStore({
@@ -113,7 +130,9 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			displayField:   'description',
 			valueField:     'name',
 			value:			'bottom',
-			store:          this.legendPositionStore
+			store:          this.legendPositionStore,
+			width:			245,
+			labelWidth:		110
 		});
 
 		this.showPercentageCheck = new Ext.form.Checkbox({
@@ -195,7 +214,49 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		    ]
 	    });
 
+	    this.fontTypeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.widgetFontType'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			new Ext.data.ArrayStore({
+								fields: ['name','description'],
+								data:   [["Times New Roman","Times New Roman"],["Verdana","Verdana"],["Arial","Arial"]]
+							}),  
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'fontType',
+			labelWidth:		110,
+			width:			245
 
+		});
+	    
+	    this.fontSizeStore = new Ext.data.ArrayStore({
+			fields : ['name', 'description']
+			, data : [[6,"6"],[8,"8"],[10,"10"],[12,"12"],[14,"14"],[16,"16"],[18,"18"],[22,"22"],[24,"24"],[28,"28"],[32,"32"],[36,"36"],[40,"40"]]
+		});
+	    
+	    this.fontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.widgetFontSize'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'fontSize',
+			labelWidth:		110,
+			width:			160
+
+		});
 
 		var controlsItems = new Array();
 
@@ -208,29 +269,80 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		}
 		*/
 
+		controlsItems.push(this.legendPositionCombo);
+		controlsItems.push(this.showLegendCheck);
+    	controlsItems.push(this.fontTypeCombo);
     	controlsItems.push(this.showValuesCheck);
+    	controlsItems.push(this.fontSizeCombo);
     	controlsItems.push(this.showPercentageCheck);
-    	controlsItems.push(this.showLegendCheck);
-    	controlsItems.push(this.legendPositionCombo);
     	
     	
+    	/* Font size options configuration */    	
+    	
+    	this.legendFontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.legendFontSize'),
+			typeAhead: 		true,
+			triggerAction: 'all',
+			lazyRender:		true,
+			queryMode:      'local',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'legendFontSize',
+			labelWidth:		60,
+			width:			110
+		});
+		
+		this.tooltipLabelFontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.tooltipLabelFontSize'),
+			typeAhead: 		true,
+			triggerAction: 'all',
+			lazyRender:		true,
+			queryMode:      'local',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'tooltipLabelFontSize',
+			labelWidth:		60,
+			width:			110
+		});
+    	
+		this.fontConfigurationPanel = 
+    	{
+			xtype: 				'fieldset'
+			, fieldDefaults: 	{ margin: '0 9 4 0'}
+    		, layout: 			{type: 'table', columns: 2}
+            , collapsible: 		true
+            , collapsed: 		true
+            , title: 			LN('sbi.worksheet.designer.fontConf.fontOptions')
+			, items: 			[this.legendFontSizeCombo, this.tooltipLabelFontSizeCombo]
+			, width:			355
+    	}
     	
 
 		this.form = new Ext.Panel({
 			border: false
 			, layout: 'form'
-		    , padding: '10 10 10 10'
+			, padding: '1 0 5 6'
 			, items: [
 				{
 					xtype: 'fieldset'
-					, fieldDefaults: { margin: '10 10 10 0'}
+					, width: 685
+					, fieldDefaults: { margin: '0 9 5 0'}
 					, layout: {type: 'table', columns: 2}
 		            , collapsible: true
 		            , collapsed: true
 		            , title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.options.title')
-	            	, margin: '0 0 20 0'
+	            	, margin: '0 0 10 0'
 					, items: controlsItems
 				}
+				, this.fontConfigurationPanel
 //				,{
 //					xtype: 'fieldset'
 //					, layout: 'column'
@@ -239,8 +351,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 //					, border: false
 //					, items: [this.showPercentageCheck]
 //				}
-				,
-				this.axisDefinitionPanel
+				, this.axisDefinitionPanel
 			]
 		});
 	}
@@ -267,6 +378,25 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		state.category = this.categoryContainerPanel.getCategory();
 		state.series = this.seriesContainerPanel.getContainedMeasures();
 		state.colors = this.seriesPalette.getColors();
+		
+		//blank values are permitted, so we need to check the objects before call .getValue()
+		if(this.fontTypeCombo !== null)
+		{	
+			state.fontType = this.fontTypeCombo.getValue();
+		}
+		if(this.fontSizeCombo !== null)
+		{	
+			state.fontSize = this.fontSizeCombo.getValue();
+		}
+		if(this.legendFontSizeCombo !== null)
+		{
+			state.legendFontSize = this.legendFontSizeCombo.getValue();
+		}
+		if(this.tooltipLabelFontSizeCombo)
+		{
+			state.tooltipLabelFontSize = this.tooltipLabelFontSizeCombo.getValue();
+		}
+
 		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: OUT");
 		return state;
 	}
@@ -281,6 +411,10 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 		if (state.colors) this.seriesPalette.setColors(state.colors);
+		if (state.fontType) this.fontTypeCombo.setValue(state.fontType);
+		if (state.fontSize) this.fontSizeCombo.setValue(state.fontSize);
+		if (state.legendFontSize) this.legendFontSizeCombo.setValue(state.legendFontSize);
+		if (state.tooltipLabelFontSize) this.tooltipLabelFontSizeCombo.setValue(state.tooltipLabelFontSize);
 		Sbi.trace("[PieChartWidgetDesigner.setDesignerState]: OUT");
 	}
 
