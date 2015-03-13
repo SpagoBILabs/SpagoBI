@@ -2,12 +2,11 @@ package it.eng.spagobi.commons.initializers.metadata;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.metadata.SbiTenant;
-import it.eng.spagobi.security.OAuth2SecurityInfoProvider;
+//import it.eng.spagobi.security.OAuth2SecurityInfoProvider;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.List;
 
-import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -23,16 +22,12 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 			String hql = "from SbiTenant";
 			Query hqlQuery = hibernateSession.createQuery(hql);
 			List<SbiTenant> existingTenants = hqlQuery.list();
-			List<String> configuredTenants = OAuth2SecurityInfoProvider.getTenants();
-			for (String aConfiguredTenant : configuredTenants) {
-				if (exists(aConfiguredTenant, existingTenants)) {
-					LogMF.debug(logger, "Tenant {0} already exists", aConfiguredTenant);
-				} else {
-					LogMF.info(logger, "Tenant {0} does not exist. It will be inserted", aConfiguredTenant);
-					writeTenant(aConfiguredTenant, hibernateSession);
-					LogMF.debug(logger, "Tenant {0} was inserted", aConfiguredTenant);
-				}
-			}
+			/*
+			 * List<String> configuredTenants = OAuth2SecurityInfoProvider.getTenants(); for (String aConfiguredTenant : configuredTenants) { if
+			 * (exists(aConfiguredTenant, existingTenants)) { LogMF.debug(logger, "Tenant {0} already exists", aConfiguredTenant); } else { LogMF.info(logger,
+			 * "Tenant {0} does not exist. It will be inserted", aConfiguredTenant); writeTenant(aConfiguredTenant, hibernateSession); LogMF.debug(logger,
+			 * "Tenant {0} was inserted", aConfiguredTenant); } }
+			 */
 		} catch (Throwable t) {
 			logger.error(t.getMessage(), t);
 			throw new SpagoBIRuntimeException("An unexpected error occured while initializing Tenants", t);
