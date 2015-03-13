@@ -190,6 +190,10 @@
 		background-image: url('../img/ico_add_selection.png') !important;
 	}
 	
+	.icon_view_selection {
+		background-image: url('../img/ico_view_selection.png') !important;
+	}
+	
 	.icon_delete_selection { 
 		background-image: url('../img/ico_delete_selection.png') !important; 
 	}
@@ -217,6 +221,20 @@
 		background-origin: padding-box;
 		background-size: auto;
 	}
+	
+	.mainPanelVisualizationMode {
+		-webkit-background-clip: border-box;
+		-webkit-background-origin: padding-box;
+		-webkit-background-size: auto;
+		background-attachment: scroll;
+		background-clip: border-box;
+		background-color: rgb(255, 255, 255);
+		/*background-image: url('../img/square.gif');*/
+		background-origin: padding-box;
+		background-size: auto;
+	}
+	
+	
 	
 	/* Sbi.worksheet.designer.LineChartDesignerPanel */
 	.side-by-side-linechart-area {
