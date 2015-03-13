@@ -36,7 +36,25 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	, seriesAxis: null
 	, sortOrder: null
 	, legendPositionCombo: null
+	
+	//field to select widget font type
+	, fontTypeCombo: null
+	//field to select widget font size
+	, fontSizeCombo: null
+	//field to select chart legend font size
+	, legendFontSizeCombo: null
+	//field to select chart axes titles font size 
+	, axisTitleFontSizeCombo: null
+	//field to select chart tooltip font size
+	, tooltipLabelFontSizeCombo: null
+	//field to select chart axes labels font size 
+	, axisLabelsFontSizeCombo: null
+	//panel to show font size options
+	, fontConfigurationPanel: null
 
+	, showSeriesNameCheck: null
+    , showCategoryNameCheck: null
+	
 	, constructor : function(config) {
 		Sbi.trace("[PieChartWidgetDesigner.constructor]: IN");
 
@@ -62,8 +80,8 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 
 	, getDesignerState: function() {
 		Sbi.trace("[LineChartWidgetDesigner.getDesignerState]: IN");
-		Sbi.trace("[LineChartWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.getDesignerState);
-		var state = Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.getDesignerState(this);
+		Sbi.trace("[LineChartWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.superclass.getDesignerState);
+		var state = Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.superclass.getDesignerState(this);
 		state.designer = 'Line Chart';
 		state.wtype = 'linechart';
 
@@ -75,6 +93,35 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		state.categoryAxis = this.categoryAxisText.getValue();
 		state.seriesAxis = this.seriesAxisText.getValue();
 		state.sortOrder = this.sortOrderCombo.getValue();
+		
+		//blank values are permitted, so we need to check the objects before call .getValue()
+		if(this.fontTypeCombo !== null)
+		{	
+			state.fontType = this.fontTypeCombo.getValue();
+		}
+		if(this.fontSizeCombo !== null)
+		{	
+			state.fontSize = this.fontSizeCombo.getValue();
+		}
+		if(this.legendFontSizeCombo !== null)
+		{
+			state.legendFontSize = this.legendFontSizeCombo.getValue();
+		}
+		if(this.axisTitleFontSizeCombo !== null)
+		{
+			state.axisTitleFontSize = this.axisTitleFontSizeCombo.getValue();
+		}
+		if(this.tooltipLabelFontSizeCombo !== null)
+		{
+			state.tooltipLabelFontSize = this.tooltipLabelFontSizeCombo.getValue();
+		}
+		if(this.axisLabelsFontSizeCombo !== null)
+		{
+			state.axisLabelsFontSize = this.axisLabelsFontSizeCombo.getValue();
+		}
+		
+		state.showSeriesName = this.showSeriesNameCheck.getValue();
+		state.showCategoryName = this.showCategoryNameCheck.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
 		if(this.showSeriesGroupingPanel === true) {
 			state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
@@ -100,6 +147,14 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		if (state.categoryAxis) this.categoryAxisText.setValue(state.categoryAxis);
 		if (state.seriesAxis) this.seriesAxisText.setValue(state.seriesAxis);
 		if (state.sortOrder) this.sortOrderCombo.setValue(state.sortOrder);
+		if (state.fontType) this.fontTypeCombo.setValue(state.fontType);
+		if (state.fontSize) this.fontSizeCombo.setValue(state.fontSize);
+		if (state.legendFontSize) this.legendFontSizeCombo.setValue(state.legendFontSize);
+		if (state.axisTitleFontSize) this.axisTitleFontSizeCombo.setValue(state.axisTitleFontSize);
+		if (state.tooltipLabelFontSize) this.tooltipLabelFontSizeCombo.setValue(state.tooltipLabelFontSize);
+		if (state.axisLabelsFontSize) this.axisLabelsFontSizeCombo.setValue(state.axisLabelsFontSize);
+		if (state.showSeriesName) this.showSeriesNameCheck.setValue(state.showSeriesName);
+		if (state.showCategoryName) this.showCategoryNameCheck.setValue(state.showCategoryName);
 
 		if (this.rendered) {
 			//this.changeLineChartImage.defer(200, this);
@@ -208,6 +263,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function () {
+		this.initWidgetFontOptions();
 		this.initOptionsPanel();
 		this.initAxisDefinitionPanel();
 
@@ -226,42 +282,54 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 
 		var checkFields = new Array();
 
+		/*
 		switch (this.chartLib) {
 	        case 'ext3':
 	        	break;
 	        default:
 	        	checkFields.push(this.colorAreaCheck);
 	        	checkFields.push(this.showValuesCheck);
-		}
+		}*/
 		
-		checkFields.push(this.showLegendCheck);
-		checkFields.push(this.categoryAxisText);
-		checkFields.push(this.seriesAxisText);
-		checkFields.push(this.legendPositionCombo);
+		
 		checkFields.push(this.sortOrderCombo);
+		checkFields.push(this.seriesAxisText);
+		checkFields.push(this.showSeriesNameCheck);    	
+    	checkFields.push(this.legendPositionCombo);
+		checkFields.push(this.categoryAxisText);
+		checkFields.push(this.showCategoryNameCheck);
+		checkFields.push(this.fontTypeCombo);
+		checkFields.push(this.fontSizeCombo);
+		checkFields.push(this.colorAreaCheck);
+		checkFields.push(this.showValuesCheck);
+		checkFields.push(this.showLegendCheck);		
 
 
 		this.optionsPanel = new Ext.Panel({
 			layout: 'anchor'
-			, padding: '5 10 0 10'
+			, padding: '1 0 5 6'
 			, border: false
 			, items: [
 			{
 				xtype: 'fieldset'
 				, fieldDefaults: { margin: '0 7 5 0'}
-				, layout: {type: 'table', columns: 3}
+				, layout: {type: 'table', columns: 3, tdAttrs: { valign: 'top' } }
 			    , collapsible: true
 			    , collapsed: true
 			    , title: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.options.title')
-				, margin: '0 0 20 0'
+				, margin: '0 0 10 0'
+				, padding: '0 5 0 5'
 				, items: checkFields
+				, width: 680
 			},
 			{
 				xtype: 'fieldset'
 //				, columnWidth : .4
 				, margin: '0 0 0 0'
+				, layout: {type: 'table', columns: 2, tdAttrs: { valign: 'top' } }
 				, border: false
-				, items: [this.typeRadioGroup]
+				, items: [this.typeRadioGroup, this.fontConfigurationPanel]
+				, height: 75
 			} ]
 		});
 	}
@@ -276,7 +344,8 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 
 		this.typeRadioGroup = new Ext.form.RadioGroup({
 			hideLabel: true,
-			columns: 3,
+			columns: 2,
+			width:		290,
 			items: [
 		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[0], ctCls:'side-by-side-linechart-line', inputValue: 'side-by-side-linechart', checked: true},
 //		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[1], ctCls:'stacked-linechart-line', inputValue: 'stacked-linechart'},
@@ -305,27 +374,30 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 			value:			'ASC',
 //			anchor:			'95%',
 			store:          this.sortOrderComboStore,
-			labelWidth: 120,
-			width: 250
+			labelWidth:		110,
+			width:			245
 		});
 	}
 
 	, initCheckFields: function() {
 		this.colorAreaCheck = new Ext.form.Checkbox({
-			checked: false
-			, fieldLabel: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.colorarea.title')
-			, labelWidth: 120
+			checked: 		false
+			, fieldLabel: 	LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.colorarea.title')
+			, labelWidth:	110
+			, width:		245
 		});
 		this.colorAreaCheck.on('check', this.onColorAreaCheck, this);
 
 		this.showValuesCheck = new Ext.form.Checkbox({
-			checked: false
-			, fieldLabel: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showvalues.title')
+			checked: 		false
+			, fieldLabel: 	LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showvalues.title')
+			, labelWidth:	120
 		});
 
 		this.showLegendCheck = new Ext.form.Checkbox({
-			checked: false
-			, fieldLabel: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showlegend.title')
+			checked: 		false
+			, fieldLabel: 	LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.showlegend.title')
+			, labelWidth: 	135
 		});
 
 		this.legendPositionStore = new Ext.data.ArrayStore({
@@ -348,7 +420,8 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 			valueField:     'name',
 			value:			'bottom',
 			store:          this.legendPositionStore,
-			width: 180
+			labelWidth:		110,
+			width:			245
 		});
 	}
 
@@ -357,15 +430,31 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 			 name: 'categoryAxis',
 			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'),
 			 allowBlank: true,
-			 labelWidth: 120,
-			 width: 250
+			 labelWidth:	120,
+			 width:			255
 		});
 
 		this.seriesAxisText = new Ext.form.Text({
 			 name: 'seriesAxis',
 			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'),
 			 allowBlank: true,
-			 width: 200
+			 labelWidth:	120,
+			 width:			255
+		});
+		
+		this.showSeriesNameCheck = new Ext.form.Checkbox({
+			name: 			'showSeriesName'
+			, labelWidth: 	135
+			, checked: 		false
+			, fieldLabel: 	LN('sbi.worksheet.designer.barchartdesignerpanel.form.showSeriesName.title')
+		});
+	    
+	    this.showCategoryNameCheck = new Ext.form.Checkbox({
+			name: 			'showCategoryName'
+			, labelWidth: 	135
+			, checked: 		false
+			, fieldLabel: 	LN('sbi.worksheet.designer.barchartdesignerpanel.form.showCategoryName.title')
+			, rowspan:		2
 		});
 	}
 
@@ -445,8 +534,8 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 
 	, initSeriesContainerPanel: function() {
 		this.seriesContainerPanel = new Sbi.cockpit.widgets.chart.ChartSeriesPanel({
-            width: 430
-            , height: 100
+            width: 460
+            , height: 95
             , initialData: []
             , crosstabConfig: {}
             , ddGroup: this.ddGroup
@@ -457,10 +546,145 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	, initImageContainerPanel: function() {
 		this.imageContainerPanel = new Ext.Panel({
             width: 200
-            , height: 100
+            , height: 95
             , html: this.imageTemplate.apply(['side-by-side-linechart', 'line'])
 		});
 	}
+	
+	/**
+	 * @method
+	 *
+	 * Creates the widget font configuration input
+	 *
+	 */
+	, initWidgetFontOptions: function(){
+		
+		this.fontSizeStore = new Ext.data.ArrayStore({
+			fields : ['name', 'description']
+			, data : [[6,"6"],[8,"8"],[10,"10"],[12,"12"],[14,"14"],[16,"16"],[18,"18"],[22,"22"],[24,"24"],[28,"28"],[32,"32"],[36,"36"],[40,"40"]]
+		});
+		
+		this.fontTypeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.widgetFontType'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			new Ext.data.ArrayStore({
+								fields: ['name','description'],
+								data:   [["Times New Roman","Times New Roman"],["Verdana","Verdana"],["Arial","Arial"]]
+							}),  
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'fontType',
+			labelWidth:		110,
+			width:			245
+
+		});
+	    
+	    this.fontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.widgetFontSize'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'fontSize',
+			labelWidth:		120,
+			width:			170
+
+		});
+	    
+	    this.legendFontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.legendFontSize'),
+			typeAhead: 		true,
+			triggerAction: 'all',
+			lazyRender:		true,
+			queryMode:      'local',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'legendFontSize',
+			labelWidth:		60,
+			width:			110
+		});
+		
+		this.axisTitleFontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.axisTitleFontSize'),
+			typeAhead: 		true,
+			triggerAction: 'all',
+			lazyRender:		true,
+			queryMode:      'local',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'axisTitleFontSize',
+			labelWidth:		100,
+			width:			150
+		});
+		
+		this.tooltipLabelFontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.tooltipLabelFontSize'),
+			typeAhead: 		true,
+			triggerAction: 'all',
+			lazyRender:		true,
+			queryMode:      'local',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'tooltipLabelFontSize',
+			labelWidth:		60,
+			width:			110
+		});
+		
+		this.axisLabelsFontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.axisLabelsFontSize'),
+			typeAhead: 		true,
+			triggerAction: 'all',
+			lazyRender:		true,
+			queryMode:      'local',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'axisLabelsFontSize',
+			labelWidth:		100,
+			width:			150
+		});
+		
+		this.fontConfigurationPanel = 
+    	{
+			xtype: 				'fieldset'
+			, fieldDefaults: 	{ margin: '0 9 4 0'}
+    		, layout: 			{type: 'table', columns: 2}
+            , collapsible: 		true
+            , collapsed: 		true
+            , title: 			LN('sbi.worksheet.designer.fontConf.fontOptions')
+        	, margin: 			'0 10 10 10'
+			, items: 			[this.legendFontSizeCombo, this.axisTitleFontSizeCombo, this.tooltipLabelFontSizeCombo, this.axisLabelsFontSizeCombo]
+			, width:			355
+    	}
+	}
+	
 
 	, initEvents: function(){
 		if(Ext.isIE){
