@@ -56,6 +56,14 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 					state.categoryAxis = thePanel.categoryAxis;
 					state.seriesAxis = thePanel.seriesAxis;
 					state.sortOrder = thePanel.sortOrder;
+					state.fontType = thePanel.fontType;
+					state.fontSize = thePanel.fontSize;
+					state.legendFontSize = thePanel.legendFontSize;
+					state.axisTitleFontSize = thePanel.axisTitleFontSize;
+					state.tooltipLabelFontSize = thePanel.tooltipLabelFontSize;
+					state.axisLabelsFontSize = thePanel.axisLabelsFontSize;
+					state.showSeriesName = thePanel.showSeriesName;
+					state.showCategoryName = thePanel.showCategoryName;
 					state.wtype = 'barchart';
 					this.setDesignerState(state);
 				},
@@ -91,6 +99,24 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 	, seriesAxis: null
 	, sortOrder: null
 	, legendPositionCombo: null
+	
+	//field to select widget font type
+	, fontTypeCombo: null
+	//field to select widget font size
+	, fontSizeCombo: null
+	//field to select chart legend font size
+	, legendFontSizeCombo: null
+	//field to select chart axes titles font size 
+	, axisTitleFontSizeCombo: null
+	//field to select chart tooltip font size
+	, tooltipLabelFontSizeCombo: null
+	//field to select chart axes labels font size 
+	, axisLabelsFontSizeCombo: null
+	//panel to show font size options
+	, fontConfigurationPanel: null
+	
+	, showSeriesNameCheck: null
+    , showCategoryNameCheck: null
 
 	// =================================================================================================================
 	// METHODS
@@ -108,8 +134,10 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		this.radioGroupIds = [Ext.id(), Ext.id(), Ext.id()]; // generate random id
 
 		this.typeRadioGroup = new Ext.form.RadioGroup({
-			hideLabel: true,
-			columns: 3,
+			hideLabel: 	true,
+			columns: 	3,
+			width:		300,
+			margin: 	'0 0 0 0',
 			items: [
 		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[0], ctCls:'side-by-side-barchart-vertical', inputValue: 'side-by-side-barchart', checked: true},
 		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[1], ctCls:'stacked-barchart-vertical', inputValue: 'stacked-barchart'},
@@ -134,22 +162,23 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			displayField:   'description',
 			valueField:     'name',
 			value:			'vertical',
-			labelWidth:		120,
-			store:          this.orientationComboStore
+			labelWidth:		110,
+			store:          this.orientationComboStore,
+			width:			245
 		});
 		this.orientationCombo.on('change', this.changeBarChartImage, this);
 
 
 		this.showValuesCheck = new Ext.form.Checkbox({
 			name: 'showvalues'
-			, labelWidth: 80
+			, labelWidth: 135
 			, checked: false
 			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.title')
 		});
 
 		this.showLegendCheck = new Ext.form.Checkbox({
 			name: 'showlegend'
-			, labelWidth: 80
+			, labelWidth: 135
 			, checked: false
 			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title')
 		});
@@ -162,7 +191,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 					, ['right', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right')]]
 		});
 		this.legendPositionCombo = new Ext.form.ComboBox({
-//			width:			160,
+			width:			245,
 			queryMode:      'local',
 			triggerAction:  'all',
 			forceSelection: true,
@@ -173,22 +202,25 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			displayField:   'description',
 			valueField:     'name',
 			value:			'bottom',
-			labelWidth:		100,
+			labelWidth:		110,
 			store:          this.legendPositionStore
 		});
 
 		this.categoryAxisText = new Ext.form.Text({
 			 name: 'categoryAxis',
-			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'),
-			 allowBlank: true,
-			 labelWidth:		120,
+			 fieldLabel: 	LN('sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'),
+			 allowBlank: 	true,
+			 labelWidth:	120,
+			 width:			255,
+			 rowspan: 		2
 		});
 
 		this.seriesAxisText = new Ext.form.Text({
 			 name: 'seriesAxis',
-			 fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'),
-			 allowBlank: true,
-			 labelWidth:		100,
+			 fieldLabel: 	LN('sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'),
+			 allowBlank: 	true,
+			 labelWidth:	120,
+			 width:			255
 		});
 
 		this.sortOrderComboStore = new Ext.data.ArrayStore({
@@ -208,7 +240,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			valueField:     'name',
 			value:			'ASC',
 			store:          this.sortOrderComboStore,
-			labelWidth:		120
+			labelWidth:		110,
+			width:			245
 		});
 
 		this.categoryContainerPanel = new Sbi.cockpit.widgets.chart.ChartCategoryPanel({
@@ -261,8 +294,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 
 
 		this.seriesContainerPanel = new Sbi.cockpit.widgets.chart.ChartSeriesPanel({
-            width: 430
-            , height: 110
+            width: 460
+            , height: 100
             , initialData: []
             , crosstabConfig: {}
             , ddGroup: this.ddGroup
@@ -272,7 +305,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 
 		this.imageContainerPanel = new Ext.Panel({
             width: 200
-            , height: 110
+            , height: 100
             , html: this.imageTemplate.apply(['side-by-side-barchart', 'vertical'])
 		});
 
@@ -292,30 +325,174 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 
 		    ]
 	    });
+	    
+	    this.showSeriesNameCheck = new Ext.form.Checkbox({
+			name: 'showSeriesName'
+			, labelWidth: 135
+			, checked: false
+			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showSeriesName.title')
+		});
+	    
+	    this.showCategoryNameCheck = new Ext.form.Checkbox({
+			name: 'showCategoryName'
+			, labelWidth: 135
+			, checked: false
+			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showCategoryName.title')
+		});
+	    
+	    this.fontTypeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.widgetFontType'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			new Ext.data.ArrayStore({
+								fields: ['name','description'],
+								data:   [["Times New Roman","Times New Roman"],["Verdana","Verdana"],["Arial","Arial"]]
+							}),  
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'fontType',
+			labelWidth:		110,
+			width:			245
+
+		});
+	    
+	    this.fontSizeStore = new Ext.data.ArrayStore({
+			fields : ['name', 'description']
+			, data : [[6,"6"],[8,"8"],[10,"10"],[12,"12"],[14,"14"],[16,"16"],[18,"18"],[22,"22"],[24,"24"],[28,"28"],[32,"32"],[36,"36"],[40,"40"]]
+		});
+	    
+	    this.fontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.widgetFontSize'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'fontSize',
+			labelWidth:		120,
+			width:			170
+
+		});
 
 		var controlsItems = new Array();
 
 		controlsItems.push(this.orientationCombo);
-		
+		controlsItems.push(this.seriesAxisText);
+		controlsItems.push(this.showSeriesNameCheck);
+		controlsItems.push(this.sortOrderCombo);
+		controlsItems.push(this.categoryAxisText);
+		controlsItems.push(this.showCategoryNameCheck);
 		controlsItems.push(this.legendPositionCombo);
-		/*
+		controlsItems.push(this.showValuesCheck);
+    	controlsItems.push(this.fontTypeCombo);
+    	controlsItems.push(this.fontSizeCombo);
+		controlsItems.push(this.showLegendCheck);
+    	
+    	
+    	
+    	
+    	/* Font size options configuration */    	
+    	
+    	this.legendFontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.legendFontSize'),
+			typeAhead: 		true,
+			triggerAction: 'all',
+			lazyRender:		true,
+			queryMode:      'local',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'legendFontSize',
+			labelWidth:		60,
+			width:			110
+		});
+		
+		this.axisTitleFontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.axisTitleFontSize'),
+			typeAhead: 		true,
+			triggerAction: 'all',
+			lazyRender:		true,
+			queryMode:      'local',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'axisTitleFontSize',
+			labelWidth:		100,
+			width:			150
+		});
+		
+		this.tooltipLabelFontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.tooltipLabelFontSize'),
+			typeAhead: 		true,
+			triggerAction: 'all',
+			lazyRender:		true,
+			queryMode:      'local',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'tooltipLabelFontSize',
+			labelWidth:		60,
+			width:			110
+		});
+		
+		this.axisLabelsFontSizeCombo = new Ext.form.ComboBox({
+			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.axisLabelsFontSize'),
+			typeAhead: 		true,
+			triggerAction: 'all',
+			lazyRender:		true,
+			queryMode:      'local',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			store: 			this.fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'axisLabelsFontSize',
+			labelWidth:		100,
+			width:			150
+		});
+    	
+    	/*
 		switch (this.chartLib) {
 	        case 'ext3':
 	        	break;
 	        default:
 	        	controlsItems.push(this.showValuesCheck);
 		}*/
-
-		controlsItems.push(this.showValuesCheck);
-		
-		controlsItems.push(this.categoryAxisText);
-		
-		controlsItems.push(this.seriesAxisText);
-
-    	controlsItems.push(this.showLegendCheck);
     	
-
-    	controlsItems.push(this.sortOrderCombo);
+    	this.fontConfigurationPanel = 
+    	{
+			xtype: 				'fieldset'
+			, fieldDefaults: 	{ margin: '0 9 4 0'}
+    		, layout: 			{type: 'table', columns: 2}
+            , collapsible: 		true
+            , collapsed: 		true
+            , title: 			LN('sbi.worksheet.designer.fontConf.fontOptions')
+        	, margin: 			'0 10 0 10'
+			, items: 			[this.legendFontSizeCombo, this.axisTitleFontSizeCombo, this.tooltipLabelFontSizeCombo, this.axisLabelsFontSizeCombo]
+			, width:			355
+    	}
+    	
+    	
 
 
 		this.form = new Ext.form.FormPanel({
@@ -324,13 +501,15 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			, items: [
 			    {
 			    	
-			    	padding: '5 10 5 10'
+			    	padding: '1 0 5 6'
 			    	, border: false
 			    	, items: [
 		    	          {
 							  xtype: 'fieldset'
+							, width: 685
 							, fieldDefaults: { margin: '0 9 5 0'}
-							, layout: {type: 'table', columns: 3}
+		    	          	, padding: '0 0 0 5'
+							, layout: {type: 'table', columns: 3, tdAttrs: { valign: 'top' } }
 				            , collapsible: true
 				            , collapsed: true
 				            , title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.options.title')
@@ -343,10 +522,12 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		  			    {
 							xtype: 'fieldset'
 							, margin: '0 0 0 0'
+							, layout: {type: 'table', columns: 2, tdAttrs: { valign: 'top' } }
 //							, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.type')
-							, columnWidth : .430
-							, border: false
-							, items: [this.typeRadioGroup]
+							//, columnWidth : .430
+							, border: 	false
+							, items: 	[this.typeRadioGroup, this.fontConfigurationPanel]
+							, height: 75
 						}
 						
 //						{
@@ -428,6 +609,35 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		state.legendPosition = this.legendPositionCombo.getValue();
 		state.categoryAxis = this.categoryAxisText.getValue();
 		state.sortOrder = this.sortOrderCombo.getValue();
+		
+		//blank values are permitted, so we need to check the objects before call .getValue()
+		if(this.fontTypeCombo !== null)
+		{	
+			state.fontType = this.fontTypeCombo.getValue();
+		}
+		if(this.fontSizeCombo !== null)
+		{	
+			state.fontSize = this.fontSizeCombo.getValue();
+		}
+		if(this.legendFontSizeCombo !== null)
+		{
+			state.legendFontSize = this.legendFontSizeCombo.getValue();
+		}
+		if(this.axisTitleFontSizeCombo !== null)
+		{
+			state.axisTitleFontSize = this.axisTitleFontSizeCombo.getValue();
+		}
+		if(this.tooltipLabelFontSizeCombo !== null)
+		{
+			state.tooltipLabelFontSize = this.tooltipLabelFontSizeCombo.getValue();
+		}
+		if(this.axisLabelsFontSizeCombo !== null)
+		{
+			state.axisLabelsFontSize = this.axisLabelsFontSizeCombo.getValue();
+		}
+		
+		state.showSeriesName = this.showSeriesNameCheck.getValue();
+		state.showCategoryName = this.showCategoryNameCheck.getValue();
 		state.seriesAxis = this.seriesAxisText.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
 		if(this.showSeriesGroupingPanel === true) {
@@ -450,6 +660,14 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		if (state.categoryAxis) this.categoryAxisText.setValue(state.categoryAxis);
 		if (state.seriesAxis) this.seriesAxisText.setValue(state.seriesAxis);
 		if (state.sortOrder) this.sortOrderCombo.setValue(state.sortOrder);
+		if (state.fontType) this.fontTypeCombo.setValue(state.fontType);
+		if (state.fontSize) this.fontSizeCombo.setValue(state.fontSize);
+		if (state.legendFontSize) this.legendFontSizeCombo.setValue(state.legendFontSize);
+		if (state.axisTitleFontSize) this.axisTitleFontSizeCombo.setValue(state.axisTitleFontSize);
+		if (state.tooltipLabelFontSize) this.tooltipLabelFontSizeCombo.setValue(state.tooltipLabelFontSize);
+		if (state.axisLabelsFontSize) this.axisLabelsFontSizeCombo.setValue(state.axisLabelsFontSize);
+		if (state.showSeriesName) this.showSeriesNameCheck.setValue(state.showSeriesName);
+		if (state.showCategoryName) this.showCategoryNameCheck.setValue(state.showCategoryName);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.groupingVariable && this.showSeriesGroupingPanel === true) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
