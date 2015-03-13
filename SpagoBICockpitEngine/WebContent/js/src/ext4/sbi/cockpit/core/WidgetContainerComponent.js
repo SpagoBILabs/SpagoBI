@@ -55,6 +55,15 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 
 	this.initServices();
 	this.init();
+	
+	//Condition to modify the GUI for the visualization mode
+	if(Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor)
+	{
+		
+		var visualizaionConfig = Ext.apply(this.adjustLayoutVisualizationMode(), config || {});
+		Ext.apply(c, visualizaionConfig);
+	}	
+
 
 	if(this.widget) {
 		this.items = [this.widget];
@@ -295,6 +304,40 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     , onWidgetClone: function() {
     	this.fireEvent('performaction', this, 'cloneWidget');
     }
+    
+    ,adjustLayoutVisualizationMode: function()
+    { 
+    	var visualizationModeHeader = 
+    	{
+    		xtype: 'header',
+    		height: 1
+    	};
+    	
+		var visualizationSettings = 
+		{
+			/*style: 
+			{
+				//borderColor: 'transparent',
+				borderStyle:'solid', 
+				borderWidth:'1px', 
+				backgroundColor: 'transparent', 
+				borderRadius:'0px'
+			}*/
+		    frame: false
+		    , shadow: false
+		    , resizable: false
+		    , header: visualizationModeHeader
+		    , tools: 
+		      [
+		       	{
+		       		type:'maximize'
+                    , hidden:true
+                    , scope:this
+		       	}
+		      ]
+		};
+    	return visualizationSettings;
+    }
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -317,6 +360,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	 * Initialize the GUI
 	 */
 	, init: function() {
+		
 		this.tools =  [{
 			type:'gear',
 			tooltip: LN('sbi.cockpit.window.toolbar.editor'),
