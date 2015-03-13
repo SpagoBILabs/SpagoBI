@@ -208,7 +208,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		    	, dataIndex: 'precision'
 		    	, hideable: false
 		    	, sortable: false
-		    	, width: 30
+		    	, width: 50
 		        , editor: new Ext.form.NumberField({
 		        	value: 2
 		        	, minValue: 0
@@ -222,7 +222,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		    	, dataIndex: 'suffix'
 		    	, hideable: false
 		    	, sortable: false
-		    	, width: 30
+		    	, width: 40
 		        , editor: new Ext.form.TextField({})
 		    };
 
@@ -235,8 +235,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		if ((c.parent != undefined) && ((c.parent == 'barchart') || (c.parent == 'linechart')  )){
 			this.gridColumns.push(sortByThisMeasureRadioColumn);
 		}
-		//this.gridColumns.push(precisionColumn);
-		//this.gridColumns.push(suffixColumn);
+		this.gridColumns.push(precisionColumn);
+		this.gridColumns.push(suffixColumn);
 
 		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
 	        clicksToEdit: 1
