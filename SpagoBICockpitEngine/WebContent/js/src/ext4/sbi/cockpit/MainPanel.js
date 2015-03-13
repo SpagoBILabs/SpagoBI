@@ -34,11 +34,25 @@ Sbi.cockpit.MainPanel = function(config) {
 	this.initServices();
 	this.init();
 
-	c = Ext.apply(c, {
-		id: "mainPanel",
-		bodyCls : "mainPanel",
-        items    : [this.widgetContainer]
-	});
+	//In visualization mode the .css class is differente: without the background image
+	if(Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor)
+	{
+		c = Ext.apply(c, {
+			id: "mainPanel",
+			bodyCls : "mainPanelVisualizationMode",
+	        items    : [this.widgetContainer]
+		});
+	}
+	else
+	{
+		//Current user is the author of doc..we are not in visualization mode
+		c = Ext.apply(c, {
+			id: "mainPanel",
+			bodyCls : "mainPanel",
+	        items    : [this.widgetContainer]
+		});
+	}
+	
 
 	// constructor
 	Sbi.cockpit.MainPanel.superclass.constructor.call(this, c);
@@ -385,6 +399,59 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 
 		this.widgetContainer.addSelectionWidget(selectionWidget, config.wlayout);
 	}
+	
+	, onShowSelectionsView: function(){
+		
+		Sbi.trace("[MainPanel.onShowSelectionsView]: START");
+		
+		var config = {};
+		var selectionFields = ['association', 'values'];
+		var selectionData = [];
+		
+		
+		
+		var selections = this.widgetContainer.getWidgetManager().getSelections() || [];
+		//Sbi.trace("[MainPanel.onShowSelectionsView]: config.selections is equal to [" + Sbi.toSource(selections) + "]");
+		//Sbi.trace("[MainPanel.onShowSelectionsView]: instatiating the popup");
+		
+		for(var widgetId in selections)  {
+			
+    		var selectionsOnWidget = selections[widgetId];
+    		//Sbi.trace("[MainPanel.onShowSelectionsView]: selections on widget: [" + Sbi.toSource(selectionsOnWidget) + "]");
+    		
+    		for(var fieldHeader in selectionsOnWidget) {
+    			
+    			if(selectionsOnWidget[fieldHeader].values && selectionsOnWidget[fieldHeader].values.length > 0) {
+    				
+    				selectionDataEl = [fieldHeader, selectionsOnWidget[fieldHeader].values];
+    				//Sbi.trace("[MainPanel.onShowSelectionsView]: selectionDataEl: [" + Sbi.toSource(selectionDataEl) + "]");
+    				selectionData.push(selectionDataEl);
+    			}
+    		}
+		}
+		
+		//Sbi.trace("[MainPanel.onShowSelectionsView]: selectionData: [" + Sbi.toSource(selectionData) + "]");
+
+		var selectionsStore = new Ext.data.ArrayStore({
+			fields : selectionFields
+			, data : selectionData
+		});
+
+		Ext.create('Ext.window.Window', {
+		    title: LN('sbi.cockpit.mainpanel.btn.viewselections'),
+		    height: 300,
+		    width: 650,
+		    layout: 'fit',
+		    items: { 
+		        xtype: 'grid',
+		        border: false,
+		        columns: [{header: 'Association', dataIndex: 'association', flex:1},{header: 'Values', dataIndex: 'values', flex:1}],
+		        store: selectionsStore
+		    }
+		}).show();
+		
+		Sbi.trace("[MainPanel.onShowSelectionsView]: END");
+	}
 
 	, onSelectionsWindowCancel: function(wizard) {
 		Sbi.trace("[MainPanel.onSelectionsWindowCancel]: IN");
@@ -637,6 +704,15 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.selections')
 			, scope: this
 			, handler:  this.onShowSelectionsWindow
+			, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+		 }));
+		
+		tbItems.push(  new Ext.Button({
+			id: 'viewSelections'
+     		, iconCls: 'icon_view_selection'
+			, tooltip: LN('sbi.cockpit.mainpanel.btn.viewselections')
+			, scope: this
+			, handler:  this.onShowSelectionsView
 		 }));
 
 		tbItems.push(  new Ext.Button({
