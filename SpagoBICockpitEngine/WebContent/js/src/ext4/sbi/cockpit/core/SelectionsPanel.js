@@ -109,15 +109,15 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 		Sbi.trace("[SelectionsPanel.initStoreDataByAssociation]: IN");
 
 		var initialData = [];
-
-		if (this.widgetManager){
-			var selections = this.widgetManager.getSelectionsByAssociations();
-
-			for(var association in selections) {
-				var el = ['_association_', association, selections[association].join()];
-				initialData.push(el);
-			}
-		}
+		
+//		if (this.widgetManager){
+//			var selections = this.widgetManager.getSelectionsByAssociations();
+//
+//			for(var association in selections) {
+//				var el = ['_association_', association, selections[association].join()];
+//				initialData.push(el);
+//			}
+//		}
 
 		// Until we will change selection model we use an hybrid approach. We show selection on association
 		// plus selection on fields for chart widget
