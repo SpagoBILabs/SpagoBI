@@ -89,6 +89,9 @@
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
 	
+		<MAP_REST_SERVICE serviceUrl="/forecast" businessProcess="publicFunctionality" />		
+		<MAP_REST_SERVICE serviceUrl="/forecastT8" businessProcess="publicFunctionality" />				 						 						
+				 						 						
 		
 	</MAP_REST_SERVICES>
 	
