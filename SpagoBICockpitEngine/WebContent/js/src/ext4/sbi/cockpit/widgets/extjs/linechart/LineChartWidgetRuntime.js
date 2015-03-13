@@ -98,8 +98,16 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 		Sbi.trace("[LineChartWidgetRuntime.redraw]: IN");
 
 		Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime.superclass.redraw.call(this);
+		
+		//initialize new fonts configuration -> HAVE TO BE BEFORE getSeries() method, to redraw tooltip font type
+		this.initFontConfiguration();
+		//font vars used by theme constructor
+		var chartFont = this.widgetFontConfiguration.widgetFontType;
+		var chartAxisTitleFontSize = this.widgetFontConfiguration.axisTitleFontSize;
+		var chartAxisLabelsFontSize = this.widgetFontConfiguration.axisLabelsFontSize;
 
 		var seriresConfig = this.getSeriesConfig();
+
 		var categoriesConfig =  this.getCategoriesConfig();
 
 		var axes = this.getAxes( categoriesConfig, seriresConfig );
@@ -107,7 +115,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 
 		var store = this.getStore();
 
-		var colors = this.getColors();
+		var colors = this.getColors();		
 
 		for(var i = 0; i < store.data.items.length; i++){
 			var seriesum = 0;
@@ -156,9 +164,24 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 		Ext.define('Ext.chart.theme.CustomTheme', {
 		    extend: 'Ext.chart.theme.CustomBlue',
 
+		    
 		    constructor: function(config) {
+		    	
+		    	var titleLabel = {
+		                font: 'bold ' + chartAxisTitleFontSize + ' ' + chartFont
+		            }, axisLabel = {
+		                fill: 'rgb(8,69,148)',
+		                font: chartAxisLabelsFontSize + ' ' + chartFont,
+		                spacing: 2,
+		                padding: 5
+		            };
+		    	
 		        this.callParent([Ext.apply({
-		            colors: colors
+		            colors: colors,
+	                axisLabelLeft: axisLabel,
+	                axisLabelBottom: axisLabel,
+	                axisTitleLeft: titleLabel,
+	                axisTitleBottom: titleLabel
 		        }, config)]);
 		    }
 		});
@@ -180,6 +203,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	}
 
 	, getAxes: function( categoriesConfig, seriesConfig ) {
+		
 		var seriesTitle;
 		if (this.getSeriesAxis().length > 0){
 			seriesTitle = this.getSeriesAxis();
@@ -191,11 +215,10 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 		    , position: seriesConfig.position
 		    , fields: seriesConfig.fields
 		    , minorTickSteps: 1 // The number of small ticks between two major ticks. Default is zero.
-//		    , label: {
-//		    	display: 'inside',
-//		    	renderer: Ext.util.Format.numberRenderer('0,0')
-//		    }
-			, title: seriesTitle
+		    , label: {
+		    	renderer: this.getChartsNumericFormat(0)
+		    }
+			, title: this.isSeriesAxisNameVisible()? seriesTitle : ''
 		   	, grid: true
 		    , minimum: 0
 		};
@@ -215,7 +238,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 		    type: 'Category'
 		    , position: categoriesConfig.position
 		    , fields: categoriesConfig.fields
-		    , title: categoryTitle
+		    , title: this.isCategoryAxisNameVisible()? categoryTitle : ''
 	    };
 
 		var axes = [seriesAxis, categoryAxis];
@@ -226,6 +249,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	, getSeries: function( categoriesConfig, seriesConfig ) {
 
 		Sbi.trace("[LineChartWidgetRuntime.getSeries]: IN");
+		
 		var thisPanel = this;
 		var series = [];
 
@@ -241,7 +265,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.linechart.LineChartWidgetRuntime, Sbi.cockp
 	            },
 	            axis: seriesConfig.position,
 	            smooth: true,
-	            tips: this.getSeriesTips(seriesConfig),
+	            tips: this.getSeriesTips(seriesConfig.decimalPrecisions[i], seriesConfig.suffixes[i]),
 	            xField: categoriesConfig.fields[0],
 	            yField: seriesConfig.fields[i],
 	            listeners: {

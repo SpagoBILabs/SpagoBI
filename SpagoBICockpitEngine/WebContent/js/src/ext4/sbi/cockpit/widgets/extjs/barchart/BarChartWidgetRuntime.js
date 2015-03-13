@@ -56,6 +56,9 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 
 	    var seriesFields = [];
 		var seriesTitles = [];
+		//get decimal precision and suffix to format labels
+		var seriesDecimalPrecisions = [];
+		var seriesSuffixes = [];
 
 //		alert(this.wconf.series.length);
 
@@ -64,12 +67,16 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 
 			seriesFields.push(store.fieldsMeta[id].name);
 			seriesTitles.push(id);
+			seriesDecimalPrecisions.push(this.wconf.series[i].precision);
+			seriesSuffixes.push(this.wconf.series[i].suffix);
 		}
 
 		var series = {
 			fields: seriesFields,
 			titles: seriesTitles,
-			position: this.isHorizontallyOriented()? 'bottom' : 'left'
+			position: this.isHorizontallyOriented()? 'bottom' : 'left',
+			decimalPrecisions: seriesDecimalPrecisions,
+			suffixes: seriesSuffixes
 		};
 
 		Sbi.trace("[BarChartWidgetRuntime.getSeriesConfig]: OUT");
@@ -162,6 +169,13 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		Sbi.trace("[BarChartWidgetRuntime.redraw]: IN");
 
 		Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime.superclass.redraw.call(this);
+		
+		//initialize new fonts configuration -> HAVE TO BE BEFORE getSeries() method, to redraw tooltip font type
+		this.initFontConfiguration();
+		//font vars used by theme constructor
+		var chartFont = this.widgetFontConfiguration.widgetFontType;
+		var chartAxisTitleFontSize = this.widgetFontConfiguration.axisTitleFontSize;
+		var chartAxisLabelsFontSize = this.widgetFontConfiguration.axisLabelsFontSize;
 
 		var seriresConfig = this.getSeriesConfig();
 		var categoriesConfig =  this.getCategoriesConfig();
@@ -220,8 +234,23 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		    extend: 'Ext.chart.theme.CustomBlue',
 
 		    constructor: function(config) {
+		    	
+		    	var titleLabel = {
+		                font: 'bold ' + chartAxisTitleFontSize + ' ' + chartFont
+		            }, axisLabel = {
+		                fill: 'rgb(8,69,148)',
+		                font: chartAxisLabelsFontSize + ' ' + chartFont,
+		                spacing: 2,
+		                padding: 5
+		            };
+		    	
+		    	
 		        this.callParent([Ext.apply({
-		            colors: colors
+		            colors: colors,
+		            axisLabelLeft: axisLabel,
+	                axisLabelBottom: axisLabel,
+	                axisTitleLeft: titleLabel,
+	                axisTitleBottom: titleLabel
 		        }, config)]);
 		    }
 		});
@@ -269,9 +298,9 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		    , fields: seriesConfig.fields
 		    , minorTickSteps: 1 // The number of small ticks between two major ticks. Default is zero.
 		    , label: {
-		    	renderer: Ext.util.Format.numberRenderer('0,0')
+		    	renderer: this.getChartsNumericFormat(0)
 		    }
-			, title: seriesTitle
+			, title: this.isSeriesAxisNameVisible()? seriesTitle : ''
 		   	, grid: true
 		    , minimum: 0
 		};
@@ -292,7 +321,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		    type: 'Category'
 		    , position: categoriesConfig.position
 		    , fields: categoriesConfig.fields
-		    , title: categoryTitle
+		    , title: this.isCategoryAxisNameVisible()? categoryTitle : ''
 	    };
 
 		var axes = [seriesAxis, categoryAxis];
@@ -329,8 +358,11 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		return series;
 	}
 
-	, getSeriesTips: function(series) {
+	, getSeriesTips: function(seriesConfig) {
 		var thisPanel = this;
+		
+		var chartFont = this.widgetFontConfiguration.widgetFontType;
+		var chartTooltipFontSize = this.widgetFontConfiguration.tooltipFontSize;
 
 		var tips =  {
 			trackMouse: true,
@@ -338,9 +370,15 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
            	maxWidth: 300,
            	width: 'auto',
            	minHeight: 28,
+           	bodyStyle: 
+           	{
+           		font: 'bold ' + chartTooltipFontSize + ' ' + chartFont
+           	},
            	renderer: function(storeItem, item) {
-           		var tooltipContent = thisPanel.getTooltip(storeItem, item);
-           		this.setTitle(tooltipContent);
+           		var tooltipContent = thisPanel.getTooltip(storeItem, item, seriesConfig);
+           		//this.setTitle(tooltipContent);
+           		//now tooltip content is in the body, cause of in the title the style it's not applied
+           		this.update(tooltipContent);
             }
         };
 
@@ -348,11 +386,18 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 	}
 
 	, getSeriesLabel: function(seriesConfig) {
+		
+		thePanel = this;
+		
 		var label = {
 			//insideEnd is the only options that work with stacked!
             display: this.isStacked()? 'insideEnd':'outside',
             field: this.isValuesVisibles()?( seriesConfig.fields.length == 1? seriesConfig.fields[0]: seriesConfig.fields) : null,
-            renderer: Ext.util.Format.numberRenderer('0.##'),
+            //renderer: Ext.util.Format.numberRenderer('0.##'),getChartsNumericFormat
+            renderer: function(v, label, storeItem, item, i, display, animate, index)
+            {
+            	return thePanel.getLabelValuesNumericFormat(v, label, storeItem, item, i, display, animate, index, seriesConfig);
+            },
             orientation: 'horizontal',
             contrast: true,
 		    font: '1em Arial',
@@ -456,7 +501,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 		}
 	}
 
-	, getTooltip : function(storeItem, item){
+	, getTooltip : function(storeItem, item, seriesConfig){
 
 		Sbi.trace("[BarChartWidgetRuntime.getTooltip]: IN");
 
@@ -466,14 +511,38 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 
 		} else {
 			var itemMeta = this.getItemMeta(item);
-
+			
 			var value = itemMeta.seriesFieldValue;
 			if (typeof(value) == 'number'){
 				if (!this.isInteger(value)){
-					//decimal number
-					value = +value.toFixed(2);
+					
+					var decimalPrecision;
+					var suffix;
+					
+					for (var i = 0; i < seriesConfig.fields.length; i++) {
+						if (itemMeta.seriesFieldName == seriesConfig.fields[i]){
+							decimalPrecision = seriesConfig.decimalPrecisions[i];
+							suffix = seriesConfig.suffixes[i];
+							break;
+						}
+					}
+					
+					if(decimalPrecision !== undefined && decimalPrecision !== null)
+					{
+						Sbi.trace("[BarChartWidgetRuntime.getTooltip]: Value is a number, local formatting. First is: " + value);
+						
+						value = this.getLocalFormattedNumericValuesNumeric(decimalPrecision, value);
+						
+						Sbi.trace("[BarChartWidgetRuntime.getTooltip]: After is: " + value);
+					}
+					
+					if(suffix !== undefined && suffix !== null && suffix !== '')
+					{
+						value = value + ' ' + suffix;
+						Sbi.trace("[BarChartWidgetRuntime.getTooltip]: Adding suffix to value : " + value);
+					}
 				}
-			}
+			}			
 
 			var categoryValue = itemMeta.categoryValues[0];
 

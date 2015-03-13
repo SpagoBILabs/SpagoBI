@@ -52,16 +52,23 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 
 	    var seriesFields = [];
 		var seriesTitles = [];
+		//get decimal precision and suffix to format labels
+		var seriesDecimalPrecisions = [];
+		var seriesSuffixes = [];
 
 		for(var i = 0; i < this.wconf.series.length; i++) {
 			var id = this.wconf.series[i].alias;
 			seriesFields.push(store.fieldsMeta[id].name);
 			seriesTitles.push(id);
+			seriesDecimalPrecisions.push(this.wconf.series[i].precision);
+			seriesSuffixes.push(this.wconf.series[i].suffix);
 		}
 
 		var series = {
 			fields: seriesFields,
-			titles: seriesTitles
+			titles: seriesTitles,
+			decimalPrecisions: seriesDecimalPrecisions,
+			suffixes: seriesSuffixes
 		};
 
 		return series;
@@ -161,8 +168,27 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 
 		if (typeof(fieldValue) == 'number'){
 			if (!this.isInteger(fieldValue)){
-				//decimal number
-				fieldValue = +fieldValue.toFixed(2);
+				
+				var decimalPrecision;
+				var suffix;
+				
+				for (var i = 0; i < seriresConfig.fields.length; i++) {
+					if (itemMeta.seriesFieldName == seriresConfig.fields[i]){
+						decimalPrecision = seriresConfig.decimalPrecisions[i];
+						suffix = seriresConfig.suffixes[i];
+						break;
+					}
+				}
+				
+				if(decimalPrecision !== undefined && decimalPrecision !== null)
+				{					
+					fieldValue = this.getLocalFormattedNumericValuesNumeric(decimalPrecision, fieldValue);
+				}
+				
+				if(suffix !== undefined && suffix !== null && suffix !== '')
+				{
+					fieldValue = fieldValue + ' ' + suffix;
+				}
 			}
 		}
 
@@ -303,7 +329,8 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 					if (typeof(fieldValue) == 'number'){
 						if (!thisPanel.isInteger(fieldValue)){
 							//decimal number
-							fieldValue = +fieldValue.toFixed(2);
+							//fieldValue = +fieldValue.toFixed(2);
+							fieldValue = thisPanel.getLabelValuesNumericFormat(fieldValue,label, storeItem, item, i, display, animate, index, seriesConfig);
 						}
 					}
 
@@ -381,6 +408,10 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		}
 
 		//Construct the series object(s)
+		
+		var chartFont = this.widgetFontConfiguration.widgetFontType;
+		var chartTooltipFontSize = this.widgetFontConfiguration.tooltipFontSize;
+		
 		var aSerie = {
                 type: 'pie',
                 highlight: {
@@ -399,6 +430,10 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 	            	  maxWidth: 300,
 	            	  width: 'auto',
 	            	  minHeight: 28,
+                 	  bodyStyle: 
+                   	  {
+                   			font: 'bold ' + chartTooltipFontSize + ' ' + chartFont
+                   	  },
 	            	  renderer: function(storeItem, item) {
 	            		   //this.setTitle(String(item.value[0])+" : "+String(item.value[1]));
 	            		   var tooltipContent = thisPanel.getTooltip(storeItem, item);
@@ -421,6 +456,9 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 	, redraw: function() {
 		Sbi.trace("[PieChartWidgetRuntime.redraw]: IN");
 		Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime.superclass.redraw.call(this);
+		
+		//initialize new fonts configuration -> HAVE TO BE BEFORE getSeries() method, to redraw tooltip font type
+		this.initFontConfiguration();
 
 		var seriresConfig = this.getSeriesConfig();
 		var categoriesConfig = this.getCategoriesConfig();

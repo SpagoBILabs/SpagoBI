@@ -46,18 +46,27 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 
 		var store = this.getStore();
 
+		//these values are taken from Series table,
 	    var seriesFields = [];
-		var seriesTitles = [];
+		var seriesTitles = []; 
+		var seriesDecimalPrecisions = [];
+		var seriesSuffixes = [];
+		
 		for(var i = 0; i < this.wconf.series.length; i++) {
 			var id = this.wconf.series[i].alias;
 			seriesFields.push(store.fieldsMeta[id].name);
 			seriesTitles.push(id);
+			seriesDecimalPrecisions.push(this.wconf.series[i].precision);
+			seriesSuffixes.push(this.wconf.series[i].suffix);
+			
 		}
 
 		var series = {
 			fields: seriesFields,
 			titles: seriesTitles,
-			position: this.isHorizontallyOriented()? 'bottom' : 'left'
+			position: this.isHorizontallyOriented()? 'bottom' : 'left',
+			decimalPrecisions: seriesDecimalPrecisions,
+			suffixes: seriesSuffixes
 		};
 
 		return series;
@@ -110,7 +119,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 		return showvalues;
 	}
 
-	, getTooltip : function(storeItem, item){
+	, getTooltip : function(storeItem, item, decimalPrecision, suffix){
 
 		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: IN");
 
@@ -119,11 +128,20 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 		var itemMeta = this.getItemMeta(item);
 		var value = itemMeta.seriesFieldValue;
 		if (typeof(value) == 'number'){
-			if (!this.isInteger(value)){
-				//decimal number
-				value = +value.toFixed(2);
-			}
+			Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: Value is a number, local formatting. First is: " + value);
+			
+			value = this.getLocalFormattedNumericValuesNumeric(decimalPrecision, value);
+			
+			Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: After is: " + value);
+			
 		}
+		
+		if(suffix !== undefined && suffix !== null && suffix !== '')
+		{
+			value = value + ' ' + suffix;
+			Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: Adding suffix to value : " + value);
+		}
+		
 		var categoryValue = itemMeta.categoryValues[0];
 
 		tooltip =  itemMeta.seriesFieldHeader + ': ' + value
