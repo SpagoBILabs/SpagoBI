@@ -4,7 +4,7 @@
  This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<script type="text/javascript" src="../js/lib/messageResource/messageResource.min.js"></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/messageResource/messageResource.min.js")%>'></script>
 
 <script type="text/javascript">
 	//Function that gets the properties file's content in an synchronous way
@@ -21,7 +21,7 @@
 		
 		xmlhttp.open('GET', url, false);
 		xmlhttp.send();
-		callback(xmlhttp.responseText)
+		callback(xmlhttp.responseText);
 	}
 	
 	//Initialization of the messageResource object
@@ -36,7 +36,8 @@
     messageResource.setCurrentLocale('<%=locale.getLanguage()%>_<%=locale.getCountry()%>');
     
     //en_US has already been loaded: if current locale is en_US it is not necessary to load it again
-    if ('<%=locale.getLanguage()%>_<%=locale.getCountry()%>'!='en_US'){
+    if ('<%=locale.getLanguage()%>_<%=locale.getCountry()%>'!='en_US')
+    {
     	messageResource.load('messages', function(){});
     }
 </script>

@@ -45,7 +45,11 @@
         <MAP_REST_SERVICE serviceUrl="/test/inmemorymaterializer/join_geo_time" businessProcess="publicFunctionality" />                
     
 		<MAP_REST_SERVICE serviceUrl="/publish" businessProcess="publicFunctionality" />
-			
+		
+		<MAP_REST_SERVICE serviceUrl="/LOV" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/AD" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/ADUse" businessProcess="publicFunctionality" />	
+		
 		<MAP_REST_SERVICE serviceUrl="/domains/listValueDescriptionByType" businessProcess="publicFunctionality" />		
 	 	<MAP_REST_SERVICE serviceUrl="/domainsforfinaluser/listValueDescriptionByType" businessProcess="SelfServiceDatasetManagement" /> 
 	 	
@@ -89,7 +93,6 @@
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/saveCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
-	
 		<MAP_REST_SERVICE serviceUrl="/forecast" businessProcess="publicFunctionality" />		
 		<MAP_REST_SERVICE serviceUrl="/forecastT8" businessProcess="publicFunctionality" />				 						 						
 				 						 						
