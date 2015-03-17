@@ -13,7 +13,8 @@
 	    <MAP_REST_SERVICE serviceUrl="/cache.*" businessProcess="SelfServiceDatasetManagement" />
         <MAP_REST_SERVICE serviceUrl="/fileservicedataset/createdataset" businessProcess="SelfServiceDatasetManagement" />                                              
 
-
+		<MAP_REST_SERVICE serviceUrl="/analyticalDriver" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/analyticalDriverUse" businessProcess="publicFunctionality" />
 	    
         <MAP_REST_SERVICE serviceUrl="/locker/lock" businessProcess="publicFunctionality" />
         <MAP_REST_SERVICE serviceUrl="/locker/unlock" businessProcess="publicFunctionality" />
