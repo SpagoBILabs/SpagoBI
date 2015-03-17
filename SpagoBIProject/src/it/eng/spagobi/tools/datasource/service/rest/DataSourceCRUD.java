@@ -1,7 +1,7 @@
- /* SpagoBI, the Open Source Business Intelligence suite
+/* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.tools.datasource.service.rest;
@@ -46,7 +46,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 @Path("/datasources")
 public class DataSourceCRUD {
@@ -68,11 +68,11 @@ public class DataSourceCRUD {
 		JSONObject datasorcesJSON = new JSONObject();
 		try {
 			dataSourceDao = DAOFactory.getDataSourceDAO();
-			
-			if(profile.getIsSuperadmin() != null && profile.getIsSuperadmin()){
+
+			if (profile.getIsSuperadmin() != null && profile.getIsSuperadmin()) {
 				TenantManager.unset();
 				dataSources = dataSourceDao.loadDataSourcesForSuperAdmin();
-			}else{
+			} else {
 				dataSourceDao.setUserProfile(profile);
 				dataSources = dataSourceDao.loadAllDataSources();
 			}
@@ -83,35 +83,32 @@ public class DataSourceCRUD {
 			datasorcesJSON = serializeDatasources(dataSources, dialects);
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(
-					"An unexpected error occured while instatiating the dao", t);
+			throw new SpagoBIServiceException("An unexpected error occured while instatiating the dao", t);
 		}
 
 		return datasorcesJSON.toString();
 
 	}
 
-
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	public String deleteDataSource(@Context HttpServletRequest req) {
-		IEngUserProfile profile = (IEngUserProfile) req.getSession()
-				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		HashMap<String, String> logParam = new HashMap();
 
 		try {
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 			String id = (String) requestBodyJSON.opt("DATASOURCE_ID");
-			Assert.assertNotNull(id,deleteNullIdDataSourceError );
+			Assert.assertNotNull(id, deleteNullIdDataSourceError);
 			// if the ds is associated with any BIEngine or BIObjects, creates
 			// an error
 			boolean bObjects = DAOFactory.getDataSourceDAO().hasBIObjAssociated(id);
-			//boolean bEngines = DAOFactory.getDataSourceDAO().hasBIEngineAssociated(id);
-			if (bObjects){ //|| bEngines) {
+			// boolean bEngines = DAOFactory.getDataSourceDAO().hasBIEngineAssociated(id);
+			if (bObjects) { // || bEngines) {
 				HashMap params = new HashMap();
 				logger.debug(deleteInUseDSError);
 				updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
-				return ( ExceptionUtilities.serializeException(deleteInUseDSError,null));
+				return (ExceptionUtilities.serializeException(deleteInUseDSError, null));
 			}
 
 			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer(id));
@@ -125,93 +122,87 @@ public class DataSourceCRUD {
 			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
 			logger.debug(canNotFillResponseError);
 			try {
-				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
-				throw new SpagoBIRuntimeException(
-						"Cannot fill response container", e);
+				throw new SpagoBIRuntimeException("Cannot fill response container", e);
 			}
 		}
 	}
-	
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public String saveDataSource(@Context HttpServletRequest req) {
 		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		try {
-			
-			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-			IDataSourceDAO dao=DAOFactory.getDataSourceDAO();
 
-			if(profile.getIsSuperadmin()){
+		try {
+
+			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			IDataSourceDAO dao = DAOFactory.getDataSourceDAO();
+
+			if (profile.getIsSuperadmin()) {
 				TenantManager.unset();
 				dao.setUserID(profile.getUserId().toString());
-			}else{
+			} else {
 				dao.setUserProfile(profile);
-			}			
-			
+			}
+
 			DataSource dsNew = recoverDataSourceDetails(requestBodyJSON);
 
 			HashMap<String, String> logParam = new HashMap();
-			logParam.put("JNDI",dsNew.getJndi());
-			logParam.put("NAME",dsNew.getLabel());
-			logParam.put("URL",dsNew.getUrlConnection());
+			logParam.put("JNDI", dsNew.getJndi());
+			logParam.put("NAME", dsNew.getLabel());
+			logParam.put("URL", dsNew.getUrlConnection());
 
-			if (dsNew.getDsId()==-1) {
-				//if a ds with the same label not exists on db ok else error
-				if (DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dsNew.getLabel()) != null){
+			if (dsNew.getDsId() == -1) {
+				// if a ds with the same label not exists on db ok else error
+				if (DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dsNew.getLabel()) != null) {
 					updateAudit(req, profile, "DATA_SOURCE.ADD", logParam, "KO");
 					throw new SpagoBIRuntimeException(saveDuplicatedDSError);
-				}	 		
-				Integer id =dao.insertDataSource(dsNew, profile.getOrganization());
+				}
+				Integer id = dao.insertDataSource(dsNew, profile.getOrganization());
 				dsNew.setDsId(id);
 				updateAudit(req, profile, "DATA_SOURCE.ADD", logParam, "OK");
-			} else {				
-				//update ds
+			} else {
+				// update ds
 				dao.modifyDataSource(dsNew);
 				updateAudit(req, profile, "DATA_SOURCE.MODIFY", logParam, "OK");
-			}  
-					
-			return ("{DATASOURCE_ID:"+dsNew.getDsId()+" }");
+			}
+
+			return ("{DATASOURCE_ID:" + dsNew.getDsId() + " }");
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
 			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
 			logger.debug(ex.getMessage());
 			try {
-				return ( ExceptionUtilities.serializeException(ex.getMessage(),null));
+				return (ExceptionUtilities.serializeException(ex.getMessage(), null));
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
-				throw new SpagoBIRuntimeException(
-						"Cannot fill response container", e);
+				throw new SpagoBIRuntimeException("Cannot fill response container", e);
 			}
 		} catch (Exception ex) {
 			logger.error("Cannot fill response container", ex);
 			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
 			logger.debug(canNotFillResponseError);
 			try {
-				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
-				throw new SpagoBIRuntimeException(
-						"Cannot fill response container", e);
+				throw new SpagoBIRuntimeException("Cannot fill response container", e);
 			}
 		}
 	}
 
-
-	private static void updateAudit(HttpServletRequest request,
-			IEngUserProfile profile, String action_code,
-			HashMap<String, String> parameters, String esito) {
+	private static void updateAudit(HttpServletRequest request, IEngUserProfile profile, String action_code, HashMap<String, String> parameters, String esito) {
 		try {
-			AuditLogUtilities.updateAudit(request, profile, action_code,
-					parameters, esito);
+			AuditLogUtilities.updateAudit(request, profile, action_code, parameters, esito);
 		} catch (Exception e) {
 			logger.debug("Error writnig audit", e);
 		}
 	}
-	
+
 	private JSONObject serializeDatasources(List<DataSource> dataSources, List<Domain> dialects) throws SerializationException, JSONException {
-		
+
 		JSONObject dataSourcesJSON = new JSONObject();
 		// JSONObject aDataSourcesJSON = new JSONObject();
 		JSONArray dataSourcesJSONArray = new JSONArray();
@@ -228,42 +219,42 @@ public class DataSourceCRUD {
 		}
 		return dataSourcesJSON;
 	}
-	
-	private DataSource recoverDataSourceDetails (JSONObject requestBodyJSON) throws EMFUserError, SourceBeanException, IOException  {
-		DataSource ds  = new DataSource();
-		Integer id=-1;
-		String idStr = (String)requestBodyJSON.opt("DATASOURCE_ID");
-		if(idStr!=null && !idStr.equals("")){
+
+	private DataSource recoverDataSourceDetails(JSONObject requestBodyJSON) throws EMFUserError, SourceBeanException, IOException {
+		DataSource ds = new DataSource();
+		Integer id = -1;
+		String idStr = (String) requestBodyJSON.opt("DATASOURCE_ID");
+		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
-		Integer dialectId = Integer.valueOf((String)requestBodyJSON.opt("DIALECT_ID"));	
-		String description = (String)requestBodyJSON.opt("DESCRIPTION");	
-		String label = (String)requestBodyJSON.opt("DATASOURCE_LABEL");
-		String jndi = (String)requestBodyJSON.opt("JNDI_URL");
-		String url = (String)requestBodyJSON.opt("CONNECTION_URL");
-		String user = (String)requestBodyJSON.opt("USER");
-		String pwd = (String)requestBodyJSON.opt("PASSWORD");
-		String driver = (String)requestBodyJSON.opt("DRIVER");
-		String schemaAttr = (String)requestBodyJSON.opt("SCHEMA");
-		String multiSchema = (String)requestBodyJSON.opt("MULTISCHEMA");
-		String readOnlyS = (String)requestBodyJSON.opt("READ_ONLY");
-		String writeDefaultS = (String)requestBodyJSON.opt("WRITE_DEFAULT");
+		Integer dialectId = Integer.valueOf((String) requestBodyJSON.opt("DIALECT_ID"));
+		String description = (String) requestBodyJSON.opt("DESCRIPTION");
+		String label = (String) requestBodyJSON.opt("DATASOURCE_LABEL");
+		String jndi = (String) requestBodyJSON.opt("JNDI_URL");
+		String url = (String) requestBodyJSON.opt("CONNECTION_URL");
+		String user = (String) requestBodyJSON.opt("USER");
+		String pwd = (String) requestBodyJSON.opt("PASSWORD");
+		String driver = (String) requestBodyJSON.opt("DRIVER");
+		String schemaAttr = (String) requestBodyJSON.opt("SCHEMA");
+		String multiSchema = (String) requestBodyJSON.opt("MULTISCHEMA");
+		String readOnlyS = (String) requestBodyJSON.opt("READ_ONLY");
+		String writeDefaultS = (String) requestBodyJSON.opt("WRITE_DEFAULT");
 
 		Boolean isMultiSchema = false;
-		if(multiSchema!=null && (multiSchema.equals("on") || multiSchema.equals("true"))){
+		if (multiSchema != null && (multiSchema.equals("on") || multiSchema.equals("true"))) {
 			isMultiSchema = true;
 		}
 
 		Boolean readOnly = false;
-		if(readOnlyS!=null && (readOnlyS.equals("on") || readOnlyS.equals("true"))){
+		if (readOnlyS != null && (readOnlyS.equals("on") || readOnlyS.equals("true"))) {
 			readOnly = true;
 		}
 
 		Boolean writeDefault = false;
-		if(writeDefaultS!=null && (writeDefaultS.equals("on") || writeDefaultS.equals("true"))){
+		if (writeDefaultS != null && (writeDefaultS.equals("on") || writeDefaultS.equals("true"))) {
 			writeDefault = true;
 		}
-		
+
 		ds.setDsId(id.intValue());
 		ds.setDialectId(dialectId);
 		ds.setLabel(label);
@@ -277,15 +268,12 @@ public class DataSourceCRUD {
 		ds.setMultiSchema(isMultiSchema);
 		ds.setReadOnly(readOnly);
 		ds.setWriteDefault(writeDefault);
-				
+
 		return ds;
 	}
-	
 
-	
-	private String serializeException(Exception e) throws JSONException{
-		return ExceptionUtilities.serializeException(e.getMessage(),null);
+	private String serializeException(Exception e) throws JSONException {
+		return ExceptionUtilities.serializeException(e.getMessage(), null);
 	}
-
 
 }
