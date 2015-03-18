@@ -77,7 +77,7 @@ LICENSE: see LICENSE.txt file
         }
     }
     
-    private Document getTemplateAsDom4jDocument(HttpServletRequest request, HashMap requestParameters) {
+    private Document getTemplateAsDom4jDocument(HttpServletRequest request, HashMap requestParameters, List globalParameters) {
     	InputStream is = null;
     	Document document = null;
     	try {
@@ -89,65 +89,74 @@ LICENSE: see LICENSE.txt file
 	        BASE64Decoder bASE64Decoder = new BASE64Decoder();
 	        byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
 	        is = new java.io.ByteArrayInputStream(templateContent);
-	        org.dom4j.io.SAXReader reader = new org.dom4j.io.SAXReader();
-	        document = reader.read(is);
-	        return document;
-    	} catch (Exception e) {
-    		logger.error("Error while getting template as a XML document", e);
-    		throw new RuntimeException("Error while getting template as a XML document", e);
-    	} finally {
-    		try {
-	    		if (is != null) {
-	    			is.close();
-	    		}
-    		} catch (Exception e) {
-    			logger.error("Error while closing stream", e);
-    		}
-    	}
-    }
-    
-    private AnalysisBean getSubobjectContentAsAnalysisBean(HttpServletRequest request) {
-        InputStream is = null;
-        InputStreamReader isr = null;
-        AnalysisBean analysis = null;
-        try {
-            HttpSession session = request.getSession();
-            String userId = (String) session.getAttribute("userId");
-            String subObjectId = request.getParameter("subobjectId");
-            ContentServiceProxy contentProxy = new ContentServiceProxy(userId, session);
-            Content subObject = contentProxy.readSubObjectContent(subObjectId);
-            String subobjdata64Coded = subObject.getContent();
-            BASE64Decoder bASE64Decoder = new BASE64Decoder();
-            byte[] subobjBytes = bASE64Decoder.decodeBuffer(subobjdata64Coded);
-            is = new java.io.ByteArrayInputStream(subobjBytes);
-            isr = new InputStreamReader(is);
-            XStream dataBinder = new XStream();
-            analysis = (AnalysisBean) dataBinder.fromXML(isr, new AnalysisBean());
-            return analysis;
-        } catch (Exception e) {
-            logger.error("Error while loading AnalysisBean for analysis definition", e);
-            throw new RuntimeException("Error while loading AnalysisBean for analysis definition", e);
-        } finally {
-            try {
-                if (isr != null) {
-                    isr.close();
-                }
-            } catch (Exception e) {
-                logger.error("Error while closing InputStreamReader", e);
-            }
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (Exception e) {
-                logger.error("Error while closing ByteArrayInputStream", e);
-            }
-        }
-    }
-%>
+	               
+	        if(globalParameters != null){
+                logger.debug("global parameters present, ssubstitute them in template");
+	        	String templateDecodedString = StringUtilities.convertStreamToString(is);
+				templateDecodedString = ParameterUtilities.substituteQueryParameters(templateDecodedString, globalParameters, request);
+				logger.debug("template was filled with global parameters");
+				is = new java.io.ByteArrayInputStream(templateDecodedString.getBytes());
+	        }
+
+			org.dom4j.io.SAXReader reader = new org.dom4j.io.SAXReader();
+			document = reader.read(is);
+			return document;
+		} catch (Exception e) {
+			logger.error("Error while getting template as a XML document", e);
+			throw new RuntimeException("Error while getting template as a XML document", e);
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+				}
+			} catch (Exception e) {
+				logger.error("Error while closing stream", e);
+			}
+		}
+	}
+
+	private AnalysisBean getSubobjectContentAsAnalysisBean(HttpServletRequest request) {
+		InputStream is = null;
+		InputStreamReader isr = null;
+		AnalysisBean analysis = null;
+		try {
+			HttpSession session = request.getSession();
+			String userId = (String) session.getAttribute("userId");
+			String subObjectId = request.getParameter("subobjectId");
+			ContentServiceProxy contentProxy = new ContentServiceProxy(userId, session);
+			Content subObject = contentProxy.readSubObjectContent(subObjectId);
+			String subobjdata64Coded = subObject.getContent();
+			BASE64Decoder bASE64Decoder = new BASE64Decoder();
+			byte[] subobjBytes = bASE64Decoder.decodeBuffer(subobjdata64Coded);
+			is = new java.io.ByteArrayInputStream(subobjBytes);
+			isr = new InputStreamReader(is);
+			XStream dataBinder = new XStream();
+			analysis = (AnalysisBean) dataBinder.fromXML(isr, new AnalysisBean());
+			return analysis;
+		} catch (Exception e) {
+			logger.error("Error while loading AnalysisBean for analysis definition", e);
+			throw new RuntimeException("Error while loading AnalysisBean for analysis definition", e);
+		} finally {
+			try {
+				if (isr != null) {
+					isr.close();
+				}
+			} catch (Exception e) {
+				logger.error("Error while closing InputStreamReader", e);
+			}
+			try {
+				if (is != null) {
+					is.close();
+				}
+			} catch (Exception e) {
+				logger.error("Error while closing ByteArrayInputStream", e);
+			}
+		}
+	}%>
 
 <%
 	List parameters = null;
+    List globalParameters = null;
 	String reference = null, query = null;
 	AnalysisBean analysis = null;
 	Document document = null;
@@ -185,7 +194,14 @@ LICENSE: see LICENSE.txt file
 			// TODO move the cube profiling information from driver to engine 
 			requestParameters.remove("dimension_access_rules");
 			
-			document = this.getTemplateAsDom4jDocument(request, requestParameters);
+			document = this.getTemplateAsDom4jDocument(request, requestParameters, null);
+			
+	         // if document template definition contains external global parameters the template must be created again
+            globalParameters= document.selectNodes("//olap/parameter"); 
+            if(globalParameters != null && !globalParameters.isEmpty() ){
+                // recreate documetn definition with parametrization
+                   document = this.getTemplateAsDom4jDocument(request, requestParameters, globalParameters);                            
+            }
 			
 			// if subObject execution in the request there are the description and visibility
 			String descrSO = request.getParameter("descriptionSubObject");
@@ -214,7 +230,14 @@ LICENSE: see LICENSE.txt file
 			// TODO move the cube profiling information from driver to engine 
 			requestParameters.remove("dimension_access_rules");
 			
-			document = this.getTemplateAsDom4jDocument(request, requestParameters);
+			document = this.getTemplateAsDom4jDocument(request, requestParameters, null);
+			
+			// if document template definition contains external global parameters the template must be created again
+            globalParameters= document.selectNodes("//olap/parameter");	
+			if(globalParameters != null && !globalParameters.isEmpty() ){
+				// recreate documetn definition with parametrization
+			       document = this.getTemplateAsDom4jDocument(request, requestParameters, globalParameters);			       			
+			}
 		    
 			query = document.selectSingleNode("//olap/MDXquery").getStringValue();
 			
