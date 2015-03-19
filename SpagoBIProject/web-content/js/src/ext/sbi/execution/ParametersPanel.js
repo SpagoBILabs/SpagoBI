@@ -89,7 +89,9 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	
 	this.baseConfig = c;
 	
-	
+	//global variable
+	this.firstInitialization = true;
+
 	
 	this.parametersPreference = undefined;
 	if (c.parameters) {
@@ -654,7 +656,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	, initializeParametersPanel: function( parameters, reset ) {
 			
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : IN');
-		
+				
 		this.on('checkReady', function () {
 			if((this.firstLoadCounter == this.firstLoadTotParams )
 					|| (this.firstLoadTotParams == 0)){	
@@ -789,12 +791,14 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		//var state = Ext.apply(defaultValuesFormState, this.preferenceState);
 		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
+		this.firstInitialization = false;
 
 			
 		if (this.firstLoadTotParams == 0 && reset) {
 			this.fireEvent('ready', this, this.isReadyForExecution(), state);	
 			this.fireEvent('synchronize', this);	
 		}
+		
 		
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : OUT');
 	}
@@ -1043,9 +1047,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(field.behindParameter.selectionType === 'TREE'){ 
 			var p = Sbi.commons.JSON.encode(this.getFormState());
 			field.reloadTree(p);
-		}	
-		
-		field.reset();
+			if (!this.firstInitialization){
+				field.reset();
+			}
+		} else {
+			field.reset();
+		}
 		Sbi.debug('[ParametersPanel.updateDataDependentField] : field [' + dependantConf.parameterId + '] that is data correlated with field [' + fatherField.name + '] have been updeted succesfully');
 	}
 	
