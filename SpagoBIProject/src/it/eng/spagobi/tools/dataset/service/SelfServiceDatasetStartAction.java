@@ -325,10 +325,10 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, getLocale().getLanguage());
 		parametersMap.put(SpagoBIConstants.SBI_COUNTRY, getLocale().getCountry());
 
-		if (!GeneralUtilities.isSSOEnabled()) {
-			UserProfile userProfile = (UserProfile) getUserProfile();
-			parametersMap.put(SsoServiceInterface.USER_ID, (String) userProfile.getUserId());
-		}
+		// if (!GeneralUtilities.isSSOEnabled()) {
+		UserProfile userProfile = (UserProfile) getUserProfile();
+		parametersMap.put(SsoServiceInterface.USER_ID, (String) userProfile.getUserUniqueIdentifier());
+		// }
 
 		return parametersMap;
 	}

@@ -64,6 +64,5 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/javax.json-1.0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

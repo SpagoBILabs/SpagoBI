@@ -7,15 +7,15 @@ package it.eng.spagobi.security.OAuth2;
 
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import sun.misc.BASE64Encoder;
 
@@ -87,16 +89,30 @@ public class OAuth2Filter implements Filter {
 				out.write(body);
 				out.close();
 
-				JsonReader jsonReader = Json.createReader(connection.getInputStream());
-				JsonObject jsonObject = jsonReader.readObject();
-				jsonReader.close();
-				connection.disconnect();
+				InputStream is = connection.getInputStream();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+				StringBuilder stringBuilder = new StringBuilder();
+				String line;
+				while ((line = reader.readLine()) != null) {
+					stringBuilder.append(line);
+				}
 
-				String accessToken = jsonObject.getString("access_token");
+				String accessToken;
+				try {
+					JSONObject jsonObject = new JSONObject(stringBuilder.toString());
 
-				session = ((HttpServletRequest) request).getSession();
-				session.setAttribute("access_token", accessToken);
-				((HttpServletResponse) response).sendRedirect("http://localhost:8080/SpagoBI/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE");
+					accessToken = jsonObject.getString("access_token");
+					session = ((HttpServletRequest) request).getSession();
+					session.setAttribute("access_token", accessToken);
+					((HttpServletResponse) response).sendRedirect("http://localhost:8080/SpagoBI/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE");
+				} catch (JSONException e) {
+					logger.error(e.getMessage(), e);
+					throw new SpagoBIRuntimeException("Error while trying to read JSon object containing access token", e);
+				} finally {
+					reader.close();
+					is.close();
+					connection.disconnect();
+				}
 			}
 		} else {
 			// pass the request along the filter chain

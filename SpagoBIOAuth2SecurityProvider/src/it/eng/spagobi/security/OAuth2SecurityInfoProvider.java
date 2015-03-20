@@ -8,7 +8,10 @@ package it.eng.spagobi.security;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
@@ -18,14 +21,12 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -40,7 +41,7 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 	// Token for access admin information in fi-ware
 	private static String token = null;
 	// It contains data about the application, such its name and its roles
-	private static JsonObject jsonApplicationData = null;
+	private static JSONObject jsonApplicationData = null;
 	private static List<String> tenants = null;
 
 	@Override
@@ -51,22 +52,28 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 		getTenants();
 
 		List<Role> roles = new ArrayList<Role>();
-		JsonArray jsonRolesArray = jsonApplicationData.getJsonArray("roles");
+		try {
+			JSONArray jsonRolesArray = jsonApplicationData.getJSONArray("roles");
 
-		String name;
-		for (JsonValue jsonValue : jsonRolesArray) {
-			name = ((JsonObject) jsonValue).getString("name");
-			if (!name.equals("Provider") && !name.equals("Purchaser")) {
-				Role role = new Role(name, name);
-				role.setOrganization("SPAGOBI");
-				roles.add(role);
+			String name;
+			for (int i = 0; i < jsonRolesArray.length(); i++) {
+				name = jsonRolesArray.getJSONObject(i).getString("name");
 
-				for (String tenant : tenants) {
-					role = new Role(name, name);
-					role.setOrganization(tenant);
+				if (!name.equals("Provider") && !name.equals("Purchaser")) {
+					Role role = new Role(name, name);
+					role.setOrganization("SPAGOBI");
 					roles.add(role);
+
+					for (String tenant : tenants) {
+						role = new Role(name, name);
+						role.setOrganization(tenant);
+						roles.add(role);
+					}
 				}
 			}
+		} catch (JSONException e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIRuntimeException("Error while trying to read JSon array containing the list of roles", e);
 		}
 		logger.debug("OUT");
 		return roles;
@@ -95,7 +102,8 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 		tenants = new ArrayList<String>();
 
 		HttpsURLConnection connection = null;
-		JsonReader jsonReader = null;
+		InputStream is = null;
+		BufferedReader reader = null;
 		try {
 			URL url = new URL("https://account.lab.fiware.org/applications/" + applicationName + "/actors?auth_token=" + token);
 			connection = (HttpsURLConnection) url.openConnection();
@@ -104,16 +112,29 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			connection.setConnectTimeout(10000);
 			connection.setReadTimeout(10000);
 
-			jsonReader = Json.createReader(connection.getInputStream());
-			JsonArray actorList = jsonReader.readObject().getJsonArray("actors");
+			is = connection.getInputStream();
+			reader = new BufferedReader(new InputStreamReader(is));
+			StringBuilder stringBuilder = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				stringBuilder.append(line);
+			}
 
-			for (JsonValue jsonValue : actorList) {
-				if (((JsonObject) jsonValue).getString("actor_type").equals("Group")) {
-					tenants.add(((JsonObject) jsonValue).getString("name"));
+			JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+			JSONArray actorList = jsonObject.getJSONArray("actors");
+
+			JSONObject obj;
+			for (int i = 0; i < actorList.length(); i++) {
+				obj = actorList.getJSONObject(i);
+				if (obj.getString("actor_type").equals("Group")) {
+					tenants.add(obj.getString("name"));
 				}
 			}
 
 			return tenants;
+		} catch (JSONException e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIRuntimeException("Error while trying to read JSon array containing the list of tenants", e);
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new SpagoBIRuntimeException("Error while trying to obtain tenants' informations from fi-ware", e);
@@ -123,8 +144,16 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			if (connection != null) {
 				connection.disconnect();
 			}
-			if (jsonReader != null) {
-				jsonReader.close();
+			try {
+				if (reader != null) {
+					reader.close();
+				}
+				if (is != null) {
+					is.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
@@ -138,7 +167,8 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			}
 
 			HttpsURLConnection connection = null;
-			JsonReader jsonReader = null;
+			InputStream is = null;
+			BufferedReader reader = null;
 			try {
 				URL url = new URL("https://account.lab.fiware.org/applications/" + applicationName + ".json?auth_token=" + token);
 				connection = (HttpsURLConnection) url.openConnection();
@@ -147,8 +177,18 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 				connection.setConnectTimeout(10000);
 				connection.setReadTimeout(10000);
 
-				jsonReader = Json.createReader(connection.getInputStream());
-				jsonApplicationData = jsonReader.readObject();
+				is = connection.getInputStream();
+				reader = new BufferedReader(new InputStreamReader(is));
+				StringBuilder stringBuilder = new StringBuilder();
+				String line;
+				while ((line = reader.readLine()) != null) {
+					stringBuilder.append(line);
+				}
+
+				jsonApplicationData = new JSONObject(stringBuilder.toString());
+			} catch (JSONException e) {
+				logger.error(e.getMessage(), e);
+				throw new SpagoBIRuntimeException("Error while trying to retrive JSon object containing application's data", e);
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIRuntimeException("Error while trying to obtain application's informations from fi-ware", e);
@@ -158,15 +198,23 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 				if (connection != null) {
 					connection.disconnect();
 				}
-				if (jsonReader != null) {
-					jsonReader.close();
+				try {
+					if (reader != null) {
+						reader.close();
+					}
+					if (is != null) {
+						is.close();
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}
 
 	}
 
-	// It loads the authentication credentials used for retrieving the application's information and retrieve the token for the admin user
+	// It loads the authentication credentials used for retrieving the application's information and it retrieves the token for the admin user
 	private static void loadConfigs() {
 		logger.debug("IN");
 
@@ -174,7 +222,8 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 		String configFile = "it.eng.spagobi.security.OAuth2.configs";
 
 		HttpsURLConnection connection = null;
-		JsonReader jsonReader = null;
+		InputStream is = null;
+		BufferedReader reader = null;
 		try {
 			resourceBundle = ResourceBundle.getBundle(configFile);
 
@@ -218,10 +267,19 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			out.write(body);
 			out.close();
 
-			jsonReader = Json.createReader(connection.getInputStream());
-			JsonObject jsonObject = jsonReader.readObject();
+			is = connection.getInputStream();
+			reader = new BufferedReader(new InputStreamReader(is));
+			StringBuilder stringBuilder = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				stringBuilder.append(line);
+			}
 
+			JSONObject jsonObject = new JSONObject(stringBuilder.toString());
 			token = jsonObject.getString("token");
+		} catch (JSONException e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIRuntimeException("Error while trying to read JSon object containing access token", e);
 		} catch (MissingResourceException e) {
 			logger.error(e.getMessage(), e);
 			throw new SpagoBIRuntimeException("Impossible to find configurations file [" + configFile + "]", e);
@@ -234,8 +292,16 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			if (connection != null) {
 				connection.disconnect();
 			}
-			if (jsonReader != null) {
-				jsonReader.close();
+			try {
+				if (reader != null) {
+					reader.close();
+				}
+				if (is != null) {
+					is.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

@@ -9,7 +9,10 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,13 +20,12 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -38,19 +40,27 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 
 		SpagoBIUserProfile profile;
 		HttpsURLConnection connection = null;
-		JsonReader jsonReader = null;
+		InputStream is = null;
+		BufferedReader reader = null;
 		try {
 			URL url = new URL("https://account.lab.fiware.org/user?access_token=" + userId);
 			connection = (HttpsURLConnection) url.openConnection();
 			connection.setConnectTimeout(10000);
 			connection.setReadTimeout(10000);
 
-			jsonReader = Json.createReader(connection.getInputStream());
-			JsonObject jsonObject = jsonReader.readObject();
+			is = connection.getInputStream();
+			reader = new BufferedReader(new InputStreamReader(is));
+			StringBuilder stringBuilder = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				stringBuilder.append(line);
+			}
+
+			JSONObject jsonObject = new JSONObject(stringBuilder.toString());
 
 			profile = new SpagoBIUserProfile();
-			profile.setUniqueIdentifier(Integer.toString(jsonObject.getInt("id")));
-			profile.setUserId(Integer.toString(jsonObject.getInt("id")));
+			profile.setUniqueIdentifier(userId); // The OAuth2 token
+			profile.setUserId(Integer.toString(jsonObject.getInt("id"))); // The id inside fiware
 			profile.setUserName(jsonObject.getString("displayName"));
 			profile.setOrganization("SPAGOBI");
 
@@ -70,30 +80,30 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 
 			profile.setIsSuperadmin(email.equals(adminEmail.toLowerCase()));
 
-			JsonArray jsonRolesArray = jsonObject.getJsonArray("roles");
+			JSONArray jsonRolesArray = jsonObject.getJSONArray("roles");
 			List<String> roles = new ArrayList<String>();
 
 			// Read roles
 			String name;
-			for (int i = 0; i < jsonRolesArray.size(); i++) {
-				name = jsonRolesArray.getJsonObject(i).getString("name");
+			for (int i = 0; i < jsonRolesArray.length(); i++) {
+				name = jsonRolesArray.getJSONObject(i).getString("name");
 				if (!name.equals("Provider") && !name.equals("Purchaser"))
 					roles.add(name);
 			}
 
 			// If no roles were found, search for roles in the organizations
 			if (roles.size() == 0) {
-				JsonArray organizations = jsonObject.getJsonArray("organizations");
+				JSONArray organizations = jsonObject.getJSONArray("organizations");
 
-				if (organizations != null) {
+				if (organizations != null) { // TODO: more than one organization
 					// For each organization
-					for (int i = 0; i < organizations.size(); i++) {
-						String organizationName = organizations.getJsonObject(i).getString("displayName");
-						jsonRolesArray = organizations.getJsonObject(i).getJsonArray("roles");
+					for (int i = 0; i < organizations.length() && roles.size() == 0; i++) {
+						String organizationName = organizations.getJSONObject(i).getString("displayName");
+						jsonRolesArray = organizations.getJSONObject(i).getJSONArray("roles");
 
 						// For each role in the current organization
-						for (int k = 0; k < jsonRolesArray.size(); k++) {
-							name = jsonRolesArray.getJsonObject(k).getString("name");
+						for (int k = 0; k < jsonRolesArray.length(); k++) {
+							name = jsonRolesArray.getJSONObject(k).getString("name");
 
 							if (!name.equals("Provider") && !name.equals("Purchaser")) {
 								profile.setOrganization(organizationName);
@@ -113,6 +123,9 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			profile.setAttributes(attributes);
 
 			return profile;
+		} catch (JSONException e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIRuntimeException("Error while trying to read JSon object containing user profile's information", e);
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new SpagoBIRuntimeException("Error while trying to obtain user information from fi-ware", e);
@@ -122,8 +135,16 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			if (connection != null) {
 				connection.disconnect();
 			}
-			if (jsonReader != null) {
-				jsonReader.close();
+			try {
+				if (reader != null) {
+					reader.close();
+				}
+				if (is != null) {
+					is.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
