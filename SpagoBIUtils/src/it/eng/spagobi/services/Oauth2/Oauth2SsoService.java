@@ -16,25 +16,25 @@ import javax.servlet.http.HttpSession;
 
 public class Oauth2SsoService implements SsoServiceInterface {
 
-	@Override
 	public void validateTicket(String ticket, String userId) throws SecurityException {
 		// TODO Auto-generated method stub
 	}
 
-	@Override
 	public String readTicket(HttpSession session) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return "NA";
 	}
 
-	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 
-		return (String) session.getAttribute("access_token");
+		String userId = (String) session.getAttribute("access_token");
+
+		if (userId == null)
+			userId = request.getParameter(SsoServiceInterface.USER_ID);
+
+		return userId;
 	}
 
-	@Override
 	public String readUserIdentifier(PortletSession session) {
 		// TODO Auto-generated method stub
 		return null;

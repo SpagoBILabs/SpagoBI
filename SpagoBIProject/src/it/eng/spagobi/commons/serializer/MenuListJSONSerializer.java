@@ -260,14 +260,14 @@ public class MenuListJSONSerializer implements Serializer {
 			socialAnalysis.put(ICON_ALIGN, "top");
 			socialAnalysis.put(SCALE, "large");
 			socialAnalysis.put(TARGET, "_self");
-			if (!GeneralUtilities.isSSOEnabled()) {
-				socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "="
-						+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&"
-						+ SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');");
-			} else {
-				socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage()
-						+ "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');");
-			}
+			// if (!GeneralUtilities.isSSOEnabled()) {
+			socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "="
+					+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&"
+					+ SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');");
+			/*
+			 * } else { socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" +
+			 * locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');"); }
+			 */
 			tempMenuList.put(socialAnalysis);
 		}
 
@@ -444,14 +444,13 @@ public class MenuListJSONSerializer implements Serializer {
 				if (url.contains("${SPAGOBI_SOCIAL_ANALYSIS_URL}")) {
 					url = url.substring(0, url.length() - 1);
 					url = url.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
-					if (!GeneralUtilities.isSSOEnabled()) {
-						url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&"
-								+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry()
-								+ "'";
-					} else {
-						url = url + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "="
-								+ locale.getCountry() + "'";
-					}
+					// if (!GeneralUtilities.isSSOEnabled()) {
+					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&"
+							+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
+					/*
+					 * } else { url = url + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" +
+					 * locale.getCountry() + "'"; }
+					 */
 				}
 
 				temp2.put(HREF, url + ", '" + path + "')");
