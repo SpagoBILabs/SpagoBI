@@ -72,6 +72,10 @@ public interface IStatement {
 
 	public void setParameters(Map parameters);
 
+	public Map getProfileAttributes();
+
+	public void setProfileAttributes(Map profileAttributes);
+
 	public String getNextAlias(Map entityAliasesMaps);
 
 	// public String getFieldAlias(String rootEntityAlias, String queryName);

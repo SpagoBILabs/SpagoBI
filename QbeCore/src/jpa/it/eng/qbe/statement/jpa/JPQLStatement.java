@@ -56,11 +56,19 @@ public class JPQLStatement extends AbstractStatement {
 
 		if (getParameters() != null) {
 			try {
-				queryStr = StringUtils.replaceParameters(queryStr.trim(), "P", getParameters());
+				queryStr = StringUtils.replaceParameters(queryStr.trim(), "$P", getParameters());
 			} catch (IOException e) {
 				throw new SpagoBIRuntimeException("Impossible to set parameters in query", e);
 			}
+		}
 
+		if (getProfileAttributes() != null) {
+			try {
+				queryStr = StringUtils.replaceParameters(queryStr.trim(), "$", getProfileAttributes());
+
+			} catch (IOException e) {
+				throw new SpagoBIRuntimeException("Impossible to set profile attributes in query", e);
+			}
 		}
 
 		setQueryString(queryStr);
@@ -83,7 +91,7 @@ public class JPQLStatement extends AbstractStatement {
 		String havingClause = null;
 		// String viewRelation = null;
 
-		Assert.assertNotNull(query, "Input  parameter 'query' cannot be null");
+		Assert.assertNotNull(query, "Input parameter 'query' cannot be null");
 		Assert.assertTrue(!query.isEmpty(), "Input query cannot be empty (i.e. with no selected fields)");
 
 		// let's start with the query at hand

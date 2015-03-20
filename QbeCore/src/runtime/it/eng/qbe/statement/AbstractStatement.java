@@ -30,6 +30,8 @@ public abstract class AbstractStatement implements IStatement {
 
 	Map parameters;
 
+	Map profileAttributes;
+
 	String queryString;
 
 	/** The max results. */
@@ -89,6 +91,14 @@ public abstract class AbstractStatement implements IStatement {
 
 	public void setParameters(Map parameters) {
 		this.parameters = parameters;
+	}
+
+	public Map getProfileAttributes() {
+		return profileAttributes;
+	}
+
+	public void setProfileAttributes(Map profileAttributes) {
+		this.profileAttributes = profileAttributes;
 	}
 
 	/*
