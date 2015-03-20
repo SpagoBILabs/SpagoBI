@@ -113,7 +113,14 @@ public class StringUtils {
 			}
 			String parameterValue = parameters.get(parameterName) == null ? null : parameters.get(parameterName).toString();
 			parameterValue = escapeHQL(parameterValue);
-			result = result.replaceAll(parameterTypeIdentifier + "\\{" + parameterName + "\\}", parameterValue);
+
+			// split case because $ is a character specific of regular
+			// expressions
+			if (parameterTypeIdentifier.startsWith("$")) {
+				result = result.replaceAll("\\" + parameterTypeIdentifier + "\\{" + parameterName + "\\}", parameterValue);
+			} else {
+				result = result.replaceAll(parameterTypeIdentifier + "\\{" + parameterName + "\\}", parameterValue);
+			}
 		}
 
 		return result;
@@ -142,6 +149,10 @@ public class StringUtils {
 			if (endIndex == -1)
 				throw new IOException("Malformed parameter: " + str.substring(beginIndex));
 			String parameter = str.substring(beginIndex + 2, endIndex);
+			// for different syntaxes
+			if (parameter.startsWith("{")) {
+				parameter = parameter.substring(1);
+			}
 			parameters.add(parameter);
 			fromIndex = endIndex;
 		}
