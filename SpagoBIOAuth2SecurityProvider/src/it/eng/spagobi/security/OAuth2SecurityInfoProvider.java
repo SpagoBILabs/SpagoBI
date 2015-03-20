@@ -236,11 +236,11 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			final String proxyUser = resourceBundle.getString("PROXY_USER");
 			final String proxyPassword = resourceBundle.getString("PROXY_PASSWORD");
 
-			if (proxyUrl != null && proxyPort != null) {
+			if (!proxyUrl.equals("")) {
 				System.setProperty("https.proxyHost", proxyUrl);
 				System.setProperty("https.proxyPort", proxyPort);
 
-				if (proxyUser != null && proxyPassword != null) {
+				if (!proxyUser.equals("")) {
 					Authenticator authenticator = new Authenticator() {
 
 						@Override
@@ -282,7 +282,7 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			throw new SpagoBIRuntimeException("Error while trying to read JSon object containing access token", e);
 		} catch (MissingResourceException e) {
 			logger.error(e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Impossible to find configurations file [" + configFile + "]", e);
+			throw new SpagoBIRuntimeException("Impossible to find the specified resource inside the configurations file [" + configFile + "]", e);
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new SpagoBIRuntimeException("Error while trying to contact fi-ware", e);
