@@ -16,5 +16,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtilsJSON"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIDAO"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

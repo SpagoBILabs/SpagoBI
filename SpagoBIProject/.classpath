@@ -18,6 +18,5 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIOAuth2SecurityProvider"/>
 	<classpathentry kind="output" path="web-content/WEB-INF/classes"/>
 </classpath>

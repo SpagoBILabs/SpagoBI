@@ -7,5 +7,8 @@
         <dependent-module archiveName="SpagoBIUtilsJSON.jar" deploy-path="/" handle="module:/resource/SpagoBIUtilsJSON/SpagoBIUtilsJSON">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="SpagoBIDAO.jar" deploy-path="/" handle="module:/resource/SpagoBIDAO/SpagoBIDAO">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
     </wb-module>
 </project-modules>

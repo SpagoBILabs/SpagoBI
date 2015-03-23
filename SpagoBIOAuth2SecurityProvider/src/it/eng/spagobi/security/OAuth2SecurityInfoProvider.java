@@ -6,6 +6,8 @@
 package it.eng.spagobi.security;
 
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.BufferedReader;
@@ -13,8 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,14 +42,14 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 	private static String token = null;
 	// It contains data about the application, such its name and its roles
 	private static JSONObject jsonApplicationData = null;
-	private static List<String> tenants = null;
 
 	@Override
 	public List getRoles() {
 		logger.debug("IN");
 		// Initialize all the static properties if they have not been already initialized
 		calculateJSonApplicationData();
-		getTenants();
+
+		List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
 
 		List<Role> roles = new ArrayList<Role>();
 		try {
@@ -59,14 +59,11 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			for (int i = 0; i < jsonRolesArray.length(); i++) {
 				name = jsonRolesArray.getJSONObject(i).getString("name");
 
+				Role role;
 				if (!name.equals("Provider") && !name.equals("Purchaser")) {
-					Role role = new Role(name, name);
-					role.setOrganization("SPAGOBI");
-					roles.add(role);
-
-					for (String tenant : tenants) {
+					for (SbiTenant tenant : tenants) {
 						role = new Role(name, name);
-						role.setOrganization(tenant);
+						role.setOrganization(tenant.getName());
 						roles.add(role);
 					}
 				}
@@ -86,76 +83,6 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 		attributes.add("email");
 
 		return attributes;
-	}
-
-	public static List<String> getTenants() {
-		logger.debug("IN");
-		if (tenants != null) {
-			logger.debug("OUT");
-			return tenants;
-		}
-
-		if (token == null) {
-			loadConfigs();
-		}
-
-		tenants = new ArrayList<String>();
-
-		HttpsURLConnection connection = null;
-		InputStream is = null;
-		BufferedReader reader = null;
-		try {
-			URL url = new URL("https://account.lab.fiware.org/applications/" + applicationName + "/actors?auth_token=" + token);
-			connection = (HttpsURLConnection) url.openConnection();
-			connection.setRequestMethod("GET");
-
-			connection.setConnectTimeout(10000);
-			connection.setReadTimeout(10000);
-
-			is = connection.getInputStream();
-			reader = new BufferedReader(new InputStreamReader(is));
-			StringBuilder stringBuilder = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				stringBuilder.append(line);
-			}
-
-			JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-			JSONArray actorList = jsonObject.getJSONArray("actors");
-
-			JSONObject obj;
-			for (int i = 0; i < actorList.length(); i++) {
-				obj = actorList.getJSONObject(i);
-				if (obj.getString("actor_type").equals("Group")) {
-					tenants.add(obj.getString("name"));
-				}
-			}
-
-			return tenants;
-		} catch (JSONException e) {
-			logger.error(e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while trying to read JSon array containing the list of tenants", e);
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while trying to obtain tenants' informations from fi-ware", e);
-		} finally {
-			logger.debug("OUT");
-
-			if (connection != null) {
-				connection.disconnect();
-			}
-			try {
-				if (reader != null) {
-					reader.close();
-				}
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 	}
 
 	// It looks for informations about the application, such its name and its roles and initialize jsonApplicationData with them
@@ -230,27 +157,6 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			applicationName = resourceBundle.getString("APPLICATION_NAME");
 			adminEmail = resourceBundle.getString("ADMIN_EMAIL");
 			adminPassword = resourceBundle.getString("ADMIN_PASSWORD");
-
-			final String proxyUrl = resourceBundle.getString("PROXY_URL");
-			final String proxyPort = resourceBundle.getString("PROXY_PORT");
-			final String proxyUser = resourceBundle.getString("PROXY_USER");
-			final String proxyPassword = resourceBundle.getString("PROXY_PASSWORD");
-
-			if (!proxyUrl.equals("")) {
-				System.setProperty("https.proxyHost", proxyUrl);
-				System.setProperty("https.proxyPort", proxyPort);
-
-				if (!proxyUser.equals("")) {
-					Authenticator authenticator = new Authenticator() {
-
-						@Override
-						public PasswordAuthentication getPasswordAuthentication() {
-							return (new PasswordAuthentication(proxyUser, proxyPassword.toCharArray()));
-						}
-					};
-					Authenticator.setDefault(authenticator);
-				}
-			}
 
 			URL url = new URL("https://account.lab.fiware.org/api/v1/tokens.json");
 
