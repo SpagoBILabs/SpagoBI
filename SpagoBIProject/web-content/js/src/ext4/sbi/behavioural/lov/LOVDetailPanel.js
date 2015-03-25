@@ -40,7 +40,66 @@ Ext.define
 	    	
 	    	this.initFields();	
 	    	
-	    	this.items = [ this.panel1, this.panel2 ];
+	    	//this.aa = Ext.create("Sbi.behavioural.lov.TestLovPanel2",{});
+	    		    	
+	    	//var tt = this;
+	    	
+	    	/*
+	    	var previewPanel = Ext.create("Ext.Paenl",{
+	    		htm: "text",
+	    		layout:"fit"
+	    	});
+	    	
+	    	function updatePanel(){
+	    		this.removeAll();
+	    		this.add(Ext.create(""TextLoVPanel,[sss]))
+	    	}
+	    	
+	    	
+	    	
+	    	steps: 
+	    		1) implementation of getDetails (to je kod mene openTestPage() metoda) of detail panel: output should be an object containing the provider
+	    		2) implementation of the test button:
+	    				a) getDeatils
+	    				b) updatePanel passing the details (so creates the lovConfig for the TestLovPanel )
+	    		3) start to integrate the TestLovPanel
+	    	*/
+	    	
+	    	this.resultPanel = Ext.create
+	    	(
+    			"Ext.panel.Panel",
+    			
+    			{
+    				html: "text",
+    				layout: "fit"
+    			}
+	    	);
+	    	
+	    	this.tabPanel = Ext.create
+	    	(
+    			'Ext.tab.Panel', 
+    			
+    			{
+		    		width: 600,
+		    		height: 600,
+		    		id: "asd",
+		    		
+		    	    items: 
+	    	    	[	
+	    	    	 	{
+	    	    	 		items: [ this.panel1, this.panel2, this.panel3 ],
+	    	    	 		title: "LOV Form"
+	    	    	 	}, 
+	    	    	 	
+	    	    	 	{
+	    	    	 		title: 'LOV Results',
+	    	    	 		items: [ this.resultPanel ]
+	    	    	 	}
+		    	 	]
+    			}
+			);
+	    	
+	    	this.items = [ this.tabPanel ];
 	    	
 	    	this.tbar = Sbi.widget.toolbar.StaticToolbarBuilder.buildToolbar
 	    	(
@@ -102,10 +161,39 @@ Ext.define
 			);
     	},
     	
+    	updatePanel: function(contextName, lovConfig, lovProvider)
+    	{
+    		console.log("USAO U UPDATE PANEL");
+    		
+    		console.log(lovProvider);
+    		
+    		this.resultPanel.removeAll();
+    		
+    		this.resultPanel.add
+    		(
+				Ext.create
+				(
+					"Sbi.behavioural.lov.TestLovPanel2", 
+					
+					{
+						contextName: contextName, 
+						lovConfig: lovConfig
+					}
+				)
+			);
+    		
+    		this.resultPanel.update(); 
+    		
+    		console.log(this.resultPanel);  		
+    		console.log("----*");    		
+    	},    	
+    	
     	
     	initFields: function()
     	{
-    		var globalScope = this;
+    		var globalScope = this;    		    		
+    		
+    		//this.testLov = Ext.create("Sbi.behavioural.lov.TestLovPanel2",{});
     		
     		this.lovId = Ext.create
     		(
@@ -238,7 +326,7 @@ Ext.define
 	    	        
 	    	        listeners: 
 			        {
-			            change: function() 
+			            select: function() 
 			            {
 			                globalScope.selectedInputType(this.getValue());
 			            }
@@ -315,7 +403,7 @@ Ext.define
 	    	        name: "DATASOURCE_ID",
 	    	        id: "DATA_SOURCE_COMBO",
 	    	        displayField:'DATASOURCE_LABEL',
-	    	        valueField:'DESCRIPTION',
+	    	        valueField:'DATASOURCE_LABEL',
 	    	        padding: "10 0 0 0",
 	    	        editable: false,
 	    	        allowBlank: false
@@ -335,20 +423,6 @@ Ext.define
 				}
     		);
     		
-    	
-    		this.panel2 = Ext.create
-    		(
-    			"Ext.panel.Panel",
-    			
-    			{
-    				width: "100%",
-    				padding: "10 0 0 0",
-    				
-    				items: 
-					[ this.dataSourceCombo, this.dataSourceQuery ]    				
-    			}
-    		);
-    		
     		    		
     		Ext.define
     		(
@@ -356,11 +430,10 @@ Ext.define
 				
 				{
 					extend: 'Ext.data.Model',
-					fields: [ "VALUE_NM", "VALUE_DS", "VALUE_ID" ]
+					fields: [ "VALUE_NM", "VALUE_DS", "VALUE_ID", "VALUE_CD" ]
 				}
 			);
-        	
-    		
+        	    		
         	var scriptTypeStore = Ext.create
         	(
     			'Ext.data.Store',
@@ -390,10 +463,9 @@ Ext.define
     			
     			function(scriptTypeStore)
     			{ 
+    				//console.log(scriptTypeStore);
     			}
 			);
-    		
-        	var globalScope = this;
         	
     		this.scriptTypeCombo = new Ext.create
     		(
@@ -401,17 +473,20 @@ Ext.define
 	    		
 				{
 	    			fieldLabel: LN('sbi.behavioural.lov.details.scriptType'),
-	    	        store: scriptTypeStore,
+	    	        store: scriptTypeStore,	    	        
+	    	        name: "SCRIPT_TYPE",
 	    	        id: "SCRIPT_TYPE_COMBO",
 	    	        displayField:'VALUE_NM',
-	    	        valueField:'VALUE_CD',
+	    	        valueField:'VALUE_NM',
 	    	        editable: false,
 	    	        allowBlank: false,
+	    	        padding: "10 0 10 0",
 	    	        
 	    	        listeners: 
 			        {
 			            change: function() 
 			            {
+			            	console.log("AAAA");
 			            }
 			        }
 	    	    }
@@ -419,35 +494,62 @@ Ext.define
     		
     		this.scriptQuery = Ext.create
     		(
-				"Ext.form.field.Text",
+				"Ext.form.field.TextArea",
 				
 				{
 					id: "SCRIPT_QUERY",
+					fieldLabel: LN('sbi.behavioural.lov.details.scriptDescription'),
 					height: 100,
-					width: 200,
-					padding: '0 100 50'
+					width: 500,
+					padding: '10 0 10 0'
 				}
     		);
+    		
+    		this.panel2 = Ext.create
+    		(
+    			"Ext.panel.Panel",
+    			
+    			{
+    				width: "100%",
+    				padding: "10 0 0 0",
+    				
+    				items: 
+					[ this.dataSourceCombo, this.dataSourceQuery ]    				
+    			}
+    		);
+    		
+    		this.panel3 = Ext.create
+    		(
+    			"Ext.panel.Panel",
+    			
+    			{
+    				width: "100%",
+    				padding: "10 0 0 0",
+    				
+    				items: 
+					[ this.scriptTypeCombo, this.scriptQuery  ]    				
+    			}
+    		);
+    		
+    		
     	},
     	
     	
     	selectedInputType: function(inputTypeCD)
 		{    			
 			var type = -1;
+			//this.panel2.show();
+			
+			this.panel2.hide();
+			this.panel3.hide();
 			
 			if (inputTypeCD == "QUERY")
 			{
 				this.panel2.show();
-								
-				if (this.lovId.value == 0)
-				{					
-//					this.dataSourceCombo.setValue("");
-//					this.dataSourceQuery.setValue("");
-				}
 			}
-			else
+			else if (inputTypeCD == "SCRIPT")
 			{
-				this.panel2.hide();
+				this.panel3.show();
 			}
 			
 		},
@@ -461,14 +563,17 @@ Ext.define
     	setFormState: function(values)
     	{
     		var v = values;
-    		console.log("PROVERA ID-eva");
-			console.log(values.LOV_ID);
-			console.log(values.I_TYPE_ID);
+    		
+    		this.selectedInputType(values.I_TYPE_CD);
+    		
+//    		console.log("PROVERA ID-eva");
+//			console.log(values.LOV_ID);
+//			console.log(values.I_TYPE_ID);
     		/* *** 	Problem solved: Keeping panel 2 details (combo and text area) from 
     		 * 		the old record in the new one. */
     		// Needed for differentiating between old (existing) record and the new one
     		if (values.LOV_ID != 0)
-    		{   
+    		{       			
     			this.lovInputTypeCombo.setValue(values.I_TYPE_CD);
     			    			
     			var query = values.LOV_PROVIDER;
@@ -509,7 +614,7 @@ Ext.define
     		var getLovLabel = this.lovLabel.value;
     		
     		if (this.lovInputTypeCombo.getValue() == "QUERY")
-			{    			
+			{    			    			
     			var getLovProvider = "<QUERY>" + "<CONNECTION>" + this.dataSourceCombo.getValue() + "</CONNECTION>" + "<STMT>" + this.dataSourceQuery.getValue() + "</STMT>" + "<VALUE-COLUMN>"
 				+ "region_id" + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + "region_id" + "</DESCRIPTION-COLUMN>"
 				+ "<VISIBLE-COLUMNS>" + "region_id" + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
