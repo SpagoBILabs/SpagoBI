@@ -113,6 +113,7 @@ Sbi.settings.execution = {
 			, fieldLabelWidth: 100
 			, moveInMementoUsingCtrlKey: false
 			, maxFieldHeight : 300  // max height to be available for rendering an input field; in case the field exceeds, scroll bars will appear
+			, labelSeparator : ':'   // separator between the driver's label and the input field, e.g. ':', an empty string or others...
 		}
 
 		, shortcutsPanel: {
