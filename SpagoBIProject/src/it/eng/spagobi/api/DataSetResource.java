@@ -573,6 +573,23 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	// Start CKAN integration by Alessandro P
+	// @GET
+	// @Path("/ckan")
+	// @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	// public String getCkanDataSet(@QueryParam("typeDoc") String typeDoc) {
+	// logger.debug("IN");
+	// try {
+	// List<IDataSet> dataSets = getDatasetManagementAPI().getCkanDataSet();
+	// return serializeDataSets(dataSets, typeDoc);
+	// } catch (Throwable t) {
+	// throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+	// } finally {
+	// logger.debug("OUT");
+	// }
+	// }
+	// End integration
+
 	@GET
 	@Path("/owned")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

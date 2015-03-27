@@ -25,7 +25,9 @@
 		<MAP_REST_SERVICE serviceUrl="/documents/share" businessProcess="publicFunctionality" />
 		<MAP_REST_SERVICE serviceUrl="/documents/myAnalysisDocsList" businessProcess="CreateWorksheetFromDatasetUserFunctionality" />  
 	
-		<MAP_REST_SERVICE serviceUrl="/geoexport/jpg" businessProcess="publicFunctionality" />	
+		<MAP_REST_SERVICE serviceUrl="/geoexport/jpg" businessProcess="publicFunctionality" />
+		
+		<MAP_REST_SERVICE serviceUrl="/ckan-management/download" businessProcess="publicFunctionality" />
 
 		<MAP_REST_SERVICE serviceUrl="/certificateddatasets/getflatdataset" businessProcess="DocumentDevManagement" />
         <MAP_REST_SERVICE serviceUrl="/certificateddatasets" businessProcess="CreateWorksheetFromDatasetUserFunctionality" />  
