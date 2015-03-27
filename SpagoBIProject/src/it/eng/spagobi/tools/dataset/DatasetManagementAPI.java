@@ -732,6 +732,22 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	// Start CKAN integration by Alessandro P
+	// public List<IDataSet> getCkanDataSet() {
+	// try {
+	// List<IDataSet> dataSets = getDataSetDAO().loadCkanDataSets();
+	// for (IDataSet dataSet : dataSets) {
+	// checkQbeDataset(dataSet);
+	// }
+	// return dataSets;
+	// } catch (Throwable t) {
+	// throw new RuntimeException("An unexpected error occured while executing method", t);
+	// } finally {
+	// logger.debug("OUT");
+	// }
+	// }
+	// End integration
+
 	public List<IDataSet> getOwnedDataSet() {
 		return getOwnedDataSet(null);
 	}

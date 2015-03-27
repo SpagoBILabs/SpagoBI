@@ -13,9 +13,6 @@ import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
 import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
@@ -47,6 +44,7 @@ import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
@@ -82,7 +80,6 @@ public class JSONSerializer implements Serializer {
 
 	public JSONSerializer() {
 		mappings = new HashMap();
-
 		mappings.put(DataSource.class, new DataSourceJSONSerializer());
 		mappings.put(DataSourceModel.class, new DataSourceJSONSerializer());
 		mappings.put(Domain.class, new DomainJSONSerializer());
@@ -114,6 +111,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put(ScriptDataSet.class, new DataSetJSONSerializer());
 		mappings.put(WebServiceDataSet.class, new DataSetJSONSerializer());
 		mappings.put(FileDataSet.class, new DataSetJSONSerializer());
+		mappings.put(CkanDataSet.class, new DataSetJSONSerializer());
 
 		mappings.put(RoleMetaModelCategory.class, new RoleMetaModelCategoryJSONSerializer());
 
@@ -147,26 +145,17 @@ public class JSONSerializer implements Serializer {
 		mappings.put(Job.class, new JobJSONSerializer());
 		mappings.put(Trigger.class, new TriggerJSONSerializer());
 
-		mappings.put(Parameter.class, new ParametersJSONSerialize());
-		mappings.put(ParameterUse.class, new ParametersUseJSONSerialize());
-		mappings.put(ModalitiesValue.class, new ModalitiesValuesJSONSerializer());
-		
 	}
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		Object result = null;
 
 		try {
-
 			if (o instanceof Collection) {
 				JSONArray r = new JSONArray();
-
 				Collection c = (Collection) o;
-
 				Iterator it = c.iterator();
-
 				while (it.hasNext()) {
-					// For LOV objects (ModalitiesValue) this will put JSONObjects into JSONArray
 					r.put(serialize(it.next(), locale));
 				}
 				result = r;
@@ -184,6 +173,7 @@ public class JSONSerializer implements Serializer {
 		} finally {
 
 		}
+
 		return result;
 	}
 

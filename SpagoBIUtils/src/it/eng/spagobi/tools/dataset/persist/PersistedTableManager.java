@@ -172,8 +172,12 @@ public class PersistedTableManager {
 						Integer intValue = Integer.valueOf((String) field.getValue());
 						field.setValue(intValue);
 					} else if (fmd.getType().toString().contains("Double")) {
-						Double doubleValue = Double.valueOf((String) field.getValue());
-						field.setValue(doubleValue);
+						try {
+							Double doubleValue = Double.valueOf((String) field.getValue());
+							field.setValue(doubleValue);
+						} catch (Throwable t) {
+							System.out.println(field.getValue());
+						}
 					}
 
 				}

@@ -142,6 +142,7 @@
 <DOMAIN valueCd="groovy" valueNm="Groovy" domainCd="SCRIPT_TYPE" domainNm="Script Type" valueDs="Script Type"/>
 <DOMAIN valueCd="ECMAScript" valueNm="Javascript" domainCd="SCRIPT_TYPE" domainNm="Script Type" valueDs="Script Type"/>
 <DOMAIN valueCd="File" valueNm="SbiFileDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiFileDataSet"/>
+<DOMAIN valueCd="Ckan" valueNm="SbiCkanDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiCkanDataSet"/>
 <DOMAIN valueCd="Query" valueNm="SbiQueryDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiQueryDataSet"/>
 <DOMAIN valueCd="Java Class" valueNm="SbiJClassDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiJClassDataSet"/>
 <DOMAIN valueCd="Web Service" valueNm="SbiWSDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiWSDataSet"/>

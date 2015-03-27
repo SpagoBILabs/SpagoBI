@@ -38,10 +38,12 @@ import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.metamodel.SiblingsFileWrapper;
 import it.eng.spagobi.rest.annotations.ToValidate;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.dataproxy.CkanDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -100,9 +102,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini
- *          (monica.franceschini@eng.it)
- * 
+ * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
+ *
  */
 @Path("/selfservicedataset")
 public class SelfServiceDataSetCRUD {
@@ -142,7 +143,6 @@ public class SelfServiceDataSetCRUD {
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 
 			JSONArray datasetsJSONReturn = putActions(profile, datasetsJSONArray, typeDocWizard);
-
 			JSONReturn.put("root", datasetsJSONReturn);
 
 		} catch (Throwable t) {
@@ -218,7 +218,7 @@ public class SelfServiceDataSetCRUD {
 					String meta = datasetJSON.getString("meta");
 					isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
 				} catch (Exception e) {
-					logger.error("Error during ceck of Geo spatial column", e);
+					logger.error("Error during check of Geo spatial column", e);
 				}
 				if (isGeoDataset)
 					actions.put(georeportAction); // Annotated view map action
@@ -431,8 +431,7 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	/*
-	 * Change the scope of the dataset. If the dataset is private change it to
-	 * public (SHARE) If the dataset is public change it to private (UNSHARE)
+	 * Change the scope of the dataset. If the dataset is private change it to public (SHARE) If the dataset is public change it to private (UNSHARE)
 	 */
 	@POST
 	@Path("/share")
@@ -1134,6 +1133,12 @@ public class SelfServiceDataSetCRUD {
 		IDataSet toReturn = null;
 		if (type.equals(DataSetConstants.DS_QBE)) {
 			toReturn = this.getQbeDataSet(request);
+		} else if (type.equals(DataSetConstants.DS_CKAN)) {
+			if (checkMaxResults) {
+				toReturn = this.getCkanDataSet(request, savingDataset, maxResults);
+			} else {
+				toReturn = this.getCkanDataSet(request, savingDataset);
+			}
 		} else {
 			if (checkMaxResults) {
 				toReturn = this.getFileDataSet(request, savingDataset, maxResults);
@@ -1356,10 +1361,8 @@ public class SelfServiceDataSetCRUD {
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to
-			 * the specified destination file. The directory holding the
-			 * destination file is created if it does not exist. If the
-			 * destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
@@ -1371,7 +1374,111 @@ public class SelfServiceDataSetCRUD {
 				throw new SpagoBIRuntimeException("Cannot move dataset File", e);
 			}
 		}
+	}
 
+	private IDataSet getCkanDataSet(HttpServletRequest request, boolean savingDataset, int maxResults) {
+		IDataSet dataSet = this.getCkanDataSet(request, savingDataset);
+		if (dataSet instanceof CkanDataSet) {
+			CkanDataSet ckanDataSet = ((CkanDataSet) dataSet);
+			ckanDataSet.setMaxResults(maxResults);
+			CkanDataProxy ckanDataProxy = ckanDataSet.getDataProxy();
+			if (ckanDataProxy != null) {
+				ckanDataProxy.setMaxResultsReader(ckanDataSet.getMaxResults());
+			}
+		}
+		return dataSet;
+	}
+
+	private IDataSet getCkanDataSet(HttpServletRequest request, boolean savingDataset) {
+		CkanDataSet toReturn = new CkanDataSet();
+		JSONObject jsonDsConfig = this.getCkanDataSetConfig(request, savingDataset);
+		toReturn.setConfiguration(jsonDsConfig.toString());
+
+		Integer id = -1;
+		String idStr = request.getParameter("id");
+		if (idStr != null && !idStr.equals("")) {
+			id = new Integer(idStr);
+		}
+		String ckanUrl = request.getParameter("ckanUrl");
+		String ckanId = request.getParameter("ckanId");
+		toReturn.setCkanId(ckanId);
+		toReturn.setCkanUrl(ckanUrl);
+		toReturn.setResourcePath(ckanUrl);
+		String label = request.getParameter("label");
+		String fileName = request.getParameter("fileName");
+		String fileType = request.getParameter("fileType");
+		Boolean newFileUploaded = false;
+		if (request.getParameter("fileUploaded") != null) {
+			newFileUploaded = Boolean.valueOf((request.getParameter("fileUploaded")));
+		}
+
+		if (id == -1) {
+
+			if (savingDataset) {
+				// rename and move the file
+				String resourcePath = DAOConfig.getResourcePath();
+				deleteDatasetFile(fileName, resourcePath, fileType);
+				toReturn.setFileName(label + "." + fileType.toLowerCase());
+			}
+		} else {
+			// reading or modifying a existing dataset
+			if (newFileUploaded) {
+				String resourcePath = DAOConfig.getResourcePath();
+				deleteDatasetFile(fileName, resourcePath, fileType);
+				toReturn.setFileName(label + "." + fileType.toLowerCase());
+			}
+		}
+		return toReturn;
+	}
+
+	private JSONObject getCkanDataSetConfig(HttpServletRequest req, boolean savingDataset) {
+		JSONObject jsonDsConfig = new JSONObject();
+		try {
+			String label = req.getParameter("label");
+			String fileName = req.getParameter("fileName");
+			String csvDelimiter = req.getParameter("csvDelimiter");
+			String csvQuote = req.getParameter("csvQuote");
+			String csvEncoding = req.getParameter("csvEncoding");
+			String fileType = req.getParameter("fileType");
+			String skipRows = req.getParameter("skipRows");
+			String limitRows = req.getParameter("limitRows");
+			String xslSheetNumber = req.getParameter("xslSheetNumber");
+			String ckanId = req.getParameter("ckanId");
+			String ckanUrl = req.getParameter("ckanUrl");
+			String scopeCd = DataSetConstants.DS_SCOPE_USER;
+
+			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
+			if (savingDataset) {
+				// when saving the dataset the file associated will get the
+				// dataset label name
+				jsonDsConfig.put(DataSetConstants.FILE_NAME, label + "." + fileType.toLowerCase());
+			} else {
+				jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+			}
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
+			jsonDsConfig.put(DataSetConstants.CKAN_ID, ckanId);
+			jsonDsConfig.put(DataSetConstants.CKAN_URL, ckanUrl);
+			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
+
+		} catch (Exception e) {
+			logger.error("Error while defining dataset configuration. Error: " + e.getMessage());
+			throw new SpagoBIRuntimeException("Error while defining dataset configuration", e);
+		}
+		return jsonDsConfig;
+	}
+
+	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
+		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
+
+		File datasetFile = new File(filePath + fileName);
+		if (datasetFile.exists()) {
+			datasetFile.delete();
+		}
 	}
 
 	private String serializeException(Exception e) throws JSONException {
