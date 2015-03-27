@@ -254,7 +254,9 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
         	
         	flatViewModality: <%= flatViewModality%>,
         	
-        	isSSOEnabled: <%= GeneralUtilities.isSSOEnabled() %>
+        	isSSOEnabled: <%= GeneralUtilities.isSSOEnabled() %>,
+        	
+        	showMessageOnSessionExpired: <%= "TRUE".equalsIgnoreCase(SingletonConfig.getInstance().getConfigValue("SPAGOBI.ON_SESSION_EXPIRED.SHOW_MESSAGE")) %>
         	
         };
     }();
