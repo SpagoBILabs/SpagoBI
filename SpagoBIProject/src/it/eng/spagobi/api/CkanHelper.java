@@ -8,6 +8,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -53,7 +54,7 @@ public class CkanHelper {
 			IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			UserProfile userProfile = (UserProfile) profile;
 			// String ckanApiKey = profile.getCkanConnection().getApiKey();
-			String ckanApiKey = "05e90ca7-d788-47fc-a490-9510213218f7";
+			String ckanApiKey = "740f922c-3929-4715-9273-72210e7982e8";
 
 			String fileURL = request.getParameter("url");
 			String fileName = request.getParameter("id");
@@ -82,16 +83,11 @@ public class CkanHelper {
 	private void initClient(HttpClient httpClient) {
 
 		// Getting proxy properties set as JVM args
-		// String proxyHost = System.getProperty("http.proxyHost");
-		// String proxyPort = System.getProperty("http.proxyPort");
-		// int proxyPortInt = CKANUtils.portAsInteger(proxyPort);
-		// String proxyUsername = System.getProperty("http.proxyUsername");
-		// String proxyPassword = System.getProperty("http.proxyPassword");
-
-		String proxyHost = "proxy.eng.it";
-		int proxyPortInt = 3128;
-		String proxyUsername = "aportosa";
-		String proxyPassword = "IBMDRL2013";
+		String proxyHost = System.getProperty("http.proxyHost");
+		String proxyPort = System.getProperty("http.proxyPort");
+		int proxyPortInt = CKANUtils.portAsInteger(proxyPort);
+		String proxyUsername = System.getProperty("http.proxyUsername");
+		String proxyPassword = System.getProperty("http.proxyPassword");
 
 		logger.debug("Setting client to download CKAN resource");
 		httpClient.setConnectionTimeout(500);
