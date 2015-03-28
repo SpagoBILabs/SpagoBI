@@ -5,26 +5,23 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.security;
 
+import it.eng.spagobi.security.oauth2.OAuth2Client;
+import it.eng.spagobi.security.oauth2.OAuth2Config;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.Properties;
 
-import javax.net.ssl.HttpsURLConnection;
-
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -39,24 +36,24 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 		logger.debug("IN");
 
 		SpagoBIUserProfile profile;
-		HttpsURLConnection connection = null;
-		InputStream is = null;
-		BufferedReader reader = null;
 		try {
-			URL url = new URL("https://account.lab.fiware.org/user?access_token=" + userId);
-			connection = (HttpsURLConnection) url.openConnection();
-			connection.setConnectTimeout(10000);
-			connection.setReadTimeout(10000);
+			Properties config = OAuth2Config.getInstance().getConfig();
 
-			is = connection.getInputStream();
-			reader = new BufferedReader(new InputStreamReader(is));
-			StringBuilder stringBuilder = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				stringBuilder.append(line);
+			OAuth2Client oauth2Client = new OAuth2Client();
+
+			HttpClient httpClient = oauth2Client.getHttpClient();
+			GetMethod httpget = new GetMethod(config.getProperty("GET_USER_INFO_URL") + "?access_token=" + userId);
+			int statusCode = httpClient.executeMethod(httpget);
+			byte[] response = httpget.getResponseBody();
+			if (statusCode != HttpStatus.SC_OK) {
+				logger.error("Error while getting user information from OAuth2 provider: server returned statusCode = " + statusCode);
+				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
+				throw new SpagoBIRuntimeException("Error while getting user information from OAuth2 provider: server returned statusCode = " + statusCode);
 			}
 
-			JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+			String responseStr = new String(response);
+			LogMF.debug(logger, "Server response is:\n{0}", responseStr);
+			JSONObject jsonObject = new JSONObject(responseStr);
 
 			profile = new SpagoBIUserProfile();
 			profile.setUniqueIdentifier(userId); // The OAuth2 token
@@ -64,20 +61,8 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			profile.setUserName(jsonObject.getString("displayName"));
 			profile.setOrganization("SPAGOBI");
 
-			String adminEmail = null;
+			String adminEmail = config.getProperty("ADMIN_EMAIL");
 			String email = jsonObject.getString("email");
-
-			ResourceBundle resourceBundle = null;
-			String configFile = "it.eng.spagobi.security.OAuth2.configs";
-
-			try {
-				resourceBundle = ResourceBundle.getBundle(configFile);
-
-				adminEmail = resourceBundle.getString("ADMIN_EMAIL");
-			} catch (MissingResourceException e) {
-				throw new SpagoBIRuntimeException("Impossible to find configurations file [" + configFile + "]", e);
-			}
-
 			profile.setIsSuperadmin(email.equals(adminEmail.toLowerCase()));
 
 			JSONArray jsonRolesArray = jsonObject.getJSONArray("roles");
@@ -123,29 +108,10 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			profile.setAttributes(attributes);
 
 			return profile;
-		} catch (JSONException e) {
-			logger.error(e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while trying to read JSon object containing user profile's information", e);
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while trying to obtain user information from fi-ware", e);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while trying to read JSon object containing user profile's information from OAuth2 provider", e);
 		} finally {
 			logger.debug("OUT");
-
-			if (connection != null) {
-				connection.disconnect();
-			}
-			try {
-				if (reader != null) {
-					reader.close();
-				}
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 

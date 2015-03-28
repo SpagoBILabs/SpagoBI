@@ -72,7 +72,7 @@
  	<!-- START OAUTH 2
  	<filter>
 		<filter-name>OAuthFilter</filter-name>
-		<filter-class>it.eng.spagobi.security.OAuth2.OAuth2Filter</filter-class>
+		<filter-class>it.eng.spagobi.security.oauth2.OAuth2Filter</filter-class>
 	</filter>
  	END OAUTH 2 -->
     

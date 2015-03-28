@@ -64,5 +64,9 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/javax.json-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/jaxrs-api-3.0.9.Final.jar"/>
+	<classpathentry kind="lib" path="lib/resteasy-jaxrs-2.3.5.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

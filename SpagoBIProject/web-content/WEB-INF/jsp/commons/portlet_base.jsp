@@ -261,6 +261,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 
     // javascript-side user profile object
     Ext.ns("Sbi.user");
+    Sbi.user.organization = '<%= StringEscapeUtils.escapeJavaScript(((UserProfile)userProfile).getOrganization()) %>';
     Sbi.user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
     Sbi.user.userId = '<%= StringEscapeUtils.escapeJavaScript(userId) %>';
     Sbi.user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>';    
