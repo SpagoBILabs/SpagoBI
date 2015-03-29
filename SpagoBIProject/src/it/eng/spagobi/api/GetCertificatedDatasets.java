@@ -14,6 +14,7 @@ package it.eng.spagobi.api;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -254,8 +255,8 @@ public class GetCertificatedDatasets {
 
 		JSONArray datasetsJsonArray = new JSONArray();
 
-		Connection fiwareConnection = new Connection(CKANConfig.getInstance().getConfig().getProperty("ckan.url"), "05e90ca7-d788-47fc-a490-9510213218f7",
-				"alessandro-7");
+		Connection fiwareConnection = new Connection(CKANConfig.getInstance().getConfig().getProperty("ckan.url"),
+				profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile).getUserName().toString());
 		// Connection demoConnection = new Connection("http://demo.ckan.org", "740f922c-3929-4715-9273-72210e7982e8", "alessandroportosa");
 
 		CKANClient client = new CKANClient(fiwareConnection);
