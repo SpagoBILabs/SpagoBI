@@ -32,7 +32,7 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 	static private Logger logger = Logger.getLogger(OAuth2SecurityServiceSupplier.class);
 
 	@Override
-	public SpagoBIUserProfile createUserProfile(String userId) {
+	public SpagoBIUserProfile createUserProfile(String userUniqueIdentifier) {
 		logger.debug("IN");
 
 		SpagoBIUserProfile profile;
@@ -42,7 +42,7 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			OAuth2Client oauth2Client = new OAuth2Client();
 
 			HttpClient httpClient = oauth2Client.getHttpClient();
-			GetMethod httpget = new GetMethod(config.getProperty("GET_USER_INFO_URL") + "?access_token=" + userId);
+			GetMethod httpget = new GetMethod(config.getProperty("GET_USER_INFO_URL") + "?access_token=" + userUniqueIdentifier);
 			int statusCode = httpClient.executeMethod(httpget);
 			byte[] response = httpget.getResponseBody();
 			if (statusCode != HttpStatus.SC_OK) {
@@ -55,10 +55,15 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			LogMF.debug(logger, "Server response is:\n{0}", responseStr);
 			JSONObject jsonObject = new JSONObject(responseStr);
 
+			String userId = jsonObject.getString("nickName"); // The nickName inside fiware
+			logger.debug("User id is [" + userId + "]");
+			String userName = jsonObject.getString("displayName");
+			logger.debug("User name is [" + userName + "]");
+
 			profile = new SpagoBIUserProfile();
-			profile.setUniqueIdentifier(userId); // The OAuth2 token
-			profile.setUserId(Integer.toString(jsonObject.getInt("id"))); // The id inside fiware
-			profile.setUserName(jsonObject.getString("displayName"));
+			profile.setUniqueIdentifier(userUniqueIdentifier); // The OAuth2 token
+			profile.setUserId(userId);
+			profile.setUserName(userName);
 			profile.setOrganization("SPAGOBI");
 
 			String adminEmail = config.getProperty("ADMIN_EMAIL");
@@ -103,7 +108,9 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			profile.setRoles(roles.toArray(rolesString));
 
 			HashMap<String, String> attributes = new HashMap<String, String>();
-			attributes.put("displayName", jsonObject.getString("displayName"));
+			attributes.put("userUniqueIdentifier", userUniqueIdentifier);
+			attributes.put("userId", userId);
+			attributes.put("userName", userName);
 			attributes.put("email", email);
 			profile.setAttributes(attributes);
 

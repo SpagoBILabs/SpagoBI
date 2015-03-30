@@ -250,7 +250,7 @@ public class GetCertificatedDatasets {
 		JSONArray datasetsJsonArray = new JSONArray();
 
 		Connection fiwareConnection = new Connection(CKANConfig.getInstance().getConfig().getProperty("ckan.url"),
-				profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile).getUserName().toString());
+				profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile).getUserId().toString());
 		// Connection demoConnection = new Connection("http://demo.ckan.org", "740f922c-3929-4715-9273-72210e7982e8", "alessandroportosa");
 
 		CKANClient client = new CKANClient(fiwareConnection);
