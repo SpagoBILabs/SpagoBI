@@ -53,10 +53,11 @@ public class OAuth2Client {
 	}
 
 	public HttpClient getHttpClient() {
-		String proxyUrl = config.getProperty("PROXY_URL");
-		String proxyPort = config.getProperty("PROXY_PORT");
-		String proxyUser = config.getProperty("PROXY_USER");
-		String proxyPassword = config.getProperty("PROXY_PASSWORD");
+
+		String proxyUrl = System.getProperty("http.proxyHost");
+		String proxyPort = System.getProperty("http.proxyPort");
+		String proxyUser = System.getProperty("http.proxyUsername");
+		String proxyPassword = System.getProperty("http.proxyPassword");
 
 		HttpClient client = new HttpClient();
 		if (proxyUrl != null) {
