@@ -47,7 +47,7 @@ public class CkanDataProxy extends AbstractDataProxy {
 		try {
 			// recover the file from resources!
 			String filePath = this.resPath;
-			String ckanApiKey = "05e90ca7-d788-47fc-a490-9510213218f7";
+			String ckanApiKey = "insert apikey code";
 			inputStream = getInputStreamFromURL(filePath, ckanApiKey);
 			dataReader.setMaxResults(this.getMaxResultsReader());
 			dataStore = dataReader.read(inputStream);
@@ -85,7 +85,10 @@ public class CkanDataProxy extends AbstractDataProxy {
 		try {
 			int statusCode = -1;
 			initClient(httpClient);
-			httpget.setRequestHeader("Authorization", ckanApiKey);
+			// For FIWARE CKAN instance
+			httpget.setRequestHeader("X-Auth-Token", ckanApiKey);
+			// For ANY CKAN instance
+			// httpget.setRequestHeader("Authorization", ckanApiKey);
 			statusCode = httpClient.executeMethod(httpget);
 			if (statusCode == HttpStatus.SC_OK) {
 				is = httpget.getResponseBodyAsStream();
@@ -102,16 +105,10 @@ public class CkanDataProxy extends AbstractDataProxy {
 	private void initClient(HttpClient httpClient) {
 
 		// Getting proxy properties set as JVM args
-		// String proxyHost = System.getProperty("http.proxyHost");
-		// String proxyPort = System.getProperty("http.proxyPort");
-		// int proxyPortInt = CKANUtils.portAsInteger(proxyPort);
-		// String proxyUsername = System.getProperty("http.proxyUsername");
-		// String proxyPassword = System.getProperty("http.proxyPassword");
-
-		String proxyHost = "proxy.eng.it";
-		int proxyPortInt = 3128;
-		String proxyUsername = "aportosa";
-		String proxyPassword = "IBMDRL2013";
+		String proxyHost = null;
+		int proxyPortInt = -1;
+		String proxyUsername = null;
+		String proxyPassword = null;
 
 		logger.debug("Setting client to download CKAN resource");
 		httpClient.setConnectionTimeout(500);
@@ -140,7 +137,7 @@ public class CkanDataProxy extends AbstractDataProxy {
 		InputStream fis = null;
 		try {
 			String filePath = this.resPath;
-			String ckanApiKey = "05e90ca7-d788-47fc-a490-9510213218f7";
+			String ckanApiKey = "740f922c-3929-4715-9273-72210e7982e8";
 			fis = getInputStreamFromURL(filePath, ckanApiKey);
 
 			byte[] buffer = new byte[1024];
