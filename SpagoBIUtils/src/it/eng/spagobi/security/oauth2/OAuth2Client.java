@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.log4j.LogMF;
@@ -38,8 +39,13 @@ public class OAuth2Client {
 			httppost.addParameter("email", adminEmail);
 			httppost.addParameter("password", adminPassword);
 			int statusCode = client.executeMethod(httppost);
-			logger.debug("statusCode=" + statusCode);
 			byte[] response = httppost.getResponseBody();
+			if (statusCode != HttpStatus.SC_OK) {
+				logger.error("Error while getting access token from OAuth2 provider: server returned statusCode = " + statusCode);
+				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
+				throw new SpagoBIRuntimeException("Error while getting access token from OAuth2 provider: server returned statusCode = " + statusCode);
+			}
+			logger.debug("statusCode=" + statusCode);
 			String responseStr = new String(response);
 			logger.debug("response=" + responseStr);
 			JSONObject jsonObject = new JSONObject(responseStr);
