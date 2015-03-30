@@ -281,7 +281,10 @@ public final class CKANClient {
 
 		try {
 			request = new ClientRequest(uri, httpExecutor);
+			// For FIWARE CKAN instance
 			request.header("X-Auth-Token", connection.getApiKey());
+			// For ANY CKAN instance
+			// request.header("Authorization", connection.getApiKey());
 			response = request.head();
 			if (response.getStatus() != 200) {
 				throw new CKANException("Failed : HTTP error code : " + response.getStatus());
@@ -556,7 +559,7 @@ public final class CKANClient {
 			int facetMinCount, int facetLimit, List<String> facetField) throws CKANException {
 		/*
 		 * ,\"qf\":\""+qf+"\" -> removed from JSON
-		 *
+		 * 
 		 * Dismax query fields not figured out yet
 		 */
 		if (facetField == null) {
