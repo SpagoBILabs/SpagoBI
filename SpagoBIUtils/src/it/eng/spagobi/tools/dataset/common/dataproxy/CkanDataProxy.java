@@ -10,6 +10,7 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
  */
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.tools.dataset.ckan.CKANClient;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -20,9 +21,7 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 
@@ -84,12 +83,11 @@ public class CkanDataProxy extends AbstractDataProxy {
 
 	private InputStream getInputStreamFromURL(String fileURL, String ckanApiKey) throws IOException {
 		logger.debug("IN");
-		HttpClient httpClient = new HttpClient();
+		HttpClient httpClient = CKANClient.getHttpClient();
 		GetMethod httpget = new GetMethod(fileURL);
 		InputStream is = null;
 		try {
 			int statusCode = -1;
-			initClient(httpClient);
 			// For FIWARE CKAN instance
 			httpget.setRequestHeader("X-Auth-Token", ckanApiKey);
 			// For ANY CKAN instance
@@ -105,35 +103,6 @@ public class CkanDataProxy extends AbstractDataProxy {
 		}
 		// return input stream from the HTTP connection
 		return is;
-	}
-
-	private void initClient(HttpClient httpClient) {
-
-		// Getting proxy properties set as JVM args
-		String proxyHost = null;
-		int proxyPortInt = -1;
-		String proxyUsername = null;
-		String proxyPassword = null;
-
-		logger.debug("Setting client to download CKAN resource");
-		httpClient.setConnectionTimeout(500);
-
-		if (proxyHost != null && proxyPortInt > 0) {
-			if (proxyUsername != null && proxyPassword != null) {
-				logger.debug("Setting proxy with authentication");
-				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-				HttpState state = new HttpState();
-				state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUsername, proxyPassword));
-				httpClient.setState(state);
-				logger.debug("Proxy with authentication set");
-			} else {
-				// Username and/or password not acceptable. Trying to set proxy without credentials
-				logger.debug("Setting proxy without authentication");
-				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-				logger.debug("Proxy without authentication set");
-			}
-		}
-		logger.debug("Client set");
 	}
 
 	private byte[] createChecksum() {

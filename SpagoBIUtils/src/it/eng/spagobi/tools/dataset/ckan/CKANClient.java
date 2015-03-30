@@ -88,7 +88,7 @@ public final class CKANClient {
 		logger.debug("Initialising CKANClient");
 		this.connection = c;
 		mapper = new ObjectMapper();
-		initClient();
+		httpExecutor = new ApacheHttpClientExecutor(getHttpClient());
 		logger.debug("CKANClient initialised");
 	}
 
@@ -96,7 +96,7 @@ public final class CKANClient {
 	 * Initialise a new REST Client for making requests to a remote REST services.
 	 */
 
-	private void initClient() {
+	public static HttpClient getHttpClient() {
 
 		// Getting proxy properties set as JVM args
 		String proxyHost = System.getProperty("http.proxyHost");
@@ -116,19 +116,19 @@ public final class CKANClient {
 				HttpState state = new HttpState();
 				state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUsername, proxyPassword));
 				httpClient.setState(state);
-				httpExecutor = new ApacheHttpClientExecutor(httpClient);
 				logger.debug("Proxy with authentication set");
 			} else {
 				// Username and/or password not acceptable. Trying to set proxy without credentials
 				logger.debug("Setting proxy without authentication");
 				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-				httpExecutor = new ApacheHttpClientExecutor(httpClient);
 				logger.debug("Proxy without authentication set");
 			}
 		} else {
-			httpExecutor = new ApacheHttpClientExecutor();
+			logger.debug("No proxy configuration found");
 		}
 		logger.debug("REST client set");
+
+		return httpClient;
 	}
 
 	public Connection getConnection() {
@@ -559,7 +559,7 @@ public final class CKANClient {
 			int facetMinCount, int facetLimit, List<String> facetField) throws CKANException {
 		/*
 		 * ,\"qf\":\""+qf+"\" -> removed from JSON
-		 * 
+		 *
 		 * Dismax query fields not figured out yet
 		 */
 		if (facetField == null) {
