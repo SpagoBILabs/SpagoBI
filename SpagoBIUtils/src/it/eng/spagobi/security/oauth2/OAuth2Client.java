@@ -60,11 +60,17 @@ public class OAuth2Client {
 		String proxyPassword = System.getProperty("http.proxyPassword");
 
 		HttpClient client = new HttpClient();
-		if (proxyUrl != null) {
-			HttpState state = new HttpState();
+		if (proxyUrl != null && proxyPort != null) {
+			logger.debug("Setting proxy configuration ...");
 			client.getHostConfiguration().setProxy(proxyUrl, Integer.parseInt(proxyPort));
-			state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUser, proxyPassword));
-			client.setState(state);
+			if (proxyUser != null) {
+				logger.debug("Setting proxy authentication configuration ...");
+				HttpState state = new HttpState();
+				state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUser, proxyPassword));
+				client.setState(state);
+			}
+		} else {
+			logger.debug("No proxy configuration found");
 		}
 
 		return client;
