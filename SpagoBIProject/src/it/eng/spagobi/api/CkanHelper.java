@@ -5,15 +5,15 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
@@ -53,8 +53,7 @@ public class CkanHelper {
 		try {
 			IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			UserProfile userProfile = (UserProfile) profile;
-			// String ckanApiKey = profile.getCkanConnection().getApiKey();
-			String ckanApiKey = "740f922c-3929-4715-9273-72210e7982e8";
+			String ckanApiKey = "insert apikey code";
 
 			String fileURL = request.getParameter("url");
 			String fileName = request.getParameter("id");
@@ -73,8 +72,9 @@ public class CkanHelper {
 			return replayToClient(file, null);
 		} catch (Throwable t) {
 			logger.error("Error while uploading CKAN dataset file", t);
-			SpagoBIServiceException e = SpagoBIServiceExceptionHandler.getInstance().getWrappedException("REST service /ckan-management/download", t);
-			return replayToClient(null, e);
+			// SpagoBIServiceException e = SpagoBIServiceExceptionHandler.getInstance().getWrappedException("REST service /ckan-management/download", t);
+			// return replayToClient(null, e);
+			throw new SpagoBIServiceException("REST service /ckan-management/download", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -83,11 +83,10 @@ public class CkanHelper {
 	private void initClient(HttpClient httpClient) {
 
 		// Getting proxy properties set as JVM args
-		String proxyHost = System.getProperty("http.proxyHost");
-		String proxyPort = System.getProperty("http.proxyPort");
-		int proxyPortInt = CKANUtils.portAsInteger(proxyPort);
-		String proxyUsername = System.getProperty("http.proxyUsername");
-		String proxyPassword = System.getProperty("http.proxyPassword");
+		String proxyHost = null;
+		int proxyPortInt = -1;
+		String proxyUsername = null;
+		String proxyPassword = null;
 
 		logger.debug("Setting client to download CKAN resource");
 		httpClient.setConnectionTimeout(500);
@@ -114,30 +113,46 @@ public class CkanHelper {
 		logger.debug("IN");
 		HttpClient httpClient = new HttpClient();
 		GetMethod httpget = new GetMethod(fileURL);
-		try {
-			int statusCode = -1;
-			initClient(httpClient);
-			httpget.setRequestHeader("Authorization", ckanApiKey);
-			statusCode = httpClient.executeMethod(httpget);
-			if (statusCode == HttpStatus.SC_OK) {
-				InputStream is = httpget.getResponseBodyAsStream();
-				FileOutputStream fos = new FileOutputStream(saveTo);
 
-				logger.debug("Saving file...");
-				byte[] buffer = new byte[1024];
-				int len1 = 0;
-				while ((len1 = is.read(buffer)) != -1) {
-					fos.write(buffer, 0, len1);
+		try {
+			InputStream is = null;
+			FileOutputStream fos = null;
+			try {
+				int statusCode = -1;
+				initClient(httpClient);
+				// For FIWARE CKAN instance
+				httpget.setRequestHeader("X-Auth-Token", ckanApiKey);
+				// For ANY CKAN instance
+				// httpget.setRequestHeader("Authorization", ckanApiKey);
+				statusCode = httpClient.executeMethod(httpget);
+				if (statusCode == HttpStatus.SC_OK) {
+					is = httpget.getResponseBodyAsStream();
+					fos = new FileOutputStream(saveTo);
+
+					logger.debug("Saving file...");
+					byte[] buffer = new byte[1024];
+					int len1 = 0;
+					while ((len1 = is.read(buffer)) != -1) {
+						fos.write(buffer, 0, len1);
+					}
+
+					logger.debug("File saved");
+				} else {
+					logger.debug("Impossibile to download from " + fileURL + ". Status code: " + statusCode);
+					throw new SpagoBIServiceException("REST service /ckan-management/download", "Error while downloading file from the server");
 				}
+			} catch (FileNotFoundException fnfe) {
+				logger.error("Error while saving file into server");
+				throw new SpagoBIServiceException("REST service /ckan-management/download", "Error while saving file into server", fnfe);
+			} finally {
 				fos.close();
-				logger.debug("File saved");
+				is.close();
+				httpget.releaseConnection();
+				logger.debug("OUT");
 			}
-		} catch (Throwable t) {
-			logger.error("Error while saving file into server: " + t);
-			throw new SpagoBIServiceException("REST service /ckan-management/download", "Error while saving file into server", t);
-		} finally {
-			httpget.releaseConnection();
-			logger.debug("OUT");
+		} catch (IOException ioe) {
+			logger.error("Error while saving file into server");
+			throw new SpagoBIServiceException("REST service /ckan-management/download", "Error while saving file into server", ioe);
 		}
 	}
 
@@ -159,9 +174,9 @@ public class CkanHelper {
 			}
 			return response.toString();
 		} catch (JSONException jsonEx) {
-			logger.error(jsonEx);
+			logger.error("Error during JSON conversion of result");
+			throw new SpagoBIServiceException("REST service /ckan-management/download", "Error while generating JSON response", jsonEx);
 		}
-		return response.toString();
 	}
 
 	private File checkAndCreateDir(String name) {
