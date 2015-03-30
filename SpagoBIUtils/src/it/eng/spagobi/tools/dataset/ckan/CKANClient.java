@@ -35,6 +35,7 @@ import it.eng.spagobi.tools.dataset.ckan.result.list.impl.DatasetList;
 import it.eng.spagobi.tools.dataset.ckan.result.list.impl.OrganizationSummaryList;
 import it.eng.spagobi.tools.dataset.ckan.result.list.impl.StringList;
 import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -45,6 +46,7 @@ import java.util.List;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
@@ -221,7 +223,7 @@ public final class CKANClient {
 		ClientResponse<String> response = null;
 		String jsonResponse = "";
 		try {
-			URL url = new URL(uri);
+			new URL(uri);
 		} catch (MalformedURLException mue) {
 			System.err.println(mue);
 			throw new CKANException("Failed: the provided URI is malformed.");
@@ -236,18 +238,18 @@ public final class CKANClient {
 			request.body("application/json", jsonParams);
 			request.accept("application/json");
 			response = request.post(String.class);
+			jsonResponse = response.getEntity();
+			LogMF.debug(logger, "Status code is [{0}], server response is \n{1}", new String[] { Integer.toString(response.getStatus()), jsonResponse });
 			if (response.getStatus() != 200) {
+				logger.error("Failed : HTTP error code : " + response.getStatus() + ". Server returned \n" + jsonResponse);
 				throw new CKANException("Failed : HTTP error code : " + response.getStatus());
 			}
-			jsonResponse = response.getEntity();
+
 			if (jsonResponse == null) {
 				throw new CKANException("Failed: deserialisation has not been perfomed well. jsonResponse is null");
 			}
-		} catch (CKANException ckane) {
-			logger.debug("Error " + ckane.getErrorMessages());
 		} catch (Exception e) {
-			logger.error("Can't connect to REST service " + uri);
-			e.printStackTrace();
+			throw new SpagoBIRuntimeException("Error while requesting [" + uri + "]", e);
 		} finally {
 			if (response != null) {
 				response.releaseConnection();
