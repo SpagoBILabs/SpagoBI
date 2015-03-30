@@ -82,7 +82,7 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			}
 
 			// If no roles were found, search for roles in the organizations
-			if (roles.size() == 0) {
+			if (roles.size() == 0 && !jsonObject.isNull("organizations")) {
 				JSONArray organizations = jsonObject.getJSONArray("organizations");
 
 				if (organizations != null) { // TODO: more than one organization
