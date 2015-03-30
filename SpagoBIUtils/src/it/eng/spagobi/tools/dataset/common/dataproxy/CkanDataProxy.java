@@ -13,12 +13,14 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.ckan.CKANClient;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.Map;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -49,9 +51,14 @@ public class CkanDataProxy extends AbstractDataProxy {
 		InputStream inputStream = null;
 
 		try {
+			Map profileAttributes = this.getProfile();
+			Assert.assertNotNull(profileAttributes, "User profile attributes not found!!");
+			// the ckan api key is the user unique identifier: see it.eng.spagobi.security.OAuth2SecurityServiceSupplier
+			String ckanApiKey = (String) profileAttributes.get("userUniqueIdentifier");
+			Assert.assertNotNull(ckanApiKey, "User unique identifier not found!!");
+
 			// recover the file from resources!
 			String filePath = this.resPath;
-			String ckanApiKey = "insert apikey code";
 			inputStream = getInputStreamFromURL(filePath, ckanApiKey);
 			dataReader.setMaxResults(this.getMaxResultsReader());
 			dataStore = dataReader.read(inputStream);
