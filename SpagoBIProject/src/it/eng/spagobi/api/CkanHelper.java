@@ -12,6 +12,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.ckan.CKANClient;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -32,9 +33,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -58,7 +57,7 @@ public class CkanHelper {
 		try {
 			IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			UserProfile userProfile = (UserProfile) profile;
-			String ckanApiKey = "insert apikey code";
+			String ckanApiKey = userProfile.getUserUniqueIdentifier().toString();
 
 			String fileURL = request.getParameter("url");
 			String fileName = request.getParameter("id");
@@ -85,38 +84,8 @@ public class CkanHelper {
 		}
 	}
 
-	private void initClient(HttpClient httpClient) {
-
-		// Getting proxy properties set as JVM args
-		String proxyHost = null;
-		int proxyPortInt = -1;
-		String proxyUsername = null;
-		String proxyPassword = null;
-
-		logger.debug("Setting client to download CKAN resource");
-		httpClient.setConnectionTimeout(500);
-
-		if (proxyHost != null && proxyPortInt > 0) {
-			if (proxyUsername != null && proxyPassword != null) {
-				logger.debug("Setting proxy with authentication");
-				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-				HttpState state = new HttpState();
-				state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUsername, proxyPassword));
-				httpClient.setState(state);
-				logger.debug("Proxy with authentication set");
-			} else {
-				// Username and/or password not acceptable. Trying to set proxy without credentials
-				logger.debug("Setting proxy without authentication");
-				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-				logger.debug("Proxy without authentication set");
-			}
-		}
-		logger.debug("REST client set");
-	}
-
 	private void downloadAndSaveFile(String fileURL, String ckanApiKey, File saveTo) {
 		logger.debug("IN");
-		HttpClient httpClient = new HttpClient();
 		GetMethod httpget = new GetMethod(fileURL);
 
 		try {
@@ -124,7 +93,7 @@ public class CkanHelper {
 			FileOutputStream fos = null;
 			try {
 				int statusCode = -1;
-				initClient(httpClient);
+				HttpClient httpClient = CKANClient.getHttpClient();
 				// For FIWARE CKAN instance
 				httpget.setRequestHeader("X-Auth-Token", ckanApiKey);
 				// For ANY CKAN instance
