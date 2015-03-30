@@ -82,7 +82,7 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 				// there is a default role selected so filter only its functionalities
 				logger.debug("Selected role is not null, put right functionality");
 				Collection functionalities = this.getFunctionalitiesForDefaultRole(profile, defaultRole);
-				LogMF.error(logger, "User functionalities considering default role [{0}]: {1}", new String[] { defaultRole, functionalities.toString() });
+				LogMF.debug(logger, "User functionalities considering default role [{0}]: {1}", new String[] { defaultRole, functionalities.toString() });
 				((UserProfile) profile).setFunctionalities(functionalities);
 				logger.debug("set functionalities for default role");
 			}
@@ -115,7 +115,7 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction {
 			String[] functionalitiesArray = UserUtilities.readFunctionality(clone);
 			toReturn = StringUtilities.convertArrayInCollection(functionalitiesArray);
 		} finally {
-			LogMF.error(logger, "Returning: {0}", new String[] { toReturn.toString() });
+			LogMF.debug(logger, "Returning: {0}", new String[] { toReturn.toString() });
 		}
 		return toReturn;
 	}
