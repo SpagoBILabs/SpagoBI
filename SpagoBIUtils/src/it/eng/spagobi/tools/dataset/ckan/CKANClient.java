@@ -46,7 +46,6 @@ import java.util.List;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
@@ -223,9 +222,9 @@ public final class CKANClient {
 		ClientResponse<String> response = null;
 		String jsonResponse = "";
 		try {
-			new URL(uri);
+			URL url = new URL(uri);
 		} catch (MalformedURLException mue) {
-			System.err.println(mue);
+			logger.debug("Failed: the provided URI is malformed. URI: " + uri);
 			throw new CKANException("Failed: the provided URI is malformed.");
 		}
 
@@ -237,17 +236,22 @@ public final class CKANClient {
 			// request.header("Authorization", connection.getApiKey());
 			request.body("application/json", jsonParams);
 			request.accept("application/json");
-			response = request.post(String.class);
-			jsonResponse = response.getEntity();
-			LogMF.debug(logger, "Status code is [{0}], server response is \n{1}", new String[] { Integer.toString(response.getStatus()), jsonResponse });
+			try {
+				response = request.post(String.class);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (response.getStatus() != 200) {
-				logger.error("Failed : HTTP error code : " + response.getStatus() + ". Server returned \n" + jsonResponse);
 				throw new CKANException("Failed : HTTP error code : " + response.getStatus());
 			}
-
+			jsonResponse = response.getEntity();
 			if (jsonResponse == null) {
 				throw new CKANException("Failed: deserialisation has not been perfomed well. jsonResponse is null");
 			}
+		} catch (CKANException ckane) {
+			logger.debug("Error " + ckane.getErrorMessages());
+			throw ckane;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while requesting [" + uri + "]", e);
 		} finally {
@@ -270,47 +274,47 @@ public final class CKANClient {
 	 * @throws A
 	 *             CKANException if the request fails
 	 */
-	private String[] headAndReturnHeaders(String uri) throws CKANException {
-		ClientRequest request = null;
-		ClientResponse response = null;
-		String[] headers = new String[] { "", "" };
-		try {
-			URL url = new URL(uri);
-		} catch (MalformedURLException mue) {
-			System.err.println(mue);
-			throw new CKANException("Failed: the provided URI is malformed.");
-		}
-
-		try {
-			request = new ClientRequest(uri, httpExecutor);
-			// For FIWARE CKAN instance
-			request.header("X-Auth-Token", connection.getApiKey());
-			// For ANY CKAN instance
-			// request.header("Authorization", connection.getApiKey());
-			response = request.head();
-			if (response.getStatus() != 200) {
-				throw new CKANException("Failed : HTTP error code : " + response.getStatus());
-			}
-			Object temp = response.getHeaders().getFirst("Content-Type");
-			if (temp != null) {
-				headers[0] = temp.toString();
-			}
-			temp = response.getHeaders().getFirst("Content-Length");
-			if (temp != null) {
-				headers[1] = temp.toString();
-			}
-		} catch (CKANException ckane) {
-			logger.debug("Error " + ckane.getErrorMessages());
-		} catch (Exception e) {
-			logger.error("Can't connect to REST service " + uri);
-			e.printStackTrace();
-		} finally {
-			if (response != null) {
-				response.releaseConnection();
-			}
-		}
-		return headers;
-	}
+	// private String[] headAndReturnHeaders(String uri) throws CKANException {
+	// ClientRequest request = null;
+	// ClientResponse response = null;
+	// String[] headers = new String[] { "", "" };
+	// try {
+	// URL url = new URL(uri);
+	// } catch (MalformedURLException mue) {
+	// logger.debug("Failed: the provided URI is malformed. URI: " + uri);
+	// throw new CKANException("Failed: the provided URI is malformed.");
+	// }
+	//
+	// try {
+	// request = new ClientRequest(uri, httpExecutor);
+	// // For FIWARE CKAN instance
+	// request.header("X-Auth-Token", connection.getApiKey());
+	// // For ANY CKAN instance
+	// // request.header("Authorization", connection.getApiKey());
+	// response = request.head();
+	// if (response.getStatus() != 200) {
+	// throw new CKANException("Failed : HTTP error code : " + response.getStatus());
+	// }
+	// Object temp = response.getHeaders().getFirst("Content-Type");
+	// if (temp != null) {
+	// headers[0] = temp.toString();
+	// }
+	// temp = response.getHeaders().getFirst("Content-Length");
+	// if (temp != null) {
+	// headers[1] = temp.toString();
+	// }
+	// } catch (CKANException ckane) {
+	// logger.debug("Error " + ckane.getErrorMessages());
+	// } catch (Exception e) {
+	// logger.error("Can't connect to REST service " + uri);
+	// e.printStackTrace();
+	// } finally {
+	// if (response != null) {
+	// response.releaseConnection();
+	// }
+	// }
+	// return headers;
+	// }
 
 	protected <T> T getObjectResult(Class<T> cls, String uri, String jsonParams, String action) throws CKANException {
 		return getObjectFromJson(cls, postAndReturnTheJSON(uri, jsonParams), action);
@@ -320,9 +324,9 @@ public final class CKANClient {
 		return getObjectResult(DatasetList.class, uri, jsonParams, action);
 	}
 
-	public List<Resource> getAllAvailableResources() throws CKANException {
+	public List<Resource> getAllAvailableResources(String filter) throws CKANException {
 		List<Resource> resources = new ArrayList<Resource>();
-		for (Dataset ds : getAllAccessibleDatasetList()) {
+		for (Dataset ds : getAllAccessibleDatasetList(filter)) {
 			List<Resource> rs = ds.getResources();
 			if (rs != null && rs.size() > 0)
 				resources.addAll(rs);
@@ -330,16 +334,13 @@ public final class CKANClient {
 		return resources;
 	}
 
-	public List<Resource> getAllResourcesCompatibleWithSpagoBI() throws CKANException {
+	public List<Resource> getAllResourcesCompatibleWithSpagoBI(String filter) throws CKANException {
 		List<Resource> resources = new ArrayList<Resource>();
-		for (Dataset ds : getAllAccessibleDatasetList()) {
+		for (Dataset ds : getAllAccessibleDatasetList(filter)) {
 			if (ds.getState().equals("active")) {
 				List<Resource> rsList = ds.getResources();
 				if (rsList != null && rsList.size() > 0) {
 					for (Resource rs : rsList) {
-						// String[] headers = headAndReturnHeaders(rs.getUrl());
-						// rs.setContentType(headers[0]);
-						// rs.setContentLength(headers[1]);
 						if (rs.getState().equals("active") && CKANUtils.isCompatibleWithSpagoBI(rs)) {
 							rs.setPackage_name(ds.getName());
 							rs.setPackage_id(ds.getId());
@@ -347,13 +348,6 @@ public final class CKANClient {
 							rs.setPackage_isPrivate(ds.isPrivate());
 							rs.setPackage_isSearchable(Boolean.parseBoolean(ds.isSearchable()));
 							rs.setPackage_url(ds.getUrl());
-							// Tag[] tags = (Tag[]) ds.getTags().toArray();
-							// String tagList = tags[0].getName();
-							// for(int i=1; i<tags.length; i++)
-							// {
-							// tagList += ", " + tags[i].getName();
-							// }
-							// rs.setPackage_tags(tagList);
 							resources.add(rs);
 						}
 					}
@@ -363,14 +357,14 @@ public final class CKANClient {
 		return resources;
 	}
 
-	public List<Dataset> getAllAccessibleDatasetList() throws CKANException {
+	public List<Dataset> getAllAccessibleDatasetList(String filter) throws CKANException {
 
 		List<Dataset> accessibleDatasets = new ArrayList<Dataset>();
 
 		String userId = connection.getUserId();
 		boolean isAuthenticated = connection.getApiKey() != null && userId != null;
 
-		if (isAuthenticated) {
+		if (isAuthenticated && filter.equals("NOFILTER")) {
 			logger.debug("Getting public and searchable private datasets for the user " + userId);
 			int start = 0;
 			int numberOfDatasets = searchDatasets("", "", 0).getResult().getCount();
@@ -380,19 +374,11 @@ public final class CKANClient {
 			}
 			long elapsedTime = System.currentTimeMillis();
 
-			// MULTIPLE SMALL REST CALL
-			// if (numberOfDatasets > 0) {
-			// do {
-			// datasetList = searchDatasets("", "", DEFAULT_SEARCH_MAX_RETURNED_ROWS, "", start).getResult().getResults();
-			// start = start + numberOfDatasets;
-			// } while (start < numberOfDatasets);
-			// }
-
 			// ONE FAT REST CALL
 			accessibleDatasets = searchDatasets("", "", numberOfDatasets, "", start).getResult().getResults();
 
 			elapsedTime = System.currentTimeMillis() - elapsedTime;
-			System.out.println(elapsedTime + "ms");
+			logger.debug("Time elapsed for searchDatasets: " + elapsedTime + "ms");
 			logger.debug("Public and searchable private datasets for the user " + userId + " obtained");
 
 			logger.debug("Getting acquired datasets for the user " + userId);
@@ -425,16 +411,31 @@ public final class CKANClient {
 			logger.debug("Private organization datasets for user " + userId + " obtained");
 		} else {
 			// No authentication details available
-			logger.debug("Getting only public datasets");
+			logger.debug("Getting public and searchable private datasets for the user " + userId + "(filtered by " + filter
+					+ ") or getting public datasets if no user authentication available");
 			int start = 0;
-			int numberOfDatasets = searchDatasets("", "", 0).getResult().getCount();
-			if (numberOfDatasets > 0) {
-				do {
-					accessibleDatasets = searchDatasets("", "", DEFAULT_SEARCH_MAX_RETURNED_ROWS, "", start).getResult().getResults();
-					start = start + DEFAULT_SEARCH_MAX_RETURNED_ROWS;
-				} while (start <= numberOfDatasets);
+			int numberOfDatasets = 0;
+			if (filter.equals("NOFILTER")) {
+				numberOfDatasets = searchDatasets("", "", 0).getResult().getCount();
+			} else {
+				numberOfDatasets = searchDatasets(filter, "", 0).getResult().getCount();
 			}
-			logger.debug("Only public datasets obtained");
+			// TODO: we need to enable datasets paging
+			if (numberOfDatasets > DATASETS_LIMIT) {
+				numberOfDatasets = DATASETS_LIMIT;
+			}
+			long elapsedTime = System.currentTimeMillis();
+
+			// ONE FAT REST CALL
+			if (filter.equals("NOFILTER")) {
+				accessibleDatasets = searchDatasets("", "", numberOfDatasets, "", start).getResult().getResults();
+			} else {
+				accessibleDatasets = searchDatasets(filter, "", numberOfDatasets, "", start).getResult().getResults();
+			}
+
+			elapsedTime = System.currentTimeMillis() - elapsedTime;
+			logger.debug("Time elapsed for searchDatasets: " + elapsedTime + "ms");
+			logger.debug("Datasets obtained");
 		}
 		return accessibleDatasets;
 	}
@@ -561,7 +562,7 @@ public final class CKANClient {
 			int facetMinCount, int facetLimit, List<String> facetField) throws CKANException {
 		/*
 		 * ,\"qf\":\""+qf+"\" -> removed from JSON
-		 *
+		 * 
 		 * Dismax query fields not figured out yet
 		 */
 		if (facetField == null) {
