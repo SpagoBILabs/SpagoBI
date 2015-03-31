@@ -87,7 +87,7 @@ public class GetCertificatedDatasets {
 					dataSets = dataSetDao.loadMyDataDataSets(profile.getUserUniqueIdentifier().toString());
 				} else if (ckanDS != null && ckanDS.equals("true")) {
 					ckanJSONArray = getOnlineCkanDatasets(profile);
-					dataSets = dataSetDao.loadCkanDataSets(profile.getUserUniqueIdentifier().toString());
+					dataSets = dataSetDao.loadCkanDataSets(((UserProfile) profile).getUserId().toString());
 					synchronizeDatasets(dataSets, ckanJSONArray);
 				} else {
 					// else it is a custom dataset list --> get all datasets public with owner != user itself
@@ -267,7 +267,8 @@ public class GetCertificatedDatasets {
 			}
 			logger.debug("Resources translated in " + (System.currentTimeMillis() - start) + "ms.");
 		} catch (CKANException e) {
-			e.printStackTrace();
+			logger.debug("Error while getting CKAN resources");
+			throw new SpagoBIServiceException("REST service /certificateddatasets", "Error while getting CKAN resources");
 		}
 		return datasetsJsonArray;
 	}
