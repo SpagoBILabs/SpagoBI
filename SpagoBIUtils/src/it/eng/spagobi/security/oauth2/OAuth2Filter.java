@@ -45,7 +45,7 @@ public class OAuth2Filter implements Filter {
 
 				session.setAttribute("access_token", accessToken);
 
-				((HttpServletResponse) response).sendRedirect("http://localhost:8080/SpagoBI/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE");
+				((HttpServletResponse) response).sendRedirect(oauth2Config.getProperty("REDIRECT_URI"));
 			}
 		} else
 			chain.doFilter(request, response);
