@@ -175,7 +175,8 @@ public class GetCertificatedDatasets {
 
 			if (typeDocWizard == null) {
 				actions.put(detailAction);
-				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))) {
+				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))
+						|| ((UserProfile) profile).getUserId().toString().equals(datasetJSON.get("owner"))) {
 					// the delete action is able only for private dataset
 					actions.put(deleteAction);
 				}
