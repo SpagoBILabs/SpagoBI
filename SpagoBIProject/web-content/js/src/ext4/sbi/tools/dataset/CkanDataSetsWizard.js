@@ -448,6 +448,8 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 				if(responseObject !== undefined  && responseObject.responseText !== undefined) {
 					if(responseObject.responseText !== '{}') {
 						fileDetail = Ext.decode(responseObject.responseText);
+					} else {
+						Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.wizard.ckan.downloadError'), '');
 					}
 				}
 			},
@@ -455,12 +457,11 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.wizard.ckan.downloadError'), '');
 			}
 		});
-		console.log(fileDetail);
 		
-		if(fileDetail === null) {
-			// abort file upload operation
-			return;
+		if(fileDetail.hasOwnProperty('errors')) {
+			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.wizard.ckan.downloadError'), '');
 		}
+		else {
 		
 //		this.fileUpload.getComponent('fileUploadPanel').getComponent('fileType').setValue(fileDetail.filetype);
 //		this.fileUpload.getComponent('fileUploadPanel').getComponent('fileNameField').setValue(fileDetail.filename);
@@ -474,7 +475,7 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 				
 		this.fileUpload.activateFileTypePanel(fileDetail.filetype);
 		this.fileUploaded = true;
-		
+		}
 		Sbi.debug("[CkanDatasetWizard.uploadFileButtonHandler]: OUT");
 	}
 
