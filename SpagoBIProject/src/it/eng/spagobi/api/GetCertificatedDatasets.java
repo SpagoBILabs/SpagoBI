@@ -27,6 +27,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,6 +76,7 @@ public class GetCertificatedDatasets {
 			String isTech = request.getParameter("isTech");
 			String allMyDataDS = request.getParameter("allMyDataDs");
 			String ckanDS = request.getParameter("ckanDs");
+			String ckanFilter = request.getParameter("ckanFilter");
 			String typeDocWizard = (request.getParameter("typeDoc") != null && !"null".equals(request.getParameter("typeDoc"))) ? request
 					.getParameter("typeDoc") : null;
 
@@ -86,7 +88,7 @@ public class GetCertificatedDatasets {
 					// get all the Datasets visible for the current user (MyData,Enterprise,Shared Datasets,Ckan)
 					dataSets = dataSetDao.loadMyDataDataSets(profile.getUserUniqueIdentifier().toString());
 				} else if (ckanDS != null && ckanDS.equals("true")) {
-					ckanJSONArray = getOnlineCkanDatasets(profile);
+					ckanJSONArray = getOnlineCkanDatasets(profile, ckanFilter);
 					dataSets = dataSetDao.loadCkanDataSets(((UserProfile) profile).getUserId().toString());
 					synchronizeDatasets(dataSets, ckanJSONArray);
 				} else {
@@ -98,8 +100,12 @@ public class GetCertificatedDatasets {
 			long start = System.currentTimeMillis();
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			if (ckanDS != null && ckanDS.equals("true")) {
-				for (int i = 0; i < ckanJSONArray.length(); i++) {
-					datasetsJSONArray.put(ckanJSONArray.get(i));
+				if (ckanFilter.equals("NOFILTER")) {
+					for (int i = 0; i < ckanJSONArray.length(); i++) {
+						datasetsJSONArray.put(ckanJSONArray.get(i));
+					}
+				} else { // Search by filter: list only unused CKAN datasets
+					datasetsJSONArray = ckanJSONArray;
 				}
 			}
 
@@ -246,7 +252,7 @@ public class GetCertificatedDatasets {
 		return JSONReturn.toString();
 	}
 
-	private JSONArray getOnlineCkanDatasets(IEngUserProfile profile) throws JSONException {
+	private JSONArray getOnlineCkanDatasets(IEngUserProfile profile, String filter) throws JSONException {
 
 		JSONArray datasetsJsonArray = new JSONArray();
 
@@ -258,7 +264,7 @@ public class GetCertificatedDatasets {
 		try {
 			logger.debug("Getting resources...");
 			long start = System.currentTimeMillis();
-			List<Resource> list = client.getAllResourcesCompatibleWithSpagoBI();
+			List<Resource> list = client.getAllResourcesCompatibleWithSpagoBI(filter);
 			logger.debug("Resources got in " + (System.currentTimeMillis() - start) + "ms.");
 			logger.debug("Translating resources...");
 			start = System.currentTimeMillis();
@@ -278,7 +284,9 @@ public class GetCertificatedDatasets {
 		boolean dsFound = false;
 		logger.debug("Synchronize resources...");
 		long start = System.currentTimeMillis();
-		for (IDataSet ds : spagobiDs) {
+		Iterator<IDataSet> iterator = spagobiDs.iterator();
+		while (iterator.hasNext()) {
+			IDataSet ds = iterator.next();
 			String config = JSONUtils.escapeJsonString(ds.getConfiguration());
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 			for (int i = 0; i < ckanDs.length(); i++) {
@@ -288,8 +296,10 @@ public class GetCertificatedDatasets {
 					break;
 				}
 			}
-			if (!dsFound)
-				spagobiDs.remove(ds);
+			if (!dsFound) {
+				iterator.remove();
+				// spagobiDs.remove(ds);
+			}
 		}
 		logger.debug("Resources synchronized in " + (System.currentTimeMillis() - start) + "ms.");
 	}
