@@ -450,16 +450,19 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 						fileDetail = Ext.decode(responseObject.responseText);
 					} else {
 						Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.wizard.ckan.downloadError'), '');
+						this.closeWin()
 					}
 				}
 			},
 			failure: function(responseObject){
 				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.wizard.ckan.downloadError'), '');
+				this.closeWin()
 			}
 		});
 		
 		if(fileDetail.hasOwnProperty('errors')) {
 			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.wizard.ckan.downloadError'), '');
+			this.closeWin()
 		}
 		else {
 		
