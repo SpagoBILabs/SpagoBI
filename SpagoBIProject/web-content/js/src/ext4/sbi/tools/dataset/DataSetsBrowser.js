@@ -155,12 +155,28 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			
 			var bannerHTML = this.createBannerHtml({});
 			this.bannerPanel = new Ext.Panel({
+				id: 'bannerDs',
 				height: 105,
 				border:0,
 			   	autoScroll: false,
 			   //	style:"position:'absolute';z-index:800000;float:left;width:100%;",
 			   	html: bannerHTML
-			});			
+			});	
+		}
+	}
+	
+    , changeToolbar: function(searchOnCkan) {
+		
+		if (this.displayToolbar) {
+			if(searchOnCkan){
+				Ext.get('search').dom.removeAttribute("onkeyup");	
+				Ext.get('searchButton').dom.setAttribute("onclick", "javascript:Ext.getCmp(\'this\').showDataset( \'CkanDataSet\', Ext.get('search').dom.value)");
+			}
+			else {
+				//Ext.get('searchForm').dom.setAttribute("action", "#");
+				Ext.get('search').dom.setAttribute("onkeyup", "javascript:Ext.getCmp(\'this\').filterStore(this.value)");
+				Ext.get('searchButton').dom.removeAttribute("onclick");
+			}
 		}
 	}
 	
@@ -226,6 +242,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams.showOnlyOwner = true;
 			baseParams.typeDoc = this.typeDoc;
 			baseParams.ckanDs = true;
+			baseParams.ckanFilter = arguments[1];
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
@@ -758,16 +775,27 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			}
 		}
 		//Change content of DatasetView
-		this.activateFilter(datasetType);
+		if(datasetType == 'CkanDataSet') {
+			var filter = arguments[1];
+			this.activateFilter(datasetType, filter);
+		}
+		else {
+			this.activateFilter(datasetType);
+		}
 		if (datasetType == 'MyDataSet'){
+			this.changeToolbar(false);
 			this.createButtonVisibility(true);
 		} else if (datasetType == 'EnterpriseDataSet'){
+			this.changeToolbar(false);
 			this.createButtonVisibility(false);
 		} else if (datasetType == 'SharedDataSet'){
+			this.changeToolbar(false);
 			this.createButtonVisibility(false);
 		} else if (datasetType == 'CkanDataSet'){
+			this.changeToolbar(true);
 			this.createButtonVisibility(false);
 		} else if (datasetType == 'AllDataSet'){
+			this.changeToolbar(false);
 			this.createButtonVisibility(true);
 		}	
 		
@@ -878,7 +906,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
          		activeClass = '';
          	}
           	bannerHTML = bannerHTML+	
-      		'	    	<li class="'+activeClass+'" id="CkanDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'CkanDataSet\')">'+LN('sbi.mydata.ckandataset')+'</a></li> ';    	
+      		'	    	<li class="'+activeClass+'" id="CkanDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'CkanDataSet\', \'NOFILTER\')">'+LN('sbi.mydata.ckandataset')+'</a></li> ';    	
           }
          if (Sbi.settings.mydata.showAllDataSetFilter){
           	if (Sbi.settings.mydata.defaultFilter == 'AllDataSet'){
@@ -892,36 +920,35 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 //    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">'+LN('sbi.generic.all')+'</a></li> '+
 //    					communityString+
 //    		'	        <li class="favourite last"><a href="#">'+LN('sbi.browser.document.favourites')+'</a></li> '+
-        bannerHTML = bannerHTML+
-            '		</ul> '+
-    		'	    <div id="list-actions" class="list-actions"> '+
-    					createButton +
-    		'	        <form action="#" method="get" class="search-form"> '+
-    		'	            <fieldset> '+
-    		'	                <div class="field"> '+
-    		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
-    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
-    		'	                </div> '+
-    		'	                <div class="submit"> '+
-    		'	                    <input type="text" value="Cerca" /> '+
-    		'	                </div> '+
-    		'	            </fieldset> '+
-    		'	        </form> '+
-    		'	         <ul class="order" id="sortList">'+
-    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'dateIn\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
-//    		'	            <li id="label"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
-    		'	            <li id="name"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
-    		'	            <li id="owner"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'owner\')">'+LN('sbi.ds.owner')+'</a></li> '+
-    		'	        </ul> '+
-    		'	    </div> '+
-    		'	</div> '+
-    		'</div>' ;
+
+	        bannerHTML = bannerHTML+
+	            '		</ul> '+
+	    		'	    <div id="list-actions" class="list-actions"> '+
+	    					createButton +
+	    		'	        <form id="searchForm" action="#" method="get" class="search-form"> '+
+	    		'	            <fieldset> '+
+	    		'	                <div class="field"> '+
+	    		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
+	    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
+	    		'	                </div> '+
+	    		'	                <div class="submit"> '+
+	    		'	                    <input id="searchButton" type="text" value="Cerca" /> '+
+	    		'	                </div> '+
+	    		'	            </fieldset> '+
+	    		'	        </form> '+
+	    		'	         <ul class="order" id="sortList">'+
+	    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'dateIn\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
+	//    		'	            <li id="label"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
+	    		'	            <li id="name"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
+	    		'	            <li id="owner"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'owner\')">'+LN('sbi.ds.owner')+'</a></li> '+
+	    		'	        </ul> '+
+	    		'	    </div> '+
+	    		'	</div> '+
+	    		'</div>' ;
 //        var dh = Ext.DomHelper;
 //        var b = this.bannerPanel.getEl().update(bannerHTML);
 
         return bannerHTML;
     }
-	
-
 });
   
