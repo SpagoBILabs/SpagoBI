@@ -19,6 +19,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -134,9 +135,9 @@ public class SelfServiceDataSetCRUD {
 			String showOnlyOwner = req.getParameter("showOnlyOwner");
 			if (!isTechDsMngr) {
 				if (showOnlyOwner != null && !showOnlyOwner.equalsIgnoreCase("true")) {
-					dataSets = dataSetDao.loadDatasetOwnedAndShared(profile.getUserUniqueIdentifier().toString());
+					dataSets = dataSetDao.loadDatasetOwnedAndShared(((UserProfile) profile).getUserId().toString());
 				} else {
-					dataSets = dataSetDao.loadUserDataSets(profile.getUserUniqueIdentifier().toString());
+					dataSets = dataSetDao.loadUserDataSets(((UserProfile) profile).getUserId().toString());
 				}
 			}
 
@@ -205,7 +206,7 @@ public class SelfServiceDataSetCRUD {
 			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
 			if (typeDocWizard == null) {
 				actions.put(detailAction);
-				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))) {
+				if (((UserProfile) profile).getUserId().toString().equals(datasetJSON.get("owner"))) {
 					// the delete action is able only for private dataset
 					actions.put(deleteAction);
 				}
