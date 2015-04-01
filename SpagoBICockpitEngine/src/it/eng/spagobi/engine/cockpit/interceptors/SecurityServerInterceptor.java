@@ -1,13 +1,12 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.cockpit.interceptors;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engine.cockpit.CockpitEngineRuntimeException;
@@ -16,6 +15,7 @@ import it.eng.spagobi.engine.cockpit.api.SecurityServiceSupplierFactory;
 import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.proxy.SecurityServiceProxy;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -41,12 +41,11 @@ import org.jboss.resteasy.spi.interception.AcceptedByMethod;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 /**
- * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a
- * JAX-RS resource method is found to invoke on, but before the actual
- * invocation happens
- * 
+ * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a JAX-RS resource method is found to invoke on, but before the actual invocation
+ * happens
+ *
  * Similar to SpagoBIAccessFilter but designed for REST services
- * 
+ *
  */
 @Provider
 @ServerInterceptor
@@ -60,9 +59,8 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 
 	/**
 	 * Preprocess all the REST requests.
-	 * 
-	 * Get the UserProfile from the session and checks if has the grants to
-	 * execute the service
+	 *
+	 * Get the UserProfile from the session and checks if has the grants to execute the service
 	 */
 	@Override
 	public ServerResponse preProcess(HttpRequest request, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
@@ -225,7 +223,8 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		logger.debug("User id = " + userId);
 		if (StringUtilities.isNotEmpty(userId)) {
 			try {
-				engProfile = GeneralUtilities.createNewUserProfile(userId);
+				SecurityServiceProxy proxy = new SecurityServiceProxy(userId, servletRequest.getSession());
+				engProfile = proxy.getUserProfile();
 			} catch (Exception e) {
 				logger.error("Error while creating user profile with user id = [" + userId + "]", e);
 			}
@@ -236,19 +235,16 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	}
 
 	/**
-	 * Finds the user identifier from http request or from SSO system (by the
-	 * http request in input). Use the SsoServiceInterface for read the userId
-	 * in all cases, if SSO is disabled use FakeSsoService. Check
-	 * spagobi_sso.xml
-	 * 
+	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
+	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
+	 *
 	 * @param httpRequest
 	 *            The http request
-	 * 
+	 *
 	 * @return the current user unique identified
-	 * 
+	 *
 	 * @throws Exception
-	 *             in case the SSO is enabled and the user identifier specified
-	 *             on http request is different from the SSO detected one.
+	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
 
 	private String getUserIdentifier() throws Exception {
