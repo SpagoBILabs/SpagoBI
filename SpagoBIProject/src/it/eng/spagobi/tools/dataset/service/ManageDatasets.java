@@ -846,16 +846,21 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			// added
 			String dsId = getAttributeAsString(DataSetConstants.DS_ID);
 			String dsLabel = getAttributeAsString(DataSetConstants.LABEL);
-			String fileType = getAttributeAsString(DataSetConstants.FILE_TYPE);
+			String fileType = getAttributeAsString(DataSetConstants.CKAN_FILE_TYPE);
 
-			String csvDelimiter = getAttributeAsString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER);
-			String csvQuote = getAttributeAsString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER);
+			String csvDelimiter = getAttributeAsString(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
+			String csvQuote = getAttributeAsString(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
 
-			String skipRows = getAttributeAsString(DataSetConstants.XSL_FILE_SKIP_ROWS);
-			String limitRows = getAttributeAsString(DataSetConstants.XSL_FILE_LIMIT_ROWS);
-			String xslSheetNumber = getAttributeAsString(DataSetConstants.XSL_FILE_SHEET_NUMBER);
+			String skipRows = getAttributeAsString(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
+			String limitRows = getAttributeAsString(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
+			String xslSheetNumber = getAttributeAsString(DataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
 
 			String ckanUrl = getAttributeAsString(DataSetConstants.CKAN_URL);
+
+			String ckanId = getAttributeAsString(DataSetConstants.CKAN_ID);
+			String scopeCd = DataSetConstants.DS_SCOPE_USER;
+
+			String ckanEncodig = getAttributeAsString(DataSetConstants.CKAN_CSV_FILE_ENCODING);
 
 			Boolean newFileUploaded = false;
 			if (getAttributeAsString("fileUploaded") != null) {
@@ -865,10 +870,13 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, ckanEncodig);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
 			jsonDsConfig.put(DataSetConstants.CKAN_URL, ckanUrl);
+			jsonDsConfig.put(DataSetConstants.CKAN_ID, ckanId);
+			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
 
 			dataSet = new CkanDataSet();
 			((CkanDataSet) dataSet).setResourcePath(ckanUrl);
