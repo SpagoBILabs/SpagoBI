@@ -77,6 +77,7 @@ public class GetCertificatedDatasets {
 			String allMyDataDS = request.getParameter("allMyDataDs");
 			String ckanDS = request.getParameter("ckanDs");
 			String ckanFilter = request.getParameter("ckanFilter");
+			String ckanOffset = request.getParameter("ckanOffset");
 			String typeDocWizard = (request.getParameter("typeDoc") != null && !"null".equals(request.getParameter("typeDoc"))) ? request
 					.getParameter("typeDoc") : null;
 
@@ -88,7 +89,7 @@ public class GetCertificatedDatasets {
 					// get all the Datasets visible for the current user (MyData,Enterprise,Shared Datasets,Ckan)
 					dataSets = dataSetDao.loadMyDataDataSets(profile.getUserUniqueIdentifier().toString());
 				} else if (ckanDS != null && ckanDS.equals("true")) {
-					ckanJSONArray = getOnlineCkanDatasets(profile, ckanFilter);
+					ckanJSONArray = getOnlineCkanDatasets(profile, ckanFilter, ckanOffset);
 					dataSets = dataSetDao.loadCkanDataSets(((UserProfile) profile).getUserId().toString());
 					synchronizeDatasets(dataSets, ckanJSONArray);
 				} else {
@@ -100,7 +101,7 @@ public class GetCertificatedDatasets {
 			long start = System.currentTimeMillis();
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			if (ckanDS != null && ckanDS.equals("true")) {
-				if (ckanFilter.equals("NOFILTER")) {
+				if (ckanFilter.equals("NOFILTER") && ckanOffset.equals("0")) {
 					for (int i = 0; i < ckanJSONArray.length(); i++) {
 						datasetsJSONArray.put(ckanJSONArray.get(i));
 					}
@@ -252,7 +253,7 @@ public class GetCertificatedDatasets {
 		return JSONReturn.toString();
 	}
 
-	private JSONArray getOnlineCkanDatasets(IEngUserProfile profile, String filter) throws JSONException {
+	private JSONArray getOnlineCkanDatasets(IEngUserProfile profile, String filter, String offset) throws JSONException {
 
 		JSONArray datasetsJsonArray = new JSONArray();
 
@@ -264,7 +265,7 @@ public class GetCertificatedDatasets {
 		try {
 			logger.debug("Getting resources...");
 			long start = System.currentTimeMillis();
-			List<Resource> list = client.getAllResourcesCompatibleWithSpagoBI(filter);
+			List<Resource> list = client.getAllResourcesCompatibleWithSpagoBI(filter, offset);
 			logger.debug("Resources got in " + (System.currentTimeMillis() - start) + "ms.");
 			logger.debug("Translating resources...");
 			start = System.currentTimeMillis();
