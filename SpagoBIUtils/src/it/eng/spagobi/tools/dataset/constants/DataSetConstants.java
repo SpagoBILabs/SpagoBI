@@ -117,6 +117,17 @@ public class DataSetConstants {
 	public static final String XSL_FILE_LIMIT_ROWS = "limitRows";
 	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
 
+	// CKAN dataset constants
+
+	public static final String CKAN_FILE_TYPE = "ckanFileType";
+	public static final String CKAN_CSV_FILE_DELIMITER_CHARACTER = "ckanCsvDelimiter";
+	public static final String CKAN_CSV_FILE_QUOTE_CHARACTER = "ckanCsvQuote";
+	public static final String CKAN_CSV_FILE_ENCODING = "ckanCsvEncoding";
+
+	public static final String CKAN_XSL_FILE_SKIP_ROWS = "ckanSkipRows";
+	public static final String CKAN_XSL_FILE_LIMIT_ROWS = "ckanLimitRows";
+	public static final String CKAN_XSL_FILE_SHEET_NUMBER = "ckanXslSheetNumber";
+
 	public static final String CKAN_ID = "ckanId";
 	public static final String CKAN_URL = "ckanUrl";
 
