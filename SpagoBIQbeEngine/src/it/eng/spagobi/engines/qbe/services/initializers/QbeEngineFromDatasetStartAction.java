@@ -1,12 +1,16 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.initializers;
 
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -16,6 +20,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +28,7 @@ import org.apache.log4j.Logger;
 
 /**
  * The Class QbeEngineFromDatasetStartAction. Called when opening QBE engine by passing a datase, not a document.
- * 
+ *
  * @author Giulio Gavardi
  */
 public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
@@ -100,11 +105,25 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 	@Override
 	public Map addDatasetsToEnv() {
 		Map env = super.getEnv();
+		logger.debug(env);
 		env.put(EngineConstants.ENV_LOCALE, getLocale());
 		String datasetLabel = this.getAttributeAsString(DATASET_LABEL);
 		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
 
 		IDataSet dataset = this.getDataSet();
+
+		// update parameters into the dataset
+		logger.debug("Setting parameters into dataset...");
+		dataset.setParamsMap(env);
+
+		// update profile attributes into dataset
+		Map<String, Object> userAttributes = new HashMap<String, Object>();
+		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		userAttributes.putAll(profile.getUserAttributes());
+		userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+		logger.debug("Setting user profile attributes into dataset...");
+		logger.debug(userAttributes);
+		dataset.setUserProfileAttributes(userAttributes);
 
 		// substitute default engine's datasource with dataset one
 		IDataSource dataSource = dataset.getDataSource();
@@ -115,8 +134,8 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		}
 
 		IDataSetTableDescriptor descriptor = this.persistDataset(dataset, env);
-		if (dataset instanceof QbeDataSet) {
-			adjustMetadataForQbeDataset((QbeDataSet) dataset, descriptor);
+		if (dataset instanceof QbeDataSet || dataset instanceof FileDataSet || dataset instanceof CkanDataSet) {
+			adjustMetadataDataset(dataset, descriptor);
 		}
 
 		List<IDataSet> dataSets = new ArrayList<IDataSet>();
@@ -129,7 +148,7 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 	 * This method solves the following issue: SQLDataSet defines the SQL statement directly considering the names' of the wrapped dataset fields, but, in case
 	 * of QbeDataSet, the fields' names are "it.eng.spagobi......Entity.fieldName" and not the name of the persistence table!!! We modify the dataset's metadata
 	 * in order to fix this.
-	 * 
+	 *
 	 * @param dataset
 	 *            The persisted Qbe dataset
 	 * @param descriptor
@@ -141,8 +160,8 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 	// IDataSet.getPersistTableName with
 	// IDataSet.getPersistTableDescriptor in order to permit the
 	// IDataSetTableDescriptor to go with its dataset.
-	// TODO merge with it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction.adjustMetadataForQbeDataset
-	private void adjustMetadataForQbeDataset(QbeDataSet dataset, IDataSetTableDescriptor descriptor) {
+	// TODO merge with it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction.adjustMetadataDataset
+	private void adjustMetadataDataset(IDataSet dataset, IDataSetTableDescriptor descriptor) {
 		IMetaData metadata = dataset.getMetadata();
 		int columns = metadata.getFieldCount();
 		for (int i = 0; i < columns; i++) {
