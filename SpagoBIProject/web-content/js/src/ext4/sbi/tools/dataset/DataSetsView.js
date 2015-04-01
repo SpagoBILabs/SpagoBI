@@ -70,7 +70,12 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		fromMyDataCtx : true,
 		
 	    DETAIL_DOCUMENT: 'DocumentDetailManagement',
-	    CREATE_DOCUMENT: 'CreateDocument'
+	    CREATE_DOCUMENT: 'CreateDocument',
+	    
+	    ckanFilter: 'NOFILTER',
+	    ckanCounter: 0,
+	    
+	    CKAN_COUNTER_STEP: 200
 
 	}
 
@@ -166,9 +171,11 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 									'</div>',
 									'<div title="{name}" class="box-text">',
 										'<h2>{name}</h2>',
-										'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>',
-										'<p><b>'+author+':</b> {owner}</p>',
-										'<p class="modified">'+changed+' {dateIn}</p>',
+										'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>'+
+										'<tpl if="dsTypeCd != \'Ckan\'">'+
+											'<p><b>'+author+':</b> {owner}</p>'+
+											'<p class="modified">'+changed+' {dateIn}</p>'+
+										'</tpl>'+
 									'</div>',
 								'</div>',
 //								'<div class="fav-container" >',
@@ -203,10 +210,13 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 									'	</div>',
 						            '</tpl>'+					            
 									'</div>',		
-								'</tpl>'+	
+								'</tpl>'+
 							'</dd>',
-						 '</tpl>',	 
-						 '<div style="clear:left"></div>',
+						 '</tpl>'+
+						 //'<tpl if="root.dsTypeCd == \'Ckan\'">'+
+				 			'<div align="center"><ul class="list-tab" id="footer-dataview"><li class="active" id="moreDatasets"><a href="#" onclick="javascript:Ext.getCmp(\'this\').moreDataset()">'+LN('sbi.mydata.ckandataset.more')+'</a></li></ul></div>'+
+				 		//'</tpl>'+
+						'<div style="clear:left"></div>',
 //					'</ul>',
 //				'</div>',
 			'</div>',{
