@@ -852,16 +852,14 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		
 		var tempStore = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);				
 		// loading more datasets
-		tempStore.load(function(records, operation, success) {
-		    console.log('***DATASETS BROWSER loaded records***');
-		    this.store.loadRecords(records, {addRecords: true})
-		    this.ckanCounter += this.CKAN_COUNTER_STEP;
-			this.viewPanel.refresh();
-		});
-//		this.store.load({scope: this, addRecords: true, callback: function(records, operation, success) {
-//		    console.log('***DATASETS BROWSER loaded records***');
-//		}});
-		//this.viewPanel.bindStore(this.store);
+		tempStore.load({scope: this, callback: this.storeMoreDataset});
+	}
+		
+	, storeMoreDataset: function(records, operation, success) {
+	    console.log('***DATASETS BROWSER loaded records***');
+	    this.store.loadRecords(records, {addRecords: true})
+	    this.ckanCounter += this.CKAN_COUNTER_STEP;
+		this.viewPanel.refresh();
 	}
 	
 	, createButtonVisibility: function(visible){
