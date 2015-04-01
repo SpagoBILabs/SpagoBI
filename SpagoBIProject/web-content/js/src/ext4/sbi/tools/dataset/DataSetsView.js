@@ -212,11 +212,12 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 									'</div>',		
 								'</tpl>'+
 							'</dd>',
+							'<tpl if="xindex === xcount-1 && dsTypeCd == \'Ckan\'">'+
+							'<div style="clear:left"></div>'+
+			 				'<div><ul class="list-tab" id="footer-dataview"><li class="active" id="moreDatasets"><a href="#" onclick="javascript:Ext.getCmp(\'this\').moreDataset()">'+LN('sbi.mydata.ckandataset.more')+'</a></li></ul></div>'+
+			 				'</tpl>'+
 						 '</tpl>'+
 						'<div style="clear:left"></div>'+
-						'<tpl if="dsTypeCd == \'Ckan\'">'+
-			 				'<div align="center"><ul class="list-tab" id="footer-dataview"><li class="active" id="moreDatasets"><a href="#" onclick="javascript:Ext.getCmp(\'this\').moreDataset()">'+LN('sbi.mydata.ckandataset.more')+'</a></li></ul></div>'+
-			 			'</tpl>'+
 //					'</ul>',
 //				'</div>',
 			'</div>',{
