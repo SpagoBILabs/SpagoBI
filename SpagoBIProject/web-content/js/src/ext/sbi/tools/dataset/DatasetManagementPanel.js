@@ -175,8 +175,10 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 	detailFieldVersId: null,
 	qbeDataSetBuilder: null,
 	customDataGrid: null,
-	detailFieldScopeId: null
-
+	detailFieldScopeId: null,
+	
+	//CKAN detail
+	ckanDetail: null
 	
 	, manageFormsDisabling: function(){
 		this.tabs.disable();
@@ -263,6 +265,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							this.WSDetail.setVisible(false);
 							this.qbeQueryDetail.setVisible(false);
 							this.flatDetail.setVisible(false);
+							this.ckanDetail.setVisible(false);
 						} else if (dsTypeSelected != null
 								&& dsTypeSelected == 'Query') {
 							this.fileDetail.setVisible(false);
@@ -273,6 +276,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							this.WSDetail.setVisible(false);
 							this.qbeQueryDetail.setVisible(false);
 							this.flatDetail.setVisible(false);
+							this.ckanDetail.setVisible(false);
 						} else if (dsTypeSelected != null
 								&& dsTypeSelected == 'Java Class') {
 							this.fileDetail.setVisible(false);
@@ -283,6 +287,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							this.WSDetail.setVisible(false);
 							this.qbeQueryDetail.setVisible(false);
 							this.flatDetail.setVisible(false);
+							this.ckanDetail.setVisible(false);
 						} else if (dsTypeSelected != null
 								&& dsTypeSelected == 'Web Service') {
 							this.fileDetail.setVisible(false);
@@ -293,6 +298,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							this.WSDetail.setVisible(true);
 							this.qbeQueryDetail.setVisible(false);
 							this.flatDetail.setVisible(false);
+							this.ckanDetail.setVisible(false);
 						} else if (dsTypeSelected != null
 								&& dsTypeSelected == 'Script') {
 							this.fileDetail.setVisible(false);
@@ -303,6 +309,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							this.WSDetail.setVisible(false);
 							this.qbeQueryDetail.setVisible(false);
 							this.flatDetail.setVisible(false);
+							this.ckanDetail.setVisible(false);
 						} else if (dsTypeSelected != null
 								&& dsTypeSelected == 'Qbe') {
 							this.fileDetail.setVisible(false);
@@ -313,6 +320,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							this.WSDetail.setVisible(false);
 							this.qbeQueryDetail.setVisible(true);
 							this.flatDetail.setVisible(false);
+							this.ckanDetail.setVisible(false);
 						} else if (dsTypeSelected != null
 								&& dsTypeSelected == 'Custom') {
 							this.fileDetail.setVisible(false);
@@ -323,6 +331,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							this.qbeQueryDetail.setVisible(false);
 							this.customDataDetail.setVisible(true);
 							this.flatDetail.setVisible(false);
+							this.ckanDetail.setVisible(false);
 						} else if (dsTypeSelected != null
 								&& dsTypeSelected == 'Flat') {
 							this.fileDetail.setVisible(false);
@@ -333,6 +342,18 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							this.qbeQueryDetail.setVisible(false);
 							this.customDataDetail.setVisible(false);
 							this.flatDetail.setVisible(true); 
+							this.ckanDetail.setVisible(false);
+						} else if (dsTypeSelected != null
+								&& dsTypeSelected == 'Ckan') {
+							this.fileDetail.setVisible(false);
+							this.queryDetail.setVisible(false);
+							this.jClassDetail.setVisible(false);
+							this.scriptDetail.setVisible(false);
+							this.WSDetail.setVisible(false);
+							this.qbeQueryDetail.setVisible(false);
+							this.customDataDetail.setVisible(false);
+							this.flatDetail.setVisible(false);
+							this.ckanDetail.setVisible(true); 
 						} else if (dsTypeSelected != null
 								|| dsTypeSelected == '') {
 							this.fileDetail.setVisible(false);
@@ -343,6 +364,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							this.qbeQueryDetail.setVisible(false);
 							this.customDataDetail.setVisible(false);
 							this.flatDetail.setVisible(false); 
+							this.ckanDetail.setVisible(false);
 						}
 
 						var dsParsList = record.get('pars');
@@ -448,7 +470,9 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							'isPersisted', 'persistTableName',
 							'flatTableName', 'dataSourceFlat',
 							'qbeSQLQuery', 'qbeJSONQuery', 'qbeDataSource',
-							'qbeDatamarts',	'userIn','dateIn','versNum','versId','meta', 'scopeCd'];
+							'qbeDatamarts',	'userIn','dateIn','versNum','versId','meta', 'scopeCd',
+							'ckanFileType', 'ckanCsvDelimiter', 'ckanCsvQuote', 'ckanCsvEncoding', 'ckanSkipRows', 'ckanLimitRows', 'ckanXslSheetNumber', 'ckanId',
+							 'ckanUrl'];
 
 					this.configurationObject.emptyRecToAdd = new Ext.data.Record(
 							{	id : null,
@@ -463,7 +487,9 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								isPersisted:'', persistTableName:'',
 								flatTableName:'', dataSourceFlat : '',
 								qbeSQLQuery: '',qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
-								dsVersions : [], userIn:'',dateIn:'',versNum:'',versId:'',meta:[], scopeCd:''
+								dsVersions : [], userIn:'',dateIn:'',versNum:'',versId:'',meta:[], scopeCd:'',
+								ckanFileType: '', ckanCsvDelimiter: '', ckanCsvQuote: '', ckanCsvEncoding: '', ckanSkipRows: '',
+								ckanLimitRows: '', ckanXslSheetNumber: '', ckanId: '', ckanUrl: ''
 							});
 
 					this.configurationObject.gridColItems = [ {
@@ -1179,6 +1205,120 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							items : [ detailFlatTableName,
 									dataSourceFlat ]
 					});
+					
+					//CKAN Detail Fields - START
+					
+					this.detailCkanFileType = new Ext.form.TextField({
+						maxLength : 250, minLength : 1,
+						width : 350,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.ckanFileType'),
+						allowBlank : false, validationEvent : true,
+						name : 'ckanFileType'
+					});
+
+//					this.detailCkanFileName = new Ext.form.TextField({
+//						maxLength : 250, minLength : 1, width : 350,
+//						regexText : LN('sbi.roles.alfanumericString'),
+//						fieldLabel : LN('sbi.ds.ckanFileName'),
+//						allowBlank : false, validationEvent : true,
+//						name : 'ckanFileName'
+//					});
+					
+					this.detailCkanCsvDelimiter = new Ext.form.TextField({
+						maxLength : 250, minLength : 1, width : 350,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.ckanCsvDelimiter'),
+						allowBlank : false, validationEvent : true,
+						name : 'ckanCsvDelimiter'
+					});
+					
+					this.detailCkanCsvQuote = new Ext.form.TextField({
+						maxLength : 250, minLength : 1, width : 350,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.ckanCsvQuote'),
+						allowBlank : false, validationEvent : true,
+						name : 'ckanCsvQuote'
+					});
+					
+					this.detailCkanCsvEncoding = new Ext.form.TextField({
+						maxLength : 250, minLength : 1, width : 350,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.ckanCsvEncoding'),
+						allowBlank : true, //validationEvent : true,
+						name : 'ckanCsvEncoding'
+					});
+					
+					this.detailCkanSkipRows = new Ext.form.TextField({
+						maxLength : 250, minLength : 1, width : 350,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.ckanSkipRows'),
+						allowBlank : true, //validationEvent : true,
+						name : 'ckanSkipRows'
+					});
+					
+					this.detailCkanLimitRows = new Ext.form.TextField({
+						maxLength : 250, minLength : 1, width : 350,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.ckanLimitRows'),
+						allowBlank : true, //validationEvent : true,
+						name : 'ckanLimitRows'
+					});
+					
+					this.detailckanXslSheetNumber = new Ext.form.TextField({
+						maxLength : 250, minLength : 1, width : 350,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.ckanXslSheetNumber'),
+						allowBlank : true, //validationEvent : true,
+						name : 'ckanXslSheetNumber'
+					});
+					
+					this.detailCkanId = new Ext.form.TextField({
+						maxLength : 250, minLength : 1, width : 350,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.ckanId'),
+						allowBlank : false, validationEvent : true,
+						name : 'ckanId'
+					});
+					
+					this.detailCkanUrl = new Ext.form.TextField({
+						maxLength : 250, minLength : 1, width : 350,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.ckanUrl'),
+						allowBlank : false, validationEvent : true,
+						name : 'ckanUrl'
+					});
+					
+					this.ckanDetail = new Ext.form.FieldSet({
+						labelWidth : 100,
+						defaults : {
+							border : true
+						},
+						defaultType : 'textfield',
+						autoHeight : true,
+						autoScroll : true,
+						border : true,
+						style : {
+							"margin-left" : "3px",
+							"margin-top" : "0px",
+							"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
+									: "-5px")
+									: "3px"
+						},
+						items : [ this.detailCkanFileType,
+						          //this.detailCkanFileName,
+						          this.detailCkanCsvDelimiter,
+						          this.detailCkanCsvQuote,
+						          this.detailCkanCsvEncoding,
+						          this.detailCkanSkipRows,
+						          this.detailCkanLimitRows,
+						          this.detailckanXslSheetNumber,
+						          this.detailCkanId,
+						          this.detailCkanUrl
+						          ]
+					});
+					
+					//CKAN Detail Fields - END
 
 					var c = {};
 					this.manageParsGrid = new Sbi.tools.ManageDatasetParameters(
@@ -1229,6 +1369,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 											this.WSDetail, this.fileDetail,
 											this.qbeQueryDetail,
 											this.flatDetail,
+											this.ckanDetail,
 											this.manageParsPanel ]
 								}
 							});
@@ -1630,8 +1771,11 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								versNum: 2,
 								versId: 0,
 								meta: [],
-								scopeCd: ''
+								scopeCd: '',
+								ckanFileType: '', ckanCsvDelimiter: '', ckanCsvQuote: '', ckanCsvEncoding: '', ckanSkipRows: '',
+								ckanLimitRows: '', ckanXslSheetNumber: '', ckanId: '', ckanUrl: ''
 							});
+
 					this.setValues(this.newRecord);
 					this.manageParsGrid.loadItems([]);
 					this.manageDsVersionsGrid.loadItems([]);
@@ -1679,6 +1823,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 			    }
 				,buildNewRecordDsVersion: function(values){
 					var actualValues = this.getValues();
+					
 					var newRec = new Ext.data.Record({
 						id: actualValues['id'],
 						name : actualValues['name'],
@@ -1726,7 +1871,17 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						versNum: values['versNum'],
 						versId: values['versId'],
 						meta: values['meta'],
-						scopeCd: values['scopeCd']
+						scopeCd: values['scopeCd'],
+						ckanFileType: values['ckanFileType'],
+						//ckanFileName: values['ckanFileName'],
+						ckanCsvDelimiter: values['ckanCsvDelimiter'],
+						ckanCsvQuote: values['ckanCsvQuote'],
+						ckanCsvEncoding: values['ckanCsvEncoding'],
+						ckanSkipRows: values['ckanSkipRows'],
+						ckanLimitRows: values['ckanLimitRows'],
+						ckanXslSheetNumber: values['ckanXslSheetNumber'],
+						ckanId: values['ckanId'],
+						ckanUrl: values['ckanUrl']
 					});
 					return newRec;
 				}
@@ -1779,7 +1934,17 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						versNum: values['versNum'],
 						versId: values['versId'],
 						meta: values['meta'],
-						scopeCd: values['scopeCd']
+						scopeCd: values['scopeCd'],
+						ckanFileType: values['ckanFileType'],
+						//ckanFileName: values['ckanFileName'],
+						ckanCsvDelimiter: values['ckanCsvDelimiter'],
+						ckanCsvQuote: values['ckanCsvQuote'],
+						ckanCsvEncoding: values['ckanCsvEncoding'],
+						ckanSkipRows: values['ckanSkipRows'],
+						ckanLimitRows: values['ckanLimitRows'],
+						ckanXslSheetNumber: values['ckanXslSheetNumber'],
+						ckanId: values['ckanId'],
+						ckanUrl: values['ckanUrl']
 					});
 					return newRec;
 				}	
@@ -1830,6 +1995,16 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							meta: values['meta'],
 							fileUploaded : thisPanel.fileUploaded,
 							scopeCd: values['scopeCd'],
+							ckanFileType: values['ckanFileType'],
+							//ckanFileName: values['ckanFileName'],
+							ckanCsvDelimiter: values['ckanCsvDelimiter'],
+							ckanCsvQuote: values['ckanCsvQuote'],
+							ckanCsvEncoding: values['ckanCsvEncoding'],
+							ckanSkipRows: values['ckanSkipRows'],
+							ckanLimitRows: values['ckanLimitRows'],
+							ckanXslSheetNumber: values['ckanXslSheetNumber'],
+							ckanId: values['ckanId'],
+							ckanUrl: values['ckanUrl']
 						};
 					return params;
 				}
@@ -1878,6 +2053,15 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					record.set('versNum',values['versNum']);
 					record.set('versId',values['versId']);
 					record.set('scopeCd',values['scopeCd']);
+					record.set('ckanFileType', values['ckanFileType']),
+					record.set('ckanCsvDelimiter', values['ckanCsvDelimiter']),
+					record.set('ckanCsvQuote', values['ckanCsvQuote']),
+					record.set('ckanCsvEncoding', values['ckanCsvEncoding']),
+					record.set('ckanSkipRows', values['ckanSkipRows']),
+					record.set('ckanLimitRows', values['ckanLimitRows']),
+					record.set('ckanXslSheetNumber', values['ckanXslSheetNumber']),
+					record.set('ckanId', values['ckanId']),
+					record.set('ckanUrl', values['ckanUrl'])
 					
 					if (arrayPars) {
 						record.set('pars',arrayPars);
@@ -1952,7 +2136,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				, setValues: function(record) {
 					record.data.jclassNameForCustom = record.data.jclassName;
 					this.getForm().loadRecord(record);
-					
+
 					// in the refactored architecture all detail parts will be
 					// implemented as external widgets. The state of each widget
 					// will be set using the method setFormState. QueryDetail is
