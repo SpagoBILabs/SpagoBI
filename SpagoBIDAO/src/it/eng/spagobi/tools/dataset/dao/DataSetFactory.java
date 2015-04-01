@@ -184,6 +184,32 @@ public class DataSetFactory {
 				// String ckanResourceId = jsonConf.optString("ckanResourceId");
 				cds.setResourcePath(resourcePath);
 				cds.setCkanUrl(resourcePath);
+
+				if (!jsonConf.isNull(DataSetConstants.FILE_TYPE)) {
+					jsonConf.put(DataSetConstants.CKAN_FILE_TYPE, jsonConf.getString(DataSetConstants.FILE_TYPE));
+				}
+				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER)) {
+					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER));
+				}
+				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_QUOTE_CHARACTER)) {
+					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
+				}
+				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_ENCODING)) {
+					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_ENCODING, jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
+				}
+				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SKIP_ROWS)) {
+					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS));
+				}
+				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_LIMIT_ROWS)) {
+					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS));
+				}
+				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SHEET_NUMBER)) {
+					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER, jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER));
+				}
+				if (!jsonConf.isNull(DataSetConstants.CKAN_ID)) {
+					jsonConf.put(DataSetConstants.CKAN_ID, jsonConf.getString(DataSetConstants.CKAN_ID));
+				}
+
 				cds.setConfiguration(jsonConf.toString());
 
 				if (jsonConf.getString(DataSetConstants.FILE_TYPE) != null) {
@@ -191,6 +217,7 @@ public class DataSetFactory {
 				}
 				cds.setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));
 				cds.setDsType(CKAN_DS_TYPE);
+
 			}
 
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
