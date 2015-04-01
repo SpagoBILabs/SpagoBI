@@ -81,7 +81,7 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 
 			Properties config = OAuth2Config.getInstance().getConfig();
 
-			String token = oauth2Client.getToken();
+			String token = oauth2Client.getAdminToken();
 
 			HttpClient httpClient = oauth2Client.getHttpClient();
 			GetMethod httpget = new GetMethod(config.getProperty("APPLICATIONS_BASE_URL") + config.getProperty("APPLICATION_NAME") + ".json?auth_token="
@@ -91,7 +91,7 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			byte[] response = httpget.getResponseBody();
 			if (statusCode != HttpStatus.SC_OK) {
 				logger.error("Error while getting application information from OAuth2 provider: server returned statusCode = " + statusCode);
-				LogMF.error(logger, "Server response is:\n{0}", new Object[] {new String(response)});
+				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
 				throw new SpagoBIRuntimeException("Error while getting application information from OAuth2 provider: server returned statusCode = "
 						+ statusCode);
 			}

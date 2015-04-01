@@ -124,8 +124,8 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 
 	@Override
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
-		// TODO Auto-generated method stub
-		return null;
+		OAuth2Client oauth2Client = new OAuth2Client();
+		return createUserProfile(oauth2Client.getAccessToken(userId, psw));
 	}
 
 	@Override

@@ -87,7 +87,7 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 		try {
 			OAuth2Client oauth2Client = new OAuth2Client();
 
-			String token = oauth2Client.getToken();
+			String token = oauth2Client.getAdminToken();
 
 			HttpClient httpClient = oauth2Client.getHttpClient();
 			GetMethod httpget = new GetMethod(config.getProperty("APPLICATIONS_BASE_URL") + config.getProperty("APPLICATION_NAME") + "/actors?auth_token="
