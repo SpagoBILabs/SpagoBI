@@ -210,7 +210,8 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			}
 
 			FieldMetadata fieldMeta = new FieldMetadata();
-			fieldMeta.setName(valueField);
+			fieldMeta.setAlias(valueField);
+			fieldMeta.setName("c_" + c);
 			fieldMeta.setType(String.class);
 			dataStoreMeta.addFiedMeta(fieldMeta);
 		}

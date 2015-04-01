@@ -135,7 +135,8 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 			// Create Datastore Metadata with header file
 			for (int i = 0; i < header.length; i++) {
 				FieldMetadata fieldMeta = new FieldMetadata();
-				fieldMeta.setName(header[i]);
+				fieldMeta.setAlias(header[i]);
+				fieldMeta.setName("c_" + i);
 				fieldMeta.setType(String.class);
 				dataStoreMeta.addFiedMeta(fieldMeta);
 			}
