@@ -6,7 +6,18 @@
 
 Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 	extend: 'Sbi.widgets.wizard.WizardWindow'
+	
+//	,initComponent: function(args) {
+//			this.callParent(args);
+//	        this.on('show', this.onShow);
+//	}
 
+	,onShow: function() {
+			//var uploadButton = this.fileUpload.getComponent('fileUploadPanel').getComponent('fileUploadButton');
+			//uploadButton.fireEvent('click', uploadButton);
+			this.uploadFileButtonHandler();
+	}	
+		
 	,config: {	
 		fieldsStep1: null,
 		fieldsStep2: null,
@@ -171,6 +182,7 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 			width : 300,
 			typeAhead : true, forceSelection : true,
 			mode : 'local',
+			hidden: true,
 			triggerAction : 'all',
 			selectOnFocus : true, 
 			editable : false,
@@ -199,6 +211,8 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 			boxLabel  : LN('sbi.ds.wizard.limitPreview'),
             name      : 'limitPreview',
             id        : 'limitPreview',
+            hidden	  : true,
+            value	  : true,
     		margin: 5
 
         })
@@ -224,7 +238,7 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 		var msgStart = LN('sbi.ds.wizard.ckan.startMsg');
 		detailText.setText(msgStart);
 		var uploadButton = this.fileUpload.getComponent('fileUploadPanel').getComponent('fileUploadButton');
-		//uploadButton.setHandler(this.uploadFileButtonHandler,this);
+		uploadButton.hide();
 		uploadButton.setHandler(this.uploadFileButtonHandler,this);
 		var loadText = LN('sbi.ds.wizard.ckan.load');
 		uploadButton.setText(loadText);
@@ -450,19 +464,19 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 						fileDetail = Ext.decode(responseObject.responseText);
 					} else {
 						Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.wizard.ckan.downloadError'), '');
-						this.closeWin()
+						this.closeWin();
 					}
 				}
 			},
 			failure: function(responseObject){
 				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.wizard.ckan.downloadError'), '');
-				this.closeWin()
+				this.closeWin();
 			}
 		});
 		
 		if(fileDetail.hasOwnProperty('errors')) {
 			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.wizard.ckan.downloadError'), '');
-			this.closeWin()
+			this.closeWin();
 		}
 		else {
 		
