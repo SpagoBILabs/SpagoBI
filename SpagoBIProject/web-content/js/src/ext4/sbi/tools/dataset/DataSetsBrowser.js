@@ -188,6 +188,9 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.actions = this.actions;
 		config.user = this.user;
 		config.fromMyDataCtx = this.displayToolbar;
+		config.ckanFilter = 'NOFILTER';
+	    config.ckanCounter = 0;
+	    config.CKAN_COUNTER_STEP = 200;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 		this.viewPanel.on('detail', this.modifyDataset, this);
 		this.viewPanel.on('delete', this.deleteDataset, this);
@@ -243,6 +246,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams.typeDoc = this.typeDoc;
 			baseParams.ckanDs = true;
 			baseParams.ckanFilter = arguments[1];
+			baseParams.ckanOffset = arguments[2];
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
@@ -776,8 +780,10 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		}
 		//Change content of DatasetView
 		if(datasetType == 'CkanDataSet') {
-			var filter = arguments[1];
-			this.activateFilter(datasetType, filter);
+			this.ckanFilter = arguments[1];
+			this.ckanCounter = 0;
+			this.CKAN_COUNTER_STEP = 200;
+			this.activateFilter(datasetType, this.ckanFilter, this.ckanCounter);
 		}
 		else {
 			this.activateFilter(datasetType);
@@ -820,8 +826,42 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		    //console.log('***DATASETS BROWSER loaded records***');
 		});
 		this.viewPanel.bindStore(this.store);
+		this.ckanCounter += this.CKAN_COUNTER_STEP;
 		this.viewPanel.refresh();
 
+	}
+	
+	//Show more dataset of the passed type
+	, moreDataset: function() {
+		//Change content of DatasetView
+		this.activateFilter('CkanDataSet', this.ckanFilter, this.ckanCounter);
+		
+		this.storeConfig = Ext.apply({
+			model : this.getModelName(),
+			filteredProperties : this.filteredProperties, 
+			sorters: [],
+			proxy: {
+		        type: 'ajax'
+		        , url: this.services["list"]
+	         	, reader : {
+	        		type : 'json',
+	        		root : 'root'
+	        	}
+		     }
+		}, {});
+		
+		var tempStore = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);				
+		// loading more datasets
+		tempStore.load(function(records, operation, success) {
+		    console.log('***DATASETS BROWSER loaded records***');
+		    this.store.loadRecords(records, {addRecords: true})
+		    this.ckanCounter += this.CKAN_COUNTER_STEP;
+			this.viewPanel.refresh();
+		});
+//		this.store.load({scope: this, addRecords: true, callback: function(records, operation, success) {
+//		    console.log('***DATASETS BROWSER loaded records***');
+//		}});
+		//this.viewPanel.bindStore(this.store);
 	}
 	
 	, createButtonVisibility: function(visible){
