@@ -36,6 +36,7 @@ import it.eng.spagobi.tools.dataset.ckan.result.list.impl.OrganizationSummaryLis
 import it.eng.spagobi.tools.dataset.ckan.result.list.impl.StringList;
 import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -72,7 +73,7 @@ public final class CKANClient {
 	private final int DEFAULT_SEARCH_FACET_MIN_COUNT = 1;
 	private final int DEFAULT_SEARCH_FIRST_ROW = 0;
 	private final int DEFAULT_SEARCH_MAX_RETURNED_ROWS = 100;
-	private final int DATASETS_LIMIT = 300;
+	private final int DATASETS_LIMIT = 200;
 
 	private CKANClient() {
 	}
@@ -324,9 +325,9 @@ public final class CKANClient {
 		return getObjectResult(DatasetList.class, uri, jsonParams, action);
 	}
 
-	public List<Resource> getAllAvailableResources(String filter) throws CKANException {
+	public List<Resource> getAllAvailableResources(String filter, String offset) throws CKANException {
 		List<Resource> resources = new ArrayList<Resource>();
-		for (Dataset ds : getAllAccessibleDatasetList(filter)) {
+		for (Dataset ds : getAllAccessibleDatasetList(filter, offset)) {
 			List<Resource> rs = ds.getResources();
 			if (rs != null && rs.size() > 0)
 				resources.addAll(rs);
@@ -334,9 +335,9 @@ public final class CKANClient {
 		return resources;
 	}
 
-	public List<Resource> getAllResourcesCompatibleWithSpagoBI(String filter) throws CKANException {
+	public List<Resource> getAllResourcesCompatibleWithSpagoBI(String filter, String offset) throws CKANException {
 		List<Resource> resources = new ArrayList<Resource>();
-		for (Dataset ds : getAllAccessibleDatasetList(filter)) {
+		for (Dataset ds : getAllAccessibleDatasetList(filter, offset)) {
 			if (ds.getState().equals("active")) {
 				List<Resource> rsList = ds.getResources();
 				if (rsList != null && rsList.size() > 0) {
@@ -357,7 +358,7 @@ public final class CKANClient {
 		return resources;
 	}
 
-	public List<Dataset> getAllAccessibleDatasetList(String filter) throws CKANException {
+	public List<Dataset> getAllAccessibleDatasetList(String filter, String offset) throws CKANException {
 
 		List<Dataset> accessibleDatasets = new ArrayList<Dataset>();
 
@@ -365,64 +366,72 @@ public final class CKANClient {
 		boolean isAuthenticated = connection.getApiKey() != null && userId != null;
 
 		if (isAuthenticated && filter.equals("NOFILTER")) {
+			if (offset.equals("0")) {
+				logger.debug("Getting acquired datasets for the user " + userId);
+				logger.debug("[NOTICE] The action \"getAcquiredDatasetList\" is not provided by official CKAN API");
+				try {
+					List<Dataset> acquireDatasets = getAcquiredDatasetList().getResult();
+					accessibleDatasets.addAll(acquireDatasets);
+					logger.debug("Acquired datasets for the user " + userId + "obtained");
+				} catch (CKANException ckane) {
+					logger.debug("[WARNING] The target host" + connection.getHost() + "does not support \"getAcquiredDatasetList\": skipped");
+				}
+
+				logger.debug("Getting not searchable private datasets for the user " + userId);
+				for (Dataset ds : getUser(userId).getDatasets()) {
+					if (ds.isPrivate() && !(Boolean.parseBoolean(ds.isSearchable()))) {
+						accessibleDatasets.add(ds);
+					}
+				}
+				logger.debug("Not searchable private datasets for the user " + userId + "obtained");
+
+				logger.debug("Getting private organization datasets for user " + userId);
+				// Organization datasets result is limited to 1000
+				for (OrganizationSummary orgSummary : getOrganizationListForUser(userId)) {
+					for (Dataset ds : getOrganization(orgSummary.getName()).getPackages()) {
+						if (ds.isPrivate()) {
+							accessibleDatasets.add(ds);
+						}
+					}
+				}
+				logger.debug("Private organization datasets for user " + userId + " obtained");
+			}
 			logger.debug("Getting public and searchable private datasets for the user " + userId);
-			int start = 0;
-			int numberOfDatasets = searchDatasets("", "", 0).getResult().getCount();
-			// TODO: we need to enable datasets paging
-			if (numberOfDatasets > DATASETS_LIMIT) {
-				numberOfDatasets = DATASETS_LIMIT;
+			int start = Integer.parseInt(offset);
+			int numberOfDatasets = searchDatasets("", "", start).getResult().getCount();
+			if (numberOfDatasets == 0) {
+				throw new SpagoBIServiceException("CKAN Client", "No more datasets available");
+			} else {
+				if (numberOfDatasets >= DATASETS_LIMIT) {
+					numberOfDatasets = DATASETS_LIMIT;
+				}
 			}
 			long elapsedTime = System.currentTimeMillis();
 
 			// ONE FAT REST CALL
-			accessibleDatasets = searchDatasets("", "", numberOfDatasets, "", start).getResult().getResults();
+			List<Dataset> searchedDatasets = searchDatasets("", "", numberOfDatasets, "", start).getResult().getResults();
+			accessibleDatasets.addAll(searchedDatasets);
 
 			elapsedTime = System.currentTimeMillis() - elapsedTime;
 			logger.debug("Time elapsed for searchDatasets: " + elapsedTime + "ms");
 			logger.debug("Public and searchable private datasets for the user " + userId + " obtained");
-
-			logger.debug("Getting acquired datasets for the user " + userId);
-			logger.debug("[NOTICE] The action \"getAcquiredDatasetList\" is not provided by official CKAN API");
-			try {
-				List<Dataset> acquireDatasets = getAcquiredDatasetList().getResult();
-				accessibleDatasets.addAll(acquireDatasets);
-				logger.debug("Acquired datasets for the user " + userId + "obtained");
-			} catch (CKANException ckane) {
-				logger.debug("[WARNING] The target host" + connection.getHost() + "does not support \"getAcquiredDatasetList\": skipped");
-			}
-
-			logger.debug("Getting not searchable private datasets for the user " + userId);
-			for (Dataset ds : getUser(userId).getDatasets()) {
-				if (ds.isPrivate() && !(Boolean.parseBoolean(ds.isSearchable()))) {
-					accessibleDatasets.add(ds);
-				}
-			}
-			logger.debug("Not searchable private datasets for the user " + userId + "obtained");
-
-			logger.debug("Getting private organization datasets for user " + userId);
-			// Organization datasets result is limited to 1000
-			for (OrganizationSummary orgSummary : getOrganizationListForUser(userId)) {
-				for (Dataset ds : getOrganization(orgSummary.getName()).getPackages()) {
-					if (ds.isPrivate()) {
-						accessibleDatasets.add(ds);
-					}
-				}
-			}
-			logger.debug("Private organization datasets for user " + userId + " obtained");
 		} else {
-			// No authentication details available
+			// No authentication details available or filtered search
 			logger.debug("Getting public and searchable private datasets for the user " + userId + "(filtered by " + filter
 					+ ") or getting public datasets if no user authentication available");
-			int start = 0;
+			int start = Integer.parseInt(offset);
 			int numberOfDatasets = 0;
 			if (filter.equals("NOFILTER")) {
-				numberOfDatasets = searchDatasets("", "", 0).getResult().getCount();
+				numberOfDatasets = searchDatasets("", "", start).getResult().getCount();
 			} else {
-				numberOfDatasets = searchDatasets(filter, "", 0).getResult().getCount();
+				numberOfDatasets = searchDatasets(filter, "", start).getResult().getCount();
 			}
-			// TODO: we need to enable datasets paging
-			if (numberOfDatasets > DATASETS_LIMIT) {
-				numberOfDatasets = DATASETS_LIMIT;
+			if (numberOfDatasets == 0) {
+				throw new SpagoBIServiceException("CKAN Client", "No more datasets available");
+			} else {
+				if (numberOfDatasets >= DATASETS_LIMIT) {
+					numberOfDatasets = DATASETS_LIMIT;
+				}
 			}
 			long elapsedTime = System.currentTimeMillis();
 
@@ -562,7 +571,7 @@ public final class CKANClient {
 			int facetMinCount, int facetLimit, List<String> facetField) throws CKANException {
 		/*
 		 * ,\"qf\":\""+qf+"\" -> removed from JSON
-		 * 
+		 *
 		 * Dismax query fields not figured out yet
 		 */
 		if (facetField == null) {
