@@ -856,10 +856,13 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	}
 		
 	, storeMoreDataset: function(records, operation, success) {
-	    console.log('***DATASETS BROWSER loaded records***');
-	    this.store.loadRecords(records, {addRecords: true})
-	    this.ckanCounter += this.CKAN_COUNTER_STEP;
-		this.viewPanel.refresh();
+	    if(records.length > 0) {
+		    this.store.loadRecords(records, {addRecords: true})
+		    this.ckanCounter += this.CKAN_COUNTER_STEP;
+			this.viewPanel.refresh();
+	    } else {
+	    	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.wizard.ckan.noMoreDataset'), '');
+	    }
 	}
 	
 	, createButtonVisibility: function(visible){
