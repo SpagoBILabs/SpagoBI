@@ -16,6 +16,7 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.ckan.CKANClient;
+import it.eng.spagobi.tools.dataset.ckan.CKANConfig;
 import it.eng.spagobi.tools.dataset.ckan.Connection;
 import it.eng.spagobi.tools.dataset.ckan.exception.CKANException;
 import it.eng.spagobi.tools.dataset.ckan.resource.impl.Resource;
@@ -255,11 +256,11 @@ public class GetCertificatedDatasets {
 
 		JSONArray datasetsJsonArray = new JSONArray();
 
-		// Connection fiwareConnection = new Connection(CKANConfig.getInstance().getConfig().getProperty("ckan.url"),
-		// profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile).getUserId().toString());
-		Connection demoConnection = new Connection("http://demo.ckan.org", "740f922c-3929-4715-9273-72210e7982e8", "alessandroportosa");
+		Connection fiwareConnection = new Connection(CKANConfig.getInstance().getConfig().getProperty("ckan.url"),
+				profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile).getUserId().toString());
+		// Connection demoConnection = new Connection("http://demo.ckan.org", "740f922c-3929-4715-9273-72210e7982e8", "alessandroportosa");
 
-		CKANClient client = new CKANClient(demoConnection);
+		CKANClient client = new CKANClient(fiwareConnection);
 		try {
 			logger.debug("Getting resources...");
 			long start = System.currentTimeMillis();
