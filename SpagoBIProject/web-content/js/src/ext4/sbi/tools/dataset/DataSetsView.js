@@ -130,7 +130,6 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		
 		var author = LN('sbi.generic.author');
 		var currentUser = this.config.user;
-		
 
 		this.tpl = new Ext.XTemplate(
 				'<div id="list-container" class="main-datasets-list">', 	            
