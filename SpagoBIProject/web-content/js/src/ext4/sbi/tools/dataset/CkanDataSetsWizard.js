@@ -122,7 +122,7 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 		var toReturn = [];
 		
 		toReturn = [{label:"Id", name:"id",type:"text",hidden:"true", value:this.record.id},
-		            {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'File'},
+		            {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:'File'},
 		            {label: LN('sbi.ds.label'), name:"label", type:"text",hidden:"true", /*mandatory:true, readOnly:(this.isNew || this.isOwner)?false:true,*/ value:this.record.label}, 
 		            {label: LN('sbi.ds.name'), name:"name", type:"text", mandatory:true, readOnly:(!this.isOwner), value:this.ckanName},
 		            {label: LN('sbi.ds.description'), name:"description", type:"textarea", readOnly:(!this.isOwner), value:this.ckanDescription},

@@ -411,6 +411,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.isNew = true;
 		config.userCanPersist = this.userCanPersist;
 		config.tablePrefix = this.tablePrefix;
+
 		config.ckanUrl = rec.configuration.Resource.url;
 		config.ckanId = rec.configuration.ckanId;
 		config.ckanFormat = rec.configuration.Resource.format;
@@ -453,6 +454,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 						config.ckanUrl = rec.ckanUrl;
 						config.ckanId = rec.ckanId;
 						config.ckanFormat = rec.fileType;
+						config.ckanName = rec.name;
+						config.ckanDescription = rec.description;
 						this.wizardWin = Ext.create('Sbi.tools.dataset.CkanDataSetsWizard', config);	
 						this.wizardWin.on('save', this.saveDataset, this);
 						this.wizardWin.on('delete', this.deleteDataset, this);
