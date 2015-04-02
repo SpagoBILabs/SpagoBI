@@ -8,7 +8,6 @@ package it.eng.spagobi.tools.dataset.persist;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -121,7 +120,7 @@ public class PersistedTableManager {
 		dataset.setPersisted(false);
 		dataset.loadData();
 		IDataStore datastore = dataset.getDataStore();
-		persistDataset(dataset, datastore, dsPersist);
+		persistDataset(datastore, dsPersist);
 	}
 
 	public void persistDataset(IDataSet dataSet, IDataStore datastore, IDataSource datasource, String tableName) throws Exception {
@@ -141,7 +140,7 @@ public class PersistedTableManager {
 			logger.debug("Persistence management isn't implemented for " + getDialect() + ".");
 			throw new SpagoBIServiceException("", "sbi.ds.dsCannotPersistDialect");
 		}
-		persistDataset(dataSet, datastore, datasource);
+		persistDataset(datastore, datasource);
 	}
 
 	private IDataStore normalizeFileDataSet(IDataSet dataSet, IDataStore datastore) {
@@ -187,7 +186,7 @@ public class PersistedTableManager {
 		return datastore;
 	}
 
-	public void persistDataset(IDataSet dataset, IDataStore datastore, IDataSource datasource) throws Exception {
+	public void persistDataset(IDataStore datastore, IDataSource datasource) throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
 		String dialect = datasource.getHibDialectClass();
@@ -202,9 +201,9 @@ public class PersistedTableManager {
 			}
 			// Steps #1: define prepared statement (and max column size for
 			// strings type)
-			PreparedStatement statement = defineStatements(dataset, datastore, datasource, connection);
+			PreparedStatement statement = defineStatements(datastore, datasource, connection);
 			// Steps #2: define create table statement
-			String createStmtQuery = getCreateTableQuery(dataset, datastore, datasource);
+			String createStmtQuery = getCreateTableQuery(datastore, datasource);
 			dropTableIfExists(datasource);
 			// Step #3: execute create table statament
 			executeStatement(createStmtQuery, datasource);
@@ -230,7 +229,7 @@ public class PersistedTableManager {
 		logger.debug("OUT");
 	}
 
-	private PreparedStatement defineStatements(IDataSet dataset, IDataStore datastore, IDataSource datasource, Connection connection) {
+	private PreparedStatement defineStatements(IDataStore datastore, IDataSource datasource, Connection connection) {
 		PreparedStatement toReturn;
 
 		IMetaData storeMeta = datastore.getMetaData();
@@ -255,7 +254,7 @@ public class PersistedTableManager {
 
 		for (int i = 0; i < fieldCount; i++) {
 			IFieldMetaData fieldMeta = storeMeta.getFieldMeta(i);
-			String columnName = getSQLColumnName(dataset, fieldMeta);
+			String columnName = getSQLColumnName(fieldMeta);
 			String escapedColumnName = AbstractJDBCDataset.encapsulateColumnName(columnName, datasource);
 
 			insertQuery += separator + escapedColumnName;
@@ -438,13 +437,8 @@ public class PersistedTableManager {
 		}
 	}
 
-	private String getSQLColumnName(IDataSet dataset, IFieldMetaData fmd) {
-		String columnName = null;
-		if (dataset instanceof FileDataSet || dataset instanceof CkanDataSet) {
-			columnName = fmd.getName();
-		} else {
-			columnName = fmd.getAlias() != null ? fmd.getAlias() : fmd.getName();
-		}
+	private String getSQLColumnName(IFieldMetaData fmd) {
+		String columnName = fmd.getAlias() != null ? fmd.getAlias() : fmd.getName();
 		logger.debug("Column name is " + columnName);
 		return columnName;
 	}
@@ -563,7 +557,7 @@ public class PersistedTableManager {
 		return toReturn;
 	}
 
-	private String getCreateTableQuery(IDataSet dataset, IDataStore datastore, IDataSource dataSource) {
+	private String getCreateTableQuery(IDataStore datastore, IDataSource dataSource) {
 		String toReturn = "create table " + tableName + " (";
 		IMetaData md = datastore.getMetaData();
 
@@ -575,7 +569,7 @@ public class PersistedTableManager {
 
 		for (int i = 0, l = md.getFieldCount(); i < l; i++) {
 			IFieldMetaData fmd = md.getFieldMeta(i);
-			String columnName = getSQLColumnName(dataset, fmd);
+			String columnName = getSQLColumnName(fmd);
 			toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + getDBFieldType(dataSource, fmd);
 			toReturn += ((i < l - 1) ? " , " : "");
 		}

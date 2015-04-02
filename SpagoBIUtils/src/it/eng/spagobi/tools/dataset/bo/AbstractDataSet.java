@@ -264,10 +264,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	public void setMetadata(IMetaData metadata) {
-		String metadataStr = null;
-		DatasetMetadataParser dsp = new DatasetMetadataParser();
-		metadataStr = dsp.metadataToXML(metadata);
-		this.setDsMetadata(metadataStr);
+		// do nothings
 	}
 
 	public String getDsType() {

@@ -23,7 +23,6 @@ package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.CacheItem;
@@ -389,22 +388,22 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 	/*
 	 * public void testCacheCleaning(){ ICache cacheCustom = createCache(791449); IDataStore resultset;
-	 * 
+	 *
 	 * //Insert first dataset qbeDataset.loadData(); resultset = qbeDataset.getDataStore();
-	 * 
+	 *
 	 * try { cacheCustom.put(qbeDataset, resultset); } finally { assertNotNull(cacheCustom.get(qbeDataset.getSignature()));
 	 * logger.debug("QbeDataSet inserted inside cache"); }
-	 * 
+	 *
 	 * ICacheMetadata cacheMetadata = cacheCustom.getMetadata();
-	 * 
+	 *
 	 * //Second dataset (too big for avaiable space) fileDataset.loadData(); resultset = fileDataset.getDataStore();
-	 * 
+	 *
 	 * assertFalse(cacheMetadata.hasEnoughMemoryForStore(resultset));
-	 * 
+	 *
 	 * try{ cacheCustom.put(fileDataset, resultset);
-	 * 
+	 *
 	 * } finally { assertNull("Dataset found in cache but there should not be",cacheCustom.get(fileDataset.getSignature()));
-	 * 
+	 *
 	 * cacheCustom.deleteAll(); } }
 	 */
 
@@ -461,7 +460,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		persistedTableManager.setTableName(tableName);
 
 		try {
-			persistedTableManager.persistDataset(new JDBCDataSet(), dataStore, dataSourceWriting);
+			persistedTableManager.persistDataset(dataStore, dataSourceWriting);
 		} catch (Exception e) {
 			logger.error("Error persisting dataset");
 		}
