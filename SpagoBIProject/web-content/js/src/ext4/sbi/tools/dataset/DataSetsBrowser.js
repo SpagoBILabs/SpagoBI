@@ -777,8 +777,13 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		for(var i=0; i< tabEls.length; i++){
 			//nodeType == 1 is  Node.ELEMENT_NODE
 			if (tabEls[i].nodeType == 1){
-				if (tabEls[i].id == datasetType){					
-					tabEls[i].className += ' active '; //append class name to existing others
+				if (tabEls[i].id == datasetType){
+					if(datasetType == 'CkanDataSet') {
+						// bug fix for CKAN search
+						tabEls[i].className = 'active'; //set class name
+					} else {
+						tabEls[i].className += ' active '; //append class name to existing others
+					}
 				} else {
 					tabEls[i].className = tabEls[i].className.replace( /(?:^|\s)active(?!\S)/g , '' ); //remove active class
 				}
@@ -839,26 +844,32 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	
 	//Show more dataset of the passed type
 	, moreDataset: function() {
-		//Change content of DatasetView
-		this.activateFilter('CkanDataSet', this.ckanFilter, this.ckanCounter);
-		
-		this.storeConfig = Ext.apply({
-			model : this.getModelName(),
-			filteredProperties : this.filteredProperties, 
-			sorters: [],
-			proxy: {
-		        type: 'ajax'
-		        , url: this.services["list"]
-	         	, reader : {
-	        		type : 'json',
-	        		root : 'root'
-	        	}
-		     }
-		}, {});
-		
-		var tempStore = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);				
-		// loading more datasets
-		tempStore.load({scope: this, callback: this.storeMoreDataset});
+		var activeDatasets = Ext.get('CkanDataSet').dom.getAttribute('class');
+		if(activeDatasets == "active") {
+			//Change content of DatasetView
+			this.activateFilter('CkanDataSet', this.ckanFilter, this.ckanCounter);
+			
+			this.storeConfig = Ext.apply({
+				model : this.getModelName(),
+				filteredProperties : this.filteredProperties, 
+				sorters: [],
+				proxy: {
+			        type: 'ajax'
+			        , url: this.services["list"]
+		         	, reader : {
+		        		type : 'json',
+		        		root : 'root'
+		        	}
+			     }
+			}, {});
+			
+			var tempStore = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);				
+			// loading more datasets
+			tempStore.load({scope: this, callback: this.storeMoreDataset});
+		} else {
+			// datasets paging only enabled for CKAN
+			Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.wizard.ckan.noMoreDataset'), '');
+		}
 	}
 		
 	, storeMoreDataset: function(records, operation, success) {
