@@ -237,12 +237,9 @@ public final class CKANClient {
 			// request.header("Authorization", connection.getApiKey());
 			request.body("application/json", jsonParams);
 			request.accept("application/json");
-			try {
-				response = request.post(String.class);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			response = request.post(String.class);
+
 			if (response.getStatus() != 200) {
 				throw new CKANException("Failed : HTTP error code : " + response.getStatus());
 			}
@@ -571,7 +568,7 @@ public final class CKANClient {
 			int facetMinCount, int facetLimit, List<String> facetField) throws CKANException {
 		/*
 		 * ,\"qf\":\""+qf+"\" -> removed from JSON
-		 *
+		 * 
 		 * Dismax query fields not figured out yet
 		 */
 		if (facetField == null) {

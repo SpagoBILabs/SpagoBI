@@ -450,6 +450,9 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 				    	this.wizardWin.show();
 						break;
 					case 'Ckan' : 
+						config.ckanUrl = rec.ckanUrl;
+						config.ckanId = rec.ckanId;
+						config.ckanFormat = rec.fileType;
 						this.wizardWin = Ext.create('Sbi.tools.dataset.CkanDataSetsWizard', config);	
 						this.wizardWin.on('save', this.saveDataset, this);
 						this.wizardWin.on('delete', this.deleteDataset, this);

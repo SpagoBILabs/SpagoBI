@@ -6,15 +6,8 @@
 
 Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 	extend: 'Sbi.widgets.wizard.WizardWindow'
-	
-//	,initComponent: function(args) {
-//			this.callParent(args);
-//	        this.on('show', this.onShow);
-//	}
 
 	,onShow: function() {
-			//var uploadButton = this.fileUpload.getComponent('fileUploadPanel').getComponent('fileUploadButton');
-			//uploadButton.fireEvent('click', uploadButton);
 			this.uploadFileButtonHandler();
 	}	
 		
