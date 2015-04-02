@@ -107,7 +107,7 @@ public class DatasetManagementAPI {
 	}
 
 	public String getUserId() {
-		return getUserProfile().getUserUniqueIdentifier().toString();
+		return getUserProfile().getUserId().toString();
 	}
 
 	public void setUserProfile(UserProfile userProfile) {
