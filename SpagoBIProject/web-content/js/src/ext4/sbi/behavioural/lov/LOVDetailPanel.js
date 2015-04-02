@@ -15,11 +15,12 @@ Ext.define
 		config: 
 		{
 	    	//frame: true,
-	    	bodyPadding: '5 5 0',
+	    	//bodyPadding: '5 5 0',
 	    	
 	    	defaults: 
 	    	{
-	            width: 400
+	            //width: 400	            
+	    		layout: "fit"
 	        }, 
 	        
 	        fieldDefaults: 
@@ -38,72 +39,78 @@ Ext.define
     	{	    	
 	    	this.initConfig(config);
 	    	
-	    	this.initFields();	
-	    	
-	    	//this.aa = Ext.create("Sbi.behavioural.lov.TestLovPanel2",{});
-	    		    	
-	    	//var tt = this;
-	    	
-	    	/*
-	    	var previewPanel = Ext.create("Ext.Paenl",{
-	    		htm: "text",
-	    		layout:"fit"
-	    	});
-	    	
-	    	function updatePanel(){
-	    		this.removeAll();
-	    		this.add(Ext.create(""TextLoVPanel,[sss]))
-	    	}
-	    	
-	    	
-	    	
-	    	steps: 
-	    		1) implementation of getDetails (to je kod mene openTestPage() metoda) of detail panel: output should be an object containing the provider
-	    		2) implementation of the test button:
-	    				a) getDeatils
-	    				b) updatePanel passing the details (so creates the lovConfig for the TestLovPanel )
-	    		3) start to integrate the TestLovPanel
-	    	*/
+	    	this.initFields();
 	    	
 	    	this.resultPanel = Ext.create
 	    	(
     			"Ext.panel.Panel",
     			
     			{
-    				html: "text",
-    				layout: "fit"
+    				layout: "fit",
+    				border: false	
     			}
 	    	);
+	    	
+	    	var globalScope = this;
 	    	
 	    	this.tabPanel = Ext.create
 	    	(
     			'Ext.tab.Panel', 
     			
     			{
-		    		width: 600,
-		    		height: 600,
-		    		id: "asd",
+//		    		width: 720,
+		    		//height: screen.innerHeight,
+    				border: false,
+    				layout: "fit",
+		    		id: "TAB_PANEL_RESULTS",
 		    		
 		    	    items: 
 	    	    	[	
 	    	    	 	{
+	    	    	 		title: "LOV Form",
 	    	    	 		items: [ this.panel1, this.panel2, this.panel3 ],
-	    	    	 		title: "LOV Form"
+	    	    	 		border: false
 	    	    	 	}, 
 	    	    	 	
 	    	    	 	{
 	    	    	 		title: 'LOV Results',
-	    	    	 		items: [ this.resultPanel ]
+	    	    	 		items: [ this.resultPanel ],
+	    	    	 		layout: "fit",
+	    	    	 		border: false
 	    	    	 	}
-		    	 	]
+		    	 	],
+	    	 	
+		    	 	defaults: 
+		    	 	{
+		    	        listeners: 
+		    	        {
+		    	            activate: function(tab, eOpts) 
+		    	            {		    	                
+		    	                if (tab.title == "LOV Form")
+	    	                	{
+		    	                	// When form tab is selected show Test button and hide Save button
+		    	                	globalScope.getComponent("TOOLBAR").items.items[2].show();
+		    	                	globalScope.getComponent("TOOLBAR").items.items[3].hide();
+	    	                	}
+		    	                else
+	    	                	{
+		    	                	// When result tab is selected show Save button and hide Test button
+		    	                	globalScope.getComponent("TOOLBAR").items.items[2].hide();
+		    	                	globalScope.getComponent("TOOLBAR").items.items[3].show();
+	    	                	}
+		    	            }
+		    	        }
+		    	    }
     			}
-			);
+			);    	
 	    	
 	    	this.items = [ this.tabPanel ];
 	    	
 	    	this.tbar = Sbi.widget.toolbar.StaticToolbarBuilder.buildToolbar
 	    	(
     			{ 
+    				id: "TOOLBAR",
+    				
     				items:
     				[ 
     				 	{name:'->'},
@@ -159,33 +166,122 @@ Ext.define
 				
 				this
 			);
+	    	
+	    	
+	    	
+//	    	this.resultPanel.on
+//	    	(
+//    			"wrongSyntax",
+//    			
+//    			function()
+//    			{
+//    				console.log("GREEEEEEEEEEESKSA");
+//    			},
+//    			
+//    			this
+//	    	);
+	    	
+//	    	var addLovTestEvents = function(lovTest, lovPanel, lovConfig, modality, contextName){
+//	    		lovTest.on('lovTypeChanged',function(type){
+//	    			lovPanel.remove(lovTest,'true');
+//	    			lovConfig.lovType=type;
+//	    			lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{contextName: contextName,lovConfig:lovConfig, modality:modality}); //by alias
+//	    			addLovTestEvents(lovTest,lovPanel, lovConfig, modality, contextName);
+//	    			lovPanel.add(lovTest);
+//	    		},this);
+//	    	}
+    	},
+    	
+    	takeValues: function()
+    	{
+    		return this.resultPanel.getComponent("TEST_LOV_PANEL").takeValues();
+    	},
+    	
+    	setValues: function(data)
+    	{
+    		this.resultPanel.getComponent("TEST_LOV_PANEL").setValues(data);
     	},
     	
     	updatePanel: function(contextName, lovConfig, lovProvider)
     	{
-    		console.log("USAO U UPDATE PANEL");
+    		console.log("[IN] updatePanel() LOVDetailPanel");
     		
-    		console.log(lovProvider);
+    		//console.log(lovProvider);
     		
     		this.resultPanel.removeAll();
     		
+    		var lovTest = Ext.create
+			(
+				"Sbi.behavioural.lov.TestLovPanel2", 
+				
+				{
+					contextName: contextName, 
+					lovConfig: lovConfig,
+					id: "TEST_LOV_PANEL",
+					//tabPanelHeight: this.tabPanel.height,
+					// Can I define tab height this way?
+					tabPanelHeight: window.innerHeight,
+					lovProvider: lovProvider
+				}
+			);
+    		
+    	
+//    		var addLovTestEvents = function(lovTest, lovConfig, contextName){
+//				lovTest.on('lovTypeChanged',function(type){
+//					this.resultPanel.remove(lovTest,'true');
+//					lovConfig.lovType=type;
+//					lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel2',{contextName: contextName,lovConfig:lovConfig, lovProvider: lovProvider}); //by alias
+//					addLovTestEvents(lovTest, lovConfig, contextName);
+//					this.resultPanel.add(lovTest);
+//					console.log("LLLL");
+//				},this);
+//    		};
+    		
+    		lovTest.on
+	    	(
+    			"wrongSyntax2", 
+    			
+    			function()
+    			{
+//    				console.log("GREEEEEEEEEEESKSA2222"); 
+    				
+    				/* If user make mistake and type wrong syntax for SQL query
+    				 * take him back to the first page (LOV form) and provide him
+    				 * the last known (good, valid) SQL query (the query that existed) 
+    				 * previously for this LOV. */
+    				var startStatement = this.lovProvider.lastValue.indexOf("<STMT>")+"<STMT>".length;
+        			var endStatement = this.lovProvider.lastValue.indexOf("</STMT>");
+        			var oldStatement = this.lovProvider.lastValue.substring(startStatement,endStatement);
+        			
+        			this.dataSourceQuery.setValue(oldStatement);
+    				
+    				this.getComponent("TAB_PANEL_RESULTS").tabBar.items.items[1].hide();
+    				this.getComponent("TAB_PANEL_RESULTS").setActiveTab(0);    				
+    			},
+    			
+    			this
+	    	);
+    		
+    		lovTest.on('lovTypeChanged',function(type){
+				this.resultPanel.remove(lovTest,'true');
+				lovConfig.lovType=type;
+				lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel2',{contextName: contextName,lovConfig:lovConfig, lovProvider: lovProvider, tabPanelHeight: window.innerHeight}); //by alias
+				//addLovTestEvents(lovTest, lovConfig, contextName);
+				this.resultPanel.add(lovTest);
+				console.log("LLLL");
+			},this);
+    		
     		this.resultPanel.add
     		(
-				Ext.create
-				(
-					"Sbi.behavioural.lov.TestLovPanel2", 
-					
-					{
-						contextName: contextName, 
-						lovConfig: lovConfig
-					}
-				)
+    			lovTest
 			);
     		
     		this.resultPanel.update(); 
     		
-    		console.log(this.resultPanel);  		
-    		console.log("----*");    		
+//    		console.log(this.resultPanel);  		
+//    		console.log("----*");    	
+    		
+    		console.log("[OUT] updatePanel() LOVDetailPanel");
     	},    	
     	
     	
@@ -197,7 +293,7 @@ Ext.define
     		
     		this.lovId = Ext.create
     		(
-    			"Ext.form.field.Text",
+    			"Ext.form.field.Hidden",
     			
     			{
     				name: "LOV_ID",
@@ -245,12 +341,10 @@ Ext.define
     		
     		this.lovProvider = Ext.create
     		(
-    			"Ext.form.field.TextArea",
+    			"Ext.form.field.Hidden",
     			
     			{
     				name: "LOV_PROVIDER",
-    				width: 500,
-    				height: 150,
     				readOnly: true
     			}
     		);    
@@ -340,8 +434,11 @@ Ext.define
     			
     			{
     				width: "100%",
+    				// (top, right, bottom, left)
+    				padding: '10 10 5 10',
     				
     				items: 
+    					
 					[ this.lovId, this.lovLabel, this.lovName, this.lovDescription, 
 					  this.lovProvider, this.lovInputTypeCombo, this.lovInputTypeCd,
 					  this.lovInputTypeId, this.lovSelectionType ]    				
@@ -404,7 +501,8 @@ Ext.define
 	    	        id: "DATA_SOURCE_COMBO",
 	    	        displayField:'DATASOURCE_LABEL',
 	    	        valueField:'DATASOURCE_LABEL',
-	    	        padding: "10 0 0 0",
+	    	        // (top, right, bottom, left)
+	    	        padding: "10 0 5 0",
 	    	        editable: false,
 	    	        allowBlank: false
 	    	    }
@@ -511,7 +609,10 @@ Ext.define
     			
     			{
     				width: "100%",
-    				padding: "10 0 0 0",
+    				//border: false,
+    				// (top, right, bottom, left)
+    				padding: '5 10 5 10',
+    				id: "PANEL2",
     				
     				items: 
 					[ this.dataSourceCombo, this.dataSourceQuery ]    				
@@ -524,7 +625,8 @@ Ext.define
     			
     			{
     				width: "100%",
-    				padding: "10 0 0 0",
+    				// (top, right, bottom, left)
+    				padding: '5 10 5 10',
     				
     				items: 
 					[ this.scriptTypeCombo, this.scriptQuery  ]    				
@@ -561,9 +663,7 @@ Ext.define
     	},    
     	
     	setFormState: function(values)
-    	{
-    		var v = values;
-    		
+    	{    		
     		this.selectedInputType(values.I_TYPE_CD);
     		
 //    		console.log("PROVERA ID-eva");
@@ -571,9 +671,10 @@ Ext.define
 //			console.log(values.I_TYPE_ID);
     		/* *** 	Problem solved: Keeping panel 2 details (combo and text area) from 
     		 * 		the old record in the new one. */
+    		
     		// Needed for differentiating between old (existing) record and the new one
     		if (values.LOV_ID != 0)
-    		{       			
+    		{           			
     			this.lovInputTypeCombo.setValue(values.I_TYPE_CD);
     			    			
     			var query = values.LOV_PROVIDER;
@@ -606,7 +707,7 @@ Ext.define
     		this.getForm().setValues(values);    		
     	},
     	
-    	getFormState: function()
+    	getFormState: function(phaseOfLov)
     	{    		
     		var getLovId = this.lovId.value;
     		var getLovName = this.lovName.value;
@@ -614,14 +715,46 @@ Ext.define
     		var getLovLabel = this.lovLabel.value;
     		
     		if (this.lovInputTypeCombo.getValue() == "QUERY")
-			{    			    			
-    			var getLovProvider = "<QUERY>" + "<CONNECTION>" + this.dataSourceCombo.getValue() + "</CONNECTION>" + "<STMT>" + this.dataSourceQuery.getValue() + "</STMT>" + "<VALUE-COLUMN>"
-				+ "region_id" + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + "region_id" + "</DESCRIPTION-COLUMN>"
-				+ "<VISIBLE-COLUMNS>" + "region_id" + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
-				+ "region_id" + "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + "simple"
-				+ "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>" + "sales_city,sales_state_province,sales_district,sales_region,sales_country,sales_district_id" + "</TREE-LEVELS-COLUMNS>"
-				+ "</QUERY>";
+			{    
+    			// PREDEFINED XML QUERY...
+//    			var getLovProvider = "<QUERY>" + "<CONNECTION>" + this.dataSourceCombo.getValue() + "</CONNECTION>" + "<STMT>" + this.dataSourceQuery.getValue() + "</STMT>" + "<VALUE-COLUMN>"
+//				+ "region_id" + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + "region_id" + "</DESCRIPTION-COLUMN>"
+//				+ "<VISIBLE-COLUMNS>" + "region_id" + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
+//				+ "region_id" + "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + "simple"
+//				+ "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>" + "sales_city,sales_state_province,sales_district,sales_region,sales_country,sales_district_id" + "</TREE-LEVELS-COLUMNS>"
+//				+ "</QUERY>";
     			
+    			//while (this.dataSourceCombo.getValue() != "" && this.dataSourceQuery.getValue() != "")
+    			//{
+    			
+    			var getLovProvider = "";
+    			
+    			var startDataSource = this.lovProvider.value.indexOf("<CONNECTION>")+"<CONNECTION>".length;
+    			var endDataSource = this.lovProvider.value.indexOf("</CONNECTION>");
+    			var oldDataSource = this.lovProvider.value.substring(startDataSource,endDataSource);
+    			
+    			var startStatement = this.lovProvider.value.indexOf("<STMT>")+"<STMT>".length;
+    			var endStatement = this.lovProvider.value.indexOf("</STMT>");
+    			var oldStatement = this.lovProvider.value.substring(startStatement,endStatement);
+    			    			
+    			if (phaseOfLov == "testPhase" && getLovId == 0 || 
+    					oldDataSource != this.dataSourceCombo.getValue() || 
+    					oldStatement != this.dataSourceQuery.getValue()) // Test phase
+				{
+    				getLovProvider = "<QUERY>" + "<CONNECTION>" + this.dataSourceCombo.getValue() + "</CONNECTION>" + "<STMT>" + this.dataSourceQuery.getValue() + "</STMT>" + "<VALUE-COLUMN>"
+    				+ "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + "</DESCRIPTION-COLUMN>"
+    				+ "<VISIBLE-COLUMNS>" + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
+    				+ "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>" + "</TREE-LEVELS-COLUMNS>"
+    				+ "</QUERY>";
+    				
+    				// Need to attach this XML query to LOV provider for later filling with data
+    				this.lovProvider.value = getLovProvider;    				
+				}
+    			else // Save phase
+				{   				
+    				getLovProvider = this.lovProvider.value;   
+				}
+    			    			
     			var getInputTypeCd = "QUERY";
     			var getInputTypeId = 1; 
 			}    			
