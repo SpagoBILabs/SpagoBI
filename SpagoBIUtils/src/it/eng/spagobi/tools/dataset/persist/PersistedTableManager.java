@@ -170,14 +170,20 @@ public class PersistedTableManager {
 					IField field = rec.getFieldAt(j);
 					// change content type
 					if (fmd.getType().toString().contains("Integer")) {
-						Integer intValue = Integer.valueOf((String) field.getValue());
-						field.setValue(intValue);
+						try {
+							Integer intValue = Integer.valueOf((String) field.getValue());
+							field.setValue(intValue);
+						} catch (Throwable t) {
+							logger.error("Error trying to convert value [" + field.getValue() + "] into an Integer value. Considering it as null...");
+							field.setValue(null);
+						}
 					} else if (fmd.getType().toString().contains("Double")) {
 						try {
 							Double doubleValue = Double.valueOf((String) field.getValue());
 							field.setValue(doubleValue);
 						} catch (Throwable t) {
-							System.out.println(field.getValue());
+							logger.error("Error trying to convert value [" + field.getValue() + "] into a Double value. Considering it as null...");
+							field.setValue(null);
 						}
 					}
 
