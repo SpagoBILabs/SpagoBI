@@ -12,7 +12,7 @@
 	<INITIALIZER class="it.eng.spagobi.workflow.JbpmContextInitializer" config="" />
 
 	<!-- Initializer for SpagoBI metadata   -->  
-	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.OAuth2MetadataInitializer" config="" />
+	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.MetadataInitializer" config="" />
 
 	<!-- Initializer for Alarm Sending-->
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.AlarmQuartzInitializer" config="" />
