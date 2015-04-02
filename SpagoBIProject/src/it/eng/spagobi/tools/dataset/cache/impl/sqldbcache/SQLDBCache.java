@@ -24,7 +24,6 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.CacheItem;
@@ -1150,7 +1149,7 @@ public class SQLDBCache implements ICache {
 		persistedTableManager.setTableName(tableName);
 
 		try {
-			persistedTableManager.persistDataset(new JDBCDataSet(), dataStore, dataSource);
+			persistedTableManager.persistDataset(dataStore, dataSource);
 		} catch (Exception e) {
 			logger.error("Error persisting dataset", e);
 		}

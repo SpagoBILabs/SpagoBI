@@ -9,8 +9,6 @@ import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -134,8 +132,8 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		}
 
 		IDataSetTableDescriptor descriptor = this.persistDataset(dataset, env);
-		if (dataset instanceof QbeDataSet || dataset instanceof FileDataSet || dataset instanceof CkanDataSet) {
-			adjustMetadataDataset(dataset, descriptor);
+		if (dataset instanceof QbeDataSet) {
+			adjustMetadataQbeDataset(dataset, descriptor);
 		}
 
 		List<IDataSet> dataSets = new ArrayList<IDataSet>();
@@ -160,8 +158,8 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 	// IDataSet.getPersistTableName with
 	// IDataSet.getPersistTableDescriptor in order to permit the
 	// IDataSetTableDescriptor to go with its dataset.
-	// TODO merge with it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction.adjustMetadataDataset
-	private void adjustMetadataDataset(IDataSet dataset, IDataSetTableDescriptor descriptor) {
+	// TODO merge with it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction.adjustMetadataQbeDataset
+	private void adjustMetadataQbeDataset(IDataSet dataset, IDataSetTableDescriptor descriptor) {
 		IMetaData metadata = dataset.getMetadata();
 		int columns = metadata.getFieldCount();
 		for (int i = 0; i < columns; i++) {
