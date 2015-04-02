@@ -79,8 +79,6 @@ public class DomainCRUD {
 			throw new SpagoBIServiceException("An unexpected error occured while instatiating the dao", t);
 		}
 
-		System.out.println("------------------------ " + result);
-
 		return result;
 
 	}
