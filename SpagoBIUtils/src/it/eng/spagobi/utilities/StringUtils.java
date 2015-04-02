@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.utilities;
 
@@ -14,7 +14,7 @@ import java.util.Set;
 
 /**
  * The Class StringUtils.
- * 
+ *
  * @author Andrea Gioia
  */
 public class StringUtils {
@@ -55,16 +55,16 @@ public class StringUtils {
 
 	/**
 	 * Replace parameters.
-	 * 
+	 *
 	 * @param filterCondition
 	 *            the filter condition
 	 * @param parameterTypeIdentifier
 	 *            the parameter type identifier
 	 * @param parameters
 	 *            the parameters
-	 * 
+	 *
 	 * @return the string
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -87,16 +87,16 @@ public class StringUtils {
 
 	/**
 	 * Replace parameters.
-	 * 
+	 *
 	 * @param filterCondition
 	 *            the filter condition
 	 * @param parameterTypeIdentifier
 	 *            the parameter type identifier
 	 * @param parameters
 	 *            the parameters
-	 * 
+	 *
 	 * @return the string
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -128,14 +128,14 @@ public class StringUtils {
 
 	/**
 	 * Gets the parameters.
-	 * 
+	 *
 	 * @param str
 	 *            the str
 	 * @param parameterTypeIdentifier
 	 *            the parameter type identifier
-	 * 
+	 *
 	 * @return the parameters
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -161,9 +161,8 @@ public class StringUtils {
 	}
 
 	/**
-	 * Escapes the input string as a HQL static operand. At the time being, it
-	 * replaces "'" with "''"
-	 * 
+	 * Escapes the input string as a HQL static operand. At the time being, it replaces "'" with "''"
+	 *
 	 * @param parameter
 	 *            the parameter to be escaped
 	 * @return the escaped String
@@ -177,14 +176,12 @@ public class StringUtils {
 	}
 
 	/**
-	 * Joins the input string array into a unique string using the specified
-	 * separator
-	 * 
+	 * Joins the input string array into a unique string using the specified separator
+	 *
 	 * @param strings
 	 *            The strings to be joined
 	 * @param separator
-	 * @return Joins the input string array into a unique string using the
-	 *         specified separator
+	 * @return Joins the input string array into a unique string using the specified separator
 	 */
 	public static String join(String[] strings, String separator) {
 		StringBuffer sb = new StringBuffer();
@@ -197,12 +194,11 @@ public class StringUtils {
 	}
 
 	/**
-	 * escape all the occurences of '. As escape char use ' so all the ' in the
-	 * original string will be replaced with ''
-	 * 
+	 * escape all the occurences of '. As escape char use ' so all the ' in the original string will be replaced with ''
+	 *
 	 * @param the
 	 *            string that must be escaped
-	 * 
+	 *
 	 * @return the escaped string
 	 */
 	public static String escapeQuotes(String str) {
@@ -210,16 +206,15 @@ public class StringUtils {
 	}
 
 	/**
-	 * escape all the occurences of c. As escape char use escapeChar so all the
-	 * c in the original string will be replaced with escapeChar + c
-	 * 
+	 * escape all the occurences of c. As escape char use escapeChar so all the c in the original string will be replaced with escapeChar + c
+	 *
 	 * @param str
 	 *            the string that must be escaped
 	 * @param c
 	 *            the char to escape
 	 * @param escapeChar
 	 *            the char that will be use to escape
-	 * 
+	 *
 	 * @return the escaped string
 	 */
 	public static String escape(String str, char c, char escapeChar) {
@@ -238,7 +233,7 @@ public class StringUtils {
 
 	/**
 	 * Escapes the characters for the html code: ' --> &#39;
-	 * 
+	 *
 	 * @param str
 	 * @return
 	 */
@@ -249,7 +244,7 @@ public class StringUtils {
 
 	/**
 	 * The main method.
-	 * 
+	 *
 	 * @param args
 	 *            the arguments
 	 */
@@ -280,5 +275,17 @@ public class StringUtils {
 
 		}
 
+		System.out.println("[" + escapeForSQLColumnName(" l'altro ") + "]");
+		System.out.println("[" + escapeForSQLColumnName(" un giorno \" di pioggia \" ") + "]");
+
 	}
+
+	public static String escapeForSQLColumnName(String fieldName) {
+		String toReturn = fieldName;
+		toReturn = toReturn.trim();
+		toReturn = toReturn.replaceAll("'", "");
+		toReturn = toReturn.replaceAll("\"", "");
+		return toReturn;
+	}
+
 }
