@@ -87,14 +87,14 @@ public class GetCertificatedDatasets {
 			} else {
 				if (allMyDataDS != null && allMyDataDS.equals("true")) {
 					// get all the Datasets visible for the current user (MyData,Enterprise,Shared Datasets,Ckan)
-					dataSets = dataSetDao.loadMyDataDataSets(profile.getUserUniqueIdentifier().toString());
+					dataSets = dataSetDao.loadMyDataDataSets(((UserProfile) profile).getUserId().toString());
 				} else if (ckanDS != null && ckanDS.equals("true")) {
 					ckanJSONArray = getOnlineCkanDatasets(profile, ckanFilter, ckanOffset);
 					dataSets = dataSetDao.loadCkanDataSets(((UserProfile) profile).getUserId().toString());
 					synchronizeDatasets(dataSets, ckanJSONArray);
 				} else {
 					// else it is a custom dataset list --> get all datasets public with owner != user itself
-					dataSets = dataSetDao.loadDatasetsSharedWithUser(profile.getUserUniqueIdentifier().toString());
+					dataSets = dataSetDao.loadDatasetsSharedWithUser(((UserProfile) profile).getUserId().toString());
 				}
 			}
 			logger.debug("Creating JSON...");
@@ -182,8 +182,7 @@ public class GetCertificatedDatasets {
 
 			if (typeDocWizard == null) {
 				actions.put(detailAction);
-				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))
-						|| ((UserProfile) profile).getUserId().toString().equals(datasetJSON.get("owner"))) {
+				if (((UserProfile) profile).getUserId().toString().equals(datasetJSON.get("owner"))) {
 					// the delete action is able only for private dataset
 					actions.put(deleteAction);
 				}
