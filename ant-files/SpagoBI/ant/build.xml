@@ -60,7 +60,7 @@
 	<target name="create-bin.SpagoBI.war" depends="create.qbe.core.jar">
 		<ant dir="../SpagoBIProject/ant" target="create-bin.war" />
 	</target>
-	<target name="deploy.SpagoBI.war" depends="create.sbi.utils.jar,create.sbi.dao.jar,create.exo.security.jar,create.xlm.security.jar,create.ldap.security.jar,create.liferay.security.jar,create.SpagoBI.war">
+	<target name="deploy.SpagoBI.war" depends="create.sbi.utils.jar,create.sbi.dao.jar,create.sbi.oauth.security.jar,create.exo.security.jar,create.xlm.security.jar,create.ldap.security.jar,create.liferay.security.jar,create.SpagoBI.war">
 		<delete dir="${tomcat.home}/webapps/SpagoBI" />
 		<mkdir dir="${tomcat.home}/webapps/SpagoBI" />
 		<unzip src="../../../SpagoBIProject/dist/SpagoBI.war" dest="${tomcat.home}/webapps/SpagoBI" />
@@ -92,6 +92,10 @@
 
 	<target name="create.sbi.dao.jar" depends="create.sbi.utils.jar,create.qbe.core.jar">
 		<ant dir="../SpagoBIDAO/ant" />
+	</target>
+	
+	<target name="create.sbi.oauth.security.jar" depends="create.sbi.utils.jar,create.sbi.dao.jar">
+		<ant dir="../SpagoBIOAuth2SecurityProvider/ant" />
 	</target>
 	
 	<target name="create.exo.security.jar" >
@@ -256,7 +260,7 @@
 
 
 	<!-- MOBILE ENGINE -->
-	<target name="create.SpagoBIMobileEngine.war" depends="create.sbi.utils.jar,create.SpagoBI.war">
+	<target name="create.SpagoBIMobileEngine.war" depends="create.sbi.utils.jar,create.sbi.oauth.security.jar,create.SpagoBI.war">
 		<ant dir="../SpagoBIMobileEngine/ant" />
 	</target>
 	<target name="deploy.SpagoBIMobileEngine.war" depends="create.SpagoBIMobileEngine.war">
@@ -308,6 +312,7 @@
 		<antcall target="create.sbi.utils.jar" />
 		<antcall target="create.qbe.core.jar" />
 		<antcall target="create.sbi.dao.jar" />
+		<antcall target="create.sbi.oauth.security.jar" />
 		<antcall target="create.exo.security.jar" />
 		<antcall target="create.liferay.security.jar" />
 		<antcall target="create.xlm.security.jar" />
@@ -394,6 +399,7 @@
 		<antcall target="create.sbi.utils.jar" />
 		<antcall target="create.qbe.core.jar" />
 		<antcall target="create.sbi.dao.jar" />
+		<antcall target="create.sbi.oauth.security.jar" />
 		<antcall target="create.exo.security.jar" />
 		<antcall target="create.liferay.security.jar" />
 		<antcall target="create.xlm.security.jar" />
@@ -444,6 +450,8 @@
 		<delete dir="../../../QbeCore/dist"/>
 		<delete dir="../../../SpagoBIBirtReportEngine/ant-build"/>
 		<delete dir="../../../SpagoBIBirtReportEngine/dist"/>
+		<delete dir="../../../SpagoBIOAuth2SecurityProvider/ant-build"/>
+		<delete dir="../../../SpagoBIOAuth2SecurityProvider/dist"/>
 		<delete dir="../../../SpagoBIExoSecurityProvider/ant-build"/>
 		<delete dir="../../../SpagoBIExoSecurityProvider/dist"/>
 		<delete dir="../../../SpagoBILiferaySecurityProvider/ant-build"/>
@@ -556,6 +564,7 @@
 		<ant dir="../QbeCore/ant" target="javadoc"/>
 		<ant dir="../SpagoBIBirtReportEngine/ant" target="javadoc"/>
 		<ant dir="../SpagoBIExoSecurityProvider/ant" target="javadoc"/>
+		<ant dir="../SpagoBIOAuth2SecurityProvider/ant" target="javadoc"/>
 		<ant dir="../SpagoBIGeoEngine/ant" target="javadoc"/>
 		<ant dir="../SpagoBIGeoReportEngine/ant" target="javadoc"/>
 		<ant dir="../SpagoBICockpitEngine/ant" target="javadoc"/>
