@@ -33,15 +33,17 @@ Ext.define
 	'Sbi.behavioural.lov.TestLovResultPanel2', 
 	
 	{
-		extend: 'Sbi.widgets.grid.DynamicGridPanel', 
+		extend: 'Sbi.widgets.grid.DynamicGridPanel2', 
 		
 		constructor: function(config) 
-		{		
-			console.log("USAO U TestLovResultPanel2.js");
+		{	
+			console.log("[IN] constructor() TestLovResultPanel2");
 			
 			var defautlConf = 
 			{ 
 				pagingConfig: {}, 
+				
+				lovProvider: config.lovProvider,
 				
 				storeConfig:
 				{ 
@@ -49,8 +51,6 @@ Ext.define
 				} 
 			};
 			
-			console.log("TEST LOV RESULT PANEL (2) - 1");
-						
 			this.title =  "LOV result preview";
 			this.filterConfig = {};
 			this.border = false;
@@ -60,11 +60,11 @@ Ext.define
 			
 			Ext.apply(this, defautlConf);
 			
-			Sbi.debug('TestLovPanel costructor IN');
+			//Sbi.debug('TestLovPanel costructor IN');
 			
 			defautlConf.serviceUrl = "http://localhost:8080/SpagoBI/restful-services/LOV/Test";
 	    	
-	    	this.callParent([defautlConf]);
+	    	this.callParent([defautlConf]);	// Going into "DynamicGridPanel.js"
 	    	
 	    	this.store.on
 	    	(
@@ -72,14 +72,27 @@ Ext.define
     			
     			function()
     			{
-    				console.log("555555555555555");
+    				console.log("[LOAD] in TestLovResultPanel2");
     				this.fireEvent('storeLoad')
 				},
 				
 				this
 			);
 	    	
-	    	Sbi.debug('TestLovPanel costructor OUT');
+	    	this.store.on
+	    	(
+    			"wrongSyntax",
+    			
+    			function()
+    			{
+    				this.fireEvent('wrongSyntax1',"wrong");
+    			},
+    			
+    			this
+	    	);
+	    	
+	    	//Sbi.debug('TestLovPanel costructor OUT');
+	    	console.log("[OUT] constructor() TestLovResultPanel2");
 		}	
 	}
 );

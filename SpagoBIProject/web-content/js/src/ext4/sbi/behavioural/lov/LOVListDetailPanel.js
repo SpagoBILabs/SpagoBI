@@ -39,7 +39,10 @@ Ext.define
 					isSuperadmin: isSuperadmin 
 				}
 			);
-						
+					
+			// Hide Save button
+			this.detailPanel.getComponent("TOOLBAR").items.items[3].hide();	
+			
 			this.columns = 
 			[
 			 	{ dataIndex:"LOV_NAME", 		header:LN('sbi.generic.label') }, 
@@ -49,7 +52,7 @@ Ext.define
 			this.fields = ["LOV_ID", "LOV_NAME", "LOV_DESCRIPTION", "INPUT_TYPE_COMBOBOX"];
 			
 			this.detailPanel.on("save", this.checkCanSave, this);
-			this.detailPanel.on("test", this.openTestPage, this);
+			this.detailPanel.on("test", this.checkCanTest, this);
 			
 			this.filteredProperties = ["LOV_NAME"];
 			
@@ -98,93 +101,13 @@ Ext.define
 			);	
 		},
 		
-		openTestPage: function(record)
+		checkCanTest: function(record)
 		{
-			console.log("OPEN TEST PAGE...");
-			console.log(record);
-//			aa.prep(this.detailPanel.lovProvider.value);	
+			console.log("[IN] checkCanTest() LOVListDetailPanel");
 			
-			// Iz detailLovTestResult.jsp - kada se klikne na Test treba ovo uraditi
+			/* We need to check if the LOV form is filled with the necessary data
+			 * in both cases: creating a new record or modifying the existing one */
 			
-			var lovConfig = {};
-			
-			lovConfig.descriptionColumnName =  'null'; 	// treba da bude null
-			lovConfig.valueColumnName =  'null';			// treba da bude null
-			lovConfig.visibleColumnNames = '[]';			// treba da bude []
-			
-			lovConfig.lovType =  'simple';
-			
-			lovConfig.treeColumnNames = 'null';			
-
-			var contextName = 'SpagoBI'; 
-			
-			var lovProvider = this.detailPanel.lovProvider.value;
-						
-//			Ext.data.proxy.Rest.buildRequest(Ext.create("Ext.data.Operation", {action: "create", params: "aaa"}));
-			
-			this.detailPanel.updatePanel(contextName, lovConfig, lovProvider);
-					
-//			Ext.Ajax.request
-//    		(
-//				{
-//					url: "http://localhost:8080/SpagoBI/restful-services/LOV/Test",
-//	                params:  this.detailPanel.lovProvider.value,
-//	                method: "POST",
-//	                
-//	                success: function(response, options) 
-//	                {
-//	                	console.log("RESPONSE...");             	
-//	                	
-//	                	var responseJSON = Ext.JSON.decode(response.responseText);
-//	                	console.log(responseJSON);
-//	                	console.log(responseJSON.metaData.fields.length);
-//	                	var sm = new Array(responseJSON.metaData.fields.length);	                	
-//	                	
-//	                	console.log(responseJSON);
-//	                	console.log(responseJSON.metaData.fields.length);
-//	                	
-//	                	for (var i=1; i<responseJSON.metaData.fields.length; i++)
-//	                	{
-//	                		console.log("kkkkkkkkkkkkkk");
-//	                		console.log(responseJSON.metaData.fields[i].header);
-//	                		sm[i] = responseJSON.metaData.fields[i].header;
-//	                		console.log("nnnnnnnnnnnn");
-//	                		console.log(sm[i]);
-//	                	}                	
-//	                	
-//	                	//result = responseJSON;
-//	                	this.ajaxEnded = true;
-//	                	console.log("PRE");
-//	                	console.log(responseJSON);
-//	                	//console.log(result);
-//	                	console.log("W T F");
-//	                	console.log(this.detailPanel.getForm().getFields());
-//	                	console.log(sm.toString());
-//	                	this.detailPanel.getForm().getFields().items[11].value = "aaammm";
-//	                	this.detailPanel.getForm().getFields().items[11].rawValue = sm.toString();
-//	                	
-//	                	console.log("000");
-//	                	console.log(this.detailPanel.getForm());
-//	                	
-//	                	aa.prep("aaammm");
-//	                	
-//	                	//yy.responseProc(sm);
-////	                	console.log(sm);
-////	                	yy.textArea1.setValue(sm.toString());
-////	                	console.log("U P M");
-////	                	console.log(yy.result);
-//	                },
-//	                
-//	                failure: Sbi.exception.ExceptionHandler.handleFailure,
-//	                scope: this
-//       		 	}
-//			);
-			
-			
-		},
-		
-		checkCanSave: function(record)
-		{
 			var currentPanel = this;
 			var canBeSaved = false;
 			
@@ -207,32 +130,221 @@ Ext.define
 				else if (record.I_TYPE_CD == "SCRIPT" && record.SCRIPT_TYPE == "")
 					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.scriptTypeMissing'));
 				else
-					canBeSaved = true;
-			}
-				
-			if (canBeSaved == true)
-			{
-				currentPanel.onFormSave(record);
+				{
+					// ?????? MOZE LI JEDNOSTAVNIJE ???????
+					if (this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL2").items.items[1].value != "")
+					{
+						canBeSaved = true;
+					}
+					else
+					{
+						Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.queryDescriptionMissing'));
+					}
+				}						
 			}
 			
+			if (canBeSaved == true)
+			{					
+				console.log("[checkCanTest - canBeSaved]");
+				this.openTestPage();
+			}
+			
+			console.log("[OUT] checkCanTest() LOVListDetailPanel");
+		},
+		
+		openTestPage: function()
+		{
+			console.log("[IN] openTestPage() LOVListDetailPanel");
+			
+			var lovConfig = {};	
+			
+			var contextName = 'SpagoBI'; 
+			
+			var lovId = this.detailPanel.getFormState("testPhase").data.LOV_ID;						
+			var lovProvider = this.detailPanel.getFormState("testPhase").data.LOV_PROVIDER;
+			
+			if (lovId == 0)
+			{
+				// The new record
+				lovConfig.descriptionColumnName =  'null'; 		// treba da bude null
+				lovConfig.valueColumnName =  'null';			// treba da bude null
+				lovConfig.visibleColumnNames = '[]';			// treba da bude []				
+				lovConfig.lovType =  'simple';				
+				lovConfig.treeColumnNames = 'null';	
+			}
+			else
+			{				
+				var startDescrColumnName = lovProvider.indexOf("<DESCRIPTION-COLUMN>")+"<DESCRIPTION-COLUMN>".length;
+				var endDescrColumnName = lovProvider.indexOf("</DESCRIPTION-COLUMN>");
+				lovConfig.descriptionColumnName = lovProvider.substring(startDescrColumnName,endDescrColumnName);
+				//console.log(lovConfig.descriptionColumnName);
+				
+				var startValueColumnName = lovProvider.indexOf("<VALUE-COLUMN>")+"<VALUE-COLUMN>".length;
+				var endValueColumnName = lovProvider.indexOf("</VALUE-COLUMN>");
+				lovConfig.valueColumnName = lovProvider.substring(startValueColumnName,endValueColumnName);
+				//console.log(lovConfig.valueColumnName);
+				
+				var startVisibleColumnName = lovProvider.indexOf("<VISIBLE-COLUMNS>")+"<VISIBLE-COLUMNS>".length;
+				var endVisibleColumnName = lovProvider.indexOf("</VISIBLE-COLUMNS>");
+				lovConfig.visibleColumnNames = "[]";
+				lovConfig.visibleColumnNames = lovProvider.substring(startVisibleColumnName,endVisibleColumnName);
+				//console.log("-*-*-*-*-*-*-*");
+				//console.log(lovConfig.visibleColumnNames);
+				
+				var startLovType = lovProvider.indexOf("<LOVTYPE>")+"<LOVTYPE>".length;
+				var endLovType = lovProvider.indexOf("</LOVTYPE>");
+				lovConfig.lovType = lovProvider.substring(startLovType,endLovType);
+				//console.log(lovConfig.lovType);
+				
+				var startTreeColumnNames = lovProvider.indexOf("<TREE-LEVELS-COLUMNS>")+"<TREE-LEVELS-COLUMNS>".length;
+				var endTreeColumnNames  = lovProvider.indexOf("</TREE-LEVELS-COLUMNS>");
+				lovConfig.treeColumnNames = lovProvider.substring(startTreeColumnNames,endTreeColumnNames);
+				//console.log(lovConfig.treeColumnNames);
+			}		
+																		
+			this.detailPanel.updatePanel(contextName, lovConfig, lovProvider);
+			
+			this.detailPanel.setValues();
+			
+			// Show Test test page tab and set it as active
+			
+			// ?????? MOZE LI JEDNOSTAVNIJE ???????
+			this.detailPanel.getComponent("TAB_PANEL_RESULTS").tabBar.items.items[1].show();
+			this.detailPanel.getComponent("TAB_PANEL_RESULTS").setActiveTab(1);
+			
+			// Show Save button now
+			this.detailPanel.getComponent("TOOLBAR").items.items[3].show();
+			
+			console.log("[OUT] openTestPage() LOVListDetailPanel");
+		},
+		
+		checkCanSave: function(record)
+		{
+			console.log("[IN] checkCanSave() LOVListDetailPanel");
+			
+			/* Calling chained methods in order to get data from Configuration Panel
+			 * that are needed to fill the missing data in LOV provider XML query. */			
+			var returnLovValues = this.detailPanel.takeValues();
+			
+			if (returnLovValues != null && returnLovValues != undefined)
+			{
+				var incompleteLovProvider = this.detailPanel.getFormState("savePhase").data.LOV_PROVIDER;
+				
+				var startDataSource = incompleteLovProvider.indexOf("<CONNECTION>")+"<CONNECTION>".length;
+				var endDataSource = incompleteLovProvider.indexOf("</CONNECTION>");
+				var dataSource = incompleteLovProvider.substring(startDataSource,endDataSource);
+				
+				var startStatement = incompleteLovProvider.indexOf("<STMT>")+"<STMT>".length;
+				var endStatement = incompleteLovProvider.indexOf("</STMT>");
+				var statement = incompleteLovProvider.substring(startStatement,endStatement);
+				
+				var valueColumn = returnLovValues.valueColumnName.valueOf();
+				var descriptionColumn = returnLovValues.descriptionColumnName.valueOf();
+	
+				var visibleColumns = "";
+				var visibleColumnNames = returnLovValues.visibleColumnNames.valueOf();
+	
+				for (var i=0; i<visibleColumnNames.length; i++)
+				{
+					if (i==0)
+					{
+						visibleColumns = visibleColumnNames[i];
+					}
+					else
+					{
+						visibleColumns += "," + visibleColumnNames[i];
+					}
+				}
+				
+				// ?????????????????????????????????????????????
+				// I dont't know what is INVISIBLE-COLUMNS ????
+				// ?????????????????????????????????????????????
+				var allColumns = returnLovValues.column.valueOf();
+				var invisibleColumns = allColumns[0];
+				
+				var lovType = returnLovValues.lovType.valueOf();
+				
+				var treeLevelsColumns = "";
+				
+				for (var i=1; i<allColumns.length; i++)
+				{
+					if (i==1)
+					{
+						treeLevelsColumns = allColumns[i];
+					}
+					else
+					{
+						treeLevelsColumns += "," + allColumns[i];
+					}
+				}
+				
+				var completeLovProvider = 
+					"<QUERY>" + 
+						"<CONNECTION>" + dataSource + "</CONNECTION>" + 
+						"<STMT>" + statement + "</STMT>" + 
+						"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" + 
+						"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
+						"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" + 
+						"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" + 
+						"<LOVTYPE>" + lovType + "</LOVTYPE>" + 
+						"<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>"
+					+ "</QUERY>";
+				
+				//console.log(completeLovProvider);
+				
+				//this.detailPanel.getFormState().data.LOV_PROVIDER = completeLovProvider;
+				this.detailPanel.lovProvider.value = completeLovProvider;
+				record.LOV_PROVIDER = completeLovProvider;
+				
+				this.onFormSave(record);
+			}
+			
+			console.log("[OUT] checkCanSave() LOVListDetailPanel");
 		},	
 		
 		onFormSave: function(record)
 		{			
-			this.detailPanel.getFormState().save
+			console.log("[IN] onFormSave() LOVListDetailPanel");
+			
+			this.detailPanel.getFormState("savePhase").save
 			(
 				{
 					success: function(object, response, options)
-							{																
+							{			
+								console.log("SAVE PROVERA GRESKE");
+								console.log(response);
+						
 								if(response !== undefined && response.response !== undefined && response.response.responseText !== undefined && response.response.statusText=="OK") 
 								{									
-									response = response.response ;
+									response = response.response;
 									
 									if(response.responseText!=null && response.responseText!=undefined)
 									{										
 										if(response.responseText.indexOf("error.mesage.description")>=0)
 										{
 											Sbi.exception.ExceptionHandler.handleFailure(response);
+										}
+										else if (response.responseText.toLowerCase().indexOf("error") >= 0)
+										{
+											console.log("GRESKA SAVE");
+											
+											var selectedRecord = this.grid.getSelectionModel().getSelection();	
+											this.grid.store.remove(selectedRecord);
+											this.grid.store.commitChanges();
+											
+											/* UMESTO hide() BI BILO BOLJE DA SE VRATIMO NA FORMU 
+											 * SA IZBRISANIM PODACIMA IZ POLJA - OVO CE SE DESITI
+											 * KADA POKUSAMO DA DUPLIRAMO LOV - PO LABELI ISTI NAZIVI. */
+											this.detailPanel.hide();
+											
+//											this.grid.store.remove(record);
+//											console.log(record);
+//											this.grid.store.sync();
+//											//this.grid.store.commitChanges();
+//											
+//											this.grid.getView().refresh();
+											
+											Sbi.exception.ExceptionHandler.handleFailure(response);											
 										}
 										else
 										{
@@ -243,6 +355,7 @@ Ext.define
 											
 											
 											// Ext.apply() - Copies all the properties of config to the specified object
+											
 											selectedRow[0].data = Ext.apply(selectedRow[0].data, record);	
 											selectedRow[0].raw = Ext.apply(selectedRow[0].raw, record);											
 											
@@ -270,11 +383,15 @@ Ext.define
 							
 					scope: this					
 				}
-			);			
+			);	
+			
+			console.log("[OUT] onFormSave() LOVListDetailPanel");
 		},
 		
 		onDeleteRow: function(record)
-		{			
+		{		
+			console.log("[IN] onDeleteRow() LOVListDetailPanel");
+			
 			var selectedRecord = this.grid.getSelectionModel().getSelection();	
 			
 			var recordToDelete = Ext.create("Sbi.behavioural.lov.LOVModel",record.data);
@@ -331,19 +448,37 @@ Ext.define
 					}
 				);
 			}
+			
+			console.log("[OUT] onDeleteRow() LOVListDetailPanel");
 		},
 		
 		
 		onGridSelect: function(selectionrowmodel, record, index, eOpts)
 		{
+			//console.log("[IN] onGridSelect() LOVListDetailPanel");
+			
 			this.detailPanel.show();
+			
+			/* Whenever we click on some record on the left, on the right we should 
+			 * show the first tab on the right part of the page */
+			this.detailPanel.getComponent("TAB_PANEL_RESULTS").setActiveTab(0);
+			
+			// A way too hide TEST tab for those records that didn't start the Test button
+			this.detailPanel.getComponent("TAB_PANEL_RESULTS").tabBar.items.items[1].hide();
+			// Hide Save button
+			this.detailPanel.getComponent("TOOLBAR").items.items[3].hide();			
 			
 			if (record.data.LOV_ID == null || record.data.LOV_ID == "")
 			{	
 				this.detailPanel.panel2.hide();
 			}
 			
+			//console.log("*********");
+			//console.log(record.data);
+			
 			this.detailPanel.setFormState(record.data);
+			
+			//console.log("[OUT] onGridSelect() LOVListDetailPanel");
 		}
 	}
 );

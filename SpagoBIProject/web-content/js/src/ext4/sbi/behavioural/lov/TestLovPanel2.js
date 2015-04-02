@@ -46,20 +46,19 @@ Ext.define
     	
     	config: {
         	layout: 'border',
-        	toolbarHeight: 30
+        	toolbarHeight: 50,
+        	border: false
         },
     	
     	constructor: function(config) 
     	{
-    		console.log("USAO U TEST LOV 2");
-    		console.log(config.lovConfig);
+    		console.log("[IN] constructor() TestLovPanel2");
     		
-    		this.services = {};
-    		
+    		this.services = {};    		
     		this.initServices();    		
     		
     		this.treeLov = (config.lovConfig.lovType && (config.lovConfig.lovType=='tree'|| config.lovConfig.lovType=='treeinner'));
-    		
+    		    		
     		var typeStoreValue = "simple";
     		
     		if(config.lovConfig.lovType)
@@ -100,30 +99,30 @@ Ext.define
 				}
 			);
     		
-    		var saveButton = 
-    		{	
-    				handler: this.save,
-    				scope: this
-    		};
-
-    		var backButton = 
-    		{
-    				handler: this.back,
-    				scope: this
-    		};
+//    		var saveButton = 
+//    		{	
+//    				handler: this.save,
+//    				scope: this
+//    		};
+//
+//    		var backButton = 
+//    		{
+//    				handler: this.back,
+//    				scope: this
+//    		};
     		
     		this.dockedItems = 
 			[
 			 	{
 	    	        xtype: 'toolbar',
 	    	        dock: 'top',
-	    	        items: ['->',this.comboType,saveButton,backButton]
+	    	        items: ['->',this.comboType]
 			 	}
 		 	];
     		
     		// ???????????????????????????????
     		Ext.QuickTips.init();
-    		
+    		    		
     		/* The lower part of the result panel - PREVIEW */
     		this.lovTestPreview = Ext.create
     		(
@@ -132,12 +131,10 @@ Ext.define
 				{
 					region: 'south',
 					height: 315, 
+					lovProvider: config.lovProvider,
 					treeLov: this.treeLov
 				}
 			); 
-    		
-    		console.log("1111111111111");
-    		console.log(this.lovTestPreview.store);
     		
     		/* The upper part of the result panel - COLUMNS OF THE RESULT */
     		this.lovTestConfiguration = Ext.create
@@ -145,23 +142,31 @@ Ext.define
 				'Sbi.behavioural.lov.TestLovConfigurationGridPanel2',
 				
 				{
-					lovConfig: config.lovConfig,  
+					lovConfig: config.lovConfig, 
+					border: false,
 					parentStore: this.lovTestPreview.store, 
 					lovType: typeStoreValue, 
+					lovProvider: config.lovProvider,
 					flex: 1
 				}
 			);     		
     		
-    		this.lovTestPreview.on('storeLoad',this.lovTestConfiguration.onParentStroreLoad,this.lovTestConfiguration);
+    		this.lovTestPreview.on('storeLoad',this.lovTestConfiguration.onParentStoreLoad,this.lovTestConfiguration);
     		var lovConfigurationPanelItems = [this.lovTestConfiguration];
     		
+//    		console.log("#########1");
+//    		console.log(lovConfigurationPanelItems);
+    		
     		if(this.treeLov){
+    			console.log("#########2");
     			//Tree lov panel
-    			this.lovTestConfigurationTree = Ext.create('Sbi.behavioural.lov.TestLovTreePanel',{lovConfig:config.lovConfig, flex: 2, parentStore : this.lovTestPreview.store ,lovType: typeStoreValue});
-    			this.lovTestPreview.on('storeLoad',this.lovTestConfigurationTree.onParentStroreLoad,this.lovTestConfigurationTree);
+    			this.lovTestConfigurationTree = Ext.create('Sbi.behavioural.lov.TestLovTreePanel2',{lovConfig:config.lovConfig, flex: 2, parentStore: this.lovTestPreview.store,lovType: typeStoreValue});
+    			this.lovTestPreview.on('storeLoad',this.lovTestConfigurationTree.onParentStoreLoad,this.lovTestConfigurationTree);
     			lovConfigurationPanelItems.push(this.lovTestConfigurationTree);
     		}
 
+    		console.log("#########3");
+    		
     		var lovConfigurationPanel = Ext.create('Ext.Panel', {
     		      	layout: 'hbox',
     		      	region: 'center',
@@ -169,17 +174,37 @@ Ext.define
     		      	items: lovConfigurationPanelItems
     		    });
     		
-    		this.listeners = {
-          		"render" : function(){
+//    		console.log("#########4");
+    		
+    		this.listeners = 
+    		{
+          		"render" : function()
+          		{
           			
         			var thisH = this.getHeight();
         			var previewH;
-        			if(this.lovTestPreview.getEl()){
+        			
+        			if(this.lovTestPreview.getEl())
+        			{
         				previewH = this.lovTestPreview.getHeight();
-        			}else{
+        			}
+        			else
+        			{
         				previewH = this.lovTestPreview.height;
         			}
-        			this.lovTestConfiguration.setHeight(thisH-previewH-this.toolbarHeight);
+        			
+//        			console.log("##########");
+//        			console.log(config.tabPanelHeight);
+//        			console.log(thisH);
+//        			console.log(previewH);
+//        			console.log(this.toolbarHeight);
+        			
+        			// The old code:
+        			//this.lovTestConfiguration.setHeight(thisH-previewH-this.toolbarHeight);
+        			
+        			// Changed code (adapting to the height of the tab panel on the right)        			
+        			this.lovTestConfiguration.setHeight(config.tabPanelHeight-previewH-this.toolbarHeight-34);
+        			
         			if(this.treeLov){
         				this.lovTestConfigurationTree.setHeight(thisH-previewH-this.toolbarHeight);
         			}
@@ -192,110 +217,87 @@ Ext.define
         			}else{
         				previewH = this.lovTestPreview.height;
         			}
-        			this.lovTestConfiguration.setHeight(thisH-previewH-this.toolbarHeight);
+        			//this.lovTestConfiguration.setHeight(thisH-previewH-this.toolbarHeight);
         			if(this.treeLov){
         				this.lovTestConfigurationTree.setHeight(thisH-previewH-this.toolbarHeight);
         			}
-        		}
+        		},
+        		
+//        		"wrongSyntax": function()
+//    			{
+//    				console.log("GREEEEEEEEEEESKSA");
+//    			}
+
+        		
+//        		"lovTypeChanged": function(type)
+//        		{
+//        			this.remove();
+//        			console.log(type);
+//        			config.lovConfig.lovType=type;
+//        			lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{contextName: config.contextName,lovConfig:config.lovConfig}); //by alias
+//        			addLovTestEvents(lovTest,lovPanel, lovConfig, modality, contextName);
+//        			lovPanel.add(lovTest);
+//        		}
           	};
     		
+//    		this.on('lovTypeChanged',function(type){
+//    			lovPanel.remove(lovTest,'true');
+//    			lovConfig.lovType=type;
+//    			lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{contextName: contextName,lovConfig:lovConfig, modality:modality}); //by alias
+//    			addLovTestEvents(lovTest,lovPanel, lovConfig, modality, contextName);
+//    			lovPanel.add(lovTest);
+//    		},this);
+    		
+    		this.lovTestPreview.on
+	    	(
+    			"wrongSyntax1",
+    			
+    			function()
+    			{
+    				//console.log("GREEEEEEEEEEESKSA");
+    				this.fireEvent('wrongSyntax2',"wrong");
+    			},
+    			
+    			this
+	    	);
+    		
+    		console.log("#########5");
     		Ext.apply(this,config||{});
     		this.items = [lovConfigurationPanel,this.lovTestPreview];
         	this.callParent(arguments);
         	this.comboType.on('select',this.updateType,this);
-    		
-    		console.log("kraj konstruktora");
+        	console.log("#########6");
+        	console.log("[OUT] constructor() TestLovPanel2");
+    	},
+    	
+    	takeValues: function()
+    	{
+    		return this.lovTestConfiguration.getValues();
+    	},
+    	
+    	setValues: function(data)
+    	{
+    		this.lovTestConfiguration.setValues(data);
     	},
     	
     	initServices: function(baseParams)
     	{
+    		console.log("[IN] initServices() TestLovPanel2");
+    		
     		this.services["getSmth"] = Sbi.config.serviceRegistry.getServiceUrl({
     			serviceName: 'LOV/Test',
     			baseParams: baseParams
     		});    		
     		
-    		console.log("init services");
-    		console.log(this.services["getSmth"]);
-    	},
+    		console.log("[OUT] initServices() TestLovPanel2");
+    	},   	
     	
-    	prep: function(data) 
-    	{    	
-    		var result = 0; 
-    		var yy = this;
-    		//var ajaxEnded = false;
-    		
-    		/* opis problema: ne znam kako da vratim string iz ove funckije u konstruktor - vraca undefined */
-    		
-//    		Ext.Ajax.request
-//    		(
-//				{
-//					url: "http://localhost:8080/SpagoBI/restful-services/LOV/Test",
-//	                params:  data,
-//	                method: "POST",
-//	                
-//	                success: function(response, options) 
-//	                {
-//	                	console.log("RESPONSE...");             	
-//	                	
-//	                	var responseJSON = Ext.JSON.decode(response.responseText);
-//	                	console.log(responseJSON);
-//	                	console.log(responseJSON.metaData.fields.length);
-//	                	var sm = new Array(responseJSON.metaData.fields.length);	                	
-//	                	
-//	                	console.log(responseJSON);
-//	                	console.log(responseJSON.metaData.fields.length);
-//	                	
-//	                	for (var i=1; i<responseJSON.metaData.fields.length; i++)
-//	                	{
-//	                		console.log("kkkkkkkkkkkkkk");
-//	                		console.log(responseJSON.metaData.fields[i].header);
-//	                		sm[i] = responseJSON.metaData.fields[i].header;
-//	                		console.log("nnnnnnnnnnnn");
-//	                		console.log(sm[i]);
-//	                	}                	
-//	                	
-//	                	result = responseJSON;
-//	                	this.ajaxEnded = true;
-//	                	console.log("PRE");
-//	                	console.log(result);
-//	                	console.log("W T F");
-//	                	yy.responseProc(sm);
-////	                	console.log(sm);
-////	                	yy.textArea1.setValue(sm.toString());
-////	                	console.log("U P M");
-////	                	console.log(yy.result);
-//	                },
-//	                
-//	                failure: Sbi.exception.ExceptionHandler.handleFailure,
-//	                scope: this
-//       		 	}
-//			);
-    		
-    		
-    		
-    		console.log("PRE AJAX COMPLETE-a");
-    		console.log(data);
-    		//console.log(this.textArea1.setValue("aaaa"));
-    		this.textArea1.value = "yyyy";
-    		this.doLayout();
-//    		while(ajaxEnded==false)
-//    		{}
-    		
-    		console.log("POSLE AJAX COMPLETE-a");
-//    		Ext.Ajax.on('requestcomplete', function() {console.log("888888888");
-//    		console.log(result);});
-    		
-//    		return result;
-    	},
-    	
-    	responseProc: function(response)
+    	updateType: function(combo, records,eOpt )
     	{
-    		console.log("QQQ");
-    		console.log(response.toString());
-    		console.log(response.length);
-    		console.log("{}{}{}");
-    		console.log(this.textArea1);
-    		this.textArea1.setValue("aaa");
-    	}
+    		console.log("--- UPDATE TYPE ---");
+        	var value = records[0].data.type;  
+        	console.log(value);
+        	this.fireEvent('lovTypeChanged',value);
+        }
 	}
 );
