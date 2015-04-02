@@ -15,6 +15,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -291,12 +292,14 @@ public class DatasetManagementAPI {
 	 * @param fetchSize
 	 * @param maxResults
 	 * @param parametersValues
+	 * @param profile
 	 * @return
 	 */
-	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
+	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues, UserProfile profile) {
 		try {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			checkQbeDataset(dataSet);
+			addProfileAttributes(dataSet, profile);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
@@ -332,6 +335,16 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	private void addProfileAttributes(IDataSet dataSet, UserProfile profile) {
+		// update profile attributes into dataset
+		Map<String, Object> userAttributes = new HashMap<String, Object>();
+		userAttributes.putAll(profile.getUserAttributes());
+		userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+		LogMF.debug(logger, "Setting user profile attributes into dataset: {0}", userAttributes);
+		logger.debug(userAttributes);
+		dataSet.setUserProfileAttributes(userAttributes);
+	}
+
 	/**
 	 * insert into data store last cache date if present
 	 *
@@ -360,12 +373,13 @@ public class DatasetManagementAPI {
 	}
 
 	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues,
-			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
+			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria, UserProfile profile) {
 
 		try {
 
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			checkQbeDataset(dataSet);
+			addProfileAttributes(dataSet, profile);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
