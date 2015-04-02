@@ -215,14 +215,16 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				filterCriteria = getFilterCriteria(label, selectionsObject);
 			}
 
+			UserProfile profile = getUserProfile();
+
 			HttpSession session = this.getServletRequest().getSession();
 			IDataStore dataStore = null;
 			synchronized (session) {
 				if (groupCriteria.size() == 0 && projectionCriteria.size() == 0 && filterCriteria.size() == 0) {
-					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters));
+					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters), profile);
 				} else {
 					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters), groupCriteria, filterCriteria,
-							projectionCriteria);
+							projectionCriteria, profile);
 				}
 			}
 
