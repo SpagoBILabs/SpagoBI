@@ -16,7 +16,6 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.ckan.CKANClient;
-import it.eng.spagobi.tools.dataset.ckan.CKANConfig;
 import it.eng.spagobi.tools.dataset.ckan.Connection;
 import it.eng.spagobi.tools.dataset.ckan.exception.CKANException;
 import it.eng.spagobi.tools.dataset.ckan.resource.impl.Resource;
@@ -176,7 +175,7 @@ public class GetCertificatedDatasets {
 			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
 
 			// Check if it is a CKAN dataset and if is already bookmarked
-			if (datasetJSON.getString("dsTypeCd").equals("Ckan")) {
+			if (datasetJSON.getString("dsTypeCd").equals("Ckan") && !datasetJSON.has("id")) {
 				actions.put(infoAction);
 			}
 
@@ -256,11 +255,11 @@ public class GetCertificatedDatasets {
 
 		JSONArray datasetsJsonArray = new JSONArray();
 
-		Connection fiwareConnection = new Connection(CKANConfig.getInstance().getConfig().getProperty("ckan.url"),
-				profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile).getUserId().toString());
-		// Connection demoConnection = new Connection("http://demo.ckan.org", "740f922c-3929-4715-9273-72210e7982e8", "alessandroportosa");
+		// Connection fiwareConnection = new Connection(CKANConfig.getInstance().getConfig().getProperty("ckan.url"),
+		// profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile).getUserId().toString());
+		Connection demoConnection = new Connection("http://demo.ckan.org", "740f922c-3929-4715-9273-72210e7982e8", "alessandroportosa");
 
-		CKANClient client = new CKANClient(fiwareConnection);
+		CKANClient client = new CKANClient(demoConnection);
 		try {
 			logger.debug("Getting resources...");
 			long start = System.currentTimeMillis();
@@ -274,14 +273,14 @@ public class GetCertificatedDatasets {
 			}
 			logger.debug("Resources translated in " + (System.currentTimeMillis() - start) + "ms.");
 		} catch (CKANException e) {
-			logger.debug("Error while getting CKAN resources");
-			throw new SpagoBIServiceException("REST service /certificateddatasets", "Error while getting CKAN resources");
+			logger.debug("Error while getting CKAN resources: " + e.getErrorMessages().get(0));
+			throw new SpagoBIServiceException("REST service /certificateddatasets", "Error while getting CKAN resources: " + e.getErrorMessages().get(0));
 		}
 		return datasetsJsonArray;
 	}
 
 	private void synchronizeDatasets(List<IDataSet> spagobiDs, JSONArray ckanDs) throws JSONException {
-		boolean dsFound = false;
+		// boolean dsFound = false;
 		logger.debug("Synchronize resources...");
 		long start = System.currentTimeMillis();
 		Iterator<IDataSet> iterator = spagobiDs.iterator();
@@ -291,15 +290,15 @@ public class GetCertificatedDatasets {
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 			for (int i = 0; i < ckanDs.length(); i++) {
 				if (jsonConf.getString("ckanId").equals(ckanDs.getJSONObject(i).getJSONObject("configuration").getString("ckanId"))) {
-					dsFound = true;
+					// dsFound = true;
 					ckanDs.remove(i);
 					break;
 				}
 			}
-			if (!dsFound) {
-				iterator.remove();
-				// spagobiDs.remove(ds);
-			}
+			// If the saved CKAN dataset is not available anymore, it has to be delete from Sbi... To be implemented
+			// if (!dsFound) {
+			// iterator.remove();
+			// }
 		}
 		logger.debug("Resources synchronized in " + (System.currentTimeMillis() - start) + "ms.");
 	}

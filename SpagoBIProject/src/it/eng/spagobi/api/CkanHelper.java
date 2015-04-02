@@ -113,14 +113,18 @@ public class CkanHelper {
 					logger.debug("File saved");
 				} else {
 					logger.debug("Impossibile to download from " + fileURL + ". Status code: " + statusCode);
-					throw new SpagoBIServiceException("REST service /ckan-management/download", "Error while downloading file from the server");
+					throw new SpagoBIServiceException("REST service /ckan-management/download", String.valueOf(statusCode));
 				}
 			} catch (FileNotFoundException fnfe) {
 				logger.error("Error while saving file into server");
 				throw new SpagoBIServiceException("REST service /ckan-management/download", "Error while saving file into server", fnfe);
 			} finally {
-				fos.close();
-				is.close();
+				if (fos != null) {
+					fos.close();
+				}
+				if (is != null) {
+					is.close();
+				}
 				httpget.releaseConnection();
 				logger.debug("OUT");
 			}
