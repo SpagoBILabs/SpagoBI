@@ -189,18 +189,20 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		if (documentId != null) {
 			IDataSet dataset = this.getDataSet();
 
-			// update parameters into the dataset
-			logger.debug("Setting parameters into dataset...");
-			dataset.setParamsMap(env);
+			if (dataset != null) {
+				// update parameters into the dataset
+				logger.debug("Setting parameters into dataset...");
+				dataset.setParamsMap(env);
 
-			// update profile attributes into dataset
-			Map<String, Object> userAttributes = new HashMap<String, Object>();
-			UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			userAttributes.putAll(profile.getUserAttributes());
-			userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
-			logger.debug("Setting user profile attributes into dataset...");
-			logger.debug(userAttributes);
-			dataset.setUserProfileAttributes(userAttributes);
+				// update profile attributes into dataset
+				Map<String, Object> userAttributes = new HashMap<String, Object>();
+				UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+				userAttributes.putAll(profile.getUserAttributes());
+				userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+				logger.debug("Setting user profile attributes into dataset...");
+				logger.debug(userAttributes);
+				dataset.setUserProfileAttributes(userAttributes);
+			}
 
 			boolean hasInnerQbe = WorksheetTemplateParser.getInstance().hasInnerQbeQuery(template);
 			if (hasInnerQbe && dataset != null) {
