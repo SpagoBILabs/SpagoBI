@@ -80,23 +80,33 @@
 		<copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 
 		<antcall target="copy.sbi.security.liferay" />
+		<antcall target="copy.sbi.security.OAuth2" />
 		<antcall target="copy.sbi.security.exo" />
 		<antcall target="copy.sbi.security.xml" />
 		<antcall target="copy.sbi.security.ldap" />
 
   	<copy file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	<copy file="${OAuth2.security.dir}/dist/sbi.security.OAuth2-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
   	<copy file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
   	<copy file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
   	<copy file="${ldap.security.dir}/dist/sbi.security.ldap-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 
 	</target>
-
-	<!-- lifeay -->
+	
+	<!-- liferay -->
 	<target name="check.sbi.security.liferay" unless="sbi.security.liferay.file.exists">
 		<available property="sbi.security.liferay.file.exists" file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" />
 	</target>
 	<target name="copy.sbi.security.liferay" depends="check.sbi.security.liferay" if="${sbi.security.liferay.file.exists}">
 		<copy file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	</target>
+
+	<!-- OAuth2 -->
+	<target name="check.sbi.security.OAuth2" unless="sbi.security.OAuth2.file.exists">
+		<available property="sbi.security.OAuth2.file.exists" file="${OAuth2.security.dir}/dist/sbi.security.OAuth2-${project.version}.jar" />
+	</target>
+	<target name="copy.sbi.security.OAuth2" depends="check.sbi.security.OAuth2" if="${sbi.security.OAuth2.file.exists}">
+		<copy file="${OAuth2.security.dir}/dist/sbi.security.OAuth2-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 
 	<!-- exo -->
@@ -111,7 +121,7 @@
 	<target name="check.sbi.security.xml" unless="sbi.security.xml.file.exists">
 		<available property="sbi.security.xml.file.exists" file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" />
 	</target>
-	<target name="copy.sbi.security.xml" depends="check.sbi.security.liferay" if="${sbi.security.xml.file.exists}">
+	<target name="copy.sbi.security.xml" depends="check.sbi.security.xml" if="${sbi.security.xml.file.exists}">
 		<copy file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 
