@@ -113,8 +113,8 @@ Ext.define
 		 * It is used for populating the lower grid with data. */
 		onParentStoreLoad: function()
 		{
-			console.log("/////");
-			console.log(this.parentStore);
+			//console.log("/////");
+			//console.log(this.parentStore);
 			
 			/* This is something I added in order to prevent error due to 
 			 * wrong syntax for defined SQL (query) */
@@ -123,11 +123,11 @@ Ext.define
 			{
 				var fields = this.parentStore.proxy.reader.jsonData.metaData.fields;
 				
-				console.log("4444444");
-				console.log(fields);
+				//console.log("4444444");
+				//console.log(fields);
 				
 				if(fields!=null && fields!=undefined && fields.length>0){
-					console.log("USAO 1");
+					//console.log("USAO 1");
 					var data = [];
 					
 	//				for(var i=0; i<fields.length; i++){
@@ -171,11 +171,11 @@ Ext.define
 					);
 					
 					this.store.load();
-					console.log("USAO 3");
+					//console.log("USAO 3");
 					this.columns = this.columnsDefinition.slice(0,this.columnsDefinition.length);
-					console.log(this.columns);
+					//console.log(this.columns);
 					this.reconfigure(this.store);
-					console.log("USAO 4");
+					//console.log("USAO 4");
 				}
 			}
 			
@@ -186,6 +186,10 @@ Ext.define
 			var description;
 			var visible =[]; 
 			var data = this.store.data;
+			
+			console.log("%%$$$%%%$$%%$$");
+			console.log(data);
+			
 			if(data!=null && data!=undefined && data.items!=null && data.items!=undefined ){
 				for(var i=0; i<data.items.length; i++){
 					var aItem = data.items[i];
@@ -231,7 +235,7 @@ Ext.define
 		},
 	
 		setValues: function(data){
-			console.log("SDSSSSS - setValues");
+			//console.log("SDSSSSS - setValues");
 			this.column = [];
 			if(data!=null && data!=undefined && this.lovConfig!=null && this.lovConfig!=undefined){
 				for(var i=0; i<data.length; i++){

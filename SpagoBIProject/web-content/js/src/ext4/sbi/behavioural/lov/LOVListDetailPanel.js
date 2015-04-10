@@ -124,21 +124,34 @@ Ext.define
 				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.inputTypeMissing'));
 			}
 			else
-			{				
-				if (record.I_TYPE_CD == "QUERY" && record.DATASOURCE_ID == "" || record.DATASOURCE_ID == null)
+			{						
+				if (record.I_TYPE_CD == "QUERY" && (record.DATASOURCE_ID == "" || record.DATASOURCE_ID == null))
 					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.dataSourceMissing'));
-				else if (record.I_TYPE_CD == "SCRIPT" && record.SCRIPT_TYPE == "")
+				else if (record.I_TYPE_CD == "SCRIPT" && (record.SCRIPT_TYPE == "" || record.SCRIPT_TYPE == undefined || record.SCRIPT_TYPE == null))
 					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.scriptTypeMissing'));
 				else
-				{
-					// ?????? MOZE LI JEDNOSTAVNIJE ???????
-					if (this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL2").items.items[1].value != "")
+				{					
+					var description = null;
+						
+					if (record.I_TYPE_CD == "QUERY")
+						// ?????? MOZE LI JEDNOSTAVNIJE ???????
+						description = this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL2").items.items[1].value;
+					else if (record.I_TYPE_CD == "SCRIPT")
+						description = this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL3").items.items[1].value;
+					
+//					console.log("###### record type CD 1 #####");
+//					console.log(description);
+					
+					if (description != "" && description != null && description  != undefined)
 					{
 						canBeSaved = true;
 					}
 					else
-					{
-						Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.queryDescriptionMissing'));
+					{						
+						if(record.I_TYPE_CD == "QUERY")
+							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.queryDescriptionMissing'));
+						else if (record.I_TYPE_CD == "SCRIPT")
+							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.scriptDescriptionMissing'));
 					}
 				}						
 			}
@@ -162,7 +175,7 @@ Ext.define
 			
 			var lovId = this.detailPanel.getFormState("testPhase").data.LOV_ID;						
 			var lovProvider = this.detailPanel.getFormState("testPhase").data.LOV_PROVIDER;
-			
+								
 			if (lovId == 0)
 			{
 				// The new record
@@ -201,7 +214,7 @@ Ext.define
 				lovConfig.treeColumnNames = lovProvider.substring(startTreeColumnNames,endTreeColumnNames);
 				//console.log(lovConfig.treeColumnNames);
 			}		
-																		
+			
 			this.detailPanel.updatePanel(contextName, lovConfig, lovProvider);
 			
 			this.detailPanel.setValues();
@@ -230,13 +243,27 @@ Ext.define
 			{
 				var incompleteLovProvider = this.detailPanel.getFormState("savePhase").data.LOV_PROVIDER;
 				
-				var startDataSource = incompleteLovProvider.indexOf("<CONNECTION>")+"<CONNECTION>".length;
-				var endDataSource = incompleteLovProvider.indexOf("</CONNECTION>");
-				var dataSource = incompleteLovProvider.substring(startDataSource,endDataSource);
+				if (record.I_TYPE_CD == "QUERY")
+				{
+					var startDataSource = incompleteLovProvider.indexOf("<CONNECTION>")+"<CONNECTION>".length;
+					var endDataSource = incompleteLovProvider.indexOf("</CONNECTION>");
+					var dataSource = incompleteLovProvider.substring(startDataSource,endDataSource);
+					
+					var startStatement = incompleteLovProvider.indexOf("<STMT>")+"<STMT>".length;
+					var endStatement = incompleteLovProvider.indexOf("</STMT>");
+					var statement = incompleteLovProvider.substring(startStatement,endStatement);
+				}
 				
-				var startStatement = incompleteLovProvider.indexOf("<STMT>")+"<STMT>".length;
-				var endStatement = incompleteLovProvider.indexOf("</STMT>");
-				var statement = incompleteLovProvider.substring(startStatement,endStatement);
+				else if (record.I_TYPE_CD == "SCRIPT")
+				{
+					var startScriptType = incompleteLovProvider.indexOf("<LANGUAGE>")+"<LANGUAGE>".length;
+	    			var endScriptType = incompleteLovProvider.indexOf("</LANGUAGE>");
+	    			var scriptType = incompleteLovProvider.substring(startScriptType,endScriptType);
+	    			    			
+	    			var startScript = incompleteLovProvider.indexOf("<SCRIPT>")+"<SCRIPT>".length;
+	    			var endScript = incompleteLovProvider.indexOf("</SCRIPT>");
+	    			var script = incompleteLovProvider.substring(startScript,endScript); 	    			
+				}
 				
 				var valueColumn = returnLovValues.valueColumnName.valueOf();
 				var descriptionColumn = returnLovValues.descriptionColumnName.valueOf();
@@ -278,20 +305,38 @@ Ext.define
 					}
 				}
 				
-				var completeLovProvider = 
-					"<QUERY>" + 
-						"<CONNECTION>" + dataSource + "</CONNECTION>" + 
-						"<STMT>" + statement + "</STMT>" + 
-						"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" + 
-						"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
-						"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" + 
-						"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" + 
-						"<LOVTYPE>" + lovType + "</LOVTYPE>" + 
-						"<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>"
-					+ "</QUERY>";
+				var completeLovProvider = "";
 				
-				//console.log(completeLovProvider);
+				if (record.I_TYPE_CD == "QUERY")
+				{
+					completeLovProvider = 
+						"<QUERY>" + 
+							"<CONNECTION>" + dataSource + "</CONNECTION>" + 
+							"<STMT>" + statement + "</STMT>" + 
+							"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" + 
+							"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
+							"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" + 
+							"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" + 
+							"<LOVTYPE>" + lovType + "</LOVTYPE>" + 
+							"<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>"
+						+ "</QUERY>";
+				}
 				
+				else if (record.I_TYPE_CD == "SCRIPT")
+				{
+					completeLovProvider = 
+						"<SCRIPTLOV>" +
+		    				"<SCRIPT>" + script + "</SCRIPT>" +	
+		    				"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" +
+		    				"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
+		    				"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" +
+		    				"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" +
+		    				"<LANGUAGE>" + scriptType + "</LANGUAGE>" +
+		    				"<LOVTYPE>" + lovType + "</LOVTYPE>" +
+		    				"<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>" +
+    					"</SCRIPTLOV>";
+				}
+								
 				//this.detailPanel.getFormState().data.LOV_PROVIDER = completeLovProvider;
 				this.detailPanel.lovProvider.value = completeLovProvider;
 				record.LOV_PROVIDER = completeLovProvider;
@@ -350,9 +395,7 @@ Ext.define
 										{
 											// When there is no error in message - successfully saved record
 											Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.behavioural.lov.saved'));
-											var selectedRow = this.grid.getSelectionModel().getSelection();
-											
-											
+											var selectedRow = this.grid.getSelectionModel().getSelection();										
 											
 											// Ext.apply() - Copies all the properties of config to the specified object
 											
@@ -365,7 +408,7 @@ Ext.define
 
 											this.grid.store.sync();
 											this.grid.store.commitChanges() ;
-											this.grid.store.loadData(selectedRow[0], true) ;
+											this.grid.store.loadData(selectedRow[0], true);
 											
 											this.grid.getView().refresh();
 											
@@ -472,9 +515,6 @@ Ext.define
 			{	
 				this.detailPanel.panel2.hide();
 			}
-			
-			//console.log("*********");
-			//console.log(record.data);
 			
 			this.detailPanel.setFormState(record.data);
 			

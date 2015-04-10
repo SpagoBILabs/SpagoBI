@@ -16,7 +16,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	(
 		function() 
 		{
-			console.log("aaaa");
 			var lovDetailPanel = Ext.create("Sbi.behavioural.lov.LOVListDetailPanel", {});
 			
 			var lovViewport = Ext.create

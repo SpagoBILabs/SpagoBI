@@ -126,8 +126,8 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel2', {
     	
         var columns = this.store.getColumns();
         
-        console.log(this.store);
-        console.log(columns);
+        //console.log(this.store);
+        //console.log(columns);
         
        // console.log(columns);
        
