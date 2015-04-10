@@ -152,20 +152,19 @@ Ext.define
 			);     		
     		
     		this.lovTestPreview.on('storeLoad',this.lovTestConfiguration.onParentStoreLoad,this.lovTestConfiguration);
+    		//console.log("{{{}}}} {{{}}}}");
     		var lovConfigurationPanelItems = [this.lovTestConfiguration];
     		
 //    		console.log("#########1");
 //    		console.log(lovConfigurationPanelItems);
     		
     		if(this.treeLov){
-    			console.log("#########2");
+    			console.log("######### Tree LOV [TestLovPanel2] #########");
     			//Tree lov panel
     			this.lovTestConfigurationTree = Ext.create('Sbi.behavioural.lov.TestLovTreePanel2',{lovConfig:config.lovConfig, flex: 2, parentStore: this.lovTestPreview.store,lovType: typeStoreValue});
     			this.lovTestPreview.on('storeLoad',this.lovTestConfigurationTree.onParentStoreLoad,this.lovTestConfigurationTree);
     			lovConfigurationPanelItems.push(this.lovTestConfigurationTree);
     		}
-
-    		console.log("#########3");
     		
     		var lovConfigurationPanel = Ext.create('Ext.Panel', {
     		      	layout: 'hbox',
@@ -173,8 +172,6 @@ Ext.define
     		     	width: "100%",
     		      	items: lovConfigurationPanelItems
     		    });
-    		
-//    		console.log("#########4");
     		
     		this.listeners = 
     		{
@@ -223,12 +220,7 @@ Ext.define
         			}
         		},
         		
-//        		"wrongSyntax": function()
-//    			{
-//    				console.log("GREEEEEEEEEEESKSA");
-//    			}
-
-        		
+       		
 //        		"lovTypeChanged": function(type)
 //        		{
 //        			this.remove();
@@ -261,12 +253,11 @@ Ext.define
     			this
 	    	);
     		
-    		console.log("#########5");
     		Ext.apply(this,config||{});
     		this.items = [lovConfigurationPanel,this.lovTestPreview];
         	this.callParent(arguments);
         	this.comboType.on('select',this.updateType,this);
-        	console.log("#########6");
+        	
         	console.log("[OUT] constructor() TestLovPanel2");
     	},
     	

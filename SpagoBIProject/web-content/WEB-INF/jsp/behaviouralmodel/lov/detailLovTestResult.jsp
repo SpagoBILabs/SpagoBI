@@ -39,8 +39,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <link href="<%=linkProtoAlphaThem%>" rel="stylesheet" type="text/css"/>
 
 <%
+	System.out.println("PPPPPPPPPPPPPPPPPPPPP detailLovTestResult 0");
+
 	SourceBean detailMR = (SourceBean) aServiceResponse.getAttribute("DetailModalitiesValueModule"); 
 	SourceBean listLovMR = (SourceBean) aServiceResponse.getAttribute("ListTestLovModule"); 
+	
+	System.out.println("PPPPPPPPPPPPPPPPPPPPP detailLovTestResult 1");
 
 	String lovProviderModified = (String)aSessionContainer.getAttribute(SpagoBIConstants.LOV_MODIFIED);
 	if (lovProviderModified == null) 
@@ -61,6 +65,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
   	saveUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_DISABLED, "true");
   	saveUrlPars.put("RETURN_FROM_TEST_MSG","SAVE");
     String saveUrl = urlBuilder.getUrl(request, saveUrlPars);
+    System.out.println("PPPPPPPPPPPPPPPPPPPPP detailLovTestResult 1-1");
+    System.out.println("save URL: " + saveUrl);
   	
     Map backUrlPars = new HashMap();
     backUrlPars.put("PAGE", "DetailModalitiesValuePage");
@@ -73,8 +79,13 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     	backUrlPars.put("lovProviderModified", lovProviderModified);
     String backUrl = urlBuilder.getUrl(request, backUrlPars);
   	
+    System.out.println("PPPPPPPPPPPPPPPPPPPPP detailLovTestResult 1-2");
+    System.out.println("back URL: " + backUrl);
+    
   	ModalitiesValue modVal = (ModalitiesValue) aSessionContainer.getAttribute(SpagoBIConstants.MODALITY_VALUE_OBJECT);
   	String lovProv = modVal.getLovProvider();
+  	System.out.println("PPPPPPPPPPPPPPPPPPPPP detailLovTestResult 2");
+  	System.out.println("LOV PROVIDER: " + lovProv);
   	ILovDetail lovDet = LovDetailFactory.getLovFromXML(lovProv);
     String readonly = "" ;
     boolean isreadonly = true;
@@ -85,6 +96,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     
     String treeColumnNames = "";
     if(lovDet!=null && lovDet.getTreeLevelsColumns()!=null && lovDet.getTreeLevelsColumns().size()>0){
+    	System.out.println("PPPPPPPPPPPPPPPPPPPPP detailLovTestResult 3");
     	treeColumnNames = treeColumnNames+"['"+lovDet.getTreeLevelsColumns().get(0)+"'";
     	 for(int i=1; i<lovDet.getTreeLevelsColumns().size(); i++){
     		 treeColumnNames =treeColumnNames +",'"+ lovDet.getTreeLevelsColumns().get(i)+"'";
@@ -97,6 +109,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     String contextName = GeneralUtilities.getSpagoBiContext();
     String adapterHTTPName = GeneralUtilities.getSpagoAdapterHttpUrl();
     contextName = contextName+adapterHTTPName;
+    
+    System.out.println("PPPPPPPPPPPPPPPPPPPPP detailLovTestResult 4");
+    System.out.println("context name: " + contextName);
    
 %>
 
@@ -125,8 +140,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     Ext.onReady(function(){
 		var lovConfig = {}
 		lovConfig.descriptionColumnName =  '<%= lovDet.getDescriptionColumnName()%>';
+		console.log("OOO1");
+		console.log(lovConfig.descriptionColumnName);
 		lovConfig.valueColumnName =  '<%= lovDet.getValueColumnName()%>';
+		console.log("OOO2");
+		console.log(lovConfig.valueColumnName);
 		lovConfig.visibleColumnNames =  '<%= lovDet.getVisibleColumnNames()%>';
+		console.log("OOO3");
+		console.log(lovConfig.visibleColumnNames);
 		
 		lovConfig.lovType =  '<%= lovDet.getLovType()%>';
 		

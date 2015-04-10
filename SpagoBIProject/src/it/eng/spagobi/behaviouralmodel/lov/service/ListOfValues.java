@@ -126,6 +126,9 @@ public class ListOfValues {
 
 			int newID = modalitiesDAO.loadModalitiesValueByLabel(modVal.getLabel()).getId();
 
+			System.out.println("+++++++++");
+			System.out.println(modalitiesDAO.loadModalitiesValueByLabel(modVal.getLabel()).getLovProvider());
+
 			// return Response.ok().build();
 			return Integer.toString(newID);
 
@@ -249,7 +252,7 @@ public class ListOfValues {
 
 		Integer id = -1;
 
-		String idString = (String) requestBodyJSON.opt("LOV_ID");
+		String idString = Integer.toString((Integer) requestBodyJSON.opt("LOV_ID"));
 
 		if (idString != null && idString != "") {
 			id = new Integer(idString);

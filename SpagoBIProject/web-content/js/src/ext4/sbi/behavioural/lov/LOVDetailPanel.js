@@ -167,29 +167,6 @@ Ext.define
 				this
 			);
 	    	
-	    	
-	    	
-//	    	this.resultPanel.on
-//	    	(
-//    			"wrongSyntax",
-//    			
-//    			function()
-//    			{
-//    				console.log("GREEEEEEEEEEESKSA");
-//    			},
-//    			
-//    			this
-//	    	);
-	    	
-//	    	var addLovTestEvents = function(lovTest, lovPanel, lovConfig, modality, contextName){
-//	    		lovTest.on('lovTypeChanged',function(type){
-//	    			lovPanel.remove(lovTest,'true');
-//	    			lovConfig.lovType=type;
-//	    			lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{contextName: contextName,lovConfig:lovConfig, modality:modality}); //by alias
-//	    			addLovTestEvents(lovTest,lovPanel, lovConfig, modality, contextName);
-//	    			lovPanel.add(lovTest);
-//	    		},this);
-//	    	}
     	},
     	
     	takeValues: function()
@@ -225,44 +202,92 @@ Ext.define
 				}
 			);
     		
-    	
-//    		var addLovTestEvents = function(lovTest, lovConfig, contextName){
-//				lovTest.on('lovTypeChanged',function(type){
-//					this.resultPanel.remove(lovTest,'true');
-//					lovConfig.lovType=type;
-//					lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel2',{contextName: contextName,lovConfig:lovConfig, lovProvider: lovProvider}); //by alias
-//					addLovTestEvents(lovTest, lovConfig, contextName);
-//					this.resultPanel.add(lovTest);
-//					console.log("LLLL");
-//				},this);
-//    		};
-    		
     		lovTest.on
 	    	(
     			"wrongSyntax2", 
     			
     			function()
-    			{
-//    				console.log("GREEEEEEEEEEESKSA2222"); 
-    				
+    			{    				
     				/* If user make mistake and type wrong syntax for SQL query
     				 * take him back to the first page (LOV form) and provide him
     				 * the last known (good, valid) SQL query (the query that existed) 
     				 * previously for this LOV. */
-    				var startStatement = this.lovProvider.lastValue.indexOf("<STMT>")+"<STMT>".length;
-        			var endStatement = this.lovProvider.lastValue.indexOf("</STMT>");
-        			var oldStatement = this.lovProvider.lastValue.substring(startStatement,endStatement);
-        			
-        			this.dataSourceQuery.setValue(oldStatement);
+    				
+    				var startStatement = -1;
+        			var endStatement = -1;
+        			var oldStatement = "";
+    				
+    				// Return old LOV value for new LOV value (error happened, so we are losing nothing)
+    				//this.lovProvider.value = this.lovProvider.lastValue;
     				
     				this.getComponent("TAB_PANEL_RESULTS").tabBar.items.items[1].hide();
-    				this.getComponent("TAB_PANEL_RESULTS").setActiveTab(0);    				
+    				this.getComponent("TAB_PANEL_RESULTS").setActiveTab(0);    	
+        			
+    				console.log("#@#@#@#@#@#@#@#");    				
+    				console.log(this.lovProvider.value);
+    				console.log(this.lovProvider.lastValue);
+    				
+    				var lovProviderValue = "";
+    				
+    				if (this.lovId.value == 0)
+    					lovProviderValue = this.lovProvider.value;   
+    				else
+    					lovProviderValue = this.lovProvider.lastValue;          			     		
+        			
+    				if (lovProviderValue.indexOf("QUERY") >= 0)
+    				{
+    					startStatement = lovProviderValue.indexOf("<STMT>")+"<STMT>".length;
+            			endStatement = lovProviderValue.indexOf("</STMT>");
+            			oldStatement = lovProviderValue.substring(startStatement,endStatement);
+            			
+            			this.dataSourceQuery.setValue(oldStatement);
+            			
+            			var startIndex = lovProviderValue.indexOf("<CONNECTION>");
+            			var endIndex = lovProviderValue.indexOf("</CONNECTION>");
+            			
+            			var dsType = lovProviderValue.substring(startIndex + "<CONNECTION>".length,endIndex);
+            			
+            			this.dataSourceCombo.setValue(dsType);
+            			
+            			if (this.lovId.value == 0)
+        				{            				            			
+	            			this.dataSourceQuery.markInvalid("Wrong syntax for selected data source query type: " + dsType + ". Try again...");
+        				}
+    				}
+    				
+    				else if (lovProviderValue.indexOf("SCRIPTLOV") >= 0)
+					{
+    					startStatement = lovProviderValue.indexOf("<SCRIPT>")+"<SCRIPT>".length;
+    					endStatement = lovProviderValue.indexOf("</SCRIPT>");
+    					oldStatement = lovProviderValue.substring(startStatement,endStatement);   
+    					
+    					this.scriptQuery.setValue(oldStatement);
+    					
+    					var startScriptType = lovProviderValue.indexOf("<LANGUAGE>")+"<LANGUAGE>".length;
+            			var endScriptType = lovProviderValue.indexOf("</LANGUAGE>");
+            			var scriptType = lovProviderValue.substring(startScriptType,endScriptType);
+            			
+            			// !!!! Ovim resenjem uopste nisam odusevljen
+            			if (scriptType == "ECMAScript") 	// vidjeno u ScripDetail.java
+            				scriptType = "Javascript";
+            			else if (scriptType == "groovy") 	// vidjeno u ScripDetail.java
+            				scriptType = "Groovy";
+            			
+            			this.scriptTypeCombo.setValue(scriptType);
+    					
+    					if (this.lovId.value == 0)
+        				{
+    						this.scriptQuery.markInvalid("Wrong syntax for selected script type: " + scriptType + ". Try again...");
+        				}
+					}   
+    				
     			},
     			
     			this
 	    	);
     		
     		lovTest.on('lovTypeChanged',function(type){
+    			console.log("[START] lovTypeChanged EVENT");
 				this.resultPanel.remove(lovTest,'true');
 				lovConfig.lovType=type;
 				lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel2',{contextName: contextName,lovConfig:lovConfig, lovProvider: lovProvider, tabPanelHeight: window.innerHeight}); //by alias
@@ -345,6 +370,8 @@ Ext.define
     			
     			{
     				name: "LOV_PROVIDER",
+//    				height: 200,
+//    				width: 400,
     				readOnly: true
     			}
     		);    
@@ -502,7 +529,7 @@ Ext.define
 	    	        displayField:'DATASOURCE_LABEL',
 	    	        valueField:'DATASOURCE_LABEL',
 	    	        // (top, right, bottom, left)
-	    	        padding: "10 0 5 0",
+	    	        padding: "10 0 10 0",
 	    	        editable: false,
 	    	        allowBlank: false
 	    	    }
@@ -512,9 +539,9 @@ Ext.define
     		(
 				"Ext.form.field.TextArea",
 				
-				{
-					id: "DATA_SOURCE_QUERY",
+				{					
 					fieldLabel: LN('sbi.behavioural.lov.details.queryDescription'), 
+					id: "DATA_SOURCE_QUERY",
 					height: 100,
 					width: 500,
 					padding: '10 0 10 0'
@@ -627,6 +654,7 @@ Ext.define
     				width: "100%",
     				// (top, right, bottom, left)
     				padding: '5 10 5 10',
+    				id: "PANEL3",
     				
     				items: 
 					[ this.scriptTypeCombo, this.scriptQuery  ]    				
@@ -685,14 +713,30 @@ Ext.define
         			var endIndex = query.indexOf("</CONNECTION>");
         			
         			this.dataSourceCombo.setValue(query.substring(startIndex + "<CONNECTION>".length,endIndex));
-    			}  
-        		
-        		if (values.I_TYPE_CD == "QUERY") 
-    			{
+        			
         			var startIndex = query.indexOf("<STMT>");
         			var endIndex = query.indexOf("</STMT>");
         			
         			this.dataSourceQuery.setValue(query.substring(startIndex + "<STMT>".length,endIndex));
+    			}  
+        		
+    			else if (values.I_TYPE_CD == "SCRIPT") 
+    			{
+    				var startScriptType = query.indexOf("<LANGUAGE>")+"<LANGUAGE>".length;
+        			var endScriptType = query.indexOf("</LANGUAGE>");
+        			var scriptType = query.substring(startScriptType,endScriptType);
+        			
+        			// !!!! Ovim resenjem uopste nisam odusevljen
+        			if (scriptType == "ECMAScript") 	// vidjeno u ScripDetail.java
+        				scriptType = "Javascript";
+        			else if (scriptType == "groovy") 	// vidjeno u ScripDetail.java
+        				scriptType = "Groovy";
+        			
+        			this.scriptTypeCombo.setValue(scriptType);
+        			
+        			var startScript = query.indexOf("<SCRIPT>")+"<SCRIPT>".length;
+        			var endScript = query.indexOf("</SCRIPT>");
+        			this.scriptQuery.setValue(query.substring(startScript,endScript));
     			}        		
         		
         		//this.selectedInputType(values.I_TYPE_CD);				
@@ -700,8 +744,14 @@ Ext.define
     		else
 			{
     			this.lovInputTypeCombo.setValue(values.I_TYPE_CD);
+    			
+    			// For query (data source)
     			this.dataSourceCombo.setValue("");
     			this.dataSourceQuery.setValue("");
+    			
+    			// For script
+    			this.scriptTypeCombo.setValue("");
+    			this.scriptQuery.setValue("");
 			}
     		
     		this.getForm().setValues(values);    		
@@ -714,18 +764,10 @@ Ext.define
     		var getLovDescription = this.lovDescription.value;
     		var getLovLabel = this.lovLabel.value;
     		
+    		console.log(" +++++ getFormState +++++ ");
+    		
     		if (this.lovInputTypeCombo.getValue() == "QUERY")
 			{    
-    			// PREDEFINED XML QUERY...
-//    			var getLovProvider = "<QUERY>" + "<CONNECTION>" + this.dataSourceCombo.getValue() + "</CONNECTION>" + "<STMT>" + this.dataSourceQuery.getValue() + "</STMT>" + "<VALUE-COLUMN>"
-//				+ "region_id" + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + "region_id" + "</DESCRIPTION-COLUMN>"
-//				+ "<VISIBLE-COLUMNS>" + "region_id" + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
-//				+ "region_id" + "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + "simple"
-//				+ "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>" + "sales_city,sales_state_province,sales_district,sales_region,sales_country,sales_district_id" + "</TREE-LEVELS-COLUMNS>"
-//				+ "</QUERY>";
-    			
-    			//while (this.dataSourceCombo.getValue() != "" && this.dataSourceQuery.getValue() != "")
-    			//{
     			
     			var getLovProvider = "";
     			
@@ -736,22 +778,57 @@ Ext.define
     			var startStatement = this.lovProvider.value.indexOf("<STMT>")+"<STMT>".length;
     			var endStatement = this.lovProvider.value.indexOf("</STMT>");
     			var oldStatement = this.lovProvider.value.substring(startStatement,endStatement);
-    			    			
-    			if (phaseOfLov == "testPhase" && getLovId == 0 || 
-    					oldDataSource != this.dataSourceCombo.getValue() || 
-    					oldStatement != this.dataSourceQuery.getValue()) // Test phase
+    			
+    			// Prethodna varijanta: zakomentarisano 9.4. u 1:06 sati 
+    			if (phaseOfLov == "testPhase" && (getLovId == 0 || oldDataSource != this.dataSourceCombo.getValue() || 
+    					oldStatement != this.dataSourceQuery.getValue())) // Test phase
+//    			if (phaseOfLov == "testPhase" && getLovId == 0 && 
+//    					(oldDataSource != this.dataSourceCombo.getValue() || 
+//    					oldStatement != this.dataSourceQuery.getValue())) // Test phase
 				{
-    				getLovProvider = "<QUERY>" + "<CONNECTION>" + this.dataSourceCombo.getValue() + "</CONNECTION>" + "<STMT>" + this.dataSourceQuery.getValue() + "</STMT>" + "<VALUE-COLUMN>"
-    				+ "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + "</DESCRIPTION-COLUMN>"
-    				+ "<VISIBLE-COLUMNS>" + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
-    				+ "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>" + "</TREE-LEVELS-COLUMNS>"
-    				+ "</QUERY>";
+//    				var dataSourceComboValue = "";
+//    				var dataSourceQueryValue = "";
+//    				
+//    				if (getLovId == 0)
+//    				{
+//    					dataSourceComboValue = this.dataSourceCombo.getValue();
+//    					dataSourceQueryValue = this.dataSourceQuery.getValue();
+//    				}
+//    				else 
+//    				{
+//    					if (oldDataSource != this.dataSourceCombo.getValue())
+//    						dataSourceComboValue = this.dataSourceCombo.getValue();
+//    					else
+//    						dataSourceComboValue = oldDataSource;
+//    					
+//    					if (oldStatement != this.dataSourceQuery.getValue())
+//    						dataSourceQueryValue = this.dataSourceQuery.getValue();
+//    					else
+//    						dataSourceQueryValue = oldStatement;
+//    				}
+    				
+    				// Za svaki tip LOV-a podaci o XML formi za upit se mogu naci u Java klasama na ovoj putanji: 
+    				// C:\eclipse-jee-luna-SR1a-win32-x86_64\MyWorkspace\SpagoBIDAO\src\it\eng\spagobi\behaviouralmodel\lov\bo
+    				getLovProvider = 
+    					"<QUERY>" + 
+    						"<CONNECTION>" + this.dataSourceCombo.getValue() + "</CONNECTION>" + 
+    						"<STMT>" + this.dataSourceQuery.getValue() + "</STMT>" + 
+    						"<VALUE-COLUMN>" + "</VALUE-COLUMN>" + 
+    						"<DESCRIPTION-COLUMN>" + "</DESCRIPTION-COLUMN>" + 
+    						"<VISIBLE-COLUMNS>" + "</VISIBLE-COLUMNS>" + 
+    						"<INVISIBLE-COLUMNS>" + "</INVISIBLE-COLUMNS>" + 
+    						"<LOVTYPE>" + "</LOVTYPE>" + 
+    						"<TREE-LEVELS-COLUMNS>" + "</TREE-LEVELS-COLUMNS>" +
+						"</QUERY>";
     				
     				// Need to attach this XML query to LOV provider for later filling with data
-    				this.lovProvider.value = getLovProvider;    				
+    				
+    				
+    				if (getLovId == 0 || oldDataSource != this.dataSourceCombo.getValue())
+    					this.lovProvider.value = getLovProvider;    				
 				}
     			else // Save phase
-				{   				
+				{   	
     				getLovProvider = this.lovProvider.value;   
 				}
     			    			
@@ -763,6 +840,60 @@ Ext.define
     			var getInputTypeCd = "SCRIPT";
     			var getInputTypeId = 2; 
     			var getLovProvider = "";
+    			
+    			var startScriptType = this.lovProvider.value.indexOf("<LANGUAGE>")+"<LANGUAGE>".length;
+    			var endScriptType = this.lovProvider.value.indexOf("</LANGUAGE>");
+    			var oldScriptType = this.lovProvider.value.substring(startScriptType,endScriptType);
+    			    			
+    			var startScript = this.lovProvider.value.indexOf("<SCRIPT>")+"<SCRIPT>".length;
+    			var endScript = this.lovProvider.value.indexOf("</SCRIPT>");
+    			var oldScript = this.lovProvider.value.substring(startScript,endScript);
+    			
+    			// !!!! Ovim resenjem uopste nisam odusevljen
+    			if (oldScriptType == "ECMAScript") 	// vidjeno u ScripDetail.java
+    				oldScriptType = "Javascript";
+    			else if (oldScriptType == "groovy") 	// vidjeno u ScripDetail.java
+    				oldScriptType = "Groovy";
+    			
+	    		console.log("-+-+-+-+-");
+	    		console.log(getLovId);
+	    		console.log(oldScriptType);
+	    		console.log(this.scriptTypeCombo.getValue());
+	    		console.log(oldScript);
+	    		console.log(this.scriptQuery.getValue());
+    			
+    			if (phaseOfLov == "testPhase" && (getLovId == 0 || 
+    					oldScriptType != this.scriptTypeCombo.getValue() || 
+    					oldScript != this.scriptQuery.getValue())) // Test phase
+				{
+    				var scriptType = this.scriptTypeCombo.getValue();
+    				
+    				// !!!! Ovim resenjem uopste nisam odusevljen (obrnut smer od setFormState)
+        			if (scriptType == "Javascript") 	// vidjeno u ScripDetail.java
+        				scriptType = "ECMAScript";
+        			else if (scriptType == "Groovy") 	// vidjeno u ScripDetail.java
+        				scriptType = "groovy";
+    				
+    				// ScriptDetail.java
+    				getLovProvider = 
+    					"<SCRIPTLOV>" +
+		    				"<SCRIPT>"+this.scriptQuery.getValue()+"</SCRIPT>" +	
+		    				"<VALUE-COLUMN>"+"</VALUE-COLUMN>" +
+		    				"<DESCRIPTION-COLUMN>"+"</DESCRIPTION-COLUMN>" +
+		    				"<VISIBLE-COLUMNS>"+"</VISIBLE-COLUMNS>" +
+		    				"<INVISIBLE-COLUMNS>"+"</INVISIBLE-COLUMNS>" +
+		    				"<LANGUAGE>" + scriptType + "</LANGUAGE>" +
+		    				"<LOVTYPE>"+ "</LOVTYPE>" +
+		    				"<TREE-LEVELS-COLUMNS>"+"</TREE-LEVELS-COLUMNS>" +
+	    				"</SCRIPTLOV>";
+    				        			
+    				if (getLovId == 0 || oldScriptType != this.scriptTypeCombo.getValue())
+    					this.lovProvider.value = getLovProvider;   
+				}   
+    			else // Save phase
+				{   		
+    				getLovProvider = this.lovProvider.value; 
+				}
 			}    			
     		else if (this.lovInputTypeCombo.getValue() == "FIX_LOV")
 			{
