@@ -221,10 +221,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			IDataStore dataStore = null;
 			synchronized (session) {
 				if (groupCriteria.size() == 0 && projectionCriteria.size() == 0 && filterCriteria.size() == 0) {
-					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters), profile);
+					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters));
 				} else {
 					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters), groupCriteria, filterCriteria,
-							projectionCriteria, profile);
+							projectionCriteria);
 				}
 			}
 

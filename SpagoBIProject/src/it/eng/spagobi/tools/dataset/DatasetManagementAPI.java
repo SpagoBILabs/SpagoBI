@@ -295,11 +295,11 @@ public class DatasetManagementAPI {
 	 * @param profile
 	 * @return
 	 */
-	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues, UserProfile profile) {
+	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
 		try {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			checkQbeDataset(dataSet);
-			addProfileAttributes(dataSet, profile);
+			addProfileAttributes(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
@@ -335,7 +335,12 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private void addProfileAttributes(IDataSet dataSet, UserProfile profile) {
+	private void addProfileAttributes(IDataSet dataSet) {
+		UserProfile profile = this.getUserProfile();
+		if (profile == null) {
+			logger.warn("Missing user profile object! The dataset will fail loading datas in case it requires the user profile object");
+			return;
+		}
 		// update profile attributes into dataset
 		Map<String, Object> userAttributes = new HashMap<String, Object>();
 		userAttributes.putAll(profile.getUserAttributes());
@@ -373,13 +378,13 @@ public class DatasetManagementAPI {
 	}
 
 	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues,
-			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria, UserProfile profile) {
+			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
 
 		try {
 
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			checkQbeDataset(dataSet);
-			addProfileAttributes(dataSet, profile);
+			addProfileAttributes(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
