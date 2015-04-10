@@ -1,12 +1,11 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFInternalError;
@@ -16,6 +15,14 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
 import java.net.URL;
@@ -27,10 +34,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.mozilla.javascript.NativeArray;
 
 /**
- * Defines the <code>ScriptDetail</code> objects. This object is used to store 
- * Script Wizard detail information.
+ * Defines the <code>ScriptDetail</code> objects. This object is used to store Script Wizard detail information.
  */
 public class ScriptDetail extends DependenciesPostProcessingLov implements ILovDetail {
 
@@ -39,12 +46,12 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	public static final String SBI_BINDINGS_LANGUAGE = "SBI_LANGUAGE";
 	public static final String SBI_BINDINGS_COUNTRY = "SBI_COUNTRY";
 	public static final String SBI_BINDINGS_DATE_FORMAT = "SBI_DATE_FORMAT";
-	
+
 	/**
 	 * the script
 	 */
 	private String script = "";
-	private String languageScript = "";		
+	private String languageScript = "";
 	private List visibleColumnNames = null;
 	private String valueColumnName = "";
 	private String descriptionColumnName = "";
@@ -55,63 +62,68 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	/**
 	 * constructor.
 	 */
-	public ScriptDetail() {}
+	public ScriptDetail() {
+	}
 
 	/**
 	 * constructor.
-	 * 
-	 * @param dataDefinition xml representation of the script lov
-	 * 
-	 * @throws SourceBeanException the source bean exception
+	 *
+	 * @param dataDefinition
+	 *            xml representation of the script lov
+	 *
+	 * @throws SourceBeanException
+	 *             the source bean exception
 	 */
 	public ScriptDetail(String dataDefinition) throws SourceBeanException {
-		loadFromXML (dataDefinition);
+		loadFromXML(dataDefinition);
 	}
-
 
 	/**
 	 * loads the lov from an xml string.
-	 * 
-	 * @param dataDefinition the xml definition of the lov
-	 * 
-	 * @throws SourceBeanException the source bean exception
+	 *
+	 * @param dataDefinition
+	 *            the xml definition of the lov
+	 *
+	 * @throws SourceBeanException
+	 *             the source bean exception
 	 */
-	public void loadFromXML (String dataDefinition) throws SourceBeanException {
+	@Override
+	public void loadFromXML(String dataDefinition) throws SourceBeanException {
 		dataDefinition.trim();
 		// build the sourcebean
-		if(dataDefinition.indexOf("<SCRIPT>")!=-1) {
+		if (dataDefinition.indexOf("<SCRIPT>") != -1) {
 			int startInd = dataDefinition.indexOf("<SCRIPT>");
 			int endId = dataDefinition.indexOf("</SCRIPT>");
 			String script = dataDefinition.substring(startInd + 8, endId);
-			script =script.trim();
-			if(!script.startsWith("<![CDATA[")) {
-				script = "<![CDATA[" + script  +  "]]>";
-				dataDefinition = dataDefinition.substring(0, startInd+8) + script + dataDefinition.substring(endId); 
+			script = script.trim();
+			if (!script.startsWith("<![CDATA[")) {
+				script = "<![CDATA[" + script + "]]>";
+				dataDefinition = dataDefinition.substring(0, startInd + 8) + script + dataDefinition.substring(endId);
 			}
 		}
 		SourceBean source = SourceBean.fromXMLString(dataDefinition);
 		// get and set the script text
-		SourceBean scriptSB = (SourceBean)source.getAttribute("SCRIPT");
-		String script = scriptSB.getCharacters(); 
+		SourceBean scriptSB = (SourceBean) source.getAttribute("SCRIPT");
+		String script = scriptSB.getCharacters();
 		setScript(script);
 		// get and set value column
 		String valueColumn = "";
-		SourceBean valCol = (SourceBean)source.getAttribute("VALUE-COLUMN");
-		if(valCol!=null)
+		SourceBean valCol = (SourceBean) source.getAttribute("VALUE-COLUMN");
+		if (valCol != null)
 			valueColumn = valCol.getCharacters();
 		setValueColumnName(valueColumn);
 		// get and set the description column
 		String descrColumn = "";
-		SourceBean descColSB = (SourceBean)source.getAttribute("DESCRIPTION-COLUMN");
-		if(descColSB!=null)
+		SourceBean descColSB = (SourceBean) source.getAttribute("DESCRIPTION-COLUMN");
+		if (descColSB != null)
 			descrColumn = descColSB.getCharacters();
 		setDescriptionColumnName(descrColumn);
 		// get and set list of visible columns
 		List visColNames = new ArrayList();
-		SourceBean visColSB = (SourceBean)source.getAttribute("VISIBLE-COLUMNS");
-		if(visColSB!=null){
+		SourceBean visColSB = (SourceBean) source.getAttribute("VISIBLE-COLUMNS");
+		if (visColSB != null) {
 			String visColConc = visColSB.getCharacters();
-			if( (visColConc!=null) && !visColConc.trim().equalsIgnoreCase("") ) {
+			if ((visColConc != null) && !visColConc.trim().equalsIgnoreCase("")) {
 				String[] visColArr = visColConc.split(",");
 				visColNames = Arrays.asList(visColArr);
 			}
@@ -119,76 +131,75 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		setVisibleColumnNames(visColNames);
 		// get and set list of invisible columns
 		List invisColNames = new ArrayList();
-		SourceBean invisColSB = (SourceBean)source.getAttribute("INVISIBLE-COLUMNS");
-		if(invisColSB!=null){
+		SourceBean invisColSB = (SourceBean) source.getAttribute("INVISIBLE-COLUMNS");
+		if (invisColSB != null) {
 			String invisColConc = invisColSB.getCharacters();
-			if( (invisColConc!=null) && !invisColConc.trim().equalsIgnoreCase("") ) {
+			if ((invisColConc != null) && !invisColConc.trim().equalsIgnoreCase("")) {
 				String[] invisColArr = invisColConc.split(",");
 				invisColNames = Arrays.asList(invisColArr);
 			}
 		}
 		setInvisibleColumnNames(invisColNames);
 
-		SourceBean language = (SourceBean)source.getAttribute("LANGUAGE");
-		if(language!=null){
-			String lang=language.getCharacters();
-			if(lang!=null)
+		SourceBean language = (SourceBean) source.getAttribute("LANGUAGE");
+		if (language != null) {
+			String lang = language.getCharacters();
+			if (lang != null)
 				setLanguageScript(lang);
 		}
-		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN  definition)
-		SourceBean treeLevelsColumnsBean = (SourceBean)source.getAttribute("TREE-LEVELS-COLUMNS");
+		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN definition)
+		SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
 		String treeLevelsColumnsString = null;
-		if (treeLevelsColumnsBean != null) { 
+		if (treeLevelsColumnsBean != null) {
 			treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
 		}
-		if( (treeLevelsColumnsString!=null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("") ) {
+		if ((treeLevelsColumnsString != null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("")) {
 			String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
 			this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
 		}
-		SourceBean lovTypeBean = (SourceBean)source.getAttribute("LOVTYPE"); 
+		SourceBean lovTypeBean = (SourceBean) source.getAttribute("LOVTYPE");
 		String lovType;
-		if(lovTypeBean!=null){
-			lovType =  lovTypeBean.getCharacters(); 
+		if (lovTypeBean != null) {
+			lovType = lovTypeBean.getCharacters();
 			this.lovType = lovType;
 		}
 	}
 
-
-
 	/**
 	 * serialize the lov to an xml string.
-	 * 
+	 *
 	 * @return the serialized xml string
 	 */
-	public String toXML () { 
-		String XML = "<SCRIPTLOV>" +
-		"<SCRIPT>"+this.getScript()+"</SCRIPT>" +	
-		"<VALUE-COLUMN>"+this.getValueColumnName()+"</VALUE-COLUMN>" +
-		"<DESCRIPTION-COLUMN>"+this.getDescriptionColumnName()+"</DESCRIPTION-COLUMN>" +
-		"<VISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",")+"</VISIBLE-COLUMNS>" +
-		"<INVISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",")+"</INVISIBLE-COLUMNS>" +
-		"<LANGUAGE>"+this.getLanguageScript()+"</LANGUAGE>" +
-		"<LOVTYPE>"+this.getLovType() + "</LOVTYPE>" +
-		"<TREE-LEVELS-COLUMNS>"+GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",")+"</TREE-LEVELS-COLUMNS>" +
-		"</SCRIPTLOV>";
+	@Override
+	public String toXML() {
+		String XML = "<SCRIPTLOV>" + "<SCRIPT>" + this.getScript() + "</SCRIPT>" + "<VALUE-COLUMN>" + this.getValueColumnName() + "</VALUE-COLUMN>"
+				+ "<DESCRIPTION-COLUMN>" + this.getDescriptionColumnName() + "</DESCRIPTION-COLUMN>" + "<VISIBLE-COLUMNS>"
+				+ GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",") + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
+				+ GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",") + "</INVISIBLE-COLUMNS>" + "<LANGUAGE>" + this.getLanguageScript()
+				+ "</LANGUAGE>" + "<LOVTYPE>" + this.getLovType() + "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>"
+				+ GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",") + "</TREE-LEVELS-COLUMNS>" + "</SCRIPTLOV>";
+		System.out.println("******************");
+		System.out.println(XML);
 		return XML;
 	}
 
-
 	/**
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception;
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance
+	 *      executionInstance) throws Exception;
 	 */
-	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale) throws Exception {
+	@Override
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
+			throws Exception {
 		logger.debug("IN");
 		String result = null;
 		HashMap attributes = GeneralUtilities.getAllProfileAttributes(profile); // to be cancelled, now substitutution inline
 		attributes.putAll(this.getSystemBindings(locale));
-		//Substitute profile attributes with their value
-		String cleanScript=substituteProfileAttributes(getScript(), attributes);
+		// Substitute profile attributes with their value
+		String cleanScript = substituteProfileAttributes(getScript(), attributes);
 		setScript(cleanScript);
-		
+
 		List<Object> imports = null;
-		if( "groovy".equals(languageScript) ){
+		if ("groovy".equals(languageScript)) {
 			imports = new ArrayList<Object>();
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
 			try {
@@ -197,31 +208,99 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			} catch (Throwable t) {
 				logger.warn("Impossible to load predefinedGroovyScript.groovy", t);
 			}
-		} else if( "ECMAScript".equals(languageScript ) || "rhino-nonjdk".equals(languageScript ) ){
+		} else if ("ECMAScript".equals(languageScript) || "rhino-nonjdk".equals(languageScript)) {
 			imports = new ArrayList<Object>();
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
 			try {
-				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + url + "]");			
+				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + url + "]");
 				imports.add(url);
 			} catch (Throwable t) {
 				logger.warn("Impossible to load predefinedJavascriptScript.js", t);
-			}	
-		}  else {
+			}
+		} else {
 			logger.debug("There is no predefined script file to import for scripting language [" + languageScript + "]");
 		}
-		
+
+		// System.out.println("%%%%%%%  ScriptDetail.java %%%%%%%%%%");
+		// System.out.println(getScript());
+		// System.out.println(languageScript);
+		// System.out.println(attributes);
+		// System.out.println(imports);
+
 		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
-		result = (String)scriptManager.runScript(getScript(), languageScript, attributes, imports);   
-		
+		result = (String) scriptManager.runScript(getScript(), languageScript, attributes, imports);
+
+		System.out.println(result);
+
 		// check if the result must be converted into the right xml sintax
 		boolean toconvert = checkSintax(result);
-		if(toconvert) { 
+		if (toconvert) {
 			result = convertResult(result);
 		}
 		logger.debug("OUT");
 		return result;
 	}
 
+	@Override
+	public DataStore getLovResultAsDataStore(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
+			throws Exception {
+		logger.debug("IN");
+
+		DataStore dataStoreToReturn = null;
+		String result = "";
+
+		HashMap attributes = GeneralUtilities.getAllProfileAttributes(profile); // to be cancelled, now substitutution inline
+		attributes.putAll(this.getSystemBindings(locale));
+		// Substitute profile attributes with their value
+		String cleanScript = substituteProfileAttributes(getScript(), attributes);
+		setScript(cleanScript);
+
+		List<Object> imports = null;
+
+		if ("groovy".equals(languageScript)) {
+			imports = new ArrayList<Object>();
+			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
+			try {
+				logger.debug("predefinedGroovyScript.groovy file URL is equal to [" + url + "]");
+				imports.add(url);
+			} catch (Throwable t) {
+				logger.warn("Impossible to load predefinedGroovyScript.groovy", t);
+			}
+		} else if ("ECMAScript".equals(languageScript) || "rhino-nonjdk".equals(languageScript)) {
+			imports = new ArrayList<Object>();
+			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
+			try {
+				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + url + "]");
+				imports.add(url);
+			} catch (Throwable t) {
+				logger.warn("Impossible to load predefinedJavascriptScript.js", t);
+			}
+		} else {
+			logger.debug("There is no predefined script file to import for scripting language [" + languageScript + "]");
+		}
+		;
+
+		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
+
+		String script = getScript();
+
+		if (script.contains("getListFromMultiValueProfileAttribute")) {
+
+			script = script.replaceAll("getListFromMultiValueProfileAttribute", "getListFromMultiValueProfileAttributeDataStore");
+
+		} else if (script.contains("returnValue")) {
+
+			script = script.replaceAll("returnValue", "returnValueDataStore");
+		}
+
+		Object fromRunScript = scriptManager.runScript(script, languageScript, attributes, imports);
+
+		dataStoreToReturn = convertResultToDataStore(fromRunScript);
+
+		logger.debug("OUT");
+
+		return dataStoreToReturn;
+	}
 
 	private Map getSystemBindings(Locale locale) {
 
@@ -237,52 +316,51 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		return map;
 	}
 
-	private String substituteProfileAttributes(String script, HashMap attributes) throws EMFInternalError{
+	private String substituteProfileAttributes(String script, HashMap attributes) throws EMFInternalError {
 		logger.debug("IN");
-		String cleanScript=new String(script);
-		int indexSubstitution=0;
-		int profileAttributeStartIndex = script.indexOf("${",indexSubstitution);
+		String cleanScript = new String(script);
+		int indexSubstitution = 0;
+		int profileAttributeStartIndex = script.indexOf("${", indexSubstitution);
 
 		while (profileAttributeStartIndex != -1) {
-			int profileAttributeEndIndex=script.indexOf("}",profileAttributeStartIndex);
+			int profileAttributeEndIndex = script.indexOf("}", profileAttributeStartIndex);
 			String attributeName = script.substring(profileAttributeStartIndex + 2, profileAttributeEndIndex).trim();
 			Object attributeValueObj = attributes.get(attributeName);
-			if(attributeValueObj==null)
-			{
-				logger.error("Profile attribute "+attributeName+" not found");
-				attributeValueObj="undefined";
+			if (attributeValueObj == null) {
+				logger.error("Profile attribute " + attributeName + " not found");
+				attributeValueObj = "undefined";
 			}
-			cleanScript=cleanScript.replaceAll("\\$\\{"+attributeName+"\\}", attributeValueObj.toString());
-			indexSubstitution=profileAttributeEndIndex;
-			profileAttributeStartIndex = script.indexOf("${",indexSubstitution);
+			cleanScript = cleanScript.replaceAll("\\$\\{" + attributeName + "\\}", attributeValueObj.toString());
+			indexSubstitution = profileAttributeEndIndex;
+			profileAttributeStartIndex = script.indexOf("${", indexSubstitution);
 		}
 		logger.debug("OUT");
-		return cleanScript;	
+		return cleanScript;
 	}
-
 
 	/**
 	 * checks if the result is formatted in the right xml structure
-	 * @param result the result of the lov
+	 *
+	 * @param result
+	 *            the result of the lov
 	 * @return true if the result is formatted correctly false otherwise
 	 */
 	public boolean checkSintax(String result) {
 		boolean toconvert = false;
-		try{
+		try {
 			SourceBean source = SourceBean.fromXMLString(result);
-			if(!source.getName().equalsIgnoreCase("ROWS")) {
+			if (!source.getName().equalsIgnoreCase("ROWS")) {
 				toconvert = true;
 			} else {
 				List rowsList = source.getAttributeAsList(DataRow.ROW_TAG);
-				if( (rowsList==null) || (rowsList.size()==0) ) {
+				if ((rowsList == null) || (rowsList.size() == 0)) {
 					toconvert = true;
 				}
 			}
 
 		} catch (Exception e) {
-			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
-					"checkSintax", "the result of the lov is not formatted " +
-			"with the right structure so it will be wrapped inside an xml envelope");
+			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "checkSintax", "the result of the lov is not formatted "
+					+ "with the right structure so it will be wrapped inside an xml envelope");
 			toconvert = true;
 		}
 		return toconvert;
@@ -290,53 +368,53 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/**
 	 * Gets the list of names of the profile attributes required.
-	 * 
+	 *
 	 * @return list of profile attribute names
-	 * 
-	 * @throws Exception the exception
+	 *
+	 * @throws Exception
+	 *             the exception
 	 */
-//	public List getProfileAttributeNames() throws Exception {
-//	List names = new ArrayList();
-//	String script = getScript();
-//	while(script.indexOf("getSingleValueProfileAttribute(")!=-1) {
-//	int startind = script.indexOf("getSingleValueProfileAttribute(");
-//	int endind = startind + 31;
-//	int parind = script.indexOf(")", endind);
-//	String name = script.substring(endind, parind);
-//	script = script.substring(0, startind) + script.substring(parind+1);
-//	names.add(name);
-//	}
-//	while(script.indexOf("getMultiValueProfileAttribute(")!=-1) {
-//	int startind = script.indexOf("getMultiValueProfileAttribute(");
-//	int endind = startind + 30;
-//	int comaind = script.indexOf(",", endind);
-//	String name = script.substring(endind, comaind);
-//	script = script.substring(0, startind) + script.substring(comaind+1);
-//	names.add(name);
-//	}
-//	return names;
-//	}
-
-
-
+	// public List getProfileAttributeNames() throws Exception {
+	// List names = new ArrayList();
+	// String script = getScript();
+	// while(script.indexOf("getSingleValueProfileAttribute(")!=-1) {
+	// int startind = script.indexOf("getSingleValueProfileAttribute(");
+	// int endind = startind + 31;
+	// int parind = script.indexOf(")", endind);
+	// String name = script.substring(endind, parind);
+	// script = script.substring(0, startind) + script.substring(parind+1);
+	// names.add(name);
+	// }
+	// while(script.indexOf("getMultiValueProfileAttribute(")!=-1) {
+	// int startind = script.indexOf("getMultiValueProfileAttribute(");
+	// int endind = startind + 30;
+	// int comaind = script.indexOf(",", endind);
+	// String name = script.substring(endind, comaind);
+	// script = script.substring(0, startind) + script.substring(comaind+1);
+	// names.add(name);
+	// }
+	// return names;
+	// }
 
 	/**
 	 * Gets the list of names of the profile attributes required.
-	 * 
+	 *
 	 * @return list of profile attribute names
-	 * 
-	 * @throws Exception the exception
+	 *
+	 * @throws Exception
+	 *             the exception
 	 */
+	@Override
 	public List getProfileAttributeNames() throws Exception {
 		List names = new ArrayList();
 		String script = getScript();
-		while(script.indexOf("${")!=-1) {
+		while (script.indexOf("${") != -1) {
 			int startind = script.indexOf("${");
 			int endind = script.indexOf("}", startind);
 			String attributeDef = script.substring(startind + 2, endind);
-			if(attributeDef.indexOf("(")!=-1) {
+			if (attributeDef.indexOf("(") != -1) {
 				int indroundBrack = script.indexOf("(", startind);
-				String nameAttr = script.substring(startind+2, indroundBrack);
+				String nameAttr = script.substring(startind + 2, indroundBrack);
 				names.add(nameAttr);
 			} else {
 				names.add(attributeDef);
@@ -346,67 +424,146 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		return names;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	/**
 	 * Checks if the lov requires one or more profile attributes.
-	 * 
+	 *
 	 * @return true if the lov require one or more profile attributes, false otherwise
-	 * 
-	 * @throws Exception the exception
+	 *
+	 * @throws Exception
+	 *             the exception
 	 */
+	@Override
 	public boolean requireProfileAttributes() throws Exception {
 		boolean contains = false;
 		String script = getScript();
-		if(script.indexOf("getSingleValueProfileAttribute(")!=-1){
+		if (script.indexOf("getSingleValueProfileAttribute(") != -1) {
 			contains = true;
 		}
-		if(script.indexOf("getMultiValueProfileAttribute(")!=-1){
+		if (script.indexOf("getMultiValueProfileAttribute(") != -1) {
 			contains = true;
 		}
 		return contains;
-	}	
-
+	}
 
 	/**
-	 * In case the result of the string is not structured as expected  
-	 * wrap the result into the right xml envelope
-	 * @param result the result of the script
+	 * In case the result of the string is not structured as expected wrap the result into the right xml envelope
+	 *
+	 * @param result
+	 *            the result of the script
 	 * @return
 	 */
 	public String convertResult(String result) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<ROWS>");
-		sb.append("<ROW VALUE=\"" + result +"\"/>");
+		sb.append("<ROW VALUE=\"" + result + "\"/>");
 		sb.append("</ROWS>");
 		descriptionColumnName = "VALUE";
 		valueColumnName = "VALUE";
-		String [] visibleColumnNamesArray = new String [] {"VALUE"};
+		String[] visibleColumnNamesArray = new String[] { "VALUE" };
 		visibleColumnNames = Arrays.asList(visibleColumnNamesArray);
 		return sb.toString();
 	}
 
+	// public DataStore convertResultToDataStore(String result) {
+	public DataStore convertResultToDataStore(Object result) throws Exception {
+
+		logger.debug("[IN]");
+
+		DataStore dsToReturn = new DataStore();
+		IFieldMetaData fieldMetaData = new FieldMetadata();
+
+		fieldMetaData.setAlias("value");
+		fieldMetaData.setName("value");
+		fieldMetaData.setType(String.class);
+		fieldMetaData.setFieldType(FieldType.ATTRIBUTE);
+
+		IMetaData metadata = new MetaData();
+
+		metadata.addFiedMeta(fieldMetaData);
+		dsToReturn.setMetaData(metadata);
+
+		/* If we have more than one value in the result */
+		if (result instanceof String[]) {
+
+			logger.debug("INFO: The script test result is in the form of String[]");
+
+			String[] array = (String[]) result;
+			int stringLength = array.length;
+
+			for (int i = 0; i < stringLength; i++) {
+
+				Field field = new Field();
+				Record record = new Record();
+				field.setValue(array[i]);
+				record.appendField(field);
+				dsToReturn.insertRecord(i, record);
+			}
+		}
+		/* If we have more exactly one value in result */
+		else if (result instanceof String) {
+
+			logger.debug("INFO: The script test result is in the form of String");
+
+			Field field = new Field();
+			Record record = new Record();
+			field.setValue(result);
+			record.appendField(field);
+			dsToReturn.appendRecord(record);
+		}
+
+		else if (result instanceof NativeArray) {
+
+			logger.debug("INFO: The script test result is in the form of NativeArray");
+
+			int arrayLength = (int) ((NativeArray) result).getLength();
+			String singleValue;
+
+			for (int i = 0; i < arrayLength; i++) {
+
+				singleValue = (String) ((NativeArray) result).get(i, null);
+
+				Field field = new Field();
+				Record record = new Record();
+				field.setValue(singleValue);
+
+				record.appendField(field);
+				dsToReturn.insertRecord(i, record);
+			}
+
+		}
+
+		else if (result instanceof sun.org.mozilla.javascript.internal.NativeArray) {
+
+			int arrayLength = (int) ((sun.org.mozilla.javascript.internal.NativeArray) result).getLength();
+			String singleValue;
+
+			for (int i = 0; i < arrayLength; i++) {
+
+				singleValue = (String) ((sun.org.mozilla.javascript.internal.NativeArray) result).get(i, null);
+
+				dsToReturn.setMetaData(metadata);
+				Field field = new Field();
+				Record record = new Record();
+				field.setValue(singleValue);
+				record.appendField(field);
+				dsToReturn.appendRecord(record);
+			}
+		}
+
+		/* ERROR: Result is not string nor string array (String []) */
+		else {
+			logger.error("Not supported type returned back from script: types allowed are String and String[]");
+			throw new Exception("Not supported type returned back from script: types allowed are String and String[]");
+		}
+
+		logger.debug("[OUT]");
+
+		return dsToReturn;
+	}
 
 	/**
 	 * Get the string of the script.
-	 * 
+	 *
 	 * @return The string of the script
 	 */
 	public String getScript() {
@@ -415,83 +572,107 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/**
 	 * Set the string of the script.
-	 * 
-	 * @param script the string of the script
+	 *
+	 * @param script
+	 *            the string of the script
 	 */
 	public void setScript(String script) {
 		this.script = script;
 	}
 
 	/**
-	 * Splits an XML string by using some <code>SourceBean</code> object methods
-	 * in order to obtain the source <code>ScriptDetail</code> objects whom XML has been
-	 * built.
-	 * 
-	 * @param dataDefinition The XML input String
-	 * 
+	 * Splits an XML string by using some <code>SourceBean</code> object methods in order to obtain the source <code>ScriptDetail</code> objects whom XML has
+	 * been built.
+	 *
+	 * @param dataDefinition
+	 *            The XML input String
+	 *
 	 * @return The corrispondent <code>ScriptDetail</code> object
-	 * 
-	 * @throws SourceBeanException If a SourceBean Exception occurred
+	 *
+	 * @throws SourceBeanException
+	 *             If a SourceBean Exception occurred
 	 */
-	public static ScriptDetail fromXML (String dataDefinition) throws SourceBeanException {
+	public static ScriptDetail fromXML(String dataDefinition) throws SourceBeanException {
 		ScriptDetail scriptDet = new ScriptDetail(dataDefinition);
 		return scriptDet;
 	}
 
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName()
 	 */
+	@Override
 	public String getDescriptionColumnName() {
 		return descriptionColumnName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName(java.lang.String)
 	 */
+	@Override
 	public void setDescriptionColumnName(String descriptionColumnName) {
 		this.descriptionColumnName = descriptionColumnName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames()
 	 */
+	@Override
 	public List getInvisibleColumnNames() {
 		return invisibleColumnNames;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames(java.util.List)
 	 */
+	@Override
 	public void setInvisibleColumnNames(List invisibleColumnNames) {
 		this.invisibleColumnNames = invisibleColumnNames;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
+	@Override
 	public String getValueColumnName() {
 		return valueColumnName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java.lang.String)
 	 */
+	@Override
 	public void setValueColumnName(String valueColumnName) {
 		this.valueColumnName = valueColumnName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
+	@Override
 	public List getVisibleColumnNames() {
 		return visibleColumnNames;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(java.util.List)
 	 */
+	@Override
 	public void setVisibleColumnNames(List visibleColumnNames) {
 		this.visibleColumnNames = visibleColumnNames;
 	}
@@ -504,22 +685,24 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		this.languageScript = languageScript;
 	}
 
-
+	@Override
 	public String getLovType() {
 		return lovType;
 	}
 
+	@Override
 	public void setLovType(String lovType) {
 		this.lovType = lovType;
 	}
 
+	@Override
 	public List getTreeLevelsColumns() {
 		return treeLevelsColumns;
 	}
 
+	@Override
 	public void setTreeLevelsColumns(List treeLevelsColumns) {
 		this.treeLevelsColumns = treeLevelsColumns;
 	}
-
 
 }
