@@ -57,8 +57,6 @@ public interface ILovDetail extends Serializable {
 	 */
 	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale) throws Exception;
 
-	public DataStore getLovResultAsDataStore(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
-			throws Exception;
 
 	/**
 	 * Checks if the lov requires one or more profile attributes.
