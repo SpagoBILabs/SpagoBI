@@ -178,8 +178,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 				+ GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",") + "</INVISIBLE-COLUMNS>" + "<LANGUAGE>" + this.getLanguageScript()
 				+ "</LANGUAGE>" + "<LOVTYPE>" + this.getLovType() + "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>"
 				+ GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",") + "</TREE-LEVELS-COLUMNS>" + "</SCRIPTLOV>";
-		System.out.println("******************");
-		System.out.println(XML);
+
 		return XML;
 	}
 
@@ -221,16 +220,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			logger.debug("There is no predefined script file to import for scripting language [" + languageScript + "]");
 		}
 
-		// System.out.println("%%%%%%%  ScriptDetail.java %%%%%%%%%%");
-		// System.out.println(getScript());
-		// System.out.println(languageScript);
-		// System.out.println(attributes);
-		// System.out.println(imports);
-
 		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
 		result = (String) scriptManager.runScript(getScript(), languageScript, attributes, imports);
-
-		System.out.println(result);
 
 		// check if the result must be converted into the right xml sintax
 		boolean toconvert = checkSintax(result);
@@ -534,8 +525,11 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 		else if (result instanceof sun.org.mozilla.javascript.internal.NativeArray) {
 
+			logger.debug("INFO: The script test result is in the form of NativeArray (internal)");
+
 			int arrayLength = (int) ((sun.org.mozilla.javascript.internal.NativeArray) result).getLength();
-			String singleValue;
+
+			String singleValue = "";
 
 			for (int i = 0; i < arrayLength; i++) {
 
