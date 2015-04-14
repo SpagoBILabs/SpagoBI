@@ -232,7 +232,6 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		return result;
 	}
 
-	@Override
 	public DataStore getLovResultAsDataStore(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
 			throws Exception {
 		logger.debug("IN");
@@ -593,7 +592,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName()
 	 */
 	@Override
@@ -603,7 +602,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName(java.lang.String)
 	 */
 	@Override
@@ -613,7 +612,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames()
 	 */
 	@Override
@@ -623,7 +622,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -633,7 +632,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -643,7 +642,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java.lang.String)
 	 */
 	@Override
@@ -653,7 +652,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -663,7 +662,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(java.util.List)
 	 */
 	@Override
