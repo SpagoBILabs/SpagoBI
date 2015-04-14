@@ -49,7 +49,14 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	, initComponent: function() {
 
         Ext.apply(this, {
-            items: [this.form]
+            //items: [this.form]
+        	items: [Ext.create('Ext.tab.Panel', 
+					{
+				    	width: 400,
+				    	height: 400,
+				    	tabPosition: 'right',
+				    	items: [ this.form, this.fontConfigurationPanel]
+					})]
           , title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.title')
 		  , border: false
         });
@@ -132,7 +139,8 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			value:			'bottom',
 			store:          this.legendPositionStore,
 			width:			245,
-			labelWidth:		110
+			labelWidth:		110,
+			rowspan:		3
 		});
 
 		this.showPercentageCheck = new Ext.form.Checkbox({
@@ -215,7 +223,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	    });
 
 	    this.fontTypeCombo = new Ext.form.ComboBox({
-			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.widgetFontType'),
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontType'),
 			queryMode:      'local',
 			triggerAction:  'all',
 			forceSelection: true,
@@ -223,10 +231,14 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			allowBlank: 	true,
 			typeAhead: 		true,
 			lazyRender:		true,
-			store: 			new Ext.data.ArrayStore({
+			store: 			Ext.create('Ext.data.ArrayStore', {
 								fields: ['name','description'],
-								data:   [["Times New Roman","Times New Roman"],["Verdana","Verdana"],["Arial","Arial"]]
-							}),  
+								data:   [['Arial','Arial'], 
+								         ['Courier New','Courier New'], 
+								         ['Tahoma','Tahoma'], 
+								         ['Times New Roman','Times New Roman'],
+								         ['Verdana','Verdana'],]
+								}),  
 			valueField: 	'name',
 			displayField: 	'description',
 			name:			'fontType',
@@ -241,7 +253,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		});
 	    
 	    this.fontSizeCombo = new Ext.form.ComboBox({
-			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.widgetFontSize'),
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
 			queryMode:      'local',
 			triggerAction:  'all',
 			forceSelection: true,
@@ -257,6 +269,19 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			width:			160
 
 		});
+	    
+	    var chartGeneralFontOptions = 
+		{
+			xtype: 				'fieldset'
+			, fieldDefaults: 	{ margin: 5}
+			, layout: 			{type: 'table', columns: 2}
+	        , collapsible: 		true
+	        , collapsed: 		true
+	        , title: 			LN('sbi.cockpit.designer.fontConf.chartGeneralFontOpts')
+	    	, margin: 			10
+	    	, items: 			[this.fontTypeCombo, this.fontSizeCombo]	
+			, width:			600
+		};
 
 		var controlsItems = new Array();
 
@@ -271,16 +296,16 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 
 		controlsItems.push(this.legendPositionCombo);
 		controlsItems.push(this.showLegendCheck);
-    	controlsItems.push(this.fontTypeCombo);
+//    	controlsItems.push(this.fontTypeCombo);
     	controlsItems.push(this.showValuesCheck);
-    	controlsItems.push(this.fontSizeCombo);
+//    	controlsItems.push(this.fontSizeCombo);
     	controlsItems.push(this.showPercentageCheck);
     	
     	
     	/* Font size options configuration */    	
     	
     	this.legendFontSizeCombo = new Ext.form.ComboBox({
-			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.legendFontSize'),
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.legendFontSize'),
 			typeAhead: 		true,
 			triggerAction: 'all',
 			lazyRender:		true,
@@ -297,7 +322,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		});
 		
 		this.tooltipLabelFontSizeCombo = new Ext.form.ComboBox({
-			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.tooltipLabelFontSize'),
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.tooltipLabelFontSize'),
 			typeAhead: 		true,
 			triggerAction: 'all',
 			lazyRender:		true,
@@ -313,36 +338,61 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			width:			110
 		});
     	
-		this.fontConfigurationPanel = 
-    	{
+		var chartFontSizeOptions = 
+		{
 			xtype: 				'fieldset'
-			, fieldDefaults: 	{ margin: '0 9 4 0'}
-    		, layout: 			{type: 'table', columns: 2}
-            , collapsible: 		true
-            , collapsed: 		true
-            , title: 			LN('sbi.worksheet.designer.fontConf.fontOptions')
-			, items: 			[this.legendFontSizeCombo, this.tooltipLabelFontSizeCombo]
-			, width:			355
-    	}
+			, fieldDefaults: 	{ margin: 5}
+			, layout: 			{type: 'table', columns: 2}
+	        , collapsible: 		true
+	        , collapsed: 		true
+	        , title: 			LN('sbi.cockpit.designer.fontConf.chartFontSizeOpts')
+	    	, margin: 			10
+	    	, items: 			[this.legendFontSizeCombo, this.tooltipLabelFontSizeCombo]	
+			, width:			600
+		}; 
+		
+		this.fontConfigurationPanel = new Ext.Panel({
+			title: 			LN('sbi.cockpit.designer.fontConf.fontOptions')
+			//baseCls:'x-plain'
+			, layout: {
+				type: 'table',
+				columns:1
+			}
+			// applied to child components
+			//, defaults: {height: 150}
+			, items: 			[chartGeneralFontOptions, chartFontSizeOptions]	
+		});
+		
+//		this.fontConfigurationPanel = 
+//    	{
+//			xtype: 				'fieldset'
+//			, fieldDefaults: 	{ margin: '0 9 4 0'}
+//    		, layout: 			{type: 'table', columns: 2}
+//            , collapsible: 		true
+//            , collapsed: 		true
+//            , title: 			LN('sbi.worksheet.designer.fontConf.fontOptions')
+//			, items: 			[this.legendFontSizeCombo, this.tooltipLabelFontSizeCombo]
+//			, width:			355
+//    	}
     	
 
 		this.form = new Ext.Panel({
-			border: false
+			title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.title')
+			, border: false
 			, layout: 'form'
 			, padding: '1 0 5 6'
 			, items: [
 				{
 					xtype: 'fieldset'
-					, width: 685
+					, width: 660
 					, fieldDefaults: { margin: '0 9 5 0'}
-					, layout: {type: 'table', columns: 2}
+					, layout: {type: 'table', columns: 2, tdAttrs: { valign: 'top' }}
 		            , collapsible: true
 		            , collapsed: true
 		            , title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.options.title')
 	            	, margin: '0 0 10 0'
 					, items: controlsItems
 				}
-				, this.fontConfigurationPanel
 //				,{
 //					xtype: 'fieldset'
 //					, layout: 'column'

@@ -32,7 +32,14 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 		this.init();
 
 		c = {
-				items: [this.form]
+				//items: [this.form]
+				items: [Ext.create('Ext.tab.Panel', 
+						{
+			    	width: 400,
+			    	height: 400,
+			    	tabPosition: 'right',
+			    	items: [ this.form, this.fontConfigurationPanel]
+				})]
 			};
 
 		Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner.superclass.constructor.call(this, c);
@@ -136,7 +143,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		this.typeRadioGroup = new Ext.form.RadioGroup({
 			hideLabel: 	true,
 			columns: 	3,
-			width:		300,
+			width:		500,
 			margin: 	'0 0 0 0',
 			items: [
 		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[0], ctCls:'side-by-side-barchart-vertical', inputValue: 'side-by-side-barchart', checked: true},
@@ -164,14 +171,14 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			value:			'vertical',
 			labelWidth:		110,
 			store:          this.orientationComboStore,
-			width:			245
+			width:			235
 		});
 		this.orientationCombo.on('change', this.changeBarChartImage, this);
 
 
 		this.showValuesCheck = new Ext.form.Checkbox({
 			name: 'showvalues'
-			, labelWidth: 135
+			, labelWidth: 120
 			, checked: false
 			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.title')
 		});
@@ -191,7 +198,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 					, ['right', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right')]]
 		});
 		this.legendPositionCombo = new Ext.form.ComboBox({
-			width:			245,
+			width:			235,
 			queryMode:      'local',
 			triggerAction:  'all',
 			forceSelection: true,
@@ -211,8 +218,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			 fieldLabel: 	LN('sbi.worksheet.designer.barchartdesignerpanel.form.categoryaxis.title'),
 			 allowBlank: 	true,
 			 labelWidth:	120,
-			 width:			255,
-			 rowspan: 		2
+			 width:			235,
 		});
 
 		this.seriesAxisText = new Ext.form.Text({
@@ -220,7 +226,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			 fieldLabel: 	LN('sbi.worksheet.designer.barchartdesignerpanel.form.seriesaxis.title'),
 			 allowBlank: 	true,
 			 labelWidth:	120,
-			 width:			255
+			 width:			235
 		});
 
 		this.sortOrderComboStore = new Ext.data.ArrayStore({
@@ -241,7 +247,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			value:			'ASC',
 			store:          this.sortOrderComboStore,
 			labelWidth:		110,
-			width:			245
+			width:			235
 		});
 
 		this.categoryContainerPanel = new Sbi.cockpit.widgets.chart.ChartCategoryPanel({
@@ -314,7 +320,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 //		    , cls: 'centered-panel' //for center the panel
 	        , cls: 'x-axis-definition-table'	
 			, width: '100%'
-	        , padding: '0 10 10 10'
+	        //, padding: '0 10 10 10'
 	        , layout: {type: 'table', columns : 2}
 	    	//, items: axisDefinitionPanelItems
 	        , items:[
@@ -341,7 +347,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		});
 	    
 	    this.fontTypeCombo = new Ext.form.ComboBox({
-			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.widgetFontType'),
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontType'),
 			queryMode:      'local',
 			triggerAction:  'all',
 			forceSelection: true,
@@ -349,10 +355,14 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			allowBlank: 	true,
 			typeAhead: 		true,
 			lazyRender:		true,
-			store: 			new Ext.data.ArrayStore({
+			store: 			Ext.create('Ext.data.ArrayStore', {
 								fields: ['name','description'],
-								data:   [["Times New Roman","Times New Roman"],["Verdana","Verdana"],["Arial","Arial"]]
-							}),  
+								data:   [['Arial','Arial'], 
+								         ['Courier New','Courier New'], 
+								         ['Tahoma','Tahoma'], 
+								         ['Times New Roman','Times New Roman'],
+								         ['Verdana','Verdana'],]
+								}),  
 			valueField: 	'name',
 			displayField: 	'description',
 			name:			'fontType',
@@ -367,7 +377,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		});
 	    
 	    this.fontSizeCombo = new Ext.form.ComboBox({
-			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.widgetFontSize'),
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
 			queryMode:      'local',
 			triggerAction:  'all',
 			forceSelection: true,
@@ -383,6 +393,21 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			width:			170
 
 		});
+	    
+	    var chartGeneralFontOptions = 
+		{
+			xtype: 				'fieldset'
+			, fieldDefaults: 	{ margin: 5}
+			, layout: 			{type: 'table', columns: 2}
+	        , collapsible: 		true
+	        , collapsed: 		true
+	        , title: 			LN('sbi.cockpit.designer.fontConf.chartGeneralFontOpts')
+	    	, margin: 			10
+	    	, items: 			[this.fontTypeCombo, this.fontSizeCombo]	
+			, width:			600
+		};
+	    
+	    
 
 		var controlsItems = new Array();
 
@@ -394,8 +419,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		controlsItems.push(this.showCategoryNameCheck);
 		controlsItems.push(this.legendPositionCombo);
 		controlsItems.push(this.showValuesCheck);
-    	controlsItems.push(this.fontTypeCombo);
-    	controlsItems.push(this.fontSizeCombo);
+    	//controlsItems.push(this.fontTypeCombo);
+    	//controlsItems.push(this.fontSizeCombo);
 		controlsItems.push(this.showLegendCheck);
     	
     	
@@ -404,7 +429,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
     	/* Font size options configuration */    	
     	
     	this.legendFontSizeCombo = new Ext.form.ComboBox({
-			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.legendFontSize'),
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.legendFontSize'),
 			typeAhead: 		true,
 			triggerAction: 'all',
 			lazyRender:		true,
@@ -421,7 +446,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		});
 		
 		this.axisTitleFontSizeCombo = new Ext.form.ComboBox({
-			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.axisTitleFontSize'),
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.axisTitleFontSize'),
 			typeAhead: 		true,
 			triggerAction: 'all',
 			lazyRender:		true,
@@ -438,7 +463,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		});
 		
 		this.tooltipLabelFontSizeCombo = new Ext.form.ComboBox({
-			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.tooltipLabelFontSize'),
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.tooltipLabelFontSize'),
 			typeAhead: 		true,
 			triggerAction: 'all',
 			lazyRender:		true,
@@ -455,7 +480,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		});
 		
 		this.axisLabelsFontSizeCombo = new Ext.form.ComboBox({
-			fieldLabel: 	LN('sbi.worksheet.designer.fontConf.axisLabelsFontSize'),
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.axisLabelsFontSize'),
 			typeAhead: 		true,
 			triggerAction: 'all',
 			lazyRender:		true,
@@ -470,6 +495,20 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			labelWidth:		100,
 			width:			150
 		});
+		
+		
+		var chartFontSizeOptions = 
+		{
+			xtype: 				'fieldset'
+			, fieldDefaults: 	{ margin: 5}
+			, layout: 			{type: 'table', columns: 2}
+	        , collapsible: 		true
+	        , collapsed: 		true
+	        , title: 			LN('sbi.cockpit.designer.fontConf.chartFontSizeOpts')
+	    	, margin: 			10
+	    	, items: 			[this.legendFontSizeCombo, this.axisTitleFontSizeCombo, this.tooltipLabelFontSizeCombo, this.axisLabelsFontSizeCombo]	
+			, width:			600
+		}; 
     	
     	/*
 		switch (this.chartLib) {
@@ -478,26 +517,39 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 	        default:
 	        	controlsItems.push(this.showValuesCheck);
 		}*/
+		
+		this.fontConfigurationPanel = new Ext.Panel({
+			title: 			LN('sbi.cockpit.designer.fontConf.fontOptions')
+			//baseCls:'x-plain'
+			, layout: {
+				type: 'table',
+				columns:1
+			}
+			// applied to child components
+			//, defaults: {height: 150}
+			, items: 			[chartGeneralFontOptions, chartFontSizeOptions]	
+		});
     	
-    	this.fontConfigurationPanel = 
-    	{
-			xtype: 				'fieldset'
-			, fieldDefaults: 	{ margin: '0 9 4 0'}
-    		, layout: 			{type: 'table', columns: 2}
-            , collapsible: 		true
-            , collapsed: 		true
-            , title: 			LN('sbi.worksheet.designer.fontConf.fontOptions')
-        	, margin: 			'0 10 0 10'
-			, items: 			[this.legendFontSizeCombo, this.axisTitleFontSizeCombo, this.tooltipLabelFontSizeCombo, this.axisLabelsFontSizeCombo]
-			, width:			355
-    	}
-    	
+//    	this.fontConfigurationPanel = 
+//    	{
+//			xtype: 				'fieldset'
+//			, fieldDefaults: 	{ margin: '0 9 4 0'}
+//    		, layout: 			{type: 'table', columns: 2}
+//            , collapsible: 		true
+//            , collapsed: 		true
+//            , title: 			LN('sbi.worksheet.designer.fontConf.fontOptions')
+//        	, margin: 			'0 10 0 10'
+//			, items: 			[this.legendFontSizeCombo, this.axisTitleFontSizeCombo, this.tooltipLabelFontSizeCombo, this.axisLabelsFontSizeCombo]
+//			, width:			355
+//    	}
+//    	
     	
 
 
 		this.form = new Ext.form.FormPanel({
-			border: false
-			,layout: 'anchor'
+			title: LN('sbi.cockpit.widgets.barchart.barChartWidgetDesigner.title')
+			, border: false
+			, layout: 'anchor'
 			, items: [
 			    {
 			    	
@@ -506,7 +558,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			    	, items: [
 		    	          {
 							  xtype: 'fieldset'
-							, width: 685
+							, width: 660
 							, fieldDefaults: { margin: '0 9 5 0'}
 		    	          	, padding: '0 0 0 5'
 							, layout: {type: 'table', columns: 3, tdAttrs: { valign: 'top' } }
@@ -522,11 +574,11 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		  			    {
 							xtype: 'fieldset'
 							, margin: '0 0 0 0'
-							, layout: {type: 'table', columns: 2, tdAttrs: { valign: 'top' } }
+							, layout: {type: 'table', columns: 1, tdAttrs: { valign: 'top' } }
 //							, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.type')
 							//, columnWidth : .430
 							, border: 	false
-							, items: 	[this.typeRadioGroup, this.fontConfigurationPanel]
+							, items: 	[this.typeRadioGroup]
 							, height: 75
 						}
 						

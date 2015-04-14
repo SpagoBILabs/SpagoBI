@@ -53,7 +53,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 	this.init();
 
 	this.addEvents('contentloaded');
-
+	
 	c = Ext.apply(c, {
 		items: [this.grid]
 	});
@@ -125,6 +125,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 	, redraw: function() {
 		Sbi.trace("[TableWidget.refresh]: IN");
+		this.initFontOptions();
 		Sbi.cockpit.widgets.table.TableWidget.superclass.redraw.call(this);
 		this.doLayout();
 		Sbi.trace("[TableWidget.refresh]: OUT");
@@ -215,6 +216,12 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			}, this);
 		}
 
+		if(this.rendered){
+    		this.redraw();
+    	} else {
+    		this.on('afterrender', function(){this.redraw();}, this);
+    	}
+		
      	Sbi.trace("[TableWidget.onStoreLoad]: OUT");
 	}
 
@@ -455,7 +462,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	    this.grid.on('columnmove', this.onColumnMove, this);
 	    this.grid.on('afterlayout', this.onAfterLayout, this);
 	    // optimization: this is useful for columns rendering (see applyCellStyleRenderer function)
-	    this.grid.getView().on('beforerefresh', this.setSelectionsForColumnRenderers, this);
+	    this.grid.getView().on('beforerefresh', this.setSelectionsForColumnRenderers, this);	    
+	    
 	    Sbi.trace("[TableWidget.initGridPanel]: OUT");
 	}
 
@@ -739,6 +747,115 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		}, this);
 
 		return this.pagingTBar;
+	}
+	
+	//grid font setting
+	, initFontOptions: function() {
+		
+		//font options		
+	    if(this.wconf === undefined || this.wconf === null){
+	    	//do not change the CSS, do nothing
+	    }
+	    else{
+	    	
+	    	//font options
+		    var headerFontStyle = '#' + this.grid.id + ' .x-column-header-text { font: ';
+		    var rowsFontStyle = '#' + this.grid.id + ' .x-grid-cell { font: ';
+    	
+		    //header font weight
+		    if(this.wconf.headerFontWeight === undefined || this.wconf.headerFontWeight  === null){
+				headerFontStyle = headerFontStyle + 'normal ';	
+			} else {
+				headerFontStyle = headerFontStyle + this.wconf.headerFontWeight + ' ';
+			}
+		    
+		    //rows font weight
+		    if(this.wconf.rowsFontWeight === undefined || this.wconf.rowsFontWeight  === null){
+				rowsFontStyle = rowsFontStyle + 'normal ';	
+			} else {
+				rowsFontStyle = rowsFontStyle + this.wconf.rowsFontWeight + ' ';
+			}
+	    
+		 	//header font size
+		    if(this.wconf.headerFontSize === undefined || this.wconf.headerFontSize === null){
+	    		
+				if (this.wconf.fontSize == undefined || this.wconf.fontSize == null){
+					headerFontStyle = headerFontStyle + '11px/13px ';
+				} else {
+					headerFontStyle = headerFontStyle + this.wconf.fontSize + 'px ';
+				}			
+			} else {
+				headerFontStyle = headerFontStyle + this.wconf.headerFontSize + 'px ';
+			}
+	    	
+	    	//rows font size
+	    	if(this.wconf.rowsFontSize === undefined || this.wconf.rowsFontSize === null){
+	    		
+				if (this.wconf.fontSize == undefined || this.wconf.fontSize == null){
+					rowsFontStyle = rowsFontStyle + '11px/13px ';
+				} else {
+					rowsFontStyle = rowsFontStyle + this.wconf.fontSize + 'px ';
+				}			
+			} else {
+				rowsFontStyle = rowsFontStyle + this.wconf.rowsFontSize + 'px ';
+			}
+		    
+		    //font family
+	    	if (this.wconf.fontType === undefined || this.wconf.fontType === null){
+				headerFontStyle = headerFontStyle + 'tahoma,arial,verdana,sans-serif; ';
+				rowsFontStyle = rowsFontStyle + 'tahoma,arial,verdana,sans-serif; ';
+			} else {
+				headerFontStyle = headerFontStyle + '' + this.wconf.fontType + '; ';
+				rowsFontStyle = rowsFontStyle  + '' + this.wconf.fontType + '; ';
+			}
+	    	
+	    	//font decoration
+	    	//header font decoration
+		    if(this.wconf.headerFontDecoration === undefined || this.wconf.headerFontDecoration  === null){
+				headerFontStyle = headerFontStyle + 'text-decoration: none; ';	
+			} else {
+				headerFontStyle = headerFontStyle + 'text-decoration: ' + this.wconf.headerFontDecoration + '; ';
+			}
+		    
+			//rows font decoration
+		    if(this.wconf.rowsFontDecoration === undefined || this.wconf.rowsFontDecoration  === null){
+				rowsFontStyle = rowsFontStyle + 'text-decoration: none; ';	
+			} else {
+				rowsFontStyle = rowsFontStyle + 'text-decoration: ' + this.wconf.rowsFontDecoration + '; ';
+			}
+		    
+		    //font color
+		    //header font color
+		    if(this.wconf.headerFontColor === undefined || this.wconf.headerFontColor === null || this.wconf.headerFontColor === ''){
+				headerFontStyle = headerFontStyle + '} ';	
+			} else {
+				headerFontStyle = headerFontStyle + 'color: ' + this.wconf.headerFontColor + '; } ';
+			}
+		    
+			//rows font color
+		    if(this.wconf.rowsFontColor === undefined || this.wconf.rowsFontColor === null || this.wconf.rowsFontColor === ''){
+		    	rowsFontStyle = rowsFontStyle + '} ';	
+			} else {
+				rowsFontStyle = rowsFontStyle + 'color: ' + this.wconf.rowsFontColor + '; } ';
+			}
+
+		    if(Ext.util.CSS.getRule(headerFontStyle) !== undefined || Ext.util.CSS.getRule(headerFontStyle) !== null){
+		    	Ext.util.CSS.removeStyleSheet(this.grid.id + '_hstyle');
+		    	Ext.util.CSS.createStyleSheet(headerFontStyle, this.grid.id + '_hstyle');
+		    }
+		    else {
+		    	Ext.util.CSS.createStyleSheet(headerFontStyle, this.grid.id + '_hstyle');
+		    }
+		    
+		    if(Ext.util.CSS.getRule(rowsFontStyle) !== undefined || Ext.util.CSS.getRule(rowsFontStyle) !== null){
+		    	Ext.util.CSS.removeStyleSheet(this.grid.id + '_rstyle');
+		    	Ext.util.CSS.createStyleSheet(rowsFontStyle, this.grid.id + '_rstyle');
+		    }
+		    else {
+		    	Ext.util.CSS.createStyleSheet(rowsFontStyle, this.grid.id + '_rstyle');
+		    }  
+		    
+	    }	
 	}
 
 });
