@@ -34,7 +34,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.mozilla.javascript.NativeArray;
 
 /**
  * Defines the <code>ScriptDetail</code> objects. This object is used to store Script Wizard detail information.
@@ -501,47 +500,47 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			dsToReturn.appendRecord(record);
 		}
 
-		else if (result instanceof NativeArray) {
-
-			logger.debug("INFO: The script test result is in the form of NativeArray");
-
-			int arrayLength = (int) ((NativeArray) result).getLength();
-			String singleValue;
-
-			for (int i = 0; i < arrayLength; i++) {
-
-				singleValue = (String) ((NativeArray) result).get(i, null);
-
-				Field field = new Field();
-				Record record = new Record();
-				field.setValue(singleValue);
-
-				record.appendField(field);
-				dsToReturn.insertRecord(i, record);
-			}
-
-		}
-
-		else if (result instanceof sun.org.mozilla.javascript.internal.NativeArray) {
-
-			logger.debug("INFO: The script test result is in the form of NativeArray (internal)");
-
-			int arrayLength = (int) ((sun.org.mozilla.javascript.internal.NativeArray) result).getLength();
-
-			String singleValue = "";
-
-			for (int i = 0; i < arrayLength; i++) {
-
-				singleValue = (String) ((sun.org.mozilla.javascript.internal.NativeArray) result).get(i, null);
-
-				dsToReturn.setMetaData(metadata);
-				Field field = new Field();
-				Record record = new Record();
-				field.setValue(singleValue);
-				record.appendField(field);
-				dsToReturn.appendRecord(record);
-			}
-		}
+		// else if (result instanceof NativeArray) {
+		//
+		// logger.debug("INFO: The script test result is in the form of NativeArray");
+		//
+		// int arrayLength = (int) ((NativeArray) result).getLength();
+		// String singleValue;
+		//
+		// for (int i = 0; i < arrayLength; i++) {
+		//
+		// singleValue = (String) ((NativeArray) result).get(i, null);
+		//
+		// Field field = new Field();
+		// Record record = new Record();
+		// field.setValue(singleValue);
+		//
+		// record.appendField(field);
+		// dsToReturn.insertRecord(i, record);
+		// }
+		//
+		// }
+		//
+		// else if (result instanceof sun.org.mozilla.javascript.internal.NativeArray) {
+		//
+		// logger.debug("INFO: The script test result is in the form of NativeArray (internal)");
+		//
+		// int arrayLength = (int) ((sun.org.mozilla.javascript.internal.NativeArray) result).getLength();
+		//
+		// String singleValue = "";
+		//
+		// for (int i = 0; i < arrayLength; i++) {
+		//
+		// singleValue = (String) ((sun.org.mozilla.javascript.internal.NativeArray) result).get(i, null);
+		//
+		// dsToReturn.setMetaData(metadata);
+		// Field field = new Field();
+		// Record record = new Record();
+		// field.setValue(singleValue);
+		// record.appendField(field);
+		// dsToReturn.appendRecord(record);
+		// }
+		// }
 
 		/* ERROR: Result is not string nor string array (String []) */
 		else {
@@ -592,7 +591,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName()
 	 */
 	@Override
@@ -602,7 +601,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName(java.lang.String)
 	 */
 	@Override
@@ -612,7 +611,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames()
 	 */
 	@Override
@@ -622,7 +621,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -632,7 +631,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -642,7 +641,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java.lang.String)
 	 */
 	@Override
@@ -652,7 +651,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -662,7 +661,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(java.util.List)
 	 */
 	@Override
