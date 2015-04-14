@@ -57,7 +57,9 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	this.init();
 	
 	//Condition to modify the GUI for the visualization mode
-	if(Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor)
+	//if(Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor)
+	//---> now we check the environment, not the doc author for visualization mode
+	if(Sbi.config.environment === 'DOCBROWSER' && Sbi.config.documentMode === 'VIEW')
 	{
 		
 		var visualizaionConfig = Ext.apply(this.adjustLayoutVisualizationMode(), config || {});

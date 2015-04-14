@@ -33,9 +33,11 @@ Sbi.cockpit.MainPanel = function(config) {
 
 	this.initServices();
 	this.init();
-
-	//In visualization mode the .css class is differente: without the background image
-	if(Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor)
+			
+	//In visualization mode the .css class is different: without the background image
+	//if(Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor)
+	//---> now we check the environment, not the doc author for visualization mode
+	if(Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode())
 	{
 		c = Ext.apply(c, {
 			id: "mainPanel",
@@ -52,7 +54,6 @@ Sbi.cockpit.MainPanel = function(config) {
 	        items    : [this.widgetContainer]
 		});
 	}
-	
 
 	// constructor
 	Sbi.cockpit.MainPanel.superclass.constructor.call(this, c);
@@ -89,6 +90,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 * The wizard that manages the associations definition
 	 */
 	, associationEditorWizard: null
+	
+    /**
+	 * @property {Ext.Window} fontEditorWizard
+	 * The wizard that manages fonts definition
+	 */
+	, fontEditorWizard: null
 
 	/**
 	 * @property {Ext.Window} filterEditorWizard
@@ -101,6 +108,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 * The window that shows the selections defined
 	 */
 	, selectionsWindow: null
+	
+	/**
+	 * @property {Ext.Window} viewSelectionsWindow
+	 * The simple window (not a widget) that shows the selections defined, in doc browser mode
+	 */
+	, viewSelectionsWindow: null
 
     , msgPanel: null
 
@@ -292,7 +305,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 
 	, closeDocument : function() {
 		Sbi.trace("[MainPanel.closeDocument]: IN");
-
+		
+		
 		var url = Sbi.config.contextName + '/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE';
 
 		Sbi.trace("[MainPanel.closeDocument]: go back to [" + Sbi.config.environment + "]");
@@ -404,51 +418,61 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		
 		Sbi.trace("[MainPanel.onShowSelectionsView]: START");
 		
-		var config = {};
-		var selectionFields = ['association', 'values'];
-		var selectionData = [];
+		if(this.viewSelectionsWindow === undefined || this.viewSelectionsWindow === null) {
 		
-		
-		
-		var selections = this.widgetContainer.getWidgetManager().getSelections() || [];
-		//Sbi.trace("[MainPanel.onShowSelectionsView]: config.selections is equal to [" + Sbi.toSource(selections) + "]");
-		//Sbi.trace("[MainPanel.onShowSelectionsView]: instatiating the popup");
-		
-		for(var widgetId in selections)  {
+			var config = {};
+			var selectionFields = ['association', 'values'];
+			var selectionData = [];
 			
-    		var selectionsOnWidget = selections[widgetId];
-    		//Sbi.trace("[MainPanel.onShowSelectionsView]: selections on widget: [" + Sbi.toSource(selectionsOnWidget) + "]");
-    		
-    		for(var fieldHeader in selectionsOnWidget) {
-    			
-    			if(selectionsOnWidget[fieldHeader].values && selectionsOnWidget[fieldHeader].values.length > 0) {
-    				
-    				selectionDataEl = [fieldHeader, selectionsOnWidget[fieldHeader].values];
-    				//Sbi.trace("[MainPanel.onShowSelectionsView]: selectionDataEl: [" + Sbi.toSource(selectionDataEl) + "]");
-    				selectionData.push(selectionDataEl);
-    			}
-    		}
+			var selections = this.widgetContainer.getWidgetManager().getSelections() || [];
+			//Sbi.trace("[MainPanel.onShowSelectionsView]: config.selections is equal to [" + Sbi.toSource(selections) + "]");
+			//Sbi.trace("[MainPanel.onShowSelectionsView]: instatiating the popup");
+			
+			for(var widgetId in selections)  {
+				
+	    		var selectionsOnWidget = selections[widgetId];
+	    		//Sbi.trace("[MainPanel.onShowSelectionsView]: selections on widget: [" + Sbi.toSource(selectionsOnWidget) + "]");
+	    		
+	    		for(var fieldHeader in selectionsOnWidget) {
+	    			
+	    			if(selectionsOnWidget[fieldHeader].values && selectionsOnWidget[fieldHeader].values.length > 0) {
+	    				
+	    				selectionDataEl = [fieldHeader, selectionsOnWidget[fieldHeader].values];
+	    				//Sbi.trace("[MainPanel.onShowSelectionsView]: selectionDataEl: [" + Sbi.toSource(selectionDataEl) + "]");
+	    				selectionData.push(selectionDataEl);
+	    			}
+	    		}
+			}
+			
+			//Sbi.trace("[MainPanel.onShowSelectionsView]: selectionData: [" + Sbi.toSource(selectionData) + "]");
+	
+			var selectionsStore = new Ext.data.ArrayStore({
+				fields : selectionFields
+				, data : selectionData
+			});
+	
+			this.viewSelectionsWindow = Ext.create('Ext.window.Window', {
+			    title: LN('sbi.cockpit.mainpanel.btn.viewselections'),
+			    height: 300,
+			    width: 650,
+			    layout: 'fit',
+			    closeAction: 'destroy',
+			    closable: false,
+			    items: { 
+			        xtype: 'grid',
+			        border: false,
+			        columns: [{header: LN('sbi.cockpit.mainpanel.btn.associations'), dataIndex: 'association', flex:1},
+			                  {header: LN('sbi.cockpit.core.selections.list.columnValues'), dataIndex: 'values', flex:1}],
+			        store: selectionsStore
+			    }
+			}).show();
+			
+		} else {
+			this.viewSelectionsWindow.destroy();
+			this.viewSelectionsWindow.destroy();
+			this.viewSelectionsWindow = null;
 		}
 		
-		//Sbi.trace("[MainPanel.onShowSelectionsView]: selectionData: [" + Sbi.toSource(selectionData) + "]");
-
-		var selectionsStore = new Ext.data.ArrayStore({
-			fields : selectionFields
-			, data : selectionData
-		});
-
-		Ext.create('Ext.window.Window', {
-		    title: LN('sbi.cockpit.mainpanel.btn.viewselections'),
-		    height: 300,
-		    width: 650,
-		    layout: 'fit',
-		    items: { 
-		        xtype: 'grid',
-		        border: false,
-		        columns: [{header: 'Association', dataIndex: 'association', flex:1},{header: 'Values', dataIndex: 'values', flex:1}],
-		        store: selectionsStore
-		    }
-		}).show();
 		
 		Sbi.trace("[MainPanel.onShowSelectionsView]: END");
 	}
@@ -573,6 +597,45 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		}
 		Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: OUT");
 	}
+	
+	//FONT SECTION - START
+	
+	, onShowFontEditorWizard: function(){
+		var config = {};
+		config.storesList = Sbi.storeManager.getStoreIds();
+		Sbi.trace("[MainPanel.onShowFontEditorWizard]: config.stores is equal to [" + Sbi.toSource(config.stores) + "]");
+		config.fonts = Sbi.storeManager.getFonts();
+		Sbi.trace("[MainPanel.onShowFontsEditorWizard]: config.fonts is equal to [" + Sbi.toSource(config.fonts) + "]");
+   		Sbi.trace("[MainPanel.onShowFontEditorWizard]: instatiating the editor");
+   		this.fontEditorWizard = Ext.create('Sbi.fonts.FontEditorWizard', config);
+   		this.fontEditorWizard.on("submit", this.onFontEditorWizardSubmit, this);
+   		this.fontEditorWizard.on("cancel", this.onFontEditorWizardCancel, this);
+    	Sbi.trace("[MainPanel.onShowFontEditorWizard]: editor succesfully instantiated");
+
+		this.fontEditorWizard.show();
+	}
+	
+	, onFontEditorWizardCancel: function(wizard) {
+		Sbi.trace("[MainPanel.onFontEditorWizardCancel]: IN");
+		this.fontEditorWizard.close();
+		this.fontEditorWizard.destroy();
+		Sbi.trace("[MainPanel.onFontEditorWizardCancel]: OUT");
+	}
+
+	, onFontEditorWizardSubmit: function(wizard) {
+		Sbi.trace("[MainPanel.onFontEditorWizardSubmit]: IN");
+		var wizardState = wizard.getWizardState();
+		console.log(wizardState);
+		if (Sbi.isValorized(wizardState.fonts)){
+			Sbi.storeManager.setFontConfigurations(wizardState.fonts);
+			Sbi.trace("[MainPanel.onFontEditorWizardSubmit]: setted font group [" + Sbi.toSource(wizardState.fonts) + "] succesfully added to store manager");
+		}
+		this.fontEditorWizard.close();
+		this.fontEditorWizard.destroy();
+		Sbi.trace("[MainPanel.onFilterEditorWizardSubmit]: OUT");
+	}
+	
+	//FONT SECTION - END
 
 	, onShowFilterEditorWizard: function(){
 		var config = {};
@@ -639,6 +702,10 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, onDebug: function() {
 		this.debug();
 	}
+	
+	, isViewDocumentMode: function() {
+		return (Sbi.config.documentMode === 'VIEW'); 
+	}
 
 	//-----------------------------------------------------------------------------------------------------------------
 	// init methods
@@ -669,13 +736,16 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 
 		var tbItems = ['->'];
 
+		//Now DocBrowser is the visualization mode. Hidden condition modified
+		
 		tbItems.push(  new Ext.Button({
 			id: 'add'
      		, iconCls: 'icon_add_widget'
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.addWidget')
 			, scope: this
 			, handler:  this.onAddWidget
-			, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 
 
@@ -685,7 +755,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.cleanCacheWidget')
 			, scope: this
 			, handler:  this.onCleanCache
-			, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 
 		tbItems.push(  new Ext.Button({
@@ -694,7 +765,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.associations')
 			, scope: this
 			, handler:  this.onShowAssociationEditorWizard
-			, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 
 
@@ -704,7 +776,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.selections')
 			, scope: this
 			, handler:  this.onShowSelectionsWindow
-			, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 		
 		tbItems.push(  new Ext.Button({
@@ -713,6 +786,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.viewselections')
 			, scope: this
 			, handler:  this.onShowSelectionsView
+			, hidden: Sbi.config.environment !== 'DOCBROWSER' || Sbi.config.documentMode === 'EDIT'
 		 }));
 
 		tbItems.push(  new Ext.Button({
@@ -721,6 +795,15 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.clearselections')
 			, scope: this
 			, handler:  this.onClearSelections
+		 }));
+		
+		tbItems.push(  new Ext.Button({
+			id: 'fontBtn'
+     		, iconCls: 'icon_font'
+			, tooltip: LN('sbi.cockpit.mainpanel.btn.fonts')
+			, scope: this
+			, handler:  this.onShowFontEditorWizard
+			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 
 
@@ -740,7 +823,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, tooltip: 'Save'
 			, scope: this
 			, handler:  this.onShowSaveDocumentWindow
-			, hidden: this.isDocumentNotSaved() || (Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor)
+			//, hidden: this.isDocumentNotSaved() || (Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor)
+			, hidden: this.isDocumentNotSaved() || Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 
 		tbItems.push( new Ext.Button({
@@ -749,7 +833,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 		, tooltip: 'Save As'
 	 		, scope: this
 	 		, handler:  this.onShowSaveDocumentAsWindow
-	 		, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+	 		//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+	 		, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 	 	}));
 
 		/*
