@@ -15,14 +15,8 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.Record;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
 import java.net.URL;
@@ -236,55 +230,16 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		logger.debug("IN");
 
 		DataStore dataStoreToReturn = null;
-		String result = "";
 
 		HashMap attributes = GeneralUtilities.getAllProfileAttributes(profile); // to be cancelled, now substitutution inline
 		attributes.putAll(this.getSystemBindings(locale));
-		// Substitute profile attributes with their value
-		String cleanScript = substituteProfileAttributes(getScript(), attributes);
-		setScript(cleanScript);
 
-		List<Object> imports = null;
-
-		if ("groovy".equals(languageScript)) {
-			imports = new ArrayList<Object>();
-			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
-			try {
-				logger.debug("predefinedGroovyScript.groovy file URL is equal to [" + url + "]");
-				imports.add(url);
-			} catch (Throwable t) {
-				logger.warn("Impossible to load predefinedGroovyScript.groovy", t);
-			}
-		} else if ("ECMAScript".equals(languageScript) || "rhino-nonjdk".equals(languageScript)) {
-			imports = new ArrayList<Object>();
-			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
-			try {
-				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + url + "]");
-				imports.add(url);
-			} catch (Throwable t) {
-				logger.warn("Impossible to load predefinedJavascriptScript.js", t);
-			}
-		} else {
-			logger.debug("There is no predefined script file to import for scripting language [" + languageScript + "]");
-		}
-		;
-
-		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
-
-		String script = getScript();
-
-		if (script.contains("getListFromMultiValueProfileAttribute")) {
-
-			script = script.replaceAll("getListFromMultiValueProfileAttribute", "getListFromMultiValueProfileAttributeDataStore");
-
-		} else if (script.contains("returnValue")) {
-
-			script = script.replaceAll("returnValue", "returnValueDataStore");
-		}
-
-		Object fromRunScript = scriptManager.runScript(script, languageScript, attributes, imports);
-
-		dataStoreToReturn = convertResultToDataStore(fromRunScript);
+		ScriptDataSet dataset = new ScriptDataSet();
+		dataset.setScript(script);
+		dataset.setScriptLanguage(languageScript);
+		dataset.setUserProfileAttributes(attributes);
+		dataset.loadData();
+		dataStoreToReturn = (DataStore) dataset.getDataStore();
 
 		logger.debug("OUT");
 
@@ -451,106 +406,6 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		String[] visibleColumnNamesArray = new String[] { "VALUE" };
 		visibleColumnNames = Arrays.asList(visibleColumnNamesArray);
 		return sb.toString();
-	}
-
-	// public DataStore convertResultToDataStore(String result) {
-	public DataStore convertResultToDataStore(Object result) throws Exception {
-
-		logger.debug("[IN]");
-
-		DataStore dsToReturn = new DataStore();
-		IFieldMetaData fieldMetaData = new FieldMetadata();
-
-		fieldMetaData.setAlias("value");
-		fieldMetaData.setName("value");
-		fieldMetaData.setType(String.class);
-		fieldMetaData.setFieldType(FieldType.ATTRIBUTE);
-
-		IMetaData metadata = new MetaData();
-
-		metadata.addFiedMeta(fieldMetaData);
-		dsToReturn.setMetaData(metadata);
-
-		/* If we have more than one value in the result */
-		if (result instanceof String[]) {
-
-			logger.debug("INFO: The script test result is in the form of String[]");
-
-			String[] array = (String[]) result;
-			int stringLength = array.length;
-
-			for (int i = 0; i < stringLength; i++) {
-
-				Field field = new Field();
-				Record record = new Record();
-				field.setValue(array[i]);
-				record.appendField(field);
-				dsToReturn.insertRecord(i, record);
-			}
-		}
-		/* If we have more exactly one value in result */
-		else if (result instanceof String) {
-
-			logger.debug("INFO: The script test result is in the form of String");
-
-			Field field = new Field();
-			Record record = new Record();
-			field.setValue(result);
-			record.appendField(field);
-			dsToReturn.appendRecord(record);
-		}
-
-		// else if (result instanceof NativeArray) {
-		//
-		// logger.debug("INFO: The script test result is in the form of NativeArray");
-		//
-		// int arrayLength = (int) ((NativeArray) result).getLength();
-		// String singleValue;
-		//
-		// for (int i = 0; i < arrayLength; i++) {
-		//
-		// singleValue = (String) ((NativeArray) result).get(i, null);
-		//
-		// Field field = new Field();
-		// Record record = new Record();
-		// field.setValue(singleValue);
-		//
-		// record.appendField(field);
-		// dsToReturn.insertRecord(i, record);
-		// }
-		//
-		// }
-		//
-		// else if (result instanceof sun.org.mozilla.javascript.internal.NativeArray) {
-		//
-		// logger.debug("INFO: The script test result is in the form of NativeArray (internal)");
-		//
-		// int arrayLength = (int) ((sun.org.mozilla.javascript.internal.NativeArray) result).getLength();
-		//
-		// String singleValue = "";
-		//
-		// for (int i = 0; i < arrayLength; i++) {
-		//
-		// singleValue = (String) ((sun.org.mozilla.javascript.internal.NativeArray) result).get(i, null);
-		//
-		// dsToReturn.setMetaData(metadata);
-		// Field field = new Field();
-		// Record record = new Record();
-		// field.setValue(singleValue);
-		// record.appendField(field);
-		// dsToReturn.appendRecord(record);
-		// }
-		// }
-
-		/* ERROR: Result is not string nor string array (String []) */
-		else {
-			logger.error("Not supported type returned back from script: types allowed are String and String[]");
-			throw new Exception("Not supported type returned back from script: types allowed are String and String[]");
-		}
-
-		logger.debug("[OUT]");
-
-		return dsToReturn;
 	}
 
 	/**
