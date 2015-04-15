@@ -632,7 +632,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		}
 		this.fontEditorWizard.close();
 		this.fontEditorWizard.destroy();
-		Sbi.trace("[MainPanel.onFilterEditorWizardSubmit]: OUT");
+		Sbi.trace("[MainPanel.onFontEditorWizardSubmit]: OUT");
 	}
 	
 	//FONT SECTION - END
