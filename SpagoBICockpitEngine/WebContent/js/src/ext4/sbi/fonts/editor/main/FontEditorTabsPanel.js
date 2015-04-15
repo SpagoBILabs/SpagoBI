@@ -17,8 +17,6 @@
 	, layout: 'fit'
 	, config:{
 		  services: null
-		, store: null
-		, storesList: null
 		, fonts: null
 		, border: false
 		, height: 180
@@ -104,12 +102,6 @@
 		var pcTabFonts = this.findTabFonts("pieChartFonts");
 		var tbTabFonts = this.findTabFonts("tableFonts");
 		var ctTabFonts = this.findTabFonts("crosstabFonts");
-		
-//		console.log(bcTabFonts);
-//		console.log(lcTabFonts);
-//		console.log(pcTabFonts);
-//		console.log(tbTabFonts);
-//		console.log(ctTabFonts);
 		
 		this.fontEditorBarChartTab = Ext.create('Sbi.fonts.views.BarChartFontTabPanel',bcTabFonts);
         this.fontEditorLineChartTab = Ext.create('Sbi.fonts.views.LineChartFontTabPanel',lcTabFonts);

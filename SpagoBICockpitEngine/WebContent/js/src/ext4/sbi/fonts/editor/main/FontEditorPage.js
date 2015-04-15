@@ -9,8 +9,7 @@ Ext.define('Sbi.fonts.editor.main.FontEditorPage', {
 	, layout: 'fit'
 
 	, config:{
-		    storesList: null
-		  , fonts: null
+		  fonts: null
 		  , itemId: 0
 		  , border: false
 	}
@@ -77,8 +76,7 @@ Ext.define('Sbi.fonts.editor.main.FontEditorPage', {
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	, init: function(){
-		this.fontEditorPanel = Ext.create('Sbi.fonts.editor.main.FontEditor',{storesList: this.storesList
-																				  , fonts: this.fonts});
+		this.fontEditorPanel = Ext.create('Sbi.fonts.editor.main.FontEditor',{fonts: this.fonts});
 		return this.fontEditorPanel;
 	}
 	
