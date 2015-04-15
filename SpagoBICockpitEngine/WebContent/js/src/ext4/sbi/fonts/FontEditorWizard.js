@@ -14,7 +14,6 @@ Ext.define('Sbi.fonts.FontEditorWizard', {
 //			  , closeAction: 'close'
 //			  , plain: true
 			  , modal: true
-			  , storesList: null
 			  , fonts: null
 	}
 
@@ -75,8 +74,7 @@ Ext.define('Sbi.fonts.FontEditorWizard', {
 	, init: function(c){
 		Sbi.trace("[FontEditorWizard.init]: IN");
 		this.editorMainPanel = Ext.create('Sbi.fonts.FontEditorWizardPanel',{
-			storesList: c.storesList
-			, fonts: c.fonts
+			fonts: c.fonts
 			});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
 		this.editorMainPanel.on('submit', this.onSubmit, this);

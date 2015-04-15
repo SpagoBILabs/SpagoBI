@@ -8,8 +8,7 @@ Ext.define('Sbi.fonts.FontEditorWizardPanel', {
 		extend: 'Sbi.widgets.WizardPanel'
 
 	, config:{
-	   storesList: null
-	  , fonts: null
+		fonts: null
 	  , frame: false
 	  , border: false
 	}
@@ -93,8 +92,7 @@ Ext.define('Sbi.fonts.FontEditorWizardPanel', {
 	, initFontEditorPage: function() {
 		Sbi.trace("[FontEditorWizardPanel.initFontEditorPage]: IN");
 		this.fontEditorPage = Ext.create('Sbi.fonts.editor.main.FontEditorPage',{
-			storesList: this.storesList
-			  , fonts: this.fonts
+			  fonts: this.fonts
 		});
 		Sbi.trace("[FontEditorWizardPanel.initFontEditorPage]: IN");
 		return this.fontEditorPage;
