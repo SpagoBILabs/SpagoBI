@@ -18,9 +18,10 @@ Ext.define('Sbi.fonts.views.LineChartFontTabPanel', {
 	
 	layout: 	{ type: 'table', columns: 1 },
 	title: 	LN('sbi.cockpit.font.editor.wizard.linechart'),
+	id: 'lineChartFonts',
 	
 	config:{		
-		
+		fonts: null
 	}
 
 	
@@ -87,7 +88,7 @@ Ext.define('Sbi.fonts.views.LineChartFontTabPanel', {
 			store: 			Ext.create('Sbi.fonts.stores.FontFamilyStore', {}),
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'lcFontType',
+			name:			'fontType',
 			labelWidth:		110,
 			width:			245
 
@@ -106,7 +107,7 @@ Ext.define('Sbi.fonts.views.LineChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'lcFontSize',
+			name:			'fontSize',
 			labelWidth:		120,
 			width:			170
 
@@ -138,7 +139,7 @@ Ext.define('Sbi.fonts.views.LineChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'lcLegendFontSize',
+			name:			'legendFontSize',
 			labelWidth:		60,
 			width:			110
 		});
@@ -156,7 +157,7 @@ Ext.define('Sbi.fonts.views.LineChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'lcAxisTitleFontSize',
+			name:			'axisTitleFontSize',
 			labelWidth:		100,
 			width:			150
 		});
@@ -174,7 +175,7 @@ Ext.define('Sbi.fonts.views.LineChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'lcTooltipLabelFontSize',
+			name:			'tooltipLabelFontSize',
 			labelWidth:		60,
 			width:			110
 		});
@@ -192,7 +193,7 @@ Ext.define('Sbi.fonts.views.LineChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'lcAxisLabelsFontSize',
+			name:			'axisLabelsFontSize',
 			labelWidth:		100,
 			width:			150
 		});
@@ -211,5 +212,22 @@ Ext.define('Sbi.fonts.views.LineChartFontTabPanel', {
 		}; 
 		
 	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, loadFontsConfiguration: function(){
+		
+		var form = this.getForm();		
+		form.setValues(this.fonts);
+	}
+	
+	, beforeRender: function () {
+		
+		this.loadFontsConfiguration();
+		this.callParent(arguments);
+    }
+	
 });
 

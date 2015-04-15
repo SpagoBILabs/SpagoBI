@@ -98,11 +98,24 @@
 	}
 	
 	, initTabs: function() {
-		this.fontEditorBarChartTab = Ext.create('Sbi.fonts.views.BarChartFontTabPanel',{});
-        this.fontEditorLineChartTab = Ext.create('Sbi.fonts.views.LineChartFontTabPanel',{});
-        this.fontEditorPieChartTab = Ext.create('Sbi.fonts.views.PieChartFontTabPanel',{});
-        this.fontEditorTableTab = Ext.create('Sbi.fonts.views.TableFontTabPanel',{});
-        this.fontEditorCrosstabTab = Ext.create('Sbi.fonts.views.CrosstabFontTabPanel',{});
+		
+		var bcTabFonts = this.findTabFonts("barChartFonts");
+		var lcTabFonts = this.findTabFonts("lineChartFonts");
+		var pcTabFonts = this.findTabFonts("pieChartFonts");
+		var tbTabFonts = this.findTabFonts("tableFonts");
+		var ctTabFonts = this.findTabFonts("crosstabFonts");
+		
+//		console.log(bcTabFonts);
+//		console.log(lcTabFonts);
+//		console.log(pcTabFonts);
+//		console.log(tbTabFonts);
+//		console.log(ctTabFonts);
+		
+		this.fontEditorBarChartTab = Ext.create('Sbi.fonts.views.BarChartFontTabPanel',bcTabFonts);
+        this.fontEditorLineChartTab = Ext.create('Sbi.fonts.views.LineChartFontTabPanel',lcTabFonts);
+        this.fontEditorPieChartTab = Ext.create('Sbi.fonts.views.PieChartFontTabPanel',pcTabFonts);
+        this.fontEditorTableTab = Ext.create('Sbi.fonts.views.TableFontTabPanel',tbTabFonts);
+        this.fontEditorCrosstabTab = Ext.create('Sbi.fonts.views.CrosstabFontTabPanel',ctTabFonts);
 	}
 	
 	
@@ -111,22 +124,21 @@
 	// -----------------------------------------------------------------------------------------------------------------
 	
     , getFontsList: function(){
-    	if (this.fonts == null) this.fonts = [];
-    	console.log(this.fontEditorBarChartTab);
-//    	for (var i=0; i<this.store.data.length;i++){
-//    		var rec = this.store.getAt(i);
-//    		var filter = {
-//    				id:  rec.get('id')
-//    			  , labelObj: rec.get('labelObj')
-//    			  , typeObj: rec.get('typeObj')
-//    			  , nameObj: rec.get('nameObj')
-//    			  , namePar: rec.get('namePar')
-//    			  , typePar: rec.get('typePar')
-//    			  , scope: rec.get('scope')
-//    			  , initialValue: rec.get('initialValue')
-//    		};
-//    		this.filters.push(filter);
-//    	}
+    	
+    	this.fonts = [];
+    	
+    	var barChartFontsObj = this.getTabFormFontsList(this.fontEditorBarChartTab)
+    	var lineChartFontsObj = this.getTabFormFontsList(this.fontEditorLineChartTab);
+    	var pieChartFontsObj = this.getTabFormFontsList(this.fontEditorPieChartTab);
+    	var tableFontsObj = this.getTabFormFontsList(this.fontEditorTableTab);
+    	var crosstabFontsObj = this.getTabFormFontsList(this.fontEditorCrosstabTab);
+        
+    	this.addFontObjectToFonts(barChartFontsObj);
+    	this.addFontObjectToFonts(lineChartFontsObj);
+    	this.addFontObjectToFonts(pieChartFontsObj);
+    	this.addFontObjectToFonts(tableFontsObj);
+    	this.addFontObjectToFonts(crosstabFontsObj);
+    
     	
     	return this.fonts;
     }
@@ -143,5 +155,57 @@
 	// -----------------------------------------------------------------------------------------------------------------
     // utility methods
 	// -----------------------------------------------------------------------------------------------------------------
+    
+    , addFontObjectToFonts: function(tabObject) {
+    
+    	if(tabObject !== undefined && tabObject !== null && !Sbi.isEmptyObject(tabObject)){
+    		this.fonts.push(tabObject);
+    	}
+    }
+    
+	, getTabFormFontsList: function(myTab){
+		
+		var result = {};
+		var checkedProperties = {};		
+    	
+		var form = myTab.getForm();
+        var values = form.getFieldValues();        
+        
+        for (var property in values) {
+            if (values.hasOwnProperty(property)) {
+            	if(values[property] !== null && values[property] !== ""){
+            		checkedProperties[property] = values[property];
+            	}
+            }
+        }
+        
+        if(!Sbi.isEmptyObject(checkedProperties)){
+        	result = checkedProperties;
+        	result.tabId = myTab.getId();
+        }
+        
+        return result;
+        
+	}
+	
+	, findTabFonts: function(tabId){
+		
+		var tabConf = {};
+		var tabIndex = -1;
+		
+		for(var i = 0; i < this.fonts.length; i++) {
+			if(Sbi.isValorized(this.fonts[i]) && this.fonts[i].tabId === tabId) {
+				tabIndex = i;
+				break;
+			}
+		}
+		
+		if(tabIndex >= 0){
+			tabConf.fonts = this.fonts[tabIndex]
+		}
+		
+		return tabConf;
+		
+	}
 
 });

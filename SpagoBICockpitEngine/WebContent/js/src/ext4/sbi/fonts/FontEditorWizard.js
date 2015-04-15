@@ -11,7 +11,7 @@ Ext.define('Sbi.fonts.FontEditorWizard', {
 			  , width: 1000
 			  , height: 500
 			  , closable: true
-			  , closeAction: 'close'
+//			  , closeAction: 'close'
 //			  , plain: true
 			  , modal: true
 			  , storesList: null

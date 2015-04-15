@@ -18,9 +18,10 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 	
 	layout: 	{ type: 'table', columns: 1 },
     title: 	LN('sbi.cockpit.font.editor.wizard.crosstab'),
+    id: 'crosstabFonts',
 	
 	config:{		
-		
+		fonts: null
 	}
 
 	/**
@@ -110,7 +111,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 			store: 			fontFamilyStore, 
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'ctFontType',
+			name:			'fontType',
 			labelWidth:		110,
 			width:			245
 
@@ -128,7 +129,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 			store: 			fontSizeStore, 
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'ctFontSize',
+			name:			'fontSize',
 			labelWidth:		120,
 			width:			170
 
@@ -162,14 +163,14 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				store: 			fontSizeStore,    
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'ctTdLevelFontSize',
+				name:			'tdLevelFontSize',
 				labelWidth:		130,
 				width:			180
 			});
 		 
 		 var tdLevelFontColorText = Ext.create('Ext.form.field.Text',{
 			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-			 name: 				'ctTdLevelFontColor',
+			 name: 				'tdLevelFontColor',
 	         allowBlank: 		true,
 	         regex: 			hexColorReg,
 	         regextText: 		'Not a valid HEX color',
@@ -195,7 +196,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				store: 			fontWeightStore, 
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'ctTdLevelFontWeight',
+				name:			'tdLevelFontWeight',
 				labelWidth:		130,
 				width:			245
 
@@ -213,7 +214,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				store: 			fontDecorationStore, 
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'ctTdLevelFontDecoration',
+				name:			'tdLevelFontDecoration',
 				labelWidth:		140,
 				width:			255
 
@@ -247,7 +248,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				store: 			fontSizeStore,    
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'ctTdMemberFontSize',
+				name:			'tdMemberFontSize',
 				labelWidth:		130,
 				width:			180,
 			});
@@ -255,7 +256,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 		
 		 var tdMemberFontColorText = Ext.create('Ext.form.field.Text',{
 				 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-				 name: 				'ctTdMemberFontColor',
+				 name: 				'tdMemberFontColor',
 		         allowBlank: 		true,
 		         regex: 			hexColorReg,
 		         regextText: 		'Not a valid HEX color',
@@ -281,7 +282,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				store: 			fontWeightStore, 
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'ctTdMemberFontWeight',
+				name:			'tdMemberFontWeight',
 				labelWidth:		130,
 				width:			245
 
@@ -299,7 +300,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				store: 			fontDecorationStore, 
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'ctTdMemberFontDecoration',
+				name:			'tdMemberFontDecoration',
 				labelWidth:		140,
 				width:			255
 
@@ -334,14 +335,14 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				store: 			fontSizeStore,    
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'ctTdDataFontSize',
+				name:			'tdDataFontSize',
 				labelWidth:		130,
 				width:			180
 			});
 		 
 		 var tdDataFontColorText = Ext.create('Ext.form.field.Text',{
 			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-			 name: 				'ctTdDataFontColor',
+			 name: 				'tdDataFontColor',
 	         allowBlank: 		true,
 	         regex: 			hexColorReg,
 	         regextText: 		'Not a valid HEX color',
@@ -367,7 +368,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				store: 			fontWeightStore, 
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'ctTdDataFontWeight',
+				name:			'tdDataFontWeight',
 				labelWidth:		130,
 				width:			245
 
@@ -385,7 +386,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				store: 			fontDecorationStore, 
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'ctTdDataFontDecoration',
+				name:			'tdDataFontDecoration',
 				labelWidth:		140,
 				width:			255
 
@@ -405,5 +406,21 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 		}; 
 
 	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, loadFontsConfiguration: function(){
+		
+		var form = this.getForm();		
+		form.setValues(this.fonts);
+	}
+	
+	, beforeRender: function () {
+		
+		this.loadFontsConfiguration();
+		this.callParent(arguments);
+    }
 });
 
