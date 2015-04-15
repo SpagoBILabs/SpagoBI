@@ -625,7 +625,6 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, onFontEditorWizardSubmit: function(wizard) {
 		Sbi.trace("[MainPanel.onFontEditorWizardSubmit]: IN");
 		var wizardState = wizard.getWizardState();
-		console.log(wizardState);
 		if (Sbi.isValorized(wizardState.fonts)){
 			Sbi.storeManager.setFontConfigurations(wizardState.fonts);
 			Sbi.trace("[MainPanel.onFontEditorWizardSubmit]: setted font group [" + Sbi.toSource(wizardState.fonts) + "] succesfully added to store manager");
@@ -639,8 +638,6 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 
 	, onShowFilterEditorWizard: function(){
 		var config = {};
-		config.storesList = Sbi.storeManager.getStoreIds();
-		Sbi.trace("[MainPanel.onShowFilterEditorWizard]: config.stores is equal to [" + Sbi.toSource(config.stores) + "]");
 		config.filters = Sbi.storeManager.getParameters();
 		Sbi.trace("[MainPanel.onShowFilterEditorWizard]: config.filters is equal to [" + Sbi.toSource(config.filters) + "]");
 		Sbi.trace("[MainPanel.showFilterEditorWizard]: instatiating the editor");
