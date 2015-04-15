@@ -18,9 +18,10 @@ Ext.define('Sbi.fonts.views.PieChartFontTabPanel', {
 	
 	layout: 	{ type: 'table', columns: 1 },
     title: 	LN('sbi.cockpit.font.editor.wizard.piechart'),
+    id: 'pieChartFonts',
 	
 	config:{		
-		
+		fonts: null
 	}
 
 	
@@ -88,7 +89,7 @@ Ext.define('Sbi.fonts.views.PieChartFontTabPanel', {
 			store: 			Ext.create('Sbi.fonts.stores.FontFamilyStore', {}),
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'pcFontType',
+			name:			'fontType',
 			labelWidth:		110,
 			width:			245
 
@@ -107,7 +108,7 @@ Ext.define('Sbi.fonts.views.PieChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'pcFontSize',
+			name:			'fontSize',
 			labelWidth:		110,
 			width:			160
 
@@ -141,7 +142,7 @@ Ext.define('Sbi.fonts.views.PieChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'pcLegendFontSize',
+			name:			'legendFontSize',
 			labelWidth:		60,
 			width:			110
 		});
@@ -158,7 +159,7 @@ Ext.define('Sbi.fonts.views.PieChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'pcTooltipLabelFontSize',
+			name:			'tooltipLabelFontSize',
 			labelWidth:		60,
 			width:			110
 		});
@@ -177,5 +178,21 @@ Ext.define('Sbi.fonts.views.PieChartFontTabPanel', {
 		};
 		
 	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, loadFontsConfiguration: function(){
+		
+		var form = this.getForm();		
+		form.setValues(this.fonts);
+	}
+	
+	, beforeRender: function () {
+		
+		this.loadFontsConfiguration();
+		this.callParent(arguments);
+    }
 });
 

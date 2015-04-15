@@ -18,9 +18,10 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 	
 	layout: 	{ type: 'table', columns: 1 },
     title: 	LN('sbi.cockpit.font.editor.wizard.table'),
+    id: 'tableFonts',
 	
 	config:{		
-		
+		fonts: null
 	}
 
 	
@@ -103,7 +104,7 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 			store: 			fontFamilyStore, 
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'tbFontType',
+			name:			'fontType',
 			labelWidth:		110,
 			width:			245
 
@@ -121,7 +122,7 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 			store: 			fontSizeStore, 
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'tbFontSize',
+			name:			'fontSize',
 			labelWidth:		120,
 			width:			170
 
@@ -155,7 +156,7 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 				store: 			fontSizeStore,    
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'tbHeaderFontSize',
+				name:			'headerFontSize',
 				labelWidth:		130,
 				width:			180,
 			});
@@ -163,7 +164,7 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 		
 		 var headerFontColorText = Ext.create('Ext.form.field.Text',{
 				 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-				 name: 				'tbHeaderFontColor',
+				 name: 				'headerFontColor',
 		         allowBlank: 		true,
 		         regex: 			hexColorReg,
 		         regextText: 		'Not a valid HEX color',
@@ -189,7 +190,7 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 				store: 			fontWeightStore, 
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'tbHeaderFontWeight',
+				name:			'headerFontWeight',
 				labelWidth:		130,
 				width:			245
 
@@ -207,7 +208,7 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 				store: 			fontDecorationStore, 
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'tbHeaderFontDecoration',
+				name:			'headerFontDecoration',
 				labelWidth:		140,
 				width:			255
 
@@ -242,14 +243,14 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 				store: 			fontSizeStore,    
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'tbRowsFontSize',
+				name:			'rowsFontSize',
 				labelWidth:		130,
 				width:			180
 			});
 		 
 		 var rowsFontColorText = Ext.create('Ext.form.field.Text',{
 			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-			 name: 				'tbRowsFontColor',
+			 name: 				'rowsFontColor',
 	         allowBlank: 		true,
 	         regex: 			hexColorReg,
 	         regextText: 		'Not a valid HEX color',
@@ -275,7 +276,7 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 				store: 			fontWeightStore, 
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'tbRowsFontWeight',
+				name:			'rowsFontWeight',
 				labelWidth:		130,
 				width:			245
 
@@ -293,7 +294,7 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 				store: 			fontDecorationStore, 
 				valueField: 	'name',
 				displayField: 	'description',
-				name:			'tbRowsFontDecoration',
+				name:			'rowsFontDecoration',
 				labelWidth:		140,
 				width:			255
 
@@ -313,5 +314,22 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 		};
 
 	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, loadFontsConfiguration: function(){
+		
+		var form = this.getForm();		
+		form.setValues(this.fonts);
+	}
+	
+	, beforeRender: function () {
+		
+		this.loadFontsConfiguration();
+		this.callParent(arguments);
+    }
+	
 });
 

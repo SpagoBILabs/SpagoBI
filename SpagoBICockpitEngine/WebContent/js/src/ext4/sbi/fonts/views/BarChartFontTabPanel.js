@@ -17,10 +17,11 @@ Ext.define('Sbi.fonts.views.BarChartFontTabPanel', {
 	extend: 'Ext.form.Panel',
 	
 	layout: 	{ type: 'table', columns: 1 },
-    title: 	LN('sbi.cockpit.font.editor.wizard.barchart'),
+    id: 'barChartFonts',
 	
-	config:{		
-		
+	config:{
+		title: 	LN('sbi.cockpit.font.editor.wizard.barchart'),
+		fonts: null
 	}
 
 	
@@ -47,6 +48,7 @@ Ext.define('Sbi.fonts.views.BarChartFontTabPanel', {
 	}
 
 	, initComponent: function() {
+		
         Ext.apply(this, {
             items: [this.chartGeneralFontOptions, 
                     this.chartFontSizeOptions]
@@ -67,7 +69,9 @@ Ext.define('Sbi.fonts.views.BarChartFontTabPanel', {
 	 * Initialize the GUI
 	 */
 	, init: function() {
+		
 		this.initFontEditorBarChartTab();
+
 	}
 	
 	, initFontEditorBarChartTab: function(){
@@ -88,7 +92,7 @@ Ext.define('Sbi.fonts.views.BarChartFontTabPanel', {
 			store: 			fontFamilyStore,  
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'bcFontType',
+			name:			'fontType',
 			labelWidth:		110,
 			width:			245
 
@@ -107,7 +111,7 @@ Ext.define('Sbi.fonts.views.BarChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'bcFontSize',
+			name:			'fontSize',
 			labelWidth:		120,
 			width:			170
 
@@ -139,7 +143,7 @@ Ext.define('Sbi.fonts.views.BarChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'bcLegendFontSize',
+			name:			'legendFontSize',
 			labelWidth:		60,
 			width:			110
 		});
@@ -156,7 +160,7 @@ Ext.define('Sbi.fonts.views.BarChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'bcAxisTitleFontSize',
+			name:			'axisTitleFontSize',
 			labelWidth:		100,
 			width:			150
 		});
@@ -173,7 +177,7 @@ Ext.define('Sbi.fonts.views.BarChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'bcTooltipLabelFontSize',
+			name:			'tooltipLabelFontSize',
 			labelWidth:		60,
 			width:			110
 		});
@@ -190,7 +194,7 @@ Ext.define('Sbi.fonts.views.BarChartFontTabPanel', {
 			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'bcAxisLabelsFontSize',
+			name:			'axisLabelsFontSize',
 			labelWidth:		100,
 			width:			150
 		});
@@ -210,5 +214,23 @@ Ext.define('Sbi.fonts.views.BarChartFontTabPanel', {
 		}; 
 		
 	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+    
+	, loadFontsConfiguration: function(){
+		
+		var form = this.getForm();
+		if(!Sbi.isEmptyObject(this.fonts)){
+			form.setValues(this.fonts);
+		}
+	}
+	
+	, beforeRender: function () {
+		
+		this.loadFontsConfiguration();
+		this.callParent(arguments);
+    }
 });
 
