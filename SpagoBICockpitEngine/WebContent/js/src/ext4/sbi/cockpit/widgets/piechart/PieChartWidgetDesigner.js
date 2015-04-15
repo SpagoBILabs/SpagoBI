@@ -85,10 +85,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 					state.category = thePanel.category;
 					state.series = thePanel.series;
 					state.colors = thePanel.colors;
-					state.fontType = thePanel.fontType;
-					state.fontSize = thePanel.fontSize;
-					state.legendFontSize = thePanel.legendFontSize;
-					state.tooltipLabelFontSize = thePanel.tooltipLabelFontSize;
+					this.setFontStateBeforeRender(thePanel, state);
 					state.wtype = 'piechart';
 					this.setDesignerState(state);
 				},
@@ -222,6 +219,10 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		    ]
 	    });
 
+		var fontSizeStore =  Ext.create('Sbi.fonts.stores.FontSizeStore',{});
+		
+		var fontFamilyStore = Ext.create('Sbi.fonts.stores.FontFamilyStore', {});
+	    
 	    this.fontTypeCombo = new Ext.form.ComboBox({
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontType'),
 			queryMode:      'local',
@@ -231,14 +232,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			allowBlank: 	true,
 			typeAhead: 		true,
 			lazyRender:		true,
-			store: 			Ext.create('Ext.data.ArrayStore', {
-								fields: ['name','description'],
-								data:   [['Arial','Arial'], 
-								         ['Courier New','Courier New'], 
-								         ['Tahoma','Tahoma'], 
-								         ['Times New Roman','Times New Roman'],
-								         ['Verdana','Verdana'],]
-								}),  
+			store: 			fontFamilyStore,  
 			valueField: 	'name',
 			displayField: 	'description',
 			name:			'fontType',
@@ -247,10 +241,6 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 
 		});
 	    
-	    this.fontSizeStore = new Ext.data.ArrayStore({
-			fields : ['name', 'description']
-			, data : [[6,"6"],[8,"8"],[10,"10"],[12,"12"],[14,"14"],[16,"16"],[18,"18"],[22,"22"],[24,"24"],[28,"28"],[32,"32"],[36,"36"],[40,"40"]]
-		});
 	    
 	    this.fontSizeCombo = new Ext.form.ComboBox({
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
@@ -261,7 +251,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			allowBlank: 	true,
 			typeAhead: 		true,
 			lazyRender:		true,
-			store: 			this.fontSizeStore,    
+			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
 			name:			'fontSize',
@@ -296,9 +286,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 
 		controlsItems.push(this.legendPositionCombo);
 		controlsItems.push(this.showLegendCheck);
-//    	controlsItems.push(this.fontTypeCombo);
     	controlsItems.push(this.showValuesCheck);
-//    	controlsItems.push(this.fontSizeCombo);
     	controlsItems.push(this.showPercentageCheck);
     	
     	
@@ -313,7 +301,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			forceSelection: true,
 			editable:       false,
 			allowBlank: 	true,
-			store: 			this.fontSizeStore,    
+			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
 			name:			'legendFontSize',
@@ -330,7 +318,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			forceSelection: true,
 			editable:       false,
 			allowBlank: 	true,
-			store: 			this.fontSizeStore,    
+			store: 			fontSizeStore,    
 			valueField: 	'name',
 			displayField: 	'description',
 			name:			'tooltipLabelFontSize',
@@ -362,18 +350,6 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			//, defaults: {height: 150}
 			, items: 			[chartGeneralFontOptions, chartFontSizeOptions]	
 		});
-		
-//		this.fontConfigurationPanel = 
-//    	{
-//			xtype: 				'fieldset'
-//			, fieldDefaults: 	{ margin: '0 9 4 0'}
-//    		, layout: 			{type: 'table', columns: 2}
-//            , collapsible: 		true
-//            , collapsed: 		true
-//            , title: 			LN('sbi.worksheet.designer.fontConf.fontOptions')
-//			, items: 			[this.legendFontSizeCombo, this.tooltipLabelFontSizeCombo]
-//			, width:			355
-//    	}
     	
 
 		this.form = new Ext.Panel({
@@ -429,23 +405,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		state.series = this.seriesContainerPanel.getContainedMeasures();
 		state.colors = this.seriesPalette.getColors();
 		
-		//blank values are permitted, so we need to check the objects before call .getValue()
-		if(this.fontTypeCombo !== null)
-		{	
-			state.fontType = this.fontTypeCombo.getValue();
-		}
-		if(this.fontSizeCombo !== null)
-		{	
-			state.fontSize = this.fontSizeCombo.getValue();
-		}
-		if(this.legendFontSizeCombo !== null)
-		{
-			state.legendFontSize = this.legendFontSizeCombo.getValue();
-		}
-		if(this.tooltipLabelFontSizeCombo)
-		{
-			state.tooltipLabelFontSize = this.tooltipLabelFontSizeCombo.getValue();
-		}
+		this.getFontState(state);
 
 		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: OUT");
 		return state;
@@ -461,10 +421,9 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 		if (state.colors) this.seriesPalette.setColors(state.colors);
-		if (state.fontType) this.fontTypeCombo.setValue(state.fontType);
-		if (state.fontSize) this.fontSizeCombo.setValue(state.fontSize);
-		if (state.legendFontSize) this.legendFontSizeCombo.setValue(state.legendFontSize);
-		if (state.tooltipLabelFontSize) this.tooltipLabelFontSizeCombo.setValue(state.tooltipLabelFontSize);
+		
+		this.setFontState(state);
+		
 		Sbi.trace("[PieChartWidgetDesigner.setDesignerState]: OUT");
 	}
 
@@ -499,6 +458,110 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		} else {
 			return this.categoryContainerPanel.category.id == attributeId;
 		}
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+	// utility methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, setFontStateBeforeRender: function(thePanel, state){
+		Sbi.trace("[PieChartWidgetDesigner.setFontStateBeforeRender]: IN");
+		
+		var pieChartFonts = this.findPieChartFont()
+		
+		if(pieChartFonts !== undefined && pieChartFonts !== null){
+			
+			if(thePanel.fontType === undefined || thePanel.fontType === null){
+				state.fontType = pieChartFonts.fontType;
+			}else{
+				state.fontType = thePanel.fontType;
+			}
+			
+			if(thePanel.fontSize === undefined || thePanel.fontSize === null){
+				state.fontSize = pieChartFonts.fontSize;
+			}else{
+				state.fontSize = thePanel.fontSize;
+			}
+			
+			if(thePanel.legendFontSize === undefined || thePanel.legendFontSize === null){
+				state.legendFontSize = pieChartFonts.legendFontSize;
+			}else{
+				state.legendFontSize = thePanel.legendFontSize;
+			}
+			
+			if(thePanel.tooltipLabelFontSize === undefined || thePanel.tooltipLabelFontSize === null){
+				state.tooltipLabelFontSize = pieChartFonts.tooltipLabelFontSize;
+			}else{
+				state.tooltipLabelFontSize = thePanel.tooltipLabelFontSize;
+			}
+
+		}else{
+			state.fontType = thePanel.fontType;
+			state.fontSize = thePanel.fontSize;
+			state.legendFontSize = thePanel.legendFontSize;
+			state.tooltipLabelFontSize = thePanel.tooltipLabelFontSize;
+		}
+		
+		Sbi.trace("[PieChartWidgetDesigner.setFontStateBeforeRender]: OUT");		
+	}
+	
+	, setFontState: function(state){
+		Sbi.trace("[PieChartWidgetDesigner.setFontState]: IN");
+		
+		if (state.fontType) this.fontTypeCombo.setValue(state.fontType);
+		if (state.fontSize) this.fontSizeCombo.setValue(state.fontSize);
+		if (state.legendFontSize) this.legendFontSizeCombo.setValue(state.legendFontSize);
+		if (state.tooltipLabelFontSize) this.tooltipLabelFontSizeCombo.setValue(state.tooltipLabelFontSize);	
+		
+		Sbi.trace("[PieChartWidgetDesigner.setFontState]: OUT");		
+	}
+	
+	, findPieChartFont: function(){
+		Sbi.trace("[PieChartWidgetDesigner.findPieChartFont]: IN");
+		
+		var pieChartFonts;
+		var fonts = Sbi.storeManager.getFonts();
+		
+		var tabIndex = -1;
+		
+		for(var i = 0; i < fonts.length; i++) {
+			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "pieChartFonts") {
+				tabIndex = i;
+				break;
+			}
+		}
+		
+		if(tabIndex >= 0){
+			pieChartFonts = fonts[tabIndex]
+		}
+		
+		return pieChartFonts		
+		
+		Sbi.trace("[PieChartWidgetDesigner.findPieChartFont]: OUT");		
+	}
+	
+	, getFontState: function(state){
+		Sbi.trace("[PieChartWidgetDesigner.getFontState]: IN");
+		
+		//blank values are permitted, so we need to check the objects before call .getValue()
+		if(this.fontTypeCombo !== null)
+		{	
+			state.fontType = this.fontTypeCombo.getValue();
+		}
+		if(this.fontSizeCombo !== null)
+		{	
+			state.fontSize = this.fontSizeCombo.getValue();
+		}
+		if(this.legendFontSizeCombo !== null)
+		{
+			state.legendFontSize = this.legendFontSizeCombo.getValue();
+		}
+		if(this.tooltipLabelFontSizeCombo !== null)
+		{
+			state.tooltipLabelFontSize = this.tooltipLabelFontSizeCombo.getValue();
+		}
+		
+		Sbi.trace("[PieChartWidgetDesigner.getFontState]: OUT");		
 	}
 
 });

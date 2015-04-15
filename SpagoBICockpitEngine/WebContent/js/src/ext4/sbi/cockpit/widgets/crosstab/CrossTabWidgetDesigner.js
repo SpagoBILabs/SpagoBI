@@ -70,27 +70,20 @@ Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner = function(config) {
 	this.columnsContainerPanel.on(
 		'beforerender' ,
 		function (thePanel, attribute) {
+			
+			var state = {};
+			
 			if(Sbi.isValorized(config)) {
-				this.setDesignerState({
-										rows: config.rows, 
-										columns: config.columns, 
-										measures: config.measures,
-										fontType: this.fontType,
-										fontSize: this.fontSize,
-										tdLevelFontSize: this.tdLevelFontSize,
-										tdLevelFontColor: this.tdLevelFontColor,
-										tdLevelFontWeight: this.tdLevelFontWeight,
-										tdLevelFontDecoration: this.tdLevelFontDecoration,
-										tdMemberFontSize: this.tdMemberFontSize,
-										tdMemberFontColor: this.tdMemberFontColor,
-										tdMemberFontWeight: this.tdMemberFontWeight,
-										tdMemberFontDecoration: this.tdMemberFontDecoration,
-										tdDataFontSize: this.tdDataFontSize,
-										tdDataFontColor: this.tdDataFontColor,
-										tdDataFontWeight: this.tdDataFontWeight,
-										tdDataFontDecoration: this.tdDataFontDecoration
-									});
+				
+				state.rows = config.rows;
+				state.columns = config.columns;
+				state.measures = config.measures;
+
 			}
+			
+			this.setFontStateBeforeRender(this, state);
+			
+			this.setDesignerState(state);
 		},
 		this
 	);
@@ -166,70 +159,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 		state.config = this.measuresContainerPanel.getCrosstabConfig();
 		state.config.type = 'pivot';
 		
-		//blank values are permitted, so we need to check the objects before call .getValue()
-		if(this.fontTypeCombo !== null)
-		{	
-			state.fontType = this.fontTypeCombo.getValue();
-		}
-		
-		if(this.fontSizeCombo !== null)
-		{	
-			state.fontSize = this.fontSizeCombo.getValue();
-		}
-		
-		//crosstab headers font
-		if(this.tdLevelFontSizeCombo !== null)
-		{	
-			state.tdLevelFontSize = this.tdLevelFontSizeCombo.getValue();
-		}
-		if(this.tdLevelFontColorText !== null)
-		{	
-			state.tdLevelFontColor = this.tdLevelFontColorText.getValue();
-		}		
-		if(this.tdLevelFontWeightCombo !== null)
-		{	
-			state.tdLevelFontWeight = this.tdLevelFontWeightCombo.getValue();
-		}
-		if(this.tdLevelFontDecorationCombo !== null)
-		{	
-			state.tdLevelFontDecoration = this.tdLevelFontDecorationCombo.getValue();
-		}
-		
-		//measures headers font
-		if(this.tdMemberFontSizeCombo !== null)
-		{
-			state.tdMemberFontSize = this.tdMemberFontSizeCombo.getValue();
-		}
-		if(this.tdMemberFontColorText !== null)
-		{	
-			state.tdMemberFontColor = this.tdMemberFontColorText.getValue();
-		}	
-		if(this.tdMemberFontWeightCombo !== null)
-		{	
-			state.tdMemberFontWeight = this.tdMemberFontWeightCombo.getValue();
-		}
-		if(this.tdMemberFontDecorationCombo !== null)
-		{	
-			state.tdMemberFontDecoration = this.tdMemberFontDecorationCombo.getValue();
-		}
-		
-		//data font
-		if(this.tdDataFontSizeCombo !== null)
-		{
-			state.tdDataFontSize = this.tdDataFontSizeCombo.getValue();
-		}
-		if(this.tdDataFontColorText !== null)
-		{	
-			state.tdDataFontColor = this.tdDataFontColorText.getValue();
-		}	
-		if(this.tdDataFontWeightCombo !== null)
-		{	
-			state.tdDataFontWeight = this.tdDataFontWeightCombo.getValue();
-		}
-		if(this.tdDataFontDecorationCombo !== null)
-		{	
-			state.tdDataFontDecoration = this.tdDataFontDecorationCombo.getValue();
-		}
+		this.getFontState(state);
 
 		Sbi.trace("[CrossTabWidgetDesigner.getDesignerState]: OUT");
 
@@ -244,23 +174,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 			if (state.rows) this.rowsContainerPanel.setAttributes(state.rows);
 			if (state.columns) this.columnsContainerPanel.setAttributes(state.columns);
 			if (state.measures) this.measuresContainerPanel.setMeasures(state.measures);
-			if (state.fontType) this.fontTypeCombo.setValue(state.fontType);
-			if (state.fontSize) this.fontSizeCombo.setValue(state.fontSize);
-			//crosstab headers font
-			if (state.tdLevelFontSize) this.tdLevelFontSizeCombo.setValue(state.tdLevelFontSize);
-			if (state.tdLevelFontColor) this.tdLevelFontColorText.setValue(state.tdLevelFontColor);
-			if (state.tdLevelFontWeight) this.tdLevelFontWeightCombo.setValue(state.tdLevelFontWeight);
-			if (state.tdLevelFontDecoration) this.tdLevelFontDecorationCombo.setValue(state.tdLevelFontDecoration);
-			//measures headers font		
-			if (state.tdMemberFontSize) this.tdMemberFontSizeCombo.setValue(state.tdMemberFontSize);
-			if (state.tdMemberFontColor) this.tdMemberFontColorText.setValue(state.tdMemberFontColor);
-			if (state.tdMemberFontWeight) this.tdMemberFontWeightCombo.setValue(state.tdMemberFontWeight);
-			if (state.tdMemberFontDecoration) this.tdMemberFontDecorationCombo.setValue(state.tdMemberFontDecoration);
-			//data font		
-			if (state.tdDataFontSize) this.tdDataFontSizeCombo.setValue(state.tdDataFontSize);
-			if (state.tdDataFontColor) this.tdDataFontColorText.setValue(state.tdDataFontColor);
-			if (state.tdDataFontWeight) this.tdDataFontWeightCombo.setValue(state.tdDataFontWeight);
-			if (state.tdDataFontDecoration) this.tdDataFontDecorationCombo.setValue(state.tdDataFontDecoration);
+			this.setFontState(state);
 		}
 
 
@@ -462,30 +376,13 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 //	    	//, html: "tableDesigner"
 //	    });
 		
-		/* font array definition: TODO create stores in a separate way */
+		var fontSizeStore =  Ext.create('Sbi.fonts.stores.FontSizeStore',{});
 		
-		var fontSizeStore =  Ext.create('Ext.data.ArrayStore', {
-			fields : ['name', 'description']
-			, data : [[6,"6"],[8,"8"],[10,"10"],[12,"12"],[14,"14"],[16,"16"],[18,"18"],[22,"22"],[24,"24"],[28,"28"],[32,"32"],[36,"36"],[40,"40"]]
-		});
+		var fontFamilyStore = Ext.create('Sbi.fonts.stores.FontFamilyStore', {});
 		
-		var fontFamilyStore = Ext.create('Ext.data.ArrayStore', {
-			fields: ['name','description'],
-			data:   [['Arial','Arial'], ['"Courier New"','Courier New'], ['Tahoma','Tahoma'], ['"Times New Roman"','Times New Roman'],['Verdana','Verdana'],]
-		});
+		var fontDecorationStore = Ext.create('Sbi.fonts.stores.FontDecorationStore', {});
 		
-		var fontWeightStore = Ext.create('Ext.data.ArrayStore', {
-			fields: ['name','description'],
-			data:   [['normal',LN('sbi.cockpit.designer.fontConf.normalFontWeight')],['bold',LN('sbi.cockpit.designer.fontConf.boldFontWeight')]]
-		});
-		
-		var fontDecorationStore = Ext.create('Ext.data.ArrayStore', {
-			fields: ['name','description'],
-			data:   [['none',LN('sbi.cockpit.designer.fontConf.noneFontDecoration')], 
-			         ['overline',LN('sbi.cockpit.designer.fontConf.overlineFontDecoration')],
-			         ['line-through',LN('sbi.cockpit.designer.fontConf.linethroughFontDecoration')],
-			         ['underline',LN('sbi.cockpit.designer.fontConf.underlineFontDecoration')]]
-		});
+		var fontWeightStore = Ext.create('Sbi.fonts.stores.FontWeightStore', {});
 		
 		var hexColorReg = new RegExp("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
 		
@@ -823,4 +720,247 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 		this.fireSelectionEvent = true;
 		Sbi.trace("[CrossTabWidgetDesigner.onAfterLayout][" + this.getId() + "]: OUT");
 	}
+	
+	
+	// -----------------------------------------------------------------------------------------------------------------
+	// utility methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, setFontStateBeforeRender: function(thePanel, state){
+		Sbi.trace("[CrosstabWidgetDesigner.setFontStateBeforeRender]: IN");
+		
+		var crosstabFonts = this.findCrosstabFont()
+		
+		if(crosstabFonts !== undefined && crosstabFonts !== null){
+			
+			if(thePanel.fontType === undefined || thePanel.fontType === null){
+				state.fontType = crosstabFonts.fontType;
+			}else{
+				state.fontType = thePanel.fontType;
+			}
+			
+			if(thePanel.fontSize === undefined || thePanel.fontSize === null){
+				state.fontSize = crosstabFonts.fontSize;
+			}else{
+				state.fontSize = thePanel.fontSize;
+			}
+			
+			// td level
+			if(thePanel.tdLevelFontSize === undefined || thePanel.tdLevelFontSize === null){
+				state.tdLevelFontSize = crosstabFonts.tdLevelFontSize;
+			}else{
+				state.tdLevelFontSize = thePanel.tdLevelFontSize;
+			}
+			
+			if(thePanel.tdLevelFontColor === undefined || thePanel.tdLevelFontColor === null){
+				state.tdLevelFontColor = crosstabFonts.tdLevelFontColor;
+			}else{
+				state.tdLevelFontColor = thePanel.tdLevelFontColor;
+			}
+			
+			if(thePanel.tdLevelFontWeight === undefined || thePanel.tdLevelFontWeight === null){
+				state.tdLevelFontWeight = crosstabFonts.tdLevelFontWeight;
+			}else{
+				state.tdLevelFontWeight = thePanel.tdLevelFontWeight;
+			}
+			
+			if(thePanel.tdLevelFontDecoration === undefined || thePanel.tdLevelFontDecoration === null){
+				state.tdLevelFontDecoration = crosstabFonts.tdLevelFontDecoration;
+			}else{
+				state.tdLevelFontDecoration = thePanel.tdLevelFontDecoration;
+			}
+			
+			//td member
+			if(thePanel.tdMemberFontSize === undefined || thePanel.tdMemberFontSize === null){
+				state.tdMemberFontSize = crosstabFonts.tdMemberFontSize;
+			}else{
+				state.tdMemberFontSize = thePanel.tdMemberFontSize;
+			}
+			
+			if(thePanel.tdMemberFontColor === undefined || thePanel.tdMemberFontColor === null){
+				state.tdMemberFontColor = crosstabFonts.tdMemberFontColor;
+			}else{
+				state.tdMemberFontColor = thePanel.tdMemberFontColor;
+			}
+			
+			if(thePanel.tdMemberFontWeight === undefined || thePanel.tdMemberFontWeight === null){
+				state.tdMemberFontWeight = crosstabFonts.tdMemberFontWeight;
+			}else{
+				state.tdMemberFontWeight = thePanel.tdMemberFontWeight;
+			}
+			
+			if(thePanel.tdMemberFontDecoration === undefined || thePanel.tdMemberFontDecoration === null){
+				state.tdMemberFontDecoration = crosstabFonts.tdMemberFontDecoration;
+			}else{
+				state.tdMemberFontDecoration = thePanel.tdMemberFontDecoration;
+			}
+			
+			// td data
+			if(thePanel.tdDataFontSize === undefined || thePanel.tdDataFontSize === null){
+				state.tdDataFontSize = crosstabFonts.tdDataFontSize;
+			}else{
+				state.tdDataFontSize = thePanel.tdDataFontSize;
+			}
+			
+			if(thePanel.tdDataFontColor === undefined || thePanel.tdDataFontColor === null){
+				state.tdDataFontColor = crosstabFonts.tdDataFontColor;
+			}else{
+				state.tdDataFontColor = thePanel.tdDataFontColor;
+			}
+			
+			if(thePanel.tdDataFontWeight === undefined || thePanel.tdDataFontWeight === null){
+				state.tdDataFontWeight = crosstabFonts.tdDataFontWeight;
+			}else{
+				state.tdDataFontWeight = thePanel.tdDataFontWeight;
+			}
+			
+			if(thePanel.tdDataFontDecoration === undefined || thePanel.tdDataFontDecoration === null){
+				state.tdDataFontDecoration = crosstabFonts.tdDataFontDecoration;
+			}else{
+				state.tdDataFontDecoration = thePanel.tdDataFontDecoration;
+			}
+			
+		}else{
+			
+			state.fontType = thePanel.fontType;
+			state.fontSize = thePanel.fontSize;
+			
+			state.tdLevelFontSize = thePanel.tdLevelFontSize,
+			state.tdLevelFontColor = thePanel.tdLevelFontColor,
+			state.tdLevelFontWeight = thePanel.tdLevelFontWeight,
+			state.tdLevelFontDecoration = thePanel.tdLevelFontDecoration,
+			state.tdMemberFontSize = thePanel.tdMemberFontSize,
+			state.tdMemberFontColor = thePanel.tdMemberFontColor,
+			state.tdMemberFontWeight = thePanel.tdMemberFontWeight,
+			state.tdMemberFontDecoration = thePanel.tdMemberFontDecoration,
+			state.tdDataFontSize = thePanel.tdDataFontSize,
+			state.tdDataFontColor = thePanel.tdDataFontColor,
+			state.tdDataFontWeight = thePanel.tdDataFontWeight,
+			state.tdDataFontDecoration = thePanel.tdDataFontDecoration
+			
+		}
+		
+		Sbi.trace("[CrosstabWidgetDesigner.setFontStateBeforeRender]: OUT");		
+	}
+	
+	, setFontState: function(state){
+		Sbi.trace("[CrosstabWidgetDesigner.setFontState]: IN");
+		
+		if (state.fontType) this.fontTypeCombo.setValue(state.fontType);
+		if (state.fontSize) this.fontSizeCombo.setValue(state.fontSize);
+		//crosstab headers font
+		if (state.tdLevelFontSize) this.tdLevelFontSizeCombo.setValue(state.tdLevelFontSize);
+		if (state.tdLevelFontColor) this.tdLevelFontColorText.setValue(state.tdLevelFontColor);
+		if (state.tdLevelFontWeight) this.tdLevelFontWeightCombo.setValue(state.tdLevelFontWeight);
+		if (state.tdLevelFontDecoration) this.tdLevelFontDecorationCombo.setValue(state.tdLevelFontDecoration);
+		//measures headers font		
+		if (state.tdMemberFontSize) this.tdMemberFontSizeCombo.setValue(state.tdMemberFontSize);
+		if (state.tdMemberFontColor) this.tdMemberFontColorText.setValue(state.tdMemberFontColor);
+		if (state.tdMemberFontWeight) this.tdMemberFontWeightCombo.setValue(state.tdMemberFontWeight);
+		if (state.tdMemberFontDecoration) this.tdMemberFontDecorationCombo.setValue(state.tdMemberFontDecoration);
+		//data font		
+		if (state.tdDataFontSize) this.tdDataFontSizeCombo.setValue(state.tdDataFontSize);
+		if (state.tdDataFontColor) this.tdDataFontColorText.setValue(state.tdDataFontColor);
+		if (state.tdDataFontWeight) this.tdDataFontWeightCombo.setValue(state.tdDataFontWeight);
+		if (state.tdDataFontDecoration) this.tdDataFontDecorationCombo.setValue(state.tdDataFontDecoration);		
+		
+		Sbi.trace("[CrosstabWidgetDesigner.setFontState]: OUT");		
+	}
+	
+	, findCrosstabFont: function(){
+		Sbi.trace("[CrosstabWidgetDesigner.findCrosstabFont]: IN");
+		
+		var crosstabFonts;
+		var fonts = Sbi.storeManager.getFonts();
+		
+		var tabIndex = -1;
+		
+		for(var i = 0; i < fonts.length; i++) {
+			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "crosstabFonts") {
+				tabIndex = i;
+				break;
+			}
+		}
+		
+		if(tabIndex >= 0){
+			crosstabFonts = fonts[tabIndex]
+		}
+		
+		return crosstabFonts		
+		
+		Sbi.trace("[CrosstabtWidgetDesigner.findCrosstabFont]: OUT");		
+	}
+	
+	, getFontState: function(state){
+		Sbi.trace("[CrosstabWidgetDesigner.getFontState]: IN");
+		
+		//blank values are permitted, so we need to check the objects before call .getValue()
+		if(this.fontTypeCombo !== null)
+		{	
+			state.fontType = this.fontTypeCombo.getValue();
+		}
+		
+		if(this.fontSizeCombo !== null)
+		{	
+			state.fontSize = this.fontSizeCombo.getValue();
+		}
+		
+		//crosstab headers font
+		if(this.tdLevelFontSizeCombo !== null)
+		{	
+			state.tdLevelFontSize = this.tdLevelFontSizeCombo.getValue();
+		}
+		if(this.tdLevelFontColorText !== null)
+		{	
+			state.tdLevelFontColor = this.tdLevelFontColorText.getValue();
+		}		
+		if(this.tdLevelFontWeightCombo !== null)
+		{	
+			state.tdLevelFontWeight = this.tdLevelFontWeightCombo.getValue();
+		}
+		if(this.tdLevelFontDecorationCombo !== null)
+		{	
+			state.tdLevelFontDecoration = this.tdLevelFontDecorationCombo.getValue();
+		}
+		
+		//measures headers font
+		if(this.tdMemberFontSizeCombo !== null)
+		{
+			state.tdMemberFontSize = this.tdMemberFontSizeCombo.getValue();
+		}
+		if(this.tdMemberFontColorText !== null)
+		{	
+			state.tdMemberFontColor = this.tdMemberFontColorText.getValue();
+		}	
+		if(this.tdMemberFontWeightCombo !== null)
+		{	
+			state.tdMemberFontWeight = this.tdMemberFontWeightCombo.getValue();
+		}
+		if(this.tdMemberFontDecorationCombo !== null)
+		{	
+			state.tdMemberFontDecoration = this.tdMemberFontDecorationCombo.getValue();
+		}
+		
+		//data font
+		if(this.tdDataFontSizeCombo !== null)
+		{
+			state.tdDataFontSize = this.tdDataFontSizeCombo.getValue();
+		}
+		if(this.tdDataFontColorText !== null)
+		{	
+			state.tdDataFontColor = this.tdDataFontColorText.getValue();
+		}	
+		if(this.tdDataFontWeightCombo !== null)
+		{	
+			state.tdDataFontWeight = this.tdDataFontWeightCombo.getValue();
+		}
+		if(this.tdDataFontDecorationCombo !== null)
+		{	
+			state.tdDataFontDecoration = this.tdDataFontDecorationCombo.getValue();
+		}
+		
+		
+		Sbi.trace("[CrosstabWidgetDesigner.getFontState]: OUT");		
+	}
+	
 });

@@ -232,7 +232,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 		this.widgetFontConfiguration.legendFontSize = this.getLegendFontSizeConfiguration();
 		this.widgetFontConfiguration.axisTitleFontSize = this.getAxisTitleFontSizeConfiguration();
 		this.widgetFontConfiguration.tooltipFontSize = this.getTooltipFontSizeConfiguration();
-		this.widgetFontConfiguration.axisLabelsFontSize = this.getAxisLabelsFontSizeConfiguration();			
+		this.widgetFontConfiguration.axisLabelsFontSize = this.getAxisLabelsFontSizeConfiguration();	
 
 		Sbi.trace("[AbstractChartWidgetRuntime.getFontConfiguration]: END ");
 	}
@@ -422,7 +422,8 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 	 */
 	, getFontFamilyConfiguration: function() {
 		var fontType;
-		if (this.wconf === undefined || this.wconf === null || this.wconf.fontType === undefined || this.wconf.fontType === null){
+		if (this.wconf === undefined || this.wconf === null || this.wconf.fontType === undefined || 
+				this.wconf.fontType === null || this.wconf.fontType === ""){
 			fontType = 'Arial';
 		} else {
 			fontType = this.wconf.fontType;
@@ -444,9 +445,9 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 		if (this.wconf == undefined || this.wconf == null) {
 			fontSize = '12px';
 		}
-		else if (this.wconf.legendFontSize == undefined || this.wconf.legendFontSize == null){
+		else if (this.wconf.legendFontSize == undefined || this.wconf.legendFontSize == null || this.wconf.legendFontSize == ""){
 			//specific legend font size not set -> check widget font size config or default value
-			if (this.wconf.fontSize == undefined || this.wconf.fontSize == null){
+			if (this.wconf.fontSize == undefined || this.wconf.fontSize == null || this.wconf.fontSize == ""){
 				fontSize = '12px';
 			} else {
 				fontSize = this.wconf.fontSize + 'px';
@@ -470,9 +471,9 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 		if (this.wconf == undefined || this.wconf == null) {
 			fontSize = '18px';
 		}
-		else if (this.wconf.axisTitleFontSize == undefined || this.wconf.axisTitleFontSize == null){
+		else if (this.wconf.axisTitleFontSize == undefined || this.wconf.axisTitleFontSize == null || this.wconf.axisTitleFontSize == ""){
 			//specific axis title font size not set -> check widget font size config or default value
-			if (this.wconf.fontSize == undefined || this.wconf.fontSize == null){
+			if (this.wconf.fontSize == undefined || this.wconf.fontSize == null || this.wconf.fontSize == ""){
 				fontSize = '18px';
 			} else {
 				fontSize = this.wconf.fontSize + 'px';
@@ -496,9 +497,9 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 		if (this.wconf == undefined || this.wconf == null) {
 			fontSize = '11px';
 		}
-		else if (this.wconf.tooltipLabelFontSize == undefined || this.wconf.tooltipLabelFontSize == null){
+		else if (this.wconf.tooltipLabelFontSize == undefined || this.wconf.tooltipLabelFontSize == null || this.wconf.tooltipLabelFontSize == ""){
 			//specific tooltip font size not set -> check widget font size config or default value
-			if (this.wconf.fontSize == undefined || this.wconf.fontSize == null){
+			if (this.wconf.fontSize == undefined || this.wconf.fontSize == null || this.wconf.fontSize == ""){
 				fontSize = '11px';
 			} else {
 				fontSize = this.wconf.fontSize + 'px';
@@ -522,9 +523,9 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 		if (this.wconf == undefined || this.wconf == null) {
 			fontSize = '12px';
 		}
-		else if (this.wconf.axisLabelsFontSize == undefined || this.wconf.axisLabelsFontSize == null){
+		else if (this.wconf.axisLabelsFontSize == undefined || this.wconf.axisLabelsFontSize == null || this.wconf.axisLabelsFontSize == ""){
 			//specific axis labels font size not set -> check widget font size config or default value
-			if (this.wconf.fontSize == undefined || this.wconf.fontSize == null){
+			if (this.wconf.fontSize == undefined || this.wconf.fontSize == null || this.wconf.fontSize == ""){
 				fontSize = '12px';
 			} else {
 				fontSize = this.wconf.fontSize + 'px';
