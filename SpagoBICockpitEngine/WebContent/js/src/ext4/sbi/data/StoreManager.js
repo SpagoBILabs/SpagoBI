@@ -461,33 +461,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		Sbi.trace("[StoreManager.getFontConfigurations]: OUT");
 		return confs;
 	}
-
-	/**
-	 * @method
-	 * Gets the configuration of the font whose id is equal to the one passed in as arguments
-	 * manager, null otherwise.
-	 *
-	 * @param {String} fontId the font id
-	 *
-	 * @return {Object[]} The font's configuration
-	 */
-//	, getFontConfiguration: function(fontId) {
-//		Sbi.trace("[StoreManager.getFontConfiguration]: IN");
-//
-//		var font = this.getFont(fontId);
-//		var fontConf = null;
-//
-//		if(Sbi.isValorized(font)) {
-//			fontConf = Ext.apply({}, font);
-//			Sbi.trace("[StoreManager.getFontConfiguration]: conf of font [" + fontId + "] is equal to [" + Sbi.toSource(fontConf, true)+ "]");
-//		} else {
-//			Sbi.warn("[StoreManager.getFontConfiguration]: impossible to find font [" + fontId + "]");
-//		}
-//
-//		Sbi.trace("[StoreManager.getFontConfiguration]: OUT");
-//
-//		return fontConf;
-//	}
 	
 
 	// FILTERS CONFIGS
@@ -1382,46 +1355,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 */
 	, getFonts: function() {
 		return this.fonts.getRange();
-	}
-
-	, getFont: function(fontId) {
-		return this.fonts.get(fontId);
-	}
-
-	, containsFont: function(font) {
-		if(Ext.isString(font)) {
-			return this.fonts.containsKey(font);
-		} else {
-			return this.fonts.contains(font);
-		}
-	}
-
-
-	, getStoresByFont: function(a){
-		for(var i=0; i<this.getFonts().length; i++){
-			var obj = this.getFonts()[i];
-			if (obj.description == a) {
-				return obj.stores;
-			}
-		}
-
-		return null;
-	}
-
-
-	, getFontsByStore: function(s){
-		var fontList = [];
-
-		for(var i=0; i<this.getFonts().length; i++){
-			var obj = this.getFonts()[i];
-			if (obj.stores !== null && obj.stores !== undefined ){
-				for(var i=0; i<obj.stores.length; i++){
-					if (obj.stores[i] == s){fontList.push(obj);}
-				}
-			}
-		}
-
-		return fontList;
 	}
 
 	, removeFont: function(font, autoDestroy) {
