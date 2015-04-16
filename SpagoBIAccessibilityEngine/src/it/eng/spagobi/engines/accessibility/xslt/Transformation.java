@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.accessibility.xslt;
 
@@ -28,91 +28,82 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class Transformation {
-	
+
 	private static transient Logger logger = Logger.getLogger(Transformation.class);
-	
-	/**Excecutes xslt transformation, to produce a byte array representing html page.
-	 * @param xml query result exported in xml format
-	 * @param xsl stylesheet , loaded on SpagoBI server as document's template
+
+	/**
+	 * Excecutes xslt transformation, to produce a byte array representing html page.
+	 * 
+	 * @param xml
+	 *            query result exported in xml format
+	 * @param xsl
+	 *            stylesheet , loaded on SpagoBI server as document's template
 	 * @return result of xslt transformation
 	 * @throws TransformerException
 	 * @throws ParserConfigurationException
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	public static byte[] tarnsformXSLT(String xml, 
-									   byte[] xsl)
-	        throws TransformerException, ParserConfigurationException, IOException,
-	        SAXException
-	    {
+	public static byte[] tarnsformXSLT(String xml, byte[] xsl) throws TransformerException, ParserConfigurationException, IOException, SAXException {
 		logger.debug("IN");
-	        // create an instance of TransformerFactory
-	        final ByteArrayOutputStream byteArray;
-	        final Result result;
-	        final TransformerFactory transFact;
-	        final Transformer trans;
+		// create an instance of TransformerFactory
+		final ByteArrayOutputStream byteArray;
+		final Result result;
+		final TransformerFactory transFact;
+		final Transformer trans;
 
-	        byteArray = new ByteArrayOutputStream();
-	        result = new StreamResult(byteArray);
-	        transFact = TransformerFactory.newInstance();
-	        transFact.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-	        logger.debug("Set FEATURE_SECURE_PROCESSING to true");
+		byteArray = new ByteArrayOutputStream();
+		result = new StreamResult(byteArray);
+		transFact = TransformerFactory.newInstance();
 
-	        final Source xmlSource;
-            final Document doc = loadXMLFrom(new ByteArrayInputStream(xml.getBytes()));
+		// TODO for security reasons it should be set to true
+		transFact.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);
+		logger.debug("Set FEATURE_SECURE_PROCESSING to false");
 
-            xmlSource = new DOMSource(doc);
+		final Source xmlSource;
+		final Document doc = loadXMLFrom(new ByteArrayInputStream(xml.getBytes()));
 
-	 
-	        Source xsltSource = null;
-	 
-	        if (xsl == null)
-	        {   // grab the XSL defined by the XML's xml-stylesheet instruction
-	            xsltSource =
-	                transFact.getAssociatedStylesheet(xmlSource, null, null, null);
-	        }
+		xmlSource = new DOMSource(doc);
 
-            if (xsl == null)
-            {
-            	logger.error("Invalid xsl");
-                throw new IllegalArgumentException("Invalid XSL file");
-            }
-            InputStream is = new ByteArrayInputStream (xsl);
-            
-            xsltSource = new StreamSource(is);
-	 
-	        trans = transFact.newTransformer(xsltSource);
+		Source xsltSource = null;
 
-	        trans.transform(xmlSource, result);
-	        logger.debug("OUT");
-	        is.close();
-	        return byteArray.toByteArray();
-	    }
+		if (xsl == null) { // grab the XSL defined by the XML's xml-stylesheet instruction
+			xsltSource = transFact.getAssociatedStylesheet(xmlSource, null, null, null);
+		}
 
-	 
-	    public static Document loadXMLFrom(final InputStream is)
-	        throws SAXException, IOException        
-	        
-	    {
-	    	logger.debug("IN");
-	        final DocumentBuilderFactory factory =
-	            DocumentBuilderFactory.newInstance();
-	        factory.setNamespaceAware(true);
-	        DocumentBuilder builder = null;
-	        try
-	        {
-	            builder = factory.newDocumentBuilder();
-	        }
-	        catch (ParserConfigurationException t)
-	        {
-	            logger.error("Unable to get Document Builder", t);
-	        }
-	        assert builder != null;
-	        final Document doc = builder.parse(is);
-	        is.close();
-	        logger.debug("OUT");
-	        return doc;
-	    }
+		if (xsl == null) {
+			logger.error("Invalid xsl");
+			throw new IllegalArgumentException("Invalid XSL file");
+		}
+		InputStream is = new ByteArrayInputStream(xsl);
 
+		xsltSource = new StreamSource(is);
+
+		trans = transFact.newTransformer(xsltSource);
+
+		trans.transform(xmlSource, result);
+		logger.debug("OUT");
+		is.close();
+		return byteArray.toByteArray();
+	}
+
+	public static Document loadXMLFrom(final InputStream is) throws SAXException, IOException
+
+	{
+		logger.debug("IN");
+		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		DocumentBuilder builder = null;
+		try {
+			builder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException t) {
+			logger.error("Unable to get Document Builder", t);
+		}
+		assert builder != null;
+		final Document doc = builder.parse(is);
+		is.close();
+		logger.debug("OUT");
+		return doc;
+	}
 
 }
