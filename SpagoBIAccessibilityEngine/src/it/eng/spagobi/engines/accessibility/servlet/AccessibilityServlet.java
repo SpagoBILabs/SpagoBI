@@ -26,6 +26,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
@@ -154,20 +155,59 @@ public class AccessibilityServlet extends HttpServlet {
 
 			byte[] html = Transformation.tarnsformXSLT(xmlResult, xsl);
 
-			/*
-			 * Document doc = Transformation.loadXMLFrom(new ByteArrayInputStream(xsl)); String a = doc.toString(); Node body =
-			 * doc.getElementsByTagName("body").item(0); Element element = doc.createElement("a"); element.setAttribute("href", "prova"); //
-			 * element.appendChild(new Text); body.appendChild(element);
-			 * 
-			 * xsl = doc.toString().getBytes();
-			 */
 			html = Transformation.tarnsformXSLT(xmlResult, xsl);
+			html = adjustMetaTag(html);
 
-			response.setContentType("text/html");
-			response.getOutputStream().write(addDownloadButton(html));
+			String outputFormat = request.getParameter("outputType");
+			if (outputFormat != null && outputFormat.equalsIgnoreCase("pdf")) {
+				String returnedUrl = generatePdf(html);
+				HttpURLConnection connection = null;
+				InputStream is = null;
+				OutputStream os = null;
 
-			response.getOutputStream().flush();
+				try {
+					Authenticator.setDefault(new Authenticator() {
 
+						@Override
+						public PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(System.getProperty("http.proxyUsername"), System.getProperty("http.proxyPassword").toCharArray());
+						}
+					});
+					URL url = new URL(returnedUrl);
+					connection = (HttpURLConnection) url.openConnection();
+					connection.setRequestMethod("GET");
+
+					connection.setRequestProperty("Content-Type", "application/pdf");
+
+					response.setContentType("application/pdf");
+					response.setHeader("Content-disposition", "inline; filename=report.pdf");
+					is = connection.getInputStream();
+					os = response.getOutputStream();
+					byte[] buffer = new byte[1024];
+					int len = is.read(buffer);
+					while (len != -1) {
+						os.write(buffer, 0, len);
+						len = is.read(buffer);
+					}
+				} catch (Exception e) {
+					logger.debug("Error while trying to obtain pdf from robobraille server:\n" + e);
+					throw new SpagoBIRuntimeException("Error while trying to obtain pdf from robobraille server:\n" + e);
+				} finally {
+					if (is != null)
+						is.close();
+
+					if (os != null)
+						os.close();
+
+					if (connection != null)
+						connection.disconnect();
+				}
+			} else {
+				response.setContentType("text/html");
+				response.getOutputStream().write(addCss(html));
+
+				response.getOutputStream().flush();
+			}
 		} catch (Exception e1) {
 			logger.error("Unable to output result", e1);
 			if (auditAccessUtils != null)
@@ -179,15 +219,27 @@ public class AccessibilityServlet extends HttpServlet {
 		logger.debug("OUT");
 	}
 
-	private byte[] addDownloadButton(byte[] html) {
+	// META tag is not closed. This method corrects this error
+	private byte[] adjustMetaTag(byte[] html) {
 		String htmlString = new String(html);
 		htmlString = htmlString.replaceFirst("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">",
 				"<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></META>");
-		html = htmlString.getBytes();
+		return htmlString.getBytes();
+	}
 
+	private byte[] addCss(byte[] html) {
+		String htmlString = new String(html);
+		htmlString = htmlString.replaceFirst("</head>", "<link rel=\"stylesheet\" type=\"text/css\" href=\"../css/report.css\"></head>");
+		return htmlString.getBytes();
+	}
+
+	// It returns the url containing the pdf
+	private String generatePdf(byte[] html) {
 		String returnedUrl = "";
 		String boundary = "----WebKitFormBoundaryo1yijFC6BU3ve93m";
 		String newLine = "\n";
+		HttpURLConnection connection = null;
+		DataOutputStream request = null;
 		try {
 			Authenticator.setDefault(new Authenticator() {
 
@@ -197,7 +249,7 @@ public class AccessibilityServlet extends HttpServlet {
 				}
 			});
 			URL url = new URL("http://2.109.50.18:9099/api/htmltopdf");
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection = (HttpURLConnection) url.openConnection();
 			connection.setUseCaches(false);
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
@@ -210,7 +262,7 @@ public class AccessibilityServlet extends HttpServlet {
 			connection.setRequestProperty("Connection", "Keep-Alive");
 			connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 
-			DataOutputStream request = new DataOutputStream(connection.getOutputStream());
+			request = new DataOutputStream(connection.getOutputStream());
 
 			request.writeBytes("--" + boundary + newLine);
 			request.writeBytes("Content-Disposition: form-data; name=\"pagesize\"" + newLine);
@@ -227,33 +279,32 @@ public class AccessibilityServlet extends HttpServlet {
 
 			request.writeBytes(newLine);
 			request.writeBytes("--" + boundary + "--");
-			request.flush();
-			request.close();
 
-			String line;
 			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-			StringBuffer response = new StringBuffer();
-			while ((line = reader.readLine()) != null) {
-				response.append(line);
-				response.append('\n');
-			}
-			returnedUrl = response.toString();
-			connection.disconnect();
+			returnedUrl = reader.readLine();
+
+			// returnedUrl begins with " and ends with " as well
+			returnedUrl = returnedUrl.substring(1, returnedUrl.length() - 1);
 		} catch (Exception e) {
 			logger.debug("Error while trying to contact robobraille server:\n" + e);
-			// No exception: if there is an error the document should be displayed anyway
-			// TODO: inform user about the problem
+			throw new SpagoBIRuntimeException("Error while trying to contact robobraille server:\n" + e);
+		} finally {
+			if (request != null) {
+				try {
+					request.flush();
+					request.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			if (connection != null)
+				connection.disconnect();
 		}
 
-		// Add css
-		htmlString = htmlString.replaceFirst("</head>", "<link rel=\"stylesheet\" type=\"text/css\" href=\"../css/report.css\"></head>");
-
-		// Add button for printing the accessible pdf
-		htmlString = htmlString.replaceFirst("<body>", "<body><br/>" + "<form id=\"pdf\" action=" + returnedUrl + " target=\"_blank\">"
-				+ "<button type=\"submit\">Download accessible PDF</button>" + "</form><br/><br/>");
-
-		return htmlString.getBytes();
+		return returnedUrl;
 	}
 
 	private HashMap<String, String> cleanParameters(HttpServletRequest request) {

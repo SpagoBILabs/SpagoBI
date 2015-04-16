@@ -167,6 +167,9 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	}
 
 	, exportationHandlers: {
+		'ACCESSIBLE_HTML': {
+			  'PDF' : function() { this.exportAccessibleDocumentTo('PDF'); }
+		},
 		'REPORT': {
 			  'PDF' : function() { this.exportReportTo('PDF'); }
 			, 'XLS' : function() { this.exportReportTo('XLS'); }	
@@ -239,7 +242,7 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 		 		throw new Error('Format ' + format + ' not supported for document type ' + documentType);
 		 	}
 		 	
-			if(documentType != null && documentType == 'REPORT'){
+			if(documentType != null && (documentType == 'REPORT' || documentType == 'ACCESSIBLE_HTML')) {
 				var documentUrl = null;
 				if(contentUrl == null){
 					documentUrl = this.getDocumentUrl();
@@ -639,6 +642,16 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
     // export handler methods
 	// -----------------------------------------------------------------------------------------------------------------
 
+	/**
+	 * @method
+	 * 
+	 * @param {format} target exportation format
+	 */
+	, exportAccessibleDocumentTo: function(format, contentUrl) {
+		var exportationUrl =  this.getExportationUrl(format, 'ACCESSIBLE_HTML', contentUrl);
+		window.open(exportationUrl, 'name', 'resizable=1,height=750,width=1000');
+	}
+	
 	/**
 	 * @method
 	 * 
