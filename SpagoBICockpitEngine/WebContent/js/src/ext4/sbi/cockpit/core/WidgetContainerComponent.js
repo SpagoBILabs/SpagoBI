@@ -317,26 +317,31 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     	
 		var visualizationSettings = 
 		{
-			/*style: 
-			{
-				//borderColor: 'transparent',
-				borderStyle:'solid', 
-				borderWidth:'1px', 
-				backgroundColor: 'transparent', 
-				borderRadius:'0px'
-			}*/
+				border: false,
+//			style: 
+//			{
+//				//borderColor: 'transparent',
+//				borderStyle:'solid', 
+//				borderWidth:'1px', 
+//				backgroundColor: 'transparent', 
+//				borderRadius:'0px'
+//			},
+				style: {borderColor: 'transparent', borderStyle:'solid', borderWidth:'0px', backgroundColor: 'transparent', borderRadius:'0px'},
 		    frame: false
 		    , shadow: false
 		    , resizable: false
-		    , header: visualizationModeHeader
-		    , tools: 
-		      [
-		       	{
-		       		type:'maximize'
-                    , hidden:true
-                    , scope:this
-		       	}
-		      ]
+		    //, header: visualizationModeHeader
+		    , header: false
+		    , maximizable: false
+		    , padding: 0
+//		    , tools: 
+//		      [
+//		       	{
+//		       		type:'maximize'
+//                    , hidden:true
+//                    , scope:this
+//		       	}
+//		      ]
 		};
     	return visualizationSettings;
     }
