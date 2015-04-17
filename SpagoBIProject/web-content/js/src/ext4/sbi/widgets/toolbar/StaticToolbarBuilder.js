@@ -55,6 +55,8 @@ Ext.define('Sbi.widget.toolbar.StaticToolbarBuilder', {
 				return Sbi.widget.toolbar.StaticToolbarBuilder.addSaveItemToolbarButton(toolbar, item);
 			case 'test':
 				return Sbi.widget.toolbar.StaticToolbarBuilder.addTestItemToolbarButton(toolbar, item);
+			case 'remove':
+				return Sbi.widget.toolbar.StaticToolbarBuilder.addDeleteItemToolbarButton(toolbar, item);
 			case '->':
 				return '->';
 			default:
@@ -124,6 +126,22 @@ Ext.define('Sbi.widget.toolbar.StaticToolbarBuilder', {
 			         iconCls: 'icon-test',
 			        handler: function(button, event) {
 			        	toolbar.fireEvent("test");
+					},
+			        scope: this
+			    };
+			return Ext.apply(toolbarconf,conf||{});
+		}
+		/**
+		 * Builds the delete button configuration. 
+		 * @param {Object} toolbar parent toolbar
+		 * @param {Object} item the type of the button to delete
+		 */
+		,addDeleteItemToolbarButton: function(toolbar, conf){
+			var toolbarconf = {
+					//text: LN('sbi.generic.add'),
+			         iconCls: 'button-remove',
+			        handler: function(button, event) {
+			        	toolbar.fireEvent("remove");
 					},
 			        scope: this
 			    };

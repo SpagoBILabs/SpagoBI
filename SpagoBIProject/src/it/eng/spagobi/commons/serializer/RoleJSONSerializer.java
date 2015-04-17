@@ -102,6 +102,7 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(VIEW_SOCIAL_ANALYSIS, role.isAbleToViewSocialAnalysis());
 			result.put(HIERARCHIES_MANAGEMENT, role.isAbleToHierarchiesManagement());
 			result.put(ENABLE_DATASET_PERSISTENCE, role.isAbleToEnableDatasetPersistence());
+			result.put("CHECKED", false);
 
 			// create an array for Business Model Categories Ids
 			JSONArray bmCategories = new JSONArray();
