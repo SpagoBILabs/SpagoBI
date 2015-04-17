@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
@@ -12,6 +12,15 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,21 +31,20 @@ import java.util.Locale;
 /**
  * Defines method to manage lov of fixed list type
  */
-public class FixedListDetail extends DependenciesPostProcessingLov implements ILovDetail  {
-    
+public class FixedListDetail extends DependenciesPostProcessingLov implements ILovDetail {
+
 	/**
 	 * items of the list
 	 */
-	List items = new ArrayList();    
-	
-	
+	List items = new ArrayList();
+
 	private List visibleColumnNames = null;
 	private String valueColumnName = "VALUE";
 	private String descriptionColumnName = "DESCRIPTION";
 	private List invisibleColumnNames = null;
 	private List treeLevelsColumns = null;
 	private String lovType = "simple";
-	
+
 	/**
 	 * constructor.
 	 */
@@ -45,71 +53,76 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		visibleColumnNames.add("DESCRIPTION");
 		invisibleColumnNames = new ArrayList();
 		invisibleColumnNames.add("VALUE");
-	} 
-	
+	}
+
 	/**
 	 * constructor.
-	 * 
-	 * @param dataDefinition the data definition
-	 * 
-	 * @throws SourceBeanException the source bean exception
+	 *
+	 * @param dataDefinition
+	 *            the data definition
+	 *
+	 * @throws SourceBeanException
+	 *             the source bean exception
 	 */
 	public FixedListDetail(String dataDefinition) throws SourceBeanException {
 		loadFromXML(dataDefinition);
 	}
-	
+
 	/**
 	 * loads the lov from an xml string.
-	 * 
-	 * @param dataDefinition the xml definition of the lov
-	 * 
-	 * @throws SourceBeanException the source bean exception
+	 *
+	 * @param dataDefinition
+	 *            the xml definition of the lov
+	 *
+	 * @throws SourceBeanException
+	 *             the source bean exception
 	 */
-	public void  loadFromXML (String dataDefinition) throws SourceBeanException {
+	@Override
+	public void loadFromXML(String dataDefinition) throws SourceBeanException {
 		dataDefinition.trim();
 		SourceBean source = SourceBean.fromXMLString(dataDefinition);
-		if(!source.getName().equals("FIXLISTLOV")) {
+		if (!source.getName().equals("FIXLISTLOV")) {
 			SourceBean wrapper = new SourceBean("FIXLISTLOV");
-			wrapper.setAttribute(source);	
+			wrapper.setAttribute(source);
 			source = wrapper;
 		}
 		// load data from xml
 		List listRows = source.getAttributeAsList("ROWS.ROW");
 		Iterator iterRows = listRows.iterator();
 		ArrayList lovList = new ArrayList();
-		while(iterRows.hasNext()){
+		while (iterRows.hasNext()) {
 			FixedListItemDetail lov = new FixedListItemDetail();
-			SourceBean element = (SourceBean)iterRows.next();
-			String value = (String)element.getAttribute("VALUE");
+			SourceBean element = (SourceBean) iterRows.next();
+			String value = (String) element.getAttribute("VALUE");
 			// ******** only for retro compatibility
-			if(value==null)
-				value = (String)element.getAttribute("NAME");
+			if (value == null)
+				value = (String) element.getAttribute("NAME");
 			// *************************************
 			lov.setValue(value);
-			String description = (String)element.getAttribute("DESCRIPTION");
+			String description = (String) element.getAttribute("DESCRIPTION");
 			lov.setDescription(description);
 			lovList.add(lov);
 		}
- 		setLovs(lovList);
- 		
-        // get and set value column
-	    String valueColumn = "VALUE";
-	    SourceBean valCol = (SourceBean)source.getAttribute("VALUE-COLUMN");
-		if(valCol!=null)
+		setLovs(lovList);
+
+		// get and set value column
+		String valueColumn = "VALUE";
+		SourceBean valCol = (SourceBean) source.getAttribute("VALUE-COLUMN");
+		if (valCol != null)
 			valueColumn = valCol.getCharacters();
 		setValueColumnName(valueColumn);
-		 // get and set the description column
-	    String descrColumn = "DESCRIPTION";
-	    SourceBean descColSB = (SourceBean)source.getAttribute("DESCRIPTION-COLUMN");
-		if(descColSB!=null)
+		// get and set the description column
+		String descrColumn = "DESCRIPTION";
+		SourceBean descColSB = (SourceBean) source.getAttribute("DESCRIPTION-COLUMN");
+		if (descColSB != null)
 			descrColumn = descColSB.getCharacters();
 		setDescriptionColumnName(descrColumn);
 		// get and set list of visible columns
 		List visColNames = new ArrayList();
-		SourceBean visColSB = (SourceBean)source.getAttribute("VISIBLE-COLUMNS");
-		if(visColSB!=null){
+		SourceBean visColSB = (SourceBean) source.getAttribute("VISIBLE-COLUMNS");
+		if (visColSB != null) {
 			String visColConc = visColSB.getCharacters();
-			if( (visColConc!=null) && !visColConc.trim().equalsIgnoreCase("") ) {
+			if ((visColConc != null) && !visColConc.trim().equalsIgnoreCase("")) {
 				String[] visColArr = visColConc.split(",");
 				visColNames = Arrays.asList(visColArr);
 			}
@@ -117,112 +130,183 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		setVisibleColumnNames(visColNames);
 		// get and set list of invisible columns
 		List invisColNames = new ArrayList();
-		SourceBean invisColSB = (SourceBean)source.getAttribute("INVISIBLE-COLUMNS");
-		if(invisColSB!=null){
+		SourceBean invisColSB = (SourceBean) source.getAttribute("INVISIBLE-COLUMNS");
+		if (invisColSB != null) {
 			String invisColConc = invisColSB.getCharacters();
-			if( (invisColConc!=null) && !invisColConc.trim().equalsIgnoreCase("") ) {
+			if ((invisColConc != null) && !invisColConc.trim().equalsIgnoreCase("")) {
 				String[] invisColArr = invisColConc.split(",");
 				invisColNames = Arrays.asList(invisColArr);
 			}
 		}
 		setInvisibleColumnNames(invisColNames);
-		
-		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN  definition)
-		SourceBean treeLevelsColumnsBean = (SourceBean)source.getAttribute("TREE-LEVELS-COLUMNS");
+
+		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN definition)
+		SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
 		String treeLevelsColumnsString = null;
-		if (treeLevelsColumnsBean != null) { 
+		if (treeLevelsColumnsBean != null) {
 			treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
 		}
-		if( (treeLevelsColumnsString!=null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("") ) {
+		if ((treeLevelsColumnsString != null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("")) {
 			String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
 			this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
 		}
-		SourceBean lovTypeBean = (SourceBean)source.getAttribute("LOVTYPE"); 
+		SourceBean lovTypeBean = (SourceBean) source.getAttribute("LOVTYPE");
 		String lovType;
-		if(lovTypeBean!=null){
-			lovType =  lovTypeBean.getCharacters(); 
+		if (lovTypeBean != null) {
+			lovType = lovTypeBean.getCharacters();
 			this.lovType = lovType;
 		}
 
-// 		// set visible and invisible columns
-// 		List visColList = new ArrayList();
-// 		visColList.add("DESCRIPTION");
-// 		List invisColList = new ArrayList();
-//		invisColList.add("VALUE");
-//		setInvisibleColumnNames(invisColList);
-//		setVisibleColumnNames(visColList);
-	}	
-	
+		// // set visible and invisible columns
+		// List visColList = new ArrayList();
+		// visColList.add("DESCRIPTION");
+		// List invisColList = new ArrayList();
+		// invisColList.add("VALUE");
+		// setInvisibleColumnNames(invisColList);
+		// setVisibleColumnNames(visColList);
+	}
+
 	/**
 	 * serialize the lov to an xml string.
-	 * 
+	 *
 	 * @return the serialized xml string
 	 */
+	@Override
 	public String toXML() {
 		String lovXML = "";
 		lovXML += "<FIXLISTLOV>";
 		lovXML += "<ROWS>";
 		FixedListItemDetail lov = null;
 		Iterator iter = items.iterator();
-		while(iter.hasNext()){
-			lov = (FixedListItemDetail)iter.next();
+		while (iter.hasNext()) {
+			lov = (FixedListItemDetail) iter.next();
 			String value = lov.getValue();
 			String description = lov.getDescription();
-			lovXML += "<ROW" +
-					  " VALUE=\"" + value + "\"" +
-					  " DESCRIPTION=\"" + description + "\"" +
-					  "/>";
+			lovXML += "<ROW" + " VALUE=\"" + value + "\"" + " DESCRIPTION=\"" + description + "\"" + "/>";
 		}
 		lovXML += "</ROWS>";
-		lovXML += "<VALUE-COLUMN>"+valueColumnName+"</VALUE-COLUMN>" +
-				  "<DESCRIPTION-COLUMN>"+descriptionColumnName+"</DESCRIPTION-COLUMN>" +
-				  "<VISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(visibleColumnNames, ",")+"</VISIBLE-COLUMNS>" +
-				  "<INVISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(invisibleColumnNames, ",")+"</INVISIBLE-COLUMNS>" +
-				  "<LOVTYPE>"+this.getLovType() + "</LOVTYPE>" +
-				  "<TREE-LEVELS-COLUMNS>"+GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",")+"</TREE-LEVELS-COLUMNS>" +
-				  "</FIXLISTLOV>";
+		lovXML += "<VALUE-COLUMN>" + valueColumnName + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + descriptionColumnName + "</DESCRIPTION-COLUMN>"
+				+ "<VISIBLE-COLUMNS>" + GeneralUtilities.fromListToString(visibleColumnNames, ",") + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
+				+ GeneralUtilities.fromListToString(invisibleColumnNames, ",") + "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + this.getLovType() + "</LOVTYPE>"
+				+ "<TREE-LEVELS-COLUMNS>" + GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",") + "</TREE-LEVELS-COLUMNS>" + "</FIXLISTLOV>";
 		return lovXML;
 	}
-	
+
 	/**
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception;
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance
+	 *      executionInstance) throws Exception;
 	 */
-	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale) throws Exception {
+	@Override
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
+			throws Exception {
 		String lovResult = "<ROWS>";
 		FixedListItemDetail lov = null;
 		Iterator iter = items.iterator();
-		while(iter.hasNext()){
-			lov = (FixedListItemDetail)iter.next();
+		while (iter.hasNext()) {
+			lov = (FixedListItemDetail) iter.next();
 			String value = lov.getValue();
 			String description = lov.getDescription();
-			lovResult += "<ROW" +
-					  " VALUE=\"" + value + "\"" +
-					  " DESCRIPTION=\"" + description + "\"" +
-					  "/>";
+			lovResult += "<ROW" + " VALUE=\"" + value + "\"" + " DESCRIPTION=\"" + description + "\"" + "/>";
 		}
 		lovResult += "</ROWS>";
 		lovResult = StringUtilities.substituteProfileAttributesInString(lovResult, profile);
 		return lovResult;
 	}
-		
+
+	public DataStore getLovResultAsDataStore(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
+			throws Exception {
+
+		DataStore dsToReturn = new DataStore();
+		IFieldMetaData fieldMetaData1 = new FieldMetadata();
+		IFieldMetaData fieldMetaData2 = new FieldMetadata();
+
+		fieldMetaData1.setAlias("VALUE");
+		fieldMetaData1.setName("VALUE");
+		fieldMetaData1.setType(String.class);
+		fieldMetaData1.setFieldType(FieldType.ATTRIBUTE);
+
+		IMetaData metadata = new MetaData();
+		metadata.addFiedMeta(fieldMetaData1);
+
+		fieldMetaData2.setAlias("DESCRIPTION");
+		fieldMetaData2.setName("DESCRIPTION");
+		fieldMetaData2.setType(String.class);
+		fieldMetaData2.setFieldType(FieldType.ATTRIBUTE);
+
+		metadata.addFiedMeta(fieldMetaData2);
+
+		dsToReturn.setMetaData(metadata);
+
+		FixedListItemDetail fixLovItem = null;
+
+		Iterator iter = items.iterator();
+
+		int i = 0;
+
+		while (iter.hasNext()) {
+			// System.out.println("UYUYUYUYUYUYU");
+			Field field = new Field();
+			// Field fieldValue = new Field();
+			Field descriptionValue = new Field();
+			Record record = new Record();
+
+			fixLovItem = (FixedListItemDetail) iter.next();
+			// field.setValue(fixLovItem.getValue());
+			// descriptionValue.setValue(fixLovItem.getDescription());
+
+			// System.out.println(fixLovItem.getValue());
+			// System.out.println(fixLovItem.getDescription());
+
+			List<IField> listOfFields = new ArrayList<IField>();
+			field.setValue(fixLovItem.getValue());
+			listOfFields.add(field);
+			descriptionValue.setValue(fixLovItem.getDescription());
+			listOfFields.add(descriptionValue);
+
+			// System.out.println(fixLovItem.getValue());
+			// System.out.println(fixLovItem.getDescription());
+
+			record.setFields(listOfFields);
+			// record.appendField(fieldValue);
+			// record.appendField(descriptionValue);
+
+			dsToReturn.appendRecord(record);
+		}
+
+		// for (int i = 0; i < stringLength; i++) {
+		//
+		// Field field = new Field();
+		// Record record = new Record();
+		// field.setValue(array[i]);
+		// record.appendField(field);
+		// dsToReturn.insertRecord(i, record);
+		// }
+
+		System.out.println("UUUUUUU");
+		System.out.println(dsToReturn);
+
+		return dsToReturn;
+	}
 
 	/**
 	 * Gets the list of names of the profile attributes required.
-	 * 
+	 *
 	 * @return list of profile attribute names
-	 * 
-	 * @throws Exception the exception
+	 *
+	 * @throws Exception
+	 *             the exception
 	 */
+	@Override
 	public List getProfileAttributeNames() throws Exception {
 		List names = new ArrayList();
 		String lovResult = this.toXML();
-		while(lovResult.indexOf("${")!=-1) {
+		while (lovResult.indexOf("${") != -1) {
 			int startind = lovResult.indexOf("${");
 			int endind = lovResult.indexOf("}", startind);
 			String attributeDef = lovResult.substring(startind + 2, endind);
-			if(attributeDef.indexOf("(")!=-1) {
+			if (attributeDef.indexOf("(") != -1) {
 				int indroundBrack = lovResult.indexOf("(", startind);
-				String nameAttr = lovResult.substring(startind+2, indroundBrack);
+				String nameAttr = lovResult.substring(startind + 2, indroundBrack);
 				names.add(nameAttr);
 			} else {
 				names.add(attributeDef);
@@ -234,38 +318,41 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 
 	/**
 	 * Checks if the lov requires one or more profile attributes.
-	 * 
+	 *
 	 * @return true if the lov require one or more profile attributes, false otherwise
-	 * 
-	 * @throws Exception the exception
+	 *
+	 * @throws Exception
+	 *             the exception
 	 */
+	@Override
 	public boolean requireProfileAttributes() throws Exception {
 		boolean contains = false;
 		String lovResult = this.toXML();
-		if(lovResult.indexOf("${")!=-1) {
+		if (lovResult.indexOf("${") != -1) {
 			contains = true;
 		}
 		return contains;
-	}	
-	
-	
+	}
+
 	/**
 	 * Adds a lov to the lov Detail List.
-	 * 
-	 * @param description The added lov description
-	 * @param value the value
+	 *
+	 * @param description
+	 *            The added lov description
+	 * @param value
+	 *            the value
 	 */
 	public void add(String value, String description) {
 		// if name or description are empty don't add
-		if((value==null) || (value.trim().equals("")))
-				return;
-		if((description==null) || (description.trim().equals("")))
+		if ((value == null) || (value.trim().equals("")))
+			return;
+		if ((description == null) || (description.trim().equals("")))
 			return;
 		// if the element already exists don't add
 		Iterator iter = items.iterator();
-		while(iter.hasNext()) {
-			FixedListItemDetail lovDet = (FixedListItemDetail)iter.next();
-			if(value.equals(lovDet.getValue()) && description.equals(lovDet.getDescription())) {
+		while (iter.hasNext()) {
+			FixedListItemDetail lovDet = (FixedListItemDetail) iter.next();
+			if (value.equals(lovDet.getValue()) && description.equals(lovDet.getDescription())) {
 				return;
 			}
 		}
@@ -275,128 +362,157 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		lovdet.setDescription(description);
 		items.add(lovdet);
 	}
-	
-	
+
 	/**
 	 * Deletes a lov from the lov Detail List.
-	 * 
-	 * @param value The deleted lov name
-	 * @param description The deleted lov description
+	 *
+	 * @param value
+	 *            The deleted lov name
+	 * @param description
+	 *            The deleted lov description
 	 */
 	public void remove(String value, String description) {
 		Iterator iter = items.iterator();
-		while(iter.hasNext()) {
-			FixedListItemDetail lovDet = (FixedListItemDetail)iter.next();
-			if(value.equals(lovDet.getValue()) && description.equals(lovDet.getDescription())) {
+		while (iter.hasNext()) {
+			FixedListItemDetail lovDet = (FixedListItemDetail) iter.next();
+			if (value.equals(lovDet.getValue()) && description.equals(lovDet.getDescription())) {
 				items.remove(lovDet);
 				break;
 			}
 		}
 	}
-	
-	
+
 	/**
-	 * Splits an XML string by using some <code>SourceBean</code> object methods
-	 * in order to obtain the source <code>LovDetail</code> objects whom XML has been
+	 * Splits an XML string by using some <code>SourceBean</code> object methods in order to obtain the source <code>LovDetail</code> objects whom XML has been
 	 * built.
-	 * 
-	 * @param dataDefinition The XML input String
-	 * 
+	 *
+	 * @param dataDefinition
+	 *            The XML input String
+	 *
 	 * @return The corrispondent <code>LovDetailList</code> object
-	 * 
-	 * @throws SourceBeanException If a SourceBean Exception occurred
+	 *
+	 * @throws SourceBeanException
+	 *             If a SourceBean Exception occurred
 	 */
-	public static FixedListDetail  fromXML (String dataDefinition) throws SourceBeanException {
-		return new FixedListDetail(dataDefinition);	
+	public static FixedListDetail fromXML(String dataDefinition) throws SourceBeanException {
+		return new FixedListDetail(dataDefinition);
 	}
-	
-	
+
 	/**
 	 * Gets item of the fixed list.
-	 * 
+	 *
 	 * @return items of the fixed list
 	 */
 	public List getItems() {
 		return items;
 	}
-	
+
 	/**
 	 * Sets items of the fixed list.
-	 * 
-	 * @param items the items to set
+	 *
+	 * @param items
+	 *            the items to set
 	 */
 	public void setLovs(List items) {
 		this.items = items;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName()
 	 */
+	@Override
 	public String getDescriptionColumnName() {
 		return descriptionColumnName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName(java.lang.String)
 	 */
+	@Override
 	public void setDescriptionColumnName(String descriptionColumnName) {
 		this.descriptionColumnName = descriptionColumnName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames()
 	 */
+	@Override
 	public List getInvisibleColumnNames() {
 		return invisibleColumnNames;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames(java.util.List)
 	 */
+	@Override
 	public void setInvisibleColumnNames(List invisibleColumnNames) {
 		this.invisibleColumnNames = invisibleColumnNames;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
+	@Override
 	public String getValueColumnName() {
 		return valueColumnName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java.lang.String)
 	 */
+	@Override
 	public void setValueColumnName(String valueColumnName) {
 		this.valueColumnName = valueColumnName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
+	@Override
 	public List getVisibleColumnNames() {
 		return visibleColumnNames;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(java.util.List)
 	 */
+	@Override
 	public void setVisibleColumnNames(List visibleColumnNames) {
 		this.visibleColumnNames = visibleColumnNames;
 	}
 
+	@Override
 	public String getLovType() {
 		return lovType;
 	}
 
+	@Override
 	public void setLovType(String lovType) {
 		this.lovType = lovType;
 	}
 
+	@Override
 	public List getTreeLevelsColumns() {
 		return treeLevelsColumns;
 	}
 
+	@Override
 	public void setTreeLevelsColumns(List treeLevelsColumns) {
 		this.treeLevelsColumns = treeLevelsColumns;
 	}

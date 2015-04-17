@@ -29,7 +29,6 @@ public String returnValue(String valuein) {
   return strBuf.toString();
 };
 
-
 public String getListFromMultiValueProfileAttribute(String attrName) {
  String splitter = attrName.substring(1,2);
  String valuesList = attrName.substring(3, attrName.length() - 2);
@@ -41,18 +40,6 @@ public String getListFromMultiValueProfileAttribute(String attrName) {
  };
  strBuf.append("</ROWS>");
  return strBuf.toString();
-};
-
-public String returnValueDataStore(String valuein) {
-		return valuein;
-};
-
-
-public String[] getListFromMultiValueProfileAttributeDataStore(String attrName) {
-	String splitter = attrName.substring(1,2);
-	String valuesList = attrName.substring(3, attrName.length() - 2);
-	String [] values = valuesList.split(splitter);
-	return values;
 };
 
 public String split(String attrName, String splitter) {

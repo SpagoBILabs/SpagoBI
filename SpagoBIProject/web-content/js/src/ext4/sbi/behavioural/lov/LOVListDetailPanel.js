@@ -25,6 +25,8 @@ Ext.define
 
 		constructor: function(config) 
 		{		
+			Sbi.debug('[IN] LOVListDetailPanel - constructor');
+			
 			var isSuperadmin = config.isSuperadmin;
 			
 			this.services =[];
@@ -67,10 +69,14 @@ Ext.define
 			};
 	
 			this.callParent(arguments);
+			
+			Sbi.debug('[OUT] LOVListDetailPanel - constructor');
 		},
 		
 		initServices: function(baseParams)
 		{
+			Sbi.debug('[IN] LOVListDetailPanel - initServices()');
+			
 			this.services["test"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName: 'LOV/Test'
 					, baseParams: baseParams
@@ -99,11 +105,13 @@ Ext.define
 					baseParams: baseParams
 				}
 			);	
+			
+			Sbi.debug('[OUT] LOVListDetailPanel - initServices()');
 		},
 		
 		checkCanTest: function(record)
 		{
-			console.log("[IN] checkCanTest() LOVListDetailPanel");
+			Sbi.debug('[IN] LOVListDetailPanel - checkCanTest()');
 			
 			/* We need to check if the LOV form is filled with the necessary data
 			 * in both cases: creating a new record or modifying the existing one */
@@ -113,34 +121,40 @@ Ext.define
 			
 			if (record.LOV_LABEL == "")
 			{
-				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.labelMissing'));
+				//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.labelMissing'));
+				this.detailPanel.lovLabel.markInvalid(LN('sbi.behavioural.lov.details.labelMissing'));
 			}
 			else if (record.LOV_NAME == "")
 			{
-				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.nameMissing'));
+				//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.nameMissing'));
+				this.detailPanel.lovName.markInvalid(LN('sbi.behavioural.lov.details.nameMissing'));				
 			}
 			else if (record.I_TYPE_CD == "")
 			{
-				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.inputTypeMissing'));
+				//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.inputTypeMissing'));
+				this.detailPanel.lovInputTypeCombo.markInvalid(LN('sbi.behavioural.lov.details.inputTypeMissing'));					
 			}
 			else
 			{						
 				if (record.I_TYPE_CD == "QUERY" && (record.DATASOURCE_ID == "" || record.DATASOURCE_ID == null))
-					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.dataSourceMissing'));
+				{
+//					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.dataSourceMissing'));
+					this.detailPanel.dataSourceCombo.markInvalid(LN('sbi.behavioural.lov.details.dataSourceMissing'));		
+				}
 				else if (record.I_TYPE_CD == "SCRIPT" && (record.SCRIPT_TYPE == "" || record.SCRIPT_TYPE == undefined || record.SCRIPT_TYPE == null))
-					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.scriptTypeMissing'));
+				{
+//					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.scriptTypeMissing'));
+					this.detailPanel.scriptTypeCombo.markInvalid(LN('sbi.behavioural.lov.details.scriptTypeMissing'));	
+				}
 				else
 				{					
 					var description = null;
 						
 					if (record.I_TYPE_CD == "QUERY")
-						// ?????? MOZE LI JEDNOSTAVNIJE ???????
+						// ?????? Could it be simpler ???
 						description = this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL2").items.items[1].value;
 					else if (record.I_TYPE_CD == "SCRIPT")
 						description = this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL3").items.items[1].value;
-					
-//					console.log("###### record type CD 1 #####");
-//					console.log(description);
 					
 					if (description != "" && description != null && description  != undefined)
 					{
@@ -149,25 +163,46 @@ Ext.define
 					else
 					{						
 						if(record.I_TYPE_CD == "QUERY")
-							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.queryDescriptionMissing'));
+						{
+//							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.queryDescriptionMissing'));
+							this.detailPanel.dataSourceQuery.markInvalid(LN('sbi.behavioural.lov.details.queryDescriptionMissing'));	
+						}
 						else if (record.I_TYPE_CD == "SCRIPT")
-							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.scriptDescriptionMissing'));
+						{
+//							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.scriptDescriptionMissing'));
+							this.detailPanel.scriptQuery.markInvalid(LN('sbi.behavioural.lov.details.scriptDescriptionMissing'));	
+						}
+					}
+					
+					if (record.I_TYPE_CD == "FIX_LOV")
+					{
+						var panel5 = this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL5");
+						var fixLovGrid = panel5.items.items[1];						
+						var numberOfFixLovs = fixLovGrid.getStore().getCount();
+						
+						if (numberOfFixLovs > 0)
+						{
+							canBeSaved = true;
+						}
+						else
+						{
+							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.fixLovGridEmpty')); 
+						}
 					}
 				}						
 			}
 			
 			if (canBeSaved == true)
 			{					
-				console.log("[checkCanTest - canBeSaved]");
 				this.openTestPage();
 			}
 			
-			console.log("[OUT] checkCanTest() LOVListDetailPanel");
+			Sbi.debug('[OUT] LOVListDetailPanel - checkCanTest()');
 		},
 		
 		openTestPage: function()
 		{
-			console.log("[IN] openTestPage() LOVListDetailPanel");
+			Sbi.debug('[IN] LOVListDetailPanel - openTestPage()');
 			
 			var lovConfig = {};	
 			
@@ -175,44 +210,39 @@ Ext.define
 			
 			var lovId = this.detailPanel.getFormState("testPhase").data.LOV_ID;						
 			var lovProvider = this.detailPanel.getFormState("testPhase").data.LOV_PROVIDER;
-								
+											
 			if (lovId == 0)
 			{
 				// The new record
-				lovConfig.descriptionColumnName =  'null'; 		// treba da bude null
-				lovConfig.valueColumnName =  'null';			// treba da bude null
-				lovConfig.visibleColumnNames = '[]';			// treba da bude []				
+				lovConfig.descriptionColumnName =  'null'; 	
+				lovConfig.valueColumnName =  'null';			
+				lovConfig.visibleColumnNames = '[]';						
 				lovConfig.lovType =  'simple';				
 				lovConfig.treeColumnNames = 'null';	
 			}
+			
 			else
 			{				
 				var startDescrColumnName = lovProvider.indexOf("<DESCRIPTION-COLUMN>")+"<DESCRIPTION-COLUMN>".length;
 				var endDescrColumnName = lovProvider.indexOf("</DESCRIPTION-COLUMN>");
 				lovConfig.descriptionColumnName = lovProvider.substring(startDescrColumnName,endDescrColumnName);
-				//console.log(lovConfig.descriptionColumnName);
 				
 				var startValueColumnName = lovProvider.indexOf("<VALUE-COLUMN>")+"<VALUE-COLUMN>".length;
 				var endValueColumnName = lovProvider.indexOf("</VALUE-COLUMN>");
 				lovConfig.valueColumnName = lovProvider.substring(startValueColumnName,endValueColumnName);
-				//console.log(lovConfig.valueColumnName);
 				
 				var startVisibleColumnName = lovProvider.indexOf("<VISIBLE-COLUMNS>")+"<VISIBLE-COLUMNS>".length;
 				var endVisibleColumnName = lovProvider.indexOf("</VISIBLE-COLUMNS>");
 				lovConfig.visibleColumnNames = "[]";
 				lovConfig.visibleColumnNames = lovProvider.substring(startVisibleColumnName,endVisibleColumnName);
-				//console.log("-*-*-*-*-*-*-*");
-				//console.log(lovConfig.visibleColumnNames);
 				
 				var startLovType = lovProvider.indexOf("<LOVTYPE>")+"<LOVTYPE>".length;
 				var endLovType = lovProvider.indexOf("</LOVTYPE>");
 				lovConfig.lovType = lovProvider.substring(startLovType,endLovType);
-				//console.log(lovConfig.lovType);
 				
 				var startTreeColumnNames = lovProvider.indexOf("<TREE-LEVELS-COLUMNS>")+"<TREE-LEVELS-COLUMNS>".length;
 				var endTreeColumnNames  = lovProvider.indexOf("</TREE-LEVELS-COLUMNS>");
 				lovConfig.treeColumnNames = lovProvider.substring(startTreeColumnNames,endTreeColumnNames);
-				//console.log(lovConfig.treeColumnNames);
 			}		
 			
 			this.detailPanel.updatePanel(contextName, lovConfig, lovProvider);
@@ -221,27 +251,31 @@ Ext.define
 			
 			// Show Test test page tab and set it as active
 			
-			// ?????? MOZE LI JEDNOSTAVNIJE ???????
+			// ?????? Simpler ???
 			this.detailPanel.getComponent("TAB_PANEL_RESULTS").tabBar.items.items[1].show();
 			this.detailPanel.getComponent("TAB_PANEL_RESULTS").setActiveTab(1);
 			
 			// Show Save button now
 			this.detailPanel.getComponent("TOOLBAR").items.items[3].show();
 			
-			console.log("[OUT] openTestPage() LOVListDetailPanel");
+			Sbi.debug('[OUT] LOVListDetailPanel - openTestPage()');
 		},
 		
 		checkCanSave: function(record)
 		{
-			console.log("[IN] checkCanSave() LOVListDetailPanel");
+			Sbi.debug('[IN] LOVListDetailPanel - checkCanSave()');
 			
 			/* Calling chained methods in order to get data from Configuration Panel
 			 * that are needed to fill the missing data in LOV provider XML query. */			
 			var returnLovValues = this.detailPanel.takeValues();
 			
+			// Needed for the fix LOVs
+			var arrayOfValuesFixLov = [];
+			var arrayOfDescripFixLov = [];
+			
 			if (returnLovValues != null && returnLovValues != undefined)
 			{
-				var incompleteLovProvider = this.detailPanel.getFormState("savePhase").data.LOV_PROVIDER;
+				var incompleteLovProvider = this.detailPanel.getFormState("savePhase").data.LOV_PROVIDER;				
 				
 				if (record.I_TYPE_CD == "QUERY")
 				{
@@ -265,6 +299,28 @@ Ext.define
 	    			var script = incompleteLovProvider.substring(startScript,endScript); 	    			
 				}
 				
+				else if (record.I_TYPE_CD == "FIX_LOV")
+				{
+					var startFixLov = incompleteLovProvider.indexOf("<ROWS>")+"<ROWS>".length;
+        			var endFixLov = incompleteLovProvider.indexOf("</ROWS>");
+        			var fixLovRows = incompleteLovProvider.substring(startFixLov,endFixLov);
+    				var listRows = fixLovRows.split("<ROW "); 				
+    				
+    				for (var i=1; i<listRows.length; i++)
+					{
+    					var valueStart = listRows[i].indexOf("VALUE=")+"VALUE=".length + 1;
+        				var valueEnd = listRows[i].indexOf("\" DESCRIPTION");
+        				//arrayOfValuesFixLov[i] = listRows[i].substring(valueStart,valueEnd);
+        				arrayOfValuesFixLov.push(listRows[i].substring(valueStart,valueEnd));
+        				
+        				var descriptionStart = listRows[i].indexOf("DESCRIPTION=")+"DESCRIPTION=".length + 1;
+        				var descriptionEnd = listRows[i].indexOf("/>")-1;
+//        				arrayOfDescripFixLov[i] = listRows[i].substring(descriptionStart,descriptionEnd);      	
+        				arrayOfDescripFixLov.push(listRows[i].substring(descriptionStart,descriptionEnd));
+					}
+    				
+				}				
+				
 				var valueColumn = returnLovValues.valueColumnName.valueOf();
 				var descriptionColumn = returnLovValues.descriptionColumnName.valueOf();
 	
@@ -284,7 +340,7 @@ Ext.define
 				}
 				
 				// ?????????????????????????????????????????????
-				// I dont't know what is INVISIBLE-COLUMNS ????
+				// INVISIBLE-COLUMNS ????
 				// ?????????????????????????????????????????????
 				var allColumns = returnLovValues.column.valueOf();
 				var invisibleColumns = allColumns[0];
@@ -336,6 +392,33 @@ Ext.define
 		    				"<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>" +
     					"</SCRIPTLOV>";
 				}
+				
+				else if (record.I_TYPE_CD == "FIX_LOV")
+				{
+					completeLovProvider = "<FIXLISTLOV>";
+					completeLovProvider += "<ROWS>";
+	    			
+	    			var fixLovValue = "";
+	    			var fixLovDescription = "";
+	    			
+	    			
+	    			for (var i=0; i<arrayOfValuesFixLov.length; i++)
+					{	    				
+	    				completeLovProvider += "<ROW" +
+						  " VALUE=\"" + arrayOfValuesFixLov[i] + "\"" +
+						  " DESCRIPTION=\"" + arrayOfDescripFixLov[i] + "\"" +
+						  "/>";
+					}
+	    			
+	    			completeLovProvider += "</ROWS>";
+	    			completeLovProvider += "<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" +
+	    					  "<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
+	    					  "<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" +
+	    					  "<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" +
+	    					  "<LOVTYPE>"+ lovType + "</LOVTYPE>" +
+	    					  "<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>" +
+	    					  "</FIXLISTLOV>";
+				}
 								
 				//this.detailPanel.getFormState().data.LOV_PROVIDER = completeLovProvider;
 				this.detailPanel.lovProvider.value = completeLovProvider;
@@ -344,51 +427,37 @@ Ext.define
 				this.onFormSave(record);
 			}
 			
-			console.log("[OUT] checkCanSave() LOVListDetailPanel");
+			Sbi.debug('[OUT] LOVListDetailPanel - checkCanSave()');
 		},	
 		
 		onFormSave: function(record)
 		{			
-			console.log("[IN] onFormSave() LOVListDetailPanel");
+			Sbi.debug('[IN] LOVListDetailPanel - onFormSave()');
 			
 			this.detailPanel.getFormState("savePhase").save
 			(
 				{
 					success: function(object, response, options)
-							{			
-								console.log("SAVE PROVERA GRESKE");
-								console.log(response);
-						
+							{									
 								if(response !== undefined && response.response !== undefined && response.response.responseText !== undefined && response.response.statusText=="OK") 
 								{									
 									response = response.response;
 									
 									if(response.responseText!=null && response.responseText!=undefined)
-									{										
+									{		
+										
 										if(response.responseText.indexOf("error.mesage.description")>=0)
-										{
+										{											
 											Sbi.exception.ExceptionHandler.handleFailure(response);
 										}
 										else if (response.responseText.toLowerCase().indexOf("error") >= 0)
-										{
-											console.log("GRESKA SAVE");
-											
+										{											
 											var selectedRecord = this.grid.getSelectionModel().getSelection();	
 											this.grid.store.remove(selectedRecord);
 											this.grid.store.commitChanges();
 											
-											/* UMESTO hide() BI BILO BOLJE DA SE VRATIMO NA FORMU 
-											 * SA IZBRISANIM PODACIMA IZ POLJA - OVO CE SE DESITI
-											 * KADA POKUSAMO DA DUPLIRAMO LOV - PO LABELI ISTI NAZIVI. */
 											this.detailPanel.hide();
-											
-//											this.grid.store.remove(record);
-//											console.log(record);
-//											this.grid.store.sync();
-//											//this.grid.store.commitChanges();
-//											
-//											this.grid.getView().refresh();
-											
+																						
 											Sbi.exception.ExceptionHandler.handleFailure(response);											
 										}
 										else
@@ -428,12 +497,12 @@ Ext.define
 				}
 			);	
 			
-			console.log("[OUT] onFormSave() LOVListDetailPanel");
+			Sbi.debug('[OUT] LOVListDetailPanel - onFormSave()');
 		},
 		
 		onDeleteRow: function(record)
 		{		
-			console.log("[IN] onDeleteRow() LOVListDetailPanel");
+			Sbi.debug('[IN] LOVListDetailPanel - onDeleteRow()');
 			
 			var selectedRecord = this.grid.getSelectionModel().getSelection();	
 			
@@ -460,7 +529,7 @@ Ext.define
 						{
 							if(response !== undefined && response.response !== undefined && response.response.responseText !== undefined && response.response.statusText=="OK") 
 							{
-								var aaa = response;
+								var responseToShow = response;
 								
 								response = response.response ;
 								
@@ -469,11 +538,11 @@ Ext.define
 									if(response.responseText.indexOf("error.mesage.description")>=0 || 
 											response.responseText.indexOf("Error while deleting LOV") >= 0)
 									{
-										Sbi.exception.ExceptionHandler.handleFailure(aaa);
+										Sbi.exception.ExceptionHandler.handleFailure(responseToShow);
 									}
 									else
 									{
-										Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.deleted'));
+										Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.behavioural.lov.deleted'));
 										this.grid.store.remove(record);
 										this.grid.store.commitChanges(); 
 									}
@@ -492,13 +561,13 @@ Ext.define
 				);
 			}
 			
-			console.log("[OUT] onDeleteRow() LOVListDetailPanel");
+			Sbi.debug('[OUT] LOVListDetailPanel - onDeleteRow()');
 		},
 		
 		
 		onGridSelect: function(selectionrowmodel, record, index, eOpts)
 		{
-			//console.log("[IN] onGridSelect() LOVListDetailPanel");
+//			Sbi.debug('[IN] LOVListDetailPanel - onGridSelect()');
 			
 			this.detailPanel.show();
 			
@@ -518,7 +587,7 @@ Ext.define
 			
 			this.detailPanel.setFormState(record.data);
 			
-			//console.log("[OUT] onGridSelect() LOVListDetailPanel");
+//			Sbi.debug('[OUT] LOVListDetailPanel - onGridSelect()');
 		}
 	}
 );

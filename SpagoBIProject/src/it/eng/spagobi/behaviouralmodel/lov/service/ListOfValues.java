@@ -126,9 +126,6 @@ public class ListOfValues {
 
 			int newID = modalitiesDAO.loadModalitiesValueByLabel(modVal.getLabel()).getId();
 
-			System.out.println("+++++++++");
-			System.out.println(modalitiesDAO.loadModalitiesValueByLabel(modVal.getLabel()).getLovProvider());
-
 			// return Response.ok().build();
 			return Integer.toString(newID);
 
@@ -281,8 +278,6 @@ public class ListOfValues {
 
 			DatasetDetail dataSetDetail = (DatasetDetail) LovDetailFactory.getLovFromXML(lovProvider);
 			dataSetID = Integer.parseInt(dataSetDetail.getDatasetId());
-
-			System.out.println(dataSetDetail.getDatasetId());
 		}
 
 		lovToReturn.setId(id);

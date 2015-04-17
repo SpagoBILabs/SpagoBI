@@ -48,12 +48,17 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar2', {
     	, inputField: null
     	, additionalButtons: null, //additional buttons to write in the top right part
     	
-    }
-
-	, constructor: function(config) {
+    }, 
+    
+    constructor: function(config) 
+	{
+    	Sbi.debug('[IN] DynamicFilteringToolbar2 - constructor');
+    	
 		this.callParent([config]);
 		this.store.on('load', this.onStoreLoad,this);
 		this.lovProvider = config.lovProvider;
+		
+		Sbi.debug('[OUT] DynamicFilteringToolbar2 - constructor');
 	}
 
 
@@ -152,29 +157,33 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar2', {
 				this.add(this.additionalButtons[i]);
 			}
 		}
-	}
+	}, 
 	
-	, applyFilter: function(){
+	applyFilter: function()
+	{
+		Sbi.debug('[IN] DynamicFilteringToolbar2 - applyFilter()');
+		
 		var filterConfig = this.getValue();
-		console.log("++++++++++++++++++");
-		console.log(filterConfig);
 		
 		this.store.proxy.extraParams = 
 		{
 			valueFilter: filterConfig.valueFilter,
 			columnsFilter:  filterConfig.columnsFilter,
-			columnsFilterValue: this.columnNameCombo.rawValue, // NEW !!!
+			columnsFilterValue: this.columnNameCombo.rawValue, 	// NEW !!!
 			typeValueFilter: filterConfig.typeValueFilter,
 			typeFilter: filterConfig.typeFilter,
-			name: this.lovProvider // NEW !!!
+			name: this.lovProvider 								// NEW !!!
 		};
 		
 		this.store.loadPage(1);
-	}
+		
+		Sbi.debug('[OUT] DynamicFilteringToolbar2 - applyFilter()');
+	}, 
 	
-	
-	
-	, getValue: function(){
+	getValue: function()
+	{
+		Sbi.debug('[IN] DynamicFilteringToolbar2 - getValue()');
+		
 		var filterConfig = {};
 		filterConfig.valueFilter = this.valueField.getValue();
 		filterConfig.columnsFilterValue = this.columnNameCombo.rawValue; // NEW !!!
@@ -186,6 +195,9 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar2', {
 		
 		filterConfig.typeValueFilter = this.typeCombo.getValue();
 		filterConfig.typeFilter = this.filterCombo.getValue();
+		
+		Sbi.debug('[OUT] DynamicFilteringToolbar2 - getValue()');
+		
 		return filterConfig;
 	}
 	
