@@ -4,6 +4,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 
 import java.util.Locale;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ParametersUseJSONSerialize implements Serializer {
@@ -17,6 +18,10 @@ public class ParametersUseJSONSerialize implements Serializer {
 	public static final String NAME = "NAME";
 	public static final String MANUALINPUT = "MANUALINPUT";
 	public static final String SELECTIONTYPE = "SELECTIONTYPE";
+	public static final String EXPENDABLE = "EXPENDABLE";
+	public static final String DEFAULTFORMULA = "DEFAULTFORMULA";
+	public static final String ROLESLIST = "ROLESLIST";
+	public static final String CONSTLIST = "CONSTLIST";
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 
@@ -37,12 +42,32 @@ public class ParametersUseJSONSerialize implements Serializer {
 			result.put(ID, parameterUse.getId());
 			result.put(USEID, parameterUse.getUseID());
 			result.put(LOVID, parameterUse.getIdLov());
-			result.put(DEFAULTLOVID, parameterUse.getIdLovForDefault());
 			result.put(LABEL, parameterUse.getLabel());
 			result.put(NAME, parameterUse.getName());
 			result.put(DESCRIPTION, parameterUse.getDescription());
 			result.put(MANUALINPUT, parameterUse.getManualInput());
 			result.put(SELECTIONTYPE, parameterUse.getSelectionType());
+			result.put(EXPENDABLE, parameterUse.isMaximizerEnabled());
+			result.put(DEFAULTLOVID, parameterUse.getIdLovForDefault());
+			result.put(DEFAULTFORMULA, parameterUse.getDefaultFormula());
+
+			JSONArray ja = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(parameterUse.getAssociatedRoles(), null);
+			if (ja != null) {
+
+				for (int i = 0; i < ja.length(); i++) {
+					ja.getJSONObject(i).put("CHECKED", true);
+				}
+			}
+			result.put(ROLESLIST, ja);
+
+			JSONArray ca = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(parameterUse.getAssociatedChecks(), null);
+			if (ca != null) {
+
+				for (int i = 0; i < ca.length(); i++) {
+					ca.getJSONObject(i).put("CHECKED", true);
+				}
+			}
+			result.put(CONSTLIST, ca);
 
 		} catch (Throwable t) {
 

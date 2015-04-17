@@ -15,6 +15,7 @@ import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutio
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
@@ -116,10 +117,6 @@ public class JSONSerializer implements Serializer {
 		mappings.put(FileDataSet.class, new DataSetJSONSerializer());
 		mappings.put(CkanDataSet.class, new DataSetJSONSerializer());
 
-		mappings.put(Parameter.class, new ParametersJSONSerialize());
-		mappings.put(ParameterUse.class, new ParametersUseJSONSerialize());
-		mappings.put(ModalitiesValue.class, new ModalitiesValuesJSONSerializer());
-
 		mappings.put(RoleMetaModelCategory.class, new RoleMetaModelCategoryJSONSerializer());
 
 		mappings.put(Resource.class, new ResourceJSONSerializer());
@@ -151,6 +148,11 @@ public class JSONSerializer implements Serializer {
 
 		mappings.put(Job.class, new JobJSONSerializer());
 		mappings.put(Trigger.class, new TriggerJSONSerializer());
+
+		mappings.put(Parameter.class, new ParametersJSONSerialize());
+		mappings.put(ParameterUse.class, new ParametersUseJSONSerialize());
+		mappings.put(ModalitiesValue.class, new ModalitiesValuesJSONSerializer());
+		mappings.put(Check.class, new CheckJSONSerializer());
 
 	}
 
