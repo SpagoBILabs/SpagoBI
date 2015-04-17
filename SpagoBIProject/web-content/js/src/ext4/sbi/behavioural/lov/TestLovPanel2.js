@@ -52,7 +52,7 @@ Ext.define
     	
     	constructor: function(config) 
     	{
-    		console.log("[IN] constructor() TestLovPanel2");
+    		Sbi.debug('[IN] TestLovPanel2 - constructor');
     		
     		this.services = {};    		
     		this.initServices();    		
@@ -152,14 +152,9 @@ Ext.define
 			);     		
     		
     		this.lovTestPreview.on('storeLoad',this.lovTestConfiguration.onParentStoreLoad,this.lovTestConfiguration);
-    		//console.log("{{{}}}} {{{}}}}");
     		var lovConfigurationPanelItems = [this.lovTestConfiguration];
     		
-//    		console.log("#########1");
-//    		console.log(lovConfigurationPanelItems);
-    		
     		if(this.treeLov){
-    			console.log("######### Tree LOV [TestLovPanel2] #########");
     			//Tree lov panel
     			this.lovTestConfigurationTree = Ext.create('Sbi.behavioural.lov.TestLovTreePanel2',{lovConfig:config.lovConfig, flex: 2, parentStore: this.lovTestPreview.store,lovType: typeStoreValue});
     			this.lovTestPreview.on('storeLoad',this.lovTestConfigurationTree.onParentStoreLoad,this.lovTestConfigurationTree);
@@ -190,12 +185,6 @@ Ext.define
         				previewH = this.lovTestPreview.height;
         			}
         			
-//        			console.log("##########");
-//        			console.log(config.tabPanelHeight);
-//        			console.log(thisH);
-//        			console.log(previewH);
-//        			console.log(this.toolbarHeight);
-        			
         			// The old code:
         			//this.lovTestConfiguration.setHeight(thisH-previewH-this.toolbarHeight);
         			
@@ -206,6 +195,7 @@ Ext.define
         				this.lovTestConfigurationTree.setHeight(thisH-previewH-this.toolbarHeight);
         			}
         		},
+        		
         		"resize" : function(){
         			var thisH = this.getHeight();
         			var previewH;
@@ -218,35 +208,16 @@ Ext.define
         			if(this.treeLov){
         				this.lovTestConfigurationTree.setHeight(thisH-previewH-this.toolbarHeight);
         			}
-        		},
-        		
-       		
-//        		"lovTypeChanged": function(type)
-//        		{
-//        			this.remove();
-//        			console.log(type);
-//        			config.lovConfig.lovType=type;
-//        			lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{contextName: config.contextName,lovConfig:config.lovConfig}); //by alias
-//        			addLovTestEvents(lovTest,lovPanel, lovConfig, modality, contextName);
-//        			lovPanel.add(lovTest);
-//        		}
-          	};
-    		
-//    		this.on('lovTypeChanged',function(type){
-//    			lovPanel.remove(lovTest,'true');
-//    			lovConfig.lovType=type;
-//    			lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel',{contextName: contextName,lovConfig:lovConfig, modality:modality}); //by alias
-//    			addLovTestEvents(lovTest,lovPanel, lovConfig, modality, contextName);
-//    			lovPanel.add(lovTest);
-//    		},this);
-    		
+        		}
+    		};
+        	    		
     		this.lovTestPreview.on
 	    	(
     			"wrongSyntax1",
     			
     			function()
     			{
-    				//console.log("GREEEEEEEEEEESKSA");
+    				Sbi.debug('[INFO] TestLovPanel2 - constructor - wrong syntax error');
     				this.fireEvent('wrongSyntax2',"wrong");
     			},
     			
@@ -258,37 +229,41 @@ Ext.define
         	this.callParent(arguments);
         	this.comboType.on('select',this.updateType,this);
         	
-        	console.log("[OUT] constructor() TestLovPanel2");
+        	Sbi.debug('[OUT] TestLovPanel2 - constructor');
     	},
     	
     	takeValues: function()
     	{
+    		Sbi.debug('[IN&OUT] TestLovPanel2 - takeValues()');
     		return this.lovTestConfiguration.getValues();
     	},
     	
     	setValues: function(data)
     	{
+    		Sbi.debug('[IN&OUT] TestLovPanel2 - setValues()');    	
     		this.lovTestConfiguration.setValues(data);
     	},
     	
     	initServices: function(baseParams)
     	{
-    		console.log("[IN] initServices() TestLovPanel2");
+    		Sbi.debug('[IN] TestLovPanel2 - initServices()');
     		
     		this.services["getSmth"] = Sbi.config.serviceRegistry.getServiceUrl({
     			serviceName: 'LOV/Test',
     			baseParams: baseParams
     		});    		
     		
-    		console.log("[OUT] initServices() TestLovPanel2");
+    		Sbi.debug('[OUT] TestLovPanel2 - initServices()');
     	},   	
     	
     	updateType: function(combo, records,eOpt )
     	{
-    		console.log("--- UPDATE TYPE ---");
+    		Sbi.debug('[IN] TestLovPanel2 - updateType()');
+    		
         	var value = records[0].data.type;  
-        	console.log(value);
         	this.fireEvent('lovTypeChanged',value);
+        	
+        	Sbi.debug('[OUT] TestLovPanel2 - updateType()');
         }
 	}
 );

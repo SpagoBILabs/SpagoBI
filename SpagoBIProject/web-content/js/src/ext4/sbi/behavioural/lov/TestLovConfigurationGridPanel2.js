@@ -22,6 +22,8 @@ Ext.define
 	    constructor: function(config) 
 	    {
 			// I have the semi-filled LOV provider within "config.lovProvider"
+	    	
+	    	Sbi.debug('[IN] TestLovConfigurationGridPanel2 - constructor');
 			
 			this.title =  "Fields";
 
@@ -34,10 +36,7 @@ Ext.define
 					enableDrop: false
 				}
 			};
-							
-//			Sbi.debug('TestLovConfigurationGridPanel costructor IN');
-			console.log("[IN] constructor() TestLovConfigurationGridPanel2");
-			
+										
 			Ext.apply(this,config);
 			
 			this.flex = 1;
@@ -98,23 +97,19 @@ Ext.define
 			
 			this.columns = this.columnsDefinition.slice(0,this.columnsDefinition.length);
 			
-			// "this.columns" - names of the columns in the upper grid
-			
-			
+			// "this.columns" - names of the columns in the upper grid		
 			
 			this.store.load();			
 	    	this.callParent(arguments);
-//	    	Sbi.debug('TestLovConfigurationGridPanel costructor OUT');	
-	    	console.log("[OUT] constructor() TestLovConfigurationGridPanel2");
-	    	
+
+	    	Sbi.debug('[OUT] TestLovConfigurationGridPanel2 - constructor');	    	
 		},
 		
 		/* This function is called from the outer class (JS file) - e.g "TestLovPanel2.js" 
 		 * It is used for populating the lower grid with data. */
 		onParentStoreLoad: function()
 		{
-			//console.log("/////");
-			//console.log(this.parentStore);
+			Sbi.debug('[IN] TestLovConfigurationGridPanel2 - onParentStoreLoad()');
 			
 			/* This is something I added in order to prevent error due to 
 			 * wrong syntax for defined SQL (query) */
@@ -122,12 +117,9 @@ Ext.define
 			if (this.parentStore.proxy.reader.jsonData.metaData != undefined)
 			{
 				var fields = this.parentStore.proxy.reader.jsonData.metaData.fields;
-				
-				//console.log("4444444");
-				//console.log(fields);
-				
+								
 				if(fields!=null && fields!=undefined && fields.length>0){
-					//console.log("USAO 1");
+					
 					var data = [];
 					
 	//				for(var i=0; i<fields.length; i++){
@@ -171,28 +163,29 @@ Ext.define
 					);
 					
 					this.store.load();
-					//console.log("USAO 3");
 					this.columns = this.columnsDefinition.slice(0,this.columnsDefinition.length);
-					//console.log(this.columns);
 					this.reconfigure(this.store);
-					//console.log("USAO 4");
 				}
 			}
 			
-		}
+			Sbi.debug('[OUT] TestLovConfigurationGridPanel2 - onParentStoreLoad()');
+		}, 
 		
-		, getValues: function(){
+		getValues: function()
+		{
+			Sbi.debug('[IN] TestLovConfigurationGridPanel2 - getValues()');
+			
 			var value;
 			var description;
 			var visible =[]; 
 			var data = this.store.data;
 			
-			console.log("%%$$$%%%$$%%$$");
-			console.log(data);
-			
-			if(data!=null && data!=undefined && data.items!=null && data.items!=undefined ){
-				for(var i=0; i<data.items.length; i++){
+			if(data!=null && data!=undefined && data.items!=null && data.items!=undefined )
+			{
+				for(var i=0; i<data.items.length; i++)
+				{
 					var aItem = data.items[i];
+					
 					if(aItem.data.isValue){
 						value = aItem.data.name;
 					}
@@ -232,32 +225,52 @@ Ext.define
 				return LOVConfiguration;
 			}
 			
+			Sbi.debug('[OUT] TestLovConfigurationGridPanel2 - getValues()');
 		},
 	
-		setValues: function(data){
-			//console.log("SDSSSSS - setValues");
+		setValues: function(data)
+		{			
+			Sbi.debug('[IN] TestLovConfigurationGridPanel2 - setValues()');
+			
 			this.column = [];
-			if(data!=null && data!=undefined && this.lovConfig!=null && this.lovConfig!=undefined){
-				for(var i=0; i<data.length; i++){
+			
+			if(data!=null && data!=undefined && this.lovConfig!=null && this.lovConfig!=undefined)
+			{
+				for(var i=0; i<data.length; i++)
+				{
 					var aItem = data[i];
-					if(aItem.name == this.lovConfig.valueColumnName){
+					
+					if(aItem.name == this.lovConfig.valueColumnName)
+					{
 						aItem.isValue = true;
-					}else{
+					}
+					else
+					{
 						aItem.isValue = false;
 					}
-					if(aItem.name == this.lovConfig.descriptionColumnName ){
+					
+					if(aItem.name == this.lovConfig.descriptionColumnName )
+					{
 						aItem.isDescription = true;
-					}else{
+					}else
+					{
 						aItem.isDescription = false;
 					}
-					if(this.lovConfig.visibleColumnNames.indexOf(aItem.name)>=0){
+					
+					if(this.lovConfig.visibleColumnNames.indexOf(aItem.name)>=0)
+					{
 						aItem.isVisible = true;
-					}else{
+					}
+					else
+					{
 						aItem.isVisible = false;
 					}
+					
 					this.column.push(aItem.name);
 				}
 			}
+			
+			Sbi.debug('[OUT] TestLovConfigurationGridPanel2 - setValues()');
 		}
 	
 	}

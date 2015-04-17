@@ -35,17 +35,19 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel2', {
         multiSelect: true,
         singleExpand: true,
         serializedTree: {}
-    }
-
-    , constructor: function(config) {
+    }, 
+    
+    constructor: function(config) 
+    {
+    	Sbi.debug('[IN] TestLovTreePanel2 - constructor');
+    	
 		this.title =  "Tree LOV definition";
-
-     	console.log("PAAAAANEEEEEEELLLLL...");
-     	console.log(config.lovConfig);
 		
     	Ext.apply(this,config||{});
     	var thisPanel = this;
-        this.viewConfig = {
+      
+    	this.viewConfig = 
+    	{
             plugins: {
                 ptype: 'treeviewdragdrop',
                 containerScroll: true
@@ -137,6 +139,8 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel2', {
         
         
         },this);
+        
+        Sbi.debug('[OUT] TestLovTreePanel2 - constructor');
     }
     
     //Add the node in the tree as leaf
@@ -308,31 +312,27 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel2', {
     	return listTreeColumnNames;
     },
     
-    setValues: function(config){
+    setValues: function(config)
+    {
+    	Sbi.debug('[IN] TestLovTreePanel2 - setValues()');
+    	
 //    	var treeColumnNames = config.treeColumnNames;
     	var treeColumnNames = this.getTreeColumnNames(config);
     	var valueColumnName = config.valueColumnName;
     	var descriptionColumnName = config.descriptionColumnName;
     	
-    	console.log("##### TREE ####");
-    	console.log(treeColumnNames);
-    	console.log(valueColumnName);
-    	console.log(descriptionColumnName);
     	
     	if(treeColumnNames!=null && treeColumnNames.length>0)
     	{
     		for(var i=0; i<treeColumnNames.length-1; i++)
     		{
-    			console.log("****//***");
-    			console.log(treeColumnNames[i]);
     			this.addTreeNode({name: treeColumnNames[i]});
     		}
     		
-    		console.log("****--***");
-			console.log(valueColumnName);
-			console.log(descriptionColumnName);
     		this.addTreeNode({name: valueColumnName, description: descriptionColumnName });    	
     	}
+    	
+    	Sbi.debug('[OUT] TestLovTreePanel2 - setValues()');
     }
     
     //set the the description equal to the value

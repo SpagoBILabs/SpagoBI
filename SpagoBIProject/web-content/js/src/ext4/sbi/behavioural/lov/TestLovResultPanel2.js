@@ -37,7 +37,7 @@ Ext.define
 		
 		constructor: function(config) 
 		{	
-			console.log("[IN] constructor() TestLovResultPanel2");
+			Sbi.debug('[IN] TestLovResultPanel2 - constructor');
 			
 			var defautlConf = 
 			{ 
@@ -59,8 +59,6 @@ Ext.define
 			defautlConf = Ext.apply( defautlConf, config || {} );
 			
 			Ext.apply(this, defautlConf);
-			
-			//Sbi.debug('TestLovPanel costructor IN');
 			
 			defautlConf.serviceUrl = "http://localhost:8080/SpagoBI/restful-services/LOV/Test";
 	    	
@@ -91,8 +89,7 @@ Ext.define
     			this
 	    	);
 	    	
-	    	//Sbi.debug('TestLovPanel costructor OUT');
-	    	console.log("[OUT] constructor() TestLovResultPanel2");
+	    	Sbi.debug('[OUT] TestLovResultPanel2 - constructor');
 		}	
 	}
 );

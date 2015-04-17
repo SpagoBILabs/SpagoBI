@@ -37,6 +37,8 @@ Ext.define
 	    
 	    constructor: function(config)
     	{	    	
+	    	Sbi.debug('[IN] LOVDetailPanel - constructor');
+	    	
 	    	this.initConfig(config);
 	    	
 	    	this.initFields();
@@ -68,7 +70,7 @@ Ext.define
 	    	    	[	
 	    	    	 	{
 	    	    	 		title: "LOV Form",
-	    	    	 		items: [ this.panel1, this.panel2, this.panel3 ],
+	    	    	 		items: [ this.panel1, this.panel2, this.panel3, this.panel5 ],
 	    	    	 		border: false
 	    	    	 	}, 
 	    	    	 	
@@ -167,23 +169,25 @@ Ext.define
 				this
 			);
 	    	
+	    	Sbi.debug('[OUT] LOVDetailPanel - constructor');
+	    	
     	},
     	
     	takeValues: function()
     	{
+    		Sbi.debug('[IN&OUT] LOVDetailPanel - takeValues()');
     		return this.resultPanel.getComponent("TEST_LOV_PANEL").takeValues();
     	},
     	
     	setValues: function(data)
     	{
+    		Sbi.debug('[IN&OUT] LOVDetailPanel - setValues()');
     		this.resultPanel.getComponent("TEST_LOV_PANEL").setValues(data);
     	},
     	
     	updatePanel: function(contextName, lovConfig, lovProvider)
     	{
-    		console.log("[IN] updatePanel() LOVDetailPanel");
-    		
-    		//console.log(lovProvider);
+    		Sbi.debug('[IN] LOVDetailPanel - updatePanel()');
     		
     		this.resultPanel.removeAll();
     		
@@ -213,6 +217,8 @@ Ext.define
     				 * the last known (good, valid) SQL query (the query that existed) 
     				 * previously for this LOV. */
     				
+    				Sbi.debug('[IN] LOVDetailPanel - updatePanel() - wrong syntax error');
+    				
     				var startStatement = -1;
         			var endStatement = -1;
         			var oldStatement = "";
@@ -222,11 +228,7 @@ Ext.define
     				
     				this.getComponent("TAB_PANEL_RESULTS").tabBar.items.items[1].hide();
     				this.getComponent("TAB_PANEL_RESULTS").setActiveTab(0);    	
-        			
-    				console.log("#@#@#@#@#@#@#@#");    				
-    				console.log(this.lovProvider.value);
-    				console.log(this.lovProvider.lastValue);
-    				
+        			    				
     				var lovProviderValue = "";
     				
     				if (this.lovId.value == 0)
@@ -267,10 +269,10 @@ Ext.define
             			var endScriptType = lovProviderValue.indexOf("</LANGUAGE>");
             			var scriptType = lovProviderValue.substring(startScriptType,endScriptType);
             			
-            			// !!!! Ovim resenjem uopste nisam odusevljen
-            			if (scriptType == "ECMAScript") 	// vidjeno u ScripDetail.java
+            			// !!!! Is this allowed ???
+            			if (scriptType == "ECMAScript") 	// saw in ScripDetail.java
             				scriptType = "Javascript";
-            			else if (scriptType == "groovy") 	// vidjeno u ScripDetail.java
+            			else if (scriptType == "groovy") 	// saw in u ScripDetail.java
             				scriptType = "Groovy";
             			
             			this.scriptTypeCombo.setValue(scriptType);
@@ -279,21 +281,22 @@ Ext.define
         				{
     						this.scriptQuery.markInvalid("Wrong syntax for selected script type: " + scriptType + ". Try again...");
         				}
-					}   
+					}  
     				
+    				Sbi.debug('[OUT] LOVDetailPanel - updatePanel() - wrong syntax error');
     			},
     			
     			this
 	    	);
     		
     		lovTest.on('lovTypeChanged',function(type){
-    			console.log("[START] lovTypeChanged EVENT");
+    			
 				this.resultPanel.remove(lovTest,'true');
 				lovConfig.lovType=type;
 				lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel2',{contextName: contextName,lovConfig:lovConfig, lovProvider: lovProvider, tabPanelHeight: window.innerHeight}); //by alias
 				//addLovTestEvents(lovTest, lovConfig, contextName);
 				this.resultPanel.add(lovTest);
-				console.log("LLLL");
+				
 			},this);
     		
     		this.resultPanel.add
@@ -302,19 +305,16 @@ Ext.define
 			);
     		
     		this.resultPanel.update(); 
-    		
-//    		console.log(this.resultPanel);  		
-//    		console.log("----*");    	
-    		
-    		console.log("[OUT] updatePanel() LOVDetailPanel");
+    		    		
+    		Sbi.debug('[OUT] LOVDetailPanel - updatePanel()');
     	},    	
     	
     	
     	initFields: function()
     	{
-    		var globalScope = this;    		    		
+    		Sbi.debug('[IN] LOVDetailPanel - initFields()');
     		
-    		//this.testLov = Ext.create("Sbi.behavioural.lov.TestLovPanel2",{});
+    		var globalScope = this;    		    		
     		
     		this.lovId = Ext.create
     		(
@@ -427,10 +427,11 @@ Ext.define
     			
     			function(inputTypeStore)
     			{ 
+    				Sbi.debug('[INFO] Input type store loaded');
     			}
 			);
     		
-    		this.lovInputTypeCombo = new Ext.create
+    		this.lovInputTypeCombo = Ext.create
     		(
 				'Ext.form.ComboBox', 
 	    		
@@ -454,6 +455,200 @@ Ext.define
 			        }
 	    	    }
 			);
+    		
+    		var globalThis = this;
+    		
+    		this.lovFixedListForm = Ext.create
+    		(
+    			"Ext.form.Panel",
+    			
+    			{
+    				title: 'Fix LOV Form',
+    				width: "100%",    				
+    				padding: '10 10 5 10',	// (top, right, bottom, left)
+    				id: "FixLOVForm",
+    				
+    				defaultType: 'textfield',
+    				
+    				items: 
+					[					 	
+					 	{					 		
+					 		fieldLabel: 'Value',
+					 		name: 'FixLovValue',
+					 		id: "FixLovValue",
+					 		width: 400,
+					 		padding: "10 0 10 0"
+				 		},
+				 		
+				 		{
+					 		fieldLabel: 'Description',
+					 		name: 'FixLovDescription',
+					 		id: "FixLovDescription",
+					 		width: 400,
+					 		allowBlank: false,
+					 		padding: "10 0 10 0"
+				 		},
+				 		
+				 		{
+				 			xtype: 'button',
+				            text: 'Add',				           
+				            margin: '0 5 15 300',  	// (top, right, bottom, left)
+				            width: 100,
+				            //scope: this,
+				            
+				            handler: function() 
+					        {			
+				            	Sbi.debug('[IN] LOVDetailPanel - initFields() - "Add" button handler');
+				            	
+					        	if ( globalThis.lovLabel.value != "" && globalThis.lovName.value != "" )
+					        	{
+						            var form = this.up('form').getForm();
+						            var fixLovValue = form._fields.items[0].value;
+						        	var fixLovDescription = form._fields.items[1].value;	
+						        	
+						            if (fixLovValue != "" && fixLovValue != undefined && 
+						            		fixLovDescription != "" && fixLovDescription != undefined) 
+						            {				
+						            	globalThis.fixLovStore.add({value: fixLovValue, description: fixLovDescription});		
+						            	form.reset();
+						            	globalThis.fixLovGrid.getView().focusRow(globalThis.fixLovStore.getCount()-1);
+						            }
+						            else
+					            	{							        		
+						            	if (fixLovValue == "" || fixLovValue == undefined)
+						        		{
+							        		//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.fixLovValueMissing'));	
+							        		form._fields.items[0].markInvalid(LN('sbi.behavioural.lov.details.fixLovValueMissing'));
+						        		}
+							        	else if (fixLovDescription == "" || fixLovDescription == undefined)
+						        		{
+							        		//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.fixLovDescriptionMissing'));
+							        		form._fields.items[1].markInvalid(LN('sbi.behavioural.lov.details.fixLovDescriptionMissing'));
+						        		}
+					            	}
+					        	}
+					        	else 
+				        		{					        		
+					        		Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.lovDetailMissing'));
+				        		}
+					        	
+					        	Sbi.debug('[OUT] LOVDetailPanel - initFields() - "Add" button handler');
+					        }
+				 		}
+					]
+    			}
+    		);
+    		
+    		var fixLovModel = Ext.define
+    		(
+				'FixLovModel', 
+				
+				{
+					extend: 'Ext.data.Model',
+					
+	    		    fields: 
+    		    	[
+	    		        {name: 'value',  type: 'string'},
+	    		        {name: 'description',   type: 'string'}
+    		        ]
+    		    }
+    		);
+    		
+    		this.fixLovStore = Ext.create
+    		(
+    			'Ext.data.Store',
+    			
+    			{
+    				model: "FixLovModel"
+    			}
+    		);   
+    		
+//    		this.fixLovStore.load({
+//    			  callback: function(){this.rememberOriginalFixLovStore();}
+//
+//    			 });
+//    		
+//    		this.fixLovStore.load
+//        	(
+//        			{ callback: function(){console.log("alkslfkahslkjdh");}	}
+//			);
+    		
+//    		this.copyOfFixLovStore = Ext.create
+//    		(
+//    			'Ext.data.Store',
+//    			
+//    			{
+//    				model: "FixLovModel"
+//    			}
+//    		);    		
+    		
+    		
+    		this.fixLovGrid = Ext.create
+    		(
+    			"Ext.grid.Panel",
+    			
+    			{
+    				title: "Fix LOV grid panel",
+    				store: this.fixLovStore,
+    				padding: "10 10 10 10",
+    				width: "100%",
+    				autoScroll: true,
+    				//overflowY: 'auto',
+    			    //overflowX: 'auto',
+    			    height: 350,
+    				
+    				columns:
+					[
+						{ text: "Value", dataIndex: "value", flex: 1, editor: 'textfield' },
+						{ text: "Description", dataIndex: "description",  flex: 1, editor: 'textfield'},
+						
+						{
+			                xtype: 'actioncolumn',
+			                width: 20,
+			                
+			                items: 
+		                	[
+			                	 {
+				                	iconCls: 'button-remove',
+				                    
+				                	handler: function(grid, rowIndex, colindex) 
+				                	{
+				                        var recordToDelete = globalThis.fixLovStore.getAt(rowIndex);
+				                        globalThis.fixLovGrid.getStore().remove(recordToDelete);
+				                    }
+			                	 }
+		                	 ]
+			            },
+			            
+			            {
+			                xtype: 'actioncolumn',
+			                width: 40,
+			                
+			                items: 
+		                	[
+			                	 {
+				                	iconCls: 'button-remove',
+				                    
+				                	handler: function(grid, rowIndex, colindex) 
+				                	{
+//				                		var originalFixLovGridStore = globalThis.fixLovStore;
+//				                        globalThis.fixLovGrid.reconfigure(originalFixLovGridStore);
+//				                        globalThis.fixLovGrid.update();
+//				                        console.log(originalFixLovGridStore);
+				                		//console.log(globalThis.modifiedFixLovStoreData);
+				                		//globalThis.rememberOriginalFixLovStore();
+				                    }
+			                	 }
+		                	 ]
+			            }
+					],
+					
+					plugins: 
+					[					           
+			           Ext.create('Ext.grid.plugin.CellEditing', {})
+		            ]
+    			}
+    		);
     		
     		this.panel1 = Ext.create
     		(
@@ -514,6 +709,7 @@ Ext.define
     			
     			function(dataSourceStore)
     			{ 
+    				Sbi.debug('[INFO] Data source store loaded (QUERY)');
     			}
 			);
     		
@@ -544,7 +740,8 @@ Ext.define
 					id: "DATA_SOURCE_QUERY",
 					height: 100,
 					width: 500,
-					padding: '10 0 10 0'
+					padding: '10 0 10 0',
+					allowBlank: false
 				}
     		);
     		
@@ -588,7 +785,7 @@ Ext.define
     			
     			function(scriptTypeStore)
     			{ 
-    				//console.log(scriptTypeStore);
+    				Sbi.debug('[INFO] Script type  store loaded (SCRIPT)');
     			}
 			);
         	
@@ -605,15 +802,7 @@ Ext.define
 	    	        valueField:'VALUE_NM',
 	    	        editable: false,
 	    	        allowBlank: false,
-	    	        padding: "10 0 10 0",
-	    	        
-	    	        listeners: 
-			        {
-			            change: function() 
-			            {
-			            	console.log("AAAA");
-			            }
-			        }
+	    	        padding: "10 0 10 0"
 	    	    }
 			);
     		
@@ -626,7 +815,8 @@ Ext.define
 					fieldLabel: LN('sbi.behavioural.lov.details.scriptDescription'),
 					height: 100,
 					width: 500,
-					padding: '10 0 10 0'
+					padding: '10 0 10 0',
+					allowBlank: false
 				}
     		);
     		
@@ -661,17 +851,59 @@ Ext.define
     			}
     		);
     		
+    		this.panel5 = Ext.create
+    		(
+				"Ext.panel.Panel",
+    			
+    			{
+    				width: "100%",
+    				// (top, right, bottom, left)
+    				padding: '5 10 5 10',
+    				id: "PANEL5",
+//    				overflowY: 'auto',
+//    			    overflowX: 'auto',
+    				
+    				items: 
+					[ this.lovFixedListForm ]    				
+    			}	
+    		);
     		
+    		this.panel5.add(this.fixLovGrid);    		
+    		
+    		Sbi.debug('[OUT] LOVDetailPanel - initFields()');
     	},
     	
     	
+    	rememberOriginalFixLovStore: function()
+    	{
+    		this.fixLovStore.load();
+    		var modifiedFixLovStoreData = this.fixLovStore.data;
+    		console.log("UUUURRRUURURUURURURURURU");
+    		
+    		console.log(this.fixLovStore.getCount());
+    		console.log(modifiedFixLovStoreData.length);
+    		
+    		for (var i=0; i<this.fixLovStore.data.length; i++)
+			{
+    			console.log(modifiedFixLovStoreData[i]);
+    			this.copyOfFixLovStore.add(modifiedFixLovStoreData[i]);
+			}
+    		
+    		console.log(this.copyOfFixLovStore);
+    		
+    		//return this.modifiedFixLovStoreData;
+    	},
+    	
+    	/* Function responsible for showing/hiding certain panels on
+    	 * the right-side part of the page. Final result depends on the
+    	 * selected input type for LOV. */
     	selectedInputType: function(inputTypeCD)
 		{    			
-			var type = -1;
-			//this.panel2.show();
+//    		Sbi.debug('[IN] LOVDetailPanel - selectedInputType()');
 			
 			this.panel2.hide();
 			this.panel3.hide();
+			this.panel5.hide();
 			
 			if (inputTypeCD == "QUERY")
 			{
@@ -681,27 +913,33 @@ Ext.define
 			{
 				this.panel3.show();
 			}
+			else if (inputTypeCD == "FIX_LOV")
+			{
+				this.panel5.show();
+			}
 			
+//			Sbi.debug('[OUT] LOVDetailPanel - selectedInputType()');
 		},
     	
     	getValues: function()
     	{
+    		Sbi.debug('[IN] LOVDetailPanel - getValues()');
     		var values = this.callParent();
+    		Sbi.debug('[OUT] LOVDetailPanel - getValues()');
     		return values;
     	},    
     	
     	setFormState: function(values)
     	{    		
+//    		Sbi.debug('[IN] LOVDetailPanel - setFormState()');
+    		
     		this.selectedInputType(values.I_TYPE_CD);
     		
-//    		console.log("PROVERA ID-eva");
-//			console.log(values.LOV_ID);
-//			console.log(values.I_TYPE_ID);
     		/* *** 	Problem solved: Keeping panel 2 details (combo and text area) from 
     		 * 		the old record in the new one. */
     		
     		// Needed for differentiating between old (existing) record and the new one
-    		if (values.LOV_ID != 0)
+    		if (values.LOV_ID != 0) // If the selected record already exists
     		{           			
     			this.lovInputTypeCombo.setValue(values.I_TYPE_CD);
     			    			
@@ -737,14 +975,44 @@ Ext.define
         			var startScript = query.indexOf("<SCRIPT>")+"<SCRIPT>".length;
         			var endScript = query.indexOf("</SCRIPT>");
         			this.scriptQuery.setValue(query.substring(startScript,endScript));
-    			}        		
-        		
-        		//this.selectedInputType(values.I_TYPE_CD);				
+    			}  
+    			
+    			else if (values.I_TYPE_CD == "FIX_LOV")
+				{   	
+    				
+    				//this.rememberOriginalFixLovStore();
+    				
+    				var startFixLov = query.indexOf("<ROWS>")+"<ROWS>".length;
+        			var endFixLov = query.indexOf("</ROWS>");
+        			var fixLovRows = query.substring(startFixLov,endFixLov);
+    				var listRows = fixLovRows.split("<ROW ");
+    				
+    				this.lovFixedListForm.getComponent("FixLovValue").setValue("");
+    				this.lovFixedListForm.getComponent("FixLovDescription").setValue("");    	
+    				
+    				this.fixLovStore.removeAll();
+    				
+    				for (var i=1; i<listRows.length; i++)
+					{
+    					var valueStart = listRows[i].indexOf("VALUE=")+"VALUE=".length + 1;
+        				var valueEnd = listRows[i].indexOf("\" DESCRIPTION");
+        				var valueFixLov = listRows[i].substring(valueStart,valueEnd);
+        				
+        				var descriptionStart = listRows[i].indexOf("DESCRIPTION=")+"DESCRIPTION=".length + 1;
+        				var descriptionEnd = listRows[i].indexOf("/>")-1;
+        				var descriptionFixLov = listRows[i].substring(descriptionStart,descriptionEnd);
+        				
+        				this.fixLovStore.insert(i,{value: valueFixLov, description: descriptionFixLov});        				
+					} 
+    				
+    				this.fixLovGrid.reconfigure(this.fixLovStore);
+    				this.fixLovGrid.update();
+				}			
     		}
-    		else
+    		else // If the selected record is the new one
 			{
     			this.lovInputTypeCombo.setValue(values.I_TYPE_CD);
-    			
+    			    			
     			// For query (data source)
     			this.dataSourceCombo.setValue("");
     			this.dataSourceQuery.setValue("");
@@ -752,23 +1020,28 @@ Ext.define
     			// For script
     			this.scriptTypeCombo.setValue("");
     			this.scriptQuery.setValue("");
+    			
+    			/* Avoiding copying data of already existing fix LOVs onto
+    			 * the fresh one of that does not contain any record. */
+    			this.fixLovStore.removeAll();
 			}
     		
-    		this.getForm().setValues(values);    		
+    		this.getForm().setValues(values);  
+    		
+//    		Sbi.debug('[OUT] LOVDetailPanel - setFormState()');
     	},
     	
     	getFormState: function(phaseOfLov)
-    	{    		
+    	{     
+    		Sbi.debug('[IN] LOVDetailPanel - getFormState()');
+    		
     		var getLovId = this.lovId.value;
     		var getLovName = this.lovName.value;
     		var getLovDescription = this.lovDescription.value;
     		var getLovLabel = this.lovLabel.value;
-    		
-    		console.log(" +++++ getFormState +++++ ");
-    		
+    		    		    		
     		if (this.lovInputTypeCombo.getValue() == "QUERY")
-			{    
-    			
+			{        			
     			var getLovProvider = "";
     			
     			var startDataSource = this.lovProvider.value.indexOf("<CONNECTION>")+"<CONNECTION>".length;
@@ -779,7 +1052,7 @@ Ext.define
     			var endStatement = this.lovProvider.value.indexOf("</STMT>");
     			var oldStatement = this.lovProvider.value.substring(startStatement,endStatement);
     			
-    			// Prethodna varijanta: zakomentarisano 9.4. u 1:06 sati 
+    			// Previous version: commented 9.4. at 1:06 AM 
     			if (phaseOfLov == "testPhase" && (getLovId == 0 || oldDataSource != this.dataSourceCombo.getValue() || 
     					oldStatement != this.dataSourceQuery.getValue())) // Test phase
 //    			if (phaseOfLov == "testPhase" && getLovId == 0 && 
@@ -807,8 +1080,6 @@ Ext.define
 //    						dataSourceQueryValue = oldStatement;
 //    				}
     				
-    				// Za svaki tip LOV-a podaci o XML formi za upit se mogu naci u Java klasama na ovoj putanji: 
-    				// C:\eclipse-jee-luna-SR1a-win32-x86_64\MyWorkspace\SpagoBIDAO\src\it\eng\spagobi\behaviouralmodel\lov\bo
     				getLovProvider = 
     					"<QUERY>" + 
     						"<CONNECTION>" + this.dataSourceCombo.getValue() + "</CONNECTION>" + 
@@ -821,8 +1092,7 @@ Ext.define
     						"<TREE-LEVELS-COLUMNS>" + "</TREE-LEVELS-COLUMNS>" +
 						"</QUERY>";
     				
-    				// Need to attach this XML query to LOV provider for later filling with data
-    				
+    				// Need to attach this XML query to LOV provider for later filling with data    				
     				
     				if (getLovId == 0 || oldDataSource != this.dataSourceCombo.getValue())
     					this.lovProvider.value = getLovProvider;    				
@@ -834,7 +1104,8 @@ Ext.define
     			    			
     			var getInputTypeCd = "QUERY";
     			var getInputTypeId = 1; 
-			}    			
+			}    
+    		
     		else if (this.lovInputTypeCombo.getValue() == "SCRIPT")
 			{
     			var getInputTypeCd = "SCRIPT";
@@ -849,18 +1120,12 @@ Ext.define
     			var endScript = this.lovProvider.value.indexOf("</SCRIPT>");
     			var oldScript = this.lovProvider.value.substring(startScript,endScript);
     			
-    			// !!!! Ovim resenjem uopste nisam odusevljen
-    			if (oldScriptType == "ECMAScript") 	// vidjeno u ScripDetail.java
+    			// !!!! Maybe change...
+    			if (oldScriptType == "ECMAScript") 	// saw in ScripDetail.java
     				oldScriptType = "Javascript";
-    			else if (oldScriptType == "groovy") 	// vidjeno u ScripDetail.java
+    			else if (oldScriptType == "groovy") 	// saw in ScripDetail.java
     				oldScriptType = "Groovy";
     			
-	    		console.log("-+-+-+-+-");
-	    		console.log(getLovId);
-	    		console.log(oldScriptType);
-	    		console.log(this.scriptTypeCombo.getValue());
-	    		console.log(oldScript);
-	    		console.log(this.scriptQuery.getValue());
     			
     			if (phaseOfLov == "testPhase" && (getLovId == 0 || 
     					oldScriptType != this.scriptTypeCombo.getValue() || 
@@ -868,10 +1133,10 @@ Ext.define
 				{
     				var scriptType = this.scriptTypeCombo.getValue();
     				
-    				// !!!! Ovim resenjem uopste nisam odusevljen (obrnut smer od setFormState)
-        			if (scriptType == "Javascript") 	// vidjeno u ScripDetail.java
+    				// !!!! Maybe change... (different direction then one in setFormState)
+        			if (scriptType == "Javascript") 	// saw in ScripDetail.java
         				scriptType = "ECMAScript";
-        			else if (scriptType == "Groovy") 	// vidjeno u ScripDetail.java
+        			else if (scriptType == "Groovy") 	// saw in ScripDetail.java
         				scriptType = "groovy";
     				
     				// ScriptDetail.java
@@ -894,19 +1159,96 @@ Ext.define
 				{   		
     				getLovProvider = this.lovProvider.value; 
 				}
-			}    			
+			} 
+    		
     		else if (this.lovInputTypeCombo.getValue() == "FIX_LOV")
 			{
     			var getInputTypeCd = "FIX_LOV";
     			var getInputTypeId = 3; 
     			var getLovProvider = "";
-			}    			
+    			
+    			var fixLovStore = this.panel5.items.items[1].getStore();
+    			
+    			var getLovProvider = "";
+    			
+    			if (phaseOfLov == "testPhase" && getLovId == 0) // Test phase
+				{    			
+	    			getLovProvider = "<FIXLISTLOV>";
+	    			getLovProvider += "<ROWS>";
+				
+	    			var fixLovCount = fixLovStore.getCount();
+	    			
+	    			var fixLovValue = "";
+	    			var fixLovDescription = "";
+	    			
+	    			for (var i=0; i<fixLovCount; i++)
+					{
+	    				fixLovValue = fixLovStore.data.items[i].data.value;
+	    				fixLovDescription = fixLovStore.data.items[i].data.description;
+	    				
+	    				getLovProvider += "<ROW" +
+						  " VALUE=\"" + fixLovValue + "\"" +
+						  " DESCRIPTION=\"" + fixLovDescription + "\"" +
+						  "/>";
+					}
+	    			
+	    			getLovProvider += "</ROWS>";
+	    			getLovProvider += "<VALUE-COLUMN>"+"</VALUE-COLUMN>" +
+	    					  "<DESCRIPTION-COLUMN>"+"</DESCRIPTION-COLUMN>" +
+	    					  "<VISIBLE-COLUMNS>"+"</VISIBLE-COLUMNS>" +
+	    					  "<INVISIBLE-COLUMNS>"+"</INVISIBLE-COLUMNS>" +
+	    					  "<LOVTYPE>" + "</LOVTYPE>" +
+	    					  "<TREE-LEVELS-COLUMNS>"+"</TREE-LEVELS-COLUMNS>" +
+	    					  "</FIXLISTLOV>";
+	    			
+	    			if (getLovId == 0)
+    					this.lovProvider.value = getLovProvider;   
+				}
+    			
+    			else
+				{
+    				getLovProvider = this.lovProvider.value; 
+    				
+    				var oldLovProvider = this.lovProvider.value;
+    				var newFixLovProvider = "";
+    				
+    				var startFixLovProv = oldLovProvider.indexOf("<FIXLISTLOV>")+"<FIXLISTLOV>".length;
+    				var endFixLovProv = oldLovProvider.indexOf("<VALUE-COLUMN>");
+    				
+    				var fixLovProvider = oldLovProvider.substring(startFixLovProv,endFixLovProv);
+    				
+    				newFixLovProvider = "<ROWS>";
+    				
+	    			var fixLovCount = fixLovStore.getCount();
+	    			
+	    			var fixLovValue = "";
+	    			var fixLovDescription = "";
+	    			
+	    			for (var i=0; i<fixLovCount; i++)
+					{
+	    				fixLovValue = fixLovStore.data.items[i].data.value;
+	    				fixLovDescription = fixLovStore.data.items[i].data.description;
+	    				
+	    				newFixLovProvider += "<ROW" +
+						  " VALUE=\"" + fixLovValue + "\"" +
+						  " DESCRIPTION=\"" + fixLovDescription + "\"" +
+						  "/>";
+					}
+	    			
+	    			newFixLovProvider += "</ROWS>";
+    				
+    				getLovProvider = oldLovProvider.substring(0,startFixLovProv) + newFixLovProvider + oldLovProvider.substring(endFixLovProv,oldLovProvider.length);
+				}
+    			
+			} 
+    		
     		else if (this.lovInputTypeCombo.getValue() == "JAVA_CLASS")
 			{
     			var getInputTypeCd = "JAVA_CLASS";
     			var getInputTypeId = 4; 
     			var getLovProvider = "";
-			}    			
+			}
+    		
     		else if (this.lovInputTypeCombo.getValue() == "DATASET")
 			{
     			var getInputTypeCd = "DATASET";
@@ -916,7 +1258,7 @@ Ext.define
     		
     		var getSelectionType = "";
     		
-    		var model1 = Ext.create
+    		var modelOfCurrentLov = Ext.create
 			(
 				"Sbi.behavioural.lov.LOVModel",
 				
@@ -932,7 +1274,9 @@ Ext.define
 				}
 			);    		
     		
-    		return model1;
+    		Sbi.debug('[OUT] LOVDetailPanel - getFormState()');
+    		
+    		return modelOfCurrentLov;
     	}
     	
 	}

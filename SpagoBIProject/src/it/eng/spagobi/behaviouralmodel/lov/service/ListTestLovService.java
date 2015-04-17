@@ -6,6 +6,7 @@ import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
@@ -50,6 +51,8 @@ public class ListTestLovService {
 			@QueryParam("columnsFilterValue") String columnsFilter, @QueryParam("typeValueFilter") String typeValueFilter,
 			@QueryParam("typeFilter") String typeFilter) {
 
+		logger.debug("IN");
+
 		JSONObject response = new JSONObject();
 
 		try {
@@ -69,6 +72,8 @@ public class ListTestLovService {
 			// If the LOV type is QUERY ...
 			if (typeLov.equalsIgnoreCase("QUERY")) {
 
+				logger.debug("IN (LOV type is QUERY)");
+
 				// Create QueryDetail object that is based on the LOV provider XML
 				QueryDetail qd = QueryDetail.fromXML(name);
 
@@ -82,7 +87,9 @@ public class ListTestLovService {
 
 					dataStore = executeSelect(datasource, statement, page, start, limit, columnsFilter, valueFilter);
 
-					// !!! MORAM OVO POPRAVITI - ne moze da se proverava samo filter po kolonama!!!
+					/*
+					 * If we want to filter LOV results, "columnsFilter" will not be empty or null.
+					 */
 					if (columnsFilter != null && columnsFilter != "") {
 
 						int numberOfColumns = dataStore.getMetaData().getFieldCount();
@@ -124,24 +131,27 @@ public class ListTestLovService {
 					response.put("testExecuted", "false");
 
 				}
+
+				logger.debug("OUT (LOV type is QUERY)");
 			}
 
-			// !!!! Testiranje nedostaje za SCRIPT !!!!
+			// !!!! SCRIPT filtering is missing !!!!
 			else if (typeLov.equalsIgnoreCase("SCRIPT")) {
 
+				logger.debug("IN (LOV type is SCRIPT)");
+
 				ScriptDetail sd = ScriptDetail.fromXML(name);
-				String script = sd.getScript();
+				// I think this is unnecessary...
+				// String script = sd.getScript();
 
 				try {
-
-					script = StringUtilities.substituteProfileAttributesInString(script, profile);
+					// I think this is unnecessary...
+					// script = StringUtilities.substituteProfileAttributesInString(script, profile);
 
 					DataStore lovResult = sd.getLovResultAsDataStore(profile, null, null, null);
 
 					JSONDataWriter dataSetWriter = new JSONDataWriter();
 					response = (JSONObject) dataSetWriter.write(lovResult);
-
-					// System.out.println(lovResult);
 
 				} catch (Exception e) {
 
@@ -158,10 +168,25 @@ public class ListTestLovService {
 					response.put("testExecuted", "false");
 
 				}
+
+				logger.debug("OUT (LOV type is SCRIPT)");
+			}
+
+			else if (typeLov.equalsIgnoreCase("FIXED_LIST")) {
+
+				logger.debug("IN (LOV type is FIX LOV)");
+
+				FixedListDetail fd = FixedListDetail.fromXML(name);
+				DataStore result = fd.getLovResultAsDataStore(profile, null, null, null);
+
+				JSONDataWriter dataSetWriter = new JSONDataWriter();
+				response = (JSONObject) dataSetWriter.write(result);
+
+				logger.debug("OUT (LOV type is FIX LOV)");
 			}
 
 			/*
-			 * if (executoin was successful) { return datasotre as it is -- writeBackToClient(new JSONSuccess(dataStoreJSON)); } else { send to the client an
+			 * if (execution was successful) { return datastore as it is -- writeBackToClient(new JSONSuccess(dataStoreJSON)); } else { send to the client an
 			 * error message with some information }
 			 */
 
@@ -170,10 +195,15 @@ public class ListTestLovService {
 			throw new SpagoBIServiceException("Error testing lov", e);
 		}
 
+		logger.debug("OUT");
+
 		return response.toString();
 	}
 
 	private List<Map<String, String>> toList(SourceBean rowsSourceBean, Integer start, Integer limit) throws JSONException {
+
+		logger.debug("IN");
+
 		Map<String, String> map;
 		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 		int startIter = 0;
@@ -208,6 +238,9 @@ public class ListTestLovService {
 				}
 			}
 		}
+
+		logger.debug("OUT");
+
 		return list;
 	}
 
@@ -231,6 +264,8 @@ public class ListTestLovService {
 	public static IDataStore executeSelect(String dataSourceLabel, String statement, Integer page, Integer start, Integer limit, String columnsFilter,
 			String valueFilter) throws EMFInternalError {
 
+		logger.debug("IN");
+
 		try {
 
 			IDataSource datasource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
@@ -251,9 +286,14 @@ public class ListTestLovService {
 				dataSet.test(start, limit, start + limit);
 			}
 
+			logger.debug("OUT (success)");
+
 			return dataSet.getDataStore();
 
 		} catch (Exception e) {
+
+			logger.debug("OUT (error)");
+
 			return null;
 		}
 

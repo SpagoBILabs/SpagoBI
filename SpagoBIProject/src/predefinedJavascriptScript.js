@@ -34,10 +34,6 @@ var valueToRet="";
 return valueToRet;
 }
 
-function  returnValueDataStore(valueIn){
-	return valueIn;
-	}
-
 
 function  getListFromMultiValueProfileAttribute(attrValue){
   var splitter = attrValue.substring(1,2);
@@ -57,13 +53,6 @@ function  getListFromMultiValueProfileAttribute(attrValue){
 	valueToRet+='</ROWS>';
   return valueToRet;
 }
-
-function  getListFromMultiValueProfileAttributeDataStore(attrValue){
-	  var splitter = attrValue.substring(1,2);
-		var valuesList = attrValue.substring(3, attrValue.length - 2);
-		var values = valuesList.split(splitter);
-	  return values;
-	}
 
 
 function  getParameterValuesAsInOperandClause(parName, isString){
