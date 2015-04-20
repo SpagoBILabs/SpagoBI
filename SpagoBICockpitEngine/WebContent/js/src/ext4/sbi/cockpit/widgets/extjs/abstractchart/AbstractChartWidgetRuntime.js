@@ -579,9 +579,9 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 	 *
 	 * @return {String} formatted value according to current locale.
 	 */
-	, getLocalFormattedNumericValuesNumeric: function(decimalPrecision, n) {
+	, getLocalFormattedNumericValues: function(decimalPrecision, n) {
 		
-		Sbi.trace("[AbstractChartWidgetRuntime.getLocalFormattedNumericValuesNumeric]: START");
+		Sbi.trace("[AbstractChartWidgetRuntime.getLocalFormattedNumericValues]: START");
 		
 		var dSeparator = Sbi.locale.formats['float'].decimalSeparator;
 		var tSeparator = Sbi.locale.formats['float'].groupingSeparator;
@@ -600,7 +600,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
         
         var cResult = v;
         
-        Sbi.trace("[AbstractChartWidgetRuntime.getLocalFormattedNumericValuesNumeric]: END");
+        Sbi.trace("[AbstractChartWidgetRuntime.getLocalFormattedNumericValues]: END");
 
         return cResult;
     }
@@ -621,7 +621,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 		var itemMeta = this.getItemMeta(item);
 		
 		if (typeof(v) == 'number'){
-			if (!this.isInteger(v)){
+			//if (this.isInteger(v)){
 				
 				var decimalPrecision;
 				var suffix;
@@ -636,14 +636,14 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime, S
 				
 				if(decimalPrecision !== undefined && decimalPrecision !== null)
 				{					
-					formattedValue = this.getLocalFormattedNumericValuesNumeric(decimalPrecision, v);
+					formattedValue = this.getLocalFormattedNumericValues(decimalPrecision, v);
 				}
 				
 				if(suffix !== undefined && suffix !== null && suffix !== '')
 				{
 					formattedValue = formattedValue + ' ' + suffix;
 				}
-			}
+			//}
 		}
 		
 		Sbi.trace("[AbstractChartWidgetRuntime.getLabelValuesNumericFormat]: END");
