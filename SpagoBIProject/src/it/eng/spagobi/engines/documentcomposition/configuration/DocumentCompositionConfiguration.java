@@ -420,14 +420,22 @@ public class DocumentCompositionConfiguration {
 			}
 
 			// loop on documents
+			int numOrder = 0;
 			for (int i = 0; i < documentList.size(); i++) {
 
 				documentSB = (SourceBean) documentList.get(i);
+				attributeValue = (String) documentSB.getAttribute(Constants.SBI_OBJ_LABEL);
+
+				// checks if a document with the label extists already. If yes is an error
+				if (documentsMap.containsKey(attributeValue)) {
+					logger.error("Document with label " + attributeValue + " is used more times into the template. Check the template!");
+					continue;
+				}
+
 				document = new Document();
 
-				// set the number that identify the document within of hash table
-				document.setNumOrder(i);
-				attributeValue = (String) documentSB.getAttribute(Constants.SBI_OBJ_LABEL);
+				// set the number that identify the document within of hash table and the document label
+				document.setNumOrder(numOrder);
 				document.setSbiObjLabel(attributeValue);
 
 				String snap = (String) documentSB.getAttribute(Constants.SNAPSHOT);
@@ -508,6 +516,7 @@ public class DocumentCompositionConfiguration {
 					document.setParams(param);
 				}
 				addDocument(document);
+				numOrder++;
 			}
 		} catch (Exception e) {
 			logger.error("Error while initializing the document. ", e);
@@ -850,7 +859,7 @@ public class DocumentCompositionConfiguration {
 			while (numDocAdded < arrDocs.length) {
 				for (int i = 0; i < arrDocs.length; i++) {
 					Document tmpDoc = (Document) arrDocs[i];
-					logger.debug("Getted document with order numbre " + tmpDoc.getNumOrder());
+					logger.debug("Getted document with order number " + tmpDoc.getNumOrder() + " of " + arrDocs.length);
 					if (tmpDoc.getNumOrder() == numDocAdded) {
 						retDocs.add(tmpDoc);
 						numDocAdded++;
