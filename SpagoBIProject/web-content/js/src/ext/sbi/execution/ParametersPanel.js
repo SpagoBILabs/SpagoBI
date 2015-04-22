@@ -499,7 +499,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var hasChangeEvent = false;				
 		if(suspendEvents && aField.hasListener('change')) {
 			hasChangeEvent = true;
-			aField.un('change', this.onUpdateDependentFields);
+			aField.un('change', this.onUpdateDependentFields, this);
 		}			
 		aField.reset();
 		if(hasChangeEvent) aField.on('change', this.onUpdateDependentFields, this);
