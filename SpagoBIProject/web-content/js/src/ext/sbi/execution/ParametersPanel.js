@@ -1026,9 +1026,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var state = this.getFormState();			
 		this.removeAllFields();
 		
+
 		this.initializeParametersPanel(this.parameters, false);	
 		//Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : restore state [' + state.toSource() + ']');
+		this.firstInitialization = true;
 		this.setFormState(state);
+		
+
 		
 		Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : OUT');
 		
