@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
@@ -75,18 +75,14 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 /**
- * This class represents a document execution instance.
- * This contains the following attributes:
- * 1. execution flow id: it is the id of an execution flow (execution in cross navigation mode share the same flow id)
- * 2. execution id: single execution id, it is unique for a single execution
- * 3. the BIObject being executed
- * 4. the execution role
- * 4. the execution modality
- * 
+ * This class represents a document execution instance. This contains the following attributes: 1. execution flow id: it is the id of an execution flow
+ * (execution in cross navigation mode share the same flow id) 2. execution id: single execution id, it is unique for a single execution 3. the BIObject being
+ * executed 4. the execution role 4. the execution modality
+ *
  * @author zerbetto
  *
  */
-public class ExecutionInstance implements Serializable{
+public class ExecutionInstance implements Serializable {
 
 	static private Logger logger = Logger.getLogger(ExecutionInstance.class);
 	private static final String TREE_INNER_LOV_TYPE = "treeinner";
@@ -104,20 +100,24 @@ public class ExecutionInstance implements Serializable{
 	private Calendar calendar = null;
 	private Locale locale = null;
 
-
 	/**
 	 * Instantiates a new execution instance.
-	 * 
-	 * @param flowId the flow id
-	 * @param executionId the execution id
-	 * @param obj the obj
-	 * @param executionRole the execution role
-	 * @throws Exception 
+	 *
+	 * @param flowId
+	 *            the flow id
+	 * @param executionId
+	 *            the execution id
+	 * @param obj
+	 *            the obj
+	 * @param executionRole
+	 *            the execution role
+	 * @throws Exception
 	 */
-	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality, Locale locale) throws Exception {
+	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole,
+			String executionModality, Locale locale) throws Exception {
 
-		logger.debug("IN: input parameters: userProfile = [" + userProfile + "]; flowId = [" + flowId + "]; executionId = [" + executionId + "]; " +
-				"biobjectId" + biobjectId + "]; executionRole = [" + executionRole + "]");
+		logger.debug("IN: input parameters: userProfile = [" + userProfile + "]; flowId = [" + flowId + "]; executionId = [" + executionId + "]; "
+				+ "biobjectId" + biobjectId + "]; executionRole = [" + executionRole + "]");
 
 		if (userProfile == null || flowId == null || executionId == null || biobjectId == null) {
 			throw new Exception("Invalid arguments.");
@@ -133,25 +133,27 @@ public class ExecutionInstance implements Serializable{
 		initBIParameters();
 	}
 
-	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, 
-			String executionRole, String executionModality, boolean displayToolbar, Locale locale) throws Exception {
+	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole,
+			String executionModality, boolean displayToolbar, Locale locale) throws Exception {
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, locale);
 		this.displayToolbar = displayToolbar;
 	}
 
-	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, 
-			String executionRole, String executionModality, boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
+	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole,
+			String executionModality, boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, displayToolbar, locale);
 		this.displaySliders = displaySliders;
 	}
 
-	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, Integer biobjectVersion, 
-			String executionRole, String executionModality, boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
+	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, Integer biobjectVersion, String executionRole,
+			String executionModality, boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, displayToolbar, displaySliders, locale);
 		this.object.setDocVersion(biobjectVersion);
 	}
 
-	/**Used by Kpi Engine for detail documents
+	/**
+	 * Used by Kpi Engine for detail documents
+	 * 
 	 * @param userProfile
 	 * @param flowId
 	 * @param executionId
@@ -160,10 +162,10 @@ public class ExecutionInstance implements Serializable{
 	 * @param executionModality
 	 * @throws Exception
 	 */
-	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, 
-			String biobjectLabel, String executionRole, String executionModality, Locale locale) throws Exception {
-		logger.debug("IN: input parameters: userProfile = [" + userProfile + "]; flowId = [" + flowId + "]; executionId = [" + executionId + "]; " +
-				"biobjectLabel" + biobjectLabel + "]; executionRole = [" + executionRole + "]; Locale="+locale.getDisplayName());
+	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, String biobjectLabel, String executionRole,
+			String executionModality, Locale locale) throws Exception {
+		logger.debug("IN: input parameters: userProfile = [" + userProfile + "]; flowId = [" + flowId + "]; executionId = [" + executionId + "]; "
+				+ "biobjectLabel" + biobjectLabel + "]; executionRole = [" + executionRole + "]; Locale=" + locale.getDisplayName());
 		if (userProfile == null || flowId == null || executionId == null || biobjectLabel == null) {
 			throw new Exception("Invalid arguments.");
 		}
@@ -178,15 +180,14 @@ public class ExecutionInstance implements Serializable{
 		initBIParameters();
 	}
 
-	public static ExecutionInstance getExecutionInstanceByLabel(ExecutionInstance instance, 
-			String biobjectLabel, Locale locale) throws Exception {
+	public static ExecutionInstance getExecutionInstanceByLabel(ExecutionInstance instance, String biobjectLabel, Locale locale) throws Exception {
 		IEngUserProfile userProfile = instance.userProfile;
 		String flowId = instance.flowId;
 		String executionId = instance.executionId;
 		String executionRole = instance.executionRole;
 		String executionModality = instance.executionModality;
 
-		return new ExecutionInstance(userProfile,flowId,executionId,biobjectLabel,executionRole,executionModality, locale);
+		return new ExecutionInstance(userProfile, flowId, executionId, biobjectLabel, executionRole, executionModality, locale);
 	}
 
 	public void changeExecutionRole(String newRole) throws Exception {
@@ -198,7 +199,7 @@ public class ExecutionInstance implements Serializable{
 		// reload the biobject
 		this.object = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(object.getId(), newRole);
 		// generates a new execution id
-		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 		UUID uuidObj = uuidGen.generateTimeBasedUUID();
 		String executionId = uuidObj.toString();
 		this.executionId = executionId.replaceAll("-", "");
@@ -209,34 +210,30 @@ public class ExecutionInstance implements Serializable{
 
 	private void initBIParameters() {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.ExecutionInstance.initBIParameters");
+		Monitor monitor = MonitorFactory.start("spagobi.ExecutionInstance.initBIParameters");
 		List tmpBIObjectParameters = object.getBiObjectParameters();
 		Iterator it = tmpBIObjectParameters.iterator();
 		BIObjectParameter aBIObjectParameter = null;
-		while (it.hasNext()){
+		while (it.hasNext()) {
 			aBIObjectParameter = (BIObjectParameter) it.next();
-			logger.debug("Parameter Label:"+aBIObjectParameter.getLabel());
+			logger.debug("Parameter Label:" + aBIObjectParameter.getLabel());
 			// check if the script return an unique value and preload it
 			Parameter par = aBIObjectParameter.getParameter();
-			if(par != null) {
+			if (par != null) {
 				ModalitiesValue paruse = par.getModalityValue();
-				if (!paruse.getITypeCd().equals("MAN_IN") && paruse.getSelectionType().equals("COMBOBOX")) {	// load values only if not a lookup						
+				if (!paruse.getITypeCd().equals("MAN_IN") && paruse.getSelectionType().equals("COMBOBOX")) { // load values only if not a lookup
 					try {
 						String lovProv = paruse.getLovProvider();
 						ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
 						LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-						String lovResult = executionCacheManager.getLovResult(
-								this.userProfile,
-								lovProvDet,
-								this.getDependencies(aBIObjectParameter), 
-								this,
+						String lovResult = executionCacheManager.getLovResult(this.userProfile, lovProvDet, this.getDependencies(aBIObjectParameter), this,
 								true);
 
 						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
-						// if the lov is single value and the parameter value is not set, the parameter value 
+						// if the lov is single value and the parameter value is not set, the parameter value
 						// is the lov result
-						if(lovResultHandler.isSingleValue() && aBIObjectParameter.getParameterValues() == null) {
-							if(!aBIObjectParameter.getParameter().getType().equals("DATE")){
+						if (lovResultHandler.isSingleValue() && aBIObjectParameter.getParameterValues() == null) {
+							if (!aBIObjectParameter.getParameter().getType().equals("DATE")) {
 								aBIObjectParameter.setParameterValues(lovResultHandler.getValues(lovProvDet.getValueColumnName()));
 								aBIObjectParameter.setHasValidValues(true);
 								aBIObjectParameter.setTransientParmeters(true);
@@ -278,41 +275,37 @@ public class ExecutionInstance implements Serializable{
 		int countHidePar = 0;
 		Iterator iterPars = biParameters.iterator();
 		BIObjectParameter biParameter = null;
-		while (iterPars.hasNext()){
-			biParameter = (BIObjectParameter)iterPars.next();
+		while (iterPars.hasNext()) {
+			biParameter = (BIObjectParameter) iterPars.next();
 			Parameter par = biParameter.getParameter();
 			if (biParameter.isTransientParmeters()) {
-				countHidePar ++;
+				countHidePar++;
 				continue;
 			}
 			if (biParameter.hasValidValues()) {
-				countHidePar ++;
+				countHidePar++;
 				continue;
 			}
 			if (par == null) {
-				logger.error("The biparameter with label = ['" + biParameter.getLabel() + "'] and url name = ['" + biParameter.getParameterUrlName() + "'] has no parameter associated. ");
+				logger.error("The biparameter with label = ['" + biParameter.getLabel() + "'] and url name = ['" + biParameter.getParameterUrlName()
+						+ "'] has no parameter associated. ");
 				continue;
 			}
 			/*
-			 * The following lines were commented because there should be not need to check if 
-			 * the parameter is single-value, since if it is single-value then it is transient (see initBIParameters method)
-			 *
-			if (biParameter.getLovResult() == null) continue;
-			LovResultHandler lovResultHandler;
-			try {
-				lovResultHandler = new LovResultHandler(biParameter.getLovResult());
-				if(lovResultHandler.isSingleValue()) countHidePar ++;
-			} catch (SourceBeanException e) {
-				continue;
-			}
+			 * The following lines were commented because there should be not need to check if the parameter is single-value, since if it is single-value then
+			 * it is transient (see initBIParameters method)
+			 * 
+			 * if (biParameter.getLovResult() == null) continue; LovResultHandler lovResultHandler; try { lovResultHandler = new
+			 * LovResultHandler(biParameter.getLovResult()); if(lovResultHandler.isSingleValue()) countHidePar ++; } catch (SourceBeanException e) { continue; }
 			 */
 		}
 		if (countHidePar == biParameters.size())
 			return true;
-		else return false;
+		else
+			return false;
 	}
 
-	public void applyViewpoint( String userProvidedParametersStr, boolean transientMode) {
+	public void applyViewpoint(String userProvidedParametersStr, boolean transientMode) {
 		logger.debug("IN");
 		if (userProvidedParametersStr != null) {
 			List biparameters = object.getBiObjectParameters();
@@ -322,15 +315,16 @@ public class ExecutionInstance implements Serializable{
 			}
 			userProvidedParametersStr = JavaScript.unescape(userProvidedParametersStr);
 			String[] userProvidedParameters = userProvidedParametersStr.split("&");
-			for(int i = 0; i < userProvidedParameters.length; i++) {
+			for (int i = 0; i < userProvidedParameters.length; i++) {
 				String[] chunks = userProvidedParameters[i].split("=");
 				if (chunks == null || chunks.length > 2) {
-					logger.warn("User provided parameter [" + userProvidedParameters[i] + "] cannot be splitted in " +
-							"[parameter url name=parameter value] by '=' characters.");
+					logger.warn("User provided parameter [" + userProvidedParameters[i] + "] cannot be splitted in "
+							+ "[parameter url name=parameter value] by '=' characters.");
 					continue;
 				}
 				String parUrlName = chunks[0];
-				if (parUrlName == null || parUrlName.trim().equals("")) continue;
+				if (parUrlName == null || parUrlName.trim().equals(""))
+					continue;
 				BIObjectParameter biparameter = null;
 				Iterator it = biparameters.iterator();
 				while (it.hasNext()) {
@@ -376,15 +370,16 @@ public class ExecutionInstance implements Serializable{
 			}
 			userProvidedParametersStr = JavaScript.unescape(userProvidedParametersStr);
 			String[] userProvidedParameters = userProvidedParametersStr.split("&");
-			for(int i = 0; i < userProvidedParameters.length; i++) {
+			for (int i = 0; i < userProvidedParameters.length; i++) {
 				String[] chunks = userProvidedParameters[i].split("=");
 				if (chunks == null || chunks.length > 2) {
-					logger.warn("User provided parameter [" + userProvidedParameters[i] + "] cannot be splitted in " +
-							"[parameter url name=parameter value] by '=' characters.");
+					logger.warn("User provided parameter [" + userProvidedParameters[i] + "] cannot be splitted in "
+							+ "[parameter url name=parameter value] by '=' characters.");
 					continue;
 				}
 				String parUrlName = chunks[0];
-				if (parUrlName == null || parUrlName.trim().equals("")) continue;
+				if (parUrlName == null || parUrlName.trim().equals(""))
+					continue;
 				BIObjectParameter biparameter = null;
 				Iterator it = biparameters.iterator();
 				while (it.hasNext()) {
@@ -407,11 +402,11 @@ public class ExecutionInstance implements Serializable{
 					biparameter.setParameterValues(null);
 				} else {
 					List parameterValues = decoder.decode(parValue);
-					//					List parameterValues = new ArrayList();
-					//					String[] values = parValue.split(";");
-					//					for (int m = 0; m < values.length; m++) {
-					//					parameterValues.add(values[m]);
-					//					}
+					// List parameterValues = new ArrayList();
+					// String[] values = parValue.split(";");
+					// for (int m = 0; m < values.length; m++) {
+					// parameterValues.add(values[m]);
+					// }
 					biparameter.setParameterValues(parameterValues);
 				}
 				biparameter.setTransientParmeters(transientMode);
@@ -429,10 +424,10 @@ public class ExecutionInstance implements Serializable{
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
 			if (pendingDelete != null && !pendingDelete.trim().equals("")) {
 				/*
-				 * The following line was commented because there should be not need to check if 
-				 * the parameter is single-value, since if it is single-value then it is transient (see initBIParameters method)
+				 * The following line was commented because there should be not need to check if the parameter is single-value, since if it is single-value then
+				 * it is transient (see initBIParameters method)
 				 */
-				//if (isSingleValue(biparam) || biparam.isTransientParmeters())
+				// if (isSingleValue(biparam) || biparam.isTransientParmeters())
 				if (biparam.isTransientParmeters())
 					continue;
 				biparam.setParameterValues(null);
@@ -456,8 +451,7 @@ public class ExecutionInstance implements Serializable{
 		logger.debug("OUT");
 	}
 
-	private void refreshParameter(BIObjectParameter biparam,
-			JSONObject jsonObject, boolean transientMode) {
+	private void refreshParameter(BIObjectParameter biparam, JSONObject jsonObject, boolean transientMode) {
 		logger.debug("IN");
 		Assert.assertNotNull(biparam, "Parameter in input is null!!");
 		Assert.assertNotNull(jsonObject, "JSONObject in input is null!!");
@@ -502,7 +496,7 @@ public class ExecutionInstance implements Serializable{
 
 	public void refreshParametersValues(Map parametersMap, boolean transientMode) {
 		logger.debug("IN");
-		Monitor monitor =MonitorFactory.start("spagobi.ExecutionInstance.refreshParametersValues");
+		Monitor monitor = MonitorFactory.start("spagobi.ExecutionInstance.refreshParametersValues");
 		List biparams = object.getBiObjectParameters();
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
@@ -579,26 +573,16 @@ public class ExecutionInstance implements Serializable{
 
 	/**
 	 * Checks if is single value.
-	 * 
-	 * @param biparam the biparam
-	 * 
+	 *
+	 * @param biparam
+	 *            the biparam
+	 *
 	 * @return true, if is single value
 	 */
 	/*
-	 * This shouldn't be useful anymore
-	private boolean isSingleValue(BIObjectParameter biparam) {
-		logger.debug("IN");
-		boolean isSingleValue = false;
-		try {
-			LovResultHandler lovResultHandler = new LovResultHandler(biparam.getLovResult());
-			if (lovResultHandler.isSingleValue())
-				isSingleValue = true;
-		} catch (SourceBeanException e) {
-			logger.error("SourceBeanException", e);
-		}
-		logger.debug("OUT");
-		return isSingleValue;
-	}
+	 * This shouldn't be useful anymore private boolean isSingleValue(BIObjectParameter biparam) { logger.debug("IN"); boolean isSingleValue = false; try {
+	 * LovResultHandler lovResultHandler = new LovResultHandler(biparam.getLovResult()); if (lovResultHandler.isSingleValue()) isSingleValue = true; } catch
+	 * (SourceBeanException e) { logger.error("SourceBeanException", e); } logger.debug("OUT"); return isSingleValue; }
 	 */
 
 	public List getParametersErrors() throws Exception {
@@ -610,19 +594,20 @@ public class ExecutionInstance implements Serializable{
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
-			// internalization of the label for display 
+			// internalization of the label for display
 			String viewLabel = biparam.getLabel();
 			String oldViewLabel = viewLabel;
 			IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 			viewLabel = msgBuilder.getI18nMessage(locale, viewLabel);
-			logger.debug(oldViewLabel+" is internazionalized in "+viewLabel);
+			logger.debug(oldViewLabel + " is internazionalized in " + viewLabel);
 			biparam.setLabel(viewLabel);
 			logger.debug("Evaluating errors for biparameter " + biparam.getLabel() + " ...");
 			List errorsOnChecks = getValidationErrorsOnChecks(biparam);
 
 			List values = biparam.getParameterValues();
 			if (biparam.isRequired() && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
-				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null, null, null);
+				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null,
+						null, null);
 				errorsOnChecks.add(error);
 			}
 
@@ -631,8 +616,7 @@ public class ExecutionInstance implements Serializable{
 			}
 			toReturn.addAll(errorsOnChecks);
 
-			if (values != null && values.size() >= 1 && 
-					!(values.size() == 1 && ( values.get(0) == null || values.get(0).toString().trim().equals("") ) )) {
+			if (values != null && values.size() >= 1 && !(values.size() == 1 && (values.get(0) == null || values.get(0).toString().trim().equals("")))) {
 				List errorsOnValues = getValidationErrorsOnValues(biparam);
 				if (errorsOnValues != null && errorsOnValues.size() > 0) {
 					logger.warn("Found " + errorsOnValues.size() + " errors on values for biparameter " + biparam.getLabel());
@@ -650,14 +634,14 @@ public class ExecutionInstance implements Serializable{
 		return toReturn;
 	}
 
-	//Thanks to Emanuele Granieri  of osmosit.com
-	private List normalizeList(List l){
+	// Thanks to Emanuele Granieri of osmosit.com
+	private List normalizeList(List l) {
 		Iterator i = l.iterator();
-		while (i.hasNext()){
+		while (i.hasNext()) {
 			Object el = i.next();
-			if (el instanceof String){
-				String elString = ((String)el);
-				if (elString==null || elString.length()==0){
+			if (el instanceof String) {
+				String elString = ((String) el);
+				if (elString == null || elString.length() == 0) {
 					i.remove();
 				}
 			}
@@ -678,7 +662,8 @@ public class ExecutionInstance implements Serializable{
 			Check check = null;
 			while (it.hasNext()) {
 				check = (Check) it.next();
-				if(check.getValueTypeCd().equalsIgnoreCase("MANDATORY")) continue;
+				if (check.getValueTypeCd().equalsIgnoreCase("MANDATORY"))
+					continue;
 				logger.debug("Applying check [" + check.getLabel() + "] to biparameter [" + label + "] ...");
 				List errors = getValidationErrorOnCheck(biparameter, check);
 				if (errors != null && errors.size() > 0) {
@@ -694,7 +679,7 @@ public class ExecutionInstance implements Serializable{
 			}
 			logger.debug("OUT");
 			return toReturn;
-		}	
+		}
 	}
 
 	private List getValidationErrorOnCheck(BIObjectParameter biparameter, Check check) throws Exception {
@@ -729,40 +714,44 @@ public class ExecutionInstance implements Serializable{
 				while (valuesIt.hasNext()) {
 					String aValue = (String) valuesIt.next();
 					EMFValidationError error = null;
-					if (check.getValueTypeCd().equalsIgnoreCase("LETTERSTRING")){
+					if (check.getValueTypeCd().equalsIgnoreCase("LETTERSTRING")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "LETTERSTRING", null, null, null);
-					} else if (check.getValueTypeCd().equalsIgnoreCase("ALFANUMERIC")){
+					} else if (check.getValueTypeCd().equalsIgnoreCase("ALFANUMERIC")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "ALFANUMERIC", null, null, null);
-					} else if (check.getValueTypeCd().equalsIgnoreCase("NUMERIC")){
+					} else if (check.getValueTypeCd().equalsIgnoreCase("NUMERIC")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "NUMERIC", null, null, null);
-					} else if (check.getValueTypeCd().equalsIgnoreCase("EMAIL")){
+					} else if (check.getValueTypeCd().equalsIgnoreCase("EMAIL")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "EMAIL", null, null, null);
-					} else if (check.getValueTypeCd().equalsIgnoreCase("FISCALCODE")){
+					} else if (check.getValueTypeCd().equalsIgnoreCase("FISCALCODE")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "FISCALCODE", null, null, null);
-					} else if (check.getValueTypeCd().equalsIgnoreCase("INTERNET ADDRESS")){
+					} else if (check.getValueTypeCd().equalsIgnoreCase("INTERNET ADDRESS")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "URL", null, null, null);
 					} else if (check.getValueTypeCd().equalsIgnoreCase("DECIMALS")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "DECIMALS", check.getFirstValue(), check.getSecondValue(), null);
 					} else if (check.getValueTypeCd().equalsIgnoreCase("RANGE")) {
-						if (biparameter.getParameter().getType().equalsIgnoreCase("DATE")){
+						if (biparameter.getParameter().getType().equalsIgnoreCase("DATE")) {
 							// In a Parameter where parameterType == DATE the mask represent the date format
-							error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "DATERANGE", check.getFirstValue(), check.getSecondValue(), biparameter.getParameter().getMask());
-						}else if (biparameter.getParameter().getType().equalsIgnoreCase("NUM")){
+							error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "DATERANGE", check.getFirstValue(), check.getSecondValue(),
+									biparameter.getParameter().getMask());
+						} else if (biparameter.getParameter().getType().equalsIgnoreCase("NUM")) {
 							// In a Parameter where parameterType == NUM the mask represent the decimal format
-							error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "NUMERICRANGE", check.getFirstValue(), check.getSecondValue(), biparameter.getParameter().getMask());
-						}else if (biparameter.getParameter().getType().equalsIgnoreCase("STRING")){
-							error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "STRINGRANGE", check.getFirstValue(), check.getSecondValue(), null);
+							error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "NUMERICRANGE", check.getFirstValue(), check.getSecondValue(),
+									biparameter.getParameter().getMask());
+						} else if (biparameter.getParameter().getType().equalsIgnoreCase("STRING")) {
+							error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "STRINGRANGE", check.getFirstValue(), check.getSecondValue(),
+									null);
 						}
-					} else if (check.getValueTypeCd().equalsIgnoreCase("MAXLENGTH")){
+					} else if (check.getValueTypeCd().equalsIgnoreCase("MAXLENGTH")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "MAXLENGTH", check.getFirstValue(), null, null);
-					} else if (check.getValueTypeCd().equalsIgnoreCase("MINLENGTH")){
+					} else if (check.getValueTypeCd().equalsIgnoreCase("MINLENGTH")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "MINLENGTH", check.getFirstValue(), null, null);
-					} else if (check.getValueTypeCd().equalsIgnoreCase("REGEXP")){
+					} else if (check.getValueTypeCd().equalsIgnoreCase("REGEXP")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "REGEXP", check.getFirstValue(), null, null);
-					} else if (check.getValueTypeCd().equalsIgnoreCase("DATE")){
+					} else if (check.getValueTypeCd().equalsIgnoreCase("DATE")) {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "DATE", check.getFirstValue(), null, null);
 					}
-					if (error != null) toReturn.add(error);
+					if (error != null)
+						toReturn.add(error);
 				}
 			}
 		}
@@ -787,14 +776,15 @@ public class ExecutionInstance implements Serializable{
 			logger.debug("Modality in use for biparameter [" + biparamLabel + "] is manual input");
 			return new ArrayList();
 		}
-		//patch for default date value
+		// patch for default date value
 		if (biparam.getParameter().getType().equalsIgnoreCase("DATE")) {
 			logger.debug("Parameter [" + biparamLabel + "] has lov defined just for default value: any other chose allowed");
 			return new ArrayList();
 		}
 
-		// we need to process default values and non-default values separately: default values do not require validation, non-default values instead require validation
-		
+		// we need to process default values and non-default values separately: default values do not require validation, non-default values instead require
+		// validation
+
 		DefaultValuesRetriever retriever = new DefaultValuesRetriever();
 		DefaultValuesList allDefaultValues = retriever.getDefaultValues(biparam, this, this.userProfile);
 		// from the complete list of values, get the values that are default values
@@ -820,18 +810,15 @@ public class ExecutionInstance implements Serializable{
 			toReturn = getValidationErrorsOnValuesForQueries((QueryDetail) lovProvDet, clone);
 		} else {
 			LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-			lovResult = executionCacheManager.getLovResult(this.userProfile,
-					lovProvDet, this.getDependencies(clone),
-					this, true);
+			lovResult = executionCacheManager.getLovResult(this.userProfile, lovProvDet, this.getDependencies(clone), this, true);
 			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, clone, lovProvDet);
 		}
 		mergeDescriptions(biparam, selectedDefaultValue, clone);
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
-	private void mergeDescriptions(BIObjectParameter biparam,
-			DefaultValuesList selectedDefaultValue, BIObjectParameter cloned) {
+
+	private void mergeDescriptions(BIObjectParameter biparam, DefaultValuesList selectedDefaultValue, BIObjectParameter cloned) {
 		int valuePosition;
 		List nonDefaultValues = cloned.getParameterValues();
 		List nonDefaultDescriptions = cloned.getParameterValuesDescription();
@@ -843,8 +830,7 @@ public class ExecutionInstance implements Serializable{
 				valuePosition = nonDefaultValues.indexOf(aValue);
 				if (valuePosition >= 0) {
 					// this means that the value IS NOT a default value
-					parameterDescriptions.add(nonDefaultDescriptions
-							.get(valuePosition));
+					parameterDescriptions.add(nonDefaultDescriptions.get(valuePosition));
 				} else {
 					// this means that the value IS a default value
 					DefaultValue defaultValue = selectedDefaultValue.getDefaultValue(aValue);
@@ -871,7 +857,7 @@ public class ExecutionInstance implements Serializable{
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+
 	private DefaultValuesList getSelectedDefaultValues(BIObjectParameter analyticalDocumentParameter, DefaultValuesList defaultValues) {
 		logger.debug("IN");
 		DefaultValuesList toReturn = new DefaultValuesList();
@@ -893,14 +879,12 @@ public class ExecutionInstance implements Serializable{
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+
 	private List getValidationErrorsOnValuesForQueries(QueryDetail queryDetail, BIObjectParameter biparam) throws Exception {
 		List toReturn = null;
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
 		// if query is not in cache, do not execute it as it is!!!
-		String lovResult = executionCacheManager.getLovResult(this.userProfile,
-				this.getLovDetail(biparam), this.getDependencies(biparam),
-				this, false);
+		String lovResult = executionCacheManager.getLovResult(this.userProfile, this.getLovDetail(biparam), this.getDependencies(biparam), this, false);
 		if (lovResult == null) {
 			// lov is not in cache: we must validate values
 			toReturn = queryDetail.validateValues(this.userProfile, biparam);
@@ -927,25 +911,25 @@ public class ExecutionInstance implements Serializable{
 		// get lov result handler
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 		List values = biparam.getParameterValues();
-		if (values != null && values.size()>0) {
+		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
-				//String value = values.get(i).toString();
+				// String value = values.get(i).toString();
 				String value = null;
 				String val = values.get(i).toString();
-				if(val.equalsIgnoreCase("%")){
+				if (val.equalsIgnoreCase("%")) {
 					value = "%";
 				} else {
 					value = URLDecoder.decode(val, "UTF-8");
 				}
 				String description = null;
-				if(value.equals("")){
+				if (value.equals("")) {
 					valueFound = true;
-				}else if(lovProvDet.getLovType().equals(TREE_INNER_LOV_TYPE)){
+				} else if (lovProvDet.getLovType().equals(TREE_INNER_LOV_TYPE)) {
 					List<String> treeColumns = lovProvDet.getTreeLevelsColumns();
-					if(treeColumns!=null){
-						for(int j=0; j<treeColumns.size(); j++){
-							valueFound = lovResultHandler.containsValue(value, treeColumns.get(j));
-							if(valueFound){
+					if (treeColumns != null) {
+						for (int j = 0; j < treeColumns.size(); j++) {
+							valueFound = lovResultHandler.containsValueForTree(value, treeColumns.get(j));
+							if (valueFound) {
 								break;
 							}
 						}
@@ -953,13 +937,11 @@ public class ExecutionInstance implements Serializable{
 				} else if (lovResultHandler.containsValue(value, lovProvDet.getValueColumnName())) {
 					valueFound = true;
 				}
-				if(valueFound){
-					description = lovResultHandler.getValueDescription(value, 
-							lovProvDet.getValueColumnName(), lovProvDet.getDescriptionColumnName());
-				}else{
-					logger.error("Parameter '" + biparam.getLabel() + "' cannot assume value '" + value + "'" +
-							" for user '" + ((UserProfile)this.userProfile).getUserId().toString()
-							+ "' with role '" + this.executionRole + "'.");
+				if (valueFound) {
+					description = lovResultHandler.getValueDescription(value, lovProvDet.getValueColumnName(), lovProvDet.getDescriptionColumnName());
+				} else {
+					logger.error("Parameter '" + biparam.getLabel() + "' cannot assume value '" + value + "'" + " for user '"
+							+ ((UserProfile) this.userProfile).getUserId().toString() + "' with role '" + this.executionRole + "'.");
 					List l = new ArrayList();
 					l.add(biparam.getLabel());
 					l.add(value);
@@ -1020,8 +1002,7 @@ public class ExecutionInstance implements Serializable{
 		Engine engine = this.getBIObject().getEngine();
 		Domain engineType;
 		try {
-			engineType = DAOFactory.getDomainDAO().loadDomainById(
-					engine.getEngineTypeId());
+			engineType = DAOFactory.getDomainDAO().loadDomainById(engine.getEngineTypeId());
 		} catch (EMFUserError e) {
 			throw new SpagoBIServiceException("Impossible to load engine type domain", e);
 		}
@@ -1061,41 +1042,42 @@ public class ExecutionInstance implements Serializable{
 		}
 	}
 
-
-	/** This method is called by SDK to execute a document; it takes as input a list of SDK parameters, each with its own set of values and fill the BiObject object
-	 * 
-	 * @param obj           The Bi Object
-	 * @param parameters     an array of SDKDocumentParameter
+	/**
+	 * This method is called by SDK to execute a document; it takes as input a list of SDK parameters, each with its own set of values and fill the BiObject
+	 * object
+	 *
+	 * @param obj
+	 *            The Bi Object
+	 * @param parameters
+	 *            an array of SDKDocumentParameter
 	 */
 
-	public void refreshBIObjectWithSDKParameters(SDKDocumentParameter[] parameters){
+	public void refreshBIObjectWithSDKParameters(SDKDocumentParameter[] parameters) {
 
 		logger.debug("IN");
-		List<BIObjectParameter> listPars=object.getBiObjectParameters();
+		List<BIObjectParameter> listPars = object.getBiObjectParameters();
 
-		HashMap<String , List<Object>> parametersMap=new HashMap<String, List<Object>>();
+		HashMap<String, List<Object>> parametersMap = new HashMap<String, List<Object>>();
 
-		//create an hashmap of parameters
-		if(parameters!=null){
+		// create an hashmap of parameters
+		if (parameters != null) {
 			for (int i = 0; i < parameters.length; i++) {
-				SDKDocumentParameter docParameter = (SDKDocumentParameter) parameters[i];
-				List<Object> valuesToInsert=new ArrayList<Object>();
+				SDKDocumentParameter docParameter = parameters[i];
+				List<Object> valuesToInsert = new ArrayList<Object>();
 
 				for (int j = 0; j < docParameter.getValues().length; j++) {
-					Object ob=docParameter.getValues()[j];
-					String obString=ob.toString();  // for now I convert in string otherwise don't pass examination
+					Object ob = docParameter.getValues()[j];
+					String obString = ob.toString(); // for now I convert in string otherwise don't pass examination
 					valuesToInsert.add(obString);
 				}
-
 
 				parametersMap.put(docParameter.getUrlName(), valuesToInsert);
 			}
 		}
 
-
 		for (Iterator iterator = listPars.iterator(); iterator.hasNext();) {
 			BIObjectParameter objectParameter = (BIObjectParameter) iterator.next();
-			List<Object> listVals=(List<Object>) parametersMap.get(objectParameter.getParameterUrlName());
+			List<Object> listVals = parametersMap.get(objectParameter.getParameterUrlName());
 			objectParameter.setParameterValues(listVals);
 		}
 
@@ -1155,8 +1137,7 @@ public class ExecutionInstance implements Serializable{
 		Engine engine = this.getBIObject().getEngine();
 		Domain engineType;
 		try {
-			engineType = DAOFactory.getDomainDAO().loadDomainById(
-					engine.getEngineTypeId());
+			engineType = DAOFactory.getDomainDAO().loadDomainById(engine.getEngineTypeId());
 		} catch (EMFUserError e) {
 			throw new SpagoBIServiceException("Impossible to load engine type domain", e);
 		}
@@ -1188,20 +1169,20 @@ public class ExecutionInstance implements Serializable{
 			buffer.append("&" + SpagoBIConstants.TOOLBAR_VISIBLE + "=FALSE");
 			buffer.append("&" + ObjectsTreeConstants.OBJECT_LABEL + "=" + object.getLabel());
 			buffer.append("&" + SpagoBIConstants.ROLE + "=" + executionRole);
-			buffer.append("&" + SpagoBIConstants.RUN_ANYWAY + "=TRUE" );
-			buffer.append("&" + SpagoBIConstants.IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS + "=TRUE" );
-			buffer.append("&SBI_EXECUTION_ID=" + this.executionId); //adds constants if it works!!
+			buffer.append("&" + SpagoBIConstants.RUN_ANYWAY + "=TRUE");
+			buffer.append("&" + SpagoBIConstants.IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS + "=TRUE");
+			buffer.append("&SBI_EXECUTION_ID=" + this.executionId); // adds constants if it works!!
 
 			String kpiClassName = SpagoBIKpiInternalEngine.class.getCanonicalName();
-			if(engine.getClassName().equals(kpiClassName)){
+			if (engine.getClassName().equals(kpiClassName)) {
 				Integer auditId = createAuditId();
 				if (auditId != null) {
-					buffer.append("&"+AuditManager.AUDIT_ID+"=" + auditId); //adds constants if it works!!
+					buffer.append("&" + AuditManager.AUDIT_ID + "=" + auditId); // adds constants if it works!!
 				}
 			}
 
 			// identity string for context
-			UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 			UUID uuid = uuidGen.generateRandomBasedUUID();
 			buffer.append("&" + LightNavigationManager.LIGHT_NAVIGATOR_ID + "=" + uuid.toString());
 
@@ -1212,11 +1193,11 @@ public class ExecutionInstance implements Serializable{
 					BIObjectParameter aParameter = (BIObjectParameter) it.next();
 
 					List list = aParameter.getParameterValues();
-					if(list!=null && !list.isEmpty()){
+					if (list != null && !list.isEmpty()) {
 						Iterator r = list.iterator();
 						while (r.hasNext()) {
 							String value = (String) r.next();
-							if (value!=null && !value.equals("")) {
+							if (value != null && !value.equals("")) {
 								// encoding value
 								try {
 									value = URLEncoder.encode(value, "UTF-8");
@@ -1229,11 +1210,10 @@ public class ExecutionInstance implements Serializable{
 							}
 						}
 					}
-					/*ParameterValuesEncoder encoder = new ParameterValuesEncoder();
-					String encodedValue = encoder.encode(aParameter);
-					if(encodedValue!=null && !encodedValue.equals("")){
-						buffer.append("&" + aParameter.getParameterUrlName() + "=" + encodedValue);
-					}*/
+					/*
+					 * ParameterValuesEncoder encoder = new ParameterValuesEncoder(); String encodedValue = encoder.encode(aParameter); if(encodedValue!=null &&
+					 * !encodedValue.equals("")){ buffer.append("&" + aParameter.getParameterUrlName() + "=" + encodedValue); }
+					 */
 				}
 			}
 			url = buffer.toString();
@@ -1253,19 +1233,19 @@ public class ExecutionInstance implements Serializable{
 		if (auditId != null) {
 			mapPars.put(AuditManager.AUDIT_ID, auditId);
 		}
-		if (locale != null ){
-			if(locale.getLanguage()!=null){
-				mapPars.put(SpagoBIConstants.SBI_LANGUAGE, locale.getLanguage());				
+		if (locale != null) {
+			if (locale.getLanguage() != null) {
+				mapPars.put(SpagoBIConstants.SBI_LANGUAGE, locale.getLanguage());
 			}
-			if(locale.getCountry()!=null){
-				mapPars.put(SpagoBIConstants.SBI_COUNTRY,locale.getCountry());
+			if (locale.getCountry() != null) {
+				mapPars.put(SpagoBIConstants.SBI_COUNTRY, locale.getCountry());
 			}
 		}
 	}
 
 	/**
 	 * Gets the execution id.
-	 * 
+	 *
 	 * @return the execution id
 	 */
 	public String getExecutionId() {
@@ -1274,7 +1254,7 @@ public class ExecutionInstance implements Serializable{
 
 	/**
 	 * Gets the flow id.
-	 * 
+	 *
 	 * @return the flow id
 	 */
 	public String getFlowId() {
@@ -1283,7 +1263,7 @@ public class ExecutionInstance implements Serializable{
 
 	/**
 	 * Gets the bI object.
-	 * 
+	 *
 	 * @return the bI object
 	 */
 	public BIObject getBIObject() {
@@ -1292,7 +1272,7 @@ public class ExecutionInstance implements Serializable{
 
 	/**
 	 * Gets the calendar.
-	 * 
+	 *
 	 * @return the calendar
 	 */
 	public Calendar getCalendar() {
@@ -1301,7 +1281,7 @@ public class ExecutionInstance implements Serializable{
 
 	/**
 	 * Gets the current execution role.
-	 * 
+	 *
 	 * @return the execution role
 	 */
 	public String getExecutionRole() {
@@ -1310,7 +1290,7 @@ public class ExecutionInstance implements Serializable{
 
 	/**
 	 * Gets the execution modality.
-	 * 
+	 *
 	 * @return the execution modality
 	 */
 	public String getExecutionModality() {
@@ -1349,14 +1329,18 @@ public class ExecutionInstance implements Serializable{
 		this.snapshot = snapshot;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object another) {
-		if (another instanceof ExecutionInstance) {;
-		ExecutionInstance anInstance = (ExecutionInstance) another;
-		return this.executionId.equals(anInstance.executionId);
-		} else 
+		if (another instanceof ExecutionInstance) {
+			;
+			ExecutionInstance anInstance = (ExecutionInstance) another;
+			return this.executionId.equals(anInstance.executionId);
+		} else
 			return false;
 	}
 

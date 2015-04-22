@@ -61,7 +61,6 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 		, viewportWindowHeight: 300
 		, fieldsPadding : 5
 		, maxFieldHeight : 300
-		, labelSeparator : ':'
 	};
 	
 	
@@ -90,7 +89,9 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	
 	this.baseConfig = c;
 	
-	
+	//global variable
+	this.firstInitialization = true;
+
 	
 	this.parametersPreference = undefined;
 	if (c.parameters) {
@@ -655,7 +656,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	, initializeParametersPanel: function( parameters, reset ) {
 			
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : IN');
-		
+				
 		this.on('checkReady', function () {
 			if((this.firstLoadCounter == this.firstLoadTotParams )
 					|| (this.firstLoadTotParams == 0)){	
@@ -790,12 +791,14 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		//var state = Ext.apply(defaultValuesFormState, this.preferenceState);
 		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
+		this.firstInitialization = false;
 
 			
 		if (this.firstLoadTotParams == 0 && reset) {
 			this.fireEvent('ready', this, this.isReadyForExecution(), state);	
 			this.fireEvent('synchronize', this);	
 		}
+		
 		
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : OUT');
 	}
@@ -1023,9 +1026,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var state = this.getFormState();			
 		this.removeAllFields();
 		
+
 		this.initializeParametersPanel(this.parameters, false);	
 		//Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : restore state [' + state.toSource() + ']');
+		this.firstInitialization = true;
 		this.setFormState(state);
+		
+
 		
 		Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : OUT');
 		
@@ -1044,9 +1051,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(field.behindParameter.selectionType === 'TREE'){ 
 			var p = Sbi.commons.JSON.encode(this.getFormState());
 			field.reloadTree(p);
-		}	
-		
-		field.reset();
+			if (!this.firstInitialization){
+				field.reset();
+			}
+		} else {
+			field.reset();
+		}
 		Sbi.debug('[ParametersPanel.updateDataDependentField] : field [' + dependantConf.parameterId + '] that is data correlated with field [' + fatherField.name + '] have been updeted succesfully');
 	}
 	
@@ -1235,10 +1245,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var el = field.el.dom.parentNode.parentNode;    
 		if( el.children[0].tagName.toLowerCase() === 'label' ) {  
 			//el.children[0].class = 'x-exec-paramlabel-disabled';
-			el.children[0].innerHTML = label + this.labelSeparator;
+			el.children[0].innerHTML = label + ':';    
 		} else if( el.parentNode.children[0].tagName.toLowerCase() === 'label' ){    
 			//el.parentNode.children[0].class = 'x-exec-paramlabel-disabled';
-			el.parentNode.children[0].innerHTML = label + this.labelSeparator;  
+			el.parentNode.children[0].innerHTML = label + ':';  
+			
 		}    
 	}
 	
@@ -1469,8 +1480,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var baseConfig = {
 			multivalue: p.multivalue
-	       , fieldLabel: p.label.replace(" ", "&nbsp;")
-	       , fieldDefaultLabel: p.label.replace(" ", "&nbsp;")
+	       , fieldLabel: p.label
+	       , fieldDefaultLabel: p.label
 		   , name : p.id
 		   , width: this.baseConfig.fieldWidth
 		   , allowBlank: !p.mandatory
@@ -1479,8 +1490,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		   , thickPerc: p.thickPerc
 		   // do not load store if the right value is passed in the preferences. In this case infact the field will be not added to the parameters panel
 		   // so it is not necessary to calculate all its values
-		   , autoLoad: !this.parameterValueIsPassedFromMenu(p)
-		   , labelSeparator: this.labelSeparator
+		   , autoLoad: !this.parameterValueIsPassedFromMenu(p) 
 		};
 		
 		var labelStyle = '';
