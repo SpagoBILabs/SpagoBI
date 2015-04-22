@@ -68,7 +68,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	protected IDataStoreTransformer dataSetTransformer;
 
 	// hook for extension points
-	private Map behaviours;
+	private final Map behaviours;
 
 	private String dsMetadata;
 	private String userIn;
@@ -87,6 +87,7 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	protected boolean persisted;
 	protected String persistTableName;
+	protected boolean scheduled;
 	protected String configuration;
 	protected List noActiveVersions;
 
@@ -138,6 +139,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		setDsMetadata(dataSet.getDsMetadata());
 		setPersisted(dataSet.isPersisted());
 		setPersistTableName(dataSet.getPersistTableName());
+		setScheduled(dataSet.isScheduled());
 		SpagoBiDataSource dsDataSourceForReading = dataSet.getDataSourceForReading();
 		setDataSourceForReading(dsDataSourceForReading != null ? DataSourceFactory.getDataSource(dsDataSourceForReading) : null);
 		setPublic(dataSet.is_public());
@@ -171,6 +173,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setNumRows(isNumRows());
 		sbd.setPersisted(isPersisted());
 		sbd.setPersistTableName(getPersistTableName());
+		sbd.setScheduled(isScheduled());
 		IDataSource dataSourceForReading = getDataSourceForReading();
 		sbd.setDataSourceForReading(dataSourceForReading != null ? dataSourceForReading.toSpagoBiDataSource() : null);
 		sbd.set_public(isPublic());
@@ -445,6 +448,21 @@ public abstract class AbstractDataSet implements IDataSet {
 	 */
 	public void setPersisted(boolean persisted) {
 		this.persisted = persisted;
+	}
+
+	/**
+	 * @return the scheduled
+	 */
+	public boolean isScheduled() {
+		return scheduled;
+	}
+
+	/**
+	 * @param scheduled
+	 *            the scheduled to set
+	 */
+	public void setScheduled(boolean scheduled) {
+		this.scheduled = scheduled;
 	}
 
 	/**
