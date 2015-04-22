@@ -89,7 +89,14 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			dataUrl : this.service,
 			baseParams : this.params,
 			createNode : function(attr) {
-				attr.text = attr.description;
+				//TODO: this must be changed
+				if (attr.description.indexOf("__") > -1){
+					var originalValue = attr.description;
+					var arr = originalValue.split("__");
+					attr.text = arr[1];
+				} else {
+					attr.text = attr.description;
+				}
 
 				if (attr.leaf) {
 					attr.iconCls = 'parameter-leaf';
@@ -277,7 +284,17 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 		}else{
 			values=null;
 		}
-		Sbi.widgets.LookupField.superclass.setRawValue.call( this, pvalues);
+		
+		//TODO: THIS MUST BE CHANGED
+		var visualizedValue;
+		if (pvalues.indexOf("__") > -1){
+			var originalValue = pvalues;
+			var arr = originalValue.split("__");
+			visualizedValue = arr[1];
+		} else {
+			visualizedValue = pvalues;
+		}
+		Sbi.widgets.LookupField.superclass.setRawValue.call( this, visualizedValue);
 		this.xStartingDescriptions = values;
 		this.xdescriptions = values;
 	}
@@ -336,8 +353,20 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 
 	,
 	getValue : function() {
-		if(this.xvalues)
-			return this.xvalues
+		if(this.xvalues){
+			//return this.xvalues
+			if (this.xvalues.length > 0){
+				if (this.xvalues[0].indexOf("__") > -1){
+					var originalValue = this.xvalues[0];
+					var arr = originalValue.split("__");
+					return arr[0];
+				} else {
+					return this.xvalues;
+				}
+			} else {
+				return this.xvalues;
+			}
+		}
 		return "";
 	}
 	
