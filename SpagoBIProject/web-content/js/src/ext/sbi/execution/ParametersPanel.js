@@ -460,10 +460,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				var aField = this.fields[fieldName];
 				var hasChangeEvent = false;		
 				if(aField.hasListener('change')) {
+					Sbi.debug('[ParametersPanel.setFormState] : field [' + p + '] has change listener');
 					hasChangeEvent = true;
-					aField.un('change', this.onUpdateDependentFields);
-				}			
+					aField.un('change', this.onUpdateDependentFields, this);
+				}
+				Sbi.debug('[ParametersPanel.setFormState] : setting value [' + fieldValue + '] to [' + p + '] ... ');
 				aField.setValue( fieldValue );
+				Sbi.debug('[ParametersPanel.setFormState] : value [' + fieldValue + '] to [' + p + '] set');
 				if(hasChangeEvent) aField.on('change', this.onUpdateDependentFields, this);
 				
 				
@@ -496,7 +499,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var hasChangeEvent = false;				
 		if(suspendEvents && aField.hasListener('change')) {
 			hasChangeEvent = true;
-			aField.un('change', this.onUpdateDependentFields);
+			aField.un('change', this.onUpdateDependentFields, this);
 		}			
 		aField.reset();
 		if(hasChangeEvent) aField.on('change', this.onUpdateDependentFields, this);
