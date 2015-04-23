@@ -41,6 +41,8 @@ Sbi.exception.ExceptionHandler = function(){
  
     // private variables
 	var loginUrl = Sbi.config.loginUrl;
+	
+	var showMessageOnSessionExpired = Sbi.config.showMessageOnSessionExpired;
 
 	// public space
 	return {
@@ -66,7 +68,7 @@ Sbi.exception.ExceptionHandler = function(){
         			if (content.errors !== undefined  && content.errors.length > 0) {
         				if (content.errors[0].message === 'session-expired') {
         					// session expired
-        		        	Sbi.exception.ExceptionHandler.redirectToLoginUrl();
+        		        	Sbi.exception.ExceptionHandler.handleSessionExpired();
         		        	return;
         				} else if (content.errors[0].message === 'not-enabled-to-call-service') {
         					Sbi.exception.ExceptionHandler.showErrorMessage(LN('not-enabled-to-call-service'), 'Service Error')
@@ -170,7 +172,25 @@ Sbi.exception.ExceptionHandler = function(){
         		window.location = loginUrl;
         	}
         }
-        
+
+		, showSessionExpiredMessage : function () {
+        	Ext.MessageBox.show({
+           		title: LN('sbi.general.sessionexpired.title')
+           		, msg: LN('sbi.general.sessionexpired.message')
+           		, buttons: Ext.MessageBox.OK     
+           		, icon: Ext.MessageBox.WARNING
+           		, modal: true
+       		});
+        }
+		
+		, handleSessionExpired : function () {
+			if (showMessageOnSessionExpired) {
+				Sbi.exception.ExceptionHandler.showSessionExpiredMessage();
+			} else {
+				Sbi.exception.ExceptionHandler.redirectToLoginUrl();
+			}
+		}
+		
         , onStoreLoadException : function(proxy, type, action, options, response, arg) {
         	Sbi.exception.ExceptionHandler.handleFailure(response, options);
         }
