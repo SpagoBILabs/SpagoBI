@@ -76,6 +76,8 @@
 			<AUTHORIZATION authorizationName="CREATE_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
 			<AUTHORIZATION authorizationName="VIEW_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
 			<AUTHORIZATION authorizationName="HIERARCHIES_MANAGEMENT" organization="SPAGOBI"/>		
+			<AUTHORIZATION authorizationName="ENABLE_DATASET_PERSISTENCE" organization="SPAGOBI"/>		
+			
 		</DEFAULT_AUTHORIZATIONS>
 		
 		
