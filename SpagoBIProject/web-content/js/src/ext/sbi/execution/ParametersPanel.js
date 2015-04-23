@@ -61,6 +61,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 		, viewportWindowHeight: 300
 		, fieldsPadding : 5
 		, maxFieldHeight : 300
+		, labelSeparator : ':'
 	};
 	
 	
@@ -1245,11 +1246,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var el = field.el.dom.parentNode.parentNode;    
 		if( el.children[0].tagName.toLowerCase() === 'label' ) {  
 			//el.children[0].class = 'x-exec-paramlabel-disabled';
-			el.children[0].innerHTML = label + ':';    
+			el.children[0].innerHTML = label + this.labelSeparator;
 		} else if( el.parentNode.children[0].tagName.toLowerCase() === 'label' ){    
 			//el.parentNode.children[0].class = 'x-exec-paramlabel-disabled';
-			el.parentNode.children[0].innerHTML = label + ':';  
-			
+			el.parentNode.children[0].innerHTML = label + this.labelSeparator;  
 		}    
 	}
 	
@@ -1480,8 +1480,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var baseConfig = {
 			multivalue: p.multivalue
-	       , fieldLabel: p.label
-	       , fieldDefaultLabel: p.label
+	       , fieldLabel: p.label.replace(" ", "&nbsp;")
+	       , fieldDefaultLabel: p.label.replace(" ", "&nbsp;")
 		   , name : p.id
 		   , width: this.baseConfig.fieldWidth
 		   , allowBlank: !p.mandatory
@@ -1490,7 +1490,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		   , thickPerc: p.thickPerc
 		   // do not load store if the right value is passed in the preferences. In this case infact the field will be not added to the parameters panel
 		   // so it is not necessary to calculate all its values
-		   , autoLoad: !this.parameterValueIsPassedFromMenu(p) 
+		   , autoLoad: !this.parameterValueIsPassedFromMenu(p)
+		   , labelSeparator: this.labelSeparator
 		};
 		
 		var labelStyle = '';
