@@ -181,5 +181,6 @@
 <CONFIG label="SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE" name="SPAGOBI SOCIAL ANALYSIS STATUS" description="SPAGOBI SOCIAL ANALYSIS STATUS" isActive="true" valueCheck="true" valueType="STRING" category="SOCIAL_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.DATASET.PREVIEW_ROWS" name="Number of rows to show for dataset preview" description="Number of rows to show for dataset preview" isActive="true" valueCheck="1000" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.DATASET.PERSIST.TABLE_PREFIX" name="Table name prefix for dataset persistence" description="Table name prefix for dataset persistence" isActive="true" valueCheck="D_" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.ON_SESSION_EXPIRED.SHOW_MESSAGE" name="SPAGOBI.ON_SESSION_EXPIRED.SHOW_MESSAGE" description="Flag to specify if an error message should be displayed in case the session expires, otherwise user will be redirected to login page" isActive="true" valueCheck="FALSE" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 </CONFIGS>
 
