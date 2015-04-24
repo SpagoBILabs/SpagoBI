@@ -874,6 +874,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (functI.getName().equals("CREATE_DOCUMENTS") && role.isAbleToCreateDocuments())
 						|| (functI.getName().equals("CREATE_SOCIAL_ANALYSIS") && role.isAbleToCreateSocialAnalysis())
 						|| (functI.getName().equals("VIEW_SOCIAL_ANALYSIS") && role.isAbleToViewSocialAnalysis())
+						|| (functI.getName().equals("HIERARCHIES_MANAGEMENT") && role.isAbleToHierarchiesManagement())
 						|| (functI.getName().equals("ENABLE_DATASET_PERSISTENCE") && role.isAbleToEnableDatasetPersistence())) {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
