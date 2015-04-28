@@ -181,7 +181,10 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 			, 'executionbuttonclicked'
 			, 'checkReady'
 			, 'ready'
-	);	
+	);
+	
+	// when the panel is rendered, we manage the dependencies between parameters 
+	this.on('ready', this.handleInitialDependencies, this, {single: true});
 };
 
 Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
@@ -240,6 +243,16 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     
     , showViewpointWin:null
     , saveViewpointWin: null
+    
+    
+    , handleInitialDependencies : function () {
+    	Sbi.debug('[ParametersPanel.handleInitialDependencies] : IN');
+    	for (p in this.fields) {
+    		var aField = this.fields[p];
+    		this.updateDependentFields( aField );
+		}
+    	Sbi.debug('[ParametersPanel.handleInitialDependencies] : OUT');
+    }
     
     // ----------------------------------------------------------------------------------------
     // public methods
@@ -675,10 +688,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var nonTransientField = 0;
 		
-//		if(!this.parameters || this.parameters.length==0){
-//			this.fireEvent("hideparameterspanel");
-//		}
-			
 		var occupiedInRow = 0;
 		
 		for(var i = 0; i < parameters.length; i++) {
@@ -705,12 +714,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			var field = this.createField( parameters[i] );
 				
-			var isAdded = false;
-			
 			if( this.parameterHasOnlyOneValue( parameters[i] ) ) {
 				if( this.parameterHasDependencies( parameters[i] ) || parameters[i].type === 'DATE') {
 					this.addField(field, nonTransientField++);
-					isAdded = true;
 				} else {
 					field.isTransient = true;
 					field.setValue(parameters[i].value);
@@ -718,9 +724,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			} else {				
 				if ( this.parameterValueIsPassedFromMenu(parameters[i]) ) {
 					field.setValue(this.preferenceState[parameters[i].id]);
-//					alert("initializeParametersPanel: set value of [" + parameters[i].id + "] " +
-//							"to [" + field.getValue() + "] " +
-//							"but dont add it to panel");
 					Sbi.debug("[ParametersPanel.initializeParametersPanel]: set value of [" + parameters[i].id + "] " +
 							"to [" + field.getValue() + "] " +
 							"but dont add it to panel");
@@ -729,20 +732,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					// the parameter is passed in prefereces but it not came from the menu, it came from a cross nav
 					if( this.parameterValueIsInPreferences(parameters[i]) ){
 						//field.setValue(this.preferenceState[parameters[i].id]);
-//						alert("initializeParametersPanel: set value of [" + parameters[i].id + "] " +
-//								"to [" + this.preferenceState[parameters[i].id] +"] " +
-//								"and add it to panel");
 						Sbi.debug("[ParametersPanel.initializeParametersPanel]: set value of [" + parameters[i].id + "] " +
 								"to [" + this.preferenceState[parameters[i].id] +"] " +
 								"and add it to panel");
 					} else {
-//						alert("initializeParametersPanel: parameter [" + parameters[i].id + "] not in preferences");
 						Sbi.debug("[ParametersPanel.initializeParametersPanel]: parameter [" + parameters[i].id + "] not in preferences");
 					}
 					
 					if (parameters[i].visible === true && parameters[i].vizible !== false) {
 						this.addField(field, nonTransientField++);
-						isAdded = true;
 						Sbi.debug('field [' + parameters[i].id + '] is added');
 					} else {
 						Sbi.debug('field [' + parameters[i].id + '] is not added');
@@ -750,11 +748,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				}
 			}
 
-			//if(isAdded==true){
-				this.fields[parameters[i].id] = field;
-			//}
-				// update occupiedInRow 
-				occupiedInRow  += parameters[i].colspan; 
+			this.fields[parameters[i].id] = field;
+			// update occupiedInRow 
+			occupiedInRow  += parameters[i].colspan; 
 			 
 		}
 
