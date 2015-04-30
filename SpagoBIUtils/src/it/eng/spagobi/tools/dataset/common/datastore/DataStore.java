@@ -1,26 +1,40 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.data.Row;
+import org.apache.metamodel.pojo.ArrayTableDataProvider;
+import org.apache.metamodel.pojo.PojoDataContext;
+import org.apache.metamodel.query.FunctionType;
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.query.SelectItem;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.util.SimpleTableDef;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
@@ -28,6 +42,9 @@ import org.apache.log4j.Logger;
 public class DataStore implements IDataStore {
 
 	private static transient Logger logger = Logger.getLogger(DataStore.class);
+
+	public static String DEFAULT_TABLE_NAME = "Temp";
+	public static String DEFAULT_SCHEMA_NAME = "SpagoBI";
 
 	IMetaData metaData;
 
@@ -216,6 +233,228 @@ public class DataStore implements IDataStore {
 		return results;
 	}
 
+	// public IDataStore aggregateRecordsByColumn(String function, int groupFieldIndex, int[] measureFieldIndexes) {
+	// IDataStore aggregatedDataStore = new DataStore();
+	//
+	// if (function.equalsIgnoreCase(AGGR_SUM)) {
+	// aggregateAndSum(groupFieldIndex, measureFieldIndexes);
+	// } else if (function.equalsIgnoreCase(AGGR_COUNT)) {
+	// aggregateAndCount(groupFieldIndex, measureFieldIndexes);
+	// } else if (function.equalsIgnoreCase(AGGR_AVG)) {
+	// aggregateAndCalculateAvg(groupFieldIndex, measureFieldIndexes);
+	// } else if (function.equalsIgnoreCase(AGGR_MIN)) {
+	// aggregateAndFindMin(groupFieldIndex, measureFieldIndexes);
+	// } else if (function.equalsIgnoreCase(AGGR_MAX)) {
+	// aggregateAndFindMax(groupFieldIndex, measureFieldIndexes);
+	// } else {
+	// new SpagoBIServiceException("DataStore: Aggregate records by specific column", "The function" + function
+	// + "is not supported as aggregation function.");
+	// }
+	//
+	// // aggregatedDataStore.getMetaData().addFiedMeta(this.metaData.getFieldMeta(groupFieldIndex));
+	// // aggregatedDataStore.getMetaData().addFiedMeta(this.metaData.getFieldMeta(measureFieldIndex));
+	//
+	// }
+	//
+	// private IDataStore aggregateAndSum(int groupFieldIndex, int[] measureFieldIndexes) {
+	// IDataStore dataStore = new DataStore();
+	// HashMap<String, Double[]> values = new HashMap<String, Double[]>();
+	// Iterator it = iterator();
+	//
+	// while (it.hasNext()) {
+	// IRecord record = (IRecord) it.next();
+	// IField groupField = record.getFieldAt(groupFieldIndex);
+	// String groupFieldValue = String.valueOf(groupField.getValue());
+	// for (int i = 0; i < measureFieldIndexes.length; i++) {
+	// IField measureField = record.getFieldAt(measureFieldIndexes[i]);
+	// Object measureFieldValue = measureField.getValue();
+	// if (groupFieldValue != null && measureFieldValue != null) {
+	// if (measureFieldValue instanceof Number) {
+	// Number number = (Number) measureFieldValue;
+	// Double numericValue = number.doubleValue();
+	// Double[] aggregatedValues = values.get(groupFieldValue);
+	// if (aggregatedValues != null) {
+	// aggregatedValues[i] += numericValue;
+	// } else {
+	// aggregatedValues = new Double[measureFieldIndexes.length];
+	// Arrays.fill(aggregatedValues, 0.0);
+	// aggregatedValues[i] = numericValue;
+	// }
+	// values.put(groupFieldValue, aggregatedValues);
+	// } else {
+	// new SpagoBIServiceException("DataStore: Aggregate and sum records by specific column", "The field " + groupField.getValue()
+	// + " has a value equals to " + measureField.getValue() + ", which is not a number.");
+	// }
+	// } else {
+	// new SpagoBIServiceException("DataStore: Aggregate and sum records by specific column", "No field exists with index " + groupFieldIndex
+	// + " or " + measureFieldIndexes[i]);
+	// }
+	// }
+	// }
+	//
+	// for (String key : values.keySet()) {
+	// IRecord record = new Record();
+	// record.appendField(new Field(key));
+	// record.appendField(new Field(values.get(key)));
+	// dataStore.appendRecord(record);
+	// }
+	//
+	// return dataStore;
+	// }
+	//
+	// private List aggregateAndCount(int groupFieldIndex, int[] measureFieldIndexes) {
+	// HashMap<String, Integer[]> values = new HashMap<String, Integer[]>();
+	// Iterator it = iterator();
+	//
+	// while (it.hasNext()) {
+	// IRecord record = (IRecord) it.next();
+	// IField groupField = record.getFieldAt(groupFieldIndex);
+	// String groupFieldValue = String.valueOf(groupField.getValue());
+	// for (int i = 0; i < measureFieldIndexes.length; i++) {
+	// IField measureField = record.getFieldAt(measureFieldIndexes[i]);
+	// Object measureFieldValue = measureField.getValue();
+	// if (groupFieldValue != null && measureFieldValue != null) {
+	// Integer[] aggregatedValues = values.get(groupFieldValue);
+	// if (aggregatedValues != null) {
+	// aggregatedValues[i];
+	// values.put(groupFieldValue, aggregatedValue + 1);
+	// } else {
+	// values.put(groupFieldValue, 1);
+	// }
+	// } else {
+	// new SpagoBIServiceException("DataStore: Aggregate and count records by specific column", "No field exists with index " + groupFieldIndex
+	// + " or " + measureFieldIndexes[i]);
+	// }
+	// }
+	// }
+	//
+	// List toReturn = new ArrayList();
+	// for (String key : values.keySet()) {
+	// IRecord record = new Record();
+	// record.appendField(new Field(key));
+	// record.appendField(new Field(values.get(key)));
+	// toReturn.add(record);
+	// }
+	// return toReturn;
+	// }
+	//
+	// private List aggregateAndCalculateAvg(int groupFieldIndex, int[] measureFieldIndexes) {
+	// HashMap<String, Double> sums = new HashMap<String, Double>();
+	// HashMap<String, Integer> counters = new HashMap<String, Integer>();
+	// Iterator it = iterator();
+	//
+	// while (it.hasNext()) {
+	// IRecord record = (IRecord) it.next();
+	// IField groupField = record.getFieldAt(groupFieldIndex);
+	// IField measureField = record.getFieldAt(measureFieldIndex);
+	// String groupFieldValue = String.valueOf(groupField.getValue());
+	// Object measureFieldValue = measureField.getValue();
+	// if (groupFieldValue != null && measureFieldValue != null) {
+	// if (measureFieldValue instanceof Number) {
+	// Number number = (Number) measureFieldValue;
+	// Double numericValue = number.doubleValue();
+	// Double aggregatedValue = sums.get(groupFieldValue);
+	// Integer counterValue = counters.get(groupFieldValue);
+	// if (aggregatedValue != null) {
+	// sums.put(groupFieldValue, aggregatedValue + numericValue);
+	// counters.put(groupFieldValue, counterValue + 1);
+	// } else {
+	// sums.put(groupFieldValue, numericValue);
+	// counters.put(groupFieldValue, 1);
+	// }
+	// } else {
+	// new SpagoBIServiceException("DataStore: Aggregate and calculate average of records by specific column", "The field "
+	// + groupField.getValue() + " has a value equals to " + measureField.getValue() + ", which is not a number.");
+	// }
+	// } else {
+	// new SpagoBIServiceException("DataStore: Aggregate and calculate average of records by specific column", "No field exists with index "
+	// + groupFieldIndex + " or " + measureFieldIndex);
+	// }
+	// }
+	// List toReturn = new ArrayList();
+	// for (String key : sums.keySet()) {
+	// IRecord record = new Record();
+	// record.appendField(new Field(key));
+	// record.appendField(new Field(sums.get(key) / counters.get(key)));
+	// toReturn.add(record);
+	// }
+	// return toReturn;
+	// }
+	//
+	// private List aggregateAndFindMin(int groupFieldIndex, int[] measureFieldIndexes) {
+	// HashMap<String, Double> values = new HashMap<String, Double>();
+	// Iterator it = iterator();
+	//
+	// while (it.hasNext()) {
+	// IRecord record = (IRecord) it.next();
+	// IField groupField = record.getFieldAt(groupFieldIndex);
+	// IField measureField = record.getFieldAt(measureFieldIndex);
+	// String groupFieldValue = String.valueOf(groupField.getValue());
+	// Object measureFieldValue = measureField.getValue();
+	// if (groupFieldValue != null && measureFieldValue != null) {
+	// if (measureFieldValue instanceof Number) {
+	// Number number = (Number) measureFieldValue;
+	// Double numericValue = number.doubleValue();
+	// Double aggregatedValue = values.get(groupFieldValue);
+	// if (aggregatedValue == null || numericValue < aggregatedValue) {
+	// values.put(groupFieldValue, numericValue);
+	// }
+	// } else {
+	// new SpagoBIServiceException("DataStore: Aggregate and find min of records by specific column", "The field " + groupField.getValue()
+	// + " has a value equals to " + measureField.getValue() + ", which is not a number.");
+	// }
+	// } else {
+	// new SpagoBIServiceException("DataStore: Aggregate and find min of records by specific column", "No field exists with index " + groupFieldIndex
+	// + " or " + measureFieldIndex);
+	// }
+	// }
+	// List toReturn = new ArrayList();
+	// for (String key : values.keySet()) {
+	// IRecord record = new Record();
+	// record.appendField(new Field(key));
+	// record.appendField(new Field(values.get(key)));
+	// toReturn.add(record);
+	// }
+	// return toReturn;
+	// }
+	//
+	// private List aggregateAndFindMax(int groupFieldIndex, int[] measureFieldIndexes) {
+	// HashMap<String, Double> values = new HashMap<String, Double>();
+	// Iterator it = iterator();
+	//
+	// while (it.hasNext()) {
+	// IRecord record = (IRecord) it.next();
+	// IField groupField = record.getFieldAt(groupFieldIndex);
+	// IField measureField = record.getFieldAt(measureFieldIndex);
+	// String groupFieldValue = String.valueOf(groupField.getValue());
+	// Object measureFieldValue = measureField.getValue();
+	// if (groupFieldValue != null && measureFieldValue != null) {
+	// if (measureFieldValue instanceof Number) {
+	// Number number = (Number) measureFieldValue;
+	// Double numericValue = number.doubleValue();
+	// Double aggregatedValue = values.get(groupFieldValue);
+	// if (aggregatedValue == null || numericValue > aggregatedValue) {
+	// values.put(groupFieldValue, numericValue);
+	// }
+	// } else {
+	// new SpagoBIServiceException("DataStore: Aggregate and find max of records by specific column", "The field " + groupField.getValue()
+	// + " has a value equals to " + measureField.getValue() + ", which is not a number.");
+	// }
+	// } else {
+	// new SpagoBIServiceException("DataStore: Aggregate and find max of records by specific column", "No field exists with index " + groupFieldIndex
+	// + " or " + measureFieldIndex);
+	// }
+	// }
+	// List toReturn = new ArrayList();
+	// for (String key : values.keySet()) {
+	// IRecord record = new Record();
+	// record.appendField(new Field(key));
+	// record.appendField(new Field(values.get(key)));
+	// toReturn.add(record);
+	// }
+	// return toReturn;
+	// }
+
 	public void sortRecords(int fieldIndex) {
 		final int fIndex = fieldIndex;
 
@@ -345,4 +584,108 @@ public class DataStore implements IDataStore {
 		this.cacheDate = cacheDate;
 	}
 
+	public IDataStore aggregateAndFilterRecords(String sqlQuery) {
+
+		// **************************************************************************************************************
+		// ***** This part build data structures used to convert a SpagoBI DataStore into an MetaModel DataContext ******
+		// **************************************************************************************************************
+		int fieldCount = this.metaData.getFieldCount();
+
+		String[] columnNames = new String[fieldCount];
+		ColumnType[] columnTypes = new ColumnType[fieldCount];
+		HashMap<String, FieldType> fieldTypes = new HashMap<String, FieldType>();
+
+		Collection<Object[]> arrays = new ArrayList<Object[]>();
+
+		for (int i = 0; i < fieldCount; i++) {
+			String columnName = this.metaData.getFieldName(i);
+			columnNames[i] = columnName;
+			Class type = this.metaData.getFieldType(i);
+			if (type == Integer.class) {
+				columnTypes[i] = ColumnType.INTEGER;
+			} else if (type == Double.class) {
+				columnTypes[i] = ColumnType.DOUBLE;
+			} else {
+				columnTypes[i] = ColumnType.STRING;
+			}
+			fieldTypes.put(columnName, this.metaData.getFieldMeta(i).getFieldType());
+		}
+		for (Object r : this.records) {
+			IRecord record = (IRecord) r;
+			Object[] row = new Object[fieldCount];
+			for (int i = 0; i < fieldCount; i++) {
+				row[i] = record.getFieldAt(i).getValue();
+			}
+			arrays.add(row);
+		}
+
+		// *************************************************************************************************
+		// ****** This part create a DataContext for doing aggregation and filter define by the query ******
+		// *************************************************************************************************
+		SimpleTableDef dataStoreDef = new SimpleTableDef(DEFAULT_TABLE_NAME, columnNames, columnTypes);
+		ArrayTableDataProvider dataStoreTableProvider = new ArrayTableDataProvider(dataStoreDef, arrays);
+		DataContext dataContext = new PojoDataContext(DEFAULT_SCHEMA_NAME, dataStoreTableProvider);
+
+		Query query = dataContext.parseQuery(sqlQuery);
+		DataSet dataSet = dataContext.executeQuery(query);
+
+		// *************************************************************************************************
+		// **** This part generates a SpagoBI datastore starting from the Apache MetaModel dataset *********
+		// *************************************************************************************************
+		IDataStore dataStore = new DataStore();
+
+		int resultCount = 0;
+		while (dataSet.next()) {
+			Row row = dataSet.getRow();
+			IRecord record = getRecordFromRow(row, dataStore);
+			dataStore.appendRecord(record);
+			resultCount++;
+		}
+
+		SelectItem[] selectItems = dataSet.getSelectItems();
+		for (int i = 0; i < selectItems.length; i++) {
+			IFieldMetaData fieldMetaData = getFieldMetaDataFromSelectItem(selectItems[i], fieldTypes);
+			dataStore.getMetaData().addFiedMeta(fieldMetaData);
+		}
+		dataStore.getMetaData().setProperty("resultNumber", resultCount);
+
+		return dataStore;
+	}
+
+	private IFieldMetaData getFieldMetaDataFromSelectItem(SelectItem selectItem, HashMap<String, FieldType> fieldTypes) {
+
+		IFieldMetaData fieldMetaData = new FieldMetadata();
+
+		String alias = selectItem.getAlias();
+		Class type = selectItem.getExpectedColumnType().getJavaEquivalentClass();
+		if ((type != Double.class) && (type != Integer.class)) {
+			type = String.class;
+		}
+		String name = selectItem.getColumn().getName();
+		FunctionType function = selectItem.getFunction();
+		FieldType fieldType;
+
+		if (function != null) {
+			fieldType = FieldType.MEASURE;
+			name = function.toString() + "(" + name + ")";
+		} else {
+			fieldType = fieldTypes.get(name);
+		}
+
+		fieldMetaData.setName(name);
+		fieldMetaData.setAlias(alias);
+		fieldMetaData.setFieldType(fieldType);
+		fieldMetaData.setType(type);
+
+		return fieldMetaData;
+	}
+
+	private IRecord getRecordFromRow(Row row, IDataStore dataStore) {
+		IRecord record = new Record(dataStore);
+		Object[] values = row.getValues();
+		for (int i = 0; i < values.length; i++) {
+			record.appendField(new Field(values[i]));
+		}
+		return record;
+	}
 }
