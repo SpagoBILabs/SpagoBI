@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.apache.metamodel.DataContext;
@@ -43,7 +44,7 @@ public class DataStore implements IDataStore {
 
 	private static transient Logger logger = Logger.getLogger(DataStore.class);
 
-	public static String DEFAULT_TABLE_NAME = "Temp";
+	public static String DEFAULT_TABLE_NAME = "TemporaryTable";
 	public static String DEFAULT_SCHEMA_NAME = "SpagoBI";
 
 	IMetaData metaData;
@@ -622,11 +623,15 @@ public class DataStore implements IDataStore {
 		// *************************************************************************************************
 		// ****** This part create a DataContext for doing aggregation and filter define by the query ******
 		// *************************************************************************************************
-		SimpleTableDef dataStoreDef = new SimpleTableDef(DEFAULT_TABLE_NAME, columnNames, columnTypes);
+
+		String uniqueTableName = UUID.randomUUID().toString().replace('-', '_');
+		SimpleTableDef dataStoreDef = new SimpleTableDef(uniqueTableName, columnNames, columnTypes);
 		ArrayTableDataProvider dataStoreTableProvider = new ArrayTableDataProvider(dataStoreDef, arrays);
 		DataContext dataContext = new PojoDataContext(DEFAULT_SCHEMA_NAME, dataStoreTableProvider);
 
-		Query query = dataContext.parseQuery(sqlQuery);
+		// Change table name to be concurrency-safe
+		String newSqlQuery = sqlQuery.replace(DEFAULT_TABLE_NAME, uniqueTableName);
+		Query query = dataContext.parseQuery(newSqlQuery);
 		DataSet dataSet = dataContext.executeQuery(query);
 
 		// *************************************************************************************************
