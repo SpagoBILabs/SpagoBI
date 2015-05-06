@@ -71,8 +71,6 @@ Ext.define('Sbi.fonts.FontEditorWizardPanel', {
 	        , text:  LN('sbi.ds.wizard.confirm')
 	        , handler: this.onSubmit
 	        , scope: this
-//	        , disabled: (this.activeItem == 0)?false:true
-//	        , disabled: true
 	    });
 
 		this.buttons.push({
@@ -82,7 +80,7 @@ Ext.define('Sbi.fonts.FontEditorWizardPanel', {
 	        , scope: this
 	    });
 
-		Sbi.trace("[FontEditorWizardPanel.initButtons]: association editor buttons succesfully adedd");
+		Sbi.trace("[FontEditorWizardPanel.initButtons]: fonts editor buttons succesfully adedd");
 
 		Sbi.trace("[FontEditorWizardPanel.initButtons]: OUT");
 
