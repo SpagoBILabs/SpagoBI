@@ -125,7 +125,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 	, redraw: function() {
 		Sbi.trace("[TableWidget.refresh]: IN");
-		this.initFontOptions();
+		this.initFontOptions();		
 		Sbi.cockpit.widgets.table.TableWidget.superclass.redraw.call(this);
 		this.doLayout();
 		Sbi.trace("[TableWidget.refresh]: OUT");
@@ -161,12 +161,32 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 		for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
 			for(var i = 0; i < meta.fields.length; i++) {
-				if(meta.fields[i].header === this.wconf.visibleselectfields[j].alias) {
-					if(this.wconf.visibleselectfields[j].funct != null &&
-							this.wconf.visibleselectfields[j].funct != 'NaN'
-								&& this.wconf.visibleselectfields[j].funct != ''){
-						meta.fields[i].header = this.wconf.visibleselectfields[j].funct+'('+this.wconf.visibleselectfields[j].alias+')';
+				
+				var propToCheck;
+				
+				//attribute can appear once
+				if(this.wconf.visibleselectfields[j].nature == 'attribute' || 
+						this.wconf.visibleselectfields[j].funct === null ||
+						this.wconf.visibleselectfields[j].funct == ''){
+					propToCheck = this.wconf.visibleselectfields[j].columnName;
+				}else{
+					//measures can have the same field with different aggregation
+					propToCheck = this.wconf.visibleselectfields[j].alias
+				}
+				
+				
+				if(meta.fields[i].header === propToCheck) {
+//					if(this.wconf.visibleselectfields[j].funct != null &&
+//							this.wconf.visibleselectfields[j].funct != 'NaN'
+//								&& this.wconf.visibleselectfields[j].funct != ''){
+//						meta.fields[i].header = this.wconf.visibleselectfields[j].funct+'('+this.wconf.visibleselectfields[j].alias+')';
+//					}
+					if(this.wconf.visibleselectfields[j].alias != null && 
+							this.wconf.visibleselectfields[j].alias != ''){
+						
+						meta.fields[i].header = this.wconf.visibleselectfields[j].alias;
 					}
+					
 					this.applyRendererOnField(meta.fields[i], this.wconf.visibleselectfields[j].funct);
 					this.applySortableOnField(meta.fields[i]);
 
@@ -183,8 +203,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			}
 		}
 		Sbi.trace("[TableWidget.onStoreMetaChange]: visible fields are [" + columns.join(",") + "]");
-
-		this.grid.reconfigure(this.getStore(), fields);
+		
+		this.grid.reconfigure(this.getStore(), fields);		
 
 		Sbi.trace("[TableWidget.onStoreMetaChange][" + this.getId() + "]: OUT");
 	}
@@ -215,7 +235,26 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				this.grid.getView().refresh();
 			}, this);
 		}
-
+		if (this.wconf.maxRowsNumber !== undefined && 
+				this.wconf.maxRowsNumber !== null && 
+				this.wconf.maxRowsNumber !== '') {
+	     	
+	     	var maxRowsIndex = this.wconf.maxRowsNumber;
+	     	var previousStore = this.getStore();
+	     	var totalCount = previousStore.getTotalCount();
+	     	
+	     	if(previousStore.getTotalCount() > this.wconf.maxRowsNumber){
+	     		
+	     		var limitedRows = [];
+	     		
+	     		for(var k = 0; k < maxRowsIndex; k++){
+	     			limitedRows.push(previousStore.inMemoryData[k]);
+	     		}
+	     		
+		     	this.grid.getStore().loadData(limitedRows)
+	     	}
+		}
+		
 		if(this.rendered){
     		this.redraw();
     	} else {
@@ -230,6 +269,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		var selections = this.getWidgetManager().getWidgetSelections(this.getId());
 		// TODO: reselect rows in a selective way
 		this.fireSelectionEvent = true;
+		
 		Sbi.trace("[TableWidget.onAfterLayout][" + this.getId() + "]: OUT");
 	}
 
@@ -301,6 +341,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			// in a way that this.getWidgetManager().getWidgetSelections(this.getId()) || {};
 			// is evaluated one time for all the cells
 			var selections = this.selectionsForColumnRenderers;
+			
+	    	for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
+				if(fieldHeader === this.wconf.visibleselectfields[j].alias) {				
+					fieldHeader = this.wconf.visibleselectfields[j].columnName;
+				}
+	    	}
+			
 	    	if (selections[fieldHeader] !== undefined && selections[fieldHeader].values.indexOf(value) != -1) {
 	    		metadata.attr = 'style="background-color: #D1D1D1;font-weight: bold;"';
 	    	}
@@ -462,7 +509,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	    this.grid.on('columnmove', this.onColumnMove, this);
 	    this.grid.on('afterlayout', this.onAfterLayout, this);
 	    // optimization: this is useful for columns rendering (see applyCellStyleRenderer function)
-	    this.grid.getView().on('beforerefresh', this.setSelectionsForColumnRenderers, this);	    
+	    this.grid.getView().on('beforerefresh', this.setSelectionsForColumnRenderers, this);	
 	    
 	    Sbi.trace("[TableWidget.initGridPanel]: OUT");
 	}
@@ -581,6 +628,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
     	var header = this.grid.getView().getHeaderCt().getHeaderAtIndex(cellIndex);
     	var fieldName = header.dataIndex;
     	var fieldHeader = header.text;
+    	
+    	//Added after table alias configuration, to manage the different header
+    	for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
+			if(fieldHeader === this.wconf.visibleselectfields[j].alias) {				
+				fieldHeader = this.wconf.visibleselectfields[j].columnName;
+			}
+    	}
 
     	if (!meta[fieldHeader]) {
 			Sbi.error("[TableWidget.extractSelectionsFromRecord]: column with header [" + fieldHeader + "] not found on record's metadata");
@@ -599,7 +653,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		}
 		var fieldValue = record.data[fieldName];
 
-		selection.header = fieldHeader;
+		selection.header = fieldHeader;//header.text;
 		selection.value = fieldValue;
 
     	return selection;
@@ -729,7 +783,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 		this.pagingTBar = new Ext.PagingToolbar({
             pageSize: this.pageSize,
-            store: this.getStore(),
+//            store: this.getStore(),
+            store: this.grid.getStore(),
             displayInfo: this.displayInfo,
             displayMsg: LN('sbi.qbe.datastorepanel.grid.displaymsg'),
             emptyMsg: LN('sbi.qbe.datastorepanel.grid.emptymsg'),
