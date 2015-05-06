@@ -128,7 +128,12 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
     		this.bbar.bindStore(this.store);    		
     		this.bbar.doLayout();
     	}
-    	this.reconfigure(this.store, columns);
+    	
+    	if(columns && columns.length>0 && columns[0]=="recNo"){
+    		columns = Ext.Array.slice(columns,1);
+    	}
+    	
+    	this.reconfigure(this.store,columns);
     }
     
     , loadStore: function(t){
