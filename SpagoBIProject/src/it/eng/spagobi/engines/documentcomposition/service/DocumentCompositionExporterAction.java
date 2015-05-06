@@ -8,7 +8,6 @@ package it.eng.spagobi.engines.documentcomposition.service;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
@@ -28,10 +27,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -73,7 +68,14 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 		Map styles=docCompConf.getLstDivStyle();
 		//Map docsMap=docCompConf.getDocumentsMap();
 		Iterator iteratorStyles=styles.keySet().iterator();
-		for (Iterator iterator = docCompConf.getDocumentsArray().iterator(); iterator.hasNext();) {
+		Iterator iterator = null;
+		try {
+			iterator = docCompConf.getDocumentsArray().iterator();
+		} catch (Exception ex) {
+			logger.error("An exception has occured", ex);
+			// throw new Exception(e);
+		}
+		while (iterator.hasNext()) {
 			Document doc = (Document) iterator.next();
 			String label=doc.getSbiObjLabel();
 			logger.debug("Document "+label);
