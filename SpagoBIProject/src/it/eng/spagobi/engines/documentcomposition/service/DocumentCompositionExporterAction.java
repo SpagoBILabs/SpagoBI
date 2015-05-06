@@ -28,6 +28,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 
 public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
