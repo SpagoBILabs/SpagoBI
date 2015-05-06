@@ -90,6 +90,13 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/fonts/views/TableFontTabPanel.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/fonts/views/CrosstabFontTabPanel.js'/></script>
 
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/layouts/editor/main/LayoutEditorTabsPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/layouts/editor/main/LayoutEditor.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/layouts/editor/main/LayoutEditorPage.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/layouts/LayoutEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/layouts/LayoutEditorWizard.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/layouts/views/ViewModeLayoutTabPanel.js'/></script>
+
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/MainPanel.js'/></script>
 
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/dummy/DummyWidget.js'/></script>
