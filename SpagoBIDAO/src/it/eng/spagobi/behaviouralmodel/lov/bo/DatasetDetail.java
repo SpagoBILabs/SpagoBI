@@ -147,7 +147,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 		SourceBean labelBean = (SourceBean) source.getAttribute("LABEL");
 		String label = labelBean.getCharacters();
 		SourceBean valCol = (SourceBean) source.getAttribute("VALUE-COLUMN");
-		String valueColumn = valCol.getCharacters();
+		String valueColumn = valCol != null ? valCol.getCharacters() : null;
 		SourceBean visCol = (SourceBean) source.getAttribute("VISIBLE-COLUMNS");
 		String visibleColumns = visCol.getCharacters();
 		SourceBean invisCol = (SourceBean) source.getAttribute("INVISIBLE-COLUMNS");

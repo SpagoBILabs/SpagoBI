@@ -136,7 +136,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		SourceBean statement = (SourceBean) source.getAttribute("STMT");
 		String queryDefinition = statement.getCharacters();
 		SourceBean valCol = (SourceBean) source.getAttribute("VALUE-COLUMN");
-		String valueColumn = valCol.getCharacters();
+		String valueColumn = valCol != null ? valCol.getCharacters() : null;
 		SourceBean visCol = (SourceBean) source.getAttribute("VISIBLE-COLUMNS");
 		String visibleColumns = visCol.getCharacters();
 		SourceBean invisCol = (SourceBean) source.getAttribute("INVISIBLE-COLUMNS");
