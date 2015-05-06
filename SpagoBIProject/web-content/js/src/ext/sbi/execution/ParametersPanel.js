@@ -249,7 +249,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     	Sbi.debug('[ParametersPanel.handleInitialDependencies] : IN');
     	for (p in this.fields) {
     		var aField = this.fields[p];
-    		this.updateDependentFields( aField );
+    		this.updateDependentFields(aField, false);
 		}
     	Sbi.debug('[ParametersPanel.handleInitialDependencies] : OUT');
     }
@@ -530,7 +530,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				if (!aField.isTransient) {
 					Sbi.debug('[ParametersPanel.reset] : Reset field [' + p + ']');
 					this.resetField(aField, true);
-					this.updateDependentFields( aField );
+					this.updateDependentFields( aField , true);
 				}
 			}
 		}
@@ -871,7 +871,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	
 	, onUpdateDependentFields: function(field, record, index) {
 		Sbi.trace('[ParametersPanel.onUpdateDependentFields] : IN');
-		this.updateDependentFields( field );
+		this.updateDependentFields( field , true);
 		Sbi.trace('[ParametersPanel.onUpdateDependentFields] : OUT');
 	}
 	, initializeFieldDependencies: function() {
@@ -925,7 +925,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			if (theField.behindParameter && theField.behindParameter.selectionType === 'TREE') {
 				
 				this.fields[p].on('select', function(field, record, index) {
-					this.updateDependentFields( field );
+					this.updateDependentFields( field, true);
 				} , this);
 				
 			} else 
@@ -933,7 +933,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			if (theField.behindParameter && theField.behindParameter.selectionType === 'LOOKUP') {
 			
 				this.fields[p].on('select', function(field, record, index) {
-					this.updateDependentFields( field );
+					this.updateDependentFields( field, true);
 				} , this);
 				
 			} else if(theField.behindParameter.selectionType === 'COMBOBOX'
@@ -944,14 +944,14 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				
 				if(theField.behindParameter.type == "DATE"){
 					this.fields[p].on('change', function(field, record, index) {
-						this.updateDependentFields( field );
+						this.updateDependentFields( field, true);
 					} , this);
 				}else{
 					// if input field has an element (it means that the field was displayed)
 					if (theField.el !== undefined) {
 						
 						theField.el.on('keydown', 
-							this.updateDependentFields.createDelegate(this, [theField]), this, {buffer: 350});
+							this.updateDependentFields.createDelegate(this, [theField, true]), this, {buffer: 350});
 						
 						
 						var onKeyDown = function(event, element, options , field){
@@ -974,7 +974,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}
 	}
 	
-	, updateDependentFields: function(f) {
+	, updateDependentFields: function(f, reset) {
 		
 		//if(f.behindParameter.selectionType === 'SLIDER') alert('SLIDER updateDependentFields');
 		
@@ -987,7 +987,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if (f.dependants !== undefined) {
 			for(var i = 0; i < f.dependants.length; i++) {
 				if(f.dependants[i].hasDataDependency === true) {
-					this.updateDataDependentField(f, f.dependants[i]);
+					this.updateDataDependentField(f, f.dependants[i], reset);
 					hasDataDependency = true;
 				}
 				
@@ -1039,7 +1039,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.manageVisualDependenciesOnVisibility = true;
 	}
 	
-	, updateDataDependentField: function(fatherField, dependantConf) {
+	, updateDataDependentField: function(fatherField, dependantConf, reset) {
 		Sbi.debug('[ParametersPanel.updateDataDependentField] : updating field [' + dependantConf.parameterId + '] that is data correlated with field [' + fatherField.name + ']');
 		
 		var field = this.fields[ dependantConf.parameterId ];
@@ -1051,11 +1051,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(field.behindParameter.selectionType === 'TREE'){ 
 			var p = Sbi.commons.JSON.encode(this.getFormState());
 			field.reloadTree(p);
-			if (!this.firstInitialization){
+			if (!this.firstInitialization && reset){
 				field.reset();
 			}
 		} else {
-			field.reset();
+			if (reset) {
+				field.reset();
+			}
 		}
 		Sbi.debug('[ParametersPanel.updateDataDependentField] : field [' + dependantConf.parameterId + '] that is data correlated with field [' + fatherField.name + '] have been updeted succesfully');
 	}
@@ -1750,7 +1752,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var rawValue = state.description;
 		if (state.description !== undefined && state.description != null && f.rendered === true) {
 			f.setRawValue( state.description );
-			this.updateDependentFields( f );
+			this.updateDependentFields( f, true);
 		}		
 	}
 	
