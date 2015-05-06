@@ -123,7 +123,8 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 		try {
 			SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
-			if (treeLevelsColumnsBean != null) {
+			if (treeLevelsColumnsBean != null && treeLevelsColumnsBean.getCharacters() != null 
+					&& treeLevelsColumnsBean.getCharacters().trim() != "") {
 				// compatibility control (versions till 5.1.0 does not have
 				// VALUE-COLUMNS and DESCRIPTION-COLUMNS definition)
 				String treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
