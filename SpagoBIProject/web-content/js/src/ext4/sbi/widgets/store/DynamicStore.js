@@ -124,7 +124,10 @@ Ext.define('Sbi.widgets.store.DynamicStore', {
 	
 	, getColumns: function(){
 		Sbi.debug('store.getColumns');
-		return this.proxy.reader.jsonData.metaData.fields;
+		if(this.proxy.reader.jsonData.metaData){
+			return this.proxy.reader.jsonData.metaData.fields;
+		}
+		return new Array();
 	}
 	, getValidationErrors : function(){
 		//Sbi.debug('store.getValidationErrors');
