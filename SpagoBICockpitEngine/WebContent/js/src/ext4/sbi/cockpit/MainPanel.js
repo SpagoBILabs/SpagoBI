@@ -96,6 +96,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 * The wizard that manages fonts definition
 	 */
 	, fontEditorWizard: null
+	
+    /**
+	 * @property {Ext.Window} layoutEditorWizard
+	 * The wizard that manages layout definition
+	 */
+	, layoutEditorWizard: null
 
 	/**
 	 * @property {Ext.Window} filterEditorWizard
@@ -388,7 +394,9 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 
 	, onAddWidget: function() {
 		// add an empty widget in the default region of the container
-		this.widgetContainer.addWidget();
+		var addedComponent = this.widgetContainer.addWidgetContainerComponent();
+		//TODO check if this call needs to fire an event
+		this.widgetContainer.showWidgetEditorWizard(addedComponent);
 	}
 
 	, onClearSelections: function() {
@@ -602,8 +610,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	
 	, onShowFontEditorWizard: function(){
 		var config = {};
-		config.storesList = Sbi.storeManager.getStoreIds();
-		Sbi.trace("[MainPanel.onShowFontEditorWizard]: config.stores is equal to [" + Sbi.toSource(config.stores) + "]");
+//		config.storesList = Sbi.storeManager.getStoreIds();
+//		Sbi.trace("[MainPanel.onShowFontEditorWizard]: config.stores is equal to [" + Sbi.toSource(config.stores) + "]");
 		config.fonts = Sbi.storeManager.getFonts();
 		Sbi.trace("[MainPanel.onShowFontsEditorWizard]: config.fonts is equal to [" + Sbi.toSource(config.fonts) + "]");
    		Sbi.trace("[MainPanel.onShowFontEditorWizard]: instatiating the editor");
@@ -635,6 +643,42 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	}
 	
 	//FONT SECTION - END
+	
+	//LAYOUT SECTION - START
+	
+	, onShowLayoutEditorWizard: function(){
+		var config = {};
+		config.layouts = Sbi.storeManager.getLayouts();
+		Sbi.trace("[MainPanel.onShowLayoutEditorWizard]: config.fonts is equal to [" + Sbi.toSource(config.layouts) + "]");
+   		Sbi.trace("[MainPanel.onShowLayoutEditorWizard]: instatiating the editor");
+   		this.layoutEditorWizard = Ext.create('Sbi.layouts.LayoutEditorWizard', config);
+   		this.layoutEditorWizard.on("submit", this.onLayoutEditorWizardSubmit, this);
+   		this.layoutEditorWizard.on("cancel", this.onLayoutEditorWizardCancel, this);
+    	Sbi.trace("[MainPanel.onShowLayoutEditorWizard]: editor succesfully instantiated");
+
+		this.layoutEditorWizard.show();
+	}
+	
+	, onLayoutEditorWizardCancel: function(wizard) {
+		Sbi.trace("[MainPanel.onLayoutEditorWizardCancel]: IN");
+		this.layoutEditorWizard.close();
+		this.layoutEditorWizard.destroy();
+		Sbi.trace("[MainPanel.onLayoutEditorWizardCancel]: OUT");
+	}
+
+	, onLayoutEditorWizardSubmit: function(wizard) {
+		Sbi.trace("[MainPanel.onLayoutEditorWizardSubmit]: IN");
+		var wizardState = wizard.getWizardState();
+		if (Sbi.isValorized(wizardState.layouts)){
+			Sbi.storeManager.setLayoutConfigurations(wizardState.layouts);
+			Sbi.trace("[MainPanel.onLayoutEditorWizardSubmit]: setted font group [" + Sbi.toSource(wizardState.layouts) + "] succesfully added to store manager");
+		}
+		this.layoutEditorWizard.close();
+		this.layoutEditorWizard.destroy();
+		Sbi.trace("[MainPanel.onLayoutEditorWizardSubmit]: OUT");
+	}
+	
+	//LAYOUT SECTION - END
 
 	, onShowFilterEditorWizard: function(){
 		var config = {};
@@ -800,6 +844,15 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.fonts')
 			, scope: this
 			, handler:  this.onShowFontEditorWizard
+			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
+		 }));
+		
+		tbItems.push(  new Ext.Button({
+			id: 'layoutBtn'
+     		, iconCls: 'icon_layout'
+			, tooltip: LN('sbi.cockpit.mainpanel.btn.layouts')
+			, scope: this
+			, handler:  this.onShowLayoutEditorWizard
 			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 
