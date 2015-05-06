@@ -26,13 +26,16 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 
 	// init properties...
 	var defaultSettings = {
-		title : this.getTitle(config)
-	    , bodyBorder: true
+		//title : this.getTitle(config)
+	    bodyBorder: true
 	    , frame: true
 	    , shadow: false
 	    , plain : true
 	    , constrain: true
-	    , layout : 'fit'
+	    , layout: {
+	        type: 'vbox',
+	        align : 'stretch'
+	    }
 	    , width:653
 	    , height:332
 	    , x: 100
@@ -64,12 +67,16 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 		
 		var visualizaionConfig = Ext.apply(this.adjustLayoutVisualizationMode(), config || {});
 		Ext.apply(c, visualizaionConfig);
-	}	
-
+	}		
 
 	if(this.widget) {
-		this.items = [this.widget];
+//		this.items = [this.widget];
 		this.widget.setParentComponent(this);
+		
+		this.initRegionPanels();
+		
+		this.items = [this.northPanel, this.centerPanel];
+		
 	} else {
 		this.html = "Please configure the widget";
 	}
@@ -106,6 +113,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
      * The wrapped widget object
      */
 	, widget: null
+	
+	, northPanel: null
+	, centerPanel: null
 
     /**
      * Last cache date retrieved from datastore, it is memorized because in case of re-execution without changes data store is not reloaded
@@ -165,11 +175,25 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 
 		if(this.cacheDate != null){
 			if(buildTitle != ''){
-				buildTitle += ' - '+LN('sbi.cockpit.window.toolbar.cacheDate');
+				this.northPanel.setVisible(true);
+				this.northPanel.update(buildTitle);
+				
+				var widgetTitlePerc = this.getWidgetConfiguration().wgeneric.titlePerc;
+				
+				if(widgetTitlePerc !== undefined && widgetTitlePerc !== null && widgetTitlePerc !== ''){
+					
+					this.northPanel.flex = (widgetTitlePerc/100);
+				} else{
+					this.northPanel.flex = 0.1;
+				}
+				
+//				buildTitle += ' - '+LN('sbi.cockpit.window.toolbar.cacheDate');				
 			}
 			else{
-				buildTitle += LN('sbi.cockpit.window.toolbar.cacheDate');
+//				buildTitle += LN('sbi.cockpit.window.toolbar.cacheDate');
+				this.northPanel.setVisible(false);
 			}
+			buildTitle = LN('sbi.cockpit.window.toolbar.cacheDate');
 
 //			var dateObjF =  Sbi.locale.formats['timestamp'].dateFormat;
 //			var dateTs =Sbi.commons.Format.date(this.cacheDate, dateObjF);
@@ -179,6 +203,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		}
 
 		this.setTitle(buildTitle);
+		
+		this.doLayout();
 	}
 
 	/**
@@ -210,7 +236,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			this.widget = widget;
 			this.widget.setParentComponent(this);
 			try {
-				this.add(widget);
+				
+				this.initRegionPanels();
+				
+				this.add(this.northPanel);
+				this.add(this.centerPanel);
+
 			} catch(e) {
 				alert("An error occured while adding widget [" + this.widget + "] to containe: " + e);
 			}
@@ -308,41 +339,54 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     }
     
     ,adjustLayoutVisualizationMode: function()
-    { 
-    	var visualizationModeHeader = 
-    	{
-    		xtype: 'header',
-    		height: 1
-    	};
+    {     	
     	
-		var visualizationSettings = 
+    	var visualizationSettings = 
 		{
-				border: false,
-//			style: 
-//			{
-//				//borderColor: 'transparent',
-//				borderStyle:'solid', 
-//				borderWidth:'1px', 
-//				backgroundColor: 'transparent', 
-//				borderRadius:'0px'
-//			},
-				style: {borderColor: 'transparent', borderStyle:'solid', borderWidth:'0px', backgroundColor: 'transparent', borderRadius:'0px'},
-		    frame: false
+			frame: false
 		    , shadow: false
 		    , resizable: false
-		    //, header: visualizationModeHeader
-		    , header: false
-		    , maximizable: false
-		    , padding: 0
-//		    , tools: 
-//		      [
-//		       	{
-//		       		type:'maximize'
-//                    , hidden:true
-//                    , scope:this
-//		       	}
-//		      ]
 		};
+    	
+    	var viewModeTabLayout = Sbi.storeManager.getLayout("viewModeLayouts");
+    	
+    	if(Sbi.isValorized(viewModeTabLayout)){
+    		if(viewModeTabLayout.showHeader !== undefined && viewModeTabLayout !== null && viewModeTabLayout.showHeader){
+    			visualizationSettings.header = {xtype: 'header', height: 1};
+    			visualizationSettings.tools = 
+    			[
+//    			 	{ type:'maximize', hidden:true, scope:this }
+    			]
+    		}else{
+    			visualizationSettings.header = false;
+    			visualizationSettings.border = false;
+    			visualizationSettings.style = 
+    			{
+    					borderColor: 'transparent', 
+    					borderStyle:'solid', 
+    					borderWidth:'0px', 
+    					backgroundColor: 'transparent', 
+    					borderRadius:'0px'
+    			};
+    			visualizationSettings.padding = 0;
+    			visualizationSettings.maximizable = false;
+
+    		}
+    	} else {
+			visualizationSettings.header = false;
+			visualizationSettings.border = false;
+			visualizationSettings.style = 
+			{
+					borderColor: 'transparent', 
+					borderStyle:'solid', 
+					borderWidth:'0px', 
+					backgroundColor: 'transparent', 
+					borderRadius:'0px'
+			};
+			visualizationSettings.padding = 0;
+			visualizationSettings.maximizable = false;
+    	}
+    	
     	return visualizationSettings;
     }
 	// -----------------------------------------------------------------------------------------------------------------
@@ -394,6 +438,44 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
         	scope:this,
         	hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
         }];
+	}
+	
+	, initRegionPanels: function(){
+		
+		this.centerPanel = Ext.create('Ext.panel.Panel', {
+			xtype: 'panel', 
+			layout: 'fit', 
+			flex: 1, 
+			region:'center', 
+			header:false, 
+			items:[this.widget]
+		});
+		
+		this.northPanel = Ext.create('Ext.panel.Panel', {
+			xtype: 'panel',
+			maxHeight: 65,
+			flex: 0.1, 
+			region:'center', 
+			header:false,
+		});
+		
+		var widgetTitle = this.getWidgetConfiguration().wgeneric.title;
+		var widgetTitlePerc = this.getWidgetConfiguration().wgeneric.titlePerc;
+		
+		if(widgetTitle !== undefined && widgetTitle !== null && widgetTitle !== ''){
+			
+			this.northPanel.hidden = false;				
+		} else{
+			this.northPanel.hidden = true;
+		}
+		
+		if(widgetTitlePerc !== undefined && widgetTitlePerc !== null && widgetTitlePerc !== ''){
+			
+			this.northPanel.flex = (widgetTitlePerc/100);
+		} else{
+			this.northPanel.flex = 0.1;
+		}
+		
 	}
 
 	// =================================================================================================================
