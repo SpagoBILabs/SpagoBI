@@ -12,6 +12,9 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,11 +22,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.log4j.Logger;
+
 /**
  * Defines method to manage lov of fixed list type
  */
 public class FixedListDetail extends DependenciesPostProcessingLov implements ILovDetail  {
     
+	private static transient Logger logger = Logger.getLogger(FixedListDetail.class);
+	
 	/**
 	 * items of the list
 	 */
@@ -34,7 +41,11 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	private String valueColumnName = "VALUE";
 	private String descriptionColumnName = "DESCRIPTION";
 	private List invisibleColumnNames = null;
-	private List treeLevelsColumns = null;
+
+	// each entry of the list contains the name of the column to be considered as value column as first item, and the name of the column to be considered as
+	// description column as second item
+	private List<Couple<String, String>> treeLevelsColumns = null;
+	
 	private String lovType = "simple";
 	
 	/**
@@ -127,16 +138,57 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		}
 		setInvisibleColumnNames(invisColNames);
 		
-		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN  definition)
-		SourceBean treeLevelsColumnsBean = (SourceBean)source.getAttribute("TREE-LEVELS-COLUMNS");
-		String treeLevelsColumnsString = null;
-		if (treeLevelsColumnsBean != null) { 
-			treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+		try {
+			SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
+			if (treeLevelsColumnsBean != null) {
+				// compatibility control (versions till 5.1.0 does not have
+				// VALUE-COLUMNS and DESCRIPTION-COLUMNS definition)
+				String treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+				String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+				List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+				for (int i = 0; i < treeLevelsColumnArr.length; i++) {
+					String aValueColumn = treeLevelsColumnArr[i];
+					if (i == treeLevelsColumnArr.length - 1) {
+						levelsMap.add(new Couple<String, String>(aValueColumn, descrColumn));
+					} else {
+						levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
+					}
+				}
+				this.setValueColumnName(null);
+				this.setDescriptionColumnName(null);
+			} else {
+				SourceBean valuesColumnsBean = (SourceBean) source.getAttribute("VALUE-COLUMNS");
+				SourceBean descriptionColumnsBean = (SourceBean) source.getAttribute("DESCRIPTION-COLUMNS");
+				if (valuesColumnsBean != null) {
+
+					Assert.assertTrue(descriptionColumnsBean != null, "DESCRIPTION-COLUMNS tag not defined");
+
+					List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+					String valuesColumnsStr = valuesColumnsBean.getCharacters();
+					logger.debug("VALUE-COLUMNS is [" + valuesColumnsStr + "]");
+					String descriptionColumnsStr = descriptionColumnsBean.getCharacters();
+					logger.debug("DESCRIPTION-COLUMNS is [" + descriptionColumnsStr + "]");
+					String[] valuesColumns = valuesColumnsStr.split(",");
+					String[] descriptionColumns = descriptionColumnsStr.split(",");
+					List<String> valuesColumnsList = Arrays.asList(valuesColumns);
+					List<String> descriptionColumnsList = Arrays.asList(descriptionColumns);
+
+					Assert.assertTrue(valuesColumnsList.size() == descriptionColumnsList.size(),
+							"Value columns list and description columns list must have the same length");
+
+					for (int i = 0; i < valuesColumnsList.size(); i++) {
+						String aValueColumn = valuesColumnsList.get(i);
+						String aDescriptionColumn = descriptionColumnsList.get(i);
+						levelsMap.add(new Couple<String, String>(aValueColumn, aDescriptionColumn));
+					}
+					this.treeLevelsColumns = levelsMap;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error while reading LOV definition from XML", e);
+			throw new SpagoBIRuntimeException("Error while reading LOV definition from XML", e);
 		}
-		if( (treeLevelsColumnsString!=null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("") ) {
-			String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
-			this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
-		}
+		
 		SourceBean lovTypeBean = (SourceBean)source.getAttribute("LOVTYPE"); 
 		String lovType;
 		if(lovTypeBean!=null){
@@ -158,29 +210,29 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	 * 
 	 * @return the serialized xml string
 	 */
+	@Override
 	public String toXML() {
 		String lovXML = "";
 		lovXML += "<FIXLISTLOV>";
 		lovXML += "<ROWS>";
 		FixedListItemDetail lov = null;
 		Iterator iter = items.iterator();
-		while(iter.hasNext()){
-			lov = (FixedListItemDetail)iter.next();
+		while (iter.hasNext()) {
+			lov = (FixedListItemDetail) iter.next();
 			String value = lov.getValue();
 			String description = lov.getDescription();
-			lovXML += "<ROW" +
-					  " VALUE=\"" + value + "\"" +
-					  " DESCRIPTION=\"" + description + "\"" +
-					  "/>";
+			lovXML += "<ROW" + " VALUE=\"" + value + "\"" + " DESCRIPTION=\"" + description + "\"" + "/>";
 		}
 		lovXML += "</ROWS>";
-		lovXML += "<VALUE-COLUMN>"+valueColumnName+"</VALUE-COLUMN>" +
-				  "<DESCRIPTION-COLUMN>"+descriptionColumnName+"</DESCRIPTION-COLUMN>" +
-				  "<VISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(visibleColumnNames, ",")+"</VISIBLE-COLUMNS>" +
-				  "<INVISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(invisibleColumnNames, ",")+"</INVISIBLE-COLUMNS>" +
-				  "<LOVTYPE>"+this.getLovType() + "</LOVTYPE>" +
-				  "<TREE-LEVELS-COLUMNS>"+GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",")+"</TREE-LEVELS-COLUMNS>" +
-				  "</FIXLISTLOV>";
+		if (this.isSimpleLovType()) {
+			lovXML += "<VALUE-COLUMN>" + valueColumnName + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + descriptionColumnName + "</DESCRIPTION-COLUMN>";
+		} else {
+			lovXML += "<VALUE-COLUMNS>" + GeneralUtilities.fromListToString(this.getTreeValueColumns(), ",") + "</VALUE-COLUMNS>" + "<DESCRIPTION-COLUMNS>"
+					+ GeneralUtilities.fromListToString(this.getTreeDescriptionColumns(), ",") + "</DESCRIPTION-COLUMNS>";
+		}
+		lovXML += "<VISIBLE-COLUMNS>" + GeneralUtilities.fromListToString(visibleColumnNames, ",") + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
+				+ GeneralUtilities.fromListToString(invisibleColumnNames, ",") + "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + this.getLovType() + "</LOVTYPE>";
+		lovXML += "</FIXLISTLOV>";
 		return lovXML;
 	}
 	
@@ -393,11 +445,13 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		this.lovType = lovType;
 	}
 
-	public List getTreeLevelsColumns() {
+	@Override
+	public List<Couple<String, String>> getTreeLevelsColumns() {
 		return treeLevelsColumns;
 	}
 
-	public void setTreeLevelsColumns(List treeLevelsColumns) {
+	@Override
+	public void setTreeLevelsColumns(List<Couple<String, String>> treeLevelsColumns) {
 		this.treeLevelsColumns = treeLevelsColumns;
 	}
 

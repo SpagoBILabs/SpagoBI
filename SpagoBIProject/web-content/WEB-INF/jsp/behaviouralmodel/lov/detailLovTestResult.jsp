@@ -83,16 +83,18 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
    	readonly = "readonly";
    	}
     
-    String treeColumnNames = "";
-    if(lovDet!=null && lovDet.getTreeLevelsColumns()!=null && lovDet.getTreeLevelsColumns().size()>0){
-    	treeColumnNames = treeColumnNames+"['"+lovDet.getTreeLevelsColumns().get(0)+"'";
-    	 for(int i=1; i<lovDet.getTreeLevelsColumns().size(); i++){
-    		 treeColumnNames =treeColumnNames +",'"+ lovDet.getTreeLevelsColumns().get(i)+"'";
-    	 }
-    	 treeColumnNames = treeColumnNames+"]";
-    }else{
-    	treeColumnNames="[]";
+    String treeColumnNames = "[";
+    if (lovDet != null && lovDet.getTreeLevelsColumns() != null && lovDet.getTreeLevelsColumns().size() > 0) {
+		Iterator<Couple<String, String>> it = lovDet.getTreeLevelsColumns().iterator();
+		while (it.hasNext()) {
+			Couple<String, String> entry = it.next();
+			treeColumnNames += "{name : '" + entry.getFirst() + "', description : '" + entry.getSecond() + "'}";
+			if (it.hasNext()) {
+				treeColumnNames += ",";
+			}
+		}
     }
+    treeColumnNames += "]";
     
     String contextName = GeneralUtilities.getSpagoBiContext();
     String adapterHTTPName = GeneralUtilities.getSpagoAdapterHttpUrl();
