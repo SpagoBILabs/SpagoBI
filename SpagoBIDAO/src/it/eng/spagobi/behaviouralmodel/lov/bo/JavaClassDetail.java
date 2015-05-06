@@ -138,6 +138,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 						levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
 					}
 				}
+				this.treeLevelsColumns = levelsMap;
 				this.setValueColumnName(null);
 				this.setDescriptionColumnName(null);
 			} else {

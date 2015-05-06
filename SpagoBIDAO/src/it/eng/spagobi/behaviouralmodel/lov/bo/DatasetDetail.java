@@ -187,6 +187,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 						levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
 					}
 				}
+				this.treeLevelsColumns = levelsMap;
 				this.setValueColumnName(null);
 				this.setDescriptionColumnName(null);
 			} else {
