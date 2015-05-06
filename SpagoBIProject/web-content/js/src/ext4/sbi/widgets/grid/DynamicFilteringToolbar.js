@@ -83,29 +83,34 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
 	    this.add( this.columnNameCombo );	    
 	    this.add({ xtype: 'tbspacer' });
 	    	    
-	    this.add(LN('sbi.lookup.asA'));
-	    this.add({ xtype: 'tbspacer' });
+
 	    
-	    this.typeStore = Ext.create('Ext.data.Store', {
-	        fields: ['value', 'label'],
-	    	data : [
-                  {value: 'string', label: LN('sbi.lookup.asString')}
-                , {value: 'num', label: LN('sbi.lookup.asNumber')}
-                , {value: 'date', label: LN('sbi.lookup.asDate')}
-            ]
-	    });	    
-	    this.typeCombo = new Ext.create('Ext.form.ComboBox', {
-	        store: this.typeStore,
-	        width: 65,
-	        displayField:'label',
-	        valueField:'value',
-	        typeAhead: true,
-	        triggerAction: 'all',
-	        emptyText:'...',
-	        selectOnFocus:true,
-	        mode: 'local'
-	    });
-	    this.add( this.typeCombo );
+	    if(!this.filterAutoType){
+		    this.add(LN('sbi.lookup.asA'));
+		    this.add({ xtype: 'tbspacer' });
+		    this.typeStore = Ext.create('Ext.data.Store', {
+		        fields: ['value', 'label'],
+		    	data : [
+	                  {value: 'string', label: LN('sbi.lookup.asString')}
+	                , {value: 'num', label: LN('sbi.lookup.asNumber')}
+	                , {value: 'date', label: LN('sbi.lookup.asDate')}
+	            ]
+		    });	    
+		    this.typeCombo = new Ext.create('Ext.form.ComboBox', {
+		        store: this.typeStore,
+		        width: 65,
+		        displayField:'label',
+		        valueField:'value',
+		        typeAhead: true,
+		        triggerAction: 'all',
+		        emptyText:'...',
+		        selectOnFocus:true,
+		        mode: 'local'
+		    });
+		    this.add( this.typeCombo );
+		   
+	    }
+
 	    this.add({ xtype: 'tbspacer' });
 	    	    
 	    this.filterStore = Ext.create('Ext.data.Store', {
@@ -144,6 +149,12 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
             scope: this
         });
 		
+		this.add({
+            text: 'X',
+            handler: this.removeFilter,
+            scope: this
+        });
+		
 		if(this.additionalButtons){
 			this.add('->');
 			for(var i=0; i<this.additionalButtons.length;i++){
@@ -158,15 +169,45 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
 		this.store.loadPage(1);
 	}
 	
+	, removeFilter: function(){
+		this.resetForm();
+		var filterConfig = this.getValue();
+		this.store.proxy.extraParams = filterConfig;
+		this.store.loadPage(1);
+	}
 	
 	
 	, getValue: function(){
 		var filterConfig = {};
 		filterConfig.valueFilter = this.valueField.getValue();
 		filterConfig.columnsFilter = this.columnNameCombo.getValue();
-		filterConfig.typeValueFilter = this.typeCombo.getValue();
+		filterConfig.columnsFilterDescription = this.columnNameCombo.getRawValue();
+		if( this.store.proxy.reader.jsonData.metaData){
+			if(this.filterAutoType){
+				if(filterConfig.valueFilter){
+					for(var i=0; i<this.store.proxy.reader.jsonData.metaData.fields.length; i++){
+						if(this.store.proxy.reader.jsonData.metaData.fields[i].name ==  filterConfig.columnsFilter){
+							filterConfig.typeValueFilter = this.store.proxy.reader.jsonData.metaData.fields[i].type;
+							break;
+						}
+					}
+				}
+			}else{
+				filterConfig.typeValueFilter = this.typeCombo.getValue();
+			}
+		}
 		filterConfig.typeFilter = this.filterCombo.getValue();
+		
 		return filterConfig;
+	}
+	
+	, resetForm: function(){
+		this.valueField.reset();
+		this.columnNameCombo.reset();
+		if(!this.filterAutoType){
+			this.typeCombo.reset();
+		}
+		this.filterCombo.reset();
 	}
 	
 	, createColumnNameCombo: function(){
@@ -180,7 +221,7 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
 	        selectOnFocus:true,
 	        typeAhead: true,
 	        triggerAction: 'all',
-	        width: 100
+	        width: this.columnComboWidth || 100
 		});	
 	}
 	
