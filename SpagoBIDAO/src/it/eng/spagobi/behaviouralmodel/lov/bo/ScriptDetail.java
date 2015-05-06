@@ -160,6 +160,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 						levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
 					}
 				}
+				this.treeLevelsColumns = levelsMap;
 				this.setValueColumnName(null);
 				this.setDescriptionColumnName(null);
 			} else {
