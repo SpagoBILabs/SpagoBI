@@ -55,7 +55,9 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 		title: 'Table Designer'
 	});
 	
+	this.initTableOptionsTab();
 	this.initFontOptionsTab();
+	
 
 	// propagate events
 	this.tableDesigner.on(
@@ -85,6 +87,8 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 				state.visibleselectfields = this.visibleselectfields
 			}
 			
+			state.maxRowsNumber = this.maxRowsNumber;
+			
 			this.setFontStateBeforeRender(this, state);
 				
 			this.setDesignerState(state);
@@ -99,7 +103,7 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 		        	, margin: 0
 		        	, padding: 0
 		        	, bodyStyle: 'width: 100%; height: 100%'
-		        	, items:[this.tableDesigner, this.fontConfigurationPanel]
+		        	, items:[this.tableDesigner, this.tableConfigurationPanel, this.fontConfigurationPanel]
 		        	//, html: "tableDesigner"
 		        });
 
@@ -137,6 +141,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	, rowsFontDecorationCombo: null
 	//panel to show font size options
 	, fontConfigurationPanel: null
+	
+	//field to set the max rows limit
+	, maxRowsNumberField: null
+	//panel for table options
+	, tableConfigurationPanel: null
 	
 	// =================================================================================================================
 	// METHODS
@@ -397,6 +406,30 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		};
 	}
 
+	, initTableOptionsTab: function(){
+		
+		this.maxRowsNumberField = Ext.create('Ext.form.field.Text',{
+			 fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.maxrowsnumber'),
+			 name: 				'maxRowsNumber',
+	         allowBlank: 		true,
+//	    	 enforceMaxLength: 	true,
+//	 		 maxLength: 		7,
+//	 		 msgTarget: 		'side',
+			 labelWidth:		140,
+			 width:				250,
+			 margin:			10
+		 });
+		
+		this.tableConfigurationPanel = 
+		{
+			xtype:		'panel'
+			, layout: 	{ type: 'table', columns: 1 }
+	        , title: 	LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.title')
+	    	, items: 	[this.maxRowsNumberField]	
+		};
+		
+	}
+
 	, getDesignerState: function(running) {
 		Sbi.trace("[TableWidgetDesigner.getDesignerState]: IN");
 
@@ -408,6 +441,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			state.visibleselectfields =  this.visibleselectfields;
 		}
 		
+		state.maxRowsNumber = this.maxRowsNumberField.getValue();
 		
 		this.getFontState(state);		
 
@@ -462,6 +496,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	, setDesignerState: function(state) {
 		Sbi.trace("[TableWidgetDesigner.setDesignerState]: IN");
 		Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.setDesignerState(this, state);
+		
+		if (state.maxRowsNumber) this.maxRowsNumberField.setValue(state.maxRowsNumber);
 		
 		this.setFontState(state);
 		
@@ -623,21 +659,21 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	, findTableFont: function(){
 		Sbi.trace("[TableWidgetDesigner.findTableFont]: IN");
 		
-		var tableFonts;
-		var fonts = Sbi.storeManager.getFonts();
-		
-		var tabIndex = -1;
-		
-		for(var i = 0; i < fonts.length; i++) {
-			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "tableFonts") {
-				tabIndex = i;
-				break;
-			}
-		}
-		
-		if(tabIndex >= 0){
-			tableFonts = fonts[tabIndex]
-		}
+		var tableFonts = Sbi.storeManager.getFont("tableFonts");
+//		var fonts = Sbi.storeManager.getFonts();
+//		
+//		var tabIndex = -1;
+//		
+//		for(var i = 0; i < fonts.length; i++) {
+//			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "tableFonts") {
+//				tabIndex = i;
+//				break;
+//			}
+//		}
+//		
+//		if(tabIndex >= 0){
+//			tableFonts = fonts[tabIndex]
+//		}
 		
 		return tableFonts		
 		
