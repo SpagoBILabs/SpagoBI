@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.datasource.jpa;
 
@@ -73,10 +73,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang
-	 * .String)
+	 *
+	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang .String)
 	 */
 	public EntityManagerFactory getEntityManagerFactory(String dmName) {
 		return getEntityManagerFactory();
@@ -163,6 +161,11 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		// to solve http://spagoworld.org/jira/browse/SPAGOBI-1934
 		if (dialect != null && dialect.contains("SQLServerDialect")) {
 			dialect = "org.hibernate.dialect.ExtendedSQLServerDialect";
+		}
+
+		// at the moment (04/2015) hibernate doesn't provide a dialect for hive or hbase with phoenix. But its similar to the postrges one
+		if (dialect.contains("hive") || dialect.contains("hbase") || dialect.contains("spark") || dialect.contains("impala")) {
+			dialect = "org.hibernate.dialect.PostgreSQLDialect";
 		}
 
 		if (getToolsDataSource().checkIsJndi()) {
