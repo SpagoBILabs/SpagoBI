@@ -519,21 +519,21 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	, findPieChartFont: function(){
 		Sbi.trace("[PieChartWidgetDesigner.findPieChartFont]: IN");
 		
-		var pieChartFonts;
-		var fonts = Sbi.storeManager.getFonts();
-		
-		var tabIndex = -1;
-		
-		for(var i = 0; i < fonts.length; i++) {
-			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "pieChartFonts") {
-				tabIndex = i;
-				break;
-			}
-		}
-		
-		if(tabIndex >= 0){
-			pieChartFonts = fonts[tabIndex]
-		}
+		var pieChartFonts = Sbi.storeManager.getFont("pieChartFonts");
+//		var fonts = Sbi.storeManager.getFonts();
+//		
+//		var tabIndex = -1;
+//		
+//		for(var i = 0; i < fonts.length; i++) {
+//			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "pieChartFonts") {
+//				tabIndex = i;
+//				break;
+//			}
+//		}
+//		
+//		if(tabIndex >= 0){
+//			pieChartFonts = fonts[tabIndex]
+//		}
 		
 		return pieChartFonts		
 		

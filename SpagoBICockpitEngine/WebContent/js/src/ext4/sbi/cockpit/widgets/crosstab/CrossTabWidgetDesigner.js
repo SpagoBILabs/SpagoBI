@@ -870,21 +870,21 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 	, findCrosstabFont: function(){
 		Sbi.trace("[CrosstabWidgetDesigner.findCrosstabFont]: IN");
 		
-		var crosstabFonts;
-		var fonts = Sbi.storeManager.getFonts();
-		
-		var tabIndex = -1;
-		
-		for(var i = 0; i < fonts.length; i++) {
-			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "crosstabFonts") {
-				tabIndex = i;
-				break;
-			}
-		}
-		
-		if(tabIndex >= 0){
-			crosstabFonts = fonts[tabIndex]
-		}
+		var crosstabFonts = Sbi.storeManager.getFont("crosstabFonts");
+//		var fonts = Sbi.storeManager.getFonts();
+//		
+//		var tabIndex = -1;
+//		
+//		for(var i = 0; i < fonts.length; i++) {
+//			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "crosstabFonts") {
+//				tabIndex = i;
+//				break;
+//			}
+//		}
+//		
+//		if(tabIndex >= 0){
+//			crosstabFonts = fonts[tabIndex]
+//		}
 		
 		return crosstabFonts		
 		

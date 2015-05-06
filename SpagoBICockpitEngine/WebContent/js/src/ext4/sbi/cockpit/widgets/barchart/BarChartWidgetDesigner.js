@@ -810,21 +810,21 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 	, findBarChartFont: function(){
 		Sbi.trace("[BarChartWidgetDesigner.findBarChartFont]: IN");
 		
-		var barChartFonts;
-		var fonts = Sbi.storeManager.getFonts();
-		
-		var tabIndex = -1;
-		
-		for(var i = 0; i < fonts.length; i++) {
-			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "barChartFonts") {
-				tabIndex = i;
-				break;
-			}
-		}
-		
-		if(tabIndex >= 0){
-			barChartFonts = fonts[tabIndex]
-		}
+		var barChartFonts = Sbi.storeManager.getFont("barChartFonts");
+//		var fonts = Sbi.storeManager.getFonts();
+//		
+//		var tabIndex = -1;
+//		
+//		for(var i = 0; i < fonts.length; i++) {
+//			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "barChartFonts") {
+//				tabIndex = i;
+//				break;
+//			}
+//		}
+//		
+//		if(tabIndex >= 0){
+//			barChartFonts = fonts[tabIndex]
+//		}
 		
 		return barChartFonts		
 		

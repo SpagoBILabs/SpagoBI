@@ -809,21 +809,21 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	, findLineChartFont: function(){
 		Sbi.trace("[LineChartWidgetDesigner.findLineChartFont]: IN");
 		
-		var lineChartFonts;
-		var fonts = Sbi.storeManager.getFonts();
-		
-		var tabIndex = -1;
-		
-		for(var i = 0; i < fonts.length; i++) {
-			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "lineChartFonts") {
-				tabIndex = i;
-				break;
-			}
-		}
-		
-		if(tabIndex >= 0){
-			lineChartFonts = fonts[tabIndex]
-		}
+		var lineChartFonts = Sbi.storeManager.getFont("lineChartFonts");
+//		var fonts = Sbi.storeManager.getFonts();
+//		
+//		var tabIndex = -1;
+//		
+//		for(var i = 0; i < fonts.length; i++) {
+//			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "lineChartFonts") {
+//				tabIndex = i;
+//				break;
+//			}
+//		}
+//		
+//		if(tabIndex >= 0){
+//			lineChartFonts = fonts[tabIndex]
+//		}
 		
 		return lineChartFonts		
 		
