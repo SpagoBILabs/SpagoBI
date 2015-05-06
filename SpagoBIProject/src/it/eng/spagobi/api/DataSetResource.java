@@ -352,19 +352,49 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
 		for (int i = 0; i < categoriesObject.length(); i++) {
 			JSONObject categoryObject = categoriesObject.getJSONObject(i);
-			String columnName = categoryObject.getString("alias");
-			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, columnName);
+
+			String columnName;
+
+			// in the Cockpit Engine, table, you can insert many times the same measure.
+			// To manage this, it's not possibile to use the alias as column name.
+			// So in the measure object there is also a "columnName" field
+
+			if (!categoryObject.isNull("columnName")) {
+				columnName = categoryObject.getString("columnName");
+			} else {
+				columnName = categoryObject.getString("alias");
+			}
+
+			String aliasName = categoryObject.getString("alias");
+
+			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName);
 			projectionCriterias.add(aProjectionCriteria);
 		}
 		for (int i = 0; i < measuresObject.length(); i++) {
 			JSONObject measureObject = measuresObject.getJSONObject(i);
-			String columnName = measureObject.getString("alias");
+
+			String columnName;
+
+			// in the Cockpit Engine, table, you can insert many times the same measure.
+			// To manage this, it's not possibile to use the alias as column name.
+			// So in the measure object there is also a "columnName" field
+
+			if (!measureObject.isNull("columnName")) {
+				columnName = measureObject.getString("columnName");
+			} else {
+				columnName = measureObject.getString("alias");
+			}
+
+			String aliasName = measureObject.getString("alias");
+
 			IAggregationFunction function = AggregationFunctions.get(measureObject.getString("funct"));
 			if (function != AggregationFunctions.NONE_FUNCTION) {
-				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), columnName);
+				// ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), columnName);
+				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), aliasName);
 				projectionCriterias.add(aProjectionCriteria);
 			} else {
-				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, columnName);
+				// ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, columnName);
+				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName);
 				projectionCriterias.add(aProjectionCriteria);
 			}
 		}
@@ -376,7 +406,19 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 		for (int i = 0; i < categoriesObject.length(); i++) {
 			JSONObject categoryObject = categoriesObject.getJSONObject(i);
-			String columnName = categoryObject.getString("alias");
+
+			String columnName;
+
+			// in the Cockpit Engine, table, you can insert many times the same measure.
+			// To manage this, it's not possibile to use the alias as column name.
+			// So in the measure object there is also a "columnName" field
+
+			if (!categoryObject.isNull("columnName")) {
+				columnName = categoryObject.getString("columnName");
+			} else {
+				columnName = categoryObject.getString("alias");
+			}
+
 			GroupCriteria groupCriteria = new GroupCriteria(dataset, columnName, null);
 			groupCriterias.add(groupCriteria);
 		}
