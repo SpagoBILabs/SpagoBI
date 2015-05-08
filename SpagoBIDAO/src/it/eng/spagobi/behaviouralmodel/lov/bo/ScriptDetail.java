@@ -17,6 +17,9 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
 import java.net.URL;
@@ -49,7 +52,11 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	private String valueColumnName = "";
 	private String descriptionColumnName = "";
 	private List invisibleColumnNames = null;
-	private List treeLevelsColumns = null;
+
+	// each entry of the list contains the name of the column to be considered as value column as first item, and the name of the column to be considered as
+	// description column as second item
+	private List<Couple<String, String>> treeLevelsColumns = null;
+
 	private String lovType = "simple";
 
 	/**
@@ -140,16 +147,59 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			if (lang != null)
 				setLanguageScript(lang);
 		}
-		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN definition)
-		SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
-		String treeLevelsColumnsString = null;
-		if (treeLevelsColumnsBean != null) {
-			treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+
+		try {
+			SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
+			if (treeLevelsColumnsBean != null && treeLevelsColumnsBean.getCharacters() != null && treeLevelsColumnsBean.getCharacters().trim() != "") {
+				// compatibility control (versions till 5.1.0 does not have
+				// VALUE-COLUMNS and DESCRIPTION-COLUMNS definition)
+				String treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+				String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+				List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+				for (int i = 0; i < treeLevelsColumnArr.length; i++) {
+					String aValueColumn = treeLevelsColumnArr[i];
+					if (i == treeLevelsColumnArr.length - 1) {
+						levelsMap.add(new Couple<String, String>(aValueColumn, descrColumn));
+					} else {
+						levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
+					}
+				}
+				this.treeLevelsColumns = levelsMap;
+				this.setValueColumnName(null);
+				this.setDescriptionColumnName(null);
+			} else {
+				SourceBean valuesColumnsBean = (SourceBean) source.getAttribute("VALUE-COLUMNS");
+				SourceBean descriptionColumnsBean = (SourceBean) source.getAttribute("DESCRIPTION-COLUMNS");
+				if (valuesColumnsBean != null) {
+
+					Assert.assertTrue(descriptionColumnsBean != null, "DESCRIPTION-COLUMNS tag not defined");
+
+					List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+					String valuesColumnsStr = valuesColumnsBean.getCharacters();
+					logger.debug("VALUE-COLUMNS is [" + valuesColumnsStr + "]");
+					String descriptionColumnsStr = descriptionColumnsBean.getCharacters();
+					logger.debug("DESCRIPTION-COLUMNS is [" + descriptionColumnsStr + "]");
+					String[] valuesColumns = valuesColumnsStr.split(",");
+					String[] descriptionColumns = descriptionColumnsStr.split(",");
+					List<String> valuesColumnsList = Arrays.asList(valuesColumns);
+					List<String> descriptionColumnsList = Arrays.asList(descriptionColumns);
+
+					Assert.assertTrue(valuesColumnsList.size() == descriptionColumnsList.size(),
+							"Value columns list and description columns list must have the same length");
+
+					for (int i = 0; i < valuesColumnsList.size(); i++) {
+						String aValueColumn = valuesColumnsList.get(i);
+						String aDescriptionColumn = descriptionColumnsList.get(i);
+						levelsMap.add(new Couple<String, String>(aValueColumn, aDescriptionColumn));
+					}
+					this.treeLevelsColumns = levelsMap;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error while reading LOV definition from XML", e);
+			throw new SpagoBIRuntimeException("Error while reading LOV definition from XML", e);
 		}
-		if ((treeLevelsColumnsString != null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("")) {
-			String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
-			this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
-		}
+
 		SourceBean lovTypeBean = (SourceBean) source.getAttribute("LOVTYPE");
 		String lovType;
 		if (lovTypeBean != null) {
@@ -165,13 +215,17 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	 */
 	@Override
 	public String toXML() {
-		String XML = "<SCRIPTLOV>" + "<SCRIPT>" + this.getScript() + "</SCRIPT>" + "<VALUE-COLUMN>" + this.getValueColumnName() + "</VALUE-COLUMN>"
-				+ "<DESCRIPTION-COLUMN>" + this.getDescriptionColumnName() + "</DESCRIPTION-COLUMN>" + "<VISIBLE-COLUMNS>"
+		String XML = "<SCRIPTLOV>" + "<SCRIPT>" + this.getScript() + "</SCRIPT>" + "<VISIBLE-COLUMNS>"
 				+ GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",") + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
 				+ GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",") + "</INVISIBLE-COLUMNS>" + "<LANGUAGE>" + this.getLanguageScript()
-				+ "</LANGUAGE>" + "<LOVTYPE>" + this.getLovType() + "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>"
-				+ GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",") + "</TREE-LEVELS-COLUMNS>" + "</SCRIPTLOV>";
-
+				+ "</LANGUAGE>" + "<LOVTYPE>" + this.getLovType() + "</LOVTYPE>";
+		if (this.isSimpleLovType()) {
+			XML += "<VALUE-COLUMN>" + valueColumnName + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + descriptionColumnName + "</DESCRIPTION-COLUMN>";
+		} else {
+			XML += "<VALUE-COLUMNS>" + GeneralUtilities.fromListToString(this.getTreeValueColumns(), ",") + "</VALUE-COLUMNS>" + "<DESCRIPTION-COLUMNS>"
+					+ GeneralUtilities.fromListToString(this.getTreeDescriptionColumns(), ",") + "</DESCRIPTION-COLUMNS>";
+		}
+		XML += "</SCRIPTLOV>";
 		return XML;
 	}
 
@@ -543,12 +597,12 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	}
 
 	@Override
-	public List getTreeLevelsColumns() {
+	public List<Couple<String, String>> getTreeLevelsColumns() {
 		return treeLevelsColumns;
 	}
 
 	@Override
-	public void setTreeLevelsColumns(List treeLevelsColumns) {
+	public void setTreeLevelsColumns(List<Couple<String, String>> treeLevelsColumns) {
 		this.treeLevelsColumns = treeLevelsColumns;
 	}
 

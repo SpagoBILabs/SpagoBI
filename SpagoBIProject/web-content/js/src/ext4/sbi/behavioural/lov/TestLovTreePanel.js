@@ -122,8 +122,8 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
         					treePanel.addTreeNode(data.records[0].data);//add the node	
         				}
         			}else{//update the existing node
-        				//find the existing node with the same value or description and update it
-        				var targetNode = treePanel.findTreeNode(treePanel.getStore().getRootNode(), targetType, target.innerText);
+        				var firstChildText = target.parentNode.firstChild.innerText;
+        				var targetNode = treePanel.findTreeNode(treePanel.getStore().getRootNode(), 'value', firstChildText);
         				treePanel.updateTreeNode(target, data.records[0].data.name, targetNode);
         			}
 
@@ -158,7 +158,7 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
 			description: description
 		});	
 
-		this.normalizeTree();
+//		this.normalizeTree();
 		this.getView().refresh();   
 		
 	}
@@ -166,21 +166,20 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
     //Update the node "node" setting as "name" the property position("target") (target position can be value or description)
     , updateTreeNode: function(target, name, node){
     	var position = this.getTargetPosition(target);
-    	if(position!=null){
-    		//if the node is not a leaf you can not set the description
-    		if(position!='description' || (node.childNodes && node.childNodes.length==0) ){
+    	if (position != null) {
+    		//if(position!='description' || (node.childNodes && node.childNodes.length==0) ){
     			var store = this.getStore();
     			var root = store.getRootNode();
-    		 	if(position=='value'){
+    		 	if (position=='value'){
     		 		var existingNode = this.findTreeNode(root, "value", name);
-    		 		if(existingNode){
+    		 		if (existingNode){
     		 			return;
     		 		}
     		 		node.set('description', name);
     		 	}
     		 	node.set(position, name);
     		 	this.getView().refresh();   
-    		}
+    		//}
     	}
 	}
     
@@ -246,7 +245,7 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
 				newChild.set('leaf', false);	
 				node.removeChild(oldChild);
 				newChild.appendChild(oldChild);	
-				this.normalizeTree();
+//				this.normalizeTree();
 				this.getView().refresh();   
 				return true;
 			}else if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
@@ -281,56 +280,50 @@ Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
     		alert("Tree not defined");
     		return null;
     	}
-    	this.serializedTree.visibleColumnNames = this.column;
-    	this.serializedTree.column = this.column;
+    	//this.serializedTree.visibleColumnNames = this.columnNames;
+    	this.serializedTree.column = this.columnNames;
     	
     	return this.serializedTree;
     }
     
     ,serializeSubTree: function(node){
-    	this.serializedTree.treeLevelsColumns.push(node.data.value);
+    	this.serializedTree.treeLevelsColumns.push({'name' : node.data.value, 'description' : node.data.description});
     	if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
     		this.serializeSubTree(node.childNodes[0]);
-    	}else{
-    		this.serializedTree.descriptionColumnName = node.data.description;
-    		this.serializedTree.valueColumnName = node.data.value;
     	}
     }
     
     , setValues: function(config){
     	var treeColumnNames = config.treeColumnNames;
-    	var valueColumnName = config.valueColumnName;
-    	var descriptionColumnName = config.descriptionColumnName;
     	
     	if(treeColumnNames!=null && treeColumnNames.length>0){
-    		for(var i=0; i<treeColumnNames.length-1; i++){
-    			this.addTreeNode({name: treeColumnNames[i]});
+    		for(var i=0; i<treeColumnNames.length; i++){
+    			this.addTreeNode({name: treeColumnNames[i].name, description: treeColumnNames[i].description});
     		}
-    		this.addTreeNode({name: valueColumnName, description: descriptionColumnName });    	
     	}
     }
     
     //set the the description equal to the value
-    , normalizeTree: function(){
-		var store = this.getStore();
-		var root = store.getRootNode();
-		var node = root; 
-		while (node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
-			node.set('description', node.data.value);
-			node = node.childNodes[0];
-		}
-	}
+//    , normalizeTree: function(){
+//		var store = this.getStore();
+//		var root = store.getRootNode();
+//		var node = root; 
+//		while (node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
+//			node.set('description', node.data.value);
+//			node = node.childNodes[0];
+//		}
+//	}
     
     //updates the visible columns (all columns)
 	,onParentStroreLoad: function(store){
 		var fields = this.parentStore.proxy.reader.jsonData.metaData.fields;
 		if(fields!=null && fields!=undefined && fields.length>0){
-			var column = [];
+			var columns = [];
 			for(var i=0; i<fields.length; i++){
-				column.push(fields[i].name);
+				columns.push(fields[i].name);
 			}
 			
-			this.column = column;
+			this.columnNames = columns;
 		}
 	}
 	
