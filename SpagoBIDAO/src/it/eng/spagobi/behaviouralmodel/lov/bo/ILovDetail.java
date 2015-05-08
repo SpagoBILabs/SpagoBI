@@ -9,7 +9,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.utilities.objects.Couple;
 
 import java.io.Serializable;
 import java.util.List;
@@ -55,8 +55,8 @@ public interface ILovDetail extends Serializable {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale) throws Exception;
-
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
+			throws Exception;
 
 	/**
 	 * Checks if the lov requires one or more profile attributes.
@@ -128,6 +128,8 @@ public interface ILovDetail extends Serializable {
 	 */
 	public String getLovType();
 
+	public boolean isSimpleLovType();
+
 	/**
 	 * Gets the levels names of the tree lov
 	 *
@@ -136,7 +138,7 @@ public interface ILovDetail extends Serializable {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public List getTreeLevelsColumns() throws Exception;
+	public List<Couple<String, String>> getTreeLevelsColumns() throws Exception;
 
 	/**
 	 * Sets the visible column names.
@@ -202,6 +204,6 @@ public interface ILovDetail extends Serializable {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void setTreeLevelsColumns(List treeLevelColumns) throws Exception;
+	public void setTreeLevelsColumns(List<Couple<String, String>> treeLevelColumns) throws Exception;
 
 }

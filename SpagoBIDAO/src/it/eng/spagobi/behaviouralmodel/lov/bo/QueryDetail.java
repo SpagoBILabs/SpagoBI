@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
@@ -30,7 +30,9 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.objects.Couple;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -52,10 +54,9 @@ import org.apache.log4j.Logger;
 //import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 
 /**
- * Defines the <code>QueryDetail</code> objects. This object is used to store
- * Query Wizard detail information.
+ * Defines the <code>QueryDetail</code> objects. This object is used to store Query Wizard detail information.
  */
-public class QueryDetail implements ILovDetail {
+public class QueryDetail extends AbstractLOV implements ILovDetail {
 	private static transient Logger logger = Logger.getLogger(QueryDetail.class);
 
 	private String dataSource = "";
@@ -66,7 +67,11 @@ public class QueryDetail implements ILovDetail {
 	private String descriptionColumnName = "";
 	private List invisibleColumnNames = null;
 	private String databaseDialect = null;
-	private List treeLevelsColumns = null;
+
+	// each entry of the list contains the name of the column to be considered as value column as first item, and the name of the column to be considered as
+	// description column as second item
+	private List<Couple<String, String>> treeLevelsColumns = null;
+
 	private String lovType = "simple";
 
 	private static String ALIAS_DELIMITER = null;
@@ -90,10 +95,10 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * constructor.
-	 * 
+	 *
 	 * @param dataDefinition
 	 *            the xml representation of the lov
-	 * 
+	 *
 	 * @throws SourceBeanException
 	 *             the source bean exception
 	 */
@@ -103,10 +108,10 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * loads the lov from an xml string.
-	 * 
+	 *
 	 * @param dataDefinition
 	 *            the xml definition of the lov
-	 * 
+	 *
 	 * @throws SourceBeanException
 	 *             the source bean exception
 	 */
@@ -131,7 +136,7 @@ public class QueryDetail implements ILovDetail {
 		SourceBean statement = (SourceBean) source.getAttribute("STMT");
 		String queryDefinition = statement.getCharacters();
 		SourceBean valCol = (SourceBean) source.getAttribute("VALUE-COLUMN");
-		String valueColumn = valCol.getCharacters();
+		String valueColumn = valCol != null ? valCol.getCharacters() : null;
 		SourceBean visCol = (SourceBean) source.getAttribute("VISIBLE-COLUMNS");
 		String visibleColumns = visCol.getCharacters();
 		SourceBean invisCol = (SourceBean) source.getAttribute("INVISIBLE-COLUMNS");
@@ -172,17 +177,59 @@ public class QueryDetail implements ILovDetail {
 			invisColNames = Arrays.asList(invisColArr);
 		}
 		setInvisibleColumnNames(invisColNames);
-		// compatibility control (versions till 3.6 does not have
-		// TREE-LEVELS-COLUMN definition)
-		SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
-		String treeLevelsColumnsString = null;
-		if (treeLevelsColumnsBean != null) {
-			treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+
+		try {
+			SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
+			if (treeLevelsColumnsBean != null && treeLevelsColumnsBean.getCharacters() != null && treeLevelsColumnsBean.getCharacters().trim() != "") {
+				// compatibility control (versions till 5.1.0 does not have
+				// VALUE-COLUMNS and DESCRIPTION-COLUMNS definition)
+				String treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+				String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+				List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+				for (int i = 0; i < treeLevelsColumnArr.length; i++) {
+					String aValueColumn = treeLevelsColumnArr[i];
+					if (i == treeLevelsColumnArr.length - 1) {
+						levelsMap.add(new Couple<String, String>(aValueColumn, descriptionColumn));
+					} else {
+						levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
+					}
+				}
+				this.treeLevelsColumns = levelsMap;
+				this.setValueColumnName(null);
+				this.setDescriptionColumnName(null);
+			} else {
+				SourceBean valuesColumnsBean = (SourceBean) source.getAttribute("VALUE-COLUMNS");
+				SourceBean descriptionColumnsBean = (SourceBean) source.getAttribute("DESCRIPTION-COLUMNS");
+				if (valuesColumnsBean != null) {
+
+					Assert.assertTrue(descriptionColumnsBean != null, "DESCRIPTION-COLUMNS tag not defined");
+
+					List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+					String valuesColumnsStr = valuesColumnsBean.getCharacters();
+					logger.debug("VALUE-COLUMNS is [" + valuesColumnsStr + "]");
+					String descriptionColumnsStr = descriptionColumnsBean.getCharacters();
+					logger.debug("DESCRIPTION-COLUMNS is [" + descriptionColumnsStr + "]");
+					String[] valuesColumns = valuesColumnsStr.split(",");
+					String[] descriptionColumns = descriptionColumnsStr.split(",");
+					List<String> valuesColumnsList = Arrays.asList(valuesColumns);
+					List<String> descriptionColumnsList = Arrays.asList(descriptionColumns);
+
+					Assert.assertTrue(valuesColumnsList.size() == descriptionColumnsList.size(),
+							"Value columns list and description columns list must have the same length");
+
+					for (int i = 0; i < valuesColumnsList.size(); i++) {
+						String aValueColumn = valuesColumnsList.get(i);
+						String aDescriptionColumn = descriptionColumnsList.get(i);
+						levelsMap.add(new Couple<String, String>(aValueColumn, aDescriptionColumn));
+					}
+					this.treeLevelsColumns = levelsMap;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error while reading LOV definition from XML", e);
+			throw new SpagoBIRuntimeException("Error while reading LOV definition from XML", e);
 		}
-		if ((treeLevelsColumnsString != null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("")) {
-			String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
-			this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
-		}
+
 		SourceBean lovTypeBean = (SourceBean) source.getAttribute("LOVTYPE");
 		String lovType;
 		if (lovTypeBean != null) {
@@ -194,24 +241,28 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * serialize the lov to an xml string.
-	 * 
+	 *
 	 * @return the serialized xml string
 	 */
 	@Override
 	public String toXML() {
-		String XML = "<QUERY>" + "<CONNECTION>" + this.getDataSource() + "</CONNECTION>" + "<STMT>" + this.getQueryDefinition() + "</STMT>" + "<VALUE-COLUMN>"
-				+ this.getValueColumnName() + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + this.getDescriptionColumnName() + "</DESCRIPTION-COLUMN>"
+		String XML = "<QUERY>" + "<CONNECTION>" + this.getDataSource() + "</CONNECTION>" + "<STMT>" + this.getQueryDefinition() + "</STMT>"
 				+ "<VISIBLE-COLUMNS>" + GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",") + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
 				+ GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",") + "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + this.getLovType()
-				+ "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>" + GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",") + "</TREE-LEVELS-COLUMNS>"
-				+ "</QUERY>";
+				+ "</LOVTYPE>";
+		if (this.isSimpleLovType()) {
+			XML += "<VALUE-COLUMN>" + valueColumnName + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + descriptionColumnName + "</DESCRIPTION-COLUMN>";
+		} else {
+			XML += "<VALUE-COLUMNS>" + GeneralUtilities.fromListToString(this.getTreeValueColumns(), ",") + "</VALUE-COLUMNS>" + "<DESCRIPTION-COLUMNS>"
+					+ GeneralUtilities.fromListToString(this.getTreeDescriptionColumns(), ",") + "</DESCRIPTION-COLUMNS>";
+		}
+		XML += "</QUERY>";
 		return XML;
 	}
 
 	/**
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(
-	 *      IEngUserProfile profile, List<ObjParuse> dependencies,
-	 *      ExecutionInstance executionInstance) throws Exception;
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult( IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance
+	 *      executionInstance) throws Exception;
 	 */
 	@Override
 	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
@@ -226,20 +277,15 @@ public class QueryDetail implements ILovDetail {
 	}
 
 	/**
-	 * This methods builds the in-line view that filters the original lov using
-	 * the dependencies. For example, suppose the lov definition is SELECT
-	 * country, state_province, city FROM REGION and there is a dependency that
-	 * set country to be "USA", this method returns SELECT * FROM (SELECT
-	 * country, state_province, city FROM REGION) T WHERE ( country = 'USA' )
-	 * 
+	 * This methods builds the in-line view that filters the original lov using the dependencies. For example, suppose the lov definition is SELECT country,
+	 * state_province, city FROM REGION and there is a dependency that set country to be "USA", this method returns SELECT * FROM (SELECT country,
+	 * state_province, city FROM REGION) T WHERE ( country = 'USA' )
+	 *
 	 * @param dependencies
-	 *            The dependencies' configuration to be considered into the
-	 *            query
+	 *            The dependencies' configuration to be considered into the query
 	 * @param executionInstance
-	 *            The execution instance (useful to retrieve dependencies
-	 *            values)
-	 * @return the in-line view that filters the original lov using the
-	 *         dependencies.
+	 *            The execution instance (useful to retrieve dependencies values)
+	 * @return the in-line view that filters the original lov using the dependencies.
 	 */
 	public String getWrappedStatement(List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters) {
 		logger.debug("IN");
@@ -259,10 +305,9 @@ public class QueryDetail implements ILovDetail {
 	}
 
 	/**
-	 * This method builds the WHERE clause for the wrapped statement (the
-	 * statement that adds filters for correlations/dependencies) See
-	 * getWrappedStatement method.
-	 * 
+	 * This method builds the WHERE clause for the wrapped statement (the statement that adds filters for correlations/dependencies) See getWrappedStatement
+	 * method.
+	 *
 	 * @param buffer
 	 *            The String buffer that contains query definition
 	 * @param dependencies
@@ -302,9 +347,8 @@ public class QueryDetail implements ILovDetail {
 	}
 
 	/**
-	 * This methods adds a single filter based on the input dependency's
-	 * configuration. See buildWhereClause and getWrappedStatement methods.
-	 * 
+	 * This methods adds a single filter based on the input dependency's configuration. See buildWhereClause and getWrappedStatement methods.
+	 *
 	 * @param buffer
 	 *            The String buffer that contains query definition
 	 * @param dependency
@@ -337,7 +381,7 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Finds the value to be used into the dependency's filter.
-	 * 
+	 *
 	 * @param dependency
 	 *            The dependency's configuration
 	 * @param executionInstance
@@ -380,7 +424,7 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Concatenates values by ','
-	 * 
+	 *
 	 * @param biparam
 	 *            The BIObjectParameter in the dependency
 	 * @param values
@@ -401,11 +445,9 @@ public class QueryDetail implements ILovDetail {
 	}
 
 	/**
-	 * Finds the suitable SQL value for the input value. A number is not
-	 * changed. A String is surrounded by single-quotes. A date is put inside a
-	 * database-dependent function. The date must respect the format returned by
-	 * GeneralUtilities.getServerDateFormat() Input values are validated.
-	 * 
+	 * Finds the suitable SQL value for the input value. A number is not changed. A String is surrounded by single-quotes. A date is put inside a
+	 * database-dependent function. The date must respect the format returned by GeneralUtilities.getServerDateFormat() Input values are validated.
+	 *
 	 * @param biparam
 	 *            The BIObjectParameter in the dependency
 	 * @param value
@@ -555,7 +597,7 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Finds the suitable operator for the input dependency.
-	 * 
+	 *
 	 * @param dependency
 	 *            The dependency's configuration
 	 * @param executionInstance
@@ -606,7 +648,7 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Gets the values and return them as an xml structure
-	 * 
+	 *
 	 * @param statement
 	 *            the query statement to execute
 	 * @return the xml string containing values
@@ -640,16 +682,13 @@ public class QueryDetail implements ILovDetail {
 	}
 
 	/**
-	 * This methods find out if the input parameters' values are admissible for
-	 * this QueryDetail instance, i.e. if the values are contained in the query
-	 * result.
-	 * 
+	 * This methods find out if the input parameters' values are admissible for this QueryDetail instance, i.e. if the values are contained in the query result.
+	 *
 	 * @param profile
 	 *            The user profile
 	 * @param biparam
 	 *            The BIObjectParameter with the values that must be validated
-	 * @return a list of errors: it is empty if all values are admissible,
-	 *         otherwise it will contain a EMFUserError for each wrong value
+	 * @return a list of errors: it is empty if all values are admissible, otherwise it will contain a EMFUserError for each wrong value
 	 * @throws Exception
 	 */
 	public List validateValues(IEngUserProfile profile, BIObjectParameter biparam) throws Exception {
@@ -728,28 +767,28 @@ public class QueryDetail implements ILovDetail {
 		StringBuffer buffer = new StringBuffer();
 
 		if (this.lovType.equals("treeinner")) {
-			for (int i = 0; i < this.treeLevelsColumns.size(); i++) {
-				String levelColumn = (String) this.treeLevelsColumns.get(i);
-
-				buffer.append("SELECT ");
-				buffer.append(getColumnSQLName(levelColumn) + " AS \"" + VALUE_ALIAS + "\" ");
-				buffer.append("FROM (");
-				buffer.append(statement);
-				buffer.append(") " + getRandomAlias() + " WHERE ");
-
-				if (values.size() == 1) {
-					buffer.append(getColumnSQLName(levelColumn) + " = ");
-					buffer.append(getSQLValue(biparam, values.get(0)));
-				} else {
-					buffer.append(getColumnSQLName(levelColumn) + " IN (");
-					buffer.append(concatenateValues(biparam, values));
-					buffer.append(")");
-				}
-
-				if (i + 1 < this.treeLevelsColumns.size()) {
-					buffer.append(" UNION ");
-				}
-			}
+			// for (int i = 0; i < this.treeLevelsColumns.size(); i++) {
+			// String levelColumn = this.treeLevelsColumns.get(i);
+			//
+			// buffer.append("SELECT ");
+			// buffer.append(getColumnSQLName(levelColumn) + " AS \"" + VALUE_ALIAS + "\" ");
+			// buffer.append("FROM (");
+			// buffer.append(statement);
+			// buffer.append(") " + getRandomAlias() + " WHERE ");
+			//
+			// if (values.size() == 1) {
+			// buffer.append(getColumnSQLName(levelColumn) + " = ");
+			// buffer.append(getSQLValue(biparam, values.get(0)));
+			// } else {
+			// buffer.append(getColumnSQLName(levelColumn) + " IN (");
+			// buffer.append(concatenateValues(biparam, values));
+			// buffer.append(")");
+			// }
+			//
+			// if (i + 1 < this.treeLevelsColumns.size()) {
+			// buffer.append(" UNION ");
+			// }
+			// }
 		} else {
 			buffer.append("SELECT ");
 			buffer.append(getColumnSQLName(this.valueColumnName) + " AS \"" + VALUE_ALIAS + "\", ");
@@ -773,9 +812,9 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Gets the list of names of the profile attributes required.
-	 * 
+	 *
 	 * @return list of profile attribute names
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -801,10 +840,9 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Checks if the lov requires one or more profile attributes.
-	 * 
-	 * @return true if the lov require one or more profile attributes, false
-	 *         otherwise
-	 * 
+	 *
+	 * @return true if the lov require one or more profile attributes, false otherwise
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -820,7 +858,7 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Builds a simple sourcebean
-	 * 
+	 *
 	 * @param name
 	 *            name of the sourcebean
 	 * @param value
@@ -835,15 +873,14 @@ public class QueryDetail implements ILovDetail {
 	}
 
 	/**
-	 * Splits an XML string by using some <code>SourceBean</code> object methods
-	 * in order to obtain the source <code>QueryDetail</code> objects whom XML
-	 * has been built.
-	 * 
+	 * Splits an XML string by using some <code>SourceBean</code> object methods in order to obtain the source <code>QueryDetail</code> objects whom XML has
+	 * been built.
+	 *
 	 * @param dataDefinition
 	 *            The XML input String
-	 * 
+	 *
 	 * @return The corrispondent <code>QueryDetail</code> object
-	 * 
+	 *
 	 * @throws SourceBeanException
 	 *             If a SourceBean Exception occurred
 	 */
@@ -853,7 +890,7 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Gets the data source.
-	 * 
+	 *
 	 * @return the data source
 	 */
 	public String getDataSource() {
@@ -862,7 +899,7 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Sets the data source.
-	 * 
+	 *
 	 * @param dataSource
 	 *            the new data source
 	 */
@@ -873,7 +910,7 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Gets the query definition.
-	 * 
+	 *
 	 * @return the query definition
 	 */
 	public String getQueryDefinition() {
@@ -882,7 +919,7 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Sets the query definition.
-	 * 
+	 *
 	 * @param queryDefinition
 	 *            the new query definition
 	 */
@@ -892,10 +929,8 @@ public class QueryDetail implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName
-	 * ()
+	 *
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName ()
 	 */
 	@Override
 	public String getDescriptionColumnName() {
@@ -904,10 +939,8 @@ public class QueryDetail implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName
-	 * (java.lang.String)
+	 *
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName (java.lang.String)
 	 */
 	@Override
 	public void setDescriptionColumnName(String descriptionColumnName) {
@@ -916,10 +949,8 @@ public class QueryDetail implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames
-	 * ()
+	 *
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames ()
 	 */
 	@Override
 	public List getInvisibleColumnNames() {
@@ -928,10 +959,8 @@ public class QueryDetail implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames
-	 * (java.util.List)
+	 *
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames (java.util.List)
 	 */
 	@Override
 	public void setInvisibleColumnNames(List invisibleColumnNames) {
@@ -940,9 +969,8 @@ public class QueryDetail implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
+	 *
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
 	public String getValueColumnName() {
@@ -951,10 +979,8 @@ public class QueryDetail implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(
-	 * java.lang.String)
+	 *
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName( java.lang.String)
 	 */
 	@Override
 	public void setValueColumnName(String valueColumnName) {
@@ -963,9 +989,8 @@ public class QueryDetail implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
+	 *
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
 	public List getVisibleColumnNames() {
@@ -974,10 +999,8 @@ public class QueryDetail implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames
-	 * (java.util.List)
+	 *
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames (java.util.List)
 	 */
 	@Override
 	public void setVisibleColumnNames(List visibleColumnNames) {
@@ -1011,12 +1034,12 @@ public class QueryDetail implements ILovDetail {
 	}
 
 	@Override
-	public List getTreeLevelsColumns() {
+	public List<Couple<String, String>> getTreeLevelsColumns() {
 		return treeLevelsColumns;
 	}
 
 	@Override
-	public void setTreeLevelsColumns(List treeLevelsColumns) {
+	public void setTreeLevelsColumns(List<Couple<String, String>> treeLevelsColumns) {
 		this.treeLevelsColumns = treeLevelsColumns;
 	}
 
@@ -1026,10 +1049,10 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Gets the data source by label.
-	 * 
+	 *
 	 * @param dsLabel
 	 *            the ds label
-	 * 
+	 *
 	 * @return the data source by label
 	 */
 	public SpagoBiDataSource getDataSourceByLabel(String dsLabel) {
@@ -1077,9 +1100,8 @@ public class QueryDetail implements ILovDetail {
 	 */
 
 	/**
-	 * use this method in service implementation. If RequestContainer isn't
-	 * correct.
-	 * 
+	 * use this method in service implementation. If RequestContainer isn't correct.
+	 *
 	 * @param profile
 	 * @param dsLabel
 	 * @return
@@ -1110,12 +1132,12 @@ public class QueryDetail implements ILovDetail {
 
 	/**
 	 * Creates a ago DataConnection object starting from a sql connection.
-	 * 
+	 *
 	 * @param con
 	 *            Connection to the export database
-	 * 
+	 *
 	 * @return The Spago DataConnection Object
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
