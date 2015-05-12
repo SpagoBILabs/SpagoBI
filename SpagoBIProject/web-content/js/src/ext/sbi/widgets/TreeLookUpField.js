@@ -210,6 +210,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 	onLookUp : function() {
 		this.fireEvent('lookup', this);
 		this.win.show(this);
+		
 	}
 
 	,
@@ -251,9 +252,9 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 				pvalues = values;
 				values = values.split(";");
 			}
-		}else{
-			values=null;
-			this.reloadTree();
+		} else {
+			values = null;
+			//this.reloadTree();
 		}
 		Sbi.widgets.LookupField.superclass.setValue.call( this, pvalues);
 		this.xStartingValues = values;
@@ -353,13 +354,12 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 		return toReturn;
 	}
 	
-	,reset : function(){
+	, reset : function(){
 		this.xvalues ="";
 		this.xdescriptions ="";
-		Sbi.widgets.LookupField.superclass.reset.call( this);
+		Sbi.widgets.TreeLookUpField.superclass.reset.call( this);
 	}
 
-	// if the parameters has been change we reload the tree
 	// if the parameters has been change we reload the tree
 	,
 	reloadTree : function(formParams) {
@@ -377,7 +377,6 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			}
 		}
 	}
-	
 	
 	,trim: function(string){
 		if(string){
@@ -405,6 +404,5 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			return  array2;
 		}
 	}
-
 
 });

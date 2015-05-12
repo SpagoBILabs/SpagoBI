@@ -1322,7 +1322,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		
 		var params = this.getBaseParams(p, executionInstance, 'complete');
-		params.PARAMETERS = Sbi.commons.JSON.encode(this.getFormState());;
+		//params.PARAMETERS = Sbi.commons.JSON.encode(this.getFormState());;
 		params.LIGHT_NAVIGATOR_DISABLED = 'TRUE';
 		
 		
@@ -1332,6 +1332,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			service: this.services['getParameterValueForExecutionService']
 		}));
 
+		field.treeLoader.on('beforeload', function(treeloader, node) {
+			var p = Sbi.commons.JSON.encode(this.getFormState());
+			treeloader.baseParams.PARAMETERS = p;
+			return true;
+		}, this);
+		
 		field.treeLoader.on('load', function(loader, node, response) {
 			//fires after the sore is loaded: can apply
 			this.firstLoadCounter++;
