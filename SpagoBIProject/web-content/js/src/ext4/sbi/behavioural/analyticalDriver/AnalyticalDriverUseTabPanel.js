@@ -99,7 +99,6 @@ initFields: function(){
 						layout: 'hbox'
 					});
 					use.selections.bindStore(scope.selectionStore);
-					use.uselovcombo.bindStore(scope.lovStore);
 					use.pickupcombo.bindStore(scope.pickupstore);
 					dataLov = scope.lovStore.data;
 					use.useLovStore.removeAll();
@@ -159,7 +158,7 @@ initFields: function(){
 						for(var m=0;m<dataLov.length;m++){
 							if (record.data.LOVID == dataLov.items[m].data.LOV_ID){
 								
-								use.lovpopupid.setValue(record.data.LOVID);
+								use.lovpopupid.setValue(dataLov.items[m].data.LOV_ID);
 								use.lovpopup.setValue(dataLov.items[m].data.LOV_NAME);
 								break;
 								
@@ -170,9 +169,17 @@ initFields: function(){
 					}
 						use.selections.setValue(record.data.SELECTIONTYPE);
 					}
-					if (record.data.DEFAULTLOVID){
+					if (record.data.DEFAULTLOVID != ""){
 						use.uselov.setValue(true);
-						use.uselovcombo.setValue(record.data.DEFAULTLOVID);
+						for(var m=0;m<dataLov.length;m++){
+							if (record.data.DEFAULTLOVID == dataLov.items[m].data.LOV_ID){
+								
+								use.dllovpopupid.setValue(dataLov.items[m].data.LOV_ID);
+								use.dllovpopup.setValue(dataLov.items[m].data.LOV_NAME);
+								break;
+								
+							}
+						}
 					}
 					else if (record.data.DEFAULTFORMULA){
 						use.pickup.setValue(true);
@@ -271,7 +278,6 @@ initFields: function(){
 				}
 			});
 	this.newUse.selections.bindStore(this.selectionStore);
-	this.newUse.uselovcombo.bindStore(this.lovStore);
 	this.newUse.pickupcombo.bindStore(this.pickupstore);
 	this.newUse.constraintsList.reconfigure(this.constraintStore);
 	this.newUse.rolesList.reconfigure(this.rolesStore);
@@ -302,12 +308,11 @@ getValues: function(){
 			LOVID: this.activeTab.lovpopupid.getValue(),
 			NONE: this.activeTab.nonedv.getValue(),
 			USELOV: this.activeTab.uselov.getValue(),
-			DEFAULTLOVID: this.activeTab.uselovcombo.getValue(),
+			DEFAULTLOVID: this.activeTab.dllovpopupid.getValue(),
 			PICKUP: this.activeTab.pickup.getValue(),
 			SELECTIONTYPE: this.activeTab.selections.getValue(),
 			EXPENDABLE: this.activeTab.expendable.getValue(),
-			DEFAULTFORMULA: this.activeTab.pickupcombo.getValue(),
-			DEFAULTLOVID: this.activeTab.uselovcombo.getValue()
+			DEFAULTFORMULA: this.activeTab.pickupcombo.getValue()
 
 	};
 
@@ -378,6 +383,15 @@ saveADUse: function(){
 					this.newUseconstStore =  Ext.create('Ext.data.Store',{
 						model: "ConstraintModel"
 					});
+					
+					dataLov = scope.lovStore.data;
+					this.newUse1.useLovStore.removeAll();
+
+					for(var l=0;l<dataLov.length;l++){
+
+						this.newUse1.useLovStore.add(dataLov.items[l].data);
+
+					}
 
 					dataConst = scope.constraintStore.data;
 					this.newUseconstStore.removeAll();
@@ -389,7 +403,6 @@ saveADUse: function(){
 
 					this.newUse1.adid.setValue(this.exampleID);
 					this.newUse1.selections.bindStore(scope.selectionStore);
-					this.newUse1.uselovcombo.bindStore(scope.lovStore);
 					this.newUse1.pickupcombo.bindStore(scope.pickupstore);
 					this.newUse1.constraintsList.reconfigure(this.newUseconstStore);
 					this.newUse1.rolesList.reconfigure(this.newUserolesStore);
