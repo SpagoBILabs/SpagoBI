@@ -18,7 +18,8 @@ Ext.define('Sbi.tools.model.MetaModelsBrowser', {
 	extend: 'Ext.Panel'
 	
 	, config: {
-		modelName : "Sbi.tools.model.MetaModelModel"
+		modelName : "Sbi.tools.model.MetaModelModel",
+		autoScroll:true
     }
 
 
