@@ -98,10 +98,18 @@ initFields: function(){
 						width : "35%",
 						layout: 'hbox'
 					});
-					use.lovs.bindStore(scope.lovStore);
 					use.selections.bindStore(scope.selectionStore);
 					use.uselovcombo.bindStore(scope.lovStore);
 					use.pickupcombo.bindStore(scope.pickupstore);
+					dataLov = scope.lovStore.data;
+					use.useLovStore.removeAll();
+
+					for(var l=0;l<dataLov.length;l++){
+
+						use.useLovStore.add(dataLov.items[l].data);
+
+					}
+
 					data = scope.rolesStore.data;
 					use.useRolesStore.removeAll();
 					for(var j=0;j<data.length;j++){
@@ -146,7 +154,20 @@ initFields: function(){
 					else {
 						use.manualinput.setValue(false);
 						use.lov.setValue(true);
-						use.lovs.setValue(record.data.LOVID);	
+					if (record.data.LOVID != ""){
+						
+						for(var m=0;m<dataLov.length;m++){
+							if (record.data.LOVID == dataLov.items[m].data.LOV_ID){
+								
+								use.lovpopupid.setValue(record.data.LOVID);
+								use.lovpopup.setValue(dataLov.items[m].data.LOV_NAME);
+								break;
+								
+							}
+						}
+						
+						
+					}
 						use.selections.setValue(record.data.SELECTIONTYPE);
 					}
 					if (record.data.DEFAULTLOVID){
@@ -237,7 +258,18 @@ initFields: function(){
 	});
 
 	this.newUse.adid.setValue(this.exampleID);
-	this.newUse.lovs.bindStore(this.lovStore);
+
+	var scope=this;
+
+	this.usesStore.on(
+			"load", 
+			function(usesStore)
+			{
+				var dataLov = scope.lovStore.data;
+				for(var l=0;l<dataLov.length;l++){
+					scope.newUse.useLovStore.add(dataLov.items[l].data);
+				}
+			});
 	this.newUse.selections.bindStore(this.selectionStore);
 	this.newUse.uselovcombo.bindStore(this.lovStore);
 	this.newUse.pickupcombo.bindStore(this.pickupstore);
@@ -267,7 +299,7 @@ getValues: function(){
 			MANUALINPUT: this.activeTab.manualinput.getValue(),
 			EXPENDABLE: this.activeTab.expendable.getValue(),
 			LOV: this.activeTab.lov.getValue(),
-			LOVID: this.activeTab.lovs.getValue(),
+			LOVID: this.activeTab.lovpopupid.getValue(),
 			NONE: this.activeTab.nonedv.getValue(),
 			USELOV: this.activeTab.uselov.getValue(),
 			DEFAULTLOVID: this.activeTab.uselovcombo.getValue(),
@@ -356,7 +388,6 @@ saveADUse: function(){
 					}
 
 					this.newUse1.adid.setValue(this.exampleID);
-					this.newUse1.lovs.bindStore(scope.lovStore);
 					this.newUse1.selections.bindStore(scope.selectionStore);
 					this.newUse1.uselovcombo.bindStore(scope.lovStore);
 					this.newUse1.pickupcombo.bindStore(scope.pickupstore);
