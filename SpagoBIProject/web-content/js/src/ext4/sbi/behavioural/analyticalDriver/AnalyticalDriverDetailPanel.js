@@ -35,7 +35,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverDetailPanel', {
 
 		initFields: function(){
 
-			this.adid = Ext.create("Ext.form.field.Text", {
+			this.adid = Ext.create("Ext.form.field.Hidden", {
 				name: "ID",
 				fieldLabel: "ID",
 				readOnly: true

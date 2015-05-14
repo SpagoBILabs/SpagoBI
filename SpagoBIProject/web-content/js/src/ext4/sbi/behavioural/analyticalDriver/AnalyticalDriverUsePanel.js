@@ -25,14 +25,14 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 		initFields: function(){
 
-			this.adid = Ext.create("Ext.form.field.Text", {
+			this.adid = Ext.create("Ext.form.field.Hidden", {
 				name: "ADID",
 				fieldLabel: "AD ID"
 			});
 
 			this.adid.setRawValue(this.exampleID);
 
-			this.useid = Ext.create("Ext.form.field.Text", {
+			this.useid = Ext.create("Ext.form.field.Hidden", {
 				name: "USEID",
 				fieldLabel: "Use ID"
 			});
@@ -81,8 +81,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			this.lovpopupid = Ext.create("Ext.form.field.Hidden", {
 				hideEmptyLabel: false,
-				allowBlank: false,
-
+				disabled: true
 			});
 
 			var thisPanel = this;
@@ -169,14 +168,62 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 			});
 
 			this.uselov.addListener('change', this.dvuselov, this);
-
-			this.uselovcombo = Ext.create('Ext.form.ComboBox',{
-
-				editable: false,
-				displayField: 'LOV_NAME',
-				valueField: 'LOV_ID',
+			
+			this.dllovpopupid = Ext.create("Ext.form.field.Hidden", {
 				hideEmptyLabel: false,
-				disabled : true
+				disabled: true
+			});
+
+			var thisPanel = this;
+			this.dllovpopup = Ext.create('Ext.form.field.Trigger', {
+				triggerCls:'x-form-question-trigger',
+				disabled: true,
+				hideEmptyLabel: false,
+				onTriggerClick: function(e) {
+
+					if(!thisPanel.dvwin){
+
+						var dvp = new Ext.grid.Panel({
+							bodyStyle: 'background-color: white;',
+							store: thisPanel.useLovStore,
+
+							columns: [
+							          { text: 'id',  dataIndex: 'LOV_ID', hidden: true },
+							          { text: 'Name',  dataIndex: 'LOV_NAME' },
+							          { text: 'Description', dataIndex: 'LOV_DESCRIPTION', flex: 1 }
+							          ]
+						});
+
+
+						thisPanel.dvwin = new Ext.Window({
+							layout:'fit',
+							bodyStyle: 'background-color: white;',
+							width:500,
+							height:300,
+							title: 'List of values',
+							closeAction:'hide',
+							plain: true,
+							items: [dvp],
+							listeners: {
+								dblclick: {
+									element: 'body',
+									fn: function(){
+										thisPanel.dllovpopupid.setValue(dvp.getSelectionModel().getSelection()[0].data.LOV_ID);
+										thisPanel.dllovpopup.setValue(dvp.getSelectionModel().getSelection()[0].data.LOV_NAME);
+										thisPanel.dvwin.hide();
+									}
+								}
+							},
+							buttons: [{
+								text: 'Close',
+								handler: function(){
+									thisPanel.dvwin.hide();
+								}
+							}]
+						});
+					}
+					thisPanel.dvwin.show(this);
+				}
 
 			});
 
@@ -219,7 +266,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			this.defvalue = Ext.create('Ext.panel.Panel',{
 
-				items: [this.nonedv, this.uselov, this.uselovcombo, this.pickup, this.pickupcombo],
+				items: [this.nonedv, this.uselov, this.dllovpopupid, this.dllovpopup, this.pickup, this.pickupcombo],
 				layout: 'anchor', 
 				bodyPadding: '5 5 5',
 				border: false
@@ -376,9 +423,13 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			var nonesel = checked;
 			if(nonesel != null && nonesel == true){
-
-				this.uselovcombo.setValue('');
-				this.uselovcombo.disable();
+				
+				this.dllovpopupid.setValue('');
+				this.dllovpopupid.disable();
+				
+				this.dllovpopup.setValue('');
+				this.dllovpopup.disable();
+				
 
 				this.pickupcombo.setValue('');
 				this.pickupcombo.disable();
@@ -391,9 +442,13 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			var uselovsel = checked;
 			if(uselovsel != null && uselovsel == true){
-
-				this.uselovcombo.enable();
-				this.uselovcombo.setValue("--Choose LOV--");
+				
+				this.dllovpopupid.enable();
+				
+				this.dllovpopup.enable();
+				this.dllovpopup.setValue("--Choose LOV--");
+				
+				
 
 				this.pickupcombo.setValue('');
 				this.pickupcombo.disable();
@@ -406,9 +461,12 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			var pickupsel = checked;
 			if(pickupsel != null && pickupsel == true){
-
-				this.uselovcombo.disable();
-				this.uselovcombo.setValue('');
+				
+				this.dllovpopupid.setValue('');
+				this.dllovpopupid.disable();
+				
+				this.dllovpopup.setValue('');
+				this.dllovpopup.disable();
 
 				this.pickupcombo.enable();
 				this.pickupcombo.setValue("--Choose pickup--");
