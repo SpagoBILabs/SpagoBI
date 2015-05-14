@@ -75,13 +75,66 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			});
 
-			this.lovs = Ext.create('Ext.form.ComboBox',{
+			this.useLovStore = Ext.create('Ext.data.Store',{
+				model: "LovModel",
+			});
 
-				editable: false,
-				displayField: 'LOV_NAME',
-				valueField: 'LOV_ID',
+			this.lovpopupid = Ext.create("Ext.form.field.Hidden", {
 				hideEmptyLabel: false,
-				disabled: true
+				allowBlank: false,
+
+			});
+
+			var thisPanel = this;
+			this.lovpopup = Ext.create('Ext.form.field.Trigger', {
+				triggerCls:'x-form-question-trigger',
+				disabled: true,
+				hideEmptyLabel: false,
+				onTriggerClick: function(e) {
+
+					if(!thisPanel.win){
+
+						var p = new Ext.grid.Panel({
+							bodyStyle: 'background-color: white;',
+							store: thisPanel.useLovStore,
+
+							columns: [
+							          { text: 'id',  dataIndex: 'LOV_ID', hidden: true },
+							          { text: 'Name',  dataIndex: 'LOV_NAME' },
+							          { text: 'Description', dataIndex: 'LOV_DESCRIPTION', flex: 1 }
+							          ]
+						});
+
+
+						thisPanel.win = new Ext.Window({
+							layout:'fit',
+							bodyStyle: 'background-color: white;',
+							width:500,
+							height:300,
+							title: 'List of values',
+							closeAction:'hide',
+							plain: true,
+							items: [p],
+							listeners: {
+								dblclick: {
+									element: 'body',
+									fn: function(){
+										thisPanel.lovpopupid.setValue(p.getSelectionModel().getSelection()[0].data.LOV_ID);
+										thisPanel.lovpopup.setValue(p.getSelectionModel().getSelection()[0].data.LOV_NAME);
+										thisPanel.win.hide();
+									}
+								}
+							},
+							buttons: [{
+								text: 'Close',
+								handler: function(){
+									thisPanel.win.hide();
+								}
+							}]
+						});
+					}
+					thisPanel.win.show(this);
+				}
 
 			});
 
@@ -157,7 +210,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			this.manlov = Ext.create('Ext.panel.Panel',{
 
-				items: [this.manualinput, this.expendable, this.lov, this.lovs, this.selections],
+				items: [this.manualinput, this.expendable, this.lov, this.lovpopupid, this.lovpopup, this.selections],
 				layout: 'anchor',
 				bodyPadding: '5 5 5',
 				border: false
@@ -299,8 +352,9 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 				this.expendable.setValue(false);
 				this.expendable.disable();
-				this.lovs.enable();
-				this.lovs.setValue("--Choose LOV--");
+				this.lovpopupid.enable();
+				this.lovpopup.enable();
+				this.lovpopup.setValue("--Choose LOV--");
 				this.selections.enable();
 				this.selections.setValue("--Choose selection--");
 
@@ -308,8 +362,10 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 			else{
 
 				this.expendable.enable();
-				this.lovs.disable();
-				this.lovs.setValue('');
+				this.lovpopupid.disable();
+				this.lovpopupid.setValue('');
+				this.lovpopup.disable();
+				this.lovpopup.setValue('');
 				this.selections.disable();
 				this.selections.setValue('');
 
