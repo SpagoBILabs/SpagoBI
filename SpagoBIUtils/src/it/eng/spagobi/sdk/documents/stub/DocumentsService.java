@@ -8,6 +8,7 @@
 package it.eng.spagobi.sdk.documents.stub;
 
 public interface DocumentsService extends java.rmi.Remote {
+    public it.eng.spagobi.sdk.documents.bo.SDKAttribute[] getAllAttributes(java.lang.String in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
     public it.eng.spagobi.sdk.documents.bo.SDKDocument[] getDocumentsAsList(java.lang.String in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException;
     public it.eng.spagobi.sdk.documents.bo.SDKDocument getDocumentById(java.lang.Integer in0) throws java.rmi.RemoteException;
     public it.eng.spagobi.sdk.documents.bo.SDKDocument getDocumentByLabel(java.lang.String in0) throws java.rmi.RemoteException;

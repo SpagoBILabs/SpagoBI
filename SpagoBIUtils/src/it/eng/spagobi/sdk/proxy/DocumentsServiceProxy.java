@@ -1,4 +1,4 @@
-/* SpagoBI,  the Open Source Business Intelligence suite
+/* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
@@ -18,9 +18,9 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 	private DocumentsService documentsService = null;
 	private ClientCredentialsHolder cch = null;
 
-	// public DocumentsServiceProxy() {
-	// _initDocumentsServiceProxy();
-	// }
+//	public DocumentsServiceProxy() {
+//		_initDocumentsServiceProxy();
+//	}
 
 	public DocumentsServiceProxy(String user, String pwd) {
 		cch = new ClientCredentialsHolder(user, pwd);
@@ -33,21 +33,17 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 	}
 
 	private void _initDocumentsServiceProxy() {
-		// try {
-		// documentsService = (new
-		// DocumentsServiceServiceLocator()).getDocumentsService();
-		// if (documentsService != null) {
-		// if (_endpoint != null)
-		// ((javax.xml.rpc.Stub)documentsService)._setProperty("javax.xml.rpc.service.endpoint.address",
-		// _endpoint);
-		// else
-		// _endpoint =
-		// (String)((javax.xml.rpc.Stub)documentsService)._getProperty("javax.xml.rpc.service.endpoint.address");
-		// }
-		//
-		// }
-		// catch (javax.xml.rpc.ServiceException serviceException) {}
-
+//		try {
+//			documentsService = (new DocumentsServiceServiceLocator()).getDocumentsService();
+//			if (documentsService != null) {
+//				if (_endpoint != null)
+//					((javax.xml.rpc.Stub) documentsService)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+//				else
+//					_endpoint = (String) ((javax.xml.rpc.Stub) documentsService)._getProperty("javax.xml.rpc.service.endpoint.address");
+//			}
+//
+//		} catch (javax.xml.rpc.ServiceException serviceException) {
+//		}
 		try {
 			it.eng.spagobi.sdk.documents.stub.DocumentsServiceServiceLocator locator = new it.eng.spagobi.sdk.documents.stub.DocumentsServiceServiceLocator();
 			Remote remote = locator.getPort(it.eng.spagobi.sdk.documents.stub.DocumentsService.class);
@@ -83,6 +79,13 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 		if (documentsService == null)
 			_initDocumentsServiceProxy();
 		return documentsService;
+	}
+
+	public it.eng.spagobi.sdk.documents.bo.SDKAttribute[] getAllAttributes(java.lang.String in0) throws java.rmi.RemoteException,
+			it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+		if (documentsService == null)
+			_initDocumentsServiceProxy();
+		return documentsService.getAllAttributes(in0);
 	}
 
 	public it.eng.spagobi.sdk.documents.bo.SDKDocument[] getDocumentsAsList(java.lang.String in0, java.lang.String in1, java.lang.String in2)
@@ -161,7 +164,7 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 
 	public it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent executeDocument(it.eng.spagobi.sdk.documents.bo.SDKDocument in0,
 			it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter[] in1, java.lang.String in2, java.lang.String in3) throws java.rmi.RemoteException,
-			it.eng.spagobi.sdk.exceptions.InvalidParameterValue, it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException,
+			it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException, it.eng.spagobi.sdk.exceptions.InvalidParameterValue,
 			it.eng.spagobi.sdk.exceptions.MissingParameterValue, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
 		if (documentsService == null)
 			_initDocumentsServiceProxy();
@@ -169,41 +172,39 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 	}
 
 	public void uploadDatamartTemplate(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0, it.eng.spagobi.sdk.documents.bo.SDKTemplate in1, java.lang.String in2,
-			java.lang.String in3) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+			java.lang.String in3) throws java.rmi.RemoteException {
 		if (documentsService == null)
 			_initDocumentsServiceProxy();
 		documentsService.uploadDatamartTemplate(in0, in1, in2, in3);
 	}
 
-	public void uploadDatamartModel(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException,
-			it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+	public void uploadDatamartModel(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException {
 		if (documentsService == null)
 			_initDocumentsServiceProxy();
 		documentsService.uploadDatamartModel(in0);
 	}
 
-	public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartFile(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException,
-			it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+	public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartFile(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException {
 		if (documentsService == null)
 			_initDocumentsServiceProxy();
 		return documentsService.downloadDatamartFile(in0, in1);
 	}
 
 	public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartModelFiles(java.lang.String in0, java.lang.String in1, java.lang.String in2)
-			throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+			throws java.rmi.RemoteException {
 		if (documentsService == null)
 			_initDocumentsServiceProxy();
 		return documentsService.downloadDatamartModelFiles(in0, in1, in2);
 	}
 
-	public java.util.HashMap getAllDatamartModels() throws java.rmi.RemoteException {
+	public java.util.HashMap getAllDatamartModels() throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
 		if (documentsService == null)
 			_initDocumentsServiceProxy();
 		return documentsService.getAllDatamartModels();
 	}
 
 	public void uploadMondrianSchema(it.eng.spagobi.sdk.documents.bo.SDKSchema in0) throws java.rmi.RemoteException,
-			it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+			it.eng.spagobi.sdk.exceptions.SDKException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
 		if (documentsService == null)
 			_initDocumentsServiceProxy();
 		documentsService.uploadMondrianSchema(in0);
