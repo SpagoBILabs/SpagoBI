@@ -167,8 +167,10 @@
 <CONFIG label="SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY" name="SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY" description="Enables the signup functionality for the final user" isActive="false" valueCheck="false" valueType="STRING" category="SECURITY"/>
 
 <CONFIG label="SPAGOBI.CACHE.NAMEPREFIX" name="SPAGOBI.CACHE.NAMEPREFIX" description="Prefix for cache tables name" isActive="true" valueCheck="sbicache" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.CACHE.SPACE_AVAILABLE" name="SPAGOBI.CACHE.SPACE_AVAILABLE" description="Bytes of dimension available for cache management" isActive="true" valueCheck="10000000" valueType="NUM" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.CACHE.SPACE_AVAILABLE" name="SPAGOBI.CACHE.SPACE_AVAILABLE" description="Bytes of dimension available for cache management" isActive="true" valueCheck="1073741824" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.CACHE.LIMIT_FOR_CLEAN" name="SPAGOBI.CACHE.LIMIT_FOR_CLEAN" description="% of dimension of space cleaned when the cache is full" isActive="true" valueCheck="50" valueType="NUM" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN" name="SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN" description="Scheduling configuration to perform a full cleaning action on the cache (this deletes any dataset into the cache!)" isActive="true" valueCheck="DAILY" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.CACHE.DS_LAST_ACCESS_TTL" name="SPAGOBI.CACHE.DS_LAST_ACCESS_TTL" description="Time To Live (from the last access) for a cached datasets" isActive="true" valueCheck="3600" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.CACHE.DATABASE_SCHEMA" name="SPAGOBI.CACHE.DATABASE_SCHEMA" description="name of the schema where the cache tables are created" isActive="true" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
 <CONFIG label="SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE" name="Max preview image size" description="Max dimension for a document's preview image" isActive="true" valueCheck="1048576" valueType="NUM" category="GENERIC_CONFIGURATION"/>

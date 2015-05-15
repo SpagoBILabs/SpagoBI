@@ -58,6 +58,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	private boolean isActiveCleanAction = false;
 	private Integer cachePercentageToClean;
+	private Integer cacheDsLastAccessTtl;
 
 	private final Map<String, Integer> columnSize = new HashMap<String, Integer>();
 
@@ -68,6 +69,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
+	public static final String CACHE_DS_LAST_ACCESS_TTL = "SPAGOBI.CACHE.DS_LAST_ACCESS_TTL";
 	public static final String DIALECT_MYSQL = "MySQL";
 	public static final String DIALECT_POSTGRES = "PostgreSQL";
 	public static final String DIALECT_ORACLE = "OracleDialect";
@@ -86,6 +88,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		if (this.cacheConfiguration != null) {
 			totalMemory = this.cacheConfiguration.getCacheSpaceAvailable();
 			cachePercentageToClean = this.cacheConfiguration.getCachePercentageToClean();
+			cacheDsLastAccessTtl = this.cacheConfiguration.getCacheDsLastAccessTtl();
 		}
 
 		String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
@@ -94,7 +97,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		}
 
 		// Modified by Alessandro Portosa
-		// Cleaning behaviour now is dominated by totalMemory value
+		// Cleaning behaviour now is driven by totalMemory value
 		// TotalMemory = -1 -> Caching with no cleaning action, TotalMemory = 0 -> No caching action, TotalMemory > 0 -> Caching with cleaning action
 		if (totalMemory != null && (totalMemory.intValue()) != -1 && cachePercentageToClean != null) {
 			isActiveCleanAction = true;
@@ -154,6 +157,10 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cachePercentageToClean;
 	}
 
+	public Integer getCacheDsLastAccessTtl() {
+		return cacheDsLastAccessTtl;
+	}
+
 	public boolean isAvailableMemoryGreaterThen(BigDecimal requiredMemory) {
 		BigDecimal availableMemory = getAvailableMemory();
 		if (availableMemory.compareTo(requiredMemory) <= 0) {
@@ -191,7 +198,9 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		item.setTable(tableName);
 		item.setSignature(resultsetSignature);
 		item.setDimension(getRequiredMemory(resultset));
-		item.setCreationDate(new Date());
+		Date now = new Date();
+		item.setCreationDate(now);
+		item.setLastUsedDate(now);
 		getCacheRegistry().put(tableName, item);
 
 		logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature() + " \n Dimension: " + item.getDimension()

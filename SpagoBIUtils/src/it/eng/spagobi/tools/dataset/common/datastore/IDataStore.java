@@ -7,6 +7,7 @@ package it.eng.spagobi.tools.dataset.common.datastore;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.dataset.query.IQuery;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 import java.util.Comparator;
@@ -57,6 +58,8 @@ public interface IDataStore {
 	void insertRecord(int recordIndex, IRecord record);
 
 	IDataStore aggregateAndFilterRecords(String sqlQuery);
+
+	IDataStore aggregateAndFilterRecords(IQuery query);
 
 	/**
 	 * @deprecated use the proper DataWriter instead

@@ -57,6 +57,7 @@ import it.eng.spagobi.utilities.threadmanager.WorkManager;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -113,7 +114,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(it.eng.spagobi.tools .dataset.bo.IDataSet)
 	 */
 	public boolean contains(IDataSet dataSet) {
@@ -133,7 +134,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.lang.String)
 	 */
 	public boolean contains(String resultsetSignature) {
@@ -142,7 +143,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.util.List)
 	 */
 	public boolean contains(List<IDataSet> dataSets) {
@@ -151,7 +152,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#getNotContained(java.util.List)
 	 */
 	public List<IDataSet> getNotContained(List<IDataSet> dataSets) {
@@ -170,7 +171,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet)
 	 */
 	public IDataStore get(IDataSet dataSet) {
@@ -205,7 +206,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String)
 	 */
 	public IDataStore get(String resultsetSignature) {
@@ -217,6 +218,7 @@ public class SQLDBCache implements ICache {
 			if (getMetadata().containsCacheItem(resultsetSignature)) {
 				logger.debug("Resultset with signature [" + resultsetSignature + "] found");
 				CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
+				cacheItem.setLastUsedDate(new Date());
 				String tableName = cacheItem.getTable();
 				logger.debug("The table associated to dataset [" + resultsetSignature + "] is [" + tableName + "]");
 				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);
@@ -247,7 +249,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet, java.util.List, java.util.List, java.util.List)
 	 */
 	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections) {
@@ -298,6 +300,7 @@ public class SQLDBCache implements ICache {
 	private IDataStore queryJoinedCachedDataset(JoinedDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters,
 			List<ProjectionCriteria> projections, String resultsetSignature) {
 		CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
+		cacheItem.setLastUsedDate(new Date());
 		String tableName = cacheItem.getTable();
 		logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
 
@@ -479,6 +482,7 @@ public class SQLDBCache implements ICache {
 	private IDataStore queryStandardCachedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
 			String resultsetSignature) {
 		CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
+		cacheItem.setLastUsedDate(new Date());
 		String tableName = cacheItem.getTable();
 		logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
 
@@ -590,7 +594,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
 	public IDataStore load(IDataSet dataSet, boolean wait) {
@@ -602,7 +606,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(java.util.List, boolean)
 	 */
 	public List<IDataStore> load(List<IDataSet> dataSets, boolean wait) {
@@ -681,7 +685,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
 	public IDataStore refresh(IDataSet dataSet, boolean wait) {
@@ -842,7 +846,7 @@ public class SQLDBCache implements ICache {
 	// ===================================================================================
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
 	 */
 	public synchronized void put(IDataSet dataSet, IDataStore dataStore) {
@@ -935,7 +939,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(it.eng.spagobi.tools.dataset .bo.IDataSet)
 	 */
 	public boolean delete(IDataSet dataSet) {
@@ -966,7 +970,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 	public boolean delete(String signature) {
@@ -1036,17 +1040,33 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteQuota()
 	 */
 	public void deleteToQuota() {
 		logger.trace("IN");
+		boolean isEnough = false;
 		try {
 			List<String> signatures = getMetadata().getSignatures();
+			// First loop to find stale datasets
 			for (String signature : signatures) {
-				delete(signature);
-				if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
-					break;
+				CacheItem item = getMetadata().getCacheItem(signature);
+				long elapsedTime = (System.currentTimeMillis() - item.getLastUsedDate().getTime()) / 1000;
+				if (elapsedTime > getMetadata().getCacheDsLastAccessTtl()) {
+					delete(signature);
+					if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
+						isEnough = true;
+						break;
+					}
+				}
+			}
+			// Second loop through datasets
+			if (!isEnough) {
+				for (String signature : signatures) {
+					delete(signature);
+					if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
+						break;
+					}
 				}
 			}
 		} catch (Throwable t) {
@@ -1061,7 +1081,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteAll()
 	 */
 	public void deleteAll() {
@@ -1080,6 +1100,32 @@ public class SQLDBCache implements ICache {
 		}
 
 		logger.debug("[SQLDBCache] All tables removed, Cache cleaned ");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.eng.spagobi.dataset.cache.ICache#deleteOnlyStale()
+	 */
+	public void deleteOnlyStale() {
+		logger.debug("Removing all stale tables from [SQLDBCache]");
+
+		List<String> signatureToDelete = new ArrayList<String>();
+
+		List<String> signatures = getMetadata().getSignatures();
+		for (String signature : signatures) {
+			CacheItem item = getMetadata().getCacheItem(signature);
+			long elapsedTime = (System.currentTimeMillis() - item.getLastUsedDate().getTime()) / 1000;
+			if (elapsedTime > getMetadata().getCacheDsLastAccessTtl()) {
+				signatureToDelete.add(item.getSignature());
+			}
+		}
+
+		for (String signature : signatureToDelete) {
+			delete(signature);
+		}
+
+		logger.debug("[SQLDBCache] All stale tables removed, Cache cleaned ");
 	}
 
 	/**
@@ -1175,7 +1221,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#getCacheMetadata()
 	 */
 	public SQLDBCacheMetadata getMetadata() {
@@ -1184,7 +1230,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#addListener(it.eng.spagobi. tools.dataset.cache.ICacheEvent,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheListener)
 	 */
@@ -1195,7 +1241,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#scheduleActivity(it.eng.spagobi .tools.dataset.cache.ICacheActivity,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheTrigger)
 	 */
@@ -1206,7 +1252,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#enable(boolean)
 	 */
 	public void enable(boolean enable) {
@@ -1216,7 +1262,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#isEnabled()
 	 */
 	public boolean isEnabled() {
@@ -1233,7 +1279,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#refresh(java.util.List, boolean)
 	 */
 	public IDataStore refresh(List<IDataSet> dataSets, boolean wait) {
