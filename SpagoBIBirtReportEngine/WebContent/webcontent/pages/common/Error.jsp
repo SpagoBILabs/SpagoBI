@@ -40,7 +40,7 @@
 					{
 						if ( error.getMessage( ) != null )
 						{
-							out.println( ParameterAccessor.htmlEncode( new String( error.getMessage( ).getBytes( "UTF-8" ),"UTF-8" ) ) );
+							out.println( ParameterAccessor.htmlEncode( new String( error.getMessage( ).getBytes( "ISO-8859-1" ),"UTF-8" ) ) );
 						}
 						else
 						{
