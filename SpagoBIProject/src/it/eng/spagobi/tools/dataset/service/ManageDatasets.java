@@ -380,7 +380,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	private void saveTriggerForDatasetJob(String jobName) {
 
 		HashMap<String, String> logParam = new HashMap();
-
+		String quartzMsg = "";
 		try {
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String jobDetail = schedulerService.getJobDefinition(jobName, JOB_GROUP);
@@ -405,6 +405,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			if (execOutSB != null) {
 				String outcome = (String) execOutSB.getAttribute("outcome");
 				if (outcome.equalsIgnoreCase("fault")) {
+					quartzMsg = (String) execOutSB.getAttribute("msg");
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.SAVE", logParam, "KO");
 					} catch (Exception e) {
@@ -424,8 +425,13 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			logger.error("Error while saving schedule for job", ex);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Error while saving schedule for job", ex);
+			String errorMsgToUser = "Error while saving schedule for job";
+			if (quartzMsg != null && !quartzMsg.isEmpty()) {
+				errorMsgToUser += ": " + quartzMsg;
+			}
+
+			logger.error(errorMsgToUser, ex);
+			throw new SpagoBIServiceException(SERVICE_NAME, errorMsgToUser, ex);
 		}
 	}
 

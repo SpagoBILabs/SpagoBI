@@ -202,7 +202,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 		} catch (Exception e) {
 			// something wrong
 			logger.error("Cannot schedule job", e);
-			servreponse.append("<EXECUTION_OUTCOME outcome=\"fault\"/>");
+			servreponse.append("<EXECUTION_OUTCOME outcome=\"fault\" msg=\"" + e.getCause().getMessage() + "\"/>");
 		}
 		return servreponse.toString();
 	}
