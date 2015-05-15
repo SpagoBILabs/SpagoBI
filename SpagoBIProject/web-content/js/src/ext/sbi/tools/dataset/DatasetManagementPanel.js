@@ -2002,11 +2002,13 @@ Ext
 									items : [
 											{
 												fieldLabel : LN('sbi.ds.persist.cron.startdate'),
-												name : 'startDate'
+												name : 'startDate',
+												format : 'd/m/Y'
 											},
 											{
 												fieldLabel : LN('sbi.ds.persist.cron.enddate'),
-												name : 'endDate'
+												name : 'endDate',
+												format : 'd/m/Y'
 											} ]
 								});
 
