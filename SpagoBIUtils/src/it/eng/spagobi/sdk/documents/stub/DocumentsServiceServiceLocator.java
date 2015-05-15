@@ -22,7 +22,7 @@ public class DocumentsServiceServiceLocator extends org.apache.axis.client.Servi
     }
 
     // Use to get a proxy class for DocumentsService
-    private java.lang.String DocumentsService_address = "http://localhost:8080/SpagoBI/sdk/DocumentsService";
+    private java.lang.String DocumentsService_address = "http://localhost:8181/SpagoBI/sdk/DocumentsService";
 
     public java.lang.String getDocumentsServiceAddress() {
         return DocumentsService_address;
