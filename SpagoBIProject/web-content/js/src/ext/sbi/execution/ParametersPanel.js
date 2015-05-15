@@ -79,7 +79,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	// merge settings and input configuration
 	var c = Ext.apply(temp, config || {});
 	
-	if(doc.parametersRegion != undefined){
+	if(doc != undefined && doc.parametersRegion != undefined){
 		c.parametersRegion = doc.parametersRegion;
 	}
 	
