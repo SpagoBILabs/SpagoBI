@@ -7,6 +7,7 @@ package it.eng.spagobi.tools.dataset.common.datastore;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.dataset.query.IQuery;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
@@ -655,6 +656,10 @@ public class DataStore implements IDataStore {
 		dataStore.getMetaData().setProperty("resultNumber", resultCount);
 
 		return dataStore;
+	}
+
+	public IDataStore aggregateAndFilterRecords(IQuery query) {
+		return aggregateAndFilterRecords(query.toSql(DEFAULT_SCHEMA_NAME, DEFAULT_TABLE_NAME));
 	}
 
 	private IFieldMetaData getFieldMetaDataFromSelectItem(SelectItem selectItem, HashMap<String, FieldType> fieldTypes) {
