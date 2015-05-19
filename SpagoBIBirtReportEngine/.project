@@ -3,8 +3,9 @@
 	<name>SpagoBIBirtReportEngine</name>
 	<comment></comment>
 	<projects>
-		<project>SpagoBIUtilsJSON</project>
 		<project>QbeCore</project>
+		<project>SpagoBIUtils</project>
+		<project>SpagoBIUtilsJSON</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
