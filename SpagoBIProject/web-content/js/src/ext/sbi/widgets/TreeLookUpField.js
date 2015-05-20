@@ -210,7 +210,10 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 	onLookUp : function() {
 		this.fireEvent('lookup', this);
 		this.win.show(this);
-		
+		if (this.xreset) {
+			this.reloadTree();
+			this.xreset = false;
+		}
 	}
 
 	,
@@ -240,6 +243,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 
 	,
 	setValue : function(values) {
+		Sbi.debug('[TreeLookUpField.setValue] : IN, values = [' + values + ']');
 		var pvalues = "";
 
 		if (values) {
@@ -256,14 +260,15 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			values = null;
 			//this.reloadTree();
 		}
-		Sbi.widgets.LookupField.superclass.setValue.call( this, pvalues);
+		Sbi.widgets.TreeLookUpField.superclass.setValue.call( this, pvalues);
 		this.xStartingValues = values;
 		this.xvalues = values;
-		
+		Sbi.debug('[TreeLookUpField.setValue] : OUT');
 	}
 
 	,
 	setRawValue : function(values) {
+		Sbi.debug('[TreeLookUpField.setRawValue] : IN, values = [' + values + ']');
 		var pvalues = "";
 		if (values) {
 			if(values instanceof Array) {
@@ -278,9 +283,10 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 		}else{
 			values=null;
 		}
-		Sbi.widgets.LookupField.superclass.setRawValue.call( this, pvalues);
+		Sbi.widgets.TreeLookUpField.superclass.setRawValue.call( this, pvalues);
 		this.xStartingDescriptions = values;
 		this.xdescriptions = values;
+		Sbi.debug('[TreeLookUpField.setRawValue] : OUT');
 	}
 
 	,
@@ -355,27 +361,22 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 	}
 	
 	, reset : function(){
-		this.xvalues ="";
-		this.xdescriptions ="";
+		Sbi.debug('[TreeLookUpField.reset] : IN');
+		this.xvalues = "";
+		this.xdescriptions = "";
+		var delNode;
+	    while (delNode = this.tree.root.childNodes[0]) {
+	    	this.tree.root.removeChild(delNode);
+	    }
 		Sbi.widgets.TreeLookUpField.superclass.reset.call( this);
+		this.xreset = true;
+		Sbi.debug('[TreeLookUpField.reset] : OUT');
 	}
 
 	// if the parameters has been change we reload the tree
 	,
-	reloadTree : function(formParams) {
-		if (formParams && formParams != this.oldFormParams) {
-			if(formParams && formParams!=this.oldFormParams){
-				this.params.PARAMETERS =  formParams;
-				this.treeLoader.baseParams =this.params;
-				var newRoot = new Ext.tree.AsyncTreeNode(this.rootConfig);
-				this.tree.setRootNode(newRoot);
-				if(this.win){
-					this.win.destroy();
-					this.initWin();
-				}
-				this.oldFormParams = formParams;
-			}
-		}
+	reloadTree : function() {
+		this.getRootNode().reload();
 	}
 	
 	,trim: function(string){
@@ -404,5 +405,10 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			return  array2;
 		}
 	}
-
+	
+	,
+	getRootNode: function () {
+		return this.tree.getRootNode();
+	}
+	
 });
