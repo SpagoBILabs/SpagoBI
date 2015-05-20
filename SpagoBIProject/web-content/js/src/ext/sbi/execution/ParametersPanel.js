@@ -90,10 +90,6 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	
 	this.baseConfig = c;
 	
-	//global variable
-	this.firstInitialization = true;
-
-	
 	this.parametersPreference = undefined;
 	if (c.parameters) {
 		this.parametersPreference = c.parameters;
@@ -297,6 +293,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 
 	, clearParametersForm: function() {
 		//this.reset();
+		this.resetTreeDrivers();
 		var defaultValuesFormState = this.getDefaultValuesFormState();
 		Sbi.debug('[ParametersPanel.clearParametersForm] : default values form state is [' + defaultValuesFormState + ']');
 		var state = Ext.apply(defaultValuesFormState, this.preferenceState);
@@ -493,6 +490,18 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}
 		
 		Sbi.trace("[ParametersPanel.setFormState] : OUT");
+	}
+	
+	,
+	resetTreeDrivers: function() {
+		Sbi.trace('[ParametersPanel.resetTreeDrivers] : IN');
+		for (f in this.fields) {
+			var aField = this.fields[f];
+			if (aField.behindParameter.selectionType === 'TREE') {
+				aField.reset();
+			}
+		}
+		Sbi.trace('[ParametersPanel.resetTreeDrivers] : OUT');
 	}
 	
 	, applyViewPoint: function(v) {
@@ -791,8 +800,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		//var state = Ext.apply(defaultValuesFormState, this.preferenceState);
 		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
-		this.firstInitialization = false;
-
 			
 		if (this.firstLoadTotParams == 0 && reset) {
 			this.fireEvent('ready', this, this.isReadyForExecution(), state);	
@@ -1029,7 +1036,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 
 		this.initializeParametersPanel(this.parameters, false);	
 		//Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : restore state [' + state.toSource() + ']');
-		this.firstInitialization = true;
+		//this.firstInitialization = true;
 		this.setFormState(state);
 		
 
@@ -1047,17 +1054,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			|| field.behindParameter.selectionType === 'LIST' 
 			|| field.behindParameter.selectionType === 'SLIDER'){ 
 			field.store.load();
-		}		
-		if(field.behindParameter.selectionType === 'TREE'){ 
-			var p = Sbi.commons.JSON.encode(this.getFormState());
-			field.reloadTree(p);
-			if (!this.firstInitialization && reset){
-				field.reset();
-			}
-		} else {
-			if (reset) {
-				field.reset();
-			}
+		}
+		if (reset) {
+			field.reset();
 		}
 		Sbi.debug('[ParametersPanel.updateDataDependentField] : field [' + dependantConf.parameterId + '] that is data correlated with field [' + fatherField.name + '] have been updeted succesfully');
 	}
