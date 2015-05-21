@@ -169,7 +169,7 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 	 *  - string -> single value
 	 */
 	, setValue : function(v){	 
-		
+		Sbi.debug('[LookupField.setValue] : IN, values = [' + v + ']');
 		var vt = v;
 		if(typeof v === 'object') {
 			this.xvalue = {};
@@ -204,6 +204,8 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 		//alert(this.name + '.setValue(' + vt + ') = ' + this.xvalue.toSource());
 		
 		this.fireEvent('select', this, v);
+		
+		Sbi.debug('[LookupField.setValue] : OUT');
 	}
 	
 	
