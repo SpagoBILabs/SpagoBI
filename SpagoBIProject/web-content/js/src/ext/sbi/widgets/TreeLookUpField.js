@@ -260,9 +260,14 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 			values = null;
 			//this.reloadTree();
 		}
-		Sbi.widgets.TreeLookUpField.superclass.setValue.call( this, pvalues);
+		Sbi.debug('[TreeLookUpField.setValue] : values = [' + values + ']');
 		this.xStartingValues = values;
 		this.xvalues = values;
+		Sbi.debug('[TreeLookUpField.setValue] : pvalues = [' + pvalues + ']');
+		Sbi.widgets.TreeLookUpField.superclass.setValue.call(this, pvalues);
+		
+		this.fireEvent('select', this, values);
+		
 		Sbi.debug('[TreeLookUpField.setValue] : OUT');
 	}
 
@@ -283,6 +288,7 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 		}else{
 			values=null;
 		}
+		Sbi.debug('[TreeLookUpField.setRawValue] : pvalues = [' + pvalues + ']');
 		Sbi.widgets.TreeLookUpField.superclass.setRawValue.call( this, pvalues);
 		this.xStartingDescriptions = values;
 		this.xdescriptions = values;
@@ -351,11 +357,13 @@ Ext.extend(Sbi.widgets.TreeLookUpField, Ext.form.TriggerField, {
 	,
 	getRawValue : function() {
 		var toReturn = "";
-		if(this.xdescriptions){//creates the string of the descriptions
+		if (this.xdescriptions) {//creates the string of the descriptions
 			for ( var i = 0; i < this.xdescriptions.length; i++) {
 				toReturn = toReturn+";"+this.xdescriptions[i];
 			}
 			toReturn = toReturn.substring(1);//remove this first ;
+		} else {
+			toReturn = Sbi.widgets.TreeLookUpField.superclass.getRawValue.call(this);
 		}
 		return toReturn;
 	}
