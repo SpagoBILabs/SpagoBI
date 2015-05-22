@@ -67,5 +67,8 @@
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/jaxrs-api-3.0.9.Final.jar"/>
 	<classpathentry kind="lib" path="lib/resteasy-jaxrs-2.3.5.Final.jar"/>
+	<classpathentry kind="lib" path="lib/MetaModel-core-4.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/MetaModel-full-4.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/MetaModel-pojo-4.3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
