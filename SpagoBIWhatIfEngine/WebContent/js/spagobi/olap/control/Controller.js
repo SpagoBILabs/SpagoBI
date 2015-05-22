@@ -370,6 +370,10 @@ Ext.define('Sbi.olap.control.Controller', {
 	 */
 	, saveSubObject: function(name, description, scope){
 		
+		if(!description){
+			description = " ";
+		}
+		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "subobject",
 			method: 'POST',
