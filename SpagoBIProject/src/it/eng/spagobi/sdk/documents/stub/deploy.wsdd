@@ -31,13 +31,6 @@
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
-      <arrayMapping
-        xmlns:ns="urn:spagobisdkdocuments"
-        qname="ns:ArrayOf_tns2_SDKAttribute"
-        type="java:it.eng.spagobi.sdk.documents.bo.SDKAttribute[]"
-        innerType="cmp-ns:SDKAttribute" xmlns:cmp-ns="http://bo.documents.sdk.spagobi.eng.it"
-        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-      />
       <typeMapping
         xmlns:ns="http://bo.documents.sdk.spagobi.eng.it"
         qname="ns:SDKDocumentParameterValue"
@@ -51,14 +44,6 @@
         qname="ns:ArrayOf_xsd_anyType"
         type="java:java.lang.Object[]"
         innerType="cmp-ns:anyType" xmlns:cmp-ns="http://www.w3.org/2001/XMLSchema"
-        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-      />
-      <typeMapping
-        xmlns:ns="http://bo.documents.sdk.spagobi.eng.it"
-        qname="ns:SDKAttribute"
-        type="java:it.eng.spagobi.sdk.documents.bo.SDKAttribute"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
       <typeMapping
