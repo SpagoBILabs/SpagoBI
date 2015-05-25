@@ -32,24 +32,6 @@ public class DocumentsServiceSoapBindingSkeleton implements it.eng.spagobi.sdk.d
         org.apache.axis.description.ParameterDesc [] _params;
         _params = new org.apache.axis.description.ParameterDesc [] {
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
-        };
-        _oper = new org.apache.axis.description.OperationDesc("getAllAttributes", _params, new javax.xml.namespace.QName("", "getAllAttributesReturn"));
-        _oper.setReturnType(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "ArrayOf_tns2_SDKAttribute"));
-        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "getAllAttributes"));
-        _oper.setSoapAction("");
-        _myOperationsList.add(_oper);
-        if (_myOperations.get("getAllAttributes") == null) {
-            _myOperations.put("getAllAttributes", new java.util.ArrayList());
-        }
-        ((java.util.List)_myOperations.get("getAllAttributes")).add(_oper);
-        _fault = new org.apache.axis.description.FaultDesc();
-        _fault.setName("NotAllowedOperationException");
-        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"));
-        _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
-        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
-        _oper.addFault(_fault);
-        _params = new org.apache.axis.description.ParameterDesc [] {
-            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
         };
@@ -369,12 +351,6 @@ public class DocumentsServiceSoapBindingSkeleton implements it.eng.spagobi.sdk.d
     public DocumentsServiceSoapBindingSkeleton(it.eng.spagobi.sdk.documents.stub.DocumentsService impl) {
         this.impl = impl;
     }
-    public it.eng.spagobi.sdk.documents.bo.SDKAttribute[] getAllAttributes(java.lang.String in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
-    {
-        it.eng.spagobi.sdk.documents.bo.SDKAttribute[] ret = impl.getAllAttributes(in0);
-        return ret;
-    }
-
     public it.eng.spagobi.sdk.documents.bo.SDKDocument[] getDocumentsAsList(java.lang.String in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException
     {
         it.eng.spagobi.sdk.documents.bo.SDKDocument[] ret = impl.getDocumentsAsList(in0, in1, in2);

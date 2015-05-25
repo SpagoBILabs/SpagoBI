@@ -9,13 +9,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <import namespace="http://bo.importexport.sdk.spagobi.eng.it"/>
    <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
-   <complexType name="SDKAttribute">
-    <sequence>
-     <element name="description" nillable="true" type="soapenc:string"/>
-     <element name="id" nillable="true" type="soapenc:int"/>
-     <element name="name" nillable="true" type="soapenc:string"/>
-    </sequence>
-   </complexType>
    <complexType name="SDKDocument">
     <sequence>
      <element name="dataSetId" nillable="true" type="soapenc:int"/>
@@ -98,13 +91,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <import namespace="http://bo.importexport.sdk.spagobi.eng.it"/>
    <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
-   <complexType name="ArrayOf_tns2_SDKAttribute">
-    <complexContent>
-     <restriction base="soapenc:Array">
-      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SDKAttribute[]"/>
-     </restriction>
-    </complexContent>
-   </complexType>
    <complexType name="ArrayOf_tns2_SDKDocument">
     <complexContent>
      <restriction base="soapenc:Array">
@@ -161,10 +147,10 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <import namespace="http://xml.apache.org/xml-soap"/>
    <import namespace="http://bo.importexport.sdk.spagobi.eng.it"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
-   <complexType name="NotAllowedOperationException">
+   <complexType name="NonExecutableDocumentException">
     <sequence/>
    </complexType>
-   <complexType name="NonExecutableDocumentException">
+   <complexType name="NotAllowedOperationException">
     <sequence/>
    </complexType>
    <complexType name="InvalidParameterValue">
@@ -370,12 +356,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
-   <wsdl:message name="getAllAttributesResponse">
-
-      <wsdl:part name="getAllAttributesReturn" type="impl:ArrayOf_tns2_SDKAttribute"/>
-
-   </wsdl:message>
-
    <wsdl:message name="uploadMondrianSchemaResponse">
 
    </wsdl:message>
@@ -484,35 +464,19 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
-   <wsdl:message name="getDocumentsAsTreeRequest">
-
-      <wsdl:part name="in0" type="soapenc:string"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getAllAttributesRequest">
-
-      <wsdl:part name="in0" type="soapenc:string"/>
-
-   </wsdl:message>
-
    <wsdl:message name="NonExecutableDocumentException">
 
       <wsdl:part name="fault" type="tns3:NonExecutableDocumentException"/>
 
    </wsdl:message>
 
+   <wsdl:message name="getDocumentsAsTreeRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
    <wsdl:portType name="DocumentsService">
-
-      <wsdl:operation name="getAllAttributes" parameterOrder="in0">
-
-         <wsdl:input message="impl:getAllAttributesRequest" name="getAllAttributesRequest"/>
-
-         <wsdl:output message="impl:getAllAttributesResponse" name="getAllAttributesResponse"/>
-
-         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
-
-      </wsdl:operation>
 
       <wsdl:operation name="getDocumentsAsList" parameterOrder="in0 in1 in2">
 
@@ -691,30 +655,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <wsdl:binding name="DocumentsServiceSoapBinding" type="impl:DocumentsService">
 
       <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-
-      <wsdl:operation name="getAllAttributes">
-
-         <wsdlsoap:operation soapAction=""/>
-
-         <wsdl:input name="getAllAttributesRequest">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:input>
-
-         <wsdl:output name="getAllAttributesResponse">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:output>
-
-         <wsdl:fault name="NotAllowedOperationException">
-
-            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:fault>
-
-      </wsdl:operation>
 
       <wsdl:operation name="getDocumentsAsList">
 

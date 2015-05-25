@@ -45,10 +45,8 @@ import it.eng.spagobi.engines.exporters.KpiExporter;
 import it.eng.spagobi.engines.exporters.ReportExporter;
 import it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine;
 import it.eng.spagobi.engines.kpi.bo.KpiResourceBlock;
-import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.sdk.AbstractSDKService;
 import it.eng.spagobi.sdk.documents.DocumentsService;
-import it.eng.spagobi.sdk.documents.bo.SDKAttribute;
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue;
@@ -1750,41 +1748,4 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return toReturn;
 	}
 
-	public SDKAttribute[] getAllAttributes(String roleName) throws NotAllowedOperationException {
-
-		logger.debug("IN: roleName = [" + roleName + "]");
-		SDKAttribute[] toReturn = null;
-
-		this.setTenant();
-
-		try {
-			IEngUserProfile profile = getUserProfile();
-
-			List<SbiAttribute> attributes = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
-
-			List attsList = new ArrayList();
-
-			if (attributes != null) {
-				Iterator it = attributes.iterator();
-				while (it.hasNext()) {
-					SbiAttribute attribute = (SbiAttribute) it.next();
-					SDKAttribute sdkAttribute = new SDKAttribute();
-					sdkAttribute.setId(attribute.getAttributeId());
-					sdkAttribute.setName(attribute.getAttributeName());
-					sdkAttribute.setDescription(attribute.getDescription());
-					attsList.add(sdkAttribute);
-				}
-			}
-			toReturn = new SDKAttribute[attsList.size()];
-			toReturn = (SDKAttribute[]) attsList.toArray(toReturn);
-		} catch (NotAllowedOperationException e) {
-			throw e;
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			this.unsetTenant();
-			logger.debug("OUT");
-		}
-		return toReturn;
-	}
 }
