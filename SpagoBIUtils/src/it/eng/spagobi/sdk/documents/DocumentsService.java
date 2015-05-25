@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.sdk.documents;
 
-import it.eng.spagobi.sdk.documents.bo.SDKAttribute;
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue;
@@ -34,8 +33,6 @@ public interface DocumentsService {
 	String[] getCorrectRolesForExecution(Integer documentId) throws NonExecutableDocumentException;
 
 	SDKDocumentParameter[] getDocumentParameters(Integer documentId, String roleName) throws NonExecutableDocumentException;
-
-	SDKAttribute[] getAllAttributes(String roleName) throws NotAllowedOperationException;
 
 	SDKDocumentParameterValue[] getAdmissibleValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException;
 
