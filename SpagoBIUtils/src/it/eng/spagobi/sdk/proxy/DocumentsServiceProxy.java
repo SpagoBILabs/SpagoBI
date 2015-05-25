@@ -18,9 +18,9 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 	private DocumentsService documentsService = null;
 	private ClientCredentialsHolder cch = null;
 
-//	public DocumentsServiceProxy() {
-//		_initDocumentsServiceProxy();
-//	}
+	// public DocumentsServiceProxy() {
+	// _initDocumentsServiceProxy();
+	// }
 
 	public DocumentsServiceProxy(String user, String pwd) {
 		cch = new ClientCredentialsHolder(user, pwd);
@@ -33,17 +33,21 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 	}
 
 	private void _initDocumentsServiceProxy() {
-//		try {
-//			documentsService = (new DocumentsServiceServiceLocator()).getDocumentsService();
-//			if (documentsService != null) {
-//				if (_endpoint != null)
-//					((javax.xml.rpc.Stub) documentsService)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
-//				else
-//					_endpoint = (String) ((javax.xml.rpc.Stub) documentsService)._getProperty("javax.xml.rpc.service.endpoint.address");
-//			}
-//
-//		} catch (javax.xml.rpc.ServiceException serviceException) {
-//		}
+		// try {
+		// documentsService = (new
+		// DocumentsServiceServiceLocator()).getDocumentsService();
+		// if (documentsService != null) {
+		// if (_endpoint != null)
+		// ((javax.xml.rpc.Stub)
+		// documentsService)._setProperty("javax.xml.rpc.service.endpoint.address",
+		// _endpoint);
+		// else
+		// _endpoint = (String) ((javax.xml.rpc.Stub)
+		// documentsService)._getProperty("javax.xml.rpc.service.endpoint.address");
+		// }
+		//
+		// } catch (javax.xml.rpc.ServiceException serviceException) {
+		// }
 		try {
 			it.eng.spagobi.sdk.documents.stub.DocumentsServiceServiceLocator locator = new it.eng.spagobi.sdk.documents.stub.DocumentsServiceServiceLocator();
 			Remote remote = locator.getPort(it.eng.spagobi.sdk.documents.stub.DocumentsService.class);
@@ -79,13 +83,6 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 		if (documentsService == null)
 			_initDocumentsServiceProxy();
 		return documentsService;
-	}
-
-	public it.eng.spagobi.sdk.documents.bo.SDKAttribute[] getAllAttributes(java.lang.String in0) throws java.rmi.RemoteException,
-			it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
-		if (documentsService == null)
-			_initDocumentsServiceProxy();
-		return documentsService.getAllAttributes(in0);
 	}
 
 	public it.eng.spagobi.sdk.documents.bo.SDKDocument[] getDocumentsAsList(java.lang.String in0, java.lang.String in1, java.lang.String in2)
