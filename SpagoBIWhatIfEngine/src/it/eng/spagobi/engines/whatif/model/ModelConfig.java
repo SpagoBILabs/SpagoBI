@@ -8,6 +8,7 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.writeback4j.SbiAliases;
 import it.eng.spagobi.writeback4j.SbiScenario;
@@ -42,6 +43,8 @@ public class ModelConfig implements Serializable {
 	private List<String> toolbarMenuButtons;
 
 	private Map<String, String> dimensionHierarchyMap;
+
+	private SpagoBICrossNavigationConfig crossNavigation;
 
 	public ModelConfig() {
 		drillType = DrillDownCommand.MODE_POSITION;
@@ -224,9 +227,16 @@ public class ModelConfig implements Serializable {
 	public void setWhatIfScenario(boolean bool) {
 	}
 
+	public SpagoBICrossNavigationConfig getCrossNavigation() {
+		return crossNavigation;
+	}
+
+	public void setCrossNavigation(SpagoBICrossNavigationConfig crossNavigation) {
+		this.crossNavigation = crossNavigation;
+	}
+
 	/**
-	 * Updates the values of the object coping the values of another configuration..
-	 * Not all the modification are copied, id est Scenario and aliases 
+	 * Updates the values of the object coping the values of another configuration.. Not all the modification are copied, id est Scenario and aliases
 	 */
 	public void update(ModelConfig source) {
 		this.drillType = source.drillType;

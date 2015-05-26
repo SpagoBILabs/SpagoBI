@@ -1,17 +1,19 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * @author Zerbetto Davide (davide.zerbetto@eng.it) 
+ * @author Zerbetto Davide (davide.zerbetto@eng.it)
  */
 
 package it.eng.spagobi.engines.whatif.model;
 
 import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMember;
 import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMemberManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
@@ -45,6 +47,8 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	private SpagoBICellSetWrapper wrapper = null;
 	private List<CalculatedMember> calculatedFields;
 	private String queryWithOutCC;
+	private SpagoBICrossNavigationConfig crossNavigation;
+	private List<TargetClickable> targetsClickable;
 
 	@Override
 	public synchronized CellSet getCellSet() {
@@ -132,10 +136,9 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 	/**
 	 * Persist the modifications in the selected version
-	 * 
+	 *
 	 * @param version
-	 *            the version of the model in witch persist the modification. In
-	 *            null persist in the version selected in the Version dimension
+	 *            the version of the model in witch persist the modification. In null persist in the version selected in the Version dimension
 	 * @throws WhatIfPersistingTransformationException
 	 */
 	public void persistTransformations(Connection connection, Integer version) throws WhatIfPersistingTransformationException {
@@ -223,6 +226,22 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 	public OlapConnection getOlapConnection() {
 		return getConnection();
+	}
+
+	public SpagoBICrossNavigationConfig getCrossNavigation() {
+		return crossNavigation;
+	}
+
+	public void setCrossNavigation(SpagoBICrossNavigationConfig crossNavigation) {
+		this.crossNavigation = crossNavigation;
+	}
+
+	public List<TargetClickable> getTargetsClickable() {
+		return targetsClickable;
+	}
+
+	public void setTargetsClickable(List<TargetClickable> targetsClickable) {
+		this.targetsClickable = targetsClickable;
 	}
 
 }

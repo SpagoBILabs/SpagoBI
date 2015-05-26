@@ -101,21 +101,25 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				'BUTTON_SAVE_NEW': this.openSaveAsWindow,
 				'BUTTON_VERSION_MANAGER': this.openVersionManagerWindow,
 				'BUTTON_EXPORT_OUTPUT': this.openOutputWindow,
-				'BUTTON_CALCULATED_MEMBERS': this.openCalculatedMembersWindow
+				'BUTTON_CALCULATED_MEMBERS': this.openCalculatedMembersWindow,
+				'BUTTON_CROSS_NAVIGATION':  function(){							
+					Sbi.olap.eventManager.initCrossNavigation();
+				}
+
 		};
 
 		this.callParent(arguments);
 
 	},
 
-	listeners: {
-//		render: function() {
-//			// After the component has been rendered, disable the default browser context menu
-//			Ext.getBody().on("contextmenu", Ext.emptyFn, null, {preventDefault: true});
-//		},
-//		contextmenu: function() {
-//		}
-	},
+	/*listeners: {
+		render: function() {
+			// After the component has been rendered, disable the default browser context menu
+			Ext.getBody().on("contextmenu", Ext.emptyFn, null, {preventDefault: true});
+		},
+		contextmenu: function() {
+		}
+	},*/
 
 	initComponent: function() {
 		var thisPanel = this;
@@ -250,6 +254,16 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			}, sharedConfig);
 		}
 
+
+		//author: Maria Caterina Russo from Osmosit
+		var buttonLabel = 'BUTTON_CROSS_NAVIGATION';
+		this.buttonsConfigContainer[buttonLabel] = Ext.apply({
+			tooltip: LN('sbi.olap.toolbar.'+buttonLabel),
+			iconCls: buttonLabel,
+			enableToggle: true,
+			label: buttonLabel,
+			handler: this.buttonHandlersMap[buttonLabel]
+		}, sharedConfig);
 
 
 

@@ -1,13 +1,15 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.whatif.template;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -73,6 +75,23 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static final String TAG_DRIVER = "DRIVER";
 	public static final String TAG_DIALECT = "DIALECT";
 	public static final String TAG_XMLA_DATASOURCE = "xmlaserver";
+	public static String TAG_CROSS_NAVIGATION = "CROSS_NAVIGATION";
+	public static String TAG_CN_TARGET = "TARGET";
+	public static String TAG_CN_DESCRIPTION = "DESCRIPTION";
+	public static String TAG_TG_DOCUMENT_LABEL = "documentLabel";
+	public static String TAG_TG_CUSTOMIZED_VIEW = "customizedView";
+	public static String TAG_TG_TARGET = "target";
+	public static String TAG_TG_TITLE = "title";
+	public static String TAG_TN_PARAMETERS = "PARAMETERS";
+	public static String TAG_TN_PARAMETER = "PARAMETER";
+	public static String TAG_MDX_CLICKABLE = "clickable";
+	public static String TAG_CNC_DOCUMENT = "targetDocument";
+	public static String TAG_CNC_TARGET = "target";
+	public static String TAG_CNC_TITLE = "title";
+	public static String TAG_CNC_UNIQUENAME = "uniqueName";
+	public static String TAG_CNC_PARAMETERS = "clickParameter";
+	public static String TAG_CNC_NAME = "name";
+	public static String TAG_CNC_VALUE = "value";
 
 	public static final String STAD_ALONE_DS_LABEL = "STAD_ALONE_DS_LABEL";
 
@@ -112,6 +131,10 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			String mdxQuery = mdxSB.getCharacters();
 			toReturn.setMdxQuery(mdxQuery);
 
+			// TODO: OSMOSIT init Targets Clickable
+			List<TargetClickable> targetsClickable = initTargetsClickable(mdxSB);
+			toReturn.setTargetsClickable(targetsClickable);
+
 			SourceBean mdxMondrianSB = (SourceBean) template.getAttribute(TAG_MDX_MONDRIAN_QUERY);
 			logger.debug(TAG_MDX_MONDRIAN_QUERY + ": " + mdxMondrianSB);
 			// Assert.assertNotNull(mdxMondrianSB, "Template is missing " +
@@ -129,6 +152,20 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 			// init the toolbar config
 			initToolbar(template, toReturn);
+
+			// TODO:
+			// OSMOSIT
+			// Check for cross navigation configuration and button adding in toolbar
+			SourceBean crossNavigation = (SourceBean) template.getAttribute(TAG_CROSS_NAVIGATION);
+			if (crossNavigation != null) {
+				SpagoBICrossNavigationConfig cninfo = new SpagoBICrossNavigationConfig(crossNavigation);
+				toReturn.setCrossNavigation(cninfo);
+				if (toReturn.getToolbarVisibleButtons() == null) {
+					toReturn.setToolbarVisibleButtons(new ArrayList<String>());
+				}
+				toReturn.getToolbarVisibleButtons().add(new String("BUTTON_CROSS_NAVIGATION"));
+
+			}
 
 			// init stand alone configuration
 			initStandAlone(template, toReturn);
@@ -162,6 +199,23 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		}
 
 		return toReturn;
+	}
+
+	private static List<TargetClickable> initTargetsClickable(SourceBean mdxSB) {
+		List clickableNodes = mdxSB.getAttributeAsList(TAG_MDX_CLICKABLE);
+		List<TargetClickable> targetsClickable = new ArrayList<TargetClickable>();
+		logger.debug(TAG_MDX_CLICKABLE + ": " + clickableNodes);
+		if (clickableNodes != null && !clickableNodes.isEmpty()) {
+			for (int i = 0; i < clickableNodes.size(); i++) {
+				TargetClickable targetClickable = new TargetClickable((SourceBean) clickableNodes.get(i));
+				if (targetClickable != null) {
+					targetsClickable.add(targetClickable);
+				}
+			}
+		} else {
+			return null;
+		}
+		return targetsClickable;
 	}
 
 	private void setProfilingUserAttributes(SourceBean template, WhatIfTemplate toReturn) {
@@ -301,8 +355,8 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		WriteBackEditConfig writeBackConfig = new WriteBackEditConfig();
 		String editCube = (String) scenarioSB.getAttribute(WhatIfXMLTemplateParser.EDIT_CUBE_ATTRIBUTE);
 		if (editCube == null || editCube.length() == 0) {
-			logger.error("In the writeback is enabled you must specify a cube to edit. Remove the " + WRITEBACK_TAG + " tag or specify a value for the attribute "
-					+ EDIT_CUBE_ATTRIBUTE);
+			logger.error("In the writeback is enabled you must specify a cube to edit. Remove the " + WRITEBACK_TAG
+					+ " tag or specify a value for the attribute " + EDIT_CUBE_ATTRIBUTE);
 			throw new SpagoBIEngineRuntimeException("In the writeback is enabled you must specify a cube to edit. Remove the " + WRITEBACK_TAG
 					+ " tag or specify a value for the attribute " + EDIT_CUBE_ATTRIBUTE);
 		}

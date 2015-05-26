@@ -1,13 +1,13 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * 
+ *
  * Utilities class that provides some usefull method to access the informations of the cube
- * 
- * @author Alberto Ghedin (alberto.ghedin@eng.it) 
+ *
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
 package it.eng.spagobi.engines.whatif.cube;
 
@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.olap4j.Axis;
 import org.olap4j.OlapDataSource;
 import org.olap4j.OlapException;
+import org.olap4j.Position;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
@@ -47,7 +48,7 @@ public class CubeUtilities {
 
 	/**
 	 * Looks for the member with id memberUniqueName in the cube
-	 * 
+	 *
 	 * @param cube
 	 *            the cube wherein to find the member
 	 * @param memberUniqueName
@@ -72,7 +73,7 @@ public class CubeUtilities {
 
 	/**
 	 * Looks for the member with id memberUniqueName in the hierarchy
-	 * 
+	 *
 	 * @param hierarchy
 	 *            the hierarchy wherein to find the member
 	 * @param memberUniqueName
@@ -86,7 +87,7 @@ public class CubeUtilities {
 
 	/**
 	 * Check if the member is the root
-	 * 
+	 *
 	 * @param memberUniqueName
 	 *            the name of the member
 	 * @return true if the member is the root
@@ -113,8 +114,34 @@ public class CubeUtilities {
 	}
 
 	/**
+	 * Retrive a position from the position unique name
+	 *
+	 * @param positions
+	 *            the list of position
+	 * @param positionUniqueName
+	 *            the position unique name
+	 * @return
+	 * @throws OlapException
+	 */
+	public static Position getPosition(List<Position> positions, String positionUniqueName) {
+		logger.debug("IN");
+		positionUniqueName = positionUniqueName.replace(" ", "");
+		for (int i = 0; i < positions.size(); i++) {
+			Position p = positions.get(i);
+			String member = p.getMembers().toString();
+			member = member.replace(" ", "");
+			if (member.equals(positionUniqueName)){
+				logger.debug("OUT: fund a member "+member);
+				return p;
+			}
+		}
+		logger.debug("OUT: ");
+		return null;
+	}
+
+	/**
 	 * Searches in the cube for the hierarchy
-	 * 
+	 *
 	 * @param cube
 	 *            the cube
 	 * @param hierarchyUniqueName
@@ -153,7 +180,7 @@ public class CubeUtilities {
 
 	/**
 	 * Return the axis for the position
-	 * 
+	 *
 	 * @param axis
 	 * @return
 	 */
@@ -190,11 +217,9 @@ public class CubeUtilities {
 		if (hierarchies == null || hierarchies.size() == 0) {
 			logger.error("Could not find hierarchies for version dimension");
 			throw new SpagoBIEngineRuntimeException("Could not find hierarchies for version dimension");
-		}
-		else if (hierarchies.size() == 1) {
+		} else if (hierarchies.size() == 1) {
 			hierarchy = hierarchies.get(0);
-		}
-		else {
+		} else {
 			String hierarchyUsed = modelConfig.getDimensionHierarchyMap().get(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME);
 			hierarchy = hierarchies.get(hierarchyUsed);
 		}
@@ -254,9 +279,7 @@ public class CubeUtilities {
 	}
 
 	/*
-	 * Search if the specified member(s) currently exists, retrieve the
-	 * corresponding object(s) and insert it in the cellMembers array (with a
-	 * substitution)
+	 * Search if the specified member(s) currently exists, retrieve the corresponding object(s) and insert it in the cellMembers array (with a substitution)
 	 */
 	private static boolean searchMember(Member[] cellMembers, String[] memberExpressionParts, Map<String, String> dimensionHierarchyMap, SbiAliases aliases) {
 		boolean memberFound = false;
@@ -324,8 +347,7 @@ public class CubeUtilities {
 				String memberToSearchSimpleName = "";
 
 				int endIndex = memberUniqueName.lastIndexOf(".");
-				if (endIndex != -1)
-				{
+				if (endIndex != -1) {
 					memberToSearchUniqueName = memberUniqueName.substring(0, endIndex);
 				}
 				if (hierarchySpecified) {
@@ -374,8 +396,7 @@ public class CubeUtilities {
 						cellMembers[i] = matchingLevelMembers.get(0);
 						memberFound = true;
 
-					}
-					else if (matchingLevelMembers.size() > 1) {
+					} else if (matchingLevelMembers.size() > 1) {
 						// >1 members found (ambiguity)
 
 						// try to resolve ambiguity with local precedence
@@ -391,8 +412,7 @@ public class CubeUtilities {
 							throw new SpagoBIEngineRuntimeException("Cannot calculate Member Value, Member name is ambiguous: " + memberToSearchSimpleName);
 						}
 
-					}
-					else {
+					} else {
 						// zero members found (wrong name)
 						memberFound = false;
 						logger.error("ERROR: Cannot calculate Value, Member name not found: " + memberToSearchSimpleName);
@@ -414,9 +434,8 @@ public class CubeUtilities {
 	}
 
 	/*
-	 * uniqueNameParts: parts of the unique name of the current cell selected
-	 * memberToSearchSimpleName: specified level part in the member expression,
-	 * ex: Drink.Dairy in the member name [Product].[Drink.Dairy]
+	 * uniqueNameParts: parts of the unique name of the current cell selected memberToSearchSimpleName: specified level part in the member expression, ex:
+	 * Drink.Dairy in the member name [Product].[Drink.Dairy]
 	 */
 	private static String generateUniqueName(String uniqueNameParts[], String memberToSearchSimpleName) {
 		String[] uniqueNamesPartsCopy = new String[uniqueNameParts.length];
@@ -450,8 +469,7 @@ public class CubeUtilities {
 	}
 
 	/*
-	 * Transform a string separated with dot in a string with square brackets
-	 * separated by dot Ex: Name.Level -> [Name].[Level]
+	 * Transform a string separated with dot in a string with square brackets separated by dot Ex: Name.Level -> [Name].[Level]
 	 */
 	private static String formatNameWithSquareBracket(String name) {
 		ArrayList<String> nameParts = new ArrayList<String>();
@@ -499,7 +517,7 @@ public class CubeUtilities {
 
 	/**
 	 * Checks if the member is visible in the cube
-	 * 
+	 *
 	 * @param model
 	 *            the pivot model
 	 * @param member
