@@ -7,7 +7,7 @@ package it.eng.spagobi.twitter.analysis.rest.security;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.twitter.analysis.rest.annotations.CheckFunctionalitiesParser;
+import it.eng.spagobi.services.rest.annotations.CheckFunctionalitiesParser;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.filters.FilterIOManager;
 
