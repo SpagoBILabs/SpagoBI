@@ -870,7 +870,7 @@ VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOM
 -- 6/10/2011 Giulio
 ALTER TABLE sbi_data_set_history MODIFY COLUMN DS_METADATA TEXT;
 
--- 20/10/2011 Davide : il motore worksheet può lavorare con i dataset
+-- 20/10/2011 Davide : il motore worksheet puï¿½ lavorare con i dataset
 UPDATE SBI_ENGINES SET USE_DATASET = TRUE WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver';
 
 -- 06/12/2011 Davide : exporter XLSX per Qbe e Worksheet
@@ -1724,7 +1724,7 @@ RENAME TABLE SBI_DATA_SET_TEMP TO SBI_DATA_SET;
 ALTER TABLE SBI_LOV DROP FOREIGN KEY FK_SBI_LOV_2;
 ALTER TABLE SBI_OBJECTS DROP FOREIGN KEY FK_SBI_OBJECTS_7;
 
---per la tabella sbi_kpi la fk non ha nome esplicito: bisogna rilevarlo tramite query e definire così lo stmt di drop (per ora manualemnte!)
+--per la tabella sbi_kpi la fk non ha nome esplicito: bisogna rilevarlo tramite query e definire cosï¿½ lo stmt di drop (per ora manualemnte!)
 select constraint_name from INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE constraint_schema = '<SCHEMA_DB_NAME>' and
 referenced_table_name = 'SBI_DATA_SET'  and table_name = 'SBI_KPI';
 ALTER TABLE sbi_kpi DROP FOREIGN KEY <FK_NAME_GETTED>;
@@ -2738,4 +2738,52 @@ INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, V
 'SPAGOBI.DATASET.PERSIST.TABLE_PREFIX', 'Table name prefix for dataset persistence', 'Table name prefix for dataset persistence', true, 'D_',
 (select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'STRING' AND DOMAIN_CD = 'PAR_TYPE'), 'GENERIC_CONFIGURATION', 'biadmin', current_timestamp);
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
+commit;
+
+-- 26/05/2015 Alessandro Portosa: added SBI_CACHE_ITEM and SBI_CACHE_JOINED_ITEM tables
+CREATE TABLE SBI_CACHE_ITEM (
+	   SIGNATURE			VARCHAR(100) NOT NULL,
+	   NAME					VARCHAR(100) NULL,
+	   TABLE_NAME 			VARCHAR(100) NOT NULL,
+	   DIMENSION 			NUMERIC NULL,
+	   CREATION_DATE 		DATETIME NULL,
+	   LAST_USED_DATE 		DATETIME NULL,
+       PROPERTIES			TEXT NULL,
+	   USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),
+       UNIQUE XAK1SBI_CACHE_ITEM (SIGNATURE),
+	   PRIMARY KEY (TABLE_NAME)
+) ENGINE=InnoDB;
+commit;
+CREATE TABLE SBI_CACHE_JOINED_ITEM (
+	   ID 					INTEGER  NOT NULL,
+	   SIGNATURE			VARCHAR(100) NOT NULL,
+	   JOINED_SIGNATURE		VARCHAR(100) NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),
+       UNIQUE XAK1SBI_CACHE_JOINED_ITEM (SIGNATURE, JOINED_SIGNATURE),
+	   PRIMARY KEY (ID)
+) ENGINE=InnoDB;
+commit;
+ALTER TABLE SBI_CACHE_JOINED_ITEM  ADD CONSTRAINT FK_SBI_CACHE_JOINED_ITEM_1 FOREIGN KEY ( SIGNATURE ) REFERENCES  SBI_CACHE_ITEM  ( SIGNATURE ) ON DELETE NO ACTION ON UPDATE CASCADE;
+commit;
+ALTER TABLE SBI_CACHE_JOINED_ITEM  ADD CONSTRAINT FK_SBI_CACHE_JOINED_ITEM_2 FOREIGN KEY ( JOINED_SIGNATURE ) REFERENCES  SBI_CACHE_ITEM  ( SIGNATURE ) ON DELETE CASCADE ON UPDATE CASCADE;
 commit;
