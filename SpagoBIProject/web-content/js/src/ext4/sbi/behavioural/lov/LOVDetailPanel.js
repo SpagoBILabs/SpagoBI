@@ -11,7 +11,7 @@ Ext.define
 	
 	{
 		extend: "Ext.form.Panel",
-		
+				
 		config: 
 		{
 	    	//frame: true,
@@ -70,7 +70,7 @@ Ext.define
 	    	    	[	
 	    	    	 	{
 	    	    	 		title: "LOV Form",
-	    	    	 		items: [ this.panel1, this.panel2, this.panel3, this.panel5 ],
+	    	    	 		items: [ this.panel1, this.panel2 ],
 	    	    	 		border: false
 	    	    	 	}, 
 	    	    	 	
@@ -148,7 +148,7 @@ Ext.define
     			"test",
     			
     			function()
-    			{
+    			{    				
     				this.fireEvent("test", this.getValues());
     			},
     			
@@ -185,12 +185,119 @@ Ext.define
     		this.resultPanel.getComponent("TEST_LOV_PANEL").setValues(data);
     	},
     	
-    	updatePanel: function(contextName, lovConfig, lovProvider)
+    	splitProfileAttributes: function(profAttributes)
+    	{
+    		Sbi.debug('[IN] LOVDetailPanel - splitProfileAttributes()');
+    		
+    		var profAttr = [];
+    		var profAttrValues = "";
+    		
+    		var array = profAttributes.substring(1,profAttributes.length-1);
+    		    	
+    		var splitArray = array.split(",");    		
+    		
+    		var lengthSplitArray = splitArray.length;
+    		var nameArray = [];
+    		profAttr = [];
+    		
+    		for (var i=0; i<lengthSplitArray; i++)
+			{
+    			var oneElemSplit = splitArray[i].split(":");
+    			var tempAttrName = oneElemSplit[0].substring(1,oneElemSplit[0].length-1);
+    			nameArray[i] = tempAttrName;
+    			profAttr[i] = [tempAttrName, oneElemSplit[1].substring(1,oneElemSplit[1].length-1)];
+			}
+    		    		
+    		Sbi.debug('[OUT] LOVDetailPanel - splitProfileAttributes()');
+    		
+    		return [profAttr,nameArray];
+    	},
+    	
+    	updatePanel: function(contextName, lovConfig, lovProvider, profAttributes)
     	{
     		Sbi.debug('[IN] LOVDetailPanel - updatePanel()');
     		
+    		var prof = null;
+    		
+    		var values = null;
+    		var first = null;
+    		var firstName = null;
+    		var firstValue = null;		   		
+ 		
+    		if (profAttributes != null || profAttributes != undefined)
+			{
+				prof = this.splitProfileAttributes(profAttributes);
+				
+				values = prof[0];	
+	    		
+	    		for (var i=0; i<values.length; i++)
+    			{	    			
+	    			if (this.profileAttrStoreContainer == undefined || this.profileAttrStoreContainer[values[i][0]] == undefined ||
+							this.profileAttrStoreContainer[values[i][0]] == null ||
+							this.profileAttrStoreContainer[values[i][0]] == {})
+					{						
+						Ext.define
+			    		(
+							'MissingProfileAttributes', 
+							
+							{
+								extend: 'Ext.data.Model',
+								
+								fields: 
+								[
+								 	{name: 'firstName',  type: 'string'}
+								]
+							}
+						);    		
+			    		
+			    		var storeAttributes =  Ext.create
+			    		(
+		    				'Ext.data.Store', 
+		    				{
+		    					model: 'MissingProfileAttributes'
+	    					}
+	    				);
+			    		
+			    		storeAttributes.add({firstName:values[i][1]}); 
+			    		this.profileAttrStoreContainer[values[i][0]] = storeAttributes;				    				    		
+					}
+					else 
+					{			    		
+			    		var ourStore = this.profileAttrStoreContainer[values[i][0]];
+			    				    		
+			    		var storeItems = ourStore.data.items;
+			    		var repeating = false;
+			    		
+			    		for (var j=0; j<storeItems.length; j++)
+		    			{			    			
+			    			if (storeItems[j].data.firstName != firstValue)
+			    				repeating = true;
+		    			}
+			    		
+			    		if (repeating == false)
+			    			ourStore.add({firstName:values[i][1]});			    		
+			    		
+					}	
+	    			
+	    			this.profileAttrStoreContainer[values[i][0]].lastSelected = values[i][1];
+	    			
+	    			if (this.lovId.value == 0)
+		    		{
+		    			this.profileAttrStoreContainerLovIdZero[i] = this.profileAttrStoreContainer[values[i][0]];
+		    			this.attributeContainer[i] = values[i][0];	
+		    		}
+    			}
+			}
+    		
+    		var updateScope = this;
+    		
+    		// Indicator of whether Add button on pop-up window is clicked.
+    		var addClicked = false;
+    		
     		this.resultPanel.removeAll();
     		
+    		var profileAttributes = profAttributes;
+    		    		
     		var lovTest = Ext.create
 			(
 				"Sbi.behavioural.lov.TestLovPanel2", 
@@ -198,6 +305,7 @@ Ext.define
 				{
 					contextName: contextName, 
 					lovConfig: lovConfig,
+					profileAttributes: profileAttributes,
 					id: "TEST_LOV_PANEL",
 					//tabPanelHeight: this.tabPanel.height,
 					// Can I define tab height this way?
@@ -227,77 +335,273 @@ Ext.define
     				//this.lovProvider.value = this.lovProvider.lastValue;
     				
     				this.getComponent("TAB_PANEL_RESULTS").tabBar.items.items[1].hide();
-    				this.getComponent("TAB_PANEL_RESULTS").setActiveTab(0);    	
+    				this.getComponent("TAB_PANEL_RESULTS").setActiveTab(0);
         			    				
+    				var lovPanel2 = this.tabPanel.items.items[0].getComponent("PANEL2");    				
+    				
     				var lovProviderValue = "";
     				
-    				if (this.lovId.value == 0)
-    					lovProviderValue = this.lovProvider.value;   
+    				var lovInputTypeModified = "";
+    				var endLovInputTypeLastValue = "";
+    				
+    				/* Find out what is the type input type of the original record and what is the
+    				 * input type for the modified record (just tried to be modified, but with 
+    				 * unsuccessful epilogue because of the error when testing). */
+    				var endLovInputTypeValue = this.lovProvider.value.indexOf(">");
+    				
+    				if (this.lovProvider.lastValue != null && this.lovProvider.lastValue != undefined && this.lovProvider.lastValue != "")
+					{
+    					endLovInputTypeLastValue = this.lovProvider.lastValue.indexOf(">");
+    					lovInputTypeModified = this.lovProvider.lastValue.substring(1,endLovInputTypeLastValue);   
+					}    					
+    				   
+    				// Variables that contain string values for the two LOV input types
+    				var lovInputTypeOriginal = this.lovProvider.value.substring(1,endLovInputTypeValue);    				  				    				
+    				
+    				var selectedRecord = this.ownerCt.items.items[0].selModel.selected.items[0].data;
+    				
+    				if (this.lovId.value == 0 || lovInputTypeOriginal != lovInputTypeModified)
+					{
+    					lovProviderValue = this.lovProvider.value; 
+					}
     				else
-    					lovProviderValue = this.lovProvider.lastValue;          			     		
-        			
+					{
+    					lovProviderValue = this.lovProvider.lastValue;
+					}
+    				    				        			
     				if (lovProviderValue.indexOf("QUERY") >= 0)
     				{
+    					var dataSourceCombo = lovPanel2.items.items[0];
+        				var dataSourceQuery = lovPanel2.items.items[1];
+    					
     					startStatement = lovProviderValue.indexOf("<STMT>")+"<STMT>".length;
             			endStatement = lovProviderValue.indexOf("</STMT>");
             			oldStatement = lovProviderValue.substring(startStatement,endStatement);
             			
-            			this.dataSourceQuery.setValue(oldStatement);
+            			dataSourceQuery.setValue(oldStatement);
             			
             			var startIndex = lovProviderValue.indexOf("<CONNECTION>");
             			var endIndex = lovProviderValue.indexOf("</CONNECTION>");
             			
             			var dsType = lovProviderValue.substring(startIndex + "<CONNECTION>".length,endIndex);
             			
-            			this.dataSourceCombo.setValue(dsType);
+            			dataSourceCombo.setValue(dsType);
             			
             			if (this.lovId.value == 0)
         				{            				            			
-	            			this.dataSourceQuery.markInvalid("Wrong syntax for selected data source query type: " + dsType + ". Try again...");
+	            			dataSourceQuery.markInvalid("Wrong syntax for selected data source query type: " + dsType + ". Try again...");
         				}
     				}
     				
     				else if (lovProviderValue.indexOf("SCRIPTLOV") >= 0)
 					{
+    					var scriptType = lovPanel2.items.items[0];
+        				var scriptQuery = lovPanel2.items.items[1];
+    					
     					startStatement = lovProviderValue.indexOf("<SCRIPT>")+"<SCRIPT>".length;
     					endStatement = lovProviderValue.indexOf("</SCRIPT>");
     					oldStatement = lovProviderValue.substring(startStatement,endStatement);   
     					
-    					this.scriptQuery.setValue(oldStatement);
-    					
     					var startScriptType = lovProviderValue.indexOf("<LANGUAGE>")+"<LANGUAGE>".length;
             			var endScriptType = lovProviderValue.indexOf("</LANGUAGE>");
-            			var scriptType = lovProviderValue.substring(startScriptType,endScriptType);
+            			var scriptTypeString = lovProviderValue.substring(startScriptType,endScriptType);
             			
             			// !!!! Is this allowed ???
-            			if (scriptType == "ECMAScript") 	// saw in ScripDetail.java
-            				scriptType = "Javascript";
-            			else if (scriptType == "groovy") 	// saw in u ScripDetail.java
-            				scriptType = "Groovy";
-            			
-            			this.scriptTypeCombo.setValue(scriptType);
+            			if (scriptTypeString == "ECMAScript") 	// saw in ScripDetail.java
+            				scriptTypeString = "Javascript";
+            			else if (scriptTypeString == "groovy") 	// saw in u ScripDetail.java
+            				scriptTypeString = "Groovy";
     					
     					if (this.lovId.value == 0)
         				{
-    						this.scriptQuery.markInvalid("Wrong syntax for selected script type: " + scriptType + ". Try again...");
+    						scriptQuery.markInvalid("Wrong syntax for selected script type: " + scriptTypeString + ". Try again...");
         				}
 					}  
+    				
+    				else if (lovProviderValue.indexOf("JAVACLASSLOV") >= 0)
+					{
+    					var javaClassName = lovPanel2.items.items[0];
+    					
+    					startStatement = lovProviderValue.indexOf("<JAVA_CLASS_NAME>")+"<JAVA_CLASS_NAME>".length;
+    					endStatement = lovProviderValue.indexOf("</JAVA_CLASS_NAME>");
+    					oldStatement = lovProviderValue.substring(startStatement,endStatement);
+            			
+    					javaClassName.setValue(oldStatement);
+    					
+    					if (this.lovId.value == 0)
+        				{
+    						javaClassName.markInvalid("Wrong Java class path and/or wrong Java class name. Try again...");
+        				}
+					}
     				
     				Sbi.debug('[OUT] LOVDetailPanel - updatePanel() - wrong syntax error');
     			},
     			
     			this
-	    	);
+	    	);	
     		
-    		lovTest.on('lovTypeChanged',function(type){
+    		lovTest.on
+	    	(
+    			"missingProfileAttr2", 
     			
-				this.resultPanel.remove(lovTest,'true');
-				lovConfig.lovType=type;
-				lovTest = Ext.create('Sbi.behavioural.lov.TestLovPanel2',{contextName: contextName,lovConfig:lovConfig, lovProvider: lovProvider, tabPanelHeight: window.innerHeight}); //by alias
-				//addLovTestEvents(lovTest, lovConfig, contextName);
-				this.resultPanel.add(lovTest);
+    			function(missingProfileAttr)
+    			{        				
+    				/* We are getting back from server-side with the request to fill the 
+    				 * missing Profile attribute(s) for the current user. */ 
+					
+					var numbOfMissingProfileAttr = missingProfileAttr.length;
+					
+					var lovProfileAttrPanel = Ext.create("Sbi.behavioural.lov.LOVProfileAttributeFilling",{});
+					lovProfileAttrPanel.create();					
+					
+					if (this.profileAttrStoreContainer == undefined)
+					{
+						for(var k=0; k<numbOfMissingProfileAttr; k++)
+						{							
+							this.profileAttrStoreContainer = {};
+							
+							Ext.define
+				    		(
+								'MissingProfileAttributes', 
+								
+								{
+									extend: 'Ext.data.Model',
+									 fields: [
+									          {name: 'firstName',  type: 'string'}
+									      ]
+								}
+							);    		
+				    		
+				    		var storeAttributes =  Ext.create('Ext.data.Store', {
+				    		     model: 'MissingProfileAttributes'
+						     });
+				    		 
+				    		this.profileAttrStoreContainer[missingProfileAttr[k]] = storeAttributes;	
+						}
+					}	
+								
+					
+					for (var u=0; u<numbOfMissingProfileAttr; u++)
+					{
+						lovProfileAttrPanel.lovFixedListForm.add
+						(
+							{
+								xtype: 'combobox',
+								// (top, right, bottom, left)
+								padding: '10 5 0 0',
+								valueField: 'firstName',
+								fieldLabel: missingProfileAttr[u],
+						 		labelAlign: 'right',					 		
+						 	    store: this.profileAttrStoreContainer[missingProfileAttr[u]],
+						 	    queryMode: 'local',
+						 	    displayField: 'firstName'
+							}
+						);
+						
+						/* Setting the last chosen value for every single missing profile 
+						 * attribute into their belonging combo boxes. */
+						var combo = lovProfileAttrPanel.lovFixedListForm.items.items[u];
+						var comboStoreData = combo.store.data;
+						
+						if (comboStoreData.length > 0)
+						{							
+							combo.setValue(this.profileAttrStoreContainer[missingProfileAttr[u]].lastSelected);
+						}
+					}
+					
+					/* Pop-up window that will appear when it is needed to 
+					 * define missing profile attributes for LOV. */
+					var window1 = Ext.create
+					(
+						'Ext.window.Window', 
+						
+						{
+						    title: LN('sbi.behavioural.lov.details.missingProfileAttributesWindow'),
+						    layout: 'fit',
+						    resizable: false,
+						    modal: true, // Prevent user from selecting something behind the window 
+						    items: [ lovProfileAttrPanel.lovFixedListForm ],
+						    
+						    listeners:
+						    {
+				                 'close': function(win)
+				                 {			                          
+			                          /* Check if window is closed after clicking the Add button
+			                           * or after clicking on the X button on the top right corner.
+			                           * In the first case close window and show the first tab, hidding
+			                           * the second one. In the latter case, show the result page and
+			                           * close the window for filling the missing profile attributes. */
+			                          if (addClicked == false)
+		                        	  {
+			                        	  updateScope.getComponent("TAB_PANEL_RESULTS").tabBar.items.items[1].hide();
+				                          updateScope.getComponent("TAB_PANEL_RESULTS").setActiveTab(0);   
+		                        	  }			                              
+				                 }
+						    }
+						}
+					);
+					
+					/* If this method (updatePanel) is called for the first time - 
+					 * when we should defined the missing profile attribute(s). */
+					if (profAttributes == null || profAttributes == undefined || profAttributes == "")
+					{						
+						/* Add confirmation (Add) button to the form that will lie
+						 * inside pop-up window */
+						lovProfileAttrPanel.lovFixedListForm.add
+						(
+							{
+					 			xtype: 'button',
+					            text: 'Add',				           
+					            margin: '10 10 15 290',  	// (top, right, bottom, left)
+					            width: 70,
+					            //scope: this,
+					            
+					            handler: function() 
+						        {								            	
+					            	var form = this.up('form').getForm();	
+					            	var arrayOfAttributes = "{";
+					            						            	
+					            	/* If no profile attribute is missing, we can send the form to
+					            	 * the server-side in order to proceed to testing page. Now, we 
+					            	 * will form one string with all the data that was missing - 
+					            	 * (key,value) pairs that we will parse (split) on the server-side
+					            	 * to get those attributes names and their values. */	
+				            		
+				            		for (var i=0; i<numbOfMissingProfileAttr; i++)
+				            		{					            			
+				            			if (i<numbOfMissingProfileAttr-1 && numbOfMissingProfileAttr > 1)
+				            			{
+					            			arrayOfAttributes = arrayOfAttributes + "\"" + missingProfileAttr[i] + "\":\"" + form._fields.items[i].rawValue + "\",";
+				            			}
+				            			else if (numbOfMissingProfileAttr == 1 || i==numbOfMissingProfileAttr-1)
+			            				{
+				            				arrayOfAttributes = arrayOfAttributes + "\"" + missingProfileAttr[i] + "\":\"" + form._fields.items[i].rawValue + "\"";
+			            				}					            							            		
+				            		}	
+				            		
+				            		arrayOfAttributes = arrayOfAttributes + "}";
+				            		
+						        	
+				            		/* Recursive call - call again THIS function to send data necessary 
+				            		 * for testing once again (now, complete ones). */
+					            	updateScope.updatePanel(contextName,lovConfig,lovProvider,arrayOfAttributes);
+					            	
+					            	/* Close the pop-up window for filling the data 
+					            	 * about missing data */
+					            	addClicked = true;
+					            	
+					            	window1.close();	
+						        }
+					 		}
+						);			
+						
+						window1.show();
+					}				
+					
+				}, 
 				
-			},this);
+				this
+	    	);
     		
     		this.resultPanel.add
     		(
@@ -314,7 +618,11 @@ Ext.define
     	{
     		Sbi.debug('[IN] LOVDetailPanel - initFields()');
     		
-    		var globalScope = this;    		    		
+    		var globalScope = this;    
+    		
+    		this.profileAttrStoreContainer = {};
+    		this.profileAttrStoreContainerLovIdZero = [];
+    		this.attributeContainer = [];
     		
     		this.lovId = Ext.create
     		(
@@ -322,11 +630,10 @@ Ext.define
     			
     			{
     				name: "LOV_ID",
-    				id: "LovId",
-    				readOnly: true
+    				id: "LovId"
     			}
     		);
-    		
+ 		
     		this.lovLabel = Ext.create
     		(
 				"Ext.form.field.Text",
@@ -431,6 +738,8 @@ Ext.define
     			}
 			);
     		
+    		var lastSelected, lastSelectedId;
+    		
     		this.lovInputTypeCombo = Ext.create
     		(
 				'Ext.form.ComboBox', 
@@ -447,10 +756,178 @@ Ext.define
 	    	        padding: "10 0 10 0",
 	    	        
 	    	        listeners: 
-			        {
-			            select: function() 
-			            {
-			                globalScope.selectedInputType(this.getValue());
+			        {			            
+			            select: function()
+			            {			            	
+			            	var panel2 = globalScope.tabPanel.items.items[0].getComponent("PANEL2");
+			            	
+			            	panel2.removeAll();
+			            	
+			            	var lovProvider = globalScope.lovProvider.rawValue;
+			            	
+			            	/* Take every detail form LOV provider in order to recreate the existing record
+			            	 * (when we, for example, in existing record change the input type, populate the
+			            	 * data in the form of the new LOV input type and then we want to return to the
+			            	 * previous type of the selected record with the original data). In that situation
+			            	 * the initial form for LOV is populated with the right data and LOV provider provide
+			            	 * us data necessary for the test page of the re-tested original LOV (record) - VALUE,
+			            	 * DESCRIPTION and VISIBLE columns. */
+			            	globalScope.lovProvider.value = globalScope.lovProvider.rawValue;
+			            				            	
+			            	if (this.value == "QUERY")
+		            		{
+			            		var lovQueryPanel = Ext.create("Sbi.behavioural.lov.LOVQueryBottomPanel",{});
+			            		lovQueryPanel.create(globalScope.services["getDataSources"]);	
+			            		
+			            		if (lovProvider.indexOf("<QUERY>")>-1)
+					   			{
+			            			if (globalScope.lovId.value == 0)
+		            				{
+			            				lovQueryPanel.dataSourceCombo.setValue("");
+			            				lovQueryPanel.dataSourceQuery.setValue("");
+		            				}
+			            			else
+		            				{
+			            				var startIndex = lovProvider.indexOf("<CONNECTION>");
+						    			var endIndex = lovProvider.indexOf("</CONNECTION>");
+						    			
+						    			lovQueryPanel.dataSourceCombo.setValue(lovProvider.substring(startIndex + "<CONNECTION>".length,endIndex));
+						    			
+						    			var startIndex = lovProvider.indexOf("<STMT>");
+						    			var endIndex = lovProvider.indexOf("</STMT>");
+						    			
+						    			lovQueryPanel.dataSourceQuery.setValue(lovProvider.substring(startIndex + "<STMT>".length,endIndex));
+		            				}				            		
+					   			}
+			            		
+				        		panel2.add(lovQueryPanel.dataSourceCombo);
+				        		panel2.add(lovQueryPanel.dataSourceQuery);
+		            		}
+			            	
+			            	else if (this.value == "SCRIPT")
+		            		{
+			            		var lovScriptPanel = Ext.create("Sbi.behavioural.lov.LOVScriptBottomPanel",{});				    			
+				    			lovScriptPanel.create(globalScope.services["getDomains"]);	   		
+					   			
+				    			if (lovProvider.indexOf("<SCRIPT>")>-1)
+					   			{		
+				    				if (globalScope.lovId.value == 0)
+		            				{
+				    					lovScriptPanel.scriptTypeCombo.setValue("");
+				    					lovScriptPanel.scriptQuery.setValue("");
+		            				}
+			            			else
+		            				{
+			            				var startScriptType = lovProvider.indexOf("<LANGUAGE>")+"<LANGUAGE>".length;
+					        			var endScriptType = lovProvider.indexOf("</LANGUAGE>");
+					        			var scriptType = lovProvider.substring(startScriptType,endScriptType);
+					        			
+					        			// !!!! Maybe change this solution
+					        			if (scriptType == "ECMAScript") 	// saw in ScripDetail.java
+					        				scriptType = "Javascript";
+					        			else if (scriptType == "groovy") 	// saw in ScripDetail.java
+					        				scriptType = "Groovy";
+					        			
+					        			lovScriptPanel.scriptTypeCombo.setValue(scriptType);
+					        			
+					        			var startScript = lovProvider.indexOf("<SCRIPT>")+"<SCRIPT>".length;
+					        			var endScript = lovProvider.indexOf("</SCRIPT>");
+					        			lovScriptPanel.scriptQuery.setValue(lovProvider.substring(startScript,endScript));
+		            				}					    			
+					   			}
+				    			
+				        		panel2.add(lovScriptPanel.scriptTypeCombo);
+				        		panel2.add(lovScriptPanel.scriptQuery);
+		            		}
+			            	
+			            	else if (this.value == "FIX_LOV")
+		            		{
+			            		var lovFixedListPanel = Ext.create("Sbi.behavioural.lov.LOVFixedListBottomPanel",{});
+				    			lovFixedListPanel.create();
+				    			
+				    			var fixLovStore = lovFixedListPanel.fixLovStore;    			
+				    			
+				    			if (lovProvider.indexOf("<FIXLISTLOV>")>-1)
+					   			{	
+				    				if (globalScope.lovId.value == 0)
+		            				{
+				    					fixLovStore.removeAll();
+		            				}
+			            			else
+		            				{
+			            				var startFixLov = lovProvider.indexOf("<ROWS>")+"<ROWS>".length;
+					        			var endFixLov = lovProvider.indexOf("</ROWS>");
+					        			var fixLovRows = lovProvider.substring(startFixLov,endFixLov);
+					    				var listRows = fixLovRows.split("<ROW ");   				  	
+					    				
+					    				fixLovStore.removeAll();
+			    				
+					    				for (var i=1; i<listRows.length; i++)
+										{
+					    					var valueStart = listRows[i].indexOf("VALUE=")+"VALUE=".length + 1;
+					        				var valueEnd = listRows[i].indexOf("\" DESCRIPTION");
+					        				var valueFixLov = listRows[i].substring(valueStart,valueEnd);
+					        				
+					        				var descriptionStart = listRows[i].indexOf("DESCRIPTION=")+"DESCRIPTION=".length + 1;
+					        				var descriptionEnd = listRows[i].indexOf("/>")-1;
+					        				var descriptionFixLov = listRows[i].substring(descriptionStart,descriptionEnd);
+					        				
+					        				fixLovStore.insert(i,{value: valueFixLov, description: descriptionFixLov});        				
+										}	
+		            				}	
+				    				
+				    						   
+					   			}
+				    			
+				    			var lovFixedListForm = lovFixedListPanel.lovFixedListForm;
+				    			var fixLovGrid = lovFixedListPanel.fixLovGrid;
+				    			var infoPanel = lovFixedListPanel.infoPanel;
+				    			
+			    				lovFixedListForm.getComponent("FixLovValue").setValue("");
+			    				lovFixedListForm.getComponent("FixLovDescription").setValue(""); 
+			   				
+			    				fixLovGrid.reconfigure(fixLovStore);
+			    				fixLovGrid.update();						    				
+			    				
+			    				
+				    			panel2.add(lovFixedListForm);
+				    			panel2.add(infoPanel);
+				    			panel2.add(fixLovGrid);
+		            		}
+			            	
+			            	else if (this.value == "JAVA_CLASS")
+		            		{
+			            		var lovJavaClassPanel = Ext.create("Sbi.behavioural.lov.LOVJavaClassBottomPanel",{});
+			            		lovJavaClassPanel.create();
+			            		
+			            		if (lovProvider.indexOf("<JAVACLASSLOV>")>-1)
+		            			{
+			            			if (globalScope.lovId.value == 0)
+		            				{
+			            				lovJavaClassPanel.javaClassName.setValue("");
+		            				}
+			            			else
+		            				{
+			            				var startJavaClassName = lovProvider.indexOf("<JAVA_CLASS_NAME>")+"<JAVA_CLASS_NAME>".length;
+										var endJavaClassName = lovProvider.indexOf("</JAVA_CLASS_NAME>");
+										var javaClassName = lovProvider.substring(startJavaClassName,endJavaClassName);
+						        		
+						        		lovJavaClassPanel.javaClassName.setValue(javaClassName);
+		            				}	
+		            			}
+			            		
+			            		panel2.add(lovJavaClassPanel.javaClassName);
+		            		}
+			            	
+			            	else if (this.value == "DATASET")
+		            		{
+			            		var lovDatasetPanel = Ext.create("Sbi.behavioural.lov.LOVDatasetBottomPanel", {});
+			            		lovDatasetPanel.create(globalScope.services["datasets"]);
+			            					            		
+			            		panel2.add(lovDatasetPanel.datasetForm);
+		            		}
+			        		
+			        		panel2.show();	
 			            }
 			        }
 	    	    }
@@ -458,212 +935,25 @@ Ext.define
     		
     		var globalThis = this;
     		
-    		this.lovFixedListForm = Ext.create
-    		(
-    			"Ext.form.Panel",
-    			
-    			{
-    				title: 'Fix LOV Form',
-    				width: "100%",    				
-    				padding: '10 10 5 10',	// (top, right, bottom, left)
-    				id: "FixLOVForm",
-    				
-    				defaultType: 'textfield',
-    				
-    				items: 
-					[					 	
-					 	{					 		
-					 		fieldLabel: 'Value',
-					 		name: 'FixLovValue',
-					 		id: "FixLovValue",
-					 		width: 400,
-					 		padding: "10 0 10 0"
-				 		},
-				 		
-				 		{
-					 		fieldLabel: 'Description',
-					 		name: 'FixLovDescription',
-					 		id: "FixLovDescription",
-					 		width: 400,
-					 		allowBlank: false,
-					 		padding: "10 0 10 0"
-				 		},
-				 		
-				 		{
-				 			xtype: 'button',
-				            text: 'Add',				           
-				            margin: '0 5 15 300',  	// (top, right, bottom, left)
-				            width: 100,
-				            //scope: this,
-				            
-				            handler: function() 
-					        {			
-				            	Sbi.debug('[IN] LOVDetailPanel - initFields() - "Add" button handler');
-				            	
-					        	if ( globalThis.lovLabel.value != "" && globalThis.lovName.value != "" )
-					        	{
-						            var form = this.up('form').getForm();
-						            var fixLovValue = form._fields.items[0].value;
-						        	var fixLovDescription = form._fields.items[1].value;	
-						        	
-						            if (fixLovValue != "" && fixLovValue != undefined && 
-						            		fixLovDescription != "" && fixLovDescription != undefined) 
-						            {				
-						            	globalThis.fixLovStore.add({value: fixLovValue, description: fixLovDescription});		
-						            	form.reset();
-						            	globalThis.fixLovGrid.getView().focusRow(globalThis.fixLovStore.getCount()-1);
-						            }
-						            else
-					            	{							        		
-						            	if (fixLovValue == "" || fixLovValue == undefined)
-						        		{
-							        		//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.fixLovValueMissing'));	
-							        		form._fields.items[0].markInvalid(LN('sbi.behavioural.lov.details.fixLovValueMissing'));
-						        		}
-							        	else if (fixLovDescription == "" || fixLovDescription == undefined)
-						        		{
-							        		//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.fixLovDescriptionMissing'));
-							        		form._fields.items[1].markInvalid(LN('sbi.behavioural.lov.details.fixLovDescriptionMissing'));
-						        		}
-					            	}
-					        	}
-					        	else 
-				        		{					        		
-					        		Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.lovDetailMissing'));
-				        		}
-					        	
-					        	Sbi.debug('[OUT] LOVDetailPanel - initFields() - "Add" button handler');
-					        }
-				 		}
-					]
-    			}
-    		);
-    		
-    		var fixLovModel = Ext.define
-    		(
-				'FixLovModel', 
-				
-				{
-					extend: 'Ext.data.Model',
-					
-	    		    fields: 
-    		    	[
-	    		        {name: 'value',  type: 'string'},
-	    		        {name: 'description',   type: 'string'}
-    		        ]
-    		    }
-    		);
-    		
-    		this.fixLovStore = Ext.create
-    		(
-    			'Ext.data.Store',
-    			
-    			{
-    				model: "FixLovModel"
-    			}
-    		);   
-    		
-//    		this.fixLovStore.load({
-//    			  callback: function(){this.rememberOriginalFixLovStore();}
-//
-//    			 });
-//    		
-//    		this.fixLovStore.load
-//        	(
-//        			{ callback: function(){console.log("alkslfkahslkjdh");}	}
-//			);
-    		
-//    		this.copyOfFixLovStore = Ext.create
-//    		(
-//    			'Ext.data.Store',
-//    			
-//    			{
-//    				model: "FixLovModel"
-//    			}
-//    		);    		
-    		
-    		
-    		this.fixLovGrid = Ext.create
-    		(
-    			"Ext.grid.Panel",
-    			
-    			{
-    				title: "Fix LOV grid panel",
-    				store: this.fixLovStore,
-    				padding: "10 10 10 10",
-    				width: "100%",
-    				autoScroll: true,
-    				//overflowY: 'auto',
-    			    //overflowX: 'auto',
-    			    height: 350,
-    				
-    				columns:
-					[
-						{ text: "Value", dataIndex: "value", flex: 1, editor: 'textfield' },
-						{ text: "Description", dataIndex: "description",  flex: 1, editor: 'textfield'},
-						
-						{
-			                xtype: 'actioncolumn',
-			                width: 20,
-			                
-			                items: 
-		                	[
-			                	 {
-				                	iconCls: 'button-remove',
-				                    
-				                	handler: function(grid, rowIndex, colindex) 
-				                	{
-				                        var recordToDelete = globalThis.fixLovStore.getAt(rowIndex);
-				                        globalThis.fixLovGrid.getStore().remove(recordToDelete);
-				                    }
-			                	 }
-		                	 ]
-			            },
-			            
-			            {
-			                xtype: 'actioncolumn',
-			                width: 40,
-			                
-			                items: 
-		                	[
-			                	 {
-				                	iconCls: 'button-remove',
-				                    
-				                	handler: function(grid, rowIndex, colindex) 
-				                	{
-//				                		var originalFixLovGridStore = globalThis.fixLovStore;
-//				                        globalThis.fixLovGrid.reconfigure(originalFixLovGridStore);
-//				                        globalThis.fixLovGrid.update();
-//				                        console.log(originalFixLovGridStore);
-				                		//console.log(globalThis.modifiedFixLovStoreData);
-				                		//globalThis.rememberOriginalFixLovStore();
-				                    }
-			                	 }
-		                	 ]
-			            }
-					],
-					
-					plugins: 
-					[					           
-			           Ext.create('Ext.grid.plugin.CellEditing', {})
-		            ]
-    			}
-    		);
-    		
     		this.panel1 = Ext.create
     		(
     			"Ext.panel.Panel",
     			
     			{
+    				title: LN('sbi.behavioural.lov.details.wizardUpper'),
     				width: "100%",
     				// (top, right, bottom, left)
-    				padding: '10 10 5 10',
+    				padding: '15 15 10 15',
+    				id: "PANEL1",
+    				
     				
     				items: 
     					
 					[ this.lovId, this.lovLabel, this.lovName, this.lovDescription, 
 					  this.lovProvider, this.lovInputTypeCombo, this.lovInputTypeCd,
-					  this.lovInputTypeId, this.lovSelectionType ]    				
+					  this.lovInputTypeId, this.lovSelectionType ],
+	    			    
+    			    bodyStyle:{"background-color":"#F9F9F9"}				
     			}
     		);
     		
@@ -677,148 +967,6 @@ Ext.define
 					fields: [ "DESCRIPTION", "DATASOURCE_LABEL", "JNDI_URL", "DATASOURCE_ID" ] // fields (labels) from JSON that comes from server that we call
 				}
 			);
-        	
-    	
-    		var dataSourceStore = Ext.create
-        	(
-    			'Ext.data.Store',
-	    		
-    			{
-	        		model: "DataSourceModel",
-	        		autoLoad: true,
-	        		
-	        		proxy: 
-	        		{
-	        			type: 'rest',	        			
-	        			//extraParams : { DOMAIN_TYPE: "INPUT_TYPE" },
-	        			
-	        			url:  this.services["getDataSources"],	
-	        			
-	        			reader: 
-	        			{
-	        				type:"json",
-	        				root: "root"
-	        			}
-	        		}
-	        	}
-			);
-        	
-    		dataSourceStore.on
-        	(
-    			'load', 
-    			
-    			function(dataSourceStore)
-    			{ 
-    				Sbi.debug('[INFO] Data source store loaded (QUERY)');
-    			}
-			);
-    		
-    		this.dataSourceCombo = new Ext.create
-    		(
-				'Ext.form.ComboBox', 
-	    		
-				{
-	    			fieldLabel: LN('sbi.behavioural.lov.details.dataSourceLabel'),
-	    	        store: dataSourceStore,
-	    	        name: "DATASOURCE_ID",
-	    	        id: "DATA_SOURCE_COMBO",
-	    	        displayField:'DATASOURCE_LABEL',
-	    	        valueField:'DATASOURCE_LABEL',
-	    	        // (top, right, bottom, left)
-	    	        padding: "10 0 10 0",
-	    	        editable: false,
-	    	        allowBlank: false
-	    	    }
-			); 
-    		
-    		this.dataSourceQuery = Ext.create
-    		(
-				"Ext.form.field.TextArea",
-				
-				{					
-					fieldLabel: LN('sbi.behavioural.lov.details.queryDescription'), 
-					id: "DATA_SOURCE_QUERY",
-					height: 100,
-					width: 500,
-					padding: '10 0 10 0',
-					allowBlank: false
-				}
-    		);
-    		
-    		    		
-    		Ext.define
-    		(
-				"ScriptTypeModel", 
-				
-				{
-					extend: 'Ext.data.Model',
-					fields: [ "VALUE_NM", "VALUE_DS", "VALUE_ID", "VALUE_CD" ]
-				}
-			);
-        	    		
-        	var scriptTypeStore = Ext.create
-        	(
-    			'Ext.data.Store',
-	    		
-    			{
-	        		model: "ScriptTypeModel",
-	        		autoLoad: true,
-	        		
-	        		proxy: 
-	        		{
-	        			type: 'rest',   			
-	        			extraParams : { DOMAIN_TYPE: "SCRIPT_TYPE" },
-	        			
-	        			url:  this.services['getDomains'],	
-	        			
-	        			reader: 
-	        			{
-	        				type:"json"
-	        			}
-	        		}
-	        	}
-			);
-        	
-        	scriptTypeStore.on
-        	(
-    			"load", 
-    			
-    			function(scriptTypeStore)
-    			{ 
-    				Sbi.debug('[INFO] Script type  store loaded (SCRIPT)');
-    			}
-			);
-        	
-    		this.scriptTypeCombo = new Ext.create
-    		(
-				'Ext.form.ComboBox', 
-	    		
-				{
-	    			fieldLabel: LN('sbi.behavioural.lov.details.scriptType'),
-	    	        store: scriptTypeStore,	    	        
-	    	        name: "SCRIPT_TYPE",
-	    	        id: "SCRIPT_TYPE_COMBO",
-	    	        displayField:'VALUE_NM',
-	    	        valueField:'VALUE_NM',
-	    	        editable: false,
-	    	        allowBlank: false,
-	    	        padding: "10 0 10 0"
-	    	    }
-			);
-    		
-    		this.scriptQuery = Ext.create
-    		(
-				"Ext.form.field.TextArea",
-				
-				{
-					id: "SCRIPT_QUERY",
-					fieldLabel: LN('sbi.behavioural.lov.details.scriptDescription'),
-					height: 100,
-					width: 500,
-					padding: '10 0 10 0',
-					allowBlank: false
-				}
-    		);
     		
     		this.panel2 = Ext.create
     		(
@@ -828,170 +976,134 @@ Ext.define
     				width: "100%",
     				//border: false,
     				// (top, right, bottom, left)
-    				padding: '5 10 5 10',
+    				padding: '5 15 15 15',
     				id: "PANEL2",
-    				
-    				items: 
-					[ this.dataSourceCombo, this.dataSourceQuery ]    				
+    				bodyStyle:{"background-color":"#F9F9F9"}
     			}
-    		);
-    		
-    		this.panel3 = Ext.create
-    		(
-    			"Ext.panel.Panel",
-    			
-    			{
-    				width: "100%",
-    				// (top, right, bottom, left)
-    				padding: '5 10 5 10',
-    				id: "PANEL3",
-    				
-    				items: 
-					[ this.scriptTypeCombo, this.scriptQuery  ]    				
-    			}
-    		);
-    		
-    		this.panel5 = Ext.create
-    		(
-				"Ext.panel.Panel",
-    			
-    			{
-    				width: "100%",
-    				// (top, right, bottom, left)
-    				padding: '5 10 5 10',
-    				id: "PANEL5",
-//    				overflowY: 'auto',
-//    			    overflowX: 'auto',
-    				
-    				items: 
-					[ this.lovFixedListForm ]    				
-    			}	
-    		);
-    		
-    		this.panel5.add(this.fixLovGrid);    		
+    		); 		
     		
     		Sbi.debug('[OUT] LOVDetailPanel - initFields()');
     	},
     	
     	
-    	rememberOriginalFixLovStore: function()
-    	{
-    		this.fixLovStore.load();
-    		var modifiedFixLovStoreData = this.fixLovStore.data;
-    		console.log("UUUURRRUURURUURURURURURU");
-    		
-    		console.log(this.fixLovStore.getCount());
-    		console.log(modifiedFixLovStoreData.length);
-    		
-    		for (var i=0; i<this.fixLovStore.data.length; i++)
-			{
-    			console.log(modifiedFixLovStoreData[i]);
-    			this.copyOfFixLovStore.add(modifiedFixLovStoreData[i]);
-			}
-    		
-    		console.log(this.copyOfFixLovStore);
-    		
-    		//return this.modifiedFixLovStoreData;
-    	},
-    	
-    	/* Function responsible for showing/hiding certain panels on
-    	 * the right-side part of the page. Final result depends on the
-    	 * selected input type for LOV. */
-    	selectedInputType: function(inputTypeCD)
-		{    			
-//    		Sbi.debug('[IN] LOVDetailPanel - selectedInputType()');
-			
-			this.panel2.hide();
-			this.panel3.hide();
-			this.panel5.hide();
-			
-			if (inputTypeCD == "QUERY")
-			{
-				this.panel2.show();
-			}
-			else if (inputTypeCD == "SCRIPT")
-			{
-				this.panel3.show();
-			}
-			else if (inputTypeCD == "FIX_LOV")
-			{
-				this.panel5.show();
-			}
-			
-//			Sbi.debug('[OUT] LOVDetailPanel - selectedInputType()');
-		},
+//    	rememberOriginalFixLovStore: function()
+//    	{
+//    		this.fixLovStore.load();
+//    		var modifiedFixLovStoreData = this.fixLovStore.data;
+//    		
+//    		for (var i=0; i<this.fixLovStore.data.length; i++)
+//			{
+//    			this.copyOfFixLovStore.add(modifiedFixLovStoreData[i]);
+//			}
+//    		
+//    		//return this.modifiedFixLovStoreData;
+//    	},
     	
     	getValues: function()
-    	{
-    		Sbi.debug('[IN] LOVDetailPanel - getValues()');
+    	{    		
+    		Sbi.debug('[IN & OUT] LOVDetailPanel - getValues()');    		
     		var values = this.callParent();
-    		Sbi.debug('[OUT] LOVDetailPanel - getValues()');
     		return values;
     	},    
     	
     	setFormState: function(values)
     	{    		
-//    		Sbi.debug('[IN] LOVDetailPanel - setFormState()');
+    		//Sbi.debug('[IN] LOVDetailPanel - setFormState()');  		
     		
-    		this.selectedInputType(values.I_TYPE_CD);
+    		// Left part of LOV Details Panel - the form
+    		var lovFormTab = this.tabPanel.items.items[0];
+    		var lovFormPanel1 = lovFormTab.getComponent("PANEL1");
+    		var lovFormPanel2 = lovFormTab.getComponent("PANEL2");
     		
-    		/* *** 	Problem solved: Keeping panel 2 details (combo and text area) from 
-    		 * 		the old record in the new one. */
+    		//var lovFormPanel3 = lovFormTab.getComponent("PANEL3");
     		
-    		// Needed for differentiating between old (existing) record and the new one
-    		if (values.LOV_ID != 0) // If the selected record already exists
-    		{           			
-    			this.lovInputTypeCombo.setValue(values.I_TYPE_CD);
-    			    			
-    			var query = values.LOV_PROVIDER;
-    			
-    			if (values.I_TYPE_CD == "QUERY") 
-    			{
-        			var startIndex = query.indexOf("<CONNECTION>");
-        			var endIndex = query.indexOf("</CONNECTION>");
+    		lovFormPanel2.removeAll();
+    		
+    		if (values.LOV_ID != 0)
+    		{    		    			
+	    		// LOV ID
+	    		lovFormPanel1.items.items[0].setValue(values.LOV_ID);
+	    		// LOV LABEL
+	    		lovFormPanel1.items.items[1].setValue(values.LOV_LABEL);
+	    		// LOV NAME
+	    		lovFormPanel1.items.items[2].setValue(values.LOV_NAME);
+	    		// LOV DESCRIPTION
+	    		lovFormPanel1.items.items[3].setValue(values.LOV_DESCRIPTION);
+	    		
+	    		// LOV INPUT TYPE COMBO
+	    		this.lovInputTypeCombo.setValue(values.I_TYPE_CD);
+	    			    		
+	    		// LOV PROVIDER
+	    		var lovProvider = values.LOV_PROVIDER;
+	    		
+	    		lovFormPanel1.items.items[4].setValue(lovProvider);    		    		    		
+	    		    		    		
+	    		if (this.lovInputTypeCombo.value == "QUERY")
+				{
+	    			lovFormPanel2.setTitle(LN('sbi.behavioural.lov.details.queryWizard'));
+	    			
+	    			var lovQueryPanel = Ext.create("Sbi.behavioural.lov.LOVQueryBottomPanel",{});
+		    		
+	        		lovQueryPanel.create(this.services["getDataSources"]);	
+	        		
+	        		var startIndex = lovProvider.indexOf("<CONNECTION>");
+	    			var endIndex = lovProvider.indexOf("</CONNECTION>");
+	    			
+	    			lovQueryPanel.dataSourceCombo.setValue(lovProvider.substring(startIndex + "<CONNECTION>".length,endIndex));
+	    			
+	    			var startIndex = lovProvider.indexOf("<STMT>");
+	    			var endIndex = lovProvider.indexOf("</STMT>");
+	    			
+	    			lovQueryPanel.dataSourceQuery.setValue(lovProvider.substring(startIndex + "<STMT>".length,endIndex));
+	   			
+	        		lovFormPanel2.add(lovQueryPanel.dataSourceCombo);
+	        		lovFormPanel2.add(lovQueryPanel.dataSourceQuery);
+				}   
+	    		
+	    		else if (this.lovInputTypeCombo.value == "SCRIPT")
+				{
+	    			lovFormPanel2.setTitle(LN('sbi.behavioural.lov.details.scriptWizard'));
+	    			
+	    			var lovScriptPanel = Ext.create("Sbi.behavioural.lov.LOVScriptBottomPanel",{});
+	    			
+	    			lovScriptPanel.create(this.services["getDomains"]);	
+	        		    			
+	    			var startScriptType = lovProvider.indexOf("<LANGUAGE>")+"<LANGUAGE>".length;
+        			var endScriptType = lovProvider.indexOf("</LANGUAGE>");
+        			var scriptType = lovProvider.substring(startScriptType,endScriptType);
         			
-        			this.dataSourceCombo.setValue(query.substring(startIndex + "<CONNECTION>".length,endIndex));
-        			
-        			var startIndex = query.indexOf("<STMT>");
-        			var endIndex = query.indexOf("</STMT>");
-        			
-        			this.dataSourceQuery.setValue(query.substring(startIndex + "<STMT>".length,endIndex));
-    			}  
-        		
-    			else if (values.I_TYPE_CD == "SCRIPT") 
-    			{
-    				var startScriptType = query.indexOf("<LANGUAGE>")+"<LANGUAGE>".length;
-        			var endScriptType = query.indexOf("</LANGUAGE>");
-        			var scriptType = query.substring(startScriptType,endScriptType);
-        			
-        			// !!!! Ovim resenjem uopste nisam odusevljen
-        			if (scriptType == "ECMAScript") 	// vidjeno u ScripDetail.java
+        			// !!!! Maybe try with another solution
+        			if (scriptType == "ECMAScript") 	// saw in ScripDetail.java
         				scriptType = "Javascript";
-        			else if (scriptType == "groovy") 	// vidjeno u ScripDetail.java
+        			else if (scriptType == "groovy") 	// saw in ScripDetail.java
         				scriptType = "Groovy";
         			
-        			this.scriptTypeCombo.setValue(scriptType);
+        			lovScriptPanel.scriptTypeCombo.setValue(scriptType);
         			
-        			var startScript = query.indexOf("<SCRIPT>")+"<SCRIPT>".length;
-        			var endScript = query.indexOf("</SCRIPT>");
-        			this.scriptQuery.setValue(query.substring(startScript,endScript));
-    			}  
-    			
-    			else if (values.I_TYPE_CD == "FIX_LOV")
-				{   	
+        			var startScript = lovProvider.indexOf("<SCRIPT>")+"<SCRIPT>".length;
+        			var endScript = lovProvider.indexOf("</SCRIPT>");
+        			lovScriptPanel.scriptQuery.setValue(lovProvider.substring(startScript,endScript));
+        			
+        			lovFormPanel2.add(lovScriptPanel.scriptTypeCombo);
+	        		lovFormPanel2.add(lovScriptPanel.scriptQuery);
+				}
+	    		
+	    		else if (this.lovInputTypeCombo.value == "FIX_LOV")
+				{   	    	
+	    			lovFormPanel2.setTitle(LN('sbi.behavioural.lov.details.fixedListWizard'));
+	    			
+	    			var lovFixedListPanel = Ext.create("Sbi.behavioural.lov.LOVFixedListBottomPanel",{});
+	    			lovFixedListPanel.create();
+	    			
+	    			var fixLovStore = lovFixedListPanel.fixLovStore;	    			
+	    			
+    				var startFixLov = lovProvider.indexOf("<ROWS>")+"<ROWS>".length;
+        			var endFixLov = lovProvider.indexOf("</ROWS>");
+        			var fixLovRows = lovProvider.substring(startFixLov,endFixLov);
+    				var listRows = fixLovRows.split("<ROW ");   				  	
     				
-    				//this.rememberOriginalFixLovStore();
-    				
-    				var startFixLov = query.indexOf("<ROWS>")+"<ROWS>".length;
-        			var endFixLov = query.indexOf("</ROWS>");
-        			var fixLovRows = query.substring(startFixLov,endFixLov);
-    				var listRows = fixLovRows.split("<ROW ");
-    				
-    				this.lovFixedListForm.getComponent("FixLovValue").setValue("");
-    				this.lovFixedListForm.getComponent("FixLovDescription").setValue("");    	
-    				
-    				this.fixLovStore.removeAll();
-    				
+    				fixLovStore.removeAll();
+//    				
     				for (var i=1; i<listRows.length; i++)
 					{
     					var valueStart = listRows[i].indexOf("VALUE=")+"VALUE=".length + 1;
@@ -1002,48 +1114,79 @@ Ext.define
         				var descriptionEnd = listRows[i].indexOf("/>")-1;
         				var descriptionFixLov = listRows[i].substring(descriptionStart,descriptionEnd);
         				
-        				this.fixLovStore.insert(i,{value: valueFixLov, description: descriptionFixLov});        				
-					} 
+        				fixLovStore.insert(i,{value: valueFixLov, description: descriptionFixLov});        				
+					}
+    				    				
+	    			var lovFixedListForm = lovFixedListPanel.lovFixedListForm;
+	    			var fixLovGrid = lovFixedListPanel.fixLovGrid;
+ 				
+    				lovFixedListForm.getComponent("FixLovValue").setValue("");
+    				lovFixedListForm.getComponent("FixLovDescription").setValue(""); 
+   				
+    				fixLovGrid.reconfigure(fixLovStore);
+    				fixLovGrid.update();
     				
-    				this.fixLovGrid.reconfigure(this.fixLovStore);
-    				this.fixLovGrid.update();
-				}			
-    		}
-    		else // If the selected record is the new one
+    				lovFormPanel2.add(lovFixedListForm);
+    				lovFormPanel2.add(lovFixedListPanel.infoPanel);
+	        		lovFormPanel2.add(fixLovGrid);
+				}
+	    		
+	    		else if (this.lovInputTypeCombo.value == "JAVA_CLASS")
+				{
+	    			lovFormPanel2.setTitle(LN('sbi.behavioural.lov.details.javaClassWizard'));
+	    			
+	    			var lovJavaClassPanel = Ext.create("Sbi.behavioural.lov.LOVJavaClassBottomPanel",{});
+	        		lovJavaClassPanel.create();	        		
+	        		
+	        		var startJavaClassName = lovProvider.indexOf("<JAVA_CLASS_NAME>")+"<JAVA_CLASS_NAME>".length;
+					var endJavaClassName = lovProvider.indexOf("</JAVA_CLASS_NAME>");
+					var javaClassName = lovProvider.substring(startJavaClassName,endJavaClassName);
+						        		
+	        		lovJavaClassPanel.javaClassName.setValue(javaClassName);
+	        		
+	        		lovFormPanel2.add(lovJavaClassPanel.javaClassName);
+				}    		
+	    		
+	    		lovFormPanel2.show();
+    		}   		
+    		
+    		else	// LOV ID = 0
 			{
-    			this.lovInputTypeCombo.setValue(values.I_TYPE_CD);
-    			    			
-    			// For query (data source)
-    			this.dataSourceCombo.setValue("");
-    			this.dataSourceQuery.setValue("");
+    			lovFormPanel2.hide();
     			
-    			// For script
-    			this.scriptTypeCombo.setValue("");
-    			this.scriptQuery.setValue("");
-    			
-    			/* Avoiding copying data of already existing fix LOVs onto
-    			 * the fresh one of that does not contain any record. */
-    			this.fixLovStore.removeAll();
-			}
-    		
-    		this.getForm().setValues(values);  
-    		
+    			lovFormPanel1.items.items[0].setValue(0);
+    			// LOV LABEL
+	    		lovFormPanel1.items.items[1].setValue("");
+	    		// LOV NAME
+	    		lovFormPanel1.items.items[2].setValue("");
+	    		// LOV DESCRIPTION
+	    		lovFormPanel1.items.items[3].setValue("");
+	    		
+	    		
+	    		// LOV INPUT TYPE
+	    		this.lovInputTypeCombo.setValue("");	    		
+	    		this.lovInputTypeCombo.markInvalid(LN('sbi.behavioural.lov.details.inputTypeMissing'));	    		
+			}	
+    			    		
 //    		Sbi.debug('[OUT] LOVDetailPanel - setFormState()');
     	},
     	
     	getFormState: function(phaseOfLov)
     	{     
     		Sbi.debug('[IN] LOVDetailPanel - getFormState()');
-    		
+    	    		
+    		/* Take the values of the textfields in the Panel 1 */
     		var getLovId = this.lovId.value;
     		var getLovName = this.lovName.value;
     		var getLovDescription = this.lovDescription.value;
-    		var getLovLabel = this.lovLabel.value;
-    		    		    		
+    		var getLovLabel = this.lovLabel.value; 
+    		
+    		var lovFormPanel2 = this.tabPanel.items.items[0].getComponent("PANEL2");
+    		    		    		    		    		    		    		
     		if (this.lovInputTypeCombo.getValue() == "QUERY")
 			{        			
     			var getLovProvider = "";
-    			
+    			    			
     			var startDataSource = this.lovProvider.value.indexOf("<CONNECTION>")+"<CONNECTION>".length;
     			var endDataSource = this.lovProvider.value.indexOf("</CONNECTION>");
     			var oldDataSource = this.lovProvider.value.substring(startDataSource,endDataSource);
@@ -1052,38 +1195,19 @@ Ext.define
     			var endStatement = this.lovProvider.value.indexOf("</STMT>");
     			var oldStatement = this.lovProvider.value.substring(startStatement,endStatement);
     			
-    			// Previous version: commented 9.4. at 1:06 AM 
-    			if (phaseOfLov == "testPhase" && (getLovId == 0 || oldDataSource != this.dataSourceCombo.getValue() || 
-    					oldStatement != this.dataSourceQuery.getValue())) // Test phase
+    			var currentDataSource = lovFormPanel2.items.items[0].value;
+    			var currentQuery = lovFormPanel2.items.items[1].value;
+    			
+    			if (phaseOfLov == "testPhase" && (getLovId == 0 || oldDataSource != currentDataSource || 
+    					oldStatement != currentQuery) || this.lovProvider.value.indexOf(this.lovInputTypeCombo.value)<0) // Test phase
 //    			if (phaseOfLov == "testPhase" && getLovId == 0 && 
 //    					(oldDataSource != this.dataSourceCombo.getValue() || 
 //    					oldStatement != this.dataSourceQuery.getValue())) // Test phase
-				{
-//    				var dataSourceComboValue = "";
-//    				var dataSourceQueryValue = "";
-//    				
-//    				if (getLovId == 0)
-//    				{
-//    					dataSourceComboValue = this.dataSourceCombo.getValue();
-//    					dataSourceQueryValue = this.dataSourceQuery.getValue();
-//    				}
-//    				else 
-//    				{
-//    					if (oldDataSource != this.dataSourceCombo.getValue())
-//    						dataSourceComboValue = this.dataSourceCombo.getValue();
-//    					else
-//    						dataSourceComboValue = oldDataSource;
-//    					
-//    					if (oldStatement != this.dataSourceQuery.getValue())
-//    						dataSourceQueryValue = this.dataSourceQuery.getValue();
-//    					else
-//    						dataSourceQueryValue = oldStatement;
-//    				}
-    				
+				{				    				
     				getLovProvider = 
     					"<QUERY>" + 
-    						"<CONNECTION>" + this.dataSourceCombo.getValue() + "</CONNECTION>" + 
-    						"<STMT>" + this.dataSourceQuery.getValue() + "</STMT>" + 
+    						"<CONNECTION>" + currentDataSource + "</CONNECTION>" + 
+    						"<STMT>" + currentQuery + "</STMT>" + 
     						"<VALUE-COLUMN>" + "</VALUE-COLUMN>" + 
     						"<DESCRIPTION-COLUMN>" + "</DESCRIPTION-COLUMN>" + 
     						"<VISIBLE-COLUMNS>" + "</VISIBLE-COLUMNS>" + 
@@ -1091,15 +1215,18 @@ Ext.define
     						"<LOVTYPE>" + "</LOVTYPE>" + 
     						"<TREE-LEVELS-COLUMNS>" + "</TREE-LEVELS-COLUMNS>" +
 						"</QUERY>";
-    				
+    				    				
     				// Need to attach this XML query to LOV provider for later filling with data    				
     				
-    				if (getLovId == 0 || oldDataSource != this.dataSourceCombo.getValue())
-    					this.lovProvider.value = getLovProvider;    				
+    				if (getLovId == 0 || oldDataSource != currentDataSource || oldStatement != currentQuery)
+					{
+    					this.lovProvider.value = getLovProvider;
+					}
+    					    				
 				}
     			else // Save phase
-				{   	
-    				getLovProvider = this.lovProvider.value;   
+				{   	    				
+    				getLovProvider = this.lovProvider.value; 
 				}
     			    			
     			var getInputTypeCd = "QUERY";
@@ -1120,6 +1247,9 @@ Ext.define
     			var endScript = this.lovProvider.value.indexOf("</SCRIPT>");
     			var oldScript = this.lovProvider.value.substring(startScript,endScript);
     			
+    			var currentScript = lovFormPanel2.items.items[0].value;
+    			var currentDescription = lovFormPanel2.items.items[1].value;
+    			
     			// !!!! Maybe change...
     			if (oldScriptType == "ECMAScript") 	// saw in ScripDetail.java
     				oldScriptType = "Javascript";
@@ -1128,10 +1258,10 @@ Ext.define
     			
     			
     			if (phaseOfLov == "testPhase" && (getLovId == 0 || 
-    					oldScriptType != this.scriptTypeCombo.getValue() || 
-    					oldScript != this.scriptQuery.getValue())) // Test phase
+    					oldScriptType != currentScript || 
+    					oldScript != currentDescription) || this.lovProvider.value.indexOf(this.lovInputTypeCombo.value)<0) // Test phase
 				{
-    				var scriptType = this.scriptTypeCombo.getValue();
+    				var scriptType = currentScript;
     				
     				// !!!! Maybe change... (different direction then one in setFormState)
         			if (scriptType == "Javascript") 	// saw in ScripDetail.java
@@ -1142,7 +1272,7 @@ Ext.define
     				// ScriptDetail.java
     				getLovProvider = 
     					"<SCRIPTLOV>" +
-		    				"<SCRIPT>"+this.scriptQuery.getValue()+"</SCRIPT>" +	
+		    				"<SCRIPT>"+currentDescription+"</SCRIPT>" +	
 		    				"<VALUE-COLUMN>"+"</VALUE-COLUMN>" +
 		    				"<DESCRIPTION-COLUMN>"+"</DESCRIPTION-COLUMN>" +
 		    				"<VISIBLE-COLUMNS>"+"</VISIBLE-COLUMNS>" +
@@ -1152,7 +1282,7 @@ Ext.define
 		    				"<TREE-LEVELS-COLUMNS>"+"</TREE-LEVELS-COLUMNS>" +
 	    				"</SCRIPTLOV>";
     				        			
-    				if (getLovId == 0 || oldScriptType != this.scriptTypeCombo.getValue())
+    				if (getLovId == 0 || oldScriptType != currentScript || oldScript != currentDescription)
     					this.lovProvider.value = getLovProvider;   
 				}   
     			else // Save phase
@@ -1165,14 +1295,14 @@ Ext.define
 			{
     			var getInputTypeCd = "FIX_LOV";
     			var getInputTypeId = 3; 
-    			var getLovProvider = "";
+    			var getLovProvider = "";   	
     			
-    			var fixLovStore = this.panel5.items.items[1].getStore();
+    			var oldLovProviderN = this.lovProvider.value; 
     			
-    			var getLovProvider = "";
+    			var fixLovStore = lovFormPanel2.items.items[2].getStore();
     			
-    			if (phaseOfLov == "testPhase" && getLovId == 0) // Test phase
-				{    			
+    			if (phaseOfLov == "testPhase" && getLovId == 0 || oldLovProviderN.indexOf("FIXLISTLOV") < 0) // Test phase
+				{      				
 	    			getLovProvider = "<FIXLISTLOV>";
 	    			getLovProvider += "<ROWS>";
 				
@@ -1201,43 +1331,44 @@ Ext.define
 	    					  "<TREE-LEVELS-COLUMNS>"+"</TREE-LEVELS-COLUMNS>" +
 	    					  "</FIXLISTLOV>";
 	    			
-	    			if (getLovId == 0)
+	    			if (getLovId == 0 || oldLovProviderN.indexOf("FIXLISTLOV") < 0)
     					this.lovProvider.value = getLovProvider;   
 				}
     			
     			else
-				{
-    				getLovProvider = this.lovProvider.value; 
-    				
-    				var oldLovProvider = this.lovProvider.value;
-    				var newFixLovProvider = "";
-    				
-    				var startFixLovProv = oldLovProvider.indexOf("<FIXLISTLOV>")+"<FIXLISTLOV>".length;
-    				var endFixLovProv = oldLovProvider.indexOf("<VALUE-COLUMN>");
-    				
-    				var fixLovProvider = oldLovProvider.substring(startFixLovProv,endFixLovProv);
-    				
-    				newFixLovProvider = "<ROWS>";
-    				
-	    			var fixLovCount = fixLovStore.getCount();
-	    			
-	    			var fixLovValue = "";
-	    			var fixLovDescription = "";
-	    			
-	    			for (var i=0; i<fixLovCount; i++)
+				{   	    				
+    				if (oldLovProviderN.indexOf("FIXLISTLOV") > -1)
 					{
-	    				fixLovValue = fixLovStore.data.items[i].data.value;
-	    				fixLovDescription = fixLovStore.data.items[i].data.description;
-	    				
-	    				newFixLovProvider += "<ROW" +
-						  " VALUE=\"" + fixLovValue + "\"" +
-						  " DESCRIPTION=\"" + fixLovDescription + "\"" +
-						  "/>";
-					}
-	    			
-	    			newFixLovProvider += "</ROWS>";
-    				
-    				getLovProvider = oldLovProvider.substring(0,startFixLovProv) + newFixLovProvider + oldLovProvider.substring(endFixLovProv,oldLovProvider.length);
+    					var oldLovProvider = this.lovProvider.value;
+        				var newFixLovProvider = "";
+        				
+        				var startFixLovProv = oldLovProvider.indexOf("<FIXLISTLOV>")+"<FIXLISTLOV>".length;
+        				var endFixLovProv = oldLovProvider.indexOf("<VALUE-COLUMN>");
+        				
+        				var fixLovProvider = oldLovProvider.substring(startFixLovProv,endFixLovProv);
+        				
+        				newFixLovProvider = "<ROWS>";
+        				
+    	    			var fixLovCount = fixLovStore.getCount();
+    	    			
+    	    			var fixLovValue = "";
+    	    			var fixLovDescription = "";
+    	    			
+    	    			for (var i=0; i<fixLovCount; i++)
+    					{
+    	    				fixLovValue = fixLovStore.data.items[i].data.value;
+    	    				fixLovDescription = fixLovStore.data.items[i].data.description;
+    	    				
+    	    				newFixLovProvider += "<ROW" +
+    						  " VALUE=\"" + fixLovValue + "\"" +
+    						  " DESCRIPTION=\"" + fixLovDescription + "\"" +
+    						  "/>";
+    					}
+    	    			
+    	    			newFixLovProvider += "</ROWS>";
+        				
+        				getLovProvider = oldLovProvider.substring(0,startFixLovProv) + newFixLovProvider + oldLovProvider.substring(endFixLovProv,oldLovProvider.length);
+					}  
 				}
     			
 			} 
@@ -1247,6 +1378,28 @@ Ext.define
     			var getInputTypeCd = "JAVA_CLASS";
     			var getInputTypeId = 4; 
     			var getLovProvider = "";
+    			
+    			var javaClassName = lovFormPanel2.items.items[0].value;  		
+		
+    			if (phaseOfLov == "testPhase" && getLovId == 0 || this.lovProvider.value.indexOf(this.lovInputTypeCombo.value)<0)
+				{
+    				getLovProvider = 
+    					"<JAVACLASSLOV>" +
+    						"<JAVA_CLASS_NAME>" + javaClassName + "</JAVA_CLASS_NAME>" +	
+    						"<VISIBLE-COLUMNS>" + "</VISIBLE-COLUMNS>" +
+    						"<INVISIBLE-COLUMNS>" + "</INVISIBLE-COLUMNS>" +
+    						"<LOVTYPE>" + "</LOVTYPE>" +
+    						"<VALUE-COLUMN>" + "</VALUE-COLUMN>" +
+    						"<DESCRIPTION-COLUMN>" + "</DESCRIPTION-COLUMN>" +
+    					"</JAVACLASSLOV>";
+    				
+    				this.lovProvider.value = getLovProvider; 
+				}					
+    			
+    			else
+				{
+    				getLovProvider = this.lovProvider.value; 
+				}
 			}
     		
     		else if (this.lovInputTypeCombo.getValue() == "DATASET")

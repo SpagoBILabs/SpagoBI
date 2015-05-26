@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * This class contain the information about the user
  */
-public class UserProfile implements IEngUserProfile {
+public class UserProfile implements IEngUserProfile, Cloneable {
 
 	private static transient Logger logger = Logger.getLogger(UserProfile.class);
 
@@ -120,7 +120,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * To be user by SpagoBI core ONLY. The user identifier in the output object will match this syntax: WORKFLOW_USER_ID_PREFIX + tenant name
-	 * 
+	 *
 	 * @return the user profile for the workflow
 	 */
 	public static final UserProfile createWorkFlowUserProfile() {
@@ -138,7 +138,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * To be user by SpagoBI core ONLY. The user identifier in the output object will match this syntax: SCHEDULER_USER_ID_PREFIX + tenant name
-	 * 
+	 *
 	 * @return the user profile for the scheduler
 	 */
 	public static final UserProfile createSchedulerUserProfile() {
@@ -182,7 +182,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getFunctionalities()
 	 */
 	public Collection getFunctionalities() throws EMFInternalError {
@@ -191,7 +191,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getFunctionalitiesByRole(java.lang.String)
 	 */
 	public Collection getFunctionalitiesByRole(String arg0) throws EMFInternalError {
@@ -201,7 +201,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getRoles()
 	 */
 	public Collection getRoles() throws EMFInternalError {
@@ -231,7 +231,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserAttribute(java.lang.String)
 	 */
 	public Object getUserAttribute(String attributeName) throws EMFInternalError {
@@ -240,7 +240,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserAttributeNames()
 	 */
 	public Collection getUserAttributeNames() {
@@ -249,7 +249,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserUniqueIdentifier()
 	 */
 	public Object getUserUniqueIdentifier() {
@@ -258,7 +258,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserName()
 	 */
 	public Object getUserName() {
@@ -270,7 +270,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserId()
 	 */
 	public Object getUserId() {
@@ -282,7 +282,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#hasRole(java.lang.String)
 	 */
 	public boolean hasRole(String roleName) throws EMFInternalError {
@@ -291,7 +291,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteAction(java.lang.String)
 	 */
 	public boolean isAbleToExecuteAction(String actionName) throws EMFInternalError {
@@ -312,7 +312,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteAction(java.lang.String)
 	 */
 	public boolean isAbleToExecuteService(String serviceUrl) throws EMFInternalError {
@@ -333,7 +333,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteModuleInPage(java.lang.String, java.lang.String)
 	 */
 	public boolean isAbleToExecuteModuleInPage(String pageName, String moduleName) throws EMFInternalError {
@@ -346,7 +346,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#setApplication(java.lang.String)
 	 */
 	public void setApplication(String arg0) throws EMFInternalError {
@@ -443,7 +443,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * To be user by external engines ONLY. The user identifier must match this syntax: SCHEDULER_USER_ID_PREFIX + tenant name
-	 * 
+	 *
 	 * @param userUniqueIdentifier
 	 *            The user identifier (SCHEDULER_USER_ID_PREFIX + tenant name)
 	 * @return the user profile for the scheduler
@@ -466,7 +466,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * To be user by external engines ONLY. The user identifier must match this syntax: WORKFLOW_USER_ID_PREFIX + tenant name
-	 * 
+	 *
 	 * @param userUniqueIdentifier
 	 *            The user identifier (WORKFLOW_USER_ID_PREFIX + tenant name)
 	 * @return the user profile for the workflow
@@ -494,4 +494,32 @@ public class UserProfile implements IEngUserProfile {
 				+ "]";
 	}
 
+	@Override
+	/*
+	 * This method will clone and return the UserProfile object that called it. New UserProfile object will take its attributes and parameters.
+	 */
+	public Object clone() {
+
+		UserProfile userProfile = new UserProfile((String) this.getUserId(), this.getOrganization());
+
+		// copy all the roles, functionalities of the original profile
+		try {
+			userProfile.setFunctionalities(this.getFunctionalities());
+		} catch (EMFInternalError e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		try {
+			userProfile.setRoles(this.getRolesForUse());
+		} catch (EMFInternalError e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		userProfile.setAttributes(this.getUserAttributes());
+
+		userProfile.setDefaultRole(this.getDefaultRole());
+
+		return userProfile;
+	}
 }

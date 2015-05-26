@@ -7,6 +7,9 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
@@ -22,9 +25,11 @@ import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,21 +52,21 @@ public class ListTestLovService {
 
 	@GET
 	public String get(@Context HttpServletRequest servletRequest, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit,
-			@QueryParam("page") Integer page, @QueryParam("name") String name, @QueryParam("valueFilter") String valueFilter,
+			@QueryParam("page") Integer page, @QueryParam("lovProviderXML") String lovProviderXML, @QueryParam("valueFilter") String valueFilter,
 			@QueryParam("columnsFilterValue") String columnsFilter, @QueryParam("typeValueFilter") String typeValueFilter,
-			@QueryParam("typeFilter") String typeFilter) {
+			@QueryParam("typeFilter") String typeFilter, @QueryParam("addProfileAttributes") String addProfileAttributes) {
 
 		logger.debug("IN");
 
 		JSONObject response = new JSONObject();
-
+		
 		try {
 
 			Exception responseFailure = null;
 			GridMetadataContainer lovExecutionResult = new GridMetadataContainer();
 
 			// Get from the request (LOV provider XML) the type of LOV (QUERY, SCRIPT, DATASET, ...)
-			String typeLov = LovDetailFactory.getLovTypeCode(name);
+			String typeLov = LovDetailFactory.getLovTypeCode(lovProviderXML);
 
 			// Get the user profile
 			UserProfile profile = (UserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -69,27 +74,65 @@ public class ListTestLovService {
 			// Based on the LOV type fill the spago list and paginator object
 			IDataStore dataStore = null;
 
-			// If the LOV type is QUERY ...
+			/*
+			 * Is this service (for testing the LOV) called for the first time (no information about potentially missing profile attributes)? If we do not have
+			 * 'addProfileAttributes' input query parameter this method is called for the first time - first request for testing.
+			 */
+			boolean methodsFirstCall = addProfileAttributes == null || addProfileAttributes.equals("");
+
+			/*
+			 * The 'lovDetails' object contain data about the LOV (LOV provider) in form of the object (unlike 'lovProviderXML' object that is in form of the
+			 * String). This interface is common (i.e. implemented by) for QueryDetail, JavaClassDetail, FixedListDetail, ScriptDetail, DatasetDetail.
+			 */
+			ILovDetail lovDetails = LovDetailFactory.getLovFromXML(lovProviderXML);
+
+			/* We will get data (names) about the missing profile attributes */
+			List profAttrToFill = getProfileAttributesToFill(lovDetails, profile);
+
+			/*
+			 * We will define this object when we get the completed UserProfile object through 'clone' object. The purpose of this object is to use it as
+			 * profile object that can be used in queries (e.g. in Java class method getValues()).
+			 */
+			/*
+			 * If in this service call we have necessary data about (potentially) missing profile attribute(s) - 'addProfileAttributes' query parameter.
+			 */
+			/*
+			 * Is this method called for the first time, before testing (result page) - without potentially missing attribute(s)?
+			 */
+			UserProfile cloneToProfile = (UserProfile) profile.clone();
+
+			if (methodsFirstCall == false) {
+				cloneToProfile = fillCloneWithData(lovProviderXML, addProfileAttributes, profAttrToFill, profile);
+			}
+
+			/*
+			 * If we have missing profile attributes AND we call this method for the first time.
+			 */
+			if (!profAttrToFill.isEmpty() && methodsFirstCall == true) {
+				return createListOfMissingProfileAttributes(profAttrToFill);
+			}
+
 			if (typeLov.equalsIgnoreCase("QUERY")) {
 
 				logger.debug("IN (LOV type is QUERY)");
 
 				// Create QueryDetail object that is based on the LOV provider XML
-				QueryDetail qd = QueryDetail.fromXML(name);
+				QueryDetail queryDetail = QueryDetail.fromXML(lovProviderXML);
 
-				String datasource = qd.getDataSource();
-				String statement = qd.getQueryDefinition();
+				String datasource = queryDetail.getDataSource();
+				String statement = queryDetail.getQueryDefinition();
 
 				// Execute query ('executeSelect' method)
 				try {
 
-					statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
-
+					// statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+					statement = StringUtilities.substituteProfileAttributesInString(statement, cloneToProfile);
 					dataStore = executeSelect(datasource, statement, page, start, limit, columnsFilter, valueFilter);
 
 					/*
 					 * If we want to filter LOV results, "columnsFilter" will not be empty or null.
 					 */
+					/* TODO: Implement for other columns too. */
 					if (columnsFilter != null && columnsFilter != "") {
 
 						int numberOfColumns = dataStore.getMetaData().getFieldCount();
@@ -99,7 +142,7 @@ public class ListTestLovService {
 							columns.add(dataStore.getMetaData().getFieldName(i));
 						}
 
-						// CAN I DO SOMETHING LIKE THIS ????
+						// TODO: CAN I DO SOMETHING LIKE THIS ????
 						SourceBean sourceBeanFiltered = DelegatedBasicListService.filterList(dataStore.toSourceBean(), valueFilter, typeValueFilter,
 								columnsFilter, typeFilter, new EMFErrorHandler());
 
@@ -135,20 +178,15 @@ public class ListTestLovService {
 				logger.debug("OUT (LOV type is QUERY)");
 			}
 
-			// !!!! SCRIPT filtering is missing !!!!
+			// TODO: SCRIPT filtering is missing !!!!
 			else if (typeLov.equalsIgnoreCase("SCRIPT")) {
 
 				logger.debug("IN (LOV type is SCRIPT)");
 
-				ScriptDetail sd = ScriptDetail.fromXML(name);
-				// I think this is unnecessary...
-				// String script = sd.getScript();
+				ScriptDetail scriptDetail = ScriptDetail.fromXML(lovProviderXML);
 
 				try {
-					// I think this is unnecessary...
-					// script = StringUtilities.substituteProfileAttributesInString(script, profile);
-
-					DataStore lovResult = sd.getLovResultAsDataStore(profile, null, null, null);
+					DataStore lovResult = scriptDetail.getLovResultAsDataStore(cloneToProfile, null, null, null);
 
 					JSONDataWriter dataSetWriter = new JSONDataWriter();
 					response = (JSONObject) dataSetWriter.write(lovResult);
@@ -176,8 +214,8 @@ public class ListTestLovService {
 
 				logger.debug("IN (LOV type is FIX LOV)");
 
-				FixedListDetail fd = FixedListDetail.fromXML(name);
-				DataStore result = fd.getLovResultAsDataStore(profile, null, null, null);
+				FixedListDetail fd = FixedListDetail.fromXML(lovProviderXML);
+				DataStore result = fd.getLovResultAsDataStore(cloneToProfile, null, null, null);
 
 				JSONDataWriter dataSetWriter = new JSONDataWriter();
 				response = (JSONObject) dataSetWriter.write(result);
@@ -185,10 +223,40 @@ public class ListTestLovService {
 				logger.debug("OUT (LOV type is FIX LOV)");
 			}
 
-			/*
-			 * if (execution was successful) { return datastore as it is -- writeBackToClient(new JSONSuccess(dataStoreJSON)); } else { send to the client an
-			 * error message with some information }
-			 */
+			else if (typeLov.equalsIgnoreCase("JAVA_CLASS")) {
+
+				logger.debug("IN (LOV type is JAVA CLASS)");
+
+				/*
+				 * We need 'javaClassDetail' for getting the information about the Java class name of the provided LOV.
+				 */
+				JavaClassDetail javaClassDetail = JavaClassDetail.fromXML(lovProviderXML);
+
+				try {
+
+					/*
+					 * If we have complete data about profile attributes that user needs we can proceed with actual testing part - test the provided LOV and
+					 * show the results.
+					 */
+
+					/*
+					 * Take name of the Java class (with its path in the project) that current LOV takes as data source.
+					 */
+					String javaClassName = javaClassDetail.getJavaClassName();
+					IJavaClassLov javaClassLov = (IJavaClassLov) Class.forName(javaClassName).newInstance();
+					String result = javaClassLov.getValues(cloneToProfile);
+
+					DataStore ds = javaClassDetail.getLovResultAsDataStore(result);
+
+					JSONDataWriter dataSetWriter = new JSONDataWriter();
+					response = (JSONObject) dataSetWriter.write(ds);
+
+				} catch (Exception e) {
+					throw new SpagoBIRuntimeException("Error while creating data store for LOV of Java class type.", e);
+				}
+
+				logger.debug("OUT (LOV type is JAVA CLASS)");
+			}
 
 		} catch (Exception e) {
 			logger.error("Error testing lov", e);
@@ -198,6 +266,125 @@ public class ListTestLovService {
 		logger.debug("OUT");
 
 		return response.toString();
+	}
+
+	private String createListOfMissingProfileAttributes(List profAttrToFill) {
+
+		logger.debug("IN");
+
+		int numberOfAttrToFill = profAttrToFill.size();
+
+		String attrToFillString = "\"";
+
+		/*
+		 * Form the String object with the data about missing profile attributes that user should define on the client-side.
+		 */
+		for (int i = 0; i < numberOfAttrToFill; i++) {
+			if (i == 0) {
+				attrToFillString = "\"" + profAttrToFill.get(i).toString() + "\"";
+			} else {
+				attrToFillString = attrToFillString + ", " + "\"" + profAttrToFill.get(i).toString() + "\"";
+			}
+		}
+
+		/*
+		 * We will return to the client (user) to provide him data about profile attributes that are necessary for executing the LOV. This JSON-formatted String
+		 * will contain data about missing attributes, 'attrToFillString'. String is dynamically populated.
+		 */
+
+		logger.debug("OUT");
+
+		/*
+		 * The idea: if (execution was successful) { return datastore as it is -- writeBackToClient(new JSONSuccess(dataStoreJSON)); } else { send to the client
+		 * an error message with some information }
+		 */
+		return "{result: 'ko', error: {code : 125, description : 'missing profile attributes', missingProfileAttributes : [" + attrToFillString + "]}}";
+	}
+
+	private UserProfile fillCloneWithData(String lovProviderXML, String addProfileAttributes, List profAttrToFill, UserProfile profile) {
+
+		logger.debug("IN");
+
+		/*
+		 * Format input String query parameter (that is in the form of the JSON) as JSON object. This way we can take the data that LOV Java class needs (for
+		 * profile attributes) and that are missing from the current user profile.
+		 */
+		JSONObject jsonObj = null;
+
+		try {
+			jsonObj = new JSONObject(addProfileAttributes);
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		/* Cloning the current profile for testing purposes. */
+		UserProfile clone = (UserProfile) profile.clone();
+
+		// copy attributes and add the missing ones
+		Map attributes = new HashMap();
+		Collection origAttrNames = profile.getUserAttributeNames();
+		Iterator origAttrNamesIter = origAttrNames.iterator();
+
+		while (origAttrNamesIter.hasNext()) {
+
+			String profileAttrName = (String) origAttrNamesIter.next();
+			String profileAttrValue;
+
+			try {
+				profileAttrValue = profile.getUserAttribute(profileAttrName).toString();
+				attributes.put(profileAttrName, profileAttrValue);
+			} catch (EMFInternalError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+		/* Set attributes that original profile already has. */
+		clone.setAttributes(attributes);
+
+		int numberOfAttrToFill = profAttrToFill.size();
+
+		/* Add attributes that original profile is missing. */
+		for (int i = 0; i < numberOfAttrToFill; i++) {
+			clone.addAttributes(profAttrToFill.get(i).toString(), jsonObj.opt(profAttrToFill.get(i).toString()));
+		}
+
+		logger.debug("OUT");
+
+		return clone;
+	}
+
+	private List getProfileAttributesToFill(ILovDetail lovDet, UserProfile profile) {
+
+		logger.debug("IN");
+
+		List attrsToFill = new ArrayList();
+
+		try {
+
+			Collection userAttrNames = profile.getUserAttributeNames();
+			List attrsRequired = lovDet.getProfileAttributeNames();
+			Iterator attrsReqIter = attrsRequired.iterator();
+
+			while (attrsReqIter.hasNext()) {
+
+				String attrName = (String) attrsReqIter.next();
+
+				if (!userAttrNames.contains(attrName)) {
+					attrsToFill.add(attrName);
+				}
+
+			}
+
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while checking the profile attributes required for test", e);
+		}
+
+		logger.debug("OUT");
+
+		return attrsToFill;
 	}
 
 	private List<Map<String, String>> toList(SourceBean rowsSourceBean, Integer start, Integer limit) throws JSONException {

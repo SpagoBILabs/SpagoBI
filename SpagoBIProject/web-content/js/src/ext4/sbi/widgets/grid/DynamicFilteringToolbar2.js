@@ -172,7 +172,8 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar2', {
 			columnsFilterValue: this.columnNameCombo.rawValue, 	// NEW !!!
 			typeValueFilter: filterConfig.typeValueFilter,
 			typeFilter: filterConfig.typeFilter,
-			name: this.lovProvider 								// NEW !!!
+			lovProviderXML: this.lovProvider,			// NEW !!!
+			addProfileAttributes: this.profileAttributes // NEW !!!
 		};
 		
 		this.store.loadPage(1);
