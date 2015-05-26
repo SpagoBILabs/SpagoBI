@@ -16,6 +16,15 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
@@ -214,14 +223,62 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 			((AbstractJavaClassLov) javaClassLov).setBIObjectParameter(BIObjectParameters);
 
 		}
+
 		String result = javaClassLov.getValues(profile);
 		result = result.trim();
+
 		// check if the result must be converted into the right xml sintax
 		boolean toconvert = checkSintax(result);
 		if (toconvert) {
 			result = convertResult(result);
 		}
+
 		return result;
+	}
+
+	/**
+	 * Method returns result of the defined LOV of type Java class as data store.
+	 * */
+
+	public DataStore getLovResultAsDataStore(String inputXML) throws Exception {
+
+		DataStore dsToReturn = new DataStore();
+		IFieldMetaData fieldMetaData = new FieldMetadata();
+
+		/*
+		 * We have just one field to set - the VALUE field (only one column and N rows).
+		 */
+		fieldMetaData.setAlias("VALUE");
+		fieldMetaData.setName("VALUE");
+		fieldMetaData.setType(String.class);
+		fieldMetaData.setFieldType(FieldType.ATTRIBUTE);
+
+		IMetaData metadata = new MetaData();
+		metadata.addFiedMeta(fieldMetaData);
+
+		dsToReturn.setMetaData(metadata);
+
+		int startIndexRows = inputXML.indexOf("<ROWS>") + "<ROWS>".length();
+		int endIndexRows = inputXML.indexOf("</ROWS>");
+
+		String rowList = inputXML.substring(startIndexRows, endIndexRows);
+
+		String[] lista = rowList.split("<ROW VALUE=\"");
+		String value = "";
+
+		for (int i = 1; i < lista.length; i++) {
+			value = lista[i].substring(0, lista[i].length() - "\"/>".length());
+			Field field = new Field();
+			Record record = new Record();
+			List<IField> listOfFields = new ArrayList<IField>();
+			field.setValue(value);
+			listOfFields.add(field);
+
+			record.setFields(listOfFields);
+			dsToReturn.appendRecord(record);
+		}
+
+		return dsToReturn;
 	}
 
 	/**
@@ -353,7 +410,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName()
 	 */
 	@Override
@@ -363,7 +420,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName(java.lang.String)
 	 */
 	@Override
@@ -373,7 +430,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames()
 	 */
 	@Override
@@ -383,7 +440,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -393,7 +450,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -403,7 +460,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java.lang.String)
 	 */
 	@Override
@@ -413,7 +470,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -423,7 +480,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(java.util.List)
 	 */
 	@Override

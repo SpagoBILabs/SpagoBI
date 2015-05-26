@@ -132,6 +132,7 @@ Ext.define
 					region: 'south',
 					height: 315, 
 					lovProvider: config.lovProvider,
+					profileAttrib: config.profileAttributes,
 					treeLov: this.treeLov
 				}
 			); 
@@ -218,7 +219,20 @@ Ext.define
     			function()
     			{
     				Sbi.debug('[INFO] TestLovPanel2 - constructor - wrong syntax error');
-    				this.fireEvent('wrongSyntax2',"wrong");
+    				this.fireEvent('wrongSyntax2',"wrong");	// Caught in LOVDetailPanel.js
+    			},
+    			
+    			this
+	    	);
+    		
+    		this.lovTestPreview.on
+	    	(
+    			"missingProfileAttr1",
+    			
+    			function(missingProfileAttr)
+    			{
+    				Sbi.debug('[INFO] TestLovPanel2 - constructor - missing Profile attributes');
+    				this.fireEvent('missingProfileAttr2',missingProfileAttr);	// Caught in LOVDetailPanel.js
     			},
     			
     			this

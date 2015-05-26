@@ -17,9 +17,10 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel2', {
     }
 
 	, constructor: function(config) {		
-//		Sbi.debug('DynamicGridPanel costructor IN');
 		
-		console.log("[IN] constructor() DynamicGridPanel");
+		Sbi.debug("[IN] constructor() DynamicGridPanel");
+		
+		var attribConfig = config.profileAttrib;
 		
 		Ext.apply(this,config);
 	
@@ -29,7 +30,7 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel2', {
     	Sbi.debug('DynamicGridPanel build store');
     	    	
     	// We are adding service URL to the existing storeConfig
-    	config.storeConfig = Ext.apply(config.storeConfig||{},{serviceUrl: config.serviceUrl, lovProvider: config.lovProvider});
+    	config.storeConfig = Ext.apply(config.storeConfig||{},{serviceUrl: config.serviceUrl, lovProvider: config.lovProvider, profileAttrib: attribConfig});
     	
     	// We don't use this (for POST-ing)
     	if ((config.usePost != null) && (config.usePost != undefined ) ){
@@ -44,7 +45,7 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel2', {
     	if (config.storeConfig.storeType && config.storeConfig.storeType == 'InMemoryFilteredStore'){ 
     		store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', config.storeConfig ||{});	
     	}else{
-    		store = Ext.create('Sbi.widgets.store.DynamicStore2', config.storeConfig ||{}, {lovProvider: config.lovProvider});	
+    		store = Ext.create('Sbi.widgets.store.DynamicStore2', config.storeConfig || {}, {lovProvider: config.lovProvider, profileAttrib: attribConfig});	
     	}
     	
     	// Store is created       	
@@ -64,12 +65,11 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel2', {
 //      	}
       	
       	var additionalButtons = Sbi.widget.grid.StaticGridDecorator.getAdditionalToolbarButtons(this.decorators);
-      	
-//      	console.log("&&&&&&&");
-//      	console.log(this.filterConfig);
-      	
+      	      	
       	if(this.filterConfig!=undefined && this.filterConfig!=null){
-      		this.tbar = Ext.create('Sbi.widgets.grid.DynamicFilteringToolbar2',Ext.apply(config.filterConfig||{},{store: this.store, additionalButtons:additionalButtons, lovProvider: config.lovProvider}));
+      		this.tbar = Ext.create('Sbi.widgets.grid.DynamicFilteringToolbar2',Ext.apply(config.filterConfig||{},
+      				{store: this.store, additionalButtons:additionalButtons, lovProvider: config.lovProvider,
+      				profileAttributes: config.profileAttrib}));
       	}
       	
     	this.callParent(arguments);
@@ -77,7 +77,6 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel2', {
     	this.on('afterrender', this.loadStore, this);
       	
 //    	Sbi.debug('DynamicGridPanel costructor OUT');
-    	console.log("[OUT] constructor() DynamicGridPanel");
     },
     
     addPaging: function(config){    	
@@ -98,38 +97,12 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel2', {
     	}
     },
     
-    /* OLD CODE */
-//    updateGrid: function(){
-//    	Sbi.debug('+++ DynamicGridPanel updategrid IN');
-//    	console.log(this.store.getColumns());
-//    	var columns = this.store.getColumns();
-//    	Sbi.widget.grid.StaticGridDecorator.addButtonColumns(this.decorators, this.columns, this);
-////    	if((this.bbar == undefined || this.bbar==null) && this.pagingToolbar){
-////    		this.bbar = this.pagingToolbar;
-////    	}
-//    	if(this.bbar!=undefined && this.bbar!=null){     
-//    		this.bbar.bindStore(this.store);    		
-//    		this.bbar.doLayout();
-//    	}
-//    	
-//    	console.log("COLUMNS...");
-//    	console.log(columns);
-//    	
-//    	this.reconfigure(this.store, columns);
-//    }
     
-    // NOTE FOR ME: Alberto and I changed this part, this method...
     updateGrid: function()
     {
 //        Sbi.debug('DynamicGridPanel updategrid IN');
-        console.log("[IN] updateGrid() DynamicGridPanel");
-    	
+            	
         var columns = this.store.getColumns();
-        
-        //console.log(this.store);
-        //console.log(columns);
-        
-       // console.log(columns);
        
         Sbi.widget.grid.StaticGridDecorator.addButtonColumns(this.decorators, this.columns, this);
 
@@ -144,7 +117,7 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel2', {
         
         this.reconfigure(this.store,columns);	
         
-        console.log("[OUT] updateGrid() DynamicGridPanel");
+        Sbi.debug("[OUT] constructor() DynamicGridPanel");
     }
     
     , loadStore: function(t){

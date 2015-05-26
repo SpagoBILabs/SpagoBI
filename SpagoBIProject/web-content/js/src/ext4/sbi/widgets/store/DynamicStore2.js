@@ -43,8 +43,8 @@ Ext.define('Sbi.widgets.store.DynamicStore2', {
     , constructor: function(config) {
 //    	Sbi.debug('constructor IN'+config);
     	
-    	console.log("[IN] constructor() DynamicStore");
-    	
+    	Sbi.debug("[IN] constructor() DynamicStore");
+    	    	
     	Ext.apply(this, config);
     	
     	if (this.isDynamicStore){
@@ -81,17 +81,15 @@ Ext.define('Sbi.widgets.store.DynamicStore2', {
 	    				}
 	    		};
 	      	} else {
-	      		
 	      		this.proxy= 
 	      		{
 	      				type: 'ajax',
 	      				url:  this.serviceUrl,
-	      				extraParams: { name: config.lovProvider },
+	      				extraParams: { lovProviderXML: config.lovProvider, addProfileAttributes: config.profileAttrib },
 	      		        writer: "json",
 	      				reader: "json"
 	      		};	      		
       		
-//	      		console.log(this.proxy);
 	      	}
 	
 	    	this.callParent([config]); // This will create the store of the defined model (up)
@@ -105,7 +103,7 @@ Ext.define('Sbi.widgets.store.DynamicStore2', {
 //    	Sbi.debug('constructor OUT');
 //		this.on('load', this.onStoreLoad, this);
     	
-    	console.log("[OUT] constructor() DynamicStore");
+    	Sbi.debug("[OUT] constructor() DynamicStore");
     }
 
 
@@ -129,20 +127,40 @@ Ext.define('Sbi.widgets.store.DynamicStore2', {
 		}
 	
 	, getColumns: function(){
-		Sbi.debug('store.getColumns');
+		Sbi.debug('store.getColumns');		
 		
-		if(this.proxy.reader.jsonData.metaData != undefined && this.proxy.reader.jsonData.metaData != null)
-		{			
-			return this.proxy.reader.jsonData.metaData.fields;
+		var jsonData = this.proxy.reader.jsonData;
+		
+		if (jsonData != undefined && jsonData.error != undefined)
+		{
+			var missingProfileAttrMessage = jsonData.error.missingProfileAttributes;
+			
+			if (missingProfileAttrMessage != null || missingProfileAttrMessage != "")
+			{
+				Sbi.debug("Missing profile attribute(s)");
+				//var question = confirm("You are missing profile attributes. Please click OK and go back to define them...");
+				this.fireEvent('missingProfileAttr',missingProfileAttrMessage);	// Caught in TestLovResultPanel2.js
+			}
 		}
 		else
 		{
-			var question = confirm("Entered query has a wrong syntax. Return on the main page");
-			
-			if (question == true)
-			{
-				this.fireEvent('wrongSyntax',"wrong");
+			if(this.proxy.reader.jsonData != undefined && this.proxy.reader.jsonData.metaData != undefined && this.proxy.reader.jsonData.metaData != null)
+			{			
+				Sbi.debug("Testing was successful");
+				return this.proxy.reader.jsonData.metaData.fields;
 			}
+			else
+			{
+				Sbi.debug("Wrong syntax");
+				
+				var question = confirm("Entered query has a wrong syntax. Return on the main page");
+				
+				if (question == true)
+				{
+					this.fireEvent('wrongSyntax',"wrong");	// Caught in TestLovResultPanel2.js
+				}
+			}		
+			
 		}		
 	}
 	, getValidationErrors : function(){

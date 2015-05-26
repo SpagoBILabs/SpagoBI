@@ -271,6 +271,9 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		return lovResult;
 	}
 
+	/**
+	 * Method returns result of the defined LOV of type fixed list as data store.
+	 * */
 	public DataStore getLovResultAsDataStore(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
 			throws Exception {
 
@@ -302,46 +305,43 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		int i = 0;
 
 		while (iter.hasNext()) {
-			// System.out.println("UYUYUYUYUYUYU");
-			Field field = new Field();
-			// Field fieldValue = new Field();
-			Field descriptionValue = new Field();
+
+			Field valueField = new Field();
+			Field descriptionField = new Field();
 			Record record = new Record();
+			List<IField> listOfFields = new ArrayList<IField>();
 
 			fixLovItem = (FixedListItemDetail) iter.next();
-			// field.setValue(fixLovItem.getValue());
-			// descriptionValue.setValue(fixLovItem.getDescription());
+			String value = fixLovItem.getValue();
 
-			// System.out.println(fixLovItem.getValue());
-			// System.out.println(fixLovItem.getDescription());
+			/*
+			 * If fixed LOV items value contains '${' - user has defined a dynamic item (field) for this LOV that will contain value of specified profile
+			 * attribute of the current User. We need to take value that User has defined and insert it as a value into this fixed list.
+			 */
+			if (value.contains("'${")) {
 
-			List<IField> listOfFields = new ArrayList<IField>();
-			field.setValue(fixLovItem.getValue());
-			listOfFields.add(field);
-			descriptionValue.setValue(fixLovItem.getDescription());
-			listOfFields.add(descriptionValue);
+				int startAttr = value.indexOf("'${") + "'${".length();
+				int endAttr = value.indexOf("}'");
+				String attr = value.substring(startAttr, endAttr); // the name of the specified attribute
 
-			// System.out.println(fixLovItem.getValue());
-			// System.out.println(fixLovItem.getDescription());
+				String attrValue = profile.getUserAttribute(attr).toString(); // value of that attribute
+
+				valueField.setValue(attrValue); // set this value for this item
+
+			} else {
+				valueField.setValue(fixLovItem.getValue()); // set static (predefined) value for this item
+			}
+
+			/* Description value is always statically defined (predefined). */
+			descriptionField.setValue(fixLovItem.getDescription());
+
+			listOfFields.add(valueField);
+			listOfFields.add(descriptionField);
 
 			record.setFields(listOfFields);
-			// record.appendField(fieldValue);
-			// record.appendField(descriptionValue);
 
 			dsToReturn.appendRecord(record);
 		}
-
-		// for (int i = 0; i < stringLength; i++) {
-		//
-		// Field field = new Field();
-		// Record record = new Record();
-		// field.setValue(array[i]);
-		// record.appendField(field);
-		// dsToReturn.insertRecord(i, record);
-		// }
-
-		System.out.println("UUUUUUU");
-		System.out.println(dsToReturn);
 
 		return dsToReturn;
 	}

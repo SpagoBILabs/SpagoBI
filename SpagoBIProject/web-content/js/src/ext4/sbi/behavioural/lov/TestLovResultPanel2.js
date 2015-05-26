@@ -45,6 +45,8 @@ Ext.define
 				
 				lovProvider: config.lovProvider,
 				
+				profileAttrib: config.profileAttrib,
+				
 				storeConfig:
 				{ 
 					pageSize: 10
@@ -62,7 +64,7 @@ Ext.define
 			
 			defautlConf.serviceUrl = "http://localhost:8080/SpagoBI/restful-services/LOV/Test";
 	    	
-	    	this.callParent([defautlConf]);	// Going into "DynamicGridPanel.js"
+	    	this.callParent([defautlConf]);	// Going into "DynamicGridPanel2.js"
 	    	
 	    	this.store.on
 	    	(
@@ -83,7 +85,19 @@ Ext.define
     			
     			function()
     			{
-    				this.fireEvent('wrongSyntax1',"wrong");
+    				this.fireEvent('wrongSyntax1',"wrong");	// Caught in TestLovPanel2.js
+    			},
+    			
+    			this
+	    	);
+	    	
+	    	this.store.on
+	    	(
+    			"missingProfileAttr",
+    			
+    			function(missingProfileAttr)
+    			{
+    				this.fireEvent('missingProfileAttr1',missingProfileAttr);	// Caught in TestLovPanel2.js
     			},
     			
     			this

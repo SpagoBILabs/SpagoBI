@@ -52,7 +52,7 @@ Ext.define
 		 	];
 			
 			this.fields = ["LOV_ID", "LOV_NAME", "LOV_DESCRIPTION", "INPUT_TYPE_COMBOBOX"];
-			
+						
 			this.detailPanel.on("save", this.checkCanSave, this);
 			this.detailPanel.on("test", this.checkCanTest, this);
 			
@@ -100,11 +100,19 @@ Ext.define
 		
 			this.services["LOV"] = Sbi.config.serviceRegistry.getRestServiceUrl
 			(
-				{
+				{ 
 					serviceName: 'LOV', 
 					baseParams: baseParams
 				}
 			);	
+			
+			this.services["datasets"] = Sbi.config.serviceRegistry.getRestServiceUrl
+			(
+				{ 
+					serviceName: '1.0/datasets', 
+					baseParams: baseParams
+				}
+			);
 			
 			Sbi.debug('[OUT] LOVListDetailPanel - initServices()');
 		},
@@ -135,26 +143,47 @@ Ext.define
 				this.detailPanel.lovInputTypeCombo.markInvalid(LN('sbi.behavioural.lov.details.inputTypeMissing'));					
 			}
 			else
-			{						
+			{		
+				var tabPanel = this.detailPanel.items.items[0];
+				var lovForm = tabPanel.items.items[0];
+				var lovPanel2 = lovForm.items.items[1];
+				
 				if (record.I_TYPE_CD == "QUERY" && (record.DATASOURCE_ID == "" || record.DATASOURCE_ID == null))
 				{
 //					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.dataSourceMissing'));
-					this.detailPanel.dataSourceCombo.markInvalid(LN('sbi.behavioural.lov.details.dataSourceMissing'));		
+					
+					var comboDataSource = lovPanel2.items.items[0];
+					comboDataSource.markInvalid(LN('sbi.behavioural.lov.details.dataSourceMissing'));		
 				}
 				else if (record.I_TYPE_CD == "SCRIPT" && (record.SCRIPT_TYPE == "" || record.SCRIPT_TYPE == undefined || record.SCRIPT_TYPE == null))
 				{
+					var comboScript = lovPanel2.items.items[0];
 //					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.scriptTypeMissing'));
-					this.detailPanel.scriptTypeCombo.markInvalid(LN('sbi.behavioural.lov.details.scriptTypeMissing'));	
+					comboScript.markInvalid(LN('sbi.behavioural.lov.details.scriptTypeMissing'));	
 				}
-				else
+				else if (record.I_TYPE_CD == "JAVA_CLASS")
+				{
+					if (record.JAVA_CLASS_NAME == "" || record.JAVA_CLASS_NAME == undefined || record.JAVA_CLASS_NAME == null)
+					{
+						var javaClassName = lovPanel2.items.items[0];
+						javaClassName.markInvalid(LN('sbi.behavioural.lov.details.javaClassNameMissing'));	
+					}				
+					else
+					{
+						canBeSaved = true;
+					}
+				}
+				else if (record.I_TYPE_CD != "JAVA_CLASS")
 				{					
 					var description = null;
 						
-					if (record.I_TYPE_CD == "QUERY")
-						// ?????? Could it be simpler ???
-						description = this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL2").items.items[1].value;
-					else if (record.I_TYPE_CD == "SCRIPT")
-						description = this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL3").items.items[1].value;
+//					if (record.I_TYPE_CD == "QUERY")
+//						// ?????? Could it be simpler ???
+//						description = this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL2").items.items[1].value;
+//					else if (record.I_TYPE_CD == "SCRIPT")
+//						description = this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL3").items.items[1].value;
+										
+					description = lovPanel2.items.items[1].value;
 					
 					if (description != "" && description != null && description  != undefined)
 					{
@@ -164,20 +193,21 @@ Ext.define
 					{						
 						if(record.I_TYPE_CD == "QUERY")
 						{
+							var dataSourceQuery = lovPanel2.items.items[1];
 //							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.queryDescriptionMissing'));
-							this.detailPanel.dataSourceQuery.markInvalid(LN('sbi.behavioural.lov.details.queryDescriptionMissing'));	
+							dataSourceQuery.markInvalid(LN('sbi.behavioural.lov.details.queryDescriptionMissing'));	
 						}
 						else if (record.I_TYPE_CD == "SCRIPT")
 						{
+							var scriptQuery = lovPanel2.items.items[1];
 //							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.scriptDescriptionMissing'));
-							this.detailPanel.scriptQuery.markInvalid(LN('sbi.behavioural.lov.details.scriptDescriptionMissing'));	
+							scriptQuery.markInvalid(LN('sbi.behavioural.lov.details.scriptDescriptionMissing'));	
 						}
 					}
 					
 					if (record.I_TYPE_CD == "FIX_LOV")
 					{
-						var panel5 = this.detailPanel.getComponent("TAB_PANEL_RESULTS").getActiveTab().getComponent("PANEL5");
-						var fixLovGrid = panel5.items.items[1];						
+						var fixLovGrid = lovPanel2.items.items[2];						
 						var numberOfFixLovs = fixLovGrid.getStore().getCount();
 						
 						if (numberOfFixLovs > 0)
@@ -194,13 +224,13 @@ Ext.define
 			
 			if (canBeSaved == true)
 			{					
-				this.openTestPage();
+				this.openTestPage(record);
 			}
 			
 			Sbi.debug('[OUT] LOVListDetailPanel - checkCanTest()');
 		},
 		
-		openTestPage: function()
+		openTestPage: function(record)
 		{
 			Sbi.debug('[IN] LOVListDetailPanel - openTestPage()');
 			
@@ -208,9 +238,43 @@ Ext.define
 			
 			var contextName = 'SpagoBI'; 
 			
-			var lovId = this.detailPanel.getFormState("testPhase").data.LOV_ID;						
+			var lovId = -1;
+			
+			if (record.LOV_ID == "")
+			{
+				lovId = 0;
+			}
+			else
+			{
+				lovId = this.detailPanel.getFormState("testPhase").data.LOV_ID;	
+			}
+			
 			var lovProvider = this.detailPanel.getFormState("testPhase").data.LOV_PROVIDER;
-											
+			
+			/* If Java class and/or its path inside the project is changed from the
+			 * one that was previously defined - create new, empty LOV provider. */
+			if (record.I_TYPE_CD == "JAVA_CLASS")
+			{
+				var startJavaClassName = lovProvider.indexOf("<JAVA_CLASS_NAME>")+"<JAVA_CLASS_NAME>".length;
+				var endJavaClassName = lovProvider.indexOf("</JAVA_CLASS_NAME>");
+				var javaClassName = lovProvider.substring(startJavaClassName,endJavaClassName);
+								
+				if (javaClassName != record.JAVA_CLASS_NAME)
+				{
+					lovProvider = "<JAVACLASSLOV>" +
+						"<JAVA_CLASS_NAME>" + record.JAVA_CLASS_NAME + "</JAVA_CLASS_NAME>" +	
+						"<VISIBLE-COLUMNS>" + "</VISIBLE-COLUMNS>" +
+						"<INVISIBLE-COLUMNS>" + "</INVISIBLE-COLUMNS>" +
+						"<LOVTYPE>" + "</LOVTYPE>" +
+						"<VALUE-COLUMN>" + "</VALUE-COLUMN>" +
+						"<DESCRIPTION-COLUMN>" + "</DESCRIPTION-COLUMN>" +
+						"</JAVACLASSLOV>";
+				}
+				
+				this.detailPanel.lovProvider.value = lovProvider;
+				this.detailPanel.lovProvider.javaClassName = javaClassName;
+			}
+																	
 			if (lovId == 0)
 			{
 				// The new record
@@ -221,7 +285,7 @@ Ext.define
 				lovConfig.treeColumnNames = 'null';	
 			}
 			
-			else
+			else                      
 			{				
 				var startDescrColumnName = lovProvider.indexOf("<DESCRIPTION-COLUMN>")+"<DESCRIPTION-COLUMN>".length;
 				var endDescrColumnName = lovProvider.indexOf("</DESCRIPTION-COLUMN>");
@@ -245,7 +309,7 @@ Ext.define
 				lovConfig.treeColumnNames = lovProvider.substring(startTreeColumnNames,endTreeColumnNames);
 			}		
 			
-			this.detailPanel.updatePanel(contextName, lovConfig, lovProvider);
+			this.detailPanel.updatePanel(contextName, lovConfig, lovProvider, null);
 			
 			this.detailPanel.setValues();
 			
@@ -275,7 +339,7 @@ Ext.define
 			
 			if (returnLovValues != null && returnLovValues != undefined)
 			{
-				var incompleteLovProvider = this.detailPanel.getFormState("savePhase").data.LOV_PROVIDER;				
+				var incompleteLovProvider = this.detailPanel.getFormState("savePhase").data.LOV_PROVIDER;
 				
 				if (record.I_TYPE_CD == "QUERY")
 				{
@@ -286,6 +350,12 @@ Ext.define
 					var startStatement = incompleteLovProvider.indexOf("<STMT>")+"<STMT>".length;
 					var endStatement = incompleteLovProvider.indexOf("</STMT>");
 					var statement = incompleteLovProvider.substring(startStatement,endStatement);
+					
+					this.detailPanel.lovProvider.dataSource = dataSource;
+					this.detailPanel.lovProvider.statement = statement;
+					
+					record.dataSource = dataSource;
+					record.statement = statement;
 				}
 				
 				else if (record.I_TYPE_CD == "SCRIPT")
@@ -296,7 +366,10 @@ Ext.define
 	    			    			
 	    			var startScript = incompleteLovProvider.indexOf("<SCRIPT>")+"<SCRIPT>".length;
 	    			var endScript = incompleteLovProvider.indexOf("</SCRIPT>");
-	    			var script = incompleteLovProvider.substring(startScript,endScript); 	    			
+	    			var script = incompleteLovProvider.substring(startScript,endScript); 	 
+	    			
+	    			this.detailPanel.lovProvider.scriptType = scriptType;
+					this.detailPanel.lovProvider.script = script;
 				}
 				
 				else if (record.I_TYPE_CD == "FIX_LOV")
@@ -319,7 +392,18 @@ Ext.define
         				arrayOfDescripFixLov.push(listRows[i].substring(descriptionStart,descriptionEnd));
 					}
     				
-				}				
+    				this.detailPanel.lovProvider.arrayOfValuesFixLov = arrayOfValuesFixLov;
+					this.detailPanel.lovProvider.arrayOfDescripFixLov = arrayOfDescripFixLov;
+				}	
+				
+				else if (record.I_TYPE_CD == "JAVA_CLASS")
+				{
+					var startJavaClassName = incompleteLovProvider.indexOf("<JAVA_CLASS_NAME>")+"<JAVA_CLASS_NAME>".length;
+					var endJavaClassName = incompleteLovProvider.indexOf("</JAVA_CLASS_NAME>");
+					var javaClassName = incompleteLovProvider.substring(startJavaClassName,endJavaClassName);
+					
+					this.detailPanel.lovProvider.javaClassName = javaClassName;
+				}
 				
 				var valueColumn = returnLovValues.valueColumnName.valueOf();
 				var descriptionColumn = returnLovValues.descriptionColumnName.valueOf();
@@ -375,7 +459,7 @@ Ext.define
 							"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" + 
 							"<LOVTYPE>" + lovType + "</LOVTYPE>" + 
 							"<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>"
-						+ "</QUERY>";
+						+ "</QUERY>";					
 				}
 				
 				else if (record.I_TYPE_CD == "SCRIPT")
@@ -419,11 +503,24 @@ Ext.define
 	    					  "<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>" +
 	    					  "</FIXLISTLOV>";
 				}
-								
+				
+				else if (record.I_TYPE_CD == "JAVA_CLASS")
+				{										
+					completeLovProvider = 
+						"<JAVACLASSLOV>" +
+							"<JAVA_CLASS_NAME>" + javaClassName + "</JAVA_CLASS_NAME>" +	
+							"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" +
+							"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" +
+							"<LOVTYPE>" + lovType + "</LOVTYPE>" +
+							"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" +
+							"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
+						"</JAVACLASSLOV>";
+				}
+									
 				//this.detailPanel.getFormState().data.LOV_PROVIDER = completeLovProvider;
 				this.detailPanel.lovProvider.value = completeLovProvider;
 				record.LOV_PROVIDER = completeLovProvider;
-				
+								
 				this.onFormSave(record);
 			}
 			
@@ -433,7 +530,7 @@ Ext.define
 		onFormSave: function(record)
 		{			
 			Sbi.debug('[IN] LOVListDetailPanel - onFormSave()');
-			
+						
 			this.detailPanel.getFormState("savePhase").save
 			(
 				{
@@ -468,20 +565,22 @@ Ext.define
 											
 											// Ext.apply() - Copies all the properties of config to the specified object
 											
+											var lovNewID = response.responseText;
+											
 											selectedRow[0].data = Ext.apply(selectedRow[0].data, record);	
 											selectedRow[0].raw = Ext.apply(selectedRow[0].raw, record);											
 											
-											selectedRow[0].data.LOV_ID = response.responseText;
+											selectedRow[0].data.LOV_ID = lovNewID;
 											
 											selectedRow[0].commit();
 
 											this.grid.store.sync();
 											this.grid.store.commitChanges() ;
 											this.grid.store.loadData(selectedRow[0], true);
-											
+																						
 											this.grid.getView().refresh();
 											
-											this.detailPanel.lovId.setValue(response.responseText);
+											this.detailPanel.lovId.setValue(lovNewID);																					
 										}
 									}
 								}
