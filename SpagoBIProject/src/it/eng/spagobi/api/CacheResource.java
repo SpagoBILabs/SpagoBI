@@ -3,21 +3,21 @@
  * © 2005-2015 Engineering Group
  *
  * This file is part of SpagoBI. SpagoBI is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version. 
- * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version.
+ * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received
  * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
- * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
+ * The complete text of SpagoBI license is included in the COPYING.LESSER file.
  */
 package it.eng.spagobi.api;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.Iterator;
@@ -40,7 +40,7 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 @Path("/1.0/cache")
 public class CacheResource extends AbstractSpagoBIResource {
@@ -82,7 +82,7 @@ public class CacheResource extends AbstractSpagoBIResource {
 
 	/**
 	 * datasetLabels is a string containing all dataset labels divided by ','
-	 * 
+	 *
 	 * @param datasetLabelsPar
 	 */
 
@@ -108,7 +108,7 @@ public class CacheResource extends AbstractSpagoBIResource {
 				IDataSet dataSet = (new DatasetManagementAPI(profile)).getDataSet(label);
 				ICache cache = SpagoBICacheManager.getCache();
 				logger.debug("Delete from cache dataset references with signature " + dataSet.getSignature());
-				cache.deleteDatasetAndJoined(dataSet.getSignature());
+				cache.delete(dataSet.getSignature());
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occurred while cleaning cache for dataset with label "
 						+ label, t);

@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
  **/
-package it.eng.spagobi.tools.dataset.cache;
+package it.eng.spagobi.utilities.cache;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -101,4 +101,11 @@ public class CacheItem {
 		properties.put(propertyName, propertyValue);
 	}
 
+	public Map<String, Object> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Map<String, Object> properties) {
+		this.properties = properties;
+	}
 }

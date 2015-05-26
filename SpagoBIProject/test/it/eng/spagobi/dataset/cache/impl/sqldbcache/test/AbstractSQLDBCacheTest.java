@@ -25,7 +25,6 @@ import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
-import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
@@ -39,6 +38,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
+import it.eng.spagobi.utilities.cache.CacheItem;
 
 import java.math.BigDecimal;
 import java.util.Random;

@@ -26,7 +26,6 @@ import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
-import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheActivity;
 import it.eng.spagobi.tools.dataset.cache.ICacheEvent;
@@ -50,6 +49,7 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -99,7 +99,8 @@ public class SQLDBCache implements ICache {
 
 		this.spagoBIWorkManager = cacheConfiguration.getWorkManager();
 
-		eraseExistingTables(cacheMetadata.getTableNamePrefix().toUpperCase());
+		// This is now used anymore. Cache is periodically cleaned by a Quartz job
+		// eraseExistingTables(cacheMetadata.getTableNamePrefix().toUpperCase());
 
 		String databaseSchema = cacheConfiguration.getSchema();
 		if (databaseSchema != null) {
@@ -219,6 +220,8 @@ public class SQLDBCache implements ICache {
 				logger.debug("Resultset with signature [" + resultsetSignature + "] found");
 				CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
 				cacheItem.setLastUsedDate(new Date());
+				// update DB information about this cacheItem
+				getMetadata().updateCacheItem(cacheItem);
 				String tableName = cacheItem.getTable();
 				logger.debug("The table associated to dataset [" + resultsetSignature + "] is [" + tableName + "]");
 				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);
@@ -301,6 +304,8 @@ public class SQLDBCache implements ICache {
 			List<ProjectionCriteria> projections, String resultsetSignature) {
 		CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
 		cacheItem.setLastUsedDate(new Date());
+		// update DB information about this cacheItem
+		getMetadata().updateCacheItem(cacheItem);
 		String tableName = cacheItem.getTable();
 		logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
 
@@ -483,6 +488,8 @@ public class SQLDBCache implements ICache {
 			String resultsetSignature) {
 		CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
 		cacheItem.setLastUsedDate(new Date());
+		// update DB information about this cacheItem
+		getMetadata().updateCacheItem(cacheItem);
 		String tableName = cacheItem.getTable();
 		logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
 
@@ -813,10 +820,11 @@ public class SQLDBCache implements ICache {
 			// dataStore.getMetaData().setProperty("COLUMN_NAMES", columnNames);
 			// dataStore.getMetaData().setProperty("DATASET_ALIAS", datasetAliases);
 
-			CacheItem item = getMetadata().addCacheItem(joinedDataSet.getSignature(), tableName, dataStore);
-			item.setProperty("BREAK_INDEXES", columnBreakIndexes);
-			item.setProperty("COLUMN_NAMES", columnNames);
-			item.setProperty("DATASET_ALIAS", datasetAliases);
+			Map<String, Object> properties = new HashMap<String, Object>();
+			properties.put("BREAK_INDEXES", columnBreakIndexes);
+			properties.put("COLUMN_NAMES", columnNames);
+			properties.put("DATASET_ALIAS", datasetAliases);
+			getMetadata().addCacheItem(joinedDataSet.getSignature(), properties, tableName, dataStore);
 
 			logger.debug("dataset " + joinedDataSet.getLabel() + " is a joined dataset, add reference in map");
 			List<IDataSet> dsReferred = joinedDataSet.getDataSets();
@@ -869,20 +877,23 @@ public class SQLDBCache implements ICache {
 			if (!getMetadata().isCleaningEnabled() || getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
 				String signature = dataSet.getSignature();
 				String tableName = persistStoreInCache(dataSet, signature, dataStore);
-				CacheItem item = getMetadata().addCacheItem(signature, tableName, dataStore);
+				Map<String, Object> properties = new HashMap<String, Object>();
 				List<Integer> breakIndexes = (List<Integer>) dataStore.getMetaData().getProperty("BREAK_INDEXES");
 				if (breakIndexes != null) {
-					item.setProperty("BREAK_INDEXES", breakIndexes);
+					properties.put("BREAK_INDEXES", breakIndexes);
 				}
 				Map<String, List<String>> columnNames = (Map<String, List<String>>) dataStore.getMetaData().getProperty("COLUMN_NAMES");
 				if (columnNames != null) {
-					item.setProperty("COLUMN_NAMES", columnNames);
+					properties.put("COLUMN_NAMES", columnNames);
 				}
 				// a
 				Map<String, String> datasetAlias = (Map<String, String>) dataStore.getMetaData().getProperty("DATASET_ALIAS");
 				if (datasetAlias != null) {
-					item.setProperty("DATASET_ALIAS", datasetAlias);
+					properties.put("DATASET_ALIAS", datasetAlias);
 				}
+
+				getMetadata().addCacheItem(signature, properties, tableName, dataStore);
+
 				// if it is a joined dataset update references
 				if (dataSet instanceof JoinedDataSet) {
 					logger.debug("dataset " + dataSet.getLabel() + " is a joined dataset, add reference in map");
@@ -949,10 +960,15 @@ public class SQLDBCache implements ICache {
 		try {
 			if (dataSet != null) {
 				String dataSetSignature = dataSet.getSignature();
-				result = delete(dataSetSignature);
-
-				// delete also Joined dataset using current dataset
-
+				List<String> joinedSignatures = getMetadata().getJoinedsReferringDataset(dataSetSignature);
+				if (!joinedSignatures.isEmpty()) {
+					// delete also Joined dataset related to current dataset
+					for (String joinedSignature : joinedSignatures) {
+						// this will trigger a DB constraint -> joined references are deleted automatically
+						delete(joinedSignature);
+					}
+				}
+				result = dropTableAndRemoveCacheItem(dataSetSignature);
 			} else {
 				logger.warn("Input parameter [dataSet] is null");
 			}
@@ -974,6 +990,36 @@ public class SQLDBCache implements ICache {
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 	public boolean delete(String signature) {
+		boolean result = false;
+
+		logger.debug("IN");
+		try {
+			if (signature != null) {
+				List<String> joinedSignatures = getMetadata().getJoinedsReferringDataset(signature);
+				if (!joinedSignatures.isEmpty()) {
+					// delete also Joined dataset related to current dataset
+					for (String joinedSignature : joinedSignatures) {
+						// this will trigger a DB constraint -> joined references are deleted automatically
+						delete(joinedSignature);
+					}
+				}
+				result = dropTableAndRemoveCacheItem(signature);
+			} else {
+				logger.warn("Input parameter [dataSet] is null");
+			}
+		} catch (Throwable t) {
+			if (t instanceof CacheException)
+				throw (CacheException) t;
+			else
+				throw new CacheException("An unexpected error occure while deleting dataset from cache", t);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return result;
+	}
+
+	private boolean dropTableAndRemoveCacheItem(String signature) {
 		logger.debug("IN");
 		logger.debug("delete " + signature);
 		if (getMetadata().containsCacheItem(signature)) {
@@ -994,6 +1040,7 @@ public class SQLDBCache implements ICache {
 	/*
 	 * (non-Javadoc)
 	 */
+	@Deprecated
 	public void deleteDatasetAndJoined(String signature) {
 		logger.debug("IN");
 
@@ -1087,18 +1134,10 @@ public class SQLDBCache implements ICache {
 	public void deleteAll() {
 		logger.debug("Removing all tables from [SQLDBCache]");
 
-		List<String> signatureToDelete = new ArrayList<String>();
-
 		List<String> signatures = getMetadata().getSignatures();
 		for (String signature : signatures) {
-			CacheItem item = getMetadata().getCacheItem(signature);
-			signatureToDelete.add(item.getSignature());
-		}
-
-		for (String signature : signatureToDelete) {
 			delete(signature);
 		}
-
 		logger.debug("[SQLDBCache] All tables removed, Cache cleaned ");
 	}
 
