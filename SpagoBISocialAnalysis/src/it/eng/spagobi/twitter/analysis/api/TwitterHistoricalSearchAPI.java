@@ -6,6 +6,7 @@
 package it.eng.spagobi.twitter.analysis.api;
 
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.twitter.analysis.entities.TwitterMonitorScheduler;
 import it.eng.spagobi.twitter.analysis.entities.TwitterSearch;
 import it.eng.spagobi.twitter.analysis.entities.TwitterSearchScheduler;
@@ -15,7 +16,6 @@ import it.eng.spagobi.twitter.analysis.enums.SearchRepeatTypeEnum;
 import it.eng.spagobi.twitter.analysis.enums.SearchTypeEnum;
 import it.eng.spagobi.twitter.analysis.enums.UpToTypeEnum;
 import it.eng.spagobi.twitter.analysis.launcher.TwitterAnalysisLauncher;
-import it.eng.spagobi.twitter.analysis.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Calendar;

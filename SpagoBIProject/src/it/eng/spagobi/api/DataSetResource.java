@@ -732,11 +732,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return getUserProfile().getUserUniqueIdentifier().toString();
 	}
 
-	private UserProfile getUserProfile() {
-		UserProfile profile = this.getIOManager().getUserProfile();
-		return profile;
-	}
-
 	// private IDataSetDAO getDataSetDAO() {
 	// IDataSetDAO dataSetDao = null;
 	// try {

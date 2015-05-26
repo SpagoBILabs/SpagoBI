@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
 <wb-module deploy-name="SpagoBI">
         <wb-resource deploy-path="/" source-path="/web-content"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
@@ -14,9 +13,6 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="SpagoBIDAO.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIDAO/SpagoBIDAO">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="SpagoBIOAuth2SecurityProvider.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIOAuth2SecurityProvider/SpagoBIOAuth2SecurityProvider">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 <property name="java-output-path" value="build/classes"/>
