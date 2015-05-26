@@ -40,23 +40,23 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		service.callService(this);
 	}
-	,drillDown: function(axis, position,  member){
+	,drillDown: function(axis, position,  member, uniqueName, positionUniqueName){
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "member",
 			subPath: "drilldown",
-			pathParams: [axis, position, member]
+			pathParams: [axis, position, member, positionUniqueName, uniqueName]
 		});
 
 		service.callService(this);
 
 	}
-	, drillUp: function(axis, position,  member){
+	, drillUp: function(axis, position,  member, uniqueName, positionUniqueName){
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "member",
 			subPath: "drillup",
-			pathParams: [axis, position, member]
+			pathParams: [axis, position, member, positionUniqueName, uniqueName]
 		});
 
 		service.callService(this);
