@@ -21,11 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
+import it.eng.spagobi.cache.dao.ICacheDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
-import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBase;
 import it.eng.spagobi.utilities.database.IDataBase;
 
@@ -34,7 +36,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,8 @@ import org.apache.log4j.Logger;
 public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	private LinkedHashMap<String, CacheItem> cacheRegistry = new LinkedHashMap<String, CacheItem>();
+
+	private final ICacheDAO cacheDao;
 
 	private final LinkedHashMap<String, List<String>> datasetToJoinedMap = new LinkedHashMap<String, List<String>>();
 
@@ -101,6 +104,12 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		// TotalMemory = -1 -> Caching with no cleaning action, TotalMemory = 0 -> No caching action, TotalMemory > 0 -> Caching with cleaning action
 		if (totalMemory != null && (totalMemory.intValue()) != -1 && cachePercentageToClean != null) {
 			isActiveCleanAction = true;
+		}
+
+		cacheDao = DAOFactory.getCacheDao();
+		if (cacheDao == null) {
+			throw new CacheException(
+					"An unexpected error occured while initializing cache metadata: the return value of DAOFactory.getCacheDao() cannot be null");
 		}
 	}
 
@@ -185,14 +194,16 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	public LinkedHashMap<String, CacheItem> getCacheRegistry() {
+		// TODO: add cachedao impl
 		return cacheRegistry;
 	}
 
 	public void setCacheRegistry(LinkedHashMap<String, CacheItem> cacheRegistry) {
+		// TODO: add cachedao impl
 		this.cacheRegistry = cacheRegistry;
 	}
 
-	public CacheItem addCacheItem(String resultsetSignature, String tableName, IDataStore resultset) {
+	public void addCacheItem(String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset) {
 		CacheItem item = new CacheItem();
 		item.setName(tableName);
 		item.setTable(tableName);
@@ -201,53 +212,61 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		Date now = new Date();
 		item.setCreationDate(now);
 		item.setLastUsedDate(now);
-		getCacheRegistry().put(tableName, item);
+		item.setProperties(properties);
+		cacheDao.insertCacheItem(item);
+		// getCacheRegistry().put(tableName, item);
 
 		logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature() + " \n Dimension: " + item.getDimension()
 				+ " bytes (approximately)  ]");
+	}
 
-		return item;
+	public void updateCacheItem(CacheItem cacheItem) {
+		cacheDao.updateCacheItem(cacheItem);
 	}
 
 	public void removeCacheItem(String tableName) {
-		getCacheRegistry().remove(tableName);
+		cacheDao.deleteCacheItemByTableName(tableName);
+		// getCacheRegistry().remove(tableName);
 	}
 
 	public void removeAllCacheItems() {
-		Iterator it = getCacheRegistry().entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
-			String key = entry.getKey();
-			this.removeCacheItem(key);
-		}
+		cacheDao.deleteAllCacheItem();
+		// Iterator it = getCacheRegistry().entrySet().iterator();
+		// while (it.hasNext()) {
+		// Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
+		// String key = entry.getKey();
+		// this.removeCacheItem(key);
+		// }
 	}
 
 	public CacheItem getCacheItemByResultSetTableName(String tableName) {
-		CacheItem toReturn = null;
-		Iterator it = getCacheRegistry().entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
-			CacheItem item = entry.getValue();
-			if (item.getTable().equalsIgnoreCase(tableName)) {
-				toReturn = item;
-				break;
-			}
-		}
-		return toReturn;
+		return cacheDao.loadCacheItemByTableName(tableName);
+		// CacheItem toReturn = null;
+		// Iterator it = getCacheRegistry().entrySet().iterator();
+		// while (it.hasNext()) {
+		// Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
+		// CacheItem item = entry.getValue();
+		// if (item.getTable().equalsIgnoreCase(tableName)) {
+		// toReturn = item;
+		// break;
+		// }
+		// }
+		// return toReturn;
 	}
 
 	public CacheItem getCacheItem(String resultSetSignature) {
-		CacheItem toReturn = null;
-		Iterator it = getCacheRegistry().entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
-			CacheItem item = entry.getValue();
-			if (item.getSignature().equalsIgnoreCase(resultSetSignature)) {
-				toReturn = item;
-				break;
-			}
-		}
-		return toReturn;
+		return cacheDao.loadCacheItemBySignature(resultSetSignature);
+		// CacheItem toReturn = null;
+		// Iterator it = getCacheRegistry().entrySet().iterator();
+		// while (it.hasNext()) {
+		// Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
+		// CacheItem item = entry.getValue();
+		// if (item.getSignature().equalsIgnoreCase(resultSetSignature)) {
+		// toReturn = item;
+		// break;
+		// }
+		// }
+		// return toReturn;
 	}
 
 	public boolean containsCacheItemByTableName(String tableName) {
@@ -260,16 +279,20 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheMetadata#getSignatures()
 	 */
 	public List<String> getSignatures() {
 		List<String> signatures = new ArrayList<String>();
-		Iterator it = getCacheRegistry().entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
-			signatures.add(entry.getValue().getSignature());
+		List<CacheItem> cacheItems = cacheDao.loadAllCacheItems();
+		for (CacheItem item : cacheItems) {
+			signatures.add(item.getSignature());
 		}
+		// Iterator it = getCacheRegistry().entrySet().iterator();
+		// while (it.hasNext()) {
+		// Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
+		// signatures.add(entry.getValue().getSignature());
+		// }
 		return signatures;
 	}
 
@@ -278,36 +301,49 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	public LinkedHashMap<String, List<String>> getDatasetToJoinedMap() {
+		// TODO: add cachedao impl
 		return datasetToJoinedMap;
 	}
 
 	public List<String> getJoinedsReferringDataset(String datasetSignature) {
 		logger.debug("IN");
 		logger.debug("Search if dataset with signature " + datasetSignature + " has joined dataset referring to it");
-		List<String> joineds = datasetToJoinedMap.get(datasetSignature);
+		List<String> toReturn = new ArrayList<String>();
+		List<CacheItem> joinedCacheItems = cacheDao.loadCacheJoinedItemsReferringTo(datasetSignature);
+		for (CacheItem joinedCacheItem : joinedCacheItems) {
+			toReturn.add(joinedCacheItem.getSignature());
+		}
+		// List<String> joineds = datasetToJoinedMap.get(datasetSignature);
 		logger.debug("OUT");
-		return joineds;
+		return toReturn;
 	}
 
 	public void addJoinedDatasetReference(String signature, String joinedSignature) {
 		logger.debug("IN");
-
-		if (datasetToJoinedMap.containsKey(signature) && datasetToJoinedMap.get(signature) != null) {
-			List joineds = datasetToJoinedMap.get(signature);
-			if (!joineds.contains(joinedSignature)) {
-				joineds.add(joinedSignature);
-				logger.debug("added information that " + joinedSignature + " refers " + signature);
-			} else {
-				logger.debug("Already know that that " + datasetToJoinedMap + " refers " + signature);
-			}
-			datasetToJoinedMap.put(signature, joineds);
+		if (!cacheDao.hasCacheItemReferenceToCacheJoinedItem(signature, joinedSignature)) {
+			CacheItem cacheItem = cacheDao.loadCacheItemBySignature(signature);
+			CacheItem joinedCacheItem = cacheDao.loadCacheItemBySignature(joinedSignature);
+			cacheDao.insertCacheJoinedItem(cacheItem, joinedCacheItem);
+			logger.debug("Added information that " + joinedSignature + " refers " + signature);
 		} else {
-			List<String> joineds = new ArrayList<String>();
-			joineds.add(joinedSignature);
-			datasetToJoinedMap.put(signature, joineds);
-			logger.debug("added information that " + joinedSignature + " refers " + signature);
+			logger.debug("Already know that " + joinedSignature + " refers " + signature);
 		}
-		logger.debug("OUT");
 
+		// if (datasetToJoinedMap.containsKey(signature) && datasetToJoinedMap.get(signature) != null) {
+		// List joineds = datasetToJoinedMap.get(signature);
+		// if (!joineds.contains(joinedSignature)) {
+		// joineds.add(joinedSignature);
+		// logger.debug("added information that " + joinedSignature + " refers " + signature);
+		// } else {
+		// logger.debug("Already know that that " + datasetToJoinedMap + " refers " + signature);
+		// }
+		// datasetToJoinedMap.put(signature, joineds);
+		// } else {
+		// List<String> joineds = new ArrayList<String>();
+		// joineds.add(joinedSignature);
+		// datasetToJoinedMap.put(signature, joineds);
+		// logger.debug("added information that " + joinedSignature + " refers " + signature);
+		// }
+		logger.debug("OUT");
 	}
 }
