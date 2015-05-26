@@ -113,18 +113,20 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * @param {int} axis position of the row
 	 * @param {int} member position of the member
 	 * @param {int} position in the Position array
+	 * @param {String} uniqueName unique name of the member
 	 */
-	drillDown: function(axis, position,  member){
-		this.olapController.drillDown(axis, member, position);
+	drillDown: function(axis, position,  member, uniqueName, positionUniqueName){
+		this.olapController.drillDown(axis, member, position, uniqueName, positionUniqueName);
 	},
 	/**
 	 * Updates the view after drill up operation
 	 * @param {int} axis position of the row
 	 * @param {int} member position of the member
 	 * @param {int} position in the Position array
+	 * @param {String} uniqueName unique name of the member
 	 */
-	drillUp: function(axis, position,  member){
-		this.olapController.drillUp(axis, member, position);
+	drillUp: function(axis, position,  member, uniqueName, positionUniqueName){
+		this.olapController.drillUp(axis, member, position, uniqueName, positionUniqueName);
 	},
 	/**
 	 * Swaps the axis
@@ -480,8 +482,80 @@ Ext.define('Sbi.olap.control.EventManager', {
 	
 	, saveSubObject: function(name, description, scope){
 		this.olapController.saveSubObject(name, description, scope);
-	}
+	},
 
+	//author: Maria Caterina Russo from Osmosit
+	/** 
+	 * cross navigation can only work without writeback configuration
+	 */
+	initCrossNavigation: function(){
+		if(this.checkLockStatusForCrossNavigation()){
+			this.olapController.initCrossNavigation();
+		}
+	},
+	
+	//author: Maria Caterina Russo from Osmosit
+	setTarget: function(targetId,position){
+		var index = "";
+		if (targetId) {
+			var endPositionIndex = targetId.indexOf("_");
+			index= targetId.substring(endPositionIndex+1);
+		}
+		this.olapController.getCrossNavigationUrl(index, position);
+	},
+	
+	//author: Maria Caterina Russo from Osmosit
+	/**
+	 * create menu with targets titles in the dom element with the id equals to the passed id
+	 * @param id the id of the dom element
+	 */
+	createCrossNavigationMenu: function(id){
+		var cell = Ext.get(id);
+		if(!this.crossNavigation)
+			this.crossNavigation = this.olapPanel.modelConfig.crossNavigation;		
+		
+		var position = "";
+		if (id) {
+			var endPositionIndex = id.indexOf("!");
+			position= id.substring(0, endPositionIndex);
+		}
+		var thisPanel = this;
+		var targets = new Array();
+		targets = this.crossNavigation.targets;		
+		cell.el.addListener('click',
+				function(e){
+			if(!this.checkLockStatusForCrossNavigation()){
+				return;
+			}
+			if(!Ext.getCmp('crossNavigationMenuId'+id)){
+				var menu=Ext.create('Ext.menu.Menu', {
+					id:'crossNavigationMenuId'+id, 
+					plain: true,
+				    margin: '0 0 10 0'
+				});	
+				var thisMenuItem= this;
+				if(targets && targets.length>0){
+					for(var i=0; i<targets.length; i++){
+						var btnId='btnMenuId'+id+'_'+i;
+						var button = {
+								xtype : 'button',
+								text : targets[i].title,							
+								
+								id: btnId,
+								handler: function() {
+									 thisMenuItem.setTarget(this.id,position);
+									 Ext.getCmp('crossNavigationMenuId'+id).hide();			
+								}
+						};
+						menu.add(button);
+					}
+				}
+				
+			}
+			
+			Ext.getCmp('crossNavigationMenuId'+id).showAt(e.getXY()); },thisPanel);	
+	  
+	}
 });
 
 

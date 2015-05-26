@@ -40,23 +40,23 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		service.callService(this);
 	}
-	,drillDown: function(axis, position,  member){
+	,drillDown: function(axis, position,  member, uniqueName, positionUniqueName){
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "member",
 			subPath: "drilldown",
-			pathParams: [axis, position, member]
+			pathParams: [axis, position, member, positionUniqueName, uniqueName]
 		});
 
 		service.callService(this);
 
 	}
-	, drillUp: function(axis, position,  member){
+	, drillUp: function(axis, position,  member, uniqueName, positionUniqueName){
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "member",
 			subPath: "drillup",
-			pathParams: [axis, position, member]
+			pathParams: [axis, position, member, positionUniqueName, uniqueName]
 		});
 
 		service.callService(this);
@@ -364,16 +364,16 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		service.callService(this, function(){Sbi.olap.eventManager.hideLoadingMask();});
 	}
-	
+
 	/**
 	 * Save a subobject
 	 */
 	, saveSubObject: function(name, description, scope){
-		
+
 		if(!description){
 			description = " ";
 		}
-		
+
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "subobject",
 			method: 'POST',
@@ -410,7 +410,43 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		service.callService(this);
 	}
-	
+
+	//author: Maria Caterina Russo from Osmosit
+	/**
+	 * Initialize cross navigation
+	 */
+	,initCrossNavigation: function(){
+		var	service = Ext.create("Sbi.service.RestService", {
+			url: "crossnavigation/initialize",
+			method: 'GET',
+			longExecution: true			
+		});
+		service.callService(this);
+	}
+
+//	author: Maria Caterina Russo from Osmosit
+	/**
+	 * Get url for cross navigation
+	 */
+	,getCrossNavigationUrl: function(targetIndex, ordinal){
+		var	service = Ext.create("Sbi.service.RestService", {
+			url: "crossnavigation",
+			longExecution: true,
+			pathParams: ["getCrossNavigationUrl",targetIndex, ordinal]
+		});
+		Ext.Ajax.request({
+			url: service.getRestUrlWithParameters(),
+			params: service.getRequestParams(),
+			method: 'POST',
+			success: function(response){
+				var data = response.responseText;		
+				var tmpFunc = new Function(data);			
+				tmpFunc();
+			}
+		});		
+	}
+
+
 	,DIVISION_SIGN: "{spagobi.operator.division}"
 
 		/**

@@ -1,14 +1,17 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.whatif.template;
 
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.writeback4j.SbiAliases;
 import it.eng.spagobi.writeback4j.SbiScenario;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,8 @@ public class WhatIfTemplate {
 	private List<String> toolbarMenuButtons;
 	private IDataSource standAloneConnection;
 	private Map<String, String> xmlaServerProperties;
+	private SpagoBICrossNavigationConfig crossNavigation;
+	List<TargetClickable> targetsClickable = new ArrayList<TargetClickable>();
 
 	public WhatIfTemplate() {
 		properties = new HashMap<String, Object>();
@@ -162,6 +167,22 @@ public class WhatIfTemplate {
 			this.alias = alias;
 		}
 
+	}
+
+	public SpagoBICrossNavigationConfig getCrossNavigation() {
+		return crossNavigation;
+	}
+
+	public void setCrossNavigation(SpagoBICrossNavigationConfig crossNavigation) {
+		this.crossNavigation = crossNavigation;
+	}
+
+	public List<TargetClickable> getTargetsClickable() {
+		return targetsClickable;
+	}
+
+	public void setTargetsClickable(List<TargetClickable> targetsClickable) {
+		this.targetsClickable = targetsClickable;
 	}
 
 }

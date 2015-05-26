@@ -154,6 +154,15 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 			modelConfig.setLocker(locker);
 			logger.debug("Init the datatsource fro writing");
 			dataSourceForWriting = initDataSourceForWriting();
+			SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) pivotModel;
+			if (template.getCrossNavigation() != null) {
+				modelConfig.setCrossNavigation(template.getCrossNavigation());
+				sbiModel.setCrossNavigation(template.getCrossNavigation());
+			}
+			if (template.getTargetsClickable() != null) {
+				sbiModel.setTargetsClickable(template.getTargetsClickable());
+			}
+
 		}
 
 		// init toolbar

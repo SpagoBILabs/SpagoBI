@@ -6,8 +6,12 @@
 
 package it.eng.spagobi.pivot4j.ui;
 
+import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.StringWriter;
@@ -314,8 +318,6 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			String drillMode = this.getDrillDownMode();
 
 			if (!isEmptyNonProperyCell(context)) {
-				// (previousAnalyzedMember != null && previousAnalyzedMember.equals(context.getMember())
-				// && (context.getColumnIndex() + context.getRowIndex()) == (previousAnalyzedMemberPosition + 1)) {
 
 				if (context.getMember() != null && context.getMember().getMemberType() != null
 						&& !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
@@ -325,8 +327,6 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 					if (commands != null && !commands.isEmpty()) {
 						for (CellCommand<?> command : commands) {
 							String cmd = command.getName();
-
-							// /spagobi whatif engine
 
 							int colIdx = context.getColumnIndex();
 							int rowIdx = context.getRowIndex();
@@ -345,18 +345,24 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 							} else {
 								pos = colIdx;
 							}
+
+							String uniqueName = context.getMember().getUniqueName();
+							String positionUniqueName = context.getPosition().getMembers().toString();
+
 							if (cmd != null) {
 								CellParameters parameters = command.createParameters(context);
 
 								if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
 										&& (!drillMode.equals(DrillDownCommand.MODE_REPLACE))) {
 									attributes.put("src", "../img/minus.gif");
-									attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp(" + axis + " , " + pos + " , " + memb + ")");
+									attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp(" + axis + " , " + pos + " , " + memb + ",'"
+											+ uniqueName + "','" + positionUniqueName + " ')");
 									getWriter().startElement("img", attributes);
 									getWriter().endElement("img");
 								} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
 									attributes.put("src", "../img/plus.gif");
-									attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown(" + axis + " , " + pos + " , " + memb + ")");
+									attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown(" + axis + " , " + pos + " , " + memb + ",'"
+											+ uniqueName + "','" + positionUniqueName + "' )");
 									getWriter().startElement("img", attributes);
 									getWriter().endElement("img");
 								}
@@ -365,19 +371,18 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 						}
 					} else {
 						if (context.getAxis() == Axis.ROWS && !isProperyCell(context)) {
-							// adding a transparent image to get a higher
-							// indentation on rows headers
+
 							attributes.put("src", "../img/nodrill.png");
 							attributes.put("style", "padding : 2px");
 							getWriter().startElement("img", attributes);
 							getWriter().endElement("img");
 						}
+
 					}
 				}
 			}
 
 			if ((context.getCellType() == CellType.Title) && !label.equalsIgnoreCase("Measures")) {
-				// /spagobi whatif engine
 
 				int colIdx = context.getColumnIndex();
 				int rowIdx = context.getRowIndex();
@@ -400,8 +405,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 				if (drillMode.equals(DrillDownCommand.MODE_REPLACE) && !this.getShowParentMembers()) {
 					Hierarchy h = context.getHierarchy();
 					PlaceMembersOnAxes pm = context.getModel().getTransform(PlaceMembersOnAxes.class);
-					// PlaceHierarchiesOnAxes ph =
-					// context.getModel().getTransform(PlaceHierarchiesOnAxes.class);
+
 					List<Member> visibleMembers = pm.findVisibleMembers(h);
 					int d = 0;
 					for (Member m : visibleMembers) {
@@ -411,9 +415,25 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 							break;
 						}
 					}
+
+					// For drill replace the context.getPosition() and context.getMember are empty.
+					String uniqueName = "x";
+					String positionUniqueName = "x";
+
+					if (context != null) {
+						if (context.getPosition() != null && context.getPosition() != null) {
+							positionUniqueName = context.getPosition().getMembers().toString();
+						}
+						if (context.getMember() != null) {
+							uniqueName = context.getMember().getUniqueName();
+						}
+
+					}
+
 					if (d != 0) {
 						attributes.put("src", "../img/arrow-up.png");
-						attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp(" + axis + " , " + pos + " , " + memb + ")");
+						attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','"
+								+ positionUniqueName + "' )");
 						getWriter().startElement("img", attributes);
 						getWriter().endElement("img");
 					}
@@ -423,7 +443,56 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 					getWriter().writeContent(label);
 				}
 			} else {
-				getWriter().writeContent(label);
+
+				// start OSMOSIT cross nav button
+				SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) context.getModel();
+				SpagoBICrossNavigationConfig crossNavigation = sbiModel.getCrossNavigation();
+				if (crossNavigation != null && crossNavigation.isButtonClicked()
+						&& !crossNavigation.getModelStatus().equalsIgnoreCase(new String("locked_by_other"))
+						&& !crossNavigation.getModelStatus().equalsIgnoreCase(new String("locked_by_user")) && context.getCellType() == CellType.Value) {
+
+					int colId = context.getColumnIndex();
+					int rowId = context.getRowIndex();
+					int positionId = context.getCell().getOrdinal();
+					String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
+					attributes.put("src", "../img/cross-navigation.gif");
+					attributes.put("onload", "javascript:Sbi.olap.eventManager.createCrossNavigationMenu('" + id + "')");
+					attributes.put("id", id);
+					getWriter().startElement("img", attributes);
+					getWriter().endElement("img");
+
+					getWriter().writeContent(label);
+				} else {
+					// TODO: OSMOSIT create member clickable
+					List<TargetClickable> targetsClickable = sbiModel.getTargetsClickable();
+					if (targetsClickable != null && targetsClickable.size() > 0) {
+						Member member = context.getMember();
+						if (member != null) {
+							String url = CrossNavigationManager.buildClickableUrl(member, targetsClickable);
+							if (url != null) {
+								attributes.remove("onClick");
+								attributes.remove("src");
+								attributes.put("href", url);
+								getWriter().startElement("a", attributes);
+								getWriter().writeContent(label);
+								getWriter().endElement("a");
+							} else {
+								getWriter().writeContent(label);
+							}
+						} else {
+
+							getWriter().writeContent(label);
+						}
+					} else {
+
+						getWriter().writeContent(label);
+					}
+					// fine OSMOSIT create member clickable
+
+					// getWriter().writeContent(label);//commentato da osmosit create member clickable
+				}
+				// fine OSMOSIT cross nav button
+				// getWriter().writeContent(label); //commentato da osmosit cross nav button
 			}
 		} else {
 			Map<String, String> attributes = new HashMap<String, String>(1);
@@ -433,8 +502,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			getWriter().writeContent(label);
 			getWriter().endElement("a");
 		}
-		// previousAnalyzedMember = context.getMember();
-		// previousAnalyzedMemberPosition = context.getColumnIndex() + context.getRowIndex();
+
 	}
 
 	private boolean isProperyCell(RenderContext context) {
