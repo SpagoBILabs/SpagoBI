@@ -10,7 +10,7 @@
 				groupingMenu="true">			
 			<ITEM	title="#menu.TenantMan"
 					functionality="TenantManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagement.jsp" 
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=MULTITENANT_MANAGEMENT_HOME" 
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
 		    <ITEM	title="#menu.EngMan"
 					functionality="TenantManagement"
@@ -18,7 +18,7 @@
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/engines16.png" />	
 			<ITEM	title="#menu.DataSourceMan"
 					functionality="DataSourceManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/datasource/listDataSource.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=LIST_DATASOURCE_HOME"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
 			<ITEM	title="#menu.DataSetMan"
 					functionality="DatasetManagement"
@@ -46,10 +46,10 @@
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/mapcatalogue/featureManagement16.png" />
 			<ITEM	title="#menu.MeasuresCatalogue"
 					functionality="MeasuresCatalogueManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/measure/measuresCatalogue.jsp" />
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=MEASURES_CATALOGUE_HOME" />
 			<ITEM	title="#menu.LayersCatalogue"
 					functionality="MeasuresCatalogueManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/layer/layerCatalogue.jsp" />		
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=LAYER_CATALOGUE_HOME" />		
 					
 					
 		</ITEM>
@@ -104,7 +104,7 @@
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/lovs16.png" />
 			<ITEM 	title="LOV new interface"
 			     	functionality="LovsView"
-				    url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/behaviouralmodel/lov/listOfValues.jsp"
+				    url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=LIST_OF_VALUES_HOME"
 				    iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/lovs16.png" />
 			<ITEM	title="#menu.ParameterMan"
 					functionality="ParameterView"
@@ -112,7 +112,7 @@
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/parameters16.png" />
 			<ITEM	title="AD new interface"
 					functionality="ParameterView"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/behaviouralmodel/analyticaldriver/analyticaldriver.jsp"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=ANALYTICAL_DRIVERS_HOME"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/parameters16.png" />
 			<ITEM	title="#menu.ConstraintMan"
 					functionality="ConstraintView"
@@ -128,7 +128,7 @@
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/menu16.png" />
 			<ITEM	title="#menu.community.mng"
 					functionality="MenuManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/community/ManageCommunity.jsp"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=MANAGE_COMMUNITY_HOME"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/community.png" />
 		</ITEM>
 		<ITEM	code="tree_mng" 
@@ -228,7 +228,7 @@
 					<!--url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=JobManagementPage&amp;MESSAGEDET=MESSAGE_GET_ALL_JOBS&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"-->
 	  		<ITEM	title="#menu.HierarchiesEditor"
 					functionality="HierarchiesManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp" />
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=HIERARCHIES_EDITOR_HOME" />
 			<ITEM	title="#menu.SocialAnalysis"
 					functionality="CreateSocialAnalysis"
 					url="${SPAGOBI_SOCIAL_ANALYSIS_URL}" />
