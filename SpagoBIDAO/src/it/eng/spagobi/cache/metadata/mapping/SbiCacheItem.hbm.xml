@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 21-mag-2015 12.23.30 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.cache.metadata.SbiCacheItem" table="SBI_CACHE_ITEM" catalog="spagobi">
+    <class name="it.eng.spagobi.cache.metadata.SbiCacheItem" table="SBI_CACHE_ITEM">
         <id name="signature" type="string">
             <column name="SIGNATURE" length="100" />
             <generator class="assigned" />

@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 21-mag-2015 12.23.30 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.cache.metadata.SbiCacheJoinedItem" table="SBI_CACHE_JOINED_ITEM" catalog="spagobi">
+    <class name="it.eng.spagobi.cache.metadata.SbiCacheJoinedItem" table="SBI_CACHE_JOINED_ITEM">
         <id name="id" type="int">
             <column name="ID" />
             <generator class="org.hibernate.id.enhanced.TableGenerator">
