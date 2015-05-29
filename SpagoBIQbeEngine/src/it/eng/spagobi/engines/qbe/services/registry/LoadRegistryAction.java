@@ -194,14 +194,25 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		Object resultToReturn = null;
 
 		if (currentValue instanceof Integer) {
+
+			if (previousValue == null) {
+				previousValue = Integer.valueOf(0);
+			}
+
 			Integer currVal = (Integer) currentValue;
 			Integer prevVal = (Integer) previousValue;
 			Integer result = currVal + prevVal;
 			resultToReturn = result;
 		} else if (currentValue instanceof Float) {
+
+			if (previousValue == null) {
+				previousValue = 0f;
+			}
+
 			Float currValF = (Float) currentValue;
 			Float prevValF = (Float) previousValue;
-			// have to pass through BigDecimal because java Math sometimes break on decimal count with float and double
+			// have to pass through BigDecimal because java Math sometimes break
+			// on decimal count with float and double
 			BigDecimal currValB = new BigDecimal(currValF.doubleValue());
 			BigDecimal prevValB = new BigDecimal(prevValF.doubleValue());
 			BigDecimal newValB = prevValB.add(currValB);
@@ -209,9 +220,15 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			Float result = new Float(newValB.floatValue());
 			resultToReturn = result;
 		} else if (currentValue instanceof Double) {
+
+			if (previousValue == null) {
+				previousValue = 0d;
+			}
+
 			Double currValD = (Double) currentValue;
 			Double prevValD = (Double) previousValue;
-			// have to pass through BigDecimal because java Math sometimes break on decimal count with float and double
+			// have to pass through BigDecimal because java Math sometimes break
+			// on decimal count with float and double
 			BigDecimal currValB = new BigDecimal(currValD.doubleValue());
 			BigDecimal prevValB = new BigDecimal(prevValD.doubleValue());
 			BigDecimal newValB = prevValB.add(currValB);
@@ -219,6 +236,11 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			Double result = new Double(newValB.doubleValue());
 			resultToReturn = result;
 		} else if (currentValue instanceof BigDecimal) {
+
+			if (previousValue == null) {
+				previousValue = BigDecimal.ZERO;
+			}
+
 			BigDecimal currVal = (BigDecimal) currentValue;
 			BigDecimal prevVal = (BigDecimal) previousValue;
 			BigDecimal result = prevVal.add(currVal);
@@ -262,7 +284,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		HashMap<Integer, Object> columnsIndexToSum2Counter = new HashMap<Integer, Object>();
 
 		// collect columns to merge and columns to sum and colummsn to empty:
-		// -- columns to merge have merge attributes until a columns with summaryFunc is found
+		// -- columns to merge have merge attributes until a columns with
+		// summaryFunc is found
 		// then other columns that have merge attribute but no
 		List<Column> columns = registryConfig.getColumns();
 
@@ -297,7 +320,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 		TreeMap<Integer, Record> recordsToAddMap = new TreeMap<Integer, Record>();
 
-		int sumCounter = 0; // add total row only if grouping has more than one member
+		int sumCounter = 0; // add total row only if grouping has more than one
+							// member
 
 		// iterate on each store row
 		for (int i = 0; i < dataStore.getRecordsCount(); i++) {
@@ -323,7 +347,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 					Integer indexMeasure = (Integer) iterator.next();
 					Object value = record.getFieldAt(indexMeasure).getValue();
 
-					// TODO treat the case this is not a number, should keep it to null
+					// TODO treat the case this is not a number, should keep it
+					// to null
 					if (value != null) {
 						// get previous value
 
@@ -336,7 +361,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 				}
 			} else {
-				// breaking point, add summarization lines at previous index; i-1
+				// breaking point, add summarization lines at previous index;
+				// i-1
 
 				// add a new record only if sumCounter > 0
 				if (sumCounter > 0) {
@@ -436,7 +462,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 		if (currentIndexRow != null) {
 			// dataStore.insertRecord(currentIndex, recordNew);
-			// index to put must be the currentIndexRow + the number of records that have already been added
+			// index to put must be the currentIndexRow + the number of records
+			// that have already been added
 
 			recordsToAddMap.put(index, recordNew);
 		} else {
@@ -531,8 +558,12 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	// set in array cell that will be colored as total
 	private void setNewSummaryColorCell(IDataStore dataStore, Integer row, Integer column) {
 		if (row == null) {
-			// if row not specified means is referring to last row that will be store lenght + already added summary rows length
-			row = Long.valueOf(dataStore.getRecordsCount()).intValue() + summaryRecordsAddedCounter - 1; // row starts from 0
+			// if row not specified means is referring to last row that will be
+			// store lenght + already added summary rows length
+			row = Long.valueOf(dataStore.getRecordsCount()).intValue() + summaryRecordsAddedCounter - 1; // row
+																											// starts
+																											// from
+																											// 0
 		}
 
 		try {
@@ -548,8 +579,12 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	// set in array cells that will contain total value
 	private void setNewSummaryCell(IDataStore dataStore, Integer row, Integer column) {
 		if (row == null) {
-			// if row not specified means is referring to last row that will be store lenght + already added summary rows length
-			row = Long.valueOf(dataStore.getRecordsCount()).intValue() + summaryRecordsAddedCounter - 1; // row starts from 0
+			// if row not specified means is referring to last row that will be
+			// store lenght + already added summary rows length
+			row = Long.valueOf(dataStore.getRecordsCount()).intValue() + summaryRecordsAddedCounter - 1; // row
+																											// starts
+																											// from
+																											// 0
 		}
 
 		try {
@@ -728,7 +763,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 				WhereField.Operand right = new WhereField.Operand(values, "value", AbstractStatement.OPERAND_TYPE_STATIC, null, null);
 
-				// if filter type is manual use it as string starting, else as equals
+				// if filter type is manual use it as string starting, else as
+				// equals
 				if (filter.getPresentationType().equals(RegistryConfigurationXMLParser.PRESENTATION_TYPE_COMBO)) {
 					query.addWhereField("Filter_" + i, filter.getField(), false, left, CriteriaConstants.EQUALS_TO, right, "AND");
 				} else {
@@ -745,13 +781,19 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	}
 
 	private IModelField getColumnModelField(Column column, IModelEntity entity) {
-		if (column.getSubEntity() != null) { // in case it is a subEntity attribute, look for the field inside it
+		if (column.getSubEntity() != null) { // in case it is a subEntity
+												// attribute, look for the field
+												// inside it
 
-			// In order to recover subentities the new way if DEFAULT_MAX_RECURSION_LEVEL is set to zero
+			// In order to recover subentities the new way if
+			// DEFAULT_MAX_RECURSION_LEVEL is set to zero
 			/*
-			 * QbeEngineInstance engineInstance = getEngineInstance(); QbeTemplate template = engineInstance.getTemplate(); // takes the only datamart's name
-			 * configured String modelName = (String) template.getDatamartNames().get(0); IModelStructure md = getDataSource().getModelStructure(); IModelEntity
-			 * subEntity = md.getEntity(column.getSubEntity());
+			 * QbeEngineInstance engineInstance = getEngineInstance();
+			 * QbeTemplate template = engineInstance.getTemplate(); // takes the
+			 * only datamart's name configured String modelName = (String)
+			 * template.getDatamartNames().get(0); IModelStructure md =
+			 * getDataSource().getModelStructure(); IModelEntity subEntity =
+			 * md.getEntity(column.getSubEntity());
 			 */
 
 			String entityUName = entity.getUniqueName();
@@ -800,7 +842,12 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			String entityName = registryConfig.getEntity();
 
 			int index = entityName.lastIndexOf(".");
-			entityName = entityName + "::" + entityName.substring(index + 1); // entity name is something like it.eng.Store::Store
+			entityName = entityName + "::" + entityName.substring(index + 1); // entity
+																				// name
+																				// is
+																				// something
+																				// like
+																				// it.eng.Store::Store
 			logger.debug("Looking for entity [" + entityName + "] in model [" + modelName + "] ...");
 			entity = structure.getRootEntity(modelName, entityName);
 			logger.debug("Entity [" + entityName + "] was found");
