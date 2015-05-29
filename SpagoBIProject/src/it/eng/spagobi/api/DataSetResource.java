@@ -5,18 +5,23 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.api;
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.deserializer.DeserializerFactory;
 import it.eng.spagobi.commons.monitor.Monitor;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
@@ -33,13 +38,21 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.crosstab.CrossTab;
 import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,20 +63,25 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -79,13 +97,52 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDataSets(@QueryParam("typeDoc") String typeDoc) {
 		logger.debug("IN");
+
 		try {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
-			return serializeDataSets(dataSets, typeDoc);
+			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
+
+			for (IDataSet dataset : dataSets) {
+				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
+					toBeReturned.add(dataset);
+			}
+
+			return serializeDataSets(toBeReturned, typeDoc);
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
+		}
+	}
+
+	@POST
+	@Path("/")
+	public Response addDataSet(String body) {
+		ObjectMapper mapper = new ObjectMapper();
+		SbiDataSet sbiDataset = null;
+		try {
+			sbiDataset = mapper.readValue(body, SbiDataSet.class);
+		} catch (Exception e) {
+			logger.error("Error while reading the JSON object", e);
+			throw new SpagoBIRuntimeException("Error while reading the JSON object", e);
+		}
+
+		sbiDataset.setId(new SbiDataSetId(null, 1, getUserProfile().getOrganization()));
+		sbiDataset.setOwner((String) getUserProfile().getUserUniqueIdentifier());
+		IDataSet dataset = DataSetFactory.toDataSet(sbiDataset);
+
+		try {
+			DAOFactory.getDataSetDAO().insertDataSet(dataset);
+		} catch (Exception e) {
+			logger.error("Error while creating the dataset: " + e.getMessage(), e);
+			throw new SpagoBIRuntimeException("Error while creating the dataset: " + e.getMessage(), e);
+		}
+
+		try {
+			return Response.created(new URI("1.0/datasets/" + dataset.getLabel().replace(" ", "%20"))).build();
+		} catch (URISyntaxException e) {
+			logger.error("Error while creating the resource url, maybe an error in the label", e);
+			throw new SpagoBIRuntimeException("Error while creating the resource url, maybe an error in the label", e);
 		}
 	}
 
@@ -102,6 +159,137 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@PUT
+	@Path("/{label}")
+	public Response modifyDataSet(@PathParam("label") String label, String body) {
+		IDataSet dataset = null;
+		SbiDataSet sbiDataset = null;
+		try {
+			dataset = getDatasetManagementAPI().getDataSet(label);
+		} catch (Exception e) {
+			logger.error("Error while creating the dataset: " + e.getMessage(), e);
+			throw new SpagoBIRuntimeException("Error while creating the dataset: " + e.getMessage(), e);
+		}
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			sbiDataset = mapper.readValue(body, SbiDataSet.class);
+		} catch (Exception e) {
+			logger.error("Error while reading the JSON object", e);
+			throw new SpagoBIRuntimeException("Error while reading the JSON object", e);
+		}
+
+		int version = 1;
+		if (dataset instanceof VersionedDataSet) {
+			version = ((VersionedDataSet) dataset).getVersionNum();
+		}
+
+		sbiDataset.setId(new SbiDataSetId(dataset.getId(), version + 1, dataset.getOrganization()));
+		sbiDataset.setOwner(dataset.getOwner());
+		sbiDataset.setLabel(label);
+
+		IDataSet newDataset = DataSetFactory.toDataSet(sbiDataset);
+
+		try {
+			DAOFactory.getDataSetDAO().modifyDataSet(newDataset);
+		} catch (Exception e) {
+			logger.error("Error while creating the dataset: " + e.getMessage(), e);
+			throw new SpagoBIRuntimeException("Error while creating the dataset: " + e.getMessage(), e);
+		}
+
+		return Response.ok().build();
+	}
+
+	@POST
+	@Path("/{label}/execute")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response execute(@PathParam("label") String label, String body) {
+		SDKDataSetParameter[] parameters = null;
+		if (body != null && !body.equals("")) {
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				parameters = mapper.readValue(body, SDKDataSetParameter[].class);
+			} catch (Exception e) {
+				logger.error("Error while reading the JSON object", e);
+				throw new SpagoBIRuntimeException("Error while reading the JSON object", e);
+			}
+		}
+
+		return Response.ok(executeDataSet(label, parameters)).build();
+	}
+
+	private String executeDataSet(String label, SDKDataSetParameter[] params) {
+		String toReturn = null;
+		logger.debug("IN: label in input = " + label);
+
+		try {
+			if (label == null) {
+				logger.warn("DataSet identifier in input is null!");
+				return null;
+			}
+			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+			if (dataSet == null) {
+				logger.warn("DataSet with label [" + label + "] not existing.");
+				return null;
+			}
+			if (params != null && params.length > 0) {
+				HashMap parametersFilled = new HashMap();
+				for (int i = 0; i < params.length; i++) {
+					SDKDataSetParameter par = params[i];
+					parametersFilled.put(par.getName(), par.getValues()[0]);
+					logger.debug("Add parameter: " + par.getName() + "/" + par.getValues()[0]);
+				}
+				dataSet.setParamsMap(parametersFilled);
+			}
+
+			// add the jar retriver in case of a Qbe DataSet
+			if (dataSet instanceof QbeDataSet
+					|| (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof QbeDataSet)) {
+				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+				Map parameters = dataSet.getParamsMap();
+				if (parameters == null) {
+					parameters = new HashMap();
+					dataSet.setParamsMap(parameters);
+				}
+				dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+			}
+
+			dataSet.loadData();
+			// toReturn = dataSet.getDataStore().toXml();
+
+			JSONDataWriter writer = new JSONDataWriter();
+			toReturn = (writer.write(dataSet.getDataStore())).toString();
+
+		} catch (Exception e) {
+			logger.error("Error while retrieving SDKEngine list", e);
+			logger.debug("Returning null");
+			return null;
+		}
+		return toReturn;
+	}
+
+	@DELETE
+	@Path("/{label}")
+	public Response deleteDataset(@PathParam("label") String label) {
+		IDataSetDAO datasetDao = null;
+		try {
+			datasetDao = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			logger.error("Internal error", e);
+			throw new SpagoBIRuntimeException("Internal error", e);
+		}
+
+		IDataSet dataset = getDatasetManagementAPI().getDataSet(label);
+
+		try {
+			datasetDao.deleteDataSet(dataset.getId());
+		} catch (Exception e) {
+			logger.error("Error while deleting the specified dataset", e);
+			throw new SpagoBIRuntimeException("Error while deleting the specified dataset", e);
+		}
+
+		return Response.ok().build();
 	}
 
 	@GET
