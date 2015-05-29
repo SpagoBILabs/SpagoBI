@@ -327,7 +327,8 @@ public class DataSetFactory {
 					ds.setCategoryId(sbiDataSet.getCategory().getValueId());
 				}
 				// ds.setConfiguration(sbiDataSet.getConfiguration());
-				ds.setId(sbiDataSet.getId().getDsId());
+				if (sbiDataSet.getId().getDsId() != null)
+					ds.setId(sbiDataSet.getId().getDsId());
 				ds.setName(sbiDataSet.getName());
 				ds.setLabel(sbiDataSet.getLabel());
 				ds.setDescription(sbiDataSet.getDescription());
