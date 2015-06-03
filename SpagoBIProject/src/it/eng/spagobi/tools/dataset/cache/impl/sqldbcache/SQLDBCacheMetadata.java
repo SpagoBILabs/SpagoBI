@@ -33,10 +33,10 @@ import it.eng.spagobi.utilities.database.IDataBase;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,11 +48,11 @@ import org.apache.log4j.Logger;
  */
 public class SQLDBCacheMetadata implements ICacheMetadata {
 
-	private LinkedHashMap<String, CacheItem> cacheRegistry = new LinkedHashMap<String, CacheItem>();
+	// private LinkedHashMap<String, CacheItem> cacheRegistry = new LinkedHashMap<String, CacheItem>();
 
 	private final ICacheDAO cacheDao;
 
-	private final LinkedHashMap<String, List<String>> datasetToJoinedMap = new LinkedHashMap<String, List<String>>();
+	// private final LinkedHashMap<String, List<String>> datasetToJoinedMap = new LinkedHashMap<String, List<String>>();
 
 	SQLDBCacheConfiguration cacheConfiguration;
 
@@ -155,7 +155,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	public Integer getNumberOfObjects() {
-		return cacheRegistry.size();
+		return cacheDao.loadAllCacheItems().size();
 	}
 
 	public boolean isCleaningEnabled() {
@@ -193,21 +193,25 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return columnSize;
 	}
 
-	public LinkedHashMap<String, CacheItem> getCacheRegistry() {
-		// TODO: add cachedao impl
-		return cacheRegistry;
+	public List<CacheItem> getCacheItems() {
+		return cacheDao.loadAllCacheItems();
 	}
 
-	public void setCacheRegistry(LinkedHashMap<String, CacheItem> cacheRegistry) {
-		// TODO: add cachedao impl
-		this.cacheRegistry = cacheRegistry;
-	}
+	// public LinkedHashMap<String, CacheItem> getCacheRegistry() {
+	// // TODO: add cachedao impl
+	// return cacheRegistry;
+	// }
+	//
+	// public void setCacheRegistry(LinkedHashMap<String, CacheItem> cacheRegistry) {
+	// // TODO: add cachedao impl
+	// this.cacheRegistry = cacheRegistry;
+	// }
 
 	public void addCacheItem(String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset) {
 		CacheItem item = new CacheItem();
 		item.setName(tableName);
 		item.setTable(tableName);
-		item.setSignature(resultsetSignature);
+		item.setSignature(getHashedSignature(resultsetSignature));
 		item.setDimension(getRequiredMemory(resultset));
 		Date now = new Date();
 		item.setCreationDate(now);
@@ -224,8 +228,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		cacheDao.updateCacheItem(cacheItem);
 	}
 
-	public void removeCacheItem(String tableName) {
-		cacheDao.deleteCacheItemByTableName(tableName);
+	public void removeCacheItem(String signature) {
+		cacheDao.deleteCacheItemBySignature(getHashedSignature(signature));
 		// getCacheRegistry().remove(tableName);
 	}
 
@@ -255,7 +259,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	public CacheItem getCacheItem(String resultSetSignature) {
-		return cacheDao.loadCacheItemBySignature(resultSetSignature);
+		return cacheDao.loadCacheItemBySignature(getHashedSignature(resultSetSignature));
 		// CacheItem toReturn = null;
 		// Iterator it = getCacheRegistry().entrySet().iterator();
 		// while (it.hasNext()) {
@@ -300,16 +304,17 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cacheConfiguration.getTableNamePrefix().toUpperCase();
 	}
 
-	public LinkedHashMap<String, List<String>> getDatasetToJoinedMap() {
-		// TODO: add cachedao impl
-		return datasetToJoinedMap;
-	}
+	// public LinkedHashMap<String, List<String>> getDatasetToJoinedMap() {
+	// // TODO: add cachedao impl
+	// return datasetToJoinedMap;
+	// }
 
 	public List<String> getJoinedsReferringDataset(String datasetSignature) {
 		logger.debug("IN");
-		logger.debug("Search if dataset with signature " + datasetSignature + " has joined dataset referring to it");
+		String signature = getHashedSignature(datasetSignature);
+		logger.debug("Search if dataset with signature " + signature + " has joined dataset referring to it");
 		List<String> toReturn = new ArrayList<String>();
-		List<CacheItem> joinedCacheItems = cacheDao.loadCacheJoinedItemsReferringTo(datasetSignature);
+		List<CacheItem> joinedCacheItems = cacheDao.loadCacheJoinedItemsReferringTo(signature);
 		for (CacheItem joinedCacheItem : joinedCacheItems) {
 			toReturn.add(joinedCacheItem.getSignature());
 		}
@@ -320,13 +325,15 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	public void addJoinedDatasetReference(String signature, String joinedSignature) {
 		logger.debug("IN");
-		if (!cacheDao.hasCacheItemReferenceToCacheJoinedItem(signature, joinedSignature)) {
-			CacheItem cacheItem = cacheDao.loadCacheItemBySignature(signature);
-			CacheItem joinedCacheItem = cacheDao.loadCacheItemBySignature(joinedSignature);
+		String hashedSignature = getHashedSignature(signature);
+		String hashedJoinedSignature = getHashedSignature(joinedSignature);
+		if (!cacheDao.hasCacheItemReferenceToCacheJoinedItem(hashedSignature, hashedJoinedSignature)) {
+			CacheItem cacheItem = cacheDao.loadCacheItemBySignature(hashedSignature);
+			CacheItem joinedCacheItem = cacheDao.loadCacheItemBySignature(hashedJoinedSignature);
 			cacheDao.insertCacheJoinedItem(cacheItem, joinedCacheItem);
-			logger.debug("Added information that " + joinedSignature + " refers " + signature);
+			logger.debug("Added information that " + hashedJoinedSignature + " refers " + hashedSignature);
 		} else {
-			logger.debug("Already know that " + joinedSignature + " refers " + signature);
+			logger.debug("Already know that " + hashedJoinedSignature + " refers " + hashedSignature);
 		}
 
 		// if (datasetToJoinedMap.containsKey(signature) && datasetToJoinedMap.get(signature) != null) {
@@ -345,5 +352,23 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		// logger.debug("added information that " + joinedSignature + " refers " + signature);
 		// }
 		logger.debug("OUT");
+	}
+
+	private String getHashedSignature(String signature) {
+		MessageDigest messageDigest;
+		try {
+			messageDigest = MessageDigest.getInstance("SHA-256");
+			messageDigest.update(signature.getBytes("UTF-8"));
+		} catch (Throwable t) {
+			throw new CacheException("Error when hashing dataset signature. This step is necessary to generate the cache item signature", t);
+		}
+
+		// convert the byte to hex format method 1
+		byte byteData[] = messageDigest.digest();
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < byteData.length; i++) {
+			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+		}
+		return sb.toString();
 	}
 }
