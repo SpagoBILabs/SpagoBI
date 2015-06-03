@@ -17,6 +17,9 @@ import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCHBaseDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
@@ -229,6 +232,12 @@ public class DataSetFactory {
 
 				if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
 					ds = new MongoDataSet();
+				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("hbase")) {
+					ds = new JDBCHBaseDataSet();
+				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("hive")) {
+					ds = new JDBCHiveDataSet();
+				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("orient")) {
+					ds = new JDBCOrientDbDataSet();
 				} else {
 					ds = new JDBCDataSet();
 				}
