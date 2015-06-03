@@ -219,7 +219,4 @@ public interface ICache {
 	 *
 	 * @param signature
 	 */
-
-	public void deleteDatasetAndJoined(String signature);
-
 }

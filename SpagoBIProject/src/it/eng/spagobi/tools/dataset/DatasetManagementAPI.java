@@ -308,7 +308,8 @@ public class DatasetManagementAPI {
 				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
 			}
 
-			ICache cache = SpagoBICacheManager.getCache();
+			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+			cache.setUserProfile(userProfile);
 			IDataStore cachedResultSet = cache.get(dataSet);
 
 			IDataStore dataStore = null;
@@ -393,7 +394,8 @@ public class DatasetManagementAPI {
 				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
 			}
 
-			ICache cache = SpagoBICacheManager.getCache();
+			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+			cache.setUserProfile(userProfile);
 			IDataStore dataStore = null;
 
 			if (cache.contains(dataSet) == false) {
@@ -446,7 +448,8 @@ public class DatasetManagementAPI {
 
 			joinedDataSet.setParamsMaps(parametersValues);
 
-			ICache cache = SpagoBICacheManager.getCache();
+			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+			cache.setUserProfile(userProfile);
 			// if (cache.contains(joinedDataSet) == false) {
 			// cache.refresh(joinedDataSet, true);
 			// }
@@ -512,7 +515,8 @@ public class DatasetManagementAPI {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
 			joinedDataSet.setParamsMaps(parametersValues);
 
-			ICache cache = SpagoBICacheManager.getCache();
+			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+			cache.setUserProfile(userProfile);
 			cache.refreshIfNotContained(joinedDataSet, true);
 			// if (cache.contains(joinedDataSet) == false) {
 			// cache.refresh(joinedDataSet, true);
@@ -564,7 +568,8 @@ public class DatasetManagementAPI {
 		List<IDataStore> dataStores = new ArrayList<IDataStore>();
 
 		try {
-			ICache cache = SpagoBICacheManager.getCache();
+			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+			cache.setUserProfile(userProfile);
 
 			WorkManager spagoBIWorkManager;
 			try {
@@ -591,7 +596,7 @@ public class DatasetManagementAPI {
 				dataSet.loadData();
 				IDataStore dataStore = dataSet.getDataStore();
 
-				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet);
+				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet, userProfile);
 
 				workItemList.add(cacheWriteWork);
 			}
@@ -617,7 +622,8 @@ public class DatasetManagementAPI {
 
 	private IDataStore storeDataSetInCache(IDataSet dataSet, Map<String, String> parametersValues, boolean wait) {
 		try {
-			ICache cache = SpagoBICacheManager.getCache();
+			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+			cache.setUserProfile(userProfile);
 			dataSet.setParamsMap(parametersValues);
 			dataSet.loadData();
 			IDataStore dataStore = dataSet.getDataStore();
@@ -631,7 +637,7 @@ public class DatasetManagementAPI {
 			commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
 
 			List<Work> workItemList = new ArrayList<Work>();
-			Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet);
+			Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet, userProfile);
 			workItemList.add(cacheWriteWork);
 
 			if (workItemList.size() > 0) {
@@ -663,7 +669,8 @@ public class DatasetManagementAPI {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			checkQbeDataset(dataSet);
 
-			ICache cache = SpagoBICacheManager.getCache();
+			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+			cache.setUserProfile(userProfile);
 			IDataStore cachedResultSet = cache.get(dataSet);
 			IDataStore dataStore = null;
 
@@ -1088,7 +1095,8 @@ public class DatasetManagementAPI {
 		joinSqlBuilder.column("count(*) counter");
 
 		try {
-			ICache cache = SpagoBICacheManager.getCache();
+			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+			cache.setUserProfile(userProfile);
 			IDataSource dataSource = ((SQLDBCache) cache).getDataSource();
 			Long maxSingleCount = 0L;
 

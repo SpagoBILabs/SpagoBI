@@ -18,15 +18,19 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work;
+
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import commonj.work.Work;
 
 /**
@@ -38,7 +42,8 @@ public class SQLDBCacheWriteWork implements Work {
 	ICache cache;
 	IDataStore dataStore;
 	IDataSet dataSet;
-	
+	UserProfile userProfile;
+
 	private static transient Logger logger = Logger.getLogger(SpagoBICacheManager.class);
 
 	/**
@@ -54,31 +59,55 @@ public class SQLDBCacheWriteWork implements Work {
 		this.dataSet = dataSet;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @param cache
+	 * @param dataStore
+	 * @param signature
+	 * @param dataSet
+	 */
+	public SQLDBCacheWriteWork(ICache cache, IDataStore dataStore, IDataSet dataSet, UserProfile userProfile) {
+		super();
+		this.cache = cache;
+		this.dataStore = dataStore;
+		this.dataSet = dataSet;
+		this.userProfile = userProfile;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
 		logger.trace("IN");
 		try {
+			if (userProfile != null) {
+				TenantManager.setTenant(new Tenant(userProfile.getOrganization()));
+			}
 			cache.put(dataSet, dataStore);
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 			// who is catching this exception in the end? Verify and push the log there
 			logger.error("An unexpected error occured while adding store to cache", t);
 			throw new RuntimeException("An unexpected error occured while adding store to cache", t);
 		} finally {
+			TenantManager.unset();
 			logger.trace("OUT");
 		}
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see commonj.work.Work#isDaemon()
 	 */
 	public boolean isDaemon() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see commonj.work.Work#release()
 	 */
 	public void release() {
