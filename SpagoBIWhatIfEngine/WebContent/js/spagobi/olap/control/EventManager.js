@@ -113,18 +113,20 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * @param {int} axis position of the row
 	 * @param {int} member position of the member
 	 * @param {int} position in the Position array
+	 * @param {String} uniqueName unique name of the member
 	 */
-	drillDown: function(axis, position,  member){
-		this.olapController.drillDown(axis, member, position);
+	drillDown: function(axis, position,  member, uniqueName, positionUniqueName){
+		this.olapController.drillDown(axis, member, position, uniqueName, positionUniqueName);
 	},
 	/**
 	 * Updates the view after drill up operation
 	 * @param {int} axis position of the row
 	 * @param {int} member position of the member
 	 * @param {int} position in the Position array
+	 * @param {String} uniqueName unique name of the member
 	 */
-	drillUp: function(axis, position,  member){
-		this.olapController.drillUp(axis, member, position);
+	drillUp: function(axis, position,  member, uniqueName, positionUniqueName){
+		this.olapController.drillUp(axis, member, position, uniqueName, positionUniqueName);
 	},
 	/**
 	 * Swaps the axis
