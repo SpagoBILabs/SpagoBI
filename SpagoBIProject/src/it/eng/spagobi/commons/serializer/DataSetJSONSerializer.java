@@ -350,7 +350,11 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(SCOPE_CD, ds.getScopeCd());
 			result.put(SCOPE_ID, ds.getScopeId());
 		} catch (Throwable t) {
-			throw new SerializationException("An error occurred while serializing object: " + o, t);
+			IDataSet ds = (IDataSet) o;
+			if (ds instanceof VersionedDataSet) {
+				ds = ((VersionedDataSet) ds).getWrappedDataset();
+			}
+			throw new SerializationException("An error occurred to dataset (" + ds.getLabel() + ") while serializing object: " + o, t);
 		} finally {
 
 		}
