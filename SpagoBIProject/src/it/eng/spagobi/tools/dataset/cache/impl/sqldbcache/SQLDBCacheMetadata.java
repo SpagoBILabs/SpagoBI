@@ -48,11 +48,7 @@ import org.apache.log4j.Logger;
  */
 public class SQLDBCacheMetadata implements ICacheMetadata {
 
-	// private LinkedHashMap<String, CacheItem> cacheRegistry = new LinkedHashMap<String, CacheItem>();
-
 	private final ICacheDAO cacheDao;
-
-	// private final LinkedHashMap<String, List<String>> datasetToJoinedMap = new LinkedHashMap<String, List<String>>();
 
 	SQLDBCacheConfiguration cacheConfiguration;
 
@@ -99,8 +95,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			throw new CacheException("An unexpected error occured while initializing cache metadata: SPAGOBI.CACHE.NAMEPREFIX cannot be empty");
 		}
 
-		// Modified by Alessandro Portosa
-		// Cleaning behaviour now is driven by totalMemory value
+		// Cleaning behavior now is driven by totalMemory value
 		// TotalMemory = -1 -> Caching with no cleaning action, TotalMemory = 0 -> No caching action, TotalMemory > 0 -> Caching with cleaning action
 		if (totalMemory != null && (totalMemory.intValue()) != -1 && cachePercentageToClean != null) {
 			isActiveCleanAction = true;
@@ -197,16 +192,6 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cacheDao.loadAllCacheItems();
 	}
 
-	// public LinkedHashMap<String, CacheItem> getCacheRegistry() {
-	// // TODO: add cachedao impl
-	// return cacheRegistry;
-	// }
-	//
-	// public void setCacheRegistry(LinkedHashMap<String, CacheItem> cacheRegistry) {
-	// // TODO: add cachedao impl
-	// this.cacheRegistry = cacheRegistry;
-	// }
-
 	public void addCacheItem(String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset) {
 		CacheItem item = new CacheItem();
 		item.setName(tableName);
@@ -218,7 +203,6 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		item.setLastUsedDate(now);
 		item.setProperties(properties);
 		cacheDao.insertCacheItem(item);
-		// getCacheRegistry().put(tableName, item);
 
 		logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature() + " \n Dimension: " + item.getDimension()
 				+ " bytes (approximately)  ]");
@@ -230,47 +214,18 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	public void removeCacheItem(String signature) {
 		cacheDao.deleteCacheItemBySignature(getHashedSignature(signature));
-		// getCacheRegistry().remove(tableName);
 	}
 
 	public void removeAllCacheItems() {
 		cacheDao.deleteAllCacheItem();
-		// Iterator it = getCacheRegistry().entrySet().iterator();
-		// while (it.hasNext()) {
-		// Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
-		// String key = entry.getKey();
-		// this.removeCacheItem(key);
-		// }
 	}
 
 	public CacheItem getCacheItemByResultSetTableName(String tableName) {
 		return cacheDao.loadCacheItemByTableName(tableName);
-		// CacheItem toReturn = null;
-		// Iterator it = getCacheRegistry().entrySet().iterator();
-		// while (it.hasNext()) {
-		// Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
-		// CacheItem item = entry.getValue();
-		// if (item.getTable().equalsIgnoreCase(tableName)) {
-		// toReturn = item;
-		// break;
-		// }
-		// }
-		// return toReturn;
 	}
 
 	public CacheItem getCacheItem(String resultSetSignature) {
 		return cacheDao.loadCacheItemBySignature(getHashedSignature(resultSetSignature));
-		// CacheItem toReturn = null;
-		// Iterator it = getCacheRegistry().entrySet().iterator();
-		// while (it.hasNext()) {
-		// Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
-		// CacheItem item = entry.getValue();
-		// if (item.getSignature().equalsIgnoreCase(resultSetSignature)) {
-		// toReturn = item;
-		// break;
-		// }
-		// }
-		// return toReturn;
 	}
 
 	public boolean containsCacheItemByTableName(String tableName) {
@@ -283,7 +238,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheMetadata#getSignatures()
 	 */
 	public List<String> getSignatures() {
@@ -292,22 +247,12 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		for (CacheItem item : cacheItems) {
 			signatures.add(item.getSignature());
 		}
-		// Iterator it = getCacheRegistry().entrySet().iterator();
-		// while (it.hasNext()) {
-		// Map.Entry<String, CacheItem> entry = (Map.Entry<String, CacheItem>) it.next();
-		// signatures.add(entry.getValue().getSignature());
-		// }
 		return signatures;
 	}
 
 	public String getTableNamePrefix() {
 		return cacheConfiguration.getTableNamePrefix().toUpperCase();
 	}
-
-	// public LinkedHashMap<String, List<String>> getDatasetToJoinedMap() {
-	// // TODO: add cachedao impl
-	// return datasetToJoinedMap;
-	// }
 
 	public List<String> getJoinedsReferringDataset(String datasetSignature) {
 		logger.debug("IN");
@@ -318,7 +263,6 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		for (CacheItem joinedCacheItem : joinedCacheItems) {
 			toReturn.add(joinedCacheItem.getSignature());
 		}
-		// List<String> joineds = datasetToJoinedMap.get(datasetSignature);
 		logger.debug("OUT");
 		return toReturn;
 	}
@@ -335,22 +279,6 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		} else {
 			logger.debug("Already know that " + hashedJoinedSignature + " refers " + hashedSignature);
 		}
-
-		// if (datasetToJoinedMap.containsKey(signature) && datasetToJoinedMap.get(signature) != null) {
-		// List joineds = datasetToJoinedMap.get(signature);
-		// if (!joineds.contains(joinedSignature)) {
-		// joineds.add(joinedSignature);
-		// logger.debug("added information that " + joinedSignature + " refers " + signature);
-		// } else {
-		// logger.debug("Already know that that " + datasetToJoinedMap + " refers " + signature);
-		// }
-		// datasetToJoinedMap.put(signature, joineds);
-		// } else {
-		// List<String> joineds = new ArrayList<String>();
-		// joineds.add(joinedSignature);
-		// datasetToJoinedMap.put(signature, joineds);
-		// logger.debug("added information that " + joinedSignature + " refers " + signature);
-		// }
 		logger.debug("OUT");
 	}
 
