@@ -631,6 +631,10 @@
 
 				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />
 
+				<file name="./src/ext4/sbi/widgets/store/DynamicStore2.js" />
+				<file name="./src/ext4/sbi/widgets/grid/DynamicFilteringToolbar2.js" />
+				<file name="./src/ext4/sbi/widgets/grid/DynamicGridPanel2.js" />
+				
 				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" />
 				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" />
 				<file name="./src/ext4/sbi/widgets/grid/RadioColumn.js" />
