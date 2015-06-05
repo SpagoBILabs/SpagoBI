@@ -653,7 +653,27 @@
 				<file name="./src/ext4/sbi/browser/DocumentsTree.js" />
 				<file name="./src/ext4/sbi/execution/SaveDocumentWindowsExt4.js" />
 
-
+				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverDetailPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverListDetailPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverModel.js" />
+				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverUseModel.js" />
+				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverUsePanel.js" />
+				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverUseTabPanel.js" />
+				
+				<file name="./src/ext4/sbi/behavioural/lov/LOVDatasetBottomPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/LOVDetailPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/LOVFixedListBottomPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/LOVJavaClassBottomPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/LOVListDetailPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/LOVModel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/LOVProfileAttributeFilling.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/LOVQueryBottomPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/LOVScriptBottomPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovConfigurationGridPanel2.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovPanel2.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel2.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel2.js" />
+				
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel.js" />
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel.js" />
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovConfigurationGridPanel.js" />
@@ -720,7 +740,6 @@
 
 				<file name="./src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorSplittedPanel.js" />
 				<file name="./src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorContextMenu.js" />
-
 				
 			</filelist>
 
