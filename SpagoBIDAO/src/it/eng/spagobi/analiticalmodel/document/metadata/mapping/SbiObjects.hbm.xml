@@ -11,46 +11,43 @@
   <id name="biobjId" type="integer">
    <column name="biobj_id"/>
    <generator class="org.hibernate.id.enhanced.TableGenerator">
-		<param name="optimizer">none</param>
-		<param name="segment_value">SBI_OBJECTS</param>	
-		<param name="initial_value">1</param>	
+    <param name="optimizer">none</param>
+    <param name="segment_value">SBI_OBJECTS</param>
+    <param name="initial_value">1</param>
    </generator>
   </id>
-  
-<component name="commonInfo" insert="true" update="true" 
-  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
-        <property name="userIn" type="string">
-            <column name="USER_IN" length="100" not-null="true" />
-        </property> 
-        <property name="userUp" type="string">
-            <column name="USER_UP" length="100" not-null="false" />
-        </property> 
-        <property name="userDe" type="string">
-            <column name="USER_DE" length="100" not-null="false" />
-        </property>                 
-        <property name="timeIn" type="timestamp">
-            <column name="TIME_IN" not-null="true" />
-        </property> 
-        <property name="timeUp" type="timestamp">
-            <column name="TIME_UP" not-null="false" />
-        </property> 
-        <property name="timeDe" type="timestamp">
-            <column name="TIME_DE" not-null="false" />
-        </property>                      
-        <property name="sbiVersionIn" type="string">
-            <column name="SBI_VERSION_IN" length="10" not-null="false" />
-        </property> 
-        <property name="sbiVersionUp" type="string">
-            <column name="SBI_VERSION_UP" length="10" not-null="false" />
-        </property> 
-        <property name="sbiVersionDe" type="string">
-            <column name="SBI_VERSION_DE" length="10" not-null="false" />
-        </property>                 
-        <property name="organization" type="string">
-            <column name="ORGANIZATION" length="20" not-null="false" />
-        </property>  			 
+  <component class="it.eng.spagobi.commons.metadata.SbiCommonInfo" name="commonInfo">
+   <property generated="never" lazy="false" name="userIn" type="string">
+    <column length="100" name="USER_IN" not-null="true"/>
+   </property>
+   <property generated="never" lazy="false" name="userUp" type="string">
+    <column length="100" name="USER_UP" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="userDe" type="string">
+    <column length="100" name="USER_DE" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="timeIn" type="timestamp">
+    <column name="TIME_IN" not-null="true"/>
+   </property>
+   <property generated="never" lazy="false" name="timeUp" type="timestamp">
+    <column name="TIME_UP" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="timeDe" type="timestamp">
+    <column name="TIME_DE" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="sbiVersionIn" type="string">
+    <column length="10" name="SBI_VERSION_IN" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="sbiVersionUp" type="string">
+    <column length="10" name="SBI_VERSION_UP" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="sbiVersionDe" type="string">
+    <column length="10" name="SBI_VERSION_DE" not-null="false"/>
+   </property>
+   <property generated="never" lazy="false" name="organization" type="string">
+    <column length="20" name="ORGANIZATION" not-null="false"/>
+   </property>
   </component>
-   
   <many-to-one class="it.eng.spagobi.engines.config.metadata.SbiEngines"
    fetch="join" name="sbiEngines">
    <column name="engine_id" not-null="true"/>
@@ -80,9 +77,8 @@
   </many-to-one>
    -->
   <property generated="never" lazy="false" name="dataSet" type="integer">
-   <column  name="data_set_id" not-null="false"/>
+   <column name="data_set_id" not-null="false"/>
   </property>
-   
   <property generated="never" lazy="false" name="objectTypeCode" type="string">
    <column length="20" name="biobj_type_cd" not-null="true"/>
   </property>
@@ -140,14 +136,13 @@
   <property generated="never" lazy="false" name="parametersRegion" type="string">
    <column length="20" name="PARAMETERS_REGION"/>
   </property>
-  
   <set inverse="true" name="sbiObjPars" sort="unsorted">
    <key>
     <column name="biobj_id" not-null="true"/>
    </key>
    <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar"/>
   </set>
-  <set inverse="true" name="sbiObjFuncs" sort="unsorted">
+  <set fetch="join" inverse="true" name="sbiObjFuncs" sort="unsorted">
    <key>
     <column name="biobj_id" not-null="true"/>
    </key>
@@ -165,7 +160,7 @@
    </key>
    <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiDocument"/>
   </set>
-  <filter name="tenantFilter" condition="organization=:tenant"/>  
+  <filter condition="organization=:tenant" name="tenantFilter"/>
  </class>
  <filter-def name="tenantFilter">
   <filter-param name="tenant" type="string"/>

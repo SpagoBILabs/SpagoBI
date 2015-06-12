@@ -395,6 +395,35 @@ public class ObjectsAccessVerifier {
 	}
 
 	/**
+	 * Control if the current user can develop new object into the functionality identified by its id.
+	 *
+	 * @param folder
+	 *            The lowFunctionality
+	 * @param profile
+	 *            user profile
+	 *
+	 * @return A boolean control value
+	 */
+	public static boolean canDev(LowFunctionality folder, IEngUserProfile profile) {
+		return canDevInternal(folder, profile);
+	}
+
+	/**
+	 * Control if the current user can test new object into the functionality.
+	 *
+	 * @param folder
+	 *            The lowFunctionality
+	 * @param profile
+	 *            user profile
+	 *
+	 * @return A boolean control value
+	 */
+	public static boolean canTest(LowFunctionality folder, IEngUserProfile profile) {
+		return canTestInternal(folder, profile);
+
+	}
+
+	/**
 	 * Control if the current user can test new object into the functionality identified by its id.
 	 *
 	 * @param folderId
@@ -405,8 +434,20 @@ public class ObjectsAccessVerifier {
 	 * @return A boolean control value
 	 */
 	public static boolean canTest(Integer folderId, IEngUserProfile profile) {
-		return canTestInternal(folderId, profile);
+		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canTest");
+		logger.debug("IN");
+		LowFunctionality folder = null;
+		try {
+			folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
+		} catch (Exception e) {
+			logger.error("Exception in loadLowFunctionalityByID", e);
 
+			return false;
+		} finally {
+			monitor.stop();
+			logger.debug("OUT");
+		}
+		return canTestInternal(folder, profile);
 	}
 
 	/**
@@ -878,8 +919,8 @@ public class ObjectsAccessVerifier {
 				canSee = true;
 			} else {
 				// if user can exec or dev or test on functionality, he can see it, otherwise he cannot see it
-				if (ObjectsAccessVerifier.canExec(lowFunctionality.getId(), profile) || ObjectsAccessVerifier.canTest(lowFunctionality.getId(), profile)
-						|| ObjectsAccessVerifier.canDev(lowFunctionality.getId(), profile)) {
+				if (ObjectsAccessVerifier.canExec(lowFunctionality, profile) || ObjectsAccessVerifier.canTest(lowFunctionality, profile)
+						|| ObjectsAccessVerifier.canDev(lowFunctionality, profile)) {
 					canSee = true;
 				} else {
 					canSee = false;
