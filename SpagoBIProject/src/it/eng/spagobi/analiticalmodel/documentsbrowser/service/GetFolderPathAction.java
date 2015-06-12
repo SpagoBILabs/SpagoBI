@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
@@ -30,92 +30,89 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
  */
 public class GetFolderPathAction extends AbstractSpagoBIAction {
-	
+
 	// REQUEST PARAMETERS
 	public static final String FOLDER_ID = "folderId";
 	public static final String ROOT_FOLDER_ID = "rootFolderId";
-	
+
 	public static final String ROOT_NODE_ID = "rootNode";
-	
+
 	// logger component
 	private static Logger logger = Logger.getLogger(GetFolderPathAction.class);
-	
+
+	@Override
 	public void doService() {
-		
+
 		List functionalities = new ArrayList();
-		
+
 		logger.debug("IN");
-		
+
 		try {
-			
+
 			String folderIdStr = getAttributeAsString(FOLDER_ID);
-			String rootFolderID = getAttributeAsString(ROOT_FOLDER_ID);	
-			
+			String rootFolderID = getAttributeAsString(ROOT_FOLDER_ID);
+
 			logger.debug("Parameter [" + FOLDER_ID + "] is equal to [" + folderIdStr + "]");
 			logger.debug("Parameter [" + ROOT_FOLDER_ID + "] is equal to [" + rootFolderID + "]");
-			
+
 			FolderContentUtil fcUtil = new FolderContentUtil();
+			LowFunctionality folder = null;
 			if (folderIdStr != null && !folderIdStr.equalsIgnoreCase(FolderContentUtil.ROOT_NODE_ID)) {
-				boolean canSee = fcUtil.checkRequiredFolder(folderIdStr, this.getUserProfile());
+				int folderId = new Integer(folderIdStr);
+				logger.debug("Folder id is " + folderId);
+				folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
+				logger.debug("Folder is " + folder);
+				boolean canSee = fcUtil.checkRequiredFolder(folder, this.getUserProfile());
 				if (!canSee) {
 					logger.error("Required folder does not exist or you don't have priviledges to see it");
 					throw new SpagoBIServiceException(SERVICE_NAME, "Required folder does not exist or you don't have priviledges to see it");
 				}
 			}
-			
-			//Check if there is folder specified as home for the document browser (Property in SBI_CONFIG with label SPAGOBI.DOCUMENTBROWSER.HOME)
-			if (folderIdStr == null){
-				Config documentBrowserHomeConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.HOME");
-				if (documentBrowserHomeConfig != null){
-					if (documentBrowserHomeConfig.isActive()){
-						
-						String folderLabel = documentBrowserHomeConfig.getValueCheck();
-						
-						if (!StringUtils.isEmpty(folderLabel)){
-							LowFunctionality funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(folderLabel, false);
-							
-							if (funct != null){
-								folderIdStr = String.valueOf(funct.getId());
 
-							}
-							
+			// Check if there is folder specified as home for the document browser (Property in SBI_CONFIG with label SPAGOBI.DOCUMENTBROWSER.HOME)
+			if (folder == null) {
+				Config documentBrowserHomeConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.HOME");
+				if (documentBrowserHomeConfig != null) {
+					if (documentBrowserHomeConfig.isActive()) {
+
+						String folderLabel = documentBrowserHomeConfig.getValueCheck();
+
+						if (!StringUtils.isEmpty(folderLabel)) {
+							folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(folderLabel, false);
+
 						}
 
 					}
 				}
 
-				
 			}
-			//------------------
-			
-			
-			
-			if (folderIdStr == null || folderIdStr.equalsIgnoreCase(ROOT_NODE_ID)){
-				//getting default folder (root)
-				LowFunctionality rootFunct = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
-				functionalities.add(rootFunct);
+			// ------------------
+
+			if (folder == null || folderIdStr.equalsIgnoreCase(ROOT_NODE_ID)) {
+				// getting default folder (root)
+				folder = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
+				functionalities.add(folder);
 			} else {
-				functionalities = DAOFactory.getLowFunctionalityDAO()
-					.loadParentFunctionalities(Integer.valueOf(folderIdStr), (rootFolderID==null?null:Integer.valueOf(rootFolderID)) );	
+				functionalities = DAOFactory.getLowFunctionalityDAO().loadParentFunctionalities(folder.getId(),
+						(rootFolderID == null ? null : Integer.valueOf(rootFolderID)));
 			}
-			
+
 			HttpServletRequest httpRequest = getHttpRequest();
 			MessageBuilder m = new MessageBuilder();
 			Locale locale = m.getLocale(httpRequest);
-			JSONArray foldersJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( functionalities,locale );
-			
+			JSONArray foldersJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(functionalities, locale);
+
 			try {
-				writeBackToClient( new JSONSuccess(  createJSONResponse(foldersJSON) ) ) ;
+				writeBackToClient(new JSONSuccess(createJSONResponse(foldersJSON)));
 			} catch (IOException e) {
 				throw new SpagoBIException("Impossible to write back the responce to the client", e);
 			}
-			
+
 		} catch (SpagoBIServiceException e) {
 			throw e;
 		} catch (Throwable t) {
@@ -124,9 +121,10 @@ public class GetFolderPathAction extends AbstractSpagoBIAction {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
 	 * Creates a json array with parents folder informations
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -136,17 +134,17 @@ public class GetFolderPathAction extends AbstractSpagoBIAction {
 		JSONArray nodes;
 
 		nodes = new JSONArray();
-		
-		for (int i=rows.length()-1; i>=0; i--){
+
+		for (int i = rows.length() - 1; i >= 0; i--) {
 			JSONObject tmpNode = rows.getJSONObject(i);
 			node = new JSONObject();
 			node.put("id", tmpNode.get(FoldersJSONSerializer.ID));
 			node.put("name", tmpNode.get(FoldersJSONSerializer.NAME));
 			node.put("path", tmpNode.get(FoldersJSONSerializer.PATH));
-			
+
 			nodes.put(node);
 		}
 		return nodes;
 	}
-	
+
 }
