@@ -6,6 +6,7 @@
 	<classpathentry kind="lib" path="lib/hibernate-3.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-databind-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache-1.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtilsJSON"/>
 	<classpathentry kind="lib" path="lib/spago-core-2.2.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/QbeCore"/>
@@ -40,6 +41,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/SpagoBIUtils/lib/ehcache-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
