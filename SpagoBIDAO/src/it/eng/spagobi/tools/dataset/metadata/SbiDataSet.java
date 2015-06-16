@@ -7,8 +7,15 @@ package it.eng.spagobi.tools.dataset.metadata;
 
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.services.validation.Alphanumeric;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Date;
+
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -30,8 +37,17 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	private SbiDataSetId id;
 
+	@ExtendedAlphanumeric
+	@Size(max = 50)
 	private String name = null;
+
+	@ExtendedAlphanumeric
+	@Size(max = 160)
 	private String description = null;
+
+	@NotEmpty
+	@Alphanumeric
+	@Size(max = 50)
 	private String label = null;
 
 	private boolean active = true;
@@ -85,12 +101,24 @@ public class SbiDataSet extends SbiHibernateModel {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public SbiDomains getScope() {
 		return scope;
 	}
 
 	public void setScope(SbiDomains scope) {
 		this.scope = scope;
+	}
+
+	public Integer getScopeId() {
+		if (scope != null)
+			return scope.getValueId();
+		else
+			return null;
+	}
+
+	public void setScopeId(Integer id) {
+		scope = getDomain(id);
 	}
 
 	/**
@@ -270,6 +298,7 @@ public class SbiDataSet extends SbiHibernateModel {
 		this.pivotRowName = pivotRowName;
 	}
 
+	@JsonIgnore
 	public SbiDomains getCategory() {
 		return category;
 	}
@@ -278,18 +307,30 @@ public class SbiDataSet extends SbiHibernateModel {
 		this.category = category;
 	}
 
+	public Integer getCategoryId() {
+		if (category != null)
+			return category.getValueId();
+		else
+			return null;
+	}
+
+	public void setCategoryId(Integer id) {
+		category = getDomain(id);
+	}
+
 	/**
 	 * Gets the transformer.
 	 *
 	 * @return the transformer
 	 */
+	@JsonIgnore
 	public SbiDomains getTransformer() {
 		return this.transformer;
 	}
 
 	/**
 	 * Sets the transformer.
-	 * 
+	 *
 	 * @param transformer
 	 *            the new transformer
 	 */
@@ -297,9 +338,20 @@ public class SbiDataSet extends SbiHibernateModel {
 		this.transformer = transformer;
 	}
 
+	public Integer getTransformerId() {
+		if (transformer != null)
+			return transformer.getValueId();
+		else
+			return null;
+	}
+
+	public void setTransformerId(Integer id) {
+		transformer = getDomain(id);
+	}
+
 	/**
 	 * Gets the metadata.
-	 * 
+	 *
 	 * @return metadata
 	 */
 	public String getDsMetadata() {
@@ -308,7 +360,7 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	/**
 	 * the metadata.
-	 * 
+	 *
 	 * @param transformer
 	 *            the new metadata
 	 */
@@ -515,4 +567,17 @@ public class SbiDataSet extends SbiHibernateModel {
 		this.publicDS = publicDS;
 	}
 
+	private SbiDomains getDomain(Integer id) {
+		if (id != null) {
+			try {
+				SbiDomains sbiDomain = new SbiDomains();
+				sbiDomain.setValueId(id);
+
+				return sbiDomain;
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Impossible to load domain with id [" + id + "]", e);
+			}
+		} else
+			return null;
+	}
 }

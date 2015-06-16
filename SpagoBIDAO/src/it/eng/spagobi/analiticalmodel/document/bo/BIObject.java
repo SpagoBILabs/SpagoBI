@@ -15,6 +15,9 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
+import it.eng.spagobi.services.validation.Alphanumeric;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.Xss;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -23,6 +26,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,6 +47,7 @@ public class BIObject implements Serializable, Cloneable {
 	private Integer id = null;
 
 	// ENGINE_ID NUMBER N Engine idenitifier (FK)
+	@NotNull
 	private Engine engine = null;
 
 	// DATA_SOURCE_ID NUMBER N DataSource idenitifier (FK)
@@ -47,30 +57,45 @@ public class BIObject implements Serializable, Cloneable {
 	private Integer dataSetId = null;
 
 	// DESCR VARCHAR2(128) Y BI Object description
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 200)
 	private String name = null;
 
 	// DESCR VARCHAR2(128) Y BI Object description
+	@ExtendedAlphanumeric
+	@Size(max = 400)
 	private String description = null;
 
 	// LABEL VARCHAR2(36) Y Engine label (short textual identifier)
+	@NotEmpty
+	@Alphanumeric
+	@Size(max = 20)
 	private String label = null;
 
 	// ENCRYPT NUMBER Y Parameter encryption request.
 	private Integer encrypt = null;
 
 	// VISIBLE NUMBER Y Parameter visible request.
+	@Range(min = 0, max = 1)
 	private Integer visible = null;
 
+	@Xss
+	@Size(max = 400)
 	private String profiledVisibility;
 
 	// REL_NAME VARCHAR2(256) Y Relative path + file object name
+	@Xss
+	@Size(max = 400)
 	private String relName = null;
 
 	// STATE_ID NUMBER N State identifier (actually not used)
+	@NotNull
 	private Integer stateID = null;
 
 	// STATE_CD VARCHAR2(18) N State code. Initially hard-coded valued, in the
 	// future, managed by a states workflow with historical storage.
+	@NotEmpty
 	private String stateCode = null;
 
 	// BIOBJ_TYPE_ID NUMBER N Business Intelligence Object Type identifier.
@@ -131,7 +156,7 @@ public class BIObject implements Serializable, Cloneable {
 	 *
 	 * @return Returns the biObjectParameters.
 	 */
-	@JsonProperty(value = "parameters")
+	@JsonIgnore
 	public List<BIObjectParameter> getBiObjectParameters() {
 		return biObjectParameters;
 	}
@@ -161,6 +186,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * @param description
 	 *            The description to set.
 	 */
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -325,6 +351,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * @param relName
 	 *            The relName to set.
 	 */
+	@JsonSetter
 	public void setRelName(String relName) {
 		this.relName = relName;
 	}
