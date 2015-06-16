@@ -73,6 +73,8 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		try {
 			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
 			serviceUrl = serviceUrl.replaceAll("/1.0/", "/");
+			serviceUrl = serviceUrl.replaceAll("/2.0/", "/");
+
 			int index = serviceUrl.indexOf("/", 1);
 			if (index > 0) {
 				serviceUrl = serviceUrl.substring(0, index);

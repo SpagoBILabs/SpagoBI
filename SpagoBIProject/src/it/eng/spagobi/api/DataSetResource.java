@@ -19,6 +19,7 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -81,8 +82,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -90,7 +89,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Path("/1.0/datasets")
 public class DataSetResource extends AbstractSpagoBIResource {
 
-	static private Logger logger = Logger.getLogger(DataSetResource.class);
+	static protected Logger logger = Logger.getLogger(DataSetResource.class);
 
 	@GET
 	@Path("/")
@@ -118,14 +117,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/")
 	public Response addDataSet(String body) {
-		ObjectMapper mapper = new ObjectMapper();
-		SbiDataSet sbiDataset = null;
-		try {
-			sbiDataset = mapper.readValue(body, SbiDataSet.class);
-		} catch (Exception e) {
-			logger.error("Error while reading the JSON object", e);
-			throw new SpagoBIRuntimeException("Error while reading the JSON object", e);
-		}
+		SbiDataSet sbiDataset = (SbiDataSet) JsonConverter.jsonToValidObject(body, SbiDataSet.class);
 
 		sbiDataset.setId(new SbiDataSetId(null, 1, getUserProfile().getOrganization()));
 		sbiDataset.setOwner((String) getUserProfile().getUserUniqueIdentifier());
@@ -165,20 +157,15 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/{label}")
 	public Response modifyDataSet(@PathParam("label") String label, String body) {
 		IDataSet dataset = null;
-		SbiDataSet sbiDataset = null;
+
 		try {
 			dataset = getDatasetManagementAPI().getDataSet(label);
 		} catch (Exception e) {
 			logger.error("Error while creating the dataset: " + e.getMessage(), e);
 			throw new SpagoBIRuntimeException("Error while creating the dataset: " + e.getMessage(), e);
 		}
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			sbiDataset = mapper.readValue(body, SbiDataSet.class);
-		} catch (Exception e) {
-			logger.error("Error while reading the JSON object", e);
-			throw new SpagoBIRuntimeException("Error while reading the JSON object", e);
-		}
+
+		SbiDataSet sbiDataset = (SbiDataSet) JsonConverter.jsonToValidObject(body, SbiDataSet.class);
 
 		int version = 1;
 		if (dataset instanceof VersionedDataSet) {
@@ -207,20 +194,13 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	public Response execute(@PathParam("label") String label, String body) {
 		SDKDataSetParameter[] parameters = null;
 		if (body != null && !body.equals("")) {
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				parameters = mapper.readValue(body, SDKDataSetParameter[].class);
-			} catch (Exception e) {
-				logger.error("Error while reading the JSON object", e);
-				throw new SpagoBIRuntimeException("Error while reading the JSON object", e);
-			}
+			parameters = (SDKDataSetParameter[]) JsonConverter.jsonToValidObject(body, SDKDataSetParameter[].class);
 		}
 
 		return Response.ok(executeDataSet(label, parameters)).build();
 	}
 
 	private String executeDataSet(String label, SDKDataSetParameter[] params) {
-		String toReturn = null;
 		logger.debug("IN: label in input = " + label);
 
 		try {
@@ -259,14 +239,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			// toReturn = dataSet.getDataStore().toXml();
 
 			JSONDataWriter writer = new JSONDataWriter();
-			toReturn = (writer.write(dataSet.getDataStore())).toString();
-
+			return (writer.write(dataSet.getDataStore())).toString();
 		} catch (Exception e) {
-			logger.error("Error while retrieving SDKEngine list", e);
-			logger.debug("Returning null");
-			return null;
+			logger.error("Error while executing dataset", e);
+			throw new SpagoBIRuntimeException("Error while executing dataset", e);
 		}
-		return toReturn;
 	}
 
 	@DELETE
@@ -933,7 +910,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	// return dataSetDao;
 	// }
 
-	private DatasetManagementAPI getDatasetManagementAPI() {
+	protected DatasetManagementAPI getDatasetManagementAPI() {
 		DatasetManagementAPI managementAPI = new DatasetManagementAPI(getUserProfile());
 		return managementAPI;
 	}
@@ -1060,7 +1037,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return fieldColumnType;
 	}
 
-	private String serializeDataSet(IDataSet dataSet, String typeDocWizard) throws JSONException {
+	protected String serializeDataSet(IDataSet dataSet, String typeDocWizard) throws JSONException {
 		try {
 			JSONObject datasetsJSONObject = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
 			JSONArray datasetsJSONArray = new JSONArray();
@@ -1072,7 +1049,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private String serializeDataSets(List<IDataSet> dataSets, String typeDocWizard) {
+	protected String serializeDataSets(List<IDataSet> dataSets, String typeDocWizard) {
 		try {
 			JSONArray datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			JSONArray datasetsJSONReturn = putActions(getUserProfile(), datasetsJSONArray, typeDocWizard);

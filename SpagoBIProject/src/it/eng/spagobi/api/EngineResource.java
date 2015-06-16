@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Path("/1.0/engines")
 @ManageAuthorization
 public class EngineResource extends AbstractSpagoBIResource {
-	static private Logger logger = Logger.getLogger(DataSetResource.class);
+	static private Logger logger = Logger.getLogger(EngineResource.class);
 
 	@GET
 	@Path("/")
