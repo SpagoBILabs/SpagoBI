@@ -1,14 +1,8 @@
-/*
- * SpagoBI, the Open Source Business Intelligence suite
- * © 2005-2015 Engineering Group
- *
- * This file is part of SpagoBI. SpagoBI is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version.
- * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received
- * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
- * The complete text of SpagoBI license is included in the COPYING.LESSER file.
- */
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.api;
 
 import it.eng.spago.error.EMFInternalError;
@@ -20,6 +14,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -51,15 +46,15 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 @Path("/1.0/documents")
 public class DocumentResource extends AbstractSpagoBIResource {
-	static private Logger logger = Logger.getLogger(DataSetResource.class);
+	static protected Logger logger = Logger.getLogger(DocumentResource.class);
+
+	protected AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 
 	@GET
 	@Path("/")
@@ -81,9 +76,9 @@ public class DocumentResource extends AbstractSpagoBIResource {
 				if (ObjectsAccessVerifier.canSee(obj, profile))
 					objects.add(obj);
 			}
-			ObjectMapper mapper = new ObjectMapper();
+			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
 
-			return Response.ok(mapper.writeValueAsString(objects)).build();
+			return Response.ok(toBeReturned).build();
 		} catch (Exception e) {
 			logger.error("Error while getting the list of documents", e);
 			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
@@ -94,20 +89,12 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
+	@Consumes("application/json")
 	public Response insertDocument(String body) {
-		ObjectMapper mapper = new ObjectMapper();
-		BIObject document;
-		try {
-			document = mapper.readValue(body, BIObject.class);
-		} catch (Exception e) {
-			logger.error("Error while reading the JSON object", e);
-			throw new SpagoBIRuntimeException("Error while reading the JSON object", e);
-		}
+		BIObject document = (BIObject) JsonConverter.jsonToValidObject(body, BIObject.class);
 
 		document.setTenant(getUserProfile().getOrganization());
 		document.setCreationUser((String) getUserProfile().getUserId());
-
-		AnalyticalModelDocumentManagementAPI APIManager = getDocumentManagementAPI();
 
 		List<Integer> functionalities = document.getFunctionalities();
 		for (Integer functionality : functionalities) {
@@ -123,11 +110,10 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			}
 		}
 
-		if (APIManager.isAnExistingDocument(document))
+		if (documentManager.isAnExistingDocument(document))
 			throw new SpagoBIRuntimeException("The document already exists");
 
-		APIManager.saveDocument(document, null);
-		APIManager.saveDocumentParameters(document);
+		documentManager.saveDocument(document, null);
 
 		try {
 			String encodedLabel = URLEncoder.encode(document.getLabel(), "UTF-8");
@@ -143,17 +129,17 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentDetails(@PathParam("label") String label) {
-		BIObject document = getDocumentManagementAPI().getDocument(label);
+		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
-		ObjectMapper mapper = new ObjectMapper();
-
 		try {
-			if (ObjectsAccessVerifier.canSee(document, getUserProfile()))
-				return Response.ok(mapper.writeValueAsString(document)).build();
-			else
+			if (ObjectsAccessVerifier.canSee(document, getUserProfile())) {
+				String toBeReturned = JsonConverter.objectToJson(document, BIObject.class);
+				return Response.ok(toBeReturned).build();
+			} else
 				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see document with label [" + label + "]");
+
 		} catch (SpagoBIRuntimeException e) {
 			throw e;
 		} catch (EMFInternalError e) {
@@ -170,9 +156,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response updateDocument(@PathParam("label") String label, String body) {
-		AnalyticalModelDocumentManagementAPI APIManager = getDocumentManagementAPI();
-
-		BIObject oldDocument = APIManager.getDocument(label);
+		BIObject oldDocument = documentManager.getDocument(label);
 		if (oldDocument == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
@@ -180,25 +164,18 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		if (!ObjectsAccessVerifier.canDevBIObject(id, getUserProfile()))
 			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to update document with label [" + label + "]");
 
-		ObjectMapper mapper = new ObjectMapper();
-		BIObject document;
-		try {
-			document = mapper.readValue(body, BIObject.class);
-		} catch (Exception e) {
-			logger.error("Error while reading the JSON object", e);
-			throw new SpagoBIRuntimeException("Error while reading the JSON object", e);
-		}
+		BIObject document = (BIObject) JsonConverter.jsonToValidObject(body, BIObject.class);
 
 		document.setLabel(label);
 		document.setId(id);
-		APIManager.saveDocument(document, null);
+		documentManager.saveDocument(document, null);
 		return Response.ok().build();
 	}
 
 	@DELETE
 	@Path("/{label}")
 	public Response deleteDocument(@PathParam("label") String label) {
-		BIObject document = getDocumentManagementAPI().getDocument(label);
+		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
@@ -217,7 +194,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{label}/template")
 	public Response getDocumentTemplate(@PathParam("label") String label) {
-		BIObject document = getDocumentManagementAPI().getDocument(label);
+		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
@@ -247,7 +224,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{label}/template")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response addDocumentTemplate(@PathParam("label") String label, MultipartFormDataInput input) {
-		BIObject document = getDocumentManagementAPI().getDocument(label);
+		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
@@ -274,7 +251,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 				template.setContent(content);
 				template.setName(getFileName(header));
 
-				getDocumentManagementAPI().saveDocument(document, template);
+				documentManager.saveDocument(document, template);
 
 				return Response.ok().build();
 			} catch (SpagoBIRuntimeException e) {
@@ -299,11 +276,10 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{label}/parameters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@Deprecated
 	public String getDocumentParameters(@PathParam("label") String label) {
 		logger.debug("IN");
 		try {
-			List<JSONObject> parameters = getDocumentManagementAPI().getDocumentParameters(label);
+			List<JSONObject> parameters = documentManager.getDocumentParameters(label);
 			JSONArray paramsJSON = writeParameters(parameters);
 			JSONObject resultsJSON = new JSONObject();
 			resultsJSON.put("results", paramsJSON);
@@ -329,11 +305,6 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	// ===================================================================
 	// UTILITY METHODS
 	// ===================================================================
-
-	private AnalyticalModelDocumentManagementAPI getDocumentManagementAPI() {
-		AnalyticalModelDocumentManagementAPI managementAPI = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-		return managementAPI;
-	}
 
 	private String getFileName(MultivaluedMap<String, String> multivaluedMap) {
 
