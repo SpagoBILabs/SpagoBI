@@ -62,6 +62,7 @@ import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
@@ -300,6 +301,18 @@ public class DAOFactory {
 	 */
 	public static IDataSetDAO getDataSetDAO() throws EMFUserError {
 		return (IDataSetDAO) createDAOInstance("DataSetDAO");
+	}
+
+	/**
+	 * Gets the sbi data set dao.
+	 *
+	 * @return the sbi data set dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiDataSetDAO getSbiDataSetDAO() throws EMFUserError {
+		return (ISbiDataSetDAO) createDAOInstance("SbiDataSetDAO");
 	}
 
 	/**
