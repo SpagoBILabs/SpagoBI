@@ -6,10 +6,18 @@
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.bo;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.services.validation.Alphanumeric;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.NoSpaces;
 
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,6 +35,7 @@ public class BIObjectParameter implements Serializable {
 	private Integer biObjectID = null;
 
 	/* PAR_ID NUMBER N Parameter identifier */
+	@NotNull
 	private Integer parID = null;
 
 	private Parameter parameter = null;
@@ -34,6 +43,9 @@ public class BIObjectParameter implements Serializable {
 	/*
 	 * LABEL VARCHAR2(36) Y Parameter label in BIObj use (short textual identifier)
 	 */
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 40)
 	private String label = null;
 
 	/* REQ_FL NUMBER Y Parameter required flag. */
@@ -65,6 +77,10 @@ public class BIObjectParameter implements Serializable {
 	private Integer priority = null;
 
 	/* PARURL_NM VARCHAR2(18) Y Parameter name in HTTP request. */
+	@NotEmpty
+	@Alphanumeric
+	@NoSpaces
+	@Size(max = 20)
 	private String parameterUrlName = null;
 
 	/* VALUES LIST OF THE PARAMETER (STRINGS) */
@@ -355,7 +371,6 @@ public class BIObjectParameter implements Serializable {
 	 * @return the Parameter object
 	 * @throws EMFUserError
 	 */
-	@JsonIgnore
 	public Parameter getParameter() {
 		return parameter;
 	}

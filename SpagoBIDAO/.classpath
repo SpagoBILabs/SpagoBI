@@ -41,5 +41,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/classmate-1.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-validator-5.2.0.CR1.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-validator-cdi-5.2.0.CR1.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-logging-3.2.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/validation-api-1.1.0.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
