@@ -7,7 +7,6 @@ package it.eng.spagobi.api.v2;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.api.DocumentResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -33,7 +32,7 @@ import org.apache.log4j.Logger;
  *
  */
 @Path("/2.0/documents")
-public class DocumentResourcer extends it.eng.spagobi.api.DocumentResource {
+public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
 
 	@Override
