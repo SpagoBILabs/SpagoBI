@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.jasperreport.exporters;
 
@@ -15,6 +15,11 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.ReportContext;
+import net.sf.jasperreports.export.ExporterConfiguration;
+import net.sf.jasperreports.export.ExporterInput;
+import net.sf.jasperreports.export.ExporterOutput;
+import net.sf.jasperreports.export.ReportExportConfiguration;
 import sun.misc.BASE64Encoder;
 
 import com.sun.image.codec.jpeg.JPEGCodec;
@@ -26,21 +31,22 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
  */
 public class JRImageBase64Exporter extends JRImageExporter {
 
+	@Override
 	public void exportReport() throws JRException {
 		byte[] bytes;
 		List bufferedImages;
 		try {
 			bytes = new byte[0];
 			String message = "<IMAGES>";
-			JasperReport report = (JasperReport)getParameter(JRImageExporterParameter.JASPER_REPORT);
-			JasperPrint jasperPrint = (JasperPrint)getParameter(JRExporterParameter.JASPER_PRINT);
-			
+			JasperReport report = (JasperReport) getParameter(JRImageExporterParameter.JASPER_REPORT);
+			JasperPrint jasperPrint = (JasperPrint) getParameter(JRExporterParameter.JASPER_PRINT);
+
 			bufferedImages = generateReportImages(report, jasperPrint);
 			Iterator iterImgs = bufferedImages.iterator();
 			int count = 1;
-			while(iterImgs.hasNext()){
-				message += "<IMAGE page=\""+count+"\">";
-				BufferedImage image = (BufferedImage)iterImgs.next();
+			while (iterImgs.hasNext()) {
+				message += "<IMAGE page=\"" + count + "\">";
+				BufferedImage image = (BufferedImage) iterImgs.next();
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(baos);
 				JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(image);
@@ -53,16 +59,46 @@ public class JRImageBase64Exporter extends JRImageExporter {
 				String encodedImage = encoder64.encode(byteImg);
 				message += encodedImage;
 				message += "</IMAGE>";
-				count ++;
+				count++;
 			}
 			message += "</IMAGES>";
 			bytes = message.getBytes();
-			
-			OutputStream out = (OutputStream)getParameter(JRExporterParameter.OUTPUT_STREAM);
+
+			OutputStream out = (OutputStream) getParameter(JRExporterParameter.OUTPUT_STREAM);
 			out.write(bytes);
 		} catch (Throwable t) {
 			throw new RuntimeException("Error while producing byte64 encoding of the report images", t);
 		}
+	}
+
+	public ReportContext getReportContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setConfiguration(ReportExportConfiguration arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setConfiguration(ExporterConfiguration arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setExporterInput(ExporterInput arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setExporterOutput(ExporterOutput arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setReportContext(ReportContext arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
