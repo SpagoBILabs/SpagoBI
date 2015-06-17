@@ -189,7 +189,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	@POST
-	@Path("/{label}/execute")
+	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response execute(@PathParam("label") String label, String body) {
 		SDKDataSetParameter[] parameters = null;
