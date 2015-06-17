@@ -5,14 +5,25 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.api.v2;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.sdk.documents.bo.SDKDocument;
+import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
+import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
+import it.eng.spagobi.sdk.documents.impl.DocumentsServiceImpl;
+import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
+import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.DELETE;
@@ -22,8 +33,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
 
@@ -180,5 +193,71 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		}
 
 		return Response.ok().build();
+	}
+
+	@POST
+	@Path("{label}/content")
+	@Produces("application/pdf")
+	public Response execute(@PathParam("label") String label, @QueryParam("outputType") String outputType, String body) {
+		SDKDocumentParameter[] parameters = null;
+		if (!body.isEmpty())
+			parameters = (SDKDocumentParameter[]) JsonConverter.jsonToValidObject(body, SDKDocumentParameter[].class);
+
+		BIObject document = documentManager.getDocument(label);
+		if (document == null)
+			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+
+		try {
+			if (ObjectsAccessVerifier.canExec(document, getUserProfile())) {
+				SDKObjectsConverter converter = new SDKObjectsConverter();
+				SDKDocument sdkDocument = converter.fromBIObjectToSDKDocument(document);
+
+				DocumentsServiceImpl documentService = new DocumentsService();
+
+				Collection<String> roles = getUserProfile().getRoles();
+				byte[] byteContent = null;
+				SDKExecutedDocumentContent content = null;
+
+				if (outputType == null || outputType.isEmpty())
+					outputType = "HTML";
+
+				for (String role : roles) {
+					try {
+						content = documentService.executeDocument(sdkDocument, parameters, role, outputType);
+
+						ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+						content.getContent().writeTo(outputStream);
+						byteContent = outputStream.toByteArray();
+					} catch (NonExecutableDocumentException e) {
+						// Don't do anything: maybe another role of the user gives him permission to execute the document
+					}
+				}
+
+				if (byteContent != null) {
+					ResponseBuilder rb = Response.ok(byteContent);
+					rb.header("Content-Disposition", "attachment; filename=" + content.getFileName());
+					return rb.build();
+				} else
+					throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to execute document with label [" + label
+							+ "]");
+			} else
+				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to execute document with label [" + label + "]");
+
+		} catch (SpagoBIRuntimeException e) {
+			throw e;
+		} catch (EMFInternalError e) {
+			logger.error("Error while looking for authorizations", e);
+			throw new SpagoBIRuntimeException("Error while looking for authorizations", e);
+		} catch (Exception e) {
+			logger.error("Error while executing document", e);
+			throw new SpagoBIRuntimeException("Error while executing document", e);
+		}
+	}
+
+	private class DocumentsService extends DocumentsServiceImpl {
+		@Override
+		protected IEngUserProfile getUserProfile() throws Exception {
+			return DocumentResource.this.getUserProfile();
+		}
 	}
 }
