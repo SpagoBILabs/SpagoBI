@@ -421,7 +421,7 @@ public class StartMassiveScheduleAction extends AbstractSpagoBIAction {
 			trigger.setStartTime(startTime);
 			
 			String endDateStr = triggerConfJSON.optString("endDate");
-			if( StringUtilities.isEmpty(endDateStr) ) {
+			if( !StringUtilities.isEmpty(endDateStr) ) {
 				String endTimeStr = triggerConfJSON.optString("endTime");
 				Date endTime = getTime(endDateStr, endTimeStr);
 				trigger.setEndTime(endTime);	
