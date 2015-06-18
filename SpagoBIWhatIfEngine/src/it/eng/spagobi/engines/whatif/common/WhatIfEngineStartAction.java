@@ -34,10 +34,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 @Path("/start")
 public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
@@ -61,14 +61,14 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf.jsp";
 	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
 
-	@Context
-	protected HttpServletRequest servletRequest;
-
 	@GET
 	@Produces("text/html")
-	public void startAction(@Context HttpServletResponse response) {
+	public void startAction() {
 
 		logger.debug("IN");
+
+		HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+		HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 		try {
 			SourceBean templateBean = getTemplateAsSourceBean();
@@ -121,7 +121,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, whatIfEngineInstance);
 
 			try {
-				servletRequest.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
+
+				request.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception e) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
 				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
@@ -142,7 +143,7 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 
 			getExecutionSession().setAttributeInSession(STARTUP_ERROR, serviceException);
 			try {
-				servletRequest.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
+				request.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception ex) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
 				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
@@ -277,7 +278,7 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 
 	@Override
 	public HttpServletRequest getServletRequest() {
-		return servletRequest;
+		return ResteasyProviderFactory.getContextData(HttpServletRequest.class);
 	}
 
 }
