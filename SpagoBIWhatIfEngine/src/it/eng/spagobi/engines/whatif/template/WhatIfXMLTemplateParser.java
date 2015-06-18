@@ -375,7 +375,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		if (initialVersion != null && initialVersion.length() > 0) {
 			try {
 				writeBackConfig.setInitialVersion(new Integer(initialVersion));
-				logger.error("The inital version is " + initialVersion);
+				logger.debug("The inital version is " + initialVersion);
 			} catch (Exception e) {
 				logger.error("Error loading the inital version from the template " + initialVersion);
 			}
