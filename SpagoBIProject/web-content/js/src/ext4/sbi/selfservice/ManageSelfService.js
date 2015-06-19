@@ -35,7 +35,15 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 	 * 
 	 */
 	modelsPanelTab: null
-	, 
+	,
+	/**
+	 * @property {Panel} smartFilterPanelTab
+	 *  Tab panel that contains the smart filters
+	 *
+	 * 
+	 */
+	smartFilterPanelTab: null
+	,
 	constructor : function(config) {
 		this.initConfig(config);
 		
@@ -67,6 +75,10 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 			this.modelsPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("sbi.tools.model.metamodelsbrowser.title")});
 			this.items.push(this.modelsPanelTab);
 		}
+		if (Sbi.settings.mydata.showSmartFilterTab == true){
+			this.smartFilterPanelTab = Ext.create('Sbi.tools.document.SmartFilterBrowser',{title: LN("sbi.tools.document.smartfilterbrowser.title")});
+			this.items.push(this.smartFilterPanelTab);
+		}
 		
 
 		//this.items = [ this.datasetPanelTab,this.modelsPanelTab ];
@@ -75,10 +87,10 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 		this.addEvents(
 		        /**
 		         * @event event1
-		         * Execute the qbe clicking in the model/dataset
+		         * Execute the qbe clicking in the dataset/model/smartfilter
 				 * @param {Object} docType engine to execute 'QBE'/'WORKSHEET'
-				 * @param {Object} inputType 'DATASET'/'MODEL'
-				 * @param {Object} record the record that contains all the information of the metamodel/dataset
+				 * @param {Object} inputType 'DATASET'/'MODEL'/'SMART_FILTER'
+				 * @param {Object} record the record that contains all the information of the dataset/metamodel/smartfilter
 		         */
 		        'executeDocument'
 				);
@@ -89,6 +101,11 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 		}
 		if (Sbi.settings.mydata.showDataSetTab == true){
 			this.datasetPanelTab.on('executeDocument',function(docType, inputType, record){
+				this.fireEvent('executeDocument',docType,inputType,record);
+			},this);
+		}
+		if (Sbi.settings.mydata.showSmartFilterTab == true){
+			this.smartFilterPanelTab.on('executeDocument',function(docType, inputType, record){
 				this.fireEvent('executeDocument',docType,inputType,record);
 			},this);
 		}

@@ -44,6 +44,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     Ext.onReady(function(){
     	Sbi.settings.mydata.showDataSetTab = <%=isMyData%>;
     	Sbi.settings.mydata.showModelsTab = <%=(typeDoc != null && "GEO".equalsIgnoreCase(typeDoc))?false:true%>;
+    	Sbi.settings.mydata.showSmartFilterTab = <%=isMyData%>;
 		var selfService = Ext.create('Sbi.selfservice.ManageSelfServiceContainer',{
         	worksheetEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
             , qbeFromBMBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromBMActionUrl) %>'
