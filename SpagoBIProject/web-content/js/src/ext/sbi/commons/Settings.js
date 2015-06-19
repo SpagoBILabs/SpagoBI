@@ -61,6 +61,7 @@ Sbi.settings.mydata = {
 	 */
 	, showDataSetTab: true
 	, showModelsTab: true
+	, showSmartFilterTab: true
 	/**
 	 * Visibility of MyData TabToolbar (this hide the whole tab toolbar)
 	 */

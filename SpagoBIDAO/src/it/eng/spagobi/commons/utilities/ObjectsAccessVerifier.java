@@ -733,7 +733,15 @@ public class ObjectsAccessVerifier {
 
 		if (profile != null) {
 			LowFunctionality personalFolder = UserUtilities.loadUserFunctionalityRoot((UserProfile) profile, false);
-			if (personalFolder != null && personalFolder.getId() == folderId) {
+			// if (personalFolder != null && personalFolder.getId() == folderId) {
+			if (personalFolder == null) {
+				try {
+					UserUtilities.createUserFunctionalityRoot(profile);
+					return true;
+				} catch (Exception e) {
+					logger.error("Error while createUserFunctionalityRoot", e);
+				}
+			} else {
 				return true;
 			}
 		}

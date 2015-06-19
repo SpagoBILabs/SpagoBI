@@ -34,6 +34,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -59,7 +60,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDocuments() {
+	public Response getDocuments(@QueryParam("inputType") String inputType) {
 		logger.debug("IN");
 		IBIObjectDAO documentsDao = null;
 		List<BIObject> allObjects = null;
@@ -72,9 +73,16 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			UserProfile profile = getUserProfile();
 			objects = new ArrayList<BIObject>();
 
-			for (BIObject obj : allObjects) {
-				if (ObjectsAccessVerifier.canSee(obj, profile))
-					objects.add(obj);
+			if (inputType != null && !inputType.isEmpty()) {
+				for (BIObject obj : allObjects) {
+					if (obj.getBiObjectTypeCode().equals(inputType) && ObjectsAccessVerifier.canSee(obj, profile))
+						objects.add(obj);
+				}
+			} else {
+				for (BIObject obj : allObjects) {
+					if (ObjectsAccessVerifier.canSee(obj, profile))
+						objects.add(obj);
+				}
 			}
 			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
 
