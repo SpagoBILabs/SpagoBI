@@ -9,6 +9,7 @@
 Sbi.sdk.apply(Sbi.sdk.api, {
 	
 	elId: 0
+	, dataSetList: {}
 	
 	/*	
 	config = { 
@@ -25,44 +26,14 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 	}
 	*/
 	
-	, authenticate:  function (config) {	    
+	, authenticate:  function ( config ) {	    
 		var serviceUrl = Sbi.sdk.services.getServiceUrl('authenticate', config.params);
 		Sbi.sdk.jsonp.asyncRequest(serviceUrl, config.callback.fn, config.callback.scope, config.callback.args);
     }
-
-	, getDocumentUrl: function( config ) {
-		var documentUrl = null;
+	
+	, getIFrameHtml: function( serviceUrl, config ) {
 		
-		if(config.documentId === undefined && config.documentLabel === undefined) {
-			alert('ERRORE: at least one beetween documentId and documentLabel attributes must be specifyed');
-			return null;
-		}
-		
-		var params = Sbi.sdk.apply({}, config.parameters || {});
-		
-		if(config.documentId !== undefined) params.OBJECT_ID = config.documentId;
-		if(config.documentLabel !== undefined) params.OBJECT_LABEL = config.documentLabel;
-		
-		if (config.executionRole !== undefined) params.ROLE = config.executionRole;
-		if (config.displayToolbar !== undefined) params.TOOLBAR_VISIBLE = config.displayToolbar;
-		if (config.displaySliders !== undefined) params.SLIDERS_VISIBLE = config.displaySliders;
-		if (config.theme !== undefined)	params.theme = config.theme;
-		
-			//if(config.useExtUI === true) {
-		// no more modality different from ext
-		documentUrl = Sbi.sdk.services.getServiceUrl('executewithext', params);
-			//} else {
-			//documentUrl = Sbi.sdk.services.getServiceUrl('execute', params);
-			//}
-		
-		return documentUrl;
-	}
-
-	, getDocumentHtml: function( config ) {
-		
-		var documentHtml;
-		var serviceUrl = this.getDocumentUrl( config );
-		
+		var html;
 		config.iframe = config.iframe || {};
 		
 		if(config.iframe.id === undefined) {
@@ -70,21 +41,21 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 			this.elId = this.elId +1;
 		}
 		
-		documentHtml = '';
-		documentHtml += '<iframe';
-		documentHtml += ' id = "' + config.iframe.id + '" ';
-		documentHtml += ' src = "' + serviceUrl + '" ';
-		if(config.iframe.style !== undefined) documentHtml += ' style = "' + config.iframe.style + '" ';
-		if(config.iframe.width !== undefined) documentHtml += ' width = "' + config.iframe.width + '" ';
-		if(config.iframe.height !== undefined) documentHtml += ' height = "' + config.iframe.height + '" ';
-		documentHtml += '></iframe>';
+		html = '';
+		html += '<iframe';
+		html += ' id = "' + config.iframe.id + '" ';
+		html += ' src = "' + serviceUrl + '" ';
+		if(config.iframe.style !== undefined) html += ' style = "' + config.iframe.style + '" ';
+		if(config.iframe.width !== undefined) html += ' width = "' + config.iframe.width + '" ';
+		if(config.iframe.height !== undefined) html += ' height = "' + config.iframe.height + '" ';
+		html += '></iframe>';
 		
-		return documentHtml;
+		return html;
 	}
 	
-	, injectDocument: function( config ) {
-		var targetEl = config.target || document.body;
+	, injectIFrame: function( serviceUrl, config ) {
 		
+		var targetEl = config.target || document.body;
 		
 		if(typeof targetEl === 'string') {
 			var elId = targetEl;
@@ -108,8 +79,50 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 		config.iframe.height = targetEl.getAttribute('height');
 		
 		
-		targetEl.innerHTML = this.getDocumentHtml( config );
+		targetEl.innerHTML = this.getIFrameHtml(serviceUrl, config);
 	}
 
+	, getDocumentUrl: function( config ) {
+		var documentUrl = null;
+		
+		if(config.documentId === undefined && config.documentLabel === undefined) {
+			alert('ERRORE: at least one beetween documentId and documentLabel attributes must be specifyed');
+			return null;
+		}
+		
+		var params = Sbi.sdk.apply({}, config.parameters || {});
+		
+		if(config.documentId !== undefined) params.OBJECT_ID = config.documentId;
+		if(config.documentLabel !== undefined) params.OBJECT_LABEL = config.documentLabel;
+		
+		if (config.executionRole !== undefined) params.ROLE = config.executionRole;
+		if (config.displayToolbar !== undefined) params.TOOLBAR_VISIBLE = config.displayToolbar;
+		if (config.theme !== undefined)	params.theme = config.theme;
+		
+		documentUrl = Sbi.sdk.services.getServiceUrl('execute', params);
+		
+		return documentUrl;
+	}
 
+	, getDocumentHtml: function( config ) {
+		
+		var serviceUrl = this.getDocumentUrl( config );
+		return this.getIFrameHtml(serviceUrl, config);
+	}
+	
+	, injectDocument: function( config ) {
+		
+		var serviceUrl = this.getDocumentUrl( config );
+		return this.injectIFrame(serviceUrl, config);
+	}
+	
+	, getDataSetList: function( config ) {
+		
+		Sbi.sdk.jsonp.timeout = 10000;
+		
+		var baseUrl = Sbi.sdk.services.baseUrl;
+		var serviceUrl = baseUrl.protocol + '://' + baseUrl.host + ":" + baseUrl.port + '/' + baseUrl.contextPath + '/restful-services/2.0/datasets';
+		
+		Sbi.sdk.jsonp.asyncRequest(serviceUrl, config.callback, this);
+	}
 });
