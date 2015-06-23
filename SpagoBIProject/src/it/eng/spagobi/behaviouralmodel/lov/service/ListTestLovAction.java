@@ -67,6 +67,8 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 	private static final String PAGINATION_START = "start";
 	private static final String PAGINATION_LIMIT = "limit";
 
+	public static final String SERVICE_NAME = "LIST_TEST_LOV_ACTION";
+
 	@Override
 	public void doService() {
 		try {
@@ -219,9 +221,14 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 					JSONObject errorStackTrace = new JSONObject();
 					errorStackTrace.put("stacktrace", responseFailure);
 					errorStackTrace.put("error", "error");
-					JSONObject errorJSON = new JSONObject();
-					errorJSON.put("metaData", errorStackTrace);
-					writeBackToClient(new JSONSuccess(errorJSON));
+
+					JSONObject error = new JSONObject();
+					error.put("success", "false");
+					error.put("message", "Error");
+					error.put("data", errorStackTrace);
+
+					writeBackToClient(new JSONSuccess(error));
+
 				} catch (IOException e) {
 					SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error executing the cockpit");
 					try {
@@ -277,7 +284,8 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 	 */
 	public static Object executeSelect(RequestContainer requestContainer, ResponseContainer responseContainer, String datasource, String statement,
 			List columnsNames) throws EMFInternalError {
-		// ResponseContainer responseContainer, String pool, String statement, List columnsNames) throws EMFInternalError {
+		// ResponseContainer responseContainer, String pool, String statement,
+		// List columnsNames) throws EMFInternalError {
 		Object result = null;
 		// DataConnectionManager dataConnectionManager = null;
 		DataConnection dataConnection = null;
@@ -285,7 +293,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 		DataResult dataResult = null;
 		try {
 			/*
-			 * dataConnectionManager = DataConnectionManager.getInstance(); dataConnection = dataConnectionManager.getConnection(pool);
+			 * dataConnectionManager = DataConnectionManager.getInstance();
 			 */
 			// gets connection
 			DataSourceUtilities dsUtil = new DataSourceUtilities();
@@ -298,6 +306,10 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			List temp = Arrays.asList(scrollableDataResult.getColumnNames());
 			columnsNames.addAll(temp);
 			result = scrollableDataResult.getSourceBean();
+		} catch (Exception e) {
+			logger.error("Error in executing LOV query: " + statement);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error inn executing LOV query");
+
 		} finally {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
 		}
@@ -305,8 +317,9 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 	}
 
 	/**
-	 * Find the attributes of the first row of the xml passed at input: this xml is assumed to be: &lt;ROWS&gt; &lt;ROW attribute_1="value_of_attribute_1" ...
-	 * /&gt; .... &lt;ROWS&gt;
+	 * Find the attributes of the first row of the xml passed at input: this xml
+	 * is assumed to be: &lt;ROWS&gt; &lt;ROW attribute_1="value_of_attribute_1"
+	 * ... /&gt; .... &lt;ROWS&gt;
 	 * 
 	 * @param rowsSourceBean
 	 *            The sourcebean to be parsed
