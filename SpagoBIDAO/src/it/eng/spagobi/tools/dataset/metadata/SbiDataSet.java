@@ -5,10 +5,12 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.metadata;
 
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.services.validation.Alphanumeric;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -20,6 +22,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * This is the class used by the DAO to map the table <code>sbi_meta_data</code>. Given the current implementation of the DAO this is the class used by
@@ -240,6 +243,7 @@ public class SbiDataSet extends SbiHibernateModel {
 	 *
 	 * @return the parameters
 	 */
+	@JsonIgnore
 	public String getParameters() {
 		return parameters;
 	}
@@ -252,6 +256,23 @@ public class SbiDataSet extends SbiHibernateModel {
 	 */
 	public void setParameters(String parameters) {
 		this.parameters = parameters;
+	}
+
+	@JsonProperty(value = "parameters")
+	public DataSetParametersList getParametersList() {
+		if (parameters != null) {
+			try {
+				return DataSetParametersList.fromXML(parameters);
+			} catch (SourceBeanException e) {
+				throw new SpagoBIRuntimeException("Error while getting dataset's parameters", e);
+			}
+		}
+		return null;
+	}
+
+	public void setParametersList(DataSetParametersList list) {
+		if (list != null)
+			this.parameters = list.toXML();
 	}
 
 	/**
@@ -372,18 +393,23 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	public MetaData getMetadata() {
-		DatasetMetadataParser parser = new DatasetMetadataParser();
-		try {
-			return (MetaData) parser.xmlToMetadata(dsMetadata);
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while getting dataset's metadata", e);
+		if (dsMetadata != null) {
+			DatasetMetadataParser parser = new DatasetMetadataParser();
+
+			try {
+				return (MetaData) parser.xmlToMetadata(dsMetadata);
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Error while getting dataset's metadata", e);
+			}
 		}
+		return null;
 	}
 
 	public void setMetadata(MetaData metadata) {
-		DatasetMetadataParser parser = new DatasetMetadataParser();
-
-		dsMetadata = parser.metadataToXML(metadata);
+		if (metadata != null) {
+			DatasetMetadataParser parser = new DatasetMetadataParser();
+			dsMetadata = parser.metadataToXML(metadata);
+		}
 	}
 
 	/**
