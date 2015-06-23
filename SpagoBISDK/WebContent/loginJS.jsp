@@ -40,7 +40,7 @@
          *  If it is set to 0 ms, an error occurs.
          *  TODO: investigate why it cannot be set to 0
          */
-		Sbi.sdk.jsonp.timeout = 100;
+		Sbi.sdk.jsonp.timeout = 5000;
 		
 		doLogin = function() {
 			var userEl = document.getElementById('user');
@@ -127,7 +127,9 @@ Password: <input type="password" id="password" name="password" size="30" value="
 	<dt> <a target="_blank" href="example5.jsp">Example 5 : injectDocument into non-existing div</a>
 	<dd>  Use <i>injectDocument</i> function to inject into a div an html string that contains the definition of an iframe 
 	pointing to the execution service. <br>In this example the specified target div does not exist so it is created on the fly by the function
-	
+	<p>
+	<dt> <a target="_blank" href="example6.jsp">Example 6 : getDataSetList</a>
+	<dd>  Use <i>getDataSetList</i> function to retrieve the list of all datasets
 </dl>
 </div>
 

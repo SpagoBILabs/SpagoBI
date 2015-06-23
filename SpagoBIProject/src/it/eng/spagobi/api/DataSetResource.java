@@ -94,7 +94,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDataSets(@QueryParam("typeDoc") String typeDoc) {
+	public String getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
 		logger.debug("IN");
 
 		try {

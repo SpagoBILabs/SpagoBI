@@ -32,7 +32,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
 
 	@Override
-	public String getDataSets(String typeDoc) {
+	public String getDataSets(String typeDoc, String callback) {
 		logger.debug("IN");
 
 		ISbiDataSetDAO dsDAO;
@@ -53,7 +53,13 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		logger.debug("OUT");
-		return JsonConverter.objectToJson(toBeReturned, toBeReturned.getClass());
+		if (callback == null || callback.isEmpty())
+			return JsonConverter.objectToJson(toBeReturned, toBeReturned.getClass());
+		else {
+			String jsonString = JsonConverter.objectToJson(toBeReturned, toBeReturned.getClass());
+
+			return callback + "(" + jsonString + ")";
+		}
 	}
 
 	@Override

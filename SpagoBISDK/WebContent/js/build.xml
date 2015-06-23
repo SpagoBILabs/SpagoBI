@@ -18,11 +18,9 @@
 		</concat>
 	</target>
 	
-	
-	<!-- target name="create-production" depends="create-debug">
-			<concat destfile="sbisdk-all-debug.js" append="true">
-			    <filelist dir="." files="*.js"/>
-			</concat>
-		</target -->
-	
+	<target name="create-production" depends="create-debug">
+		<java jar="./../WEB-INF/lib/yuicompressor-2.4.2.jar" fork="true">
+			<arg line="-o sbisdk-all-production.js sbisdk-all-debug.js" />
+		</java>
+	</target>
 </project>

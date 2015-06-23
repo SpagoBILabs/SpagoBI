@@ -28,14 +28,7 @@ Sbi.sdk.apply(Sbi.sdk.services, {
             baseParams: {NEW_SESSION: 'TRUE'}
         };
         
-        // no more called
         this.services.execute = {
-            type: 'PAGE', 
-            name: 'ExecuteBIObjectPage', 
-            baseParams: {NEW_SESSION: 'TRUE', MODALITY: 'SINGLE_OBJECT_EXECUTION_MODALITY', IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS: 'true'}
-        };
-        
-        this.services.executewithext = {
             type: 'ACTION', 
             name: 'EXECUTE_DOCUMENT_ACTION', 
             baseParams: {NEW_SESSION: 'TRUE', IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS: 'true'}
@@ -54,7 +47,7 @@ Sbi.sdk.apply(Sbi.sdk.services, {
         }
         
         if(this.services[serviceName] === undefined) {
-            alert('ERROR: Service [' + + '] does not exist');
+            alert('ERROR: Service [' + serviceName + '] does not exist');
         } else {
             urlStr = '';
             urlStr = this.baseUrl.protocol + '://' + this.baseUrl.host + ":" + this.baseUrl.port + '/' + this.baseUrl.contextPath + '/' + this.baseUrl.controllerPath;
