@@ -9,6 +9,8 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.services.validation.Alphanumeric;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Date;
@@ -354,6 +356,7 @@ public class SbiDataSet extends SbiHibernateModel {
 	 *
 	 * @return metadata
 	 */
+	@JsonIgnore
 	public String getDsMetadata() {
 		return dsMetadata;
 	}
@@ -366,6 +369,21 @@ public class SbiDataSet extends SbiHibernateModel {
 	 */
 	public void setDsMetadata(String dsMetadata) {
 		this.dsMetadata = dsMetadata;
+	}
+
+	public MetaData getMetadata() {
+		DatasetMetadataParser parser = new DatasetMetadataParser();
+		try {
+			return (MetaData) parser.xmlToMetadata(dsMetadata);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting dataset's metadata", e);
+		}
+	}
+
+	public void setMetadata(MetaData metadata) {
+		DatasetMetadataParser parser = new DatasetMetadataParser();
+
+		dsMetadata = parser.metadataToXML(metadata);
 	}
 
 	/**
