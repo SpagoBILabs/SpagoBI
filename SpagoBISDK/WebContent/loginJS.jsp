@@ -130,6 +130,9 @@ Password: <input type="password" id="password" name="password" size="30" value="
 	<p>
 	<dt> <a target="_blank" href="example6.jsp">Example 6 : getDataSetList</a>
 	<dd>  Use <i>getDataSetList</i> function to retrieve the list of all datasets
+	<p>
+	<dt> <a target="_blank" href="example7.jsp">Example 7 : executeDataSet</a>
+	<dd>  Use <i>executeDataSet</i> function to get the content of a specific dataset
 </dl>
 </div>
 
