@@ -10,12 +10,15 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.services.validation.Alphanumeric;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.Size;
 
@@ -23,6 +26,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * This is the class used by the DAO to map the table <code>sbi_meta_data</code>. Given the current implementation of the DAO this is the class used by
@@ -61,6 +71,7 @@ public class SbiDataSet extends SbiHibernateModel {
 	private String parameters = null;
 	private String dsMetadata = null;
 	private String type = null;
+	@JsonRawValue
 	private String configuration = null;
 
 	private SbiDomains transformer = null;
@@ -259,10 +270,11 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	@JsonProperty(value = "parameters")
-	public DataSetParametersList getParametersList() {
+	public List<DataSetParameterItem> getParametersList() {
 		if (parameters != null) {
 			try {
-				return DataSetParametersList.fromXML(parameters);
+				DataSetParametersList list = DataSetParametersList.fromXML(parameters);
+				return list.getItems();
 			} catch (SourceBeanException e) {
 				throw new SpagoBIRuntimeException("Error while getting dataset's parameters", e);
 			}
@@ -270,9 +282,12 @@ public class SbiDataSet extends SbiHibernateModel {
 		return null;
 	}
 
-	public void setParametersList(DataSetParametersList list) {
-		if (list != null)
+	public void setParametersList(List<DataSetParameterItem> parameters) {
+		if (parameters != null) {
+			DataSetParametersList list = new DataSetParametersList();
+			list.setPars(parameters);
 			this.parameters = list.toXML();
+		}
 	}
 
 	/**
@@ -453,8 +468,22 @@ public class SbiDataSet extends SbiHibernateModel {
 	 * @param configuration
 	 *            the configuration to set
 	 */
+	@JsonDeserialize(using = JsonRawDeserializer.class)
 	public void setConfiguration(String configuration) {
 		this.configuration = configuration;
+	}
+
+	/**
+	 * Used to deserialize raw json data as is
+	 * */
+	private static class JsonRawDeserializer extends JsonDeserializer<String> {
+
+		@Override
+		public String deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
+
+			TreeNode tree = parser.getCodec().readTree(parser);
+			return tree.toString();
+		}
 	}
 
 	/**

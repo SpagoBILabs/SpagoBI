@@ -20,9 +20,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Defines method to manage dataset parametes
  */
@@ -254,7 +251,6 @@ public class DataSetParametersList {
 	 *
 	 * @return items of the fixed list
 	 */
-	@JsonIgnore
 	public List getItems() {
 		return items;
 	}
@@ -265,17 +261,7 @@ public class DataSetParametersList {
 	 * @param items
 	 *            the items to set
 	 */
-	@JsonIgnore
 	public void setPars(List items) {
-		this.items = items;
-	}
-
-	@JsonProperty(value = "items")
-	public List<DataSetParameterItem> getParameterItems() {
-		return this.items;
-	}
-
-	public void setParameterItems(List<DataSetParameterItem> items) {
 		this.items = items;
 	}
 }
