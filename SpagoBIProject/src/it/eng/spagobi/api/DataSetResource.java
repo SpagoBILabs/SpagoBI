@@ -18,8 +18,6 @@ import it.eng.spagobi.commons.monitor.Monitor;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
-import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -69,7 +67,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -123,46 +123,53 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	@POST
+	@GET
 	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response execute(@PathParam("label") String label, String body) {
-		SDKDataSetParameter[] parameters = null;
-		if (body != null && !body.equals("")) {
-			parameters = (SDKDataSetParameter[]) JsonConverter.jsonToValidObject(body, SDKDataSetParameter[].class);
+	public Response execute(@PathParam("label") String label, @Context UriInfo info) {
+		MultivaluedMap<String, String> queryParameters = info.getQueryParameters();
+		HashMap<String, String> parameters = new HashMap<String, String>();
+		String callback = null;
+
+		if (queryParameters != null) {
+			for (String key : queryParameters.keySet()) {
+				if (!key.equals("callback"))
+					parameters.put(key, queryParameters.getFirst(key));
+				else
+					callback = queryParameters.getFirst(key);
+			}
 		}
 
-		return Response.ok(executeDataSet(label, parameters)).build();
+		if (callback == null || callback.isEmpty())
+			return Response.ok(executeDataSet(label, parameters)).build();
+		else {
+			String jsonString = executeDataSet(label, parameters);
+
+			return Response.ok(callback + "(" + jsonString + ")").build();
+		}
 	}
 
-	private String executeDataSet(String label, SDKDataSetParameter[] params) {
+	private String executeDataSet(String label, Map parameters) {
 		logger.debug("IN: label in input = " + label);
 
 		try {
 			if (label == null) {
-				logger.warn("DataSet identifier in input is null!");
-				return null;
+				logger.warn("Label is null");
+				throw new SpagoBIRuntimeException("Label is null!");
 			}
+
 			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
 			if (dataSet == null) {
-				logger.warn("DataSet with label [" + label + "] not existing.");
-				return null;
+				logger.warn("DataSet with label [" + label + "] doesn't exist");
+				throw new SpagoBIRuntimeException("DataSet with label [" + label + "] doesn't exist");
 			}
-			if (params != null && params.length > 0) {
-				HashMap parametersFilled = new HashMap();
-				for (int i = 0; i < params.length; i++) {
-					SDKDataSetParameter par = params[i];
-					parametersFilled.put(par.getName(), par.getValues()[0]);
-					logger.debug("Add parameter: " + par.getName() + "/" + par.getValues()[0]);
-				}
-				dataSet.setParamsMap(parametersFilled);
-			}
+			dataSet.setParamsMap(parameters);
 
 			// add the jar retriver in case of a Qbe DataSet
 			if (dataSet instanceof QbeDataSet
 					|| (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof QbeDataSet)) {
 				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
-				Map parameters = dataSet.getParamsMap();
+
 				if (parameters == null) {
 					parameters = new HashMap();
 					dataSet.setParamsMap(parameters);
@@ -171,10 +178,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			dataSet.loadData();
-			// toReturn = dataSet.getDataStore().toXml();
 
 			JSONDataWriter writer = new JSONDataWriter();
 			return (writer.write(dataSet.getDataStore())).toString();
+		} catch (SpagoBIRuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			logger.error("Error while executing dataset", e);
 			throw new SpagoBIRuntimeException("Error while executing dataset", e);

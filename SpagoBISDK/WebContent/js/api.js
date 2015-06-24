@@ -125,4 +125,29 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 		
 		Sbi.sdk.jsonp.asyncRequest(serviceUrl, config.callback, this);
 	}
+	
+	, executeDataSet: function( config ) {
+		
+		Sbi.sdk.jsonp.timeout = 20000;
+		
+		var baseUrl = Sbi.sdk.services.baseUrl;
+		var serviceUrl = baseUrl.protocol + '://' + baseUrl.host + ":" + baseUrl.port + '/' + baseUrl.contextPath + '/restful-services/2.0/datasets/';
+		serviceUrl += config.datasetLabel + '/content';
+		
+		if (config.parameters !== undefined) {
+			var first = true;
+			
+			for(var parameter in config.parameters) {
+				if (first) {
+					serviceUrl += '?';
+					first = false;
+				}
+				else serviceUrl += '&';
+				
+				serviceUrl += parameter + '=' + config.parameters[parameter];
+			}
+		}
+		
+		Sbi.sdk.jsonp.asyncRequest(serviceUrl, config.callback, this);
+	}
 });
