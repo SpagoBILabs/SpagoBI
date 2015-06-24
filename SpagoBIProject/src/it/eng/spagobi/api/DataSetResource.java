@@ -39,11 +39,8 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.crosstab.CrossTab;
 import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
-import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -52,8 +49,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,7 +63,6 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -114,30 +108,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	@POST
-	@Path("/")
-	public Response addDataSet(String body) {
-		SbiDataSet sbiDataset = (SbiDataSet) JsonConverter.jsonToValidObject(body, SbiDataSet.class);
-
-		sbiDataset.setId(new SbiDataSetId(null, 1, getUserProfile().getOrganization()));
-		sbiDataset.setOwner((String) getUserProfile().getUserUniqueIdentifier());
-		IDataSet dataset = DataSetFactory.toDataSet(sbiDataset);
-
-		try {
-			DAOFactory.getDataSetDAO().insertDataSet(dataset);
-		} catch (Exception e) {
-			logger.error("Error while creating the dataset: " + e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while creating the dataset: " + e.getMessage(), e);
-		}
-
-		try {
-			return Response.created(new URI("1.0/datasets/" + dataset.getLabel().replace(" ", "%20"))).build();
-		} catch (URISyntaxException e) {
-			logger.error("Error while creating the resource url, maybe an error in the label", e);
-			throw new SpagoBIRuntimeException("Error while creating the resource url, maybe an error in the label", e);
-		}
-	}
-
 	@GET
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -151,41 +121,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
-	}
-
-	@PUT
-	@Path("/{label}")
-	public Response modifyDataSet(@PathParam("label") String label, String body) {
-		IDataSet dataset = null;
-
-		try {
-			dataset = getDatasetManagementAPI().getDataSet(label);
-		} catch (Exception e) {
-			logger.error("Error while creating the dataset: " + e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while creating the dataset: " + e.getMessage(), e);
-		}
-
-		SbiDataSet sbiDataset = (SbiDataSet) JsonConverter.jsonToValidObject(body, SbiDataSet.class);
-
-		int version = 1;
-		if (dataset instanceof VersionedDataSet) {
-			version = ((VersionedDataSet) dataset).getVersionNum();
-		}
-
-		sbiDataset.setId(new SbiDataSetId(dataset.getId(), version + 1, dataset.getOrganization()));
-		sbiDataset.setOwner(dataset.getOwner());
-		sbiDataset.setLabel(label);
-
-		IDataSet newDataset = DataSetFactory.toDataSet(sbiDataset);
-
-		try {
-			DAOFactory.getDataSetDAO().modifyDataSet(newDataset);
-		} catch (Exception e) {
-			logger.error("Error while creating the dataset: " + e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while creating the dataset: " + e.getMessage(), e);
-		}
-
-		return Response.ok().build();
 	}
 
 	@POST
