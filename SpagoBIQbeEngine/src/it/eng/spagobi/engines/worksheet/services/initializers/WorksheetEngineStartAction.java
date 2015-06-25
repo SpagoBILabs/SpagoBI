@@ -191,6 +191,22 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
     	// we check the document id because, if it is not null, the document may have a dataset
     	if (documentId != null) {
     		IDataSet dataset = this.getDataSet();
+    		
+			if (dataset != null) {
+				// update parameters into the dataset
+				logger.debug("Setting parameters into dataset...");
+				dataset.setParamsMap(env);
+
+				// update profile attributes into dataset
+				Map<String, Object> userAttributes = new HashMap<String, Object>();
+				UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+				userAttributes.putAll(profile.getUserAttributes());
+				userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+				logger.debug("Setting user profile attributes into dataset...");
+				logger.debug(userAttributes);
+				dataset.setUserProfileAttributes(userAttributes);
+			}
+    		
     		boolean hasInnerQbe = WorksheetTemplateParser.getInstance().hasInnerQbeQuery(template);
     		if (hasInnerQbe && dataset != null) {
     			IDataSetTableDescriptor descriptor = this.persistDataset(dataset, env);
