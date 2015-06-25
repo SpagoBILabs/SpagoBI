@@ -7,6 +7,8 @@ package it.eng.spagobi.engines.qbe.services.initializers;
 
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -16,6 +18,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,6 +108,19 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
 
 		IDataSet dataset = this.getDataSet();
+		
+		// update parameters into the dataset
+		logger.debug("Setting parameters into dataset...");
+		dataset.setParamsMap(env);
+
+		// update profile attributes into dataset
+		Map<String, Object> userAttributes = new HashMap<String, Object>();
+		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		userAttributes.putAll(profile.getUserAttributes());
+		userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+		logger.debug("Setting user profile attributes into dataset...");
+		logger.debug(userAttributes);
+		dataset.setUserProfileAttributes(userAttributes);
 
 		// substitute default engine's datasource with dataset one
 		IDataSource dataSource = dataset.getDataSource();
