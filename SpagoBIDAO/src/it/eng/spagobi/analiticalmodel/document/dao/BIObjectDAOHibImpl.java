@@ -1810,7 +1810,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				}
 
 				if (folderID != null && roles != null && roles.size() > 0 ) {
-					buffer.append("select o from SbiObjects o, SbiObjFunc sof, SbiFunctions f,  SbiFuncRole fr " +
+					buffer.append("select distinct o from SbiObjects o, SbiObjFunc sof, SbiFunctions f,  SbiFuncRole fr " +
 							"where sof.id.sbiFunctions.functId = f.functId and o.biobjId = sof.id.sbiObjects.biobjId  " +
 							" and fr.id.role.extRoleId IN (select extRoleId from SbiExtRoles e  where  e.name in (:ROLES)) " +
 							" and fr.id.function.functId = f.functId " + 
@@ -1842,7 +1842,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				}		
 			}else{
 				if (folderID != null ){
-					buffer.append("select o from SbiObjects o, SbiObjFunc sof, SbiFunctions f " +
+					buffer.append("select distinct o from SbiObjects o, SbiObjFunc sof, SbiFunctions f " +
 							"where sof.id.sbiFunctions.functId = f.functId and o.biobjId = sof.id.sbiObjects.biobjId  " +
 					" and f.functId = :FOLDER_ID  " );
 
