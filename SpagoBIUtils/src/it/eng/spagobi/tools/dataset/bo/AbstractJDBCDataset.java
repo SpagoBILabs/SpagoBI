@@ -212,6 +212,9 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			logger.debug("Specified datasource is the dataset's datasource; using CREATE TABLE AS SELECT tecnique");
 			try{
 				List<String> fields = this.getFieldsList();
+				// get the query with parameters and profile attributes substituted by their values
+				QuerableBehaviour querableBehaviour = (QuerableBehaviour) this.getBehaviour(QuerableBehaviour.class.getName());
+				String statement = querableBehaviour.getStatement();
 				return TemporaryTableManager.createTable(fields, (String)query, tableName, getDataSource());
 			} catch (Exception e) {
 				logger.error("Error peristing the temporary table", e);
