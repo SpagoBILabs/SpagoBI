@@ -79,7 +79,6 @@ import commonj.work.Work;
 public class DatasetManagementAPI {
 
 	private UserProfile userProfile;
-	private IDataSetDAO dataSetDao;
 
 	// XML tags
 	public static final String PARAMETERSLIST = "PARAMETERSLIST";
@@ -114,21 +113,17 @@ public class DatasetManagementAPI {
 
 	public void setUserProfile(UserProfile userProfile) {
 		this.userProfile = userProfile;
-		if (dataSetDao != null) {
-			dataSetDao.setUserProfile(userProfile);
-		}
 	}
 
 	private IDataSetDAO getDataSetDAO() {
-		if (dataSetDao == null) {
-			try {
-				dataSetDao = DAOFactory.getDataSetDAO();
-				if (getUserProfile() != null) {
-					dataSetDao.setUserProfile(userProfile);
-				}
-			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("An unexpected error occured while instatiating the DAO", t);
+		IDataSetDAO dataSetDao = null;
+		try {
+			dataSetDao = DAOFactory.getDataSetDAO();
+			if (getUserProfile() != null) {
+				dataSetDao.setUserProfile(userProfile);
 			}
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected error occured while instatiating the DAO", t);
 		}
 		return dataSetDao;
 	}
@@ -178,6 +173,16 @@ public class DatasetManagementAPI {
 			if (DataSetUtilities.isExecutableByUser(dataSet, getUserProfile()) == false) {
 				throw new RuntimeException("User [" + getUserId() + "] cannot access to dataset [" + label + "]");
 			}
+			
+			// update profile attributes into dataset
+			Map<String, Object> userAttributes = new HashMap<String, Object>();
+			UserProfile profile = (UserProfile) this.getUserProfile();
+			userAttributes.putAll(profile.getUserAttributes());
+			userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+			logger.debug("Setting user profile attributes into dataset...");
+			logger.debug(userAttributes);
+			dataSet.setUserProfileAttributes(userAttributes);
+			
 			return dataSet;
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method [getDataSet]", t);
@@ -188,7 +193,7 @@ public class DatasetManagementAPI {
 
 	public List<IFieldMetaData> getDataSetFieldsMetadata(String label) {
 		try {
-			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
+			IDataSet dataSet = this.getDataSet(label);
 
 			if (dataSet == null) {
 				throw new RuntimeException("Impossible to get dataset [" + label + "] from SpagoBI Server");
@@ -218,7 +223,7 @@ public class DatasetManagementAPI {
 		logger.debug("IN");
 		try {
 			List<JSONObject> parametersList = new ArrayList<JSONObject>();
-			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
+			IDataSet dataSet = this.getDataSet(label);
 
 			if (dataSet == null) {
 				throw new RuntimeException("Impossible to get dataset [" + label + "] from SpagoBI Server");
@@ -297,7 +302,7 @@ public class DatasetManagementAPI {
 	 */
 	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
 		try {
-			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
+			IDataSet dataSet = this.getDataSet(label);
 			checkQbeDataset(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
@@ -306,15 +311,6 @@ public class DatasetManagementAPI {
 				String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
 				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
 			}
-			
-			// update profile attributes into dataset
-			Map<String, Object> userAttributes = new HashMap<String, Object>();
-			UserProfile profile = (UserProfile) this.getUserProfile();
-			userAttributes.putAll(profile.getUserAttributes());
-			userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
-			logger.debug("Setting user profile attributes into dataset...");
-			logger.debug(userAttributes);
-			dataSet.setUserProfileAttributes(userAttributes);
 
 			ICache cache = SpagoBICacheManager.getCache();
 			IDataStore cachedResultSet = cache.get(dataSet);
@@ -375,7 +371,7 @@ public class DatasetManagementAPI {
 
 		try {
 
-			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
+			IDataSet dataSet = this.getDataSet(label);
 			checkQbeDataset(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
@@ -384,7 +380,7 @@ public class DatasetManagementAPI {
 				String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
 				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
 			}
-
+			
 			ICache cache = SpagoBICacheManager.getCache();
 			IDataStore dataStore = null;
 
@@ -652,7 +648,7 @@ public class DatasetManagementAPI {
 	public IDataStore getAggregatedDataStore(String label, int offset, int fetchSize, int maxResults, CrosstabDefinition crosstabDefinition) {
 		try {
 
-			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
+			IDataSet dataSet = this.getDataSet(label);
 			checkQbeDataset(dataSet);
 
 			ICache cache = SpagoBICacheManager.getCache();
@@ -1109,7 +1105,7 @@ public class DatasetManagementAPI {
 					if (!datasetsLabelsMap.keySet().contains(dsLabel)) {
 
 						logger.debug("Dataset with label " + dsLabel);
-						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
+						IDataSet dataset = this.getDataSet(dsLabel);
 						checkQbeDataset(dataset);
 
 						// check datasets are cached otherwise cache it
