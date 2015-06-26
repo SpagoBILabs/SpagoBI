@@ -79,6 +79,7 @@ import commonj.work.Work;
 public class DatasetManagementAPI {
 
 	private UserProfile userProfile;
+	private IDataSetDAO dataSetDao;
 
 	// XML tags
 	public static final String PARAMETERSLIST = "PARAMETERSLIST";
@@ -113,17 +114,21 @@ public class DatasetManagementAPI {
 
 	public void setUserProfile(UserProfile userProfile) {
 		this.userProfile = userProfile;
+		if (dataSetDao != null) {
+			dataSetDao.setUserProfile(userProfile);
+		}
 	}
 
 	private IDataSetDAO getDataSetDAO() {
-		IDataSetDAO dataSetDao = null;
-		try {
-			dataSetDao = DAOFactory.getDataSetDAO();
-			if (getUserProfile() != null) {
-				dataSetDao.setUserProfile(userProfile);
+		if (dataSetDao == null) {
+			try {
+				dataSetDao = DAOFactory.getDataSetDAO();
+				if (getUserProfile() != null) {
+					dataSetDao.setUserProfile(userProfile);
+				}
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An unexpected error occured while instatiating the DAO", t);
 			}
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while instatiating the DAO", t);
 		}
 		return dataSetDao;
 	}
@@ -173,15 +178,6 @@ public class DatasetManagementAPI {
 			if (DataSetUtilities.isExecutableByUser(dataSet, getUserProfile()) == false) {
 				throw new RuntimeException("User [" + getUserId() + "] cannot access to dataset [" + label + "]");
 			}
-			
-			// update profile attributes into dataset
-			Map<String, Object> userAttributes = new HashMap<String, Object>();
-			UserProfile profile = (UserProfile) this.getUserProfile();
-			userAttributes.putAll(profile.getUserAttributes());
-			userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
-			logger.debug("Setting user profile attributes into dataset...");
-			logger.debug(userAttributes);
-			dataSet.setUserProfileAttributes(userAttributes);
 			
 			return dataSet;
 		} catch (Throwable t) {
@@ -304,6 +300,7 @@ public class DatasetManagementAPI {
 		try {
 			IDataSet dataSet = this.getDataSet(label);
 			checkQbeDataset(dataSet);
+			addProfileAttributes(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
@@ -337,6 +334,21 @@ public class DatasetManagementAPI {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+	
+	private void addProfileAttributes(IDataSet dataSet) {
+		UserProfile profile = this.getUserProfile();
+		if (profile == null) {
+			logger.warn("Missing user profile object! The dataset will fail loading datas in case it requires the user profile object");
+			return;
+		}
+		// update profile attributes into dataset
+		Map<String, Object> userAttributes = new HashMap<String, Object>();
+		userAttributes.putAll(profile.getUserAttributes());
+		userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+		LogMF.debug(logger, "Setting user profile attributes into dataset: {0}", userAttributes);
+		logger.debug(userAttributes);
+		dataSet.setUserProfileAttributes(userAttributes);
 	}
 
 	/**
@@ -373,6 +385,7 @@ public class DatasetManagementAPI {
 
 			IDataSet dataSet = this.getDataSet(label);
 			checkQbeDataset(dataSet);
+			addProfileAttributes(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
@@ -430,6 +443,7 @@ public class DatasetManagementAPI {
 			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
 			for (IDataSet dataSet : joinedDatasets) {
 				checkQbeDataset(dataSet);
+				addProfileAttributes(dataSet);
 			}
 
 			joinedDataSet.setParamsMaps(parametersValues);
@@ -498,6 +512,11 @@ public class DatasetManagementAPI {
 
 		try {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
+			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
+			for (IDataSet dataSet : joinedDatasets) {
+				checkQbeDataset(dataSet);
+				addProfileAttributes(dataSet);
+			}
 			joinedDataSet.setParamsMaps(parametersValues);
 
 			ICache cache = SpagoBICacheManager.getCache();
@@ -650,6 +669,7 @@ public class DatasetManagementAPI {
 
 			IDataSet dataSet = this.getDataSet(label);
 			checkQbeDataset(dataSet);
+			addProfileAttributes(dataSet);
 
 			ICache cache = SpagoBICacheManager.getCache();
 			IDataStore cachedResultSet = cache.get(dataSet);
@@ -1107,6 +1127,7 @@ public class DatasetManagementAPI {
 						logger.debug("Dataset with label " + dsLabel);
 						IDataSet dataset = this.getDataSet(dsLabel);
 						checkQbeDataset(dataset);
+						addProfileAttributes(dataset);
 
 						// check datasets are cached otherwise cache it
 						IDataStore cachedResultSet = cache.get(dataset);
