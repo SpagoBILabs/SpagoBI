@@ -15,6 +15,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -46,6 +47,7 @@ import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
@@ -304,6 +306,15 @@ public class DatasetManagementAPI {
 				String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
 				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
 			}
+			
+			// update profile attributes into dataset
+			Map<String, Object> userAttributes = new HashMap<String, Object>();
+			UserProfile profile = (UserProfile) this.getUserProfile();
+			userAttributes.putAll(profile.getUserAttributes());
+			userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+			logger.debug("Setting user profile attributes into dataset...");
+			logger.debug(userAttributes);
+			dataSet.setUserProfileAttributes(userAttributes);
 
 			ICache cache = SpagoBICacheManager.getCache();
 			IDataStore cachedResultSet = cache.get(dataSet);
