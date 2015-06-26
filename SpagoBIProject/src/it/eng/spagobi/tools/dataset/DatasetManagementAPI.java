@@ -444,6 +444,7 @@ public class DatasetManagementAPI {
 			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
 			for (IDataSet dataSet : joinedDatasets) {
 				checkQbeDataset(dataSet);
+				addProfileAttributes(dataSet);
 			}
 
 			joinedDataSet.setParamsMaps(parametersValues);
@@ -513,6 +514,11 @@ public class DatasetManagementAPI {
 
 		try {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
+			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
+			for (IDataSet dataSet : joinedDatasets) {
+				checkQbeDataset(dataSet);
+				addProfileAttributes(dataSet);
+			}
 			joinedDataSet.setParamsMaps(parametersValues);
 
 			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
@@ -668,6 +674,7 @@ public class DatasetManagementAPI {
 
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			checkQbeDataset(dataSet);
+			addProfileAttributes(dataSet);
 
 			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 			cache.setUserProfile(userProfile);
@@ -1097,7 +1104,7 @@ public class DatasetManagementAPI {
 		try {
 			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 			cache.setUserProfile(userProfile);
-			IDataSource dataSource = ((SQLDBCache) cache).getDataSource();
+			IDataSource dataSource = cache.getDataSource();
 			Long maxSingleCount = 0L;
 
 			// all arrays with fields of a single association
