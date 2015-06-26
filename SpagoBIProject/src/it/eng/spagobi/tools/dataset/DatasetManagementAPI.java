@@ -1134,6 +1134,7 @@ public class DatasetManagementAPI {
 						logger.debug("Dataset with label " + dsLabel);
 						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
 						checkQbeDataset(dataset);
+						addProfileAttributes(dataset);
 
 						// check datasets are cached otherwise cache it
 						IDataStore cachedResultSet = cache.get(dataset);
