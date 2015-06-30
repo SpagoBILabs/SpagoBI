@@ -33,6 +33,12 @@ Sbi.sdk.apply(Sbi.sdk.services, {
             name: 'EXECUTE_DOCUMENT_ACTION', 
             baseParams: {NEW_SESSION: 'TRUE', IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS: 'true'}
         };
+        
+        this.services.adHocReporting = {
+    		type: 'ACTION',
+            name: 'AD_HOC_REPORTING_START_ACTION',
+            baseParams: {NEW_SESSION: 'TRUE'}	
+        };
     }
     
     , setBaseUrl: function(u) {

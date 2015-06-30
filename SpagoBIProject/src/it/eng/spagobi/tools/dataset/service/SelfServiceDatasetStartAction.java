@@ -60,6 +60,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	public static final String IS_FROM_DOCBROWSER = "DOCBROWSER";
 	public static final String USER_CAN_PERSIST = "USER_CAN_PERSIST";
 	public static final String TABLE_NAME_PREFIX = "TABLE_NAME_PREFIX";
+	public static final String DATASET_LABEL = "dataset_label";
 
 	public static final String PERSIST_TABLE_PREFIX_CONFIG = "SPAGOBI.DATASET.PERSIST.TABLE_PREFIX";
 
@@ -89,6 +90,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			String typeDoc = getAttributeAsString("TYPE_DOC");
 			String userCanPersist = userCanPersist();
 			String tableNamePrefix = getTableNamePrefix();
+			String datasetLabel = getAttributeAsString("dataset_label");
 			logger.trace("Copying output parameters to response...");
 			try {
 				Locale locale = getLocale();
@@ -107,6 +109,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 				setAttribute(IS_FROM_DOCBROWSER, isFromDocBrowser);
 				setAttribute(USER_CAN_PERSIST, userCanPersist);
 				setAttribute(TABLE_NAME_PREFIX, tableNamePrefix);
+				setAttribute(DATASET_LABEL, datasetLabel);
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating service response", t);
 			}

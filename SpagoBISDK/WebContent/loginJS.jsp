@@ -109,7 +109,7 @@ Password: <input type="password" id="password" name="password" size="30" value="
 <dl>
 	<dt> <a target="_blank" href="example1.jsp">Example 1 : getDocumentUrl</a>
 	<dd> Use <i>getDocumentUrl</i> function to create the invocation url used to call execution service asking for a 
-	specific execution (i.e. document + execution role + parameters) 
+	specific execution (i.e. document + execution role + parameters).
 	<p>
 	<dt> <a target="_blank" href="example2.jsp">Example 2 : getDocumentHtml</a>
 	<dd> Use <i>getDocumentHtml</i> function to get an html string that contains the definition of an iframe 
@@ -126,19 +126,23 @@ Password: <input type="password" id="password" name="password" size="30" value="
 	<p>
 	<dt> <a target="_blank" href="example5.jsp">Example 5 : injectDocument into non-existing div</a>
 	<dd>  Use <i>injectDocument</i> function to inject into a div an html string that contains the definition of an iframe 
-	pointing to the execution service. <br>In this example the specified target div does not exist so it is created on the fly by the function
+	pointing to the execution service. <br>In this example the specified target div does not exist so it is created on the fly by the function.
 	<p>
 	<dt> <a target="_blank" href="example6.jsp">Example 6 : getDataSetList</a>
-	<dd>  Use <i>getDataSetList</i> function to retrieve the list of all datasets
+	<dd>  Use <i>getDataSetList</i> function to retrieve the list of all datasets.
 	<p>
 	<dt> <a target="_blank" href="example7.jsp">Example 7 : executeDataSet</a>
-	<dd>  Use <i>executeDataSet</i> function to get the content of a specific dataset
+	<dd>  Use <i>executeDataSet</i> function to get the content of a specific dataset.
+	<p>
+	<dt> <a target="_blank" href="example8.jsp">Example 8 : injectWorksheet into non-existing div</a>
+	<dd>  Use <i>injectWorksheet</i> function to inject into a div an html string that contains the definition of an iframe 
+	pointing to the url of worksheet start action. In this example the specified target div does not exist so it is created on the fly by the function.
+	<p>
+	<dt> <a target="_blank" href="example9.jsp">Example 9 : injectQbe into non-existing div</a>
+	<dd>  Use <i>injectQbe</i> function to inject into a div an html string that contains the definition of an iframe 
+	pointing to the url of qbe start action. In this example the specified target div does not exist so it is created on the fly by the function.
 </dl>
 </div>
-
-
-
-
 
 </body>
 </html>
