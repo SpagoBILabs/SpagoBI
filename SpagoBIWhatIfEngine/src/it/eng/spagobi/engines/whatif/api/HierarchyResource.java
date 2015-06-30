@@ -1,15 +1,15 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Alberto Ghedin (alberto.ghedin@eng.it) 
- * 
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ *
  * @class HierarchyResource
- * 
+ *
  * Services that manage the hierarchies of the model:
- * 
+ *
  */
 package it.eng.spagobi.engines.whatif.api;
 
@@ -35,6 +35,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.apache.log4j.Logger;
 import org.olap4j.OlapException;
@@ -57,8 +58,8 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@GET
 	@Path("{hierarchy}/slice/{member}/{multi}")
 	@Produces("text/html; charset=UTF-8")
-	public String addSlicer(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyName, @PathParam("member") String memberName,
-			@PathParam("multi") boolean multiSelection) {
+	public String addSlicer(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyName,
+			@PathParam("member") String memberName, @PathParam("multi") boolean multiSelection) {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
@@ -90,9 +91,10 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@GET
 	@Path("/{hierarchy}/filtertree/{axis}")
 	@Produces("text/html; charset=UTF-8")
-	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName, @PathParam("axis") int axis) {
+	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
+			@PathParam("axis") int axis, @QueryParam(NODE_PARM) String node) {
 		Hierarchy hierarchy = null;
-		String node;
+
 		List<Member> list = new ArrayList<Member>();
 		List<Member> visibleMembers = null;
 		String memberDescription;
@@ -108,7 +110,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 		logger.debug("Getting the node path from the request");
 		// getting the node path from request
-		node = req.getParameter(NODE_PARM);
+
 		if (node == null) {
 			logger.debug("no node path found in the request");
 			return null;
