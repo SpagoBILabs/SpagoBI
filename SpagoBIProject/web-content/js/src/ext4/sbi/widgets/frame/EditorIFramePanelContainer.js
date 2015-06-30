@@ -44,6 +44,5 @@ Ext.define('Sbi.widgets.EditorIFramePanelContainer', {
 	, load: function(url){
 		this.iframe.load(url);
 	}
-    
 	
 });

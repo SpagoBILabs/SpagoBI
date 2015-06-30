@@ -117,7 +117,6 @@ public class SbiDataSet extends SbiHibernateModel {
 		this.id = id;
 	}
 
-	@JsonIgnore
 	public SbiDomains getScope() {
 		return scope;
 	}
