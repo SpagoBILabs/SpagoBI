@@ -86,7 +86,7 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 		var documentUrl = null;
 		
 		if(config.documentId === undefined && config.documentLabel === undefined) {
-			alert('ERRORE: at least one beetween documentId and documentLabel attributes must be specifyed');
+			alert('ERROR: at least one beetween documentId and documentLabel attributes must be specified');
 			return null;
 		}
 		
@@ -113,6 +113,60 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 	, injectDocument: function( config ) {
 		
 		var serviceUrl = this.getDocumentUrl( config );
+		return this.injectIFrame(serviceUrl, config);
+	}
+	
+	, getAdHocReportingUrl: function( config ) {
+		var url = null;
+		
+		if(config.datasetLabel === undefined) {
+			alert('ERROR: datasetLabel attribute must be specified');
+			return null;
+		}
+		
+		var params = {};
+		params.dataset_label = config.datasetLabel;
+		params.TYPE_DOC = config.type;
+		
+		if (config.parameters !== undefined){
+			for(var parameter in config.parameters)
+				params[parameter] = config.parameters[parameter];
+		}
+		
+		return Sbi.sdk.services.getServiceUrl('adHocReporting', params);
+	}
+	
+	, getWorksheetUrl: function( config ) {
+		config.type = 'WORKSHEET';
+		return this.getAdHocReportingUrl(config);
+	}
+	
+	, getWorksheetHtml: function( config ) {
+		
+		var serviceUrl = this.getWorksheetUrl( config );
+		return this.getIFrameHtml(serviceUrl, config);
+	}
+	
+	, injectWorksheet: function( config ) {
+		
+		var serviceUrl = this.getWorksheetUrl( config );
+		return this.injectIFrame(serviceUrl, config);
+	}
+	
+	, getQbeUrl: function( config ) {
+		config.type = 'QBE';
+		return this.getAdHocReportingUrl(config);
+	}
+	
+	, getQbeHtml: function( config ) {
+		
+		var serviceUrl = this.getQbeUrl( config );
+		return this.getIFrameHtml(serviceUrl, config);
+	}
+	
+	, injectQbe: function( config ) {
+		
+		var serviceUrl = this.getQbeUrl( config );
 		return this.injectIFrame(serviceUrl, config);
 	}
 	

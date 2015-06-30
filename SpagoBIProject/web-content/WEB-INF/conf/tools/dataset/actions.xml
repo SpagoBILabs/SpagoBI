@@ -17,6 +17,10 @@
  	<CONFIG/>
  </ACTION>
  
+   <ACTION name="AD_HOC_REPORTING_START_ACTION" class="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetStartAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ 
 
 </ACTIONS>
 

@@ -7,6 +7,10 @@
 	<MAP_ACTIONS>
 		<MAP_ACTION actionName="SELF_SERVICE_DATASET_START_ACTION"  businessProcess="SelfServiceDatasetManagement"/>
 	</MAP_ACTIONS>
+	
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="AD_HOC_REPORTING_START_ACTION"  businessProcess="SelfServiceDatasetManagement"/>
+	</MAP_ACTIONS>
 	 
 	<MAP_PAGE_MODULES>
 	</MAP_PAGE_MODULES>

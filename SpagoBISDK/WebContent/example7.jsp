@@ -87,26 +87,26 @@ execTest7 = function() {
     	}
     	, callback: function( json, args, success ) {
     		if (success){
-    			var str = "<th>Id</th>";
+    			var str = "&lt;th&gt;Id&lt;/th&gt;";
     			
     			var fields = json.metaData.fields;
     			for(var fieldIndex in fields) {
     				if (fields[fieldIndex].hasOwnProperty('header'))
-    					str += '<th>' + fields[fieldIndex]['header'] + '</th>';
+    					str += '&lt;th&gt;' + fields[fieldIndex]['header'] + '&lt;/th&gt;';
     			}
     			
-    			str += '<tbody>';
+    			str += '&lt;tbody&gt;';
     			
     			var rows = json.rows;
     			for (var rowIndex in rows){
-    				str += '<tr>';
+    				str += '&lt;tr&gt;';
     				for (var colIndex in rows[rowIndex]) {
-    					str += '<td>' + rows[rowIndex][colIndex] + '</td>';
+    					str += '&lt;td&gt;' + rows[rowIndex][colIndex] + '&lt;/td&gt;';
     				}
-    				str += '</tr>';
+    				str += '&lt;/tr&gt;';
     			}
     			
-    			str += '</tbody>';
+    			str += '&lt;/tbody&gt;';
     			
     			document.getElementById('results').innerHTML = str;
     		}
