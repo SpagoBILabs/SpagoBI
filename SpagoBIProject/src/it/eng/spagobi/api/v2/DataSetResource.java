@@ -147,5 +147,4 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 		return Response.ok().build();
 	}
-
 }
