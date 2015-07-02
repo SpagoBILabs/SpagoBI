@@ -399,7 +399,7 @@ public class SelfServiceDataSetCRUD {
 					dataset.setPersistTableName(name);
 				}
 
-				checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
+				// checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
 				checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
 
 				PersistedTableManager ptm = new PersistedTableManager(profile);
@@ -1769,17 +1769,17 @@ public class SelfServiceDataSetCRUD {
 
 	}
 
-	private void checkQbeDataset(IDataSet dataSet) {
-		if (dataSet instanceof QbeDataSet) {
-			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
-			Map parameters = dataSet.getParamsMap();
-			if (parameters == null) {
-				parameters = new HashMap();
-				dataSet.setParamsMap(parameters);
-			}
-			dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
-		}
-	}
+	// private void checkQbeDataset(IDataSet dataSet) {
+	// if (dataSet instanceof QbeDataSet) {
+	// SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+	// Map parameters = dataSet.getParamsMap();
+	// if (parameters == null) {
+	// parameters = new HashMap();
+	// dataSet.setParamsMap(parameters);
+	// }
+	// dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+	// }
+	// }
 
 	private void checkFileDataset(IDataSet dataSet) {
 		if (dataSet instanceof FileDataSet) {
