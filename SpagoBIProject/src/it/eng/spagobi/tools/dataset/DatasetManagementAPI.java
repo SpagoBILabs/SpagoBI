@@ -512,7 +512,7 @@ public class DatasetManagementAPI {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
 			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
 			for (IDataSet dataSet : joinedDatasets) {
-				checkQbeDataset(dataSet);
+				// checkQbeDataset(dataSet);
 				addProfileAttributes(dataSet);
 			}
 			joinedDataSet.setParamsMaps(parametersValues);
