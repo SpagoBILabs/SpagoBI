@@ -466,6 +466,9 @@ public class DetBIObjModHelper {
 		objParClone.setProg(biObjPar.getProg());
 		objParClone.setRequired(biObjPar.getRequired());
 		objParClone.setVisible(biObjPar.getVisible());
+		objParClone.setPriority(biObjPar.getPriority());
+		objParClone.setThickPerc(biObjPar.getThickPerc());
+		objParClone.setColSpan(biObjPar.getColSpan());
 		return objParClone;
 	}
 
