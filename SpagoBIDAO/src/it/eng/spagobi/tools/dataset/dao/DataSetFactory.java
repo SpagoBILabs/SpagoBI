@@ -7,6 +7,7 @@ package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
@@ -28,12 +29,15 @@ import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -298,6 +302,18 @@ public class DataSetFactory {
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((QbeDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 				((QbeDataSet) ds).setDatamarts(jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
+
+				// START -> This code should work instead of CheckQbeDataSets around the projects
+				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+				Map parameters = ds.getParamsMap();
+				if (parameters == null) {
+					parameters = new HashMap();
+					ds.setParamsMap(parameters);
+				}
+				ds.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+				logger.debug("Datamart retriever correctly added to Qbe dataset");
+				// END
+
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
 				if (userProfile != null)
 					dataSourceDao.setUserProfile(userProfile);
