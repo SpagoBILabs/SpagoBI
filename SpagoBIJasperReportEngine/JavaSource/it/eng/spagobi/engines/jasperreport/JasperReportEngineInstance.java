@@ -614,7 +614,9 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					// the following instruction is necessary because the above instruction cleans variable 'is'
 					is = new java.io.ByteArrayInputStream(templateContent);
 
-					files[i] = new File(destDir, jasperDesign.getName() + ".jasper");
+					int indPoint = template.getFileName().indexOf('.');
+					files[i] = new File(destDir, template.getFileName().substring(0, indPoint) + ".jasper");
+					// files[i] = new File(destDir, jasperDesign.getName() + ".jasper");
 					logger.debug("Compiling template file: " + files[i]);
 
 					FileOutputStream fos = null;
