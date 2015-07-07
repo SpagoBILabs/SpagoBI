@@ -12,7 +12,7 @@
 		another letter or symbol it will be considered relative to the folder of the jasper report application 
 	-->
 	<!-- ====================================================================================== -->
-	<GENERALSETTINGS tmpdir="tmpdir"/>
+	<GENERALSETTINGS tmpdir="jasperTempDir"/>
 
 
 	<!-- ====================================================================================== -->

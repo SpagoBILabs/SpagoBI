@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.jasperreport;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.jasperreport.datasource.JRSpagoBIDataStoreDataSource;
@@ -33,10 +34,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
@@ -178,7 +181,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			JasperReport report = JasperCompileManager.compileReport(jasperDesign);
 
 			monitorCompileTemplate.stop();
-			logger.debug("Template file compiled  succesfully");
+			logger.debug("Template file compiled succesfully");
 
 			adaptReportParams(report);
 			setupLocale();
@@ -381,6 +384,36 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		logger.debug("OUT");
 	}
 
+	void storeLocale(File pathMasterID) {
+		logger.debug("IN");
+		Locale locale;
+		String language;
+		String country;
+		ResourceBundle resourceBoundle;
+
+		language = (String) getEnv().get("SBI_LANGUAGE");
+		country = (String) getEnv().get("SBI_COUNTRY");
+
+		if (language != null && country != null) {
+
+			logger.debug("Internazionalization in " + language);
+			locale = new Locale(language, country, "");
+
+			File resourceDir = JasperReportEngine.getConfig().getEngineResourceDir();
+			File source = new File(resourceDir + System.getProperty("file.separator") + "messages_" + language + "_" + country + ".properties");
+			if (source.exists() && !source.isDirectory() && source.length() != 0) {
+				File target = new File(pathMasterID + System.getProperty("file.separator") + "messages_" + language + "_" + country + ".properties");
+				try {
+					Files.copy(source.toPath(), target.toPath(), REPLACE_EXISTING);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			logger.debug("Properties are copied to [" + pathMasterID + "]");
+		}
+	}
+
 	Map adaptReportParams(JasperReport report) {
 		logger.debug("IN");
 
@@ -553,6 +586,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					logger.debug("template [" + subreportMeta.getTemplateFingerprint() + "] does not exists yet");
 
 					File destDir = getCacheDir(masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint());
+					// File destDir = getCacheDir(masterIds);
+					storeLocale(getCacheDir(masterIds));
 
 					logger.debug("destDir number is equal to [" + destDir + "]");
 
