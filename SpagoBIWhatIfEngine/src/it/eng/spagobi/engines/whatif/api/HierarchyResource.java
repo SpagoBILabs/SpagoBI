@@ -35,6 +35,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.apache.log4j.Logger;
 import org.olap4j.OlapException;
@@ -90,9 +91,10 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@GET
 	@Path("/{hierarchy}/filtertree/{axis}")
 	@Produces("text/html; charset=UTF-8")
-	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName, @PathParam("axis") int axis) {
+	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
+			@PathParam("axis") int axis, @QueryParam(NODE_PARM) String node) {
 		Hierarchy hierarchy = null;
-		String node;
+
 		List<Member> list = new ArrayList<Member>();
 		List<Member> visibleMembers = null;
 		String memberDescription;
@@ -108,7 +110,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 		logger.debug("Getting the node path from the request");
 		// getting the node path from request
-		node = req.getParameter(NODE_PARM);
+
 		if (node == null) {
 			logger.debug("no node path found in the request");
 			return null;
@@ -197,7 +199,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		}
 
 	}
-
+	
 	private List<SbiVersion> getVersions() {
 		Connection connection;
 		List<SbiVersion> versions = new ArrayList<SbiVersion>();
