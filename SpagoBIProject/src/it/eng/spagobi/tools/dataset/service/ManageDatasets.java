@@ -52,6 +52,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
@@ -72,6 +73,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
@@ -1277,6 +1279,17 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, qbeDatamarts);
 			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
+
+			// START -> This code should work instead of CheckQbeDataSets around the projects
+			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+			Map parameters = qbeDataSet.getParamsMap();
+			if (parameters == null) {
+				parameters = new HashMap();
+				qbeDataSet.setParamsMap(parameters);
+			}
+			qbeDataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+			logger.debug("Datamart retriever correctly added to Qbe dataset");
+			// END
 
 			qbeDataSet.setJsonQuery(jsonQuery);
 			qbeDataSet.setDatamarts(qbeDatamarts);
