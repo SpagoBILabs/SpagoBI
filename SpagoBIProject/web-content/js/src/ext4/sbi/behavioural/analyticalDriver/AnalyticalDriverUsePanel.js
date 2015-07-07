@@ -4,9 +4,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**     
- * Authors
- * 
- * - Lazar Kostic (lazar.kostic@mht.net)
+ * @author
+ * Lazar Kostic (lazar.kostic@mht.net)
  */
 
 Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
@@ -115,7 +114,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			var thisPanel = this;
 			this.lovpopup = Ext.create('Ext.form.field.Trigger', {
-				triggerCls:'x-form-question-trigger',
+				triggerCls:'x-form-search-trigger',
 				disabled: true,
 				fieldLabel: 'Select LOV',
 				padding: '0 0 0 35',
@@ -234,7 +233,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			var thisPanel = this;
 			this.dllovpopup = Ext.create('Ext.form.field.Trigger', {
-				triggerCls:'x-form-question-trigger',
+				triggerCls:'x-form-search-trigger',
 				disabled: true,
 				padding: '0 0 0 10',
 				hideEmptyLabel: true,
