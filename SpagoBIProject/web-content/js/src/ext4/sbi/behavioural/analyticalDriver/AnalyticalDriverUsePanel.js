@@ -86,16 +86,16 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 				boxLabel: 'Expendable'
 
 			});
-			
+
 			this.manexp = Ext.create('Ext.panel.Panel',{
-				
+
 				items: [this.manualinput, this.expendable],
 				layout: 'vbox',
 				bodyPadding: '5 5 10',
 				border: false
 
 			});
-				
+
 			this.lov = Ext.create("Ext.form.field.Radio",{
 				hideEmptyLabel: true,
 				boxLabel: "LOV",
@@ -123,7 +123,34 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 					if(!thisPanel.win){
 
-						var p = new Ext.grid.Panel({
+						var columns = [
+						               { text: 'id',  dataIndex: 'LOV_ID', hidden: true },
+						               { text: 'Name',  dataIndex: 'LOV_NAME' },
+						               { text: 'Description', dataIndex: 'LOV_DESCRIPTION', flex: 1 }
+						               ];
+
+						var fixedGridPanelConf = {
+								pagingConfig:{},
+								storeConfig:{ 
+									pageSize: 5
+								},
+								/*columnWidth: 2/5,
+								buttonToolbarConfig: this.buttonToolbarConfig,
+								buttonColumnsConfig: this.buttonColumnsConfig,
+								customComboToolbarConfig: this.customComboToolbarConfig,*/
+								modelName: "LovModel",
+								columns: columns,
+								filterConfig: {},
+								filteredProperties: ['LOV_NAME'],
+								filteredObjects: null
+
+						};
+
+						//Ext.apply(this,config||{});
+
+						var p = Ext.create('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered', fixedGridPanelConf);
+
+						/*var p = new Ext.grid.Panel({
 							bodyStyle: 'background-color: white;',
 							store: thisPanel.useLovStore,
 
@@ -132,8 +159,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 							          { text: 'Name',  dataIndex: 'LOV_NAME' },
 							          { text: 'Description', dataIndex: 'LOV_DESCRIPTION', flex: 1 }
 							          ]
-						});
-
+						});*/
 
 						thisPanel.win = new Ext.Window({
 							layout:'fit',
@@ -178,9 +204,9 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 				disabled: true
 
 			});
-			
+
 			this.lovright = Ext.create('Ext.panel.Panel',{
-				
+
 				items: [this.lovpopup, this.selections],
 				layout: 'vbox',
 				bodyPadding: '0 5 0',
@@ -189,9 +215,9 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 			});
 
 			this.lov.addListener('change', this.manlov, this);
-			
+
 			this.lovpart = Ext.create('Ext.panel.Panel',{
-				
+
 				items: [this.lov, this.lovright],
 				layout: 'hbox',
 				bodyPadding: '5 5 5',
@@ -208,7 +234,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 			});
 
 			this.nonedv.addListener('change', this.dvnone, this);
-			
+
 			this.nonedf = Ext.create('Ext.panel.Panel',{
 				items: [this.nonedv],
 				layout: 'hbox',
@@ -225,7 +251,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 			});
 
 			this.uselov.addListener('change', this.dvuselov, this);
-			
+
 			this.dllovpopupid = Ext.create("Ext.form.field.Hidden", {
 				hideEmptyLabel: false,
 				disabled: true
@@ -241,7 +267,34 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 					if(!thisPanel.dvwin){
 
-						var dvp = new Ext.grid.Panel({
+						var columns1 = [
+						               { text: 'id',  dataIndex: 'LOV_ID', hidden: true },
+						               { text: 'Name',  dataIndex: 'LOV_NAME' },
+						               { text: 'Description', dataIndex: 'LOV_DESCRIPTION', flex: 1 }
+						               ];
+
+						var fixedGridPanelConf1 = {
+								pagingConfig:{},
+								storeConfig:{ 
+									pageSize: 5
+								},
+								/*columnWidth: 2/5,
+										buttonToolbarConfig: this.buttonToolbarConfig,
+										buttonColumnsConfig: this.buttonColumnsConfig,
+										customComboToolbarConfig: this.customComboToolbarConfig,*/
+								modelName: "LovModel",
+								columns: columns1,
+								filterConfig: {},
+								filteredProperties: ['LOV_NAME'],
+								filteredObjects: null
+
+						};
+
+						//Ext.apply(this,config||{});
+
+						var dvp = Ext.create('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered', fixedGridPanelConf1);
+
+						/*var dvp = new Ext.grid.Panel({
 							bodyStyle: 'background-color: white;',
 							store: thisPanel.useLovStore,
 
@@ -250,7 +303,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 							          { text: 'Name',  dataIndex: 'LOV_NAME' },
 							          { text: 'Description', dataIndex: 'LOV_DESCRIPTION', flex: 1 }
 							          ]
-						});
+						});*/
 
 
 						thisPanel.dvwin = new Ext.Window({
@@ -284,7 +337,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 				}
 
 			});
-			
+
 			this.lovdf = Ext.create('Ext.panel.Panel',{
 				items: [this.uselov, this.dllovpopup],
 				layout: 'hbox',
@@ -312,15 +365,15 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 				valueField: 'defaultFormulaValue'
 
 			});
-			
+
 			this.pickupdf = Ext.create('Ext.panel.Panel',{
 				items: [this.pickup, this.pickupcombo],
 				layout: 'hbox',
-				bodyPadding: '5 5 5',
+				bodyPadding: '0 5 5',
 				border: false
 
 			});
-			
+
 			this.general = Ext.create('Ext.panel.Panel',{
 				title: 'Analytical driver use general details',
 				items: [this.adid, this.useid, this.name, this.label, this.description],
@@ -499,13 +552,13 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			var nonesel = checked;
 			if(nonesel != null && nonesel == true){
-				
+
 				this.dllovpopupid.setValue('');
 				this.dllovpopupid.disable();
-				
+
 				this.dllovpopup.setValue('');
 				this.dllovpopup.disable();
-				
+
 
 				this.pickupcombo.setValue('');
 				this.pickupcombo.disable();
@@ -518,13 +571,13 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			var uselovsel = checked;
 			if(uselovsel != null && uselovsel == true){
-				
+
 				this.dllovpopupid.enable();
-				
+
 				this.dllovpopup.enable();
 				this.dllovpopup.setValue("--Choose LOV--");
-				
-				
+
+
 
 				this.pickupcombo.setValue('');
 				this.pickupcombo.disable();
@@ -537,10 +590,10 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			var pickupsel = checked;
 			if(pickupsel != null && pickupsel == true){
-				
+
 				this.dllovpopupid.setValue('');
 				this.dllovpopupid.disable();
-				
+
 				this.dllovpopup.setValue('');
 				this.dllovpopup.disable();
 
