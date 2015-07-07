@@ -1,3 +1,14 @@
+/** SpagoBI, the Open Source Business Intelligence suite
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+
+/**     
+ * Authors
+ * 
+ * - Lazar Kostic (lazar.kostic@mht.net)
+ */
+
 Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 	extend: 'Ext.form.Panel'
 
@@ -39,22 +50,30 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			this.name = Ext.create("Ext.form.field.Text", {
 				allowBlank: false,
+				labelAlign: 'left',
+				labelWidth: 70,
+				width: 355,
 				fieldLabel: "Name"
 			});
 
 			this.label = Ext.create("Ext.form.field.Text", {
 				allowBlank: false,
+				labelWidth: 70,
+				width: 355,
+				labelAlign: 'left',
 				fieldLabel: "Label"
 			});
 
 			this.description = Ext.create("Ext.form.field.Text", {
 				allowBlank: false,
+				labelWidth: 70,
+				width: 355,
+				labelAlign: 'left',
 				fieldLabel: "Description"
 			});
 
 			this.manualinput = Ext.create("Ext.form.field.Radio",{
-				hideEmptyLabel: false,
-				fieldLabel: 'Manual input/LOV',
+				hideEmptyLabel: true,
 				boxLabel: "Manual input",
 				checked: true,
 				name: 'lovorman'
@@ -63,13 +82,23 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			this.expendable = Ext.create("Ext.form.Checkbox",{
 
-				hideEmptyLabel: false,
+				padding: '3 0 0 0',
+				hideEmptyLabel: true,
 				boxLabel: 'Expendable'
 
 			});
+			
+			this.manexp = Ext.create('Ext.panel.Panel',{
+				
+				items: [this.manualinput, this.expendable],
+				layout: 'vbox',
+				bodyPadding: '5 5 10',
+				border: false
 
+			});
+				
 			this.lov = Ext.create("Ext.form.field.Radio",{
-				hideEmptyLabel: false,
+				hideEmptyLabel: true,
 				boxLabel: "LOV",
 				name: 'lovorman'
 
@@ -88,7 +117,9 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 			this.lovpopup = Ext.create('Ext.form.field.Trigger', {
 				triggerCls:'x-form-question-trigger',
 				disabled: true,
-				hideEmptyLabel: false,
+				fieldLabel: 'Select LOV',
+				padding: '0 0 0 35',
+				hideEmptyLabel: true,
 				onTriggerClick: function(e) {
 
 					if(!thisPanel.win){
@@ -139,19 +170,38 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 
 			this.selections = Ext.create('Ext.form.ComboBox',{
 
-				hideEmptyLabel: false,
+				hideEmptyLabel: true,
+				fieldLabel: 'Select pres. type',
+				padding: '0 0 0 35',
 				editable: false,
 				displayField: 'VALUE_NM',
 				valueField: 'VALUE_CD',
 				disabled: true
 
 			});
+			
+			this.lovright = Ext.create('Ext.panel.Panel',{
+				
+				items: [this.lovpopup, this.selections],
+				layout: 'vbox',
+				bodyPadding: '0 5 0',
+				border: false
+
+			});
 
 			this.lov.addListener('change', this.manlov, this);
+			
+			this.lovpart = Ext.create('Ext.panel.Panel',{
+				
+				items: [this.lov, this.lovright],
+				layout: 'hbox',
+				bodyPadding: '5 5 5',
+				border: false
+
+			});
 
 			this.nonedv = Ext.create("Ext.form.field.Radio",{
-				hideEmptyLabel: false,
-				fieldLabel: 'Default Value',
+				hideEmptyLabel: true,
 				boxLabel: "None",
 				checked: true,
 				name: 'defaultvalue'
@@ -159,9 +209,17 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 			});
 
 			this.nonedv.addListener('change', this.dvnone, this);
+			
+			this.nonedf = Ext.create('Ext.panel.Panel',{
+				items: [this.nonedv],
+				layout: 'hbox',
+				bodyPadding: '5 5 5',
+				border: false
+
+			});
 
 			this.uselov = Ext.create("Ext.form.field.Radio",{
-				hideEmptyLabel: false,
+				hideEmptyLabel: true,
 				boxLabel: "Use a LOV",
 				name: 'defaultvalue'
 
@@ -178,7 +236,8 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 			this.dllovpopup = Ext.create('Ext.form.field.Trigger', {
 				triggerCls:'x-form-question-trigger',
 				disabled: true,
-				hideEmptyLabel: false,
+				padding: '0 0 0 10',
+				hideEmptyLabel: true,
 				onTriggerClick: function(e) {
 
 					if(!thisPanel.dvwin){
@@ -226,9 +285,17 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 				}
 
 			});
+			
+			this.lovdf = Ext.create('Ext.panel.Panel',{
+				items: [this.uselov, this.dllovpopup],
+				layout: 'hbox',
+				bodyPadding: '5 5 5',
+				border: false
+
+			});
 
 			this.pickup = Ext.create("Ext.form.field.Radio",{
-				hideEmptyLabel: false,
+				hideEmptyLabel: true,
 				boxLabel: "Pick up",
 				name: 'defaultvalue'
 
@@ -239,15 +306,24 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 			this.pickupcombo = Ext.create('Ext.form.ComboBox',{
 
 				editable: false,
-				hideEmptyLabel: false,
+				padding: '0 0 0 24',
+				hideEmptyLabel: true,
 				disabled: true,
 				displayField: 'defaultFormulaDesc',
 				valueField: 'defaultFormulaValue'
 
 			});
+			
+			this.pickupdf = Ext.create('Ext.panel.Panel',{
+				items: [this.pickup, this.pickupcombo],
+				layout: 'hbox',
+				bodyPadding: '5 5 5',
+				border: false
 
+			});
+			
 			this.general = Ext.create('Ext.panel.Panel',{
-				title: 'Analytical driver use mode details',
+				title: 'Analytical driver use general details',
 				items: [this.adid, this.useid, this.name, this.label, this.description],
 				layout: 'anchor',
 				bodyPadding: '5 5 5',
@@ -256,18 +332,19 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUsePanel', {
 			});
 
 			this.manlov = Ext.create('Ext.panel.Panel',{
-
-				items: [this.manualinput, this.expendable, this.lov, this.lovpopupid, this.lovpopup, this.selections],
+				title: "Type",
+				items: [this.manexp, this.lovpopupid, this.lovpart],
 				layout: 'anchor',
-				bodyPadding: '5 5 5',
+				bodyPadding: '5 5 0',
 				border: false
 
 			});
 
 			this.defvalue = Ext.create('Ext.panel.Panel',{
 
-				items: [this.nonedv, this.uselov, this.dllovpopupid, this.dllovpopup, this.pickup, this.pickupcombo],
-				layout: 'anchor', 
+				items: [this.nonedf, this.lovdf, this.pickupdf],
+				title: "Default value",
+				layout: 'anchor',
 				bodyPadding: '5 5 5',
 				border: false
 

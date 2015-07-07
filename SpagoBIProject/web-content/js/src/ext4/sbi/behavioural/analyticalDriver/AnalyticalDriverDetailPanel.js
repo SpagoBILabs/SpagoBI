@@ -1,10 +1,21 @@
+/** SpagoBI, the Open Source Business Intelligence suite
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+
+/**     
+ * Authors
+ * 
+ * - Lazar Kostic (lazar.kostic@mht.net)
+ */
+
 Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverDetailPanel', {
 	extend: 'Ext.form.Panel'
 		,config: {
 
 			bodyPadding: '5 5 0',
 			defaults: {
-				width: 400,
+				width: 700,
 				layout:'fit'
 			},        
 			fieldDefaults: {
@@ -19,7 +30,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverDetailPanel', {
 
 			this.initConfig(config);
 			this.initFields();
-			this.items=[this.adid, this.name, this.label, this.description, this.adTypes, this.functionalflag, this.temporalflag];
+			this.items=[this.upper];
 			this.addEvents('save');
 			this.tbar = Sbi.widget.toolbar.StaticToolbarBuilder.buildToolbar({items:[{name:'->'},{name:'save'}]},this);
 
@@ -58,6 +69,15 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverDetailPanel', {
 				fieldLabel: "Description",
 				allowBlank: false
 			});
+			
+			this.left = Ext.create('Ext.panel.Panel',{
+
+				items: [this.adid, this.name, this.label, this.description],
+				layout: 'anchor', 
+				bodyPadding: '5 5 5',
+				border: false
+
+			});
 
 			Ext.define("TypesModel", {
 				extend: 'Ext.data.Model',
@@ -90,13 +110,33 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverDetailPanel', {
 			});
 
 			this.functionalflag = Ext.create("Ext.form.Checkbox", {
+				padding: "2 0 0 65",
 				name: "FUNCTIONALFLAG",
 				fieldLabel: "Functional"
 			});
 
 			this.temporalflag = Ext.create("Ext.form.Checkbox", {
+				padding: "2 0 0 65",
 				name: "TEMPORALFLAG",
 				fieldLabel: "Temporal"
+			});
+			
+			this.right = Ext.create('Ext.panel.Panel',{
+
+				items: [this.adTypes, this.functionalflag, this.temporalflag],
+				layout: 'vbox', 
+				bodyPadding: '5 5 5',
+				border: false
+
+			});
+			
+			this.upper = Ext.create('Ext.panel.Panel',{
+
+				items: [this.left, this.right],
+				layout: 'hbox', 
+				bodyPadding: '5 5 20',
+				border: false
+
 			});
 
 		},
