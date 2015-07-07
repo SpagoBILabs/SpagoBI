@@ -4,6 +4,12 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
+/**
+ * 
+ *  @author
+ *  Danilo Ristovski (danilo.ristovski@mht.net)
+ */
+
 Ext.define
 (
 	'Sbi.behavioural.lov.TestLovConfigurationGridPanel2', 
@@ -203,12 +209,12 @@ Ext.define
 			
 			if (value == undefined || value == null || value == "")
 			{
-				Sbi.exception.ExceptionHandler.showWarningMessage("You need to specify \"Value\" value");
+				Sbi.exception.ExceptionHandler.showWarningMessage(LN("sbi.behavioural.lov.warningMissingValueDataOnTestPage"));
 				return null;
 			}
 			else if (description == undefined || description == null || description == "")
 			{
-				Sbi.exception.ExceptionHandler.showWarningMessage("You need to specify \"Description\" value");
+				Sbi.exception.ExceptionHandler.showWarningMessage(LN("sbi.behavioural.lov.warningMissingDescriptionDataOnTestPage"));
 				return null;
 			}
 			else 

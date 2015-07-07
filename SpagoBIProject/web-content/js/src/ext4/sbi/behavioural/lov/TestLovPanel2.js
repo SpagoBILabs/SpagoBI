@@ -33,7 +33,7 @@
  * 
  * Authors
  * 
- * - Alberto Ghedin (alberto.ghedin@eng.it)
+ * - Danilo Ristovski (danilo.ristovski@mht.net)
  */
 
 Ext.define
@@ -44,7 +44,8 @@ Ext.define
     	extend: 'Ext.panel.Panel', 
     	lovTestConfiguration: null,
     	
-    	config: {
+    	config: 
+    	{
         	layout: 'border',
         	toolbarHeight: 50,
         	border: false
@@ -120,7 +121,6 @@ Ext.define
 			 	}
 		 	];
     		
-    		// ???????????????????????????????
     		Ext.QuickTips.init();
     		    		
     		/* The lower part of the result panel - PREVIEW */
@@ -262,10 +262,13 @@ Ext.define
     	{
     		Sbi.debug('[IN] TestLovPanel2 - initServices()');
     		
-    		this.services["getSmth"] = Sbi.config.serviceRegistry.getServiceUrl({
-    			serviceName: 'LOV/Test',
-    			baseParams: baseParams
-    		});    		
+    		this.services["test"] = Sbi.config.serviceRegistry.getServiceUrl
+    		(
+				{
+					serviceName: 'LOV/Test',
+					baseParams: baseParams
+				}
+			);    		
     		
     		Sbi.debug('[OUT] TestLovPanel2 - initServices()');
     	},   	

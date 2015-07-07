@@ -90,7 +90,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
 		logger.debug("IN");
-
+		
 		try {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
 			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
@@ -840,6 +840,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return getUserProfile().getUserUniqueIdentifier().toString();
 	}
 
+	// private UserProfile getUserProfile() {
+	// UserProfile profile = this.getIOManager().getUserProfile();
+	// return profile;
+	// }
+
 	// private IDataSetDAO getDataSetDAO() {
 	// IDataSetDAO dataSetDao = null;
 	// try {
@@ -1089,9 +1094,16 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			boolean isGeoDataset = false;
+
 			try {
-				String meta = datasetJSON.getString("meta");
-				isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
+				// String meta = datasetJSON.getString("meta"); // [A]
+				// isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta); // [A]
+				
+				String meta = datasetJSON.optString("meta");
+
+				if (meta != null && !meta.equals(""))
+					isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
+
 			} catch (Exception e) {
 				logger.error("Error during check of Geo spatial column", e);
 			}

@@ -8,38 +8,36 @@
  *  @author
  *  Danilo Ristovski (danilo.ristovski@mht.net)
  */
- 
+
 Ext.define
 (
-	"Sbi.behavioural.lov.LOVModel", 
+	"Sbi.behavioural.lov.DatasetModel", 
 		
 	{
 		extend: 'Ext.data.Model',
-			
+		
 		fields: 	
 		[							 
-	         {name: 'LOV_ID',			type: 'number'},
-	         {name: 'LOV_LABEL',     	type: 'string'},
-	         {name: 'LOV_NAME', 		type: 'string'},
-	         {name: 'LOV_DESCRIPTION', 	type: 'string'},	         
-	         {name: 'LOV_PROVIDER',    	type: 'string'},
-	         {name: 'I_TYPE_CD',     	type: 'string'},
-	         {name: 'I_TYPE_ID',      	type: 'string'},	         
-	         {name: 'SELECTION_TYPE',   type: 'string'}   
+	         {name: 'id',			type: 'number'},
+	         {name: 'name',     	type: 'string'},
+	         {name: 'description', 	type: 'string'},
+	         {name: 'label', 		type: 'string'} 
          ],
          
-         idProperty: "LOV_ID",
+         idProperty: "id",
     
          proxy: 
          {
 	        type: 'rest',
-	        url: Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'LOV'}),
+	        
+	        url: 	Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: '1.0/datasets'}),
 	        
 	        appendId: false,
 	        
 	        reader: 
 	        {
-	            type: 'json'
+	            type: 'json',
+	            root: "root"
 	        }
          }
 	}

@@ -1,3 +1,14 @@
+/** SpagoBI, the Open Source Business Intelligence suite
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+
+/**
+ * 
+ *  @author
+ *  Danilo Ristovski (danilo.ristovski@mht.net)
+ */
+
 Ext.define
 (
 		"Sbi.behavioural.lov.LOVQueryBottomPanel", 
@@ -69,6 +80,8 @@ Ext.define
 		    	    }
 				); 
 	    		
+	    		var globalScope = this;
+	    		
 	    		this.dataSourceQuery = Ext.create
 	    		(
 					"Ext.form.field.TextArea",
@@ -79,7 +92,15 @@ Ext.define
 						height: 100,
 						width: 500,
 						padding: '10 0 10 0',
-						allowBlank: false
+						allowBlank: false//,
+						
+//						listeners : 
+//			            {
+//			                change : function(field, e) 
+//			                {					
+//			                	globalScope.dataSourceQuery.fireEvent("queryModified");
+//			                }
+//			            }
 					}
 	    		);
 	    		

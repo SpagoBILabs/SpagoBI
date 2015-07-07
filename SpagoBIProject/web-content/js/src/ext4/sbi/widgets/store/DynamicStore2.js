@@ -153,12 +153,9 @@ Ext.define('Sbi.widgets.store.DynamicStore2', {
 			{
 				Sbi.debug("Wrong syntax");
 				
-				var question = confirm("Entered query has a wrong syntax. Return on the main page");
+				var question = alert("Entered query has a wrong syntax. Return on the main page");
 				
-				if (question == true)
-				{
-					this.fireEvent('wrongSyntax',"wrong");	// Caught in TestLovResultPanel2.js
-				}
+				this.fireEvent('wrongSyntax',"wrong");	// Caught in TestLovResultPanel2.js				
 			}		
 			
 		}		

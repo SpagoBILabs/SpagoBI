@@ -1,3 +1,14 @@
+/** SpagoBI, the Open Source Business Intelligence suite
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+
+/**
+ * 
+ *  @author
+ *  Danilo Ristovski (danilo.ristovski@mht.net)
+ */
+
 Ext.define
 (
 		"Sbi.behavioural.lov.LOVScriptBottomPanel", 
@@ -5,7 +16,7 @@ Ext.define
 		{
 			create: function(dataSourceURL) 
 			{
-				Sbi.debug("[IN] Creating LOVScriptBottomPanel");
+				Sbi.debug("[IN] Creating LOVScriptBottomPanel");	
 				
 				Ext.define
 	    		(
@@ -73,9 +84,10 @@ Ext.define
 					
 					{
 						id: "SCRIPT_QUERY",
+						layout: "fit",
 						fieldLabel: LN('sbi.behavioural.lov.details.scriptDescription'),
-						height: 100,
-						width: 500,
+						height: 300,
+						width: 800,
 						padding: '10 0 10 0',
 						allowBlank: false
 					}
