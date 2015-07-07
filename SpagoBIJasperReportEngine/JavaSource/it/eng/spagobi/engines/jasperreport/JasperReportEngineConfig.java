@@ -86,11 +86,10 @@ public class JasperReportEngineConfig {
 
 	public File getTempDir() {
 		File tempDir;
-		String tempDirPath = (String) getConfigSourceBean().getAttribute("GENERALSETTINGS.tmpdir");
-		/*
-		 * String tempDirPath = System.getProperty("java.io.tmpdir"); tempDirPath = tempDirPath.concat(System.getProperty("file.separator")).concat((String)
-		 * getConfigSourceBean().getAttribute("GENERALSETTINGS.tmpdir"));
-		 */
+		// String tempDirPath = (String) getConfigSourceBean().getAttribute("GENERALSETTINGS.tmpdir");
+		String tempDirPath = System.getProperty("java.io.tmpdir");
+		tempDirPath = tempDirPath.concat(System.getProperty("file.separator")).concat((String) getConfigSourceBean().getAttribute("GENERALSETTINGS.tmpdir"));
+
 		if (!tempDirPath.startsWith("/")) {
 			File webinfDir = new File(ConfigSingleton.getRootPath());
 			File appRootDir = webinfDir.getParentFile();
