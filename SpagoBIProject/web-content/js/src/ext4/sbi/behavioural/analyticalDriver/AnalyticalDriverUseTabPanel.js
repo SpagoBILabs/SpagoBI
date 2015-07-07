@@ -1,3 +1,14 @@
+/** SpagoBI, the Open Source Business Intelligence suite
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+
+/**     
+ * Authors
+ * 
+ * - Lazar Kostic (lazar.kostic@mht.net)
+ */
+
 Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUseTabPanel', {
 	extend: 'Ext.tab.Panel'
 
@@ -21,7 +32,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUseTabPanel', {
 	this.services = [];
 	this.initServices();
 	this.initFields();
-	this.items=[this.newUse];
+	//this.items=[this.newUse];
 	this.addEvents('removeUse','saveUse');
 	this.tbar = Sbi.widget.toolbar.StaticToolbarBuilder.buildToolbar({items:[{name:'->'},{name: 'remove'},{name:'save'}]},this);
 	this.tbar.on("save",function(){
@@ -186,8 +197,14 @@ initFields: function(){
 						use.pickupcombo.setValue(record.data.DEFAULTFORMULA);
 					}
 					scope.add(use);
-				}});
-
+					
+				}
+				scope.add(scope.newUse);
+				
+				scope.setActiveTab(0);
+				
+			});
+	
 	Ext.define("SelectionModel", {
 		extend: 'Ext.data.Model',
 		fields: ["VALUE_ID","VALUE_DS","VALUE_NM", "VALUE_CD"]
@@ -352,6 +369,8 @@ getValues: function(){
 saveADUse: function(){
 
 	var scope = this;
+	
+	console.log(scope);
 
 	var values = this.getValues();
 
@@ -407,7 +426,7 @@ saveADUse: function(){
 					this.newUse1.constraintsList.reconfigure(this.newUseconstStore);
 					this.newUse1.rolesList.reconfigure(this.newUserolesStore);
 
-					this.insert(0,this.newUse1);
+					this.add(this.newUse1);
 				}
 				this.activeTab.setTitle(values.LABEL);
 				this.activeTab.useid.setValue(Ext.decode(response.response.responseText).USEID);
