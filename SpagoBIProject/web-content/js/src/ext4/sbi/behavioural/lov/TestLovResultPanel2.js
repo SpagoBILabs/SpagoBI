@@ -25,7 +25,7 @@
  * 
  * Authors
  * 
- * - Alberto Ghedin (alberto.ghedin@eng.it)
+ * - Danilo Ristovski (danilo.ristovski@mht.net)
  */
 
 Ext.define
@@ -53,7 +53,7 @@ Ext.define
 				} 
 			};
 			
-			this.title =  "LOV result preview";
+			this.title =  LN("sbi.behavioural.lov.lovResultPreviewPanelTitle");
 			this.filterConfig = {};
 			this.border = false;
 			this.region = 'south';
@@ -62,7 +62,13 @@ Ext.define
 			
 			Ext.apply(this, defautlConf);
 			
-			defautlConf.serviceUrl = "http://localhost:8080/SpagoBI/restful-services/LOV/Test";
+			defautlConf.serviceUrl = Sbi.config.serviceRegistry.getRestServiceUrl
+			(
+				{
+					serviceName: 'LOV/Test', 
+					baseParams: config.baseParams
+				}
+			);
 	    	
 	    	this.callParent([defautlConf]);	// Going into "DynamicGridPanel2.js"
 	    	
@@ -72,7 +78,6 @@ Ext.define
     			
     			function()
     			{
-    				console.log("[LOAD] in TestLovResultPanel2");
     				this.fireEvent('storeLoad')
 				},
 				

@@ -6,13 +6,12 @@
 /**
  * 
  *  @author
- *  Alberto Ghedin (alberto.ghedin@eng.it)
+ *  Danilo Ristovski (danilo.ristovski@mht.net)
  */
- 
    
 Ext.define
 (
-	"Sbi.behavioural.lov.LOVListDetailPanel", 
+	"Sbi.behavioural.lov.LOVListDetailPanel",
 	
 	{
 		extend: 'Sbi.widgets.compositepannel.ListDetailPanel',
@@ -23,32 +22,76 @@ Ext.define
 			modelName: "Sbi.behavioural.lov.LOVModel"
 		},
 
-		constructor: function(config) 
+		constructor: function(config)
 		{		
 			Sbi.debug('[IN] LOVListDetailPanel - constructor');
 			
 			var isSuperadmin = config.isSuperadmin;
 			
-			this.services =[];
+			this.services =[];			
+			
 			this.initServices();
-						
+			
+			/**
+			 * LOV detail panel is the part of the LOV page (on the right side of the page). 
+			 * It contains two global parts: the main panel with data that are common for 
+			 * records of different LOV input types (namely: label, description, name and LOV 
+			 * input type) and the second panel that is specific for every LOV input type. 
+			 * Those panels contain data dedicated GUI elements (text boxes, combo boxes etc).
+			 * 
+			 * The "LOVDetailPanel" extends "Ext.form.Panel" ExtJS class.
+			 */
 			this.detailPanel =  Ext.create
 			(
 				"Sbi.behavioural.lov.LOVDetailPanel",
 				
 				{
-					services: this.services, 
-					isSuperadmin: isSuperadmin 
+					services: this.services,
+					isSuperadmin: isSuperadmin
 				}
 			);
 					
 			// Hide Save button
 			this.detailPanel.getComponent("TOOLBAR").items.items[3].hide();	
+			var globalScope = this;
 			
 			this.columns = 
 			[
-			 	{ dataIndex:"LOV_NAME", 		header:LN('sbi.generic.label') }, 
-			 	{ dataIndex:"LOV_DESCRIPTION", 	header:LN('sbi.generic.descr') }
+			 	{ 
+			 		dataIndex:"LOV_LABEL", 		
+			 		header:LN('sbi.generic.label'),
+			 	
+			 		// Listener in charge of monitoring mouse hover over this column ('Label') in grid
+			 		listeners : 
+			 		{
+	                    'mouseover' :
+	                    	
+	                    	function(iView, iCellEl, iColIdx, iRecord, iRowEl, iRowIdx, iEvent) 
+	                    	{		               	                    		
+	                    		hoverText = globalScope.hoverTextSet(iRowIdx);
+	                    		iView.getEl().set({ 'data-qtip': hoverText });
+		                    }
+			 		 }
+			 	}, 
+			 	
+			 	{ 
+			 		dataIndex:"LOV_DESCRIPTION",
+			 		header:LN('sbi.generic.descr'),
+			 		
+			 		// Listener in charge of monitoring mouse hover over this column ('Description') in grid
+			 		listeners : 
+			 		{
+	                    'mouseover' : 
+	                    	
+	                    	function(iView, iCellEl, iColIdx, iRecord, iRowEl, iRowIdx, iEvent) 
+		                    {  	   			                    	
+	                    		/* Call the 'hoverTextSet' that will do common task for every column with textual data 
+	                    		 * that exist in the grid - make final string with data contained for hovered grid record. */
+	                    		hoverText = globalScope.hoverTextSet(iRowIdx);
+	                    		iView.getEl().set({ 'data-qtip': hoverText });
+		                    }
+			 		}
+			 	}
 		 	];
 			
 			this.fields = ["LOV_ID", "LOV_NAME", "LOV_DESCRIPTION", "INPUT_TYPE_COMBOBOX"];
@@ -68,19 +111,78 @@ Ext.define
 				deletebutton: true
 			};
 	
-			this.callParent(arguments);
+			this.callParent(arguments);			
 			
 			Sbi.debug('[OUT] LOVListDetailPanel - constructor');
 		},
 		
+		/* This method will do common task for every column with textual data 
+		 * that exists in the grid - make final string for hovered grid record 
+		 * (LOV). This final text will appear in the form of a tooltip when 
+		 * some grid record is hovered by mouse pointer. */
+		hoverTextSet: function(iRowIdx)
+		{
+			var hoverType = "";
+            var lovTypeCd = iRowIdx.data.I_TYPE_CD;
+            
+            if (lovTypeCd == "QUERY")
+      	  	{
+          	  	hoverType = "Query";
+      	  	}
+            
+            else if (lovTypeCd == "SCRIPT")
+      	  	{
+          	  	hoverType = "Script";
+          	  
+          	  	var lovProvider = iRowIdx.data.LOV_PROVIDER;
+          	  
+          	  	var startScriptLanguage = lovProvider.indexOf("<LANGUAGE>") + "<LANGUAGE>".length;
+          	  	var endScriptLanguage = lovProvider.indexOf("</LANGUAGE>");
+          	  	var scriptLanguage = lovProvider.substring(startScriptLanguage,endScriptLanguage);
+          	  
+          	  	if (scriptLanguage == "groovy")
+          	  		hoverType += " (Groovy)";
+          	  	else 
+          	  		hoverType += " (Javascript)";          	  
+      	  	}
+            
+            else if (lovTypeCd == "FIX_LOV")
+      	  	{
+          	  	hoverType = "Fixed list of values";
+      	  	}
+            
+            else if (lovTypeCd == "JAVA_CLASS")
+      	  	{
+          	  	hoverType = "Java class";
+      	  	}
+            
+            else if (lovTypeCd == "DATASET")
+      	  	{
+          	  	hoverType = "Dataset";
+      	  	}
+            
+            var hoverText = "Type: " + hoverType + 
+            				"<br/>Name: " + iRowIdx.data.LOV_NAME + 
+            				"<br/>Description: " + iRowIdx.data.LOV_DESCRIPTION;
+            
+            return hoverText;
+		},
+		
+		/**
+		 *  Initialize all the services that we need for the LOV page. These services are 
+		 *  called via REST calls sent toward dedicated server. 
+		 */
 		initServices: function(baseParams)
 		{
 			Sbi.debug('[IN] LOVListDetailPanel - initServices()');
 			
-			this.services["test"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-				serviceName: 'LOV/Test'
-					, baseParams: baseParams
-			});
+			this.services["test"]= Sbi.config.serviceRegistry.getRestServiceUrl
+			(
+				{
+					serviceName: 'LOV/Test', 
+					baseParams: baseParams
+				}
+			);
 			
 			this.services["getDomains"]= Sbi.config.serviceRegistry.getRestServiceUrl
 			(
@@ -109,7 +211,7 @@ Ext.define
 			this.services["datasets"] = Sbi.config.serviceRegistry.getRestServiceUrl
 			(
 				{ 
-					serviceName: '1.0/datasets', 
+					serviceName: '1.0/datasets',
 					baseParams: baseParams
 				}
 			);
@@ -125,7 +227,9 @@ Ext.define
 			 * in both cases: creating a new record or modifying the existing one */
 			
 			var currentPanel = this;
-			var canBeSaved = false;
+			var canBeTested = false;
+			
+			this.detailPanel.lovRecordFormSet = false;
 			
 			if (record.LOV_LABEL == "")
 			{
@@ -155,12 +259,14 @@ Ext.define
 					var comboDataSource = lovPanel2.items.items[0];
 					comboDataSource.markInvalid(LN('sbi.behavioural.lov.details.dataSourceMissing'));		
 				}
+				
 				else if (record.I_TYPE_CD == "SCRIPT" && (record.SCRIPT_TYPE == "" || record.SCRIPT_TYPE == undefined || record.SCRIPT_TYPE == null))
 				{
 					var comboScript = lovPanel2.items.items[0];
 //					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.scriptTypeMissing'));
 					comboScript.markInvalid(LN('sbi.behavioural.lov.details.scriptTypeMissing'));	
 				}
+				
 				else if (record.I_TYPE_CD == "JAVA_CLASS")
 				{
 					if (record.JAVA_CLASS_NAME == "" || record.JAVA_CLASS_NAME == undefined || record.JAVA_CLASS_NAME == null)
@@ -170,10 +276,37 @@ Ext.define
 					}				
 					else
 					{
-						canBeSaved = true;
+						canBeTested = true;
 					}
 				}
-				else if (record.I_TYPE_CD != "JAVA_CLASS")
+				
+				else if (record.I_TYPE_CD == "DATASET")
+				{
+					var datasetFormItems = lovPanel2.items.items[0];				
+									
+					if (datasetFormItems == null || datasetFormItems == undefined)
+					{
+						Sbi.exception.ExceptionHandler.
+							showWarningMessage(LN("sbi.behavioural.lov.warningDatasetCannotBeTested"));
+					}
+					else
+					{
+						var datasetFormItems = datasetFormItems.items.items[0];	
+						var datasetLabelTextfield = datasetFormItems.items.items[0];
+						var datasetLabelValue = datasetLabelTextfield.value;
+						
+						if (datasetLabelValue == "" || datasetLabelValue == null || datasetLabelValue == undefined)	
+						{
+							datasetLabelTextfield.markInvalid(LN("sbi.behavioural.lov.details.datasetLabelMissing"));
+						}	
+						else
+						{
+							canBeTested = true;
+						}	
+					}					
+				}
+				
+				else if (record.I_TYPE_CD != "JAVA_CLASS" && record.I_TYPE_CD != "DATASET")
 				{					
 					var description = null;
 						
@@ -187,7 +320,7 @@ Ext.define
 					
 					if (description != "" && description != null && description  != undefined)
 					{
-						canBeSaved = true;
+						canBeTested = true;
 					}
 					else
 					{						
@@ -212,17 +345,18 @@ Ext.define
 						
 						if (numberOfFixLovs > 0)
 						{
-							canBeSaved = true;
+							canBeTested = true;
 						}
 						else
 						{
 							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.behavioural.lov.details.fixLovGridEmpty')); 
 						}
 					}
-				}						
+				}
+				
 			}
 			
-			if (canBeSaved == true)
+			if (canBeTested == true)
 			{					
 				this.openTestPage(record);
 			}
@@ -233,12 +367,15 @@ Ext.define
 		openTestPage: function(record)
 		{
 			Sbi.debug('[IN] LOVListDetailPanel - openTestPage()');
-			
+						
 			var lovConfig = {};	
 			
 			var contextName = 'SpagoBI'; 
 			
 			var lovId = -1;
+			
+			var getFormStateTest = this.detailPanel.getFormState("testPhase");
+			//var getFormStateSaveBeforeTest = this.detailPanel.getFormState("savePhaseBeforeTest");
 			
 			if (record.LOV_ID == "")
 			{
@@ -246,10 +383,10 @@ Ext.define
 			}
 			else
 			{
-				lovId = this.detailPanel.getFormState("testPhase").data.LOV_ID;	
+				lovId = getFormStateTest.data.LOV_ID;	
 			}
 			
-			var lovProvider = this.detailPanel.getFormState("testPhase").data.LOV_PROVIDER;
+			var lovProvider = getFormStateTest.data.LOV_PROVIDER;
 			
 			/* If Java class and/or its path inside the project is changed from the
 			 * one that was previously defined - create new, empty LOV provider. */
@@ -273,6 +410,43 @@ Ext.define
 				
 				this.detailPanel.lovProvider.value = lovProvider;
 				this.detailPanel.lovProvider.javaClassName = javaClassName;
+			}
+			
+			else if (record.I_TYPE_CD == "DATASET")
+			{				
+				var startDatasetId = lovProvider.indexOf("<ID>") + "<ID>".length;
+				var endDatasetId = lovProvider.indexOf("</ID>");
+				var datasetId = lovProvider.substring(startDatasetId,endDatasetId);
+				
+				var startDatasetLabel = lovProvider.indexOf("<LABEL>") + "<LABEL>".length;
+				var endDatasetLabel = lovProvider.indexOf("</LABEL>");
+				var datasetLabel = lovProvider.substring(startDatasetLabel,endDatasetLabel);
+				
+				if (datasetLabel != record.DATASET_LABEL)
+				{
+					if (datasetId != record.DATASET_ID)
+					{
+						lovProvider = 
+								"<DATASET>" +
+								"<ID>" + record.DATASET_ID +"</ID>" +	
+								"<LABEL>" + record.DATASET_LABEL + "</LABEL>" +
+								"<VISIBLE-COLUMNS>" + "</VISIBLE-COLUMNS>" +
+								"<INVISIBLE-COLUMNS>" + "</INVISIBLE-COLUMNS>" +
+								"<LOVTYPE>" + "</LOVTYPE>" +
+								"<VALUE-COLUMN>" + "</VALUE-COLUMN>" +
+								"<DESCRIPTION-COLUMN>" + "</DESCRIPTION-COLUMN>" +
+								"</DATASET>";
+					}
+					
+					else
+					{
+						lovProvider = lovProvider.substring(0,startDatasetLabel) + record.DATASET_LABEL + lovProvider.substring(endDatasetLabel,lovProvider.length);
+					}				
+				}	
+							
+				this.detailPanel.lovProvider.value = lovProvider;
+				this.detailPanel.lovProvider.datasetId = datasetId;
+				this.detailPanel.lovProvider.datasetLabel = datasetLabel;
 			}
 																	
 			if (lovId == 0)
@@ -304,9 +478,9 @@ Ext.define
 				var endLovType = lovProvider.indexOf("</LOVTYPE>");
 				lovConfig.lovType = lovProvider.substring(startLovType,endLovType);
 				
-				var startTreeColumnNames = lovProvider.indexOf("<TREE-LEVELS-COLUMNS>")+"<TREE-LEVELS-COLUMNS>".length;
-				var endTreeColumnNames  = lovProvider.indexOf("</TREE-LEVELS-COLUMNS>");
-				lovConfig.treeColumnNames = lovProvider.substring(startTreeColumnNames,endTreeColumnNames);
+//				var startTreeColumnNames = lovProvider.indexOf("<TREE-LEVELS-COLUMNS>")+"<TREE-LEVELS-COLUMNS>".length;
+//				var endTreeColumnNames  = lovProvider.indexOf("</TREE-LEVELS-COLUMNS>");
+//				lovConfig.treeColumnNames = lovProvider.substring(startTreeColumnNames,endTreeColumnNames);
 			}		
 			
 			this.detailPanel.updatePanel(contextName, lovConfig, lovProvider, null);
@@ -327,200 +501,246 @@ Ext.define
 		
 		checkCanSave: function(record)
 		{
-			Sbi.debug('[IN] LOVListDetailPanel - checkCanSave()');
+			Sbi.debug('[IN] LOVListDetailPanel - checkCanSave()');		
 			
-			/* Calling chained methods in order to get data from Configuration Panel
-			 * that are needed to fill the missing data in LOV provider XML query. */			
-			var returnLovValues = this.detailPanel.takeValues();
+			var lovFormTab = this.detailPanel.tabPanel.items.items[0].tab;
+			var lovResultTab = this.detailPanel.tabPanel.items.items[1].tab;					
 			
-			// Needed for the fix LOVs
-			var arrayOfValuesFixLov = [];
-			var arrayOfDescripFixLov = [];
-			
-			if (returnLovValues != null && returnLovValues != undefined)
+			if (lovResultTab.hidden == false)
 			{
-				var incompleteLovProvider = this.detailPanel.getFormState("savePhase").data.LOV_PROVIDER;
+				var getFormStateSave = this.detailPanel.getFormState("savePhase");
 				
-				if (record.I_TYPE_CD == "QUERY")
-				{
-					var startDataSource = incompleteLovProvider.indexOf("<CONNECTION>")+"<CONNECTION>".length;
-					var endDataSource = incompleteLovProvider.indexOf("</CONNECTION>");
-					var dataSource = incompleteLovProvider.substring(startDataSource,endDataSource);
+				var returnLovValues = this.detailPanel.takeValues();
+				
+				/* If we did not check all necessary details about resulting LOV
+				 * - e.g. VALUE, VISIBLE, DECRIPTION radio buttons (checkbox) is 
+				 * not checked. */
+				/* Also, check if we tested, then return back to LOV form panel,
+				 * change something that is crucial for the LOV (e.g. some
+				 * other data source and/or query for QUERY input type). */
+				if (returnLovValues != null)
+				{					
+					var incompleteLovProvider = getFormStateSave.data.LOV_PROVIDER;
 					
-					var startStatement = incompleteLovProvider.indexOf("<STMT>")+"<STMT>".length;
-					var endStatement = incompleteLovProvider.indexOf("</STMT>");
-					var statement = incompleteLovProvider.substring(startStatement,endStatement);
+					if (record.I_TYPE_CD == "QUERY")
+					{
+						var startDataSource = incompleteLovProvider.indexOf("<CONNECTION>")+"<CONNECTION>".length;
+						var endDataSource = incompleteLovProvider.indexOf("</CONNECTION>");
+						var dataSource = incompleteLovProvider.substring(startDataSource,endDataSource);
+						
+						var startStatement = incompleteLovProvider.indexOf("<STMT>")+"<STMT>".length;
+						var endStatement = incompleteLovProvider.indexOf("</STMT>");
+						var statement = incompleteLovProvider.substring(startStatement,endStatement);
+						
+						this.detailPanel.lovProvider.dataSource = dataSource;
+						this.detailPanel.lovProvider.statement = statement;
+					}
 					
-					this.detailPanel.lovProvider.dataSource = dataSource;
-					this.detailPanel.lovProvider.statement = statement;
+					else if (record.I_TYPE_CD == "SCRIPT")
+					{
+						var startScriptType = incompleteLovProvider.indexOf("<LANGUAGE>")+"<LANGUAGE>".length;
+		    			var endScriptType = incompleteLovProvider.indexOf("</LANGUAGE>");
+		    			var scriptType = incompleteLovProvider.substring(startScriptType,endScriptType);
+		    			    			
+		    			var startScript = incompleteLovProvider.indexOf("<SCRIPT>")+"<SCRIPT>".length;
+		    			var endScript = incompleteLovProvider.indexOf("</SCRIPT>");
+		    			var script = incompleteLovProvider.substring(startScript,endScript); 	 
+		    			
+		    			this.detailPanel.lovProvider.scriptType = scriptType;
+						this.detailPanel.lovProvider.script = script;
+					}
 					
-					record.dataSource = dataSource;
-					record.statement = statement;
-				}
-				
-				else if (record.I_TYPE_CD == "SCRIPT")
-				{
-					var startScriptType = incompleteLovProvider.indexOf("<LANGUAGE>")+"<LANGUAGE>".length;
-	    			var endScriptType = incompleteLovProvider.indexOf("</LANGUAGE>");
-	    			var scriptType = incompleteLovProvider.substring(startScriptType,endScriptType);
-	    			    			
-	    			var startScript = incompleteLovProvider.indexOf("<SCRIPT>")+"<SCRIPT>".length;
-	    			var endScript = incompleteLovProvider.indexOf("</SCRIPT>");
-	    			var script = incompleteLovProvider.substring(startScript,endScript); 	 
-	    			
-	    			this.detailPanel.lovProvider.scriptType = scriptType;
-					this.detailPanel.lovProvider.script = script;
-				}
-				
-				else if (record.I_TYPE_CD == "FIX_LOV")
-				{
-					var startFixLov = incompleteLovProvider.indexOf("<ROWS>")+"<ROWS>".length;
-        			var endFixLov = incompleteLovProvider.indexOf("</ROWS>");
-        			var fixLovRows = incompleteLovProvider.substring(startFixLov,endFixLov);
-    				var listRows = fixLovRows.split("<ROW "); 				
-    				
-    				for (var i=1; i<listRows.length; i++)
+					else if (record.I_TYPE_CD == "FIX_LOV")
 					{
-    					var valueStart = listRows[i].indexOf("VALUE=")+"VALUE=".length + 1;
-        				var valueEnd = listRows[i].indexOf("\" DESCRIPTION");
-        				//arrayOfValuesFixLov[i] = listRows[i].substring(valueStart,valueEnd);
-        				arrayOfValuesFixLov.push(listRows[i].substring(valueStart,valueEnd));
-        				
-        				var descriptionStart = listRows[i].indexOf("DESCRIPTION=")+"DESCRIPTION=".length + 1;
-        				var descriptionEnd = listRows[i].indexOf("/>")-1;
-//        				arrayOfDescripFixLov[i] = listRows[i].substring(descriptionStart,descriptionEnd);      	
-        				arrayOfDescripFixLov.push(listRows[i].substring(descriptionStart,descriptionEnd));
-					}
-    				
-    				this.detailPanel.lovProvider.arrayOfValuesFixLov = arrayOfValuesFixLov;
-					this.detailPanel.lovProvider.arrayOfDescripFixLov = arrayOfDescripFixLov;
-				}	
-				
-				else if (record.I_TYPE_CD == "JAVA_CLASS")
-				{
-					var startJavaClassName = incompleteLovProvider.indexOf("<JAVA_CLASS_NAME>")+"<JAVA_CLASS_NAME>".length;
-					var endJavaClassName = incompleteLovProvider.indexOf("</JAVA_CLASS_NAME>");
-					var javaClassName = incompleteLovProvider.substring(startJavaClassName,endJavaClassName);
+						// Needed for the fix LOVs
+						var arrayOfValuesFixLov = [];
+						var arrayOfDescripFixLov = [];
+						
+						var startFixLov = incompleteLovProvider.indexOf("<ROWS>")+"<ROWS>".length;
+	        			var endFixLov = incompleteLovProvider.indexOf("</ROWS>");
+	        			var fixLovRows = incompleteLovProvider.substring(startFixLov,endFixLov);
+	    				var listRows = fixLovRows.split("<ROW "); 				
+	    				
+	    				for (var i=1; i<listRows.length; i++)
+						{
+	    					var valueStart = listRows[i].indexOf("VALUE=")+"VALUE=".length + 1;
+	        				var valueEnd = listRows[i].indexOf("\" DESCRIPTION");
+	        				//arrayOfValuesFixLov[i] = listRows[i].substring(valueStart,valueEnd);
+	        				arrayOfValuesFixLov.push(listRows[i].substring(valueStart,valueEnd));
+	        				
+	        				var descriptionStart = listRows[i].indexOf("DESCRIPTION=")+"DESCRIPTION=".length + 1;
+	        				var descriptionEnd = listRows[i].indexOf("/>")-1;
+//	        				arrayOfDescripFixLov[i] = listRows[i].substring(descriptionStart,descriptionEnd);      	
+	        				arrayOfDescripFixLov.push(listRows[i].substring(descriptionStart,descriptionEnd));
+						}
+	    				
+	    				this.detailPanel.lovProvider.arrayOfValuesFixLov = arrayOfValuesFixLov;
+						this.detailPanel.lovProvider.arrayOfDescripFixLov = arrayOfDescripFixLov;
+					}	
 					
-					this.detailPanel.lovProvider.javaClassName = javaClassName;
-				}
-				
-				var valueColumn = returnLovValues.valueColumnName.valueOf();
-				var descriptionColumn = returnLovValues.descriptionColumnName.valueOf();
-	
-				var visibleColumns = "";
-				var visibleColumnNames = returnLovValues.visibleColumnNames.valueOf();
-	
-				for (var i=0; i<visibleColumnNames.length; i++)
-				{
-					if (i==0)
+					else if (record.I_TYPE_CD == "JAVA_CLASS")
 					{
-						visibleColumns = visibleColumnNames[i];
+						var startJavaClassName = incompleteLovProvider.indexOf("<JAVA_CLASS_NAME>")+"<JAVA_CLASS_NAME>".length;
+						var endJavaClassName = incompleteLovProvider.indexOf("</JAVA_CLASS_NAME>");
+						var javaClassName = incompleteLovProvider.substring(startJavaClassName,endJavaClassName);
+						
+						this.detailPanel.lovProvider.javaClassName = javaClassName;
 					}
-					else
+					
+					else if (record.I_TYPE_CD == "DATASET")
+					{					
+						var startDatasetId = incompleteLovProvider.indexOf("<ID>") + "<ID>".length;
+						var endDatasetId = incompleteLovProvider.indexOf("</ID>");
+						var datasetId = incompleteLovProvider.substring(startDatasetId,endDatasetId);
+						
+						var startDatasetLabel = incompleteLovProvider.indexOf("<LABEL>") + "<LABEL>".length;
+						var endDatasetLabel = incompleteLovProvider.indexOf("</LABEL>");
+						var datasetLabel = incompleteLovProvider.substring(startDatasetLabel,endDatasetLabel);
+						
+						this.detailPanel.lovProvider.datasetId = datasetId;
+						this.detailPanel.lovProvider.datasetLabel = datasetLabel;
+					}
+					
+					var valueColumn = returnLovValues.valueColumnName.valueOf();
+					var descriptionColumn = returnLovValues.descriptionColumnName.valueOf();
+		
+					var visibleColumns = "";
+					var visibleColumnNames = returnLovValues.visibleColumnNames.valueOf();
+		
+					for (var i=0; i<visibleColumnNames.length; i++)
 					{
-						visibleColumns += "," + visibleColumnNames[i];
+						if (i==0)
+						{
+							visibleColumns = visibleColumnNames[i];
+						}
+						else
+						{
+							visibleColumns += "," + visibleColumnNames[i];
+						}
 					}
-				}
-				
-				// ?????????????????????????????????????????????
-				// INVISIBLE-COLUMNS ????
-				// ?????????????????????????????????????????????
-				var allColumns = returnLovValues.column.valueOf();
-				var invisibleColumns = allColumns[0];
-				
-				var lovType = returnLovValues.lovType.valueOf();
-				
-				var treeLevelsColumns = "";
-				
-				for (var i=1; i<allColumns.length; i++)
-				{
-					if (i==1)
+					
+					// ?????????????????????????????????????????????
+					// INVISIBLE-COLUMNS ????
+					// ?????????????????????????????????????????????
+					var allColumns = returnLovValues.column.valueOf();
+					var invisibleColumns = allColumns[0];
+					
+					var lovType = returnLovValues.lovType.valueOf();
+					
+					var treeLevelsColumns = "";
+					
+					for (var i=1; i<allColumns.length; i++)
 					{
-						treeLevelsColumns = allColumns[i];
+						if (i==1)
+						{
+							treeLevelsColumns = allColumns[i];
+						}
+						else
+						{
+							treeLevelsColumns += "," + allColumns[i];
+						}
 					}
-					else
+					
+					var completeLovProvider = "";
+					
+					if (record.I_TYPE_CD == "QUERY")
 					{
-						treeLevelsColumns += "," + allColumns[i];
+						completeLovProvider = 
+							"<QUERY>" + 
+								"<CONNECTION>" + dataSource + "</CONNECTION>" + 
+								"<STMT>" + statement + "</STMT>" + 
+								"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" + 
+								"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
+								"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" + 
+								"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" + 
+								"<LOVTYPE>" + lovType + "</LOVTYPE>" //+ 
+								//"<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>"
+							+ "</QUERY>";					
 					}
-				}
-				
-				var completeLovProvider = "";
-				
-				if (record.I_TYPE_CD == "QUERY")
-				{
-					completeLovProvider = 
-						"<QUERY>" + 
-							"<CONNECTION>" + dataSource + "</CONNECTION>" + 
-							"<STMT>" + statement + "</STMT>" + 
-							"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" + 
-							"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
-							"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" + 
-							"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" + 
-							"<LOVTYPE>" + lovType + "</LOVTYPE>" + 
-							"<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>"
-						+ "</QUERY>";					
-				}
-				
-				else if (record.I_TYPE_CD == "SCRIPT")
-				{
-					completeLovProvider = 
-						"<SCRIPTLOV>" +
-		    				"<SCRIPT>" + script + "</SCRIPT>" +	
-		    				"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" +
-		    				"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
-		    				"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" +
-		    				"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" +
-		    				"<LANGUAGE>" + scriptType + "</LANGUAGE>" +
-		    				"<LOVTYPE>" + lovType + "</LOVTYPE>" +
-		    				"<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>" +
-    					"</SCRIPTLOV>";
-				}
-				
-				else if (record.I_TYPE_CD == "FIX_LOV")
-				{
-					completeLovProvider = "<FIXLISTLOV>";
-					completeLovProvider += "<ROWS>";
-	    			
-	    			var fixLovValue = "";
-	    			var fixLovDescription = "";
-	    			
-	    			
-	    			for (var i=0; i<arrayOfValuesFixLov.length; i++)
-					{	    				
-	    				completeLovProvider += "<ROW" +
-						  " VALUE=\"" + arrayOfValuesFixLov[i] + "\"" +
-						  " DESCRIPTION=\"" + arrayOfDescripFixLov[i] + "\"" +
-						  "/>";
+					
+					else if (record.I_TYPE_CD == "SCRIPT")
+					{
+						completeLovProvider = 
+							"<SCRIPTLOV>" +
+			    				"<SCRIPT>" + script + "</SCRIPT>" +	
+			    				"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" +
+			    				"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
+			    				"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" +
+			    				"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" +
+			    				"<LANGUAGE>" + scriptType + "</LANGUAGE>" +
+			    				"<LOVTYPE>" + lovType + "</LOVTYPE>" +
+			    				//"<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>" +
+	    					"</SCRIPTLOV>";
 					}
-	    			
-	    			completeLovProvider += "</ROWS>";
-	    			completeLovProvider += "<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" +
-	    					  "<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
-	    					  "<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" +
-	    					  "<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" +
-	    					  "<LOVTYPE>"+ lovType + "</LOVTYPE>" +
-	    					  "<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>" +
-	    					  "</FIXLISTLOV>";
-				}
+					
+					else if (record.I_TYPE_CD == "FIX_LOV")
+					{
+						completeLovProvider = "<FIXLISTLOV>";
+						completeLovProvider += "<ROWS>";
+		    			
+		    			var fixLovValue = "";
+		    			var fixLovDescription = "";
+		    			
+		    			
+		    			for (var i=0; i<arrayOfValuesFixLov.length; i++)
+						{	    				
+		    				completeLovProvider += "<ROW" +
+							  " VALUE=\"" + arrayOfValuesFixLov[i] + "\"" +
+							  " DESCRIPTION=\"" + arrayOfDescripFixLov[i] + "\"" +
+							  "/>";
+						}
+		    			
+		    			completeLovProvider += "</ROWS>";
+		    			completeLovProvider += "<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" +
+		    					  "<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
+		    					  "<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" +
+		    					  "<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" +
+		    					  "<LOVTYPE>"+ lovType + "</LOVTYPE>" +
+		    					  //"<TREE-LEVELS-COLUMNS>" + treeLevelsColumns + "</TREE-LEVELS-COLUMNS>" +
+		    					  "</FIXLISTLOV>";
+					}
+					
+					else if (record.I_TYPE_CD == "JAVA_CLASS")
+					{										
+						completeLovProvider = 
+							"<JAVACLASSLOV>" +
+								"<JAVA_CLASS_NAME>" + javaClassName + "</JAVA_CLASS_NAME>" +	
+								"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" +
+								"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" +
+								"<LOVTYPE>" + lovType + "</LOVTYPE>" +
+								"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" +
+								"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
+							"</JAVACLASSLOV>";
+					}
+					
+					else if (record.I_TYPE_CD == "DATASET")
+					{
+						completeLovProvider = 
+							"<DATASET>" +
+								"<ID>" + datasetId +"</ID>" +	
+								"<LABEL>" + datasetLabel + "</LABEL>" +
+								"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" +
+								"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" +
+								"<LOVTYPE>" + lovType + "</LOVTYPE>" +
+								"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" +
+								"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
+							"</DATASET>";
+	    					
+					}
+					this.detailPanel.lovProvider.value = completeLovProvider;
+					record.LOV_PROVIDER = completeLovProvider;
+					
+					this.onFormSave(record);
+				}				
+			}
+			
+			else	// We only have the first tab (before testing)
+			{				
+//				if (getFormStateSaveBeforeTesting.data.LOV_PROVIDER != "")
+//				{
+//					this.onFormSave(record);
+//				}
 				
-				else if (record.I_TYPE_CD == "JAVA_CLASS")
-				{										
-					completeLovProvider = 
-						"<JAVACLASSLOV>" +
-							"<JAVA_CLASS_NAME>" + javaClassName + "</JAVA_CLASS_NAME>" +	
-							"<VISIBLE-COLUMNS>" + visibleColumns + "</VISIBLE-COLUMNS>" +
-							"<INVISIBLE-COLUMNS>" + invisibleColumns + "</INVISIBLE-COLUMNS>" +
-							"<LOVTYPE>" + lovType + "</LOVTYPE>" +
-							"<VALUE-COLUMN>" + valueColumn + "</VALUE-COLUMN>" +
-							"<DESCRIPTION-COLUMN>" + descriptionColumn + "</DESCRIPTION-COLUMN>" +
-						"</JAVACLASSLOV>";
-				}
-									
-				//this.detailPanel.getFormState().data.LOV_PROVIDER = completeLovProvider;
-				this.detailPanel.lovProvider.value = completeLovProvider;
-				record.LOV_PROVIDER = completeLovProvider;
-								
 				this.onFormSave(record);
 			}
 			
@@ -530,8 +750,8 @@ Ext.define
 		onFormSave: function(record)
 		{			
 			Sbi.debug('[IN] LOVListDetailPanel - onFormSave()');
-						
-			this.detailPanel.getFormState("savePhase").save
+			
+			this.detailPanel.getFormState("finalSave").save
 			(
 				{
 					success: function(object, response, options)
@@ -568,7 +788,7 @@ Ext.define
 											var lovNewID = response.responseText;
 											
 											selectedRow[0].data = Ext.apply(selectedRow[0].data, record);	
-											selectedRow[0].raw = Ext.apply(selectedRow[0].raw, record);											
+											selectedRow[0].raw = Ext.apply(selectedRow[0].raw, record);	
 											
 											selectedRow[0].data.LOV_ID = lovNewID;
 											
@@ -666,7 +886,7 @@ Ext.define
 		
 		onGridSelect: function(selectionrowmodel, record, index, eOpts)
 		{
-//			Sbi.debug('[IN] LOVListDetailPanel - onGridSelect()');
+			Sbi.debug('[IN] LOVListDetailPanel - onGridSelect()');
 			
 			this.detailPanel.show();
 			

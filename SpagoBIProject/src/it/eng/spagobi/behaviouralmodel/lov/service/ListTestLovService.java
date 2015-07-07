@@ -6,6 +6,7 @@ import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
@@ -59,7 +60,7 @@ public class ListTestLovService {
 		logger.debug("IN");
 
 		JSONObject response = new JSONObject();
-		
+
 		try {
 
 			Exception responseFailure = null;
@@ -256,6 +257,19 @@ public class ListTestLovService {
 				}
 
 				logger.debug("OUT (LOV type is JAVA CLASS)");
+			}
+
+			else if (typeLov.equalsIgnoreCase("DATASET")) {
+
+				logger.debug("IN (LOV type is DATASET)");
+
+				DatasetDetail datasetDetail = DatasetDetail.fromXML(lovProviderXML);
+				DataStore ds = datasetDetail.getLovResultAsDataStore(cloneToProfile, null, null, null);
+
+				JSONDataWriter dataSetWriter = new JSONDataWriter();
+				response = (JSONObject) dataSetWriter.write(ds);
+
+				logger.debug("OUT (LOV type is DATASET)");
 			}
 
 		} catch (Exception e) {

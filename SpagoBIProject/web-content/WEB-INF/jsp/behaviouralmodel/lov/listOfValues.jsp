@@ -16,6 +16,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	(
 		function() 
 		{
+			Ext.QuickTips.init();
+			
 			var lovDetailPanel = Ext.create("Sbi.behavioural.lov.LOVListDetailPanel", {});
 			
 			var lovViewport = Ext.create
@@ -27,6 +29,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					items:[ lovDetailPanel ]
 				}
 			);
+			
+		    //Ext.QuickTips.init();
 		}
 	);
 

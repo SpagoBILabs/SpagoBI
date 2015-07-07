@@ -1,3 +1,17 @@
+/***************************************************************************************************************************************************************
+ * SpagoBI, the Open Source Business Intelligence suite
+ * 
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. If a copy of the MPL was not distributed with this file, You can obtain one at
+ * http://mozilla.org/MPL/2.0/.
+ **************************************************************************************************************************************************************/
+
+/**
+ * 
+ *  @author
+ *  Danilo Ristovski (danilo.ristovski@mht.net)
+ */
+
 Ext.define
 (
 	"Sbi.behavioural.lov.LOVDatasetBottomPanel", 
@@ -7,118 +21,163 @@ Ext.define
 		{		
 			Sbi.debug("[IN] Creating LOVDatasetBottomPanel");
 			
-			console.log("USAOOOOOOO...");
+			var bottomPanelScope = this;
+						
+			/**
+			 * Columns that dataset grid inside the popup window will contain.
+			 */
+			var columnsOfTheWindowGrid = 
+			[
+				{ text: LN("sbi.behavioural.lov.datasetsGridLabelColumn"), dataIndex: "label", flex: 1},
+				{ text: LN("sbi.behavioural.lov.datasetsGridNameColumn"), dataIndex: "name", flex: 1},
+				{ text: LN("sbi.behavioural.lov.datasetsGridDescriptionColumn"), dataIndex: "description",  flex: 1},
 			
-			Ext.define
-    		(
-				"DatasetModel", 
+				{
+	                xtype: 'actioncolumn',
+	                width: 20,
+	                
+	                items: 
+                	[
+	                	 {
+		                	icon: '/SpagoBI/themes/sbi_default/img/button_ok.gif',
+		                    
+		                	handler: function(grid, rowIndex, colindex, button, mouseEvent, chosenDataset) 
+		                	{
+//				               	var chosenDataset = datasetStore.getAt(rowIndex);
+		                        var datasetFormItems = bottomPanelScope.datasetForm.items.items[0];
+		                        datasetFormItems.items.items[0].setValue(chosenDataset.data.label);
+		                        datasetFormItems.items.items[1].setValue(chosenDataset.data.id);
+		                        bottomPanelScope.datasetWindow.hide();				                        
+		                    }
+	                	 }
+                	 ]
+	            }
+			];
+		
+			/**
+			 * Configuration of the grid panel that will contain grid with data (available
+			 * datasets - existing in the DB), search box on the top of the grid panel and
+			 * the pagination toolbar at it's bottom.
+			 */
+			var fixedGridPanelConf = 
+			{
+					pagingConfig:{},
+					
+					storeConfig:
+					{ 
+						pageSize: 5
+					},
+					
+//					columnWidth: 2/5,
+//					buttonToolbarConfig: null,
+//					buttonColumnsConfig: null,
+//					customComboToolbarConfig: null,
+					
+					modelName: "Sbi.behavioural.lov.DatasetModel",
+					columns: columnsOfTheWindowGrid,
+					filterConfig: {},
+					filteredProperties: ["name"],
+		    		filteredObjects: null
+
+			};
+		
+			/**
+			 * Creating the grid that will be set inside the popup window. Grid offers all
+			 * available datasets inside the DB. The grid is created depending on the 
+			 * configuration that is set through previously defined variable.
+			 */
+			var gridWithDatasets = Ext.create('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered', fixedGridPanelConf);			
+			
+			this.datasetWindow = Ext.create
+			(
+				'Ext.window.Window', 
 				
 				{
-					extend: 'Ext.data.Model',
-					fields: [ "id", "name", "description", "label" ] // fields (labels) from JSON that comes from server that we call
+				    title: LN("sbi.behavioural.lov.datasetsWindowTitle"),
+				    closeAction: 'hide',
+				    layout: 'fit',
+				    width: 600,
+				    resizable: true,
+				    modal: true, // Prevent user from selecting something behind the window 
+				    items: [ gridWithDatasets ]
 				}
 			);	
 			
-			var datasetStore = Ext.create
+			datasetStore = Ext.create
         	(
     			'Ext.data.Store',
 	    		
     			{
-	        		model: "DatasetModel",
-	        		autoLoad: true,
-	        		
-	        		proxy: 
-	        		{
-	        			type: 'rest',	        			
-	        			
-	        			url:  datasetURL,	
-	        			
-	        			reader: 
-	        			{
-	        				type:"json",
-	        				root: "root"
-	        			}
-	        		}
+	        		model: Sbi.behavioural.lov.DatasetModel,
+	        		autoLoad: true
 	        	}
 			);
-			
+						
 			datasetStore.on
         	(
     			'load', 
     			
     			function(datasetStore)
     			{ 
-    				Sbi.debug('[INFO] Dataset store loaded (DATASET)');
-    				console.log(datasetStore);
+    				//Sbi.debug('[INFO] Dataset store loaded (DATASET)');							
     			}
+			);				
+			
+			this.datasetWindowTrigger = Ext.create
+			(
+				'Ext.form.field.Trigger', 
+				
+				{
+					triggerCls:'x-form-search-trigger',
+					editable: false,
+					hideEmptyLabel: true,
+					width: 300,
+					
+					onTriggerClick: function(e) 
+					{
+						bottomPanelScope.datasetWindow.show(this);
+					}					
+				}
 			);
+			
 			
 			this.datasetForm = Ext.create
 			(
 				"Ext.form.Panel",
 				
 				{
-					title: "Dataset Form",
-					width: "100%",
+					//title: "Dataset Form",
+					id: "DATASET_FORM",
+					padding: "10 0 5 0",
+					border: false,
 					
-					defaultType: 'textfield',
+					bodyStyle:{"background-color":"#F9F9F9"},	
+					
+					//defaultType: 'textfield',
 					
 				    items: 
 			    	[
-				    	 {
-					        fieldLabel: 'Dataset',
-					        name: 'first',
-					        allowBlank: false
-				    	 }
-				    ],
-				    
-				    buttons:
-			    	[
 						{
-						    text: 'Choose...',
-						    
-						    handler: function() 
-						    {
-						    	console.log("########################");
-						    	
-						    	var datasetWindow = Ext.create
-			        			(
-			        				'Ext.window.Window', 
-			        				
-			        				{
-			        				    title: "AAA",
-			        				    layout: 'fit',
-			        				    resizable: false,
-			        				    modal: true, // Prevent user from selecting something behind the window 
-			        				   // items: [ lovDatasetPanel.datasetForm ],
-			        				    
-			        				    listeners:
-			        				    {
-//			        		                 'close': function(win)
-//			        		                 {			                          
-//			        	                          /* Check if window is closed after clicking the Add button
-//			        	                           * or after clicking on the X button on the top right corner.
-//			        	                           * In the first case close window and show the first tab, hidding
-//			        	                           * the second one. In the latter case, show the result page and
-//			        	                           * close the window for filling the missing profile attributes. */
-//			        	                          if (addClicked == false)
-//			                                	  {
-//			        	                        	  updateScope.getComponent("TAB_PANEL_RESULTS").tabBar.items.items[1].hide();
-//			        		                          updateScope.getComponent("TAB_PANEL_RESULTS").setActiveTab(0);   
-//			                                	  }			                              
-//			        		                 }
-			        				    }
-			        				}
-			        			);
-						    }
+							xtype: "fieldcontainer",						
+							fieldLabel: LN("sbi.behavioural.lov.datasetLovFormLabel"),
+				    	 
+							layout: "hbox",
+							
+							items:
+							[
+								this.datasetWindowTrigger,
+							 	
+								{
+							 		xtype: "textfield",
+							        name: 'DATASET_ID',
+							        hidden: true
+							 	}							 	
+							]
 						}
-			    	]
+				    ]		    				    
 				}
-			);
+			);			
 			
-			
-			
-			   		
     		Sbi.debug("[OUT] Creating LOVDatasetBottomPanel");
 		}			
 		

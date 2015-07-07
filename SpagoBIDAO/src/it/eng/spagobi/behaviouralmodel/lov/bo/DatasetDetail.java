@@ -7,6 +7,7 @@ package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
@@ -14,6 +15,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -98,7 +100,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#toXML()
 	 */
 	@Override
@@ -130,16 +132,20 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 	public void loadFromXML(String dataDefinition) throws SourceBeanException {
 		logger.debug("IN");
 		dataDefinition.trim();
-		if (dataDefinition.indexOf("<ID>") != -1) {
-			int startInd = dataDefinition.indexOf("<ID>");
-			int endId = dataDefinition.indexOf("</ID>");
-			String dataset = dataDefinition.substring(startInd + 6, endId);
-			dataset = dataset.trim();
-			if (!dataset.startsWith("<![CDATA[")) {
-				dataset = "<![CDATA[" + dataset + "]]>";
-				dataDefinition = dataDefinition.substring(0, startInd + 6) + dataset + dataDefinition.substring(endId);
-			}
-		}
+
+		/**
+		 * Old code before refactoring. It should not be used in the new code.
+		 */
+		// if (dataDefinition.indexOf("<ID>") != -1) {
+		// int startInd = dataDefinition.indexOf("<ID>");
+		// int endId = dataDefinition.indexOf("</ID>");
+		// String dataset = dataDefinition.substring(startInd + 6, endId);
+		// dataset = dataset.trim();
+		// if (!dataset.startsWith("<![CDATA[")) {
+		// dataset = "<![CDATA[" + dataset + "]]>";
+		// dataDefinition = dataDefinition.substring(0, startInd + 6) + dataset + dataDefinition.substring(endId);
+		// }
+		// }
 
 		SourceBean source = SourceBean.fromXMLString(dataDefinition);
 		SourceBean idBean = (SourceBean) source.getAttribute("ID");
@@ -251,7 +257,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(it.eng.spago.security.IEngUserProfile, java.util.List,
 	 * it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance)
 	 */
@@ -270,9 +276,21 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 		return resultXml;
 	}
 
+	public DataStore getLovResultAsDataStore(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
+			throws NumberFormatException, EMFUserError {
+		IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(new Integer(getDatasetId()));
+		Map parameters = new HashMap();
+		dataset.setParamsMap(parameters);
+		dataset.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
+		dataset.loadData();
+		DataStore ids = (DataStore) dataset.getDataStore();
+
+		return ids;
+	}
+
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#requireProfileAttributes()
 	 */
 	@Override
@@ -282,7 +300,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getProfileAttributeNames()
 	 */
 	@Override
@@ -293,7 +311,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -303,7 +321,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames()
 	 */
 	@Override
@@ -313,7 +331,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName()
 	 */
 	@Override
@@ -323,7 +341,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -333,7 +351,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -343,7 +361,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName(java.lang.String)
 	 */
 	@Override
@@ -353,7 +371,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -363,7 +381,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java.lang.String)
 	 */
 	@Override
