@@ -128,7 +128,7 @@ initFields: function(){
 					}
 					for(var jj=0;jj<record.data.ROLESLIST.length;jj++){
 
-						for(var z=0; z< use.useRolesStore.getCount();z++){
+						for(var z=0; z<use.useRolesStore.getCount();z++){
 
 							if(use.useRolesStore.data.items[z].data.name==record.data.ROLESLIST[jj].name){
 								use.useRolesStore.data.items[z].data.CHECKED=true;
@@ -230,7 +230,14 @@ initFields: function(){
 
 	Ext.define("LovModel", {
 		extend: 'Ext.data.Model',
-		fields: [{name: 'LOV_ID',type: 'string'},"LOV_NAME", "LOV_DESCRIPTION", "LOV_PROVIDER"]
+		fields: [{name: 'LOV_ID',type: 'string'},"LOV_NAME", "LOV_DESCRIPTION", "LOV_PROVIDER"],
+		proxy: {
+			type: 'ajax',
+			url:  this.services['getLovs'],
+			reader: {
+				type:"json"
+			}
+		}
 	});
 
 	this.lovStore = Ext.create('Ext.data.Store',{
@@ -373,8 +380,6 @@ saveADUse: function(){
 
 	var scope = this;
 	
-	console.log(scope);
-
 	var values = this.getValues();
 
 	if(values.DESCRIPTION && values.NAME && values.LABEL && values.ROLESLIST.length !=0){
