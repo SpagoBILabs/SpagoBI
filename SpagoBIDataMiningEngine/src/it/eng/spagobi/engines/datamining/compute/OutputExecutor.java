@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.compute;
 
@@ -56,30 +56,29 @@ public class OutputExecutor {
 		// output -->if script --> execute script then prepare output
 
 		DataMiningResult res = new DataMiningResult();
-		
-		List<Variable> variables = out.getVariables();		
+
+		List<Variable> variables = out.getVariables();
 		logger.debug("Got variables list");
-		//replace in function and in value attributes 
+		// replace in function and in value attributes
 		String function = out.getOutputFunction();
-		if(function != null && variables!= null && !variables.isEmpty()){
+		if (function != null && variables != null && !variables.isEmpty()) {
 			function = DataMiningUtils.replaceVariables(variables, function);
 			logger.debug("Replaced variables in output function");
 		}
 		String outVal = out.getOutputValue();
-		if(outVal != null && variables!= null && !variables.isEmpty()){
+		if (outVal != null && variables != null && !variables.isEmpty()) {
 			outVal = DataMiningUtils.replaceVariables(variables, outVal);
 			logger.debug("Replaced variables in output value");
 		}
-		
-		
+
 		if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.IMAGE_OUTPUT) && out.getOutputName() != null) {
 			logger.debug("Image output");
 			res.setVariablename(outVal);// could be multiple value
-														// comma separated
+										// comma separated
 			String plotName = out.getOutputName();
 			re.eval(getPlotFilePath(plotName));
-			
-			logger.debug("Plot file name "+plotName);
+
+			logger.debug("Plot file name " + plotName);
 			if (function.equals("hist")) {
 				// predefined Histogram function
 				re.eval(function + "(" + outVal + ", col=4)");
@@ -89,7 +88,7 @@ public class OutputExecutor {
 			} else {
 				// function recalling a function inside the main script (auto)
 				// to produce an image result
-				
+
 				if (outVal == null || outVal.equals("")) {
 					re.eval(function);
 				} else {
@@ -106,8 +105,8 @@ public class OutputExecutor {
 			if (resImg != null && !resImg.equals("")) {
 				res.setResult(resImg);
 
-				scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile)
-						+ DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "." + OUTPUT_PLOT_EXTENSION);
+				scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX
+						+ plotName + "." + OUTPUT_PLOT_EXTENSION);
 				logger.debug("Deleted temp image");
 			}
 
@@ -125,9 +124,17 @@ public class OutputExecutor {
 				}
 
 			} else {
+
+				/* test h2o */
+				/*
+				 * rexp = re.eval("library(h2o)"); rexp = re.eval("remoteH2O1 <-h2o.init(ip='192.168.88.143',port=54321)"); rexp =
+				 * re.eval("prostate.hex1 <- h2o.importFile(remoteH2O1, 'hdfs://sandbox.hortonworks.com:8020/user/h2o/prostate.csv') "); rexp = re
+				 * .eval("prostate.dl1 <- h2o.deeplearning(x = 3:9, training_frame = prostate.hex1, autoencoder = TRUE, hidden = c(10, 10), epochs = 5) "); rexp
+				 * = re.eval("prostate.anon1 <- h2o.anomaly(prostate.dl1, prostate.hex1)"); rexp = re.eval("prostate.anon1");
+				 */
 				rexp = re.eval(outVal);
 			}
-			
+
 			res.setVariablename(outVal);// could be multiple value
 			// comma separated
 			if (rexp != null) {
@@ -177,7 +184,6 @@ public class OutputExecutor {
 		return imgstr;
 
 	}
-
 
 	private static String encodeToString(BufferedImage image, String type) {
 		logger.debug("IN");
