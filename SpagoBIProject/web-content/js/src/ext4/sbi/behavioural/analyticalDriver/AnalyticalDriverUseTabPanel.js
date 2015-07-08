@@ -30,7 +30,7 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUseTabPanel', {
 	this.initConfig(config);
 	this.services = [];
 	this.initServices();
-	this.initFields();
+	this.initFields(null);
 	//this.items=[this.newUse];
 	this.addEvents('removeUse','saveUse');
 	this.tbar = Sbi.widget.toolbar.StaticToolbarBuilder.buildToolbar({items:[{name:'->'},{name: 'remove'},{name:'save'}]},this);
@@ -47,9 +47,15 @@ Ext.define('Sbi.behavioural.analyticalDriver.AnalyticalDriverUseTabPanel', {
 
 },
 
-initFields: function(){
-	
+initFields: function(activeTabLabel){
+
 	Ext.getBody().mask('Loading...');
+
+	if(this.items){
+
+		this.removeAll();
+
+	}
 
 	Ext.define("RoleModel", {
 		extend: 'Ext.data.Model',
@@ -66,6 +72,24 @@ initFields: function(){
 			reader: {
 				type:"json",
 				root:"ROLES"
+			}
+		}
+	});
+
+	this.rolesDataStore =  Ext.create('Ext.data.Store',{
+		model: "RoleModel"
+	});
+
+	this.freeRolesStore =  Ext.create('Ext.data.Store',{
+		model: "RoleModel",
+		autoLoad: true,
+		proxy: {
+			type: 'rest',
+			url: Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'analyticalDriverUse'}),
+			extraParams: {adid:this.exampleID},
+			reader: {
+				type:"json",
+				root:"FREEROLES"
 			}
 		}
 	});
@@ -113,6 +137,7 @@ initFields: function(){
 					use.selections.bindStore(scope.selectionStore);
 					use.pickupcombo.bindStore(scope.pickupstore);
 					dataLov = scope.lovStore.data;
+					scope.rolesDataStore.removeAll();
 					use.useLovStore.removeAll();
 
 					for(var l=0;l<dataLov.length;l++){
@@ -122,20 +147,31 @@ initFields: function(){
 					}
 
 					data = scope.rolesStore.data;
+					freeData = scope.freeRolesStore.data;
+
 					use.useRolesStore.removeAll();
+
 					for(var j=0;j<data.length;j++){
-						use.useRolesStore.add(data.items[j].data);
+
+						scope.rolesDataStore.add(data.items[j].data);
 					}
+
 					for(var jj=0;jj<record.data.ROLESLIST.length;jj++){
 
-						for(var z=0; z<use.useRolesStore.getCount();z++){
+						for(var z=0; z<scope.rolesDataStore.getCount();z++){
 
-							if(use.useRolesStore.data.items[z].data.name==record.data.ROLESLIST[jj].name){
-								use.useRolesStore.data.items[z].data.CHECKED=true;
+							if(scope.rolesDataStore.data.items[z].data.name==record.data.ROLESLIST[jj].name){
+								use.useRolesStore.add(data.items[z].data);
+								use.useRolesStore.data.items[jj].data.CHECKED=true;
 							}
 						}
 
 					}
+
+					for(var b=0;b<freeData.length;b++){
+						use.useRolesStore.add(freeData.items[b].data);
+					}
+
 					dataConst = scope.constraintStore.data;
 					use.useConstStore.removeAll();
 					for(var k=0;k<dataConst.length;k++){
@@ -165,31 +201,31 @@ initFields: function(){
 					else {
 						use.manualinput.setValue(false);
 						use.lov.setValue(true);
-					if (record.data.LOVID != ""){
-						
-						for(var m=0;m<dataLov.length;m++){
-							if (record.data.LOVID == dataLov.items[m].data.LOV_ID){
-								
-								use.lovpopupid.setValue(dataLov.items[m].data.LOV_ID);
-								use.lovpopup.setValue(dataLov.items[m].data.LOV_NAME);
-								break;
-								
+						if (record.data.LOVID != ""){
+
+							for(var m=0;m<dataLov.length;m++){
+								if (record.data.LOVID == dataLov.items[m].data.LOV_ID){
+
+									use.lovpopupid.setValue(dataLov.items[m].data.LOV_ID);
+									use.lovpopup.setValue(dataLov.items[m].data.LOV_NAME);
+									break;
+
+								}
 							}
+
+
 						}
-						
-						
-					}
 						use.selections.setValue(record.data.SELECTIONTYPE);
 					}
 					if (record.data.DEFAULTLOVID != ""){
 						use.uselov.setValue(true);
 						for(var m=0;m<dataLov.length;m++){
 							if (record.data.DEFAULTLOVID == dataLov.items[m].data.LOV_ID){
-								
+
 								use.dllovpopupid.setValue(dataLov.items[m].data.LOV_ID);
 								use.dllovpopup.setValue(dataLov.items[m].data.LOV_NAME);
 								break;
-								
+
 							}
 						}
 					}
@@ -198,16 +234,31 @@ initFields: function(){
 						use.pickupcombo.setValue(record.data.DEFAULTFORMULA);
 					}
 					scope.add(use);
-					
+
 				}
 				scope.add(scope.newUse);
-				
-				scope.setActiveTab(0);
-				
+
+				if(activeTabLabel == null){
+
+					scope.setActiveTab(0);
+
+				}
+
+				else{
+
+					for(var h=0; h<scope.items.length; h++){
+
+						if(scope.items.items[h].title==activeTabLabel){
+							scope.setActiveTab(scope.items.items[h]);
+						}
+					}
+
+				}
+
 				Ext.getBody().unmask();
-				
+
 			});
-	
+
 	Ext.define("SelectionModel", {
 		extend: 'Ext.data.Model',
 		fields: ["VALUE_ID","VALUE_DS","VALUE_NM", "VALUE_CD"]
@@ -307,7 +358,7 @@ initFields: function(){
 	this.newUse.selections.bindStore(this.selectionStore);
 	this.newUse.pickupcombo.bindStore(this.pickupstore);
 	this.newUse.constraintsList.reconfigure(this.constraintStore);
-	this.newUse.rolesList.reconfigure(this.rolesStore);
+	this.newUse.rolesList.reconfigure(this.freeRolesStore);
 
 
 },
@@ -379,7 +430,7 @@ getValues: function(){
 saveADUse: function(){
 
 	var scope = this;
-	
+
 	var values = this.getValues();
 
 	if(values.DESCRIPTION && values.NAME && values.LABEL && values.ROLESLIST.length !=0){
@@ -400,7 +451,7 @@ saveADUse: function(){
 						model: "RoleModel"
 					});
 
-					data = scope.rolesStore.data;
+					data = scope.freeRolesStore.data;
 					this.newUserolesStore.removeAll();
 					for(var j=0;j<data.length;j++){
 						data.items[j].data.CHECKED=false;
@@ -410,7 +461,7 @@ saveADUse: function(){
 					this.newUseconstStore =  Ext.create('Ext.data.Store',{
 						model: "ConstraintModel"
 					});
-					
+
 					dataLov = scope.lovStore.data;
 					this.newUse1.useLovStore.removeAll();
 
@@ -439,6 +490,8 @@ saveADUse: function(){
 				this.activeTab.setTitle(values.LABEL);
 				this.activeTab.useid.setValue(Ext.decode(response.response.responseText).USEID);
 
+				this.initFields(values.LABEL);
+
 			},
 			scope:this
 		});
@@ -456,6 +509,8 @@ deleteADUse: function(){
 				this.remove(this.activeTab);
 				this.usesStore.remove(usetodelete);
 				this.usesStore.commitChanges();
+
+				this.initFields(null);
 
 			},
 			scope:this
