@@ -64,6 +64,7 @@ public class AnalitycalDriverUseResource {
 
 		IRoleDAO rolesDAO = null;
 		List<Role> allRoles;
+		List<Role> freeRoles;
 
 		try {
 			parametersUseDAO = DAOFactory.getParameterUseDAO();
@@ -71,8 +72,9 @@ public class AnalitycalDriverUseResource {
 
 			rolesDAO = DAOFactory.getRoleDAO();
 			allRoles = rolesDAO.loadAllRoles();
+			freeRoles = rolesDAO.loadAllFreeRolesForInsert(adid);
 
-			parametersUseJSON = serializeParametersUse(parametersUse, allRoles);
+			parametersUseJSON = serializeParametersUse(parametersUse, allRoles, freeRoles);
 
 			logger.debug("OUT: Returned analitical driver uses");
 
@@ -174,13 +176,14 @@ public class AnalitycalDriverUseResource {
 
 	}
 
-	private JSONObject serializeParametersUse(List<ParameterUse> parametersUse, List<Role> allRoles) {
+	private JSONObject serializeParametersUse(List<ParameterUse> parametersUse, List<Role> allRoles, List<Role> freeRoles) {
 
 		logger.debug("IN");
 
 		JSONObject parametersUseJSON = new JSONObject();
 		JSONArray parametersUseJSONArray = new JSONArray();
 		JSONArray rolesJSONArray = new JSONArray();
+		JSONArray freeRolesJSONArray = new JSONArray();
 
 		try {
 			parametersUseJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(parametersUse, null);
@@ -188,6 +191,9 @@ public class AnalitycalDriverUseResource {
 
 			rolesJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(allRoles, null);
 			parametersUseJSON.put("ROLES", rolesJSONArray);
+
+			freeRolesJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(freeRoles, null);
+			parametersUseJSON.put("FREEROLES", freeRolesJSONArray);
 
 			logger.debug("OUT: Serialized analitical driver use");
 
