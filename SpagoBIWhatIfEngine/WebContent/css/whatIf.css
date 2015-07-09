@@ -228,6 +228,9 @@ td[contenteditable="true"]:focus {
 .BUTTON_MDX{
 	background-image: url(../img/mdx.png);
 }
+.BUTTON_EDIT_MDX{
+	background-image: url(../img/edit_mdx.png);
+}
 .BUTTON_UNDO{
 	background-image: url(../img/undo.png);
 }
