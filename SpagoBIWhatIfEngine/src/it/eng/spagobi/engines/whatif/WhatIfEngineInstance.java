@@ -136,7 +136,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		}
 
 		// init configs
-		modelConfig = new ModelConfig();
+		modelConfig = new ModelConfig(pivotModel);
 		modelConfig.setScenario(template.getScenario());
 		modelConfig.setAliases(template.getAliases());
 
