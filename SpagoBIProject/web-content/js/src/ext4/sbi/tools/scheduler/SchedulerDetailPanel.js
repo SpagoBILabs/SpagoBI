@@ -74,7 +74,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 
 				        		return value;
 				        	}
-			        },
+			        }
 
 			    ],
 			    height: 300,
