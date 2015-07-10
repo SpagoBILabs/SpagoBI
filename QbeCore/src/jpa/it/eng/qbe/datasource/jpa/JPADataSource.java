@@ -15,14 +15,22 @@ import it.eng.qbe.datasource.transaction.ITransaction;
 import it.eng.qbe.datasource.transaction.jpa.JPAEclipseLinkTransaction;
 import it.eng.qbe.datasource.transaction.jpa.JPAHibernateTransaction;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.jpa.JPAModelStructureBuilder;
+import it.eng.qbe.query.Filter;
+import it.eng.qbe.query.filters.ProfileAttributesModelAccessModality;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -73,7 +81,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang .String)
 	 */
 	public EntityManagerFactory getEntityManagerFactory(String dmName) {
@@ -82,7 +90,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.qbe.datasource.jpa.IJPAataSource#getEntityManagerFactory()
 	 */
 	public EntityManagerFactory getEntityManagerFactory() {
@@ -94,7 +102,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.qbe.datasource.jpa.IJPAataSource#getEntityManager()
 	 */
 	public EntityManager getEntityManager() {
@@ -149,9 +157,49 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		if (dataMartModelStructure == null) {
 			structureBuilder = new JPAModelStructureBuilder(this);
 			dataMartModelStructure = structureBuilder.build();
+			List<Filter> filters = getFiltersOnProfileAttributes();
+			if (!filters.isEmpty()) {
+				logger.debug("One or more profile attributes filters were found therefore profile attributes model access modality will be activated.");
+				this.setDataMartModelAccessModality(new ProfileAttributesModelAccessModality(filters));
+			}
 		}
 
 		return dataMartModelStructure;
+	}
+
+	private List<Filter> getFiltersOnProfileAttributes() {
+		List<Filter> toReturn = new ArrayList<Filter>();
+		Iterator<String> it = dataMartModelStructure.getModelNames().iterator();
+		while (it.hasNext()) {
+			List<IModelEntity> list = dataMartModelStructure.getRootEntities(it.next());
+			List<Filter> filters = getFiltersOnProfileAttributes(list);
+			toReturn.addAll(filters);
+		}
+		return toReturn;
+	}
+
+	private List<Filter> getFiltersOnProfileAttributes(List<IModelEntity> list) {
+		List<Filter> toReturn = new ArrayList<Filter>();
+		Iterator<IModelEntity> it = list.iterator();
+		while (it.hasNext()) {
+			IModelEntity entity = it.next();
+			List<IModelField> allFields = entity.getAllFields();
+			Iterator<IModelField> fieldsIt = allFields.iterator();
+			while (fieldsIt.hasNext()) {
+				IModelField field = fieldsIt.next();
+				String attributeName = (String) field.getProperty("attribute");
+				if (attributeName != null && !attributeName.trim().equals("")) {
+					logger.debug("Found profile attribute filter on field " + field.getUniqueName() + ": profile attribute is " + attributeName);
+					// Filter filter = new Filter(entity.getUniqueName(), "F{" + field.getName() + "} = {" + attributeName + "}");
+					List<String> values = new ArrayList<String>();
+					// we put just the profile attribute name, it's value will be evaluated later, when evaluating the filters
+					values.add(attributeName);
+					Filter filter = new Filter(field, values);
+					toReturn.add(filter);
+				}
+			}
+		}
+		return toReturn;
 	}
 
 	protected Map<String, Object> buildEmptyConfiguration() {
@@ -164,7 +212,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		}
 
 		// at the moment (04/2015) hibernate doesn't provide a dialect for hive or hbase with phoenix. But its similar to the postrges one
-		if (dialect.contains("hive") || dialect.contains("hbase") || dialect.contains("spark") || dialect.contains("impala")) {
+		if (SqlUtils.isHiveLikeDialect(dialect)) {
 			dialect = "org.hibernate.dialect.PostgreSQLDialect";
 		}
 
