@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
+import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
@@ -30,11 +31,12 @@ import it.eng.qbe.statement.graph.serializer.ModelFieldPathsJSONDeserializer;
 import it.eng.qbe.statement.graph.serializer.ModelObjectInternationalizedSerializer;
 import it.eng.qbe.statement.graph.serializer.RelationJSONSerializer;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -151,9 +153,6 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				for (int i = 0; i < queries.length(); i++) {
 					queryJSON = queries.getJSONObject(i);
 					query = deserializeQuery(queryJSON);
-					// debug
-					System.out.println(query.toSql(DataStore.DEFAULT_SCHEMA_NAME, DataStore.DEFAULT_TABLE_NAME));
-					//
 					getEngineInstance().getQueryCatalogue().addQuery(query);
 					getEngineInstance().resetActiveQuery();
 				}
@@ -170,23 +169,29 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				oldQueryGraph = null;
 			}
 
+			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+
+			// we create a new query adding filters defined by profile attributes
+			IModelAccessModality accessModality = this.getEngineInstance().getDataSource().getModelAccessModality();
+			Query filteredQuery = accessModality.getFilteredStatement(query, this.getDataSource(), userProfile.getUserAttributes());
+
 			// loading the ambiguous fields
 			Set<ModelFieldPaths> ambiguousFields = new HashSet<ModelFieldPaths>();
-			Map<IModelField, Set<IQueryField>> modelFieldsMap = query.getQueryFields(getDataSource());
+			Map<IModelField, Set<IQueryField>> modelFieldsMap = filteredQuery.getQueryFields(getDataSource());
 			Set<IModelField> modelFields = modelFieldsMap.keySet();
-			Set<IModelEntity> modelEntities = query.getQueryEntities(modelFields);
+			Set<IModelEntity> modelEntities = filteredQuery.getQueryEntities(modelFields);
 
 			Map<String, Object> pathFiltersMap = new HashMap<String, Object>();
 			pathFiltersMap.put(CubeFilter.PROPERTY_MODEL_STRUCTURE, getDataSource().getModelStructure());
 			pathFiltersMap.put(CubeFilter.PROPERTY_ENTITIES, modelEntities);
 
-			if (oldQueryGraph == null && query != null) {// normal execution: a query exists
-				queryGraph = updateQueryGraphInQuery(query, forceReturnGraph, modelEntities);
+			if (oldQueryGraph == null && filteredQuery != null) {// normal execution: a query exists
+				queryGraph = updateQueryGraphInQuery(filteredQuery, forceReturnGraph, modelEntities);
 				if (queryGraph != null) {
 					// String modelName = getDataSource().getConfiguration().getModelName();
 					// Graph<IModelEntity, Relationship> graph = getDataSource().getModelStructure().getRootEntitiesGraph(modelName,
 					// false).getRootEntitiesGraph();
-					ambiguousFields = getAmbiguousFields(query, modelEntities, modelFieldsMap);
+					ambiguousFields = getAmbiguousFields(filteredQuery, modelEntities, modelFieldsMap);
 					// filter paths
 					GraphManager.filterPaths(ambiguousFields, pathFiltersMap, (QbeEngineConfig.getInstance().getPathsFiltersImpl()));
 
@@ -204,7 +209,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 					isDierctlyExecutable = true;
 				}
 			} else {// saved query
-				ambiguousFields = getAmbiguousFields(query, modelEntities, modelFieldsMap);
+				ambiguousFields = getAmbiguousFields(filteredQuery, modelEntities, modelFieldsMap);
 				// filter paths
 				GraphManager.filterPaths(ambiguousFields, pathFiltersMap, (QbeEngineConfig.getInstance().getPathsFiltersImpl()));
 				applySavedGraphPaths(oldQueryGraph, ambiguousFields);
@@ -220,6 +225,9 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				}
 			}
 
+			// we update the query graph in the query designed by the user in order to save it for later executions
+			query.setQueryGraph(filteredQuery.getQueryGraph());
+
 			// serialize the ambiguous fields
 			ObjectMapper mapper = new ObjectMapper();
 			SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1, 0, 0, null));
@@ -229,7 +237,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 			String serialized = this.getAttributeAsString(AMBIGUOUS_FIELDS_PATHS);
 			if (ambiguousFields.size() > 0 || serialized == null) {
-				serialized = mapper.writeValueAsString((Set<ModelFieldPaths>) ambiguousFields);
+				serialized = mapper.writeValueAsString(ambiguousFields);
 			}
 
 			// update the roles in the query if exists ambiguous paths
@@ -288,7 +296,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	/**
 	 * Get the graph from the request: - if exist: - checks it is valid for the query - if its valid update the graph in the query and return null - if its not
 	 * valid calculate the default graph and update the graph in the query - if not exists calculate the default graph and update the graph in the query
-	 * 
+	 *
 	 * @param query
 	 * @return
 	 */
@@ -375,7 +383,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				Iterator<IModelField> modelFieldsIter = modelFields.iterator();
 
 				while (modelFieldsIter.hasNext()) {
-					IModelField iModelField = (IModelField) modelFieldsIter.next();
+					IModelField iModelField = modelFieldsIter.next();
 					IModelEntity me = iModelField.getParent();
 					Set<GraphPath<IModelEntity, Relationship>> paths = ambiguousMap.get(me);
 					if (paths != null) {
@@ -453,7 +461,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 	/**
 	 * checks if the query graph covers all the entities in the query
-	 * 
+	 *
 	 * @param oldQueryGraph
 	 * @param newQuery
 	 * @return
@@ -475,7 +483,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 		Iterator<IModelEntity> newQueryEntitiesIter = newQueryEntities.iterator();
 		while (newQueryEntitiesIter.hasNext()) {
-			IModelEntity iModelEntity = (IModelEntity) newQueryEntitiesIter.next();
+			IModelEntity iModelEntity = newQueryEntitiesIter.next();
 			if (!oldVertexes.contains(iModelEntity)) {
 				return false;// if at least one entity contained in the query is not covered by the old cover graph the old graph is not valid
 			}

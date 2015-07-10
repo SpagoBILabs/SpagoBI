@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.statement;
 
@@ -298,7 +298,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 	}
 
-	public String getSQLQuery() {
+	public String getSQLQuery(boolean includeInjectedFilters) {
 		return statement.getSqlQueryString();
 	}
 
@@ -314,7 +314,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			// TT table with CREATE AS SELECT
 			logger.debug("Datasource for reading is the same for writing --> use TT table with CREATE AS SELECT");
 			try {
-				String sql = getSQLQuery();
+				String sql = getSQLQuery(true);
 				List<String> fields = getDataSetSelectedFields(statement.getQuery());
 				return TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
 			} catch (Exception e) {
@@ -362,7 +362,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 	/**
 	 * Build a datasource.. We need this object to build a JDBCDataSet
-	 * 
+	 *
 	 * @return
 	 */
 	public IDataSource getDataSource() {
@@ -378,7 +378,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	}
 
 	public String getSignature() {
-		return getSQLQuery();
+		return getSQLQuery(true);
 	}
 
 	public Map getUserProfileAttributes() {
@@ -487,10 +487,9 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	}
 
 	/**
-	 * Adjusts the metadata of the datastore retrieved by a JDBCDataSet, since
-	 * executed JDBC dataset does not contain correct metadata (name, alias,
+	 * Adjusts the metadata of the datastore retrieved by a JDBCDataSet, since executed JDBC dataset does not contain correct metadata (name, alias,
 	 * attribute/measure) therefore we need to merge metadata
-	 * 
+	 *
 	 * @param jdbcMetadata
 	 *            the metadata retrieved by executing the JDBC dataset
 	 * @param qbeQueryMetaData
