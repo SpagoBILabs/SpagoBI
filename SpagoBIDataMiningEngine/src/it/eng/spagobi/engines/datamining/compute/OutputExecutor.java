@@ -24,6 +24,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.rosuda.JRI.REXP;
+import org.rosuda.JRI.RFactor;
 import org.rosuda.JRI.Rengine;
 
 public class OutputExecutor {
@@ -125,13 +126,6 @@ public class OutputExecutor {
 
 			} else {
 
-				/* test h2o */
-				/*
-				 * rexp = re.eval("library(h2o)"); rexp = re.eval("remoteH2O1 <-h2o.init(ip='192.168.88.143',port=54321)"); rexp =
-				 * re.eval("prostate.hex1 <- h2o.importFile(remoteH2O1, 'hdfs://sandbox.hortonworks.com:8020/user/h2o/prostate.csv') "); rexp = re
-				 * .eval("prostate.dl1 <- h2o.deeplearning(x = 3:9, training_frame = prostate.hex1, autoencoder = TRUE, hidden = c(10, 10), epochs = 5) "); rexp
-				 * = re.eval("prostate.anon1 <- h2o.anomaly(prostate.dl1, prostate.hex1)"); rexp = re.eval("prostate.anon1");
-				 */
 				rexp = re.eval(outVal);
 			}
 
@@ -144,6 +138,49 @@ public class OutputExecutor {
 				res.setOutputType(out.getOutputType());
 				res.setResult("No result");
 			}
+			logger.debug("Evaluated result");
+		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.HTML_OUTPUT)) {
+			logger.debug("Html output");
+
+			REXP rexp = null;
+			re.eval("library(R2HTML)");
+			re.eval("library(RCurl)");
+			re.eval("HTMLStart()");
+
+			if (function != null) {
+				if (outVal == null || outVal.equals("")) {
+					outVal = out.getOuputLabel();
+					rexp = re.eval("HTML(" + function + ", append = FALSE)");
+				} else {
+					rexp = re.eval("HTML(" + function + "(" + outVal + ")" + ", append = FALSE)");
+				}
+
+			} else {
+				rexp = re.eval("HTML(" + outVal + ", append = FALSE)");
+			}
+			REXP htmlFile = re.eval("HTMLGetFile()");
+			if (htmlFile != null) {
+				logger.debug("Html result being created");
+				re.eval("u<-HTMLGetFile()");
+				logger.debug("got html output file");
+				re.eval("HTMLStop()");
+				rexp = re.eval("u");
+				rexp = re.eval("s<-paste(\"file:///\",u, sep=\"\")");
+				rexp = re.eval("c<-getURL(s)");
+				rexp = re.eval("c");
+				logger.debug("got html");
+				// delete temp file:
+				boolean success = (new File(htmlFile.asString())).delete();
+				res.setResult(rexp.asString());
+				// comma separated
+
+			} else {
+				res.setResult("No result");
+			}
+
+			res.setOutputType(out.getOutputType());
+			res.setVariablename(outVal);// could be multiple value
+
 			logger.debug("Evaluated result");
 		}
 		logger.debug("OUT");
@@ -208,7 +245,7 @@ public class OutputExecutor {
 	private String getResultAsString(REXP rexp) {
 		logger.debug("IN");
 		String result = "";
-
+		/* http://www.studytrails.com/RJava-Eclipse-Plugin/JRI-R-Java-Data-Communication.jsp */
 		int rexpType = rexp.getType();
 
 		if (rexpType == REXP.XT_ARRAY_INT) {
@@ -235,6 +272,9 @@ public class OutputExecutor {
 		} else if (rexpType == REXP.XT_ARRAY_BOOL_INT) {
 			int[] doubleArr = rexp.asIntArray();
 			result = Arrays.toString(doubleArr);
+		} else if (rexpType == REXP.XT_FACTOR) {
+			RFactor factor = rexp.asFactor();
+			result = factor.toString();
 		}
 		logger.debug("OUT");
 		return result;
