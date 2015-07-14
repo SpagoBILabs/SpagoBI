@@ -468,16 +468,23 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			if(this.fields[fieldName]) {
 				Sbi.debug('[ParametersPanel.setFormState] : Set value [' + p + '] to [' + fieldValue + ']');
 				var aField = this.fields[fieldName];
-				var hasChangeEvent = false;		
+				var hasChangeEvent = false;
+				var hasSelectEvent = false;
 				if(aField.hasListener('change')) {
 					Sbi.debug('[ParametersPanel.setFormState] : field [' + p + '] has change listener');
 					hasChangeEvent = true;
 					aField.un('change', this.onUpdateDependentFields, this);
 				}
+				if(aField.hasListener('select')) {
+					Sbi.debug('[ParametersPanel.setFormState] : field [' + p + '] has select listener');
+					hasSelectEvent = true;
+					aField.un('select', this.onUpdateDependentFields, this);
+				}
 				Sbi.debug('[ParametersPanel.setFormState] : setting value [' + fieldValue + '] to [' + p + '] ... ');
 				aField.setValue( fieldValue );
 				Sbi.debug('[ParametersPanel.setFormState] : value [' + fieldValue + '] to [' + p + '] set');
 				if(hasChangeEvent) aField.on('change', this.onUpdateDependentFields, this);
+				if(hasSelectEvent) aField.on('select', this.onUpdateDependentFields, this);
 				
 				
 				var fieldDescription = fieldName + '_field_visible_description';
@@ -737,17 +744,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 							"to [" + field.getValue() + "] " +
 							"but dont add it to panel");
 				} else {
-					
-					// the parameter is passed in prefereces but it not came from the menu, it came from a cross nav
-					if( this.parameterValueIsInPreferences(parameters[i]) ){
-						//field.setValue(this.preferenceState[parameters[i].id]);
-						Sbi.debug("[ParametersPanel.initializeParametersPanel]: set value of [" + parameters[i].id + "] " +
-								"to [" + this.preferenceState[parameters[i].id] +"] " +
-								"and add it to panel");
-					} else {
-						Sbi.debug("[ParametersPanel.initializeParametersPanel]: parameter [" + parameters[i].id + "] not in preferences");
-					}
-					
 					if (parameters[i].visible === true && parameters[i].vizible !== false) {
 						this.addField(field, nonTransientField++);
 						Sbi.debug('field [' + parameters[i].id + '] is added');
@@ -797,15 +793,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			state[p] = this.preferenceState[p];
 			delete state[p + '_field_visible_description'];			
 		}
-		//var state = Ext.apply(defaultValuesFormState, this.preferenceState);
 		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
-			
+		
 		if (this.firstLoadTotParams == 0 && reset) {
 			this.fireEvent('ready', this, this.isReadyForExecution(), state);	
 			this.fireEvent('synchronize', this);	
 		}
-		
 		
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : OUT');
 	}
@@ -931,17 +925,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			if (theField.behindParameter && theField.behindParameter.selectionType === 'TREE') {
 				
-				this.fields[p].on('select', function(field, record, index) {
-					this.updateDependentFields( field, true);
-				} , this);
+				this.fields[p].on('select', this.onUpdateDependentFields, this);
 				
 			} else 
 			
 			if (theField.behindParameter && theField.behindParameter.selectionType === 'LOOKUP') {
 			
-				this.fields[p].on('select', function(field, record, index) {
-					this.updateDependentFields( field, true);
-				} , this);
+				this.fields[p].on('select', this.onUpdateDependentFields , this);
 				
 			} else if(theField.behindParameter.selectionType === 'COMBOBOX'
 				|| theField.behindParameter.selectionType === 'LIST' 
@@ -950,9 +940,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			} else if(theField.behindParameter.typeCode == 'MAN_IN') {
 				
 				if(theField.behindParameter.type == "DATE"){
-					this.fields[p].on('change', function(field, record, index) {
-						this.updateDependentFields( field, true);
-					} , this);
+					this.fields[p].on('change', this.onUpdateDependentFields , this);
 				}else{
 					// if input field has an element (it means that the field was displayed)
 					if (theField.el !== undefined) {
