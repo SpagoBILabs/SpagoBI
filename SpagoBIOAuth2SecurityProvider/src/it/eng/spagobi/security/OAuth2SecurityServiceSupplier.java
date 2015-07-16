@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.security;
 
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.security.oauth2.OAuth2Client;
 import it.eng.spagobi.security.oauth2.OAuth2Config;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -102,6 +103,10 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 						}
 					}
 				}
+			}
+
+			if (roles.size() == 0) { // Add the default role
+				roles.add(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP"));
 			}
 
 			String[] rolesString = new String[roles.size()];
