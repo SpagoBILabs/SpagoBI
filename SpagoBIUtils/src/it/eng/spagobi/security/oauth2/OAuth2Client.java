@@ -31,38 +31,57 @@ public class OAuth2Client {
 		config = OAuth2Config.getInstance().getConfig();
 	}
 
-	public String getToken(String email, String password) {
+	public String getToken(String id, String password) {
 		logger.debug("IN");
 		try {
 			HttpClient client = getHttpClient();
-			PostMethod httppost = new PostMethod(config.getProperty("TOKENS_URL"));
-			httppost.addParameter("email", email);
-			httppost.addParameter("password", password);
+			String url = config.getProperty("REST_BASE_URL") + config.getProperty("TOKEN_PATH");
+			PostMethod httppost = new PostMethod(url);
+			httppost.setRequestHeader("Content-Type", "application/json");
+
+			String body = "{\r\n";
+			body += "    \"auth\": {\r\n";
+			body += "        \"identity\": {\r\n";
+			body += "            \"methods\": [\r\n";
+			body += "                \"password\"\r\n";
+			body += "            ],\r\n";
+			body += "            \"password\": {\r\n";
+			body += "                \"user\": {\r\n";
+			body += "                    \"id\": \"" + id + "\",\r\n";
+			body += "                    \"password\": \"" + password + "\"\r\n";
+			body += "                }\r\n";
+			body += "            }\r\n";
+			body += "        }\r\n";
+			body += "    }\r\n";
+			body += "}";
+
+			httppost.setRequestBody(body);
+
 			int statusCode = client.executeMethod(httppost);
-			byte[] response = httppost.getResponseBody();
-			if (statusCode != HttpStatus.SC_OK) {
-				logger.error("Error while getting access token from OAuth2 provider: server returned statusCode = " + statusCode);
+
+			if (statusCode != HttpStatus.SC_CREATED) {
+				logger.error("Error while getting access token from IdM REST API: server returned statusCode = " + statusCode);
+
+				byte[] response = httppost.getResponseBody();
 				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
-				throw new SpagoBIRuntimeException("Error while getting access token from OAuth2 provider: server returned statusCode = " + statusCode);
+
+				throw new SpagoBIRuntimeException("Error while getting access token from IdM REST API: server returned statusCode = " + statusCode);
 			}
-			logger.debug("statusCode=" + statusCode);
-			String responseStr = new String(response);
-			logger.debug("response=" + responseStr);
-			JSONObject jsonObject = new JSONObject(responseStr);
-			String token = jsonObject.getString("token");
-			return token;
+
+			return httppost.getResponseHeader("X-Subject-Token").getValue();
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while trying to get token from OAuth2 provider", e);
+			throw new SpagoBIRuntimeException("Error while trying to get token from IdM REST API", e);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 
+	// Returns the X-Auth-Token of the application's administrator
 	public String getAdminToken() {
-		String adminEmail = config.getProperty("ADMIN_EMAIL");
+		String adminId = config.getProperty("ADMIN_ID");
 		String adminPassword = config.getProperty("ADMIN_PASSWORD");
 
-		return getToken(adminEmail, adminPassword);
+		return getToken(adminId, adminPassword);
 	}
 
 	public HttpClient getHttpClient() {
@@ -89,10 +108,11 @@ public class OAuth2Client {
 		return client;
 	}
 
+	// It returns the access token of OAuth2 given the authorization code
 	public String getAccessToken(String code) {
 		logger.debug("IN");
 		try {
-			PostMethod httppost = createPostMethod();
+			PostMethod httppost = createPostMethodForAccessToken();
 			httppost.setParameter("grant_type", "authorization_code");
 			httppost.setParameter("code", code);
 			httppost.setParameter("redirect_uri", config.getProperty("REDIRECT_URI"));
@@ -105,10 +125,11 @@ public class OAuth2Client {
 		}
 	}
 
+	// It returns the access token of OAuth2 given username and password
 	public String getAccessToken(String username, String password) {
 		logger.debug("IN");
 		try {
-			PostMethod httppost = createPostMethod();
+			PostMethod httppost = createPostMethodForAccessToken();
 			httppost.setParameter("grant_type", "password");
 			httppost.setParameter("username", username);
 			httppost.setParameter("password", password);
@@ -122,14 +143,15 @@ public class OAuth2Client {
 		}
 	}
 
-	// The generated PostMethod object is used to retrieve access token
-	private PostMethod createPostMethod() {
+	// The generated PostMethod object is used to retrieve access token (OAuth2)
+	private PostMethod createPostMethodForAccessToken() {
 		String authorizationCredentials = config.getProperty("CLIENT_ID") + ":" + config.getProperty("SECRET");
 		String encoded = new String(new BASE64Encoder().encode(authorizationCredentials.getBytes()));
 		encoded = encoded.replaceAll("\n", "");
+		encoded = encoded.replaceAll("\r", "");
 
 		HttpClient httpClient = getHttpClient();
-		PostMethod httppost = new PostMethod(config.getProperty("GET_ACCESS_TOKEN_URL"));
+		PostMethod httppost = new PostMethod(config.getProperty("ACCESS_TOKEN_URL"));
 		httppost.setRequestHeader("Authorization", "Basic " + encoded);
 		httppost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 

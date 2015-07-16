@@ -49,12 +49,10 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			for (int i = 0; i < jsonRolesArray.length(); i++) {
 				String name = jsonRolesArray.getJSONObject(i).getString("name");
 
-				if (!name.equals("Provider") && !name.equals("Purchaser")) {
-					for (SbiTenant tenant : tenants) {
-						Role role = new Role(name, name);
-						role.setOrganization(tenant.getName());
-						roles.add(role);
-					}
+				for (SbiTenant tenant : tenants) {
+					Role role = new Role(name, name);
+					role.setOrganization(tenant.getName());
+					roles.add(role);
 				}
 			}
 		} catch (JSONException e) {
@@ -73,7 +71,7 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 		return attributes;
 	}
 
-	// It looks for informations about the application, such its name and its roles and initialize jsonApplicationData with them
+	// It looks for informations about the application, such its name and its roles and it returns a json object containing them
 	private static JSONObject getApplicationDataAsJSONObject() {
 		try {
 
@@ -84,16 +82,17 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			String token = oauth2Client.getAdminToken();
 
 			HttpClient httpClient = oauth2Client.getHttpClient();
-			GetMethod httpget = new GetMethod(config.getProperty("APPLICATIONS_BASE_URL") + config.getProperty("APPLICATION_NAME") + ".json?auth_token="
-					+ token);
+
+			String url = config.getProperty("REST_BASE_URL") + config.getProperty("ROLES_PATH") + "?application_id=" + config.getProperty("APPLICATION_ID");
+			GetMethod httpget = new GetMethod(url);
+			httpget.addRequestHeader("X-Auth-Token", token);
 
 			int statusCode = httpClient.executeMethod(httpget);
 			byte[] response = httpget.getResponseBody();
 			if (statusCode != HttpStatus.SC_OK) {
-				logger.error("Error while getting application information from OAuth2 provider: server returned statusCode = " + statusCode);
+				logger.error("Error while getting application information from IdM REST API: server returned statusCode = " + statusCode);
 				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
-				throw new SpagoBIRuntimeException("Error while getting application information from OAuth2 provider: server returned statusCode = "
-						+ statusCode);
+				throw new SpagoBIRuntimeException("Error while getting application information from IdM REST API: server returned statusCode = " + statusCode);
 			}
 
 			String responseStr = new String(response);

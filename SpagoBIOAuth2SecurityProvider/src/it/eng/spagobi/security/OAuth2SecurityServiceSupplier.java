@@ -42,7 +42,7 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			OAuth2Client oauth2Client = new OAuth2Client();
 
 			HttpClient httpClient = oauth2Client.getHttpClient();
-			GetMethod httpget = new GetMethod(config.getProperty("GET_USER_INFO_URL") + "?access_token=" + userUniqueIdentifier);
+			GetMethod httpget = new GetMethod(config.getProperty("USER_INFO_URL") + "?access_token=" + userUniqueIdentifier);
 			int statusCode = httpClient.executeMethod(httpget);
 			byte[] response = httpget.getResponseBody();
 			if (statusCode != HttpStatus.SC_OK) {
@@ -55,20 +55,20 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			LogMF.debug(logger, "Server response is:\n{0}", responseStr);
 			JSONObject jsonObject = new JSONObject(responseStr);
 
-			String userId = jsonObject.getString("nickName"); // The nickName inside fiware
+			String userId = jsonObject.getString("id");
 			logger.debug("User id is [" + userId + "]");
 			String userName = jsonObject.getString("displayName");
 			logger.debug("User name is [" + userName + "]");
 
 			profile = new SpagoBIUserProfile();
-			profile.setUniqueIdentifier(userUniqueIdentifier); // The OAuth2 token
+			profile.setUniqueIdentifier(userUniqueIdentifier); // The OAuth2 access token
 			profile.setUserId(userId);
 			profile.setUserName(userName);
 			profile.setOrganization("SPAGOBI");
 
 			String adminEmail = config.getProperty("ADMIN_EMAIL");
 			String email = jsonObject.getString("email");
-			profile.setIsSuperadmin(email.equals(adminEmail.toLowerCase()));
+			profile.setIsSuperadmin(email.equalsIgnoreCase(adminEmail));
 
 			JSONArray jsonRolesArray = jsonObject.getJSONArray("roles");
 			List<String> roles = new ArrayList<String>();
@@ -77,7 +77,7 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			String name;
 			for (int i = 0; i < jsonRolesArray.length(); i++) {
 				name = jsonRolesArray.getJSONObject(i).getString("name");
-				if (!name.equals("Provider") && !name.equals("Purchaser"))
+				if (!name.equalsIgnoreCase("provider") && !name.equalsIgnoreCase("purchaser"))
 					roles.add(name);
 			}
 
@@ -88,14 +88,14 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 				if (organizations != null) { // TODO: more than one organization
 					// For each organization
 					for (int i = 0; i < organizations.length() && roles.size() == 0; i++) {
-						String organizationName = organizations.getJSONObject(i).getString("displayName");
+						String organizationName = organizations.getJSONObject(i).getString("name");
 						jsonRolesArray = organizations.getJSONObject(i).getJSONArray("roles");
 
 						// For each role in the current organization
 						for (int k = 0; k < jsonRolesArray.length(); k++) {
 							name = jsonRolesArray.getJSONObject(k).getString("name");
 
-							if (!name.equals("Provider") && !name.equals("Purchaser")) {
+							if (!name.equalsIgnoreCase("provider") && !name.equalsIgnoreCase("purchaser")) {
 								profile.setOrganization(organizationName);
 								roles.add(name);
 							}
