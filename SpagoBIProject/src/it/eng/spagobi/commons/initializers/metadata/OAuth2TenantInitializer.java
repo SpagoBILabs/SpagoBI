@@ -90,32 +90,66 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 			String token = oauth2Client.getAdminToken();
 
 			HttpClient httpClient = oauth2Client.getHttpClient();
-			GetMethod httpget = new GetMethod(config.getProperty("APPLICATIONS_BASE_URL") + config.getProperty("APPLICATION_NAME") + "/actors?auth_token="
-					+ token);
+			String url = config.getProperty("REST_BASE_URL") + config.getProperty("ORGANIZATIONS_LIST_PATH") + "?application_id="
+					+ config.getProperty("APPLICATION_ID");
+			GetMethod httpget = new GetMethod(url);
+			httpget.addRequestHeader("X-Auth-Token", token);
+
 			int statusCode = httpClient.executeMethod(httpget);
 			byte[] response = httpget.getResponseBody();
 			if (statusCode != HttpStatus.SC_OK) {
-				logger.error("Error while getting actors from OAuth2 provider: server returned statusCode = " + statusCode);
+				logger.error("Error while getting organizations from OAuth2 provider: server returned statusCode = " + statusCode);
 				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
-				throw new SpagoBIRuntimeException("Error while getting actors from OAuth2 provider: server returned statusCode = " + statusCode);
+				throw new SpagoBIRuntimeException("Error while getting organizations from OAuth2 provider: server returned statusCode = " + statusCode);
 			}
 
 			String responseStr = new String(response);
 			LogMF.debug(logger, "Server response is:\n{0}", responseStr);
 			JSONObject jsonObject = new JSONObject(responseStr);
-			JSONArray actorList = jsonObject.getJSONArray("actors");
+			JSONArray rolesList = jsonObject.getJSONArray("role_assignments");
 
-			JSONObject obj;
-			for (int i = 0; i < actorList.length(); i++) {
-				obj = actorList.getJSONObject(i);
-				if (obj.getString("actor_type").equals("Group")) {
-					tenants.add(obj.getString("name"));
-				}
+			for (int i = 0; i < rolesList.length(); i++) {
+				String organizationId = rolesList.getJSONObject(i).getString("organization_id");
+				String organizationName = getTenantName(organizationId);
+
+				tenants.add(organizationName);
 			}
 
 			return tenants;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while trying to obtain tenants' informations from OAuth2 provider", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	private String getTenantName(String organizationId) {
+		try {
+			OAuth2Client oauth2Client = new OAuth2Client();
+
+			String token = oauth2Client.getAdminToken();
+
+			HttpClient httpClient = oauth2Client.getHttpClient();
+			String url = config.getProperty("REST_BASE_URL") + config.getProperty("ORGANIZATION_INFO_PATH") + organizationId;
+			GetMethod httpget = new GetMethod(url);
+			httpget.addRequestHeader("X-Auth-Token", token);
+
+			int statusCode = httpClient.executeMethod(httpget);
+			byte[] response = httpget.getResponseBody();
+			if (statusCode != HttpStatus.SC_OK) {
+				logger.error("Error while getting the name of organization with id [" + organizationId + "]: server returned statusCode = " + statusCode);
+				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
+				throw new SpagoBIRuntimeException("Error while getting the name of organization with id [" + organizationId
+						+ "]: server returned statusCode = " + statusCode);
+			}
+
+			String responseStr = new String(response);
+			LogMF.debug(logger, "Server response is:\n{0}", responseStr);
+			JSONObject jsonObject = new JSONObject(responseStr);
+
+			return jsonObject.getJSONObject("project").getString("name");
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while trying to obtain tenant' name from IdM REST API", e);
 		} finally {
 			logger.debug("OUT");
 		}

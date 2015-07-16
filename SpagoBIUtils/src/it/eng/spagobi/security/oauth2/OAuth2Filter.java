@@ -6,6 +6,7 @@
 package it.eng.spagobi.security.oauth2;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Properties;
 
 import javax.servlet.Filter;
@@ -36,8 +37,9 @@ public class OAuth2Filter implements Filter {
 
 		if ((session.isNew()) || (session.getAttribute("access_token") == null)) {
 			if (((HttpServletRequest) request).getParameter("code") == null) {
-				String url = oauth2Config.getProperty("AUTHORIZE_BASE_URL") + "?response_type=code&client_id="
-						+ OAuth2Config.getInstance().getConfig().getProperty("CLIENT_ID");
+				String url = oauth2Config.getProperty("AUTHORIZE_URL");
+				url += "?response_type=code&client_id=" + OAuth2Config.getInstance().getConfig().getProperty("CLIENT_ID");
+				url += "&redirect_uri=" + URLEncoder.encode(oauth2Config.getProperty("REDIRECT_URI"), "UTF-8");
 				((HttpServletResponse) response).sendRedirect(url);
 			} else {
 				OAuth2Client client = new OAuth2Client();
