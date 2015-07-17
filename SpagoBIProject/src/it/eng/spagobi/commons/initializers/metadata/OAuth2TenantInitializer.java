@@ -87,9 +87,11 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 		try {
 			OAuth2Client oauth2Client = new OAuth2Client();
 
+			// Retrieve the admin's token for REST services authentication
 			String token = oauth2Client.getAdminToken();
 
 			HttpClient httpClient = oauth2Client.getHttpClient();
+			// Get organizations authorized for the application (specified in the oauth2.config.properties)
 			String url = config.getProperty("REST_BASE_URL") + config.getProperty("ORGANIZATIONS_LIST_PATH") + "?application_id="
 					+ config.getProperty("APPLICATION_ID");
 			GetMethod httpget = new GetMethod(url);

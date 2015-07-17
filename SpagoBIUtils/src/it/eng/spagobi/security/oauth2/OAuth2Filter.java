@@ -37,11 +37,13 @@ public class OAuth2Filter implements Filter {
 
 		if ((session.isNew()) || (session.getAttribute("access_token") == null)) {
 			if (((HttpServletRequest) request).getParameter("code") == null) {
+				// We have to retrieve the Oauth2's code redirecting the browser to the OAuth2 provider
 				String url = oauth2Config.getProperty("AUTHORIZE_URL");
 				url += "?response_type=code&client_id=" + OAuth2Config.getInstance().getConfig().getProperty("CLIENT_ID");
 				url += "&redirect_uri=" + URLEncoder.encode(oauth2Config.getProperty("REDIRECT_URI"), "UTF-8");
 				((HttpServletResponse) response).sendRedirect(url);
 			} else {
+				// Using the code we get the access token and put it in session
 				OAuth2Client client = new OAuth2Client();
 				String accessToken = client.getAccessToken(((HttpServletRequest) request).getParameter("code"));
 

@@ -27,8 +27,10 @@ public class Oauth2SsoService implements SsoServiceInterface {
 	public String readUserIdentifier(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 
+		// This is for SpagoBI core: we consider the OAuth2 access token as user unique identifier
 		String userId = (String) session.getAttribute("access_token");
 
+		// In external engines we read userId from request
 		if (userId == null)
 			userId = request.getParameter(SsoServiceInterface.USER_ID);
 

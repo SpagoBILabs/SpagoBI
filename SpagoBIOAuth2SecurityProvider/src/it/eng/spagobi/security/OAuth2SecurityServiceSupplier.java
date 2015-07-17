@@ -43,6 +43,8 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			OAuth2Client oauth2Client = new OAuth2Client();
 
 			HttpClient httpClient = oauth2Client.getHttpClient();
+
+			// We call the OAuth2 provider to get user's info
 			GetMethod httpget = new GetMethod(config.getProperty("USER_INFO_URL") + "?access_token=" + userUniqueIdentifier);
 			int statusCode = httpClient.executeMethod(httpget);
 			byte[] response = httpget.getResponseBody();
@@ -67,6 +69,10 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			profile.setUserName(userName);
 			profile.setOrganization("SPAGOBI");
 
+			/*
+			 * If the user's email is the same as the owner of the application (as configured in the oauth2.config.properties file) we consider him as the
+			 * superadmin
+			 */
 			String adminEmail = config.getProperty("ADMIN_EMAIL");
 			String email = jsonObject.getString("email");
 			profile.setIsSuperadmin(email.equalsIgnoreCase(adminEmail));
