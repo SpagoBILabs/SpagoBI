@@ -99,10 +99,10 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			}
 
 			if (profile == null) {
-				// TODO check if the error can be processed by the client
-				// throws unlogged user exception that will be managed by RestExcepionMapper
-				// logger.info("User not logged");
-				// throw new LoggableFailure(request.getUri().getRequestUri().getPath());
+				/*
+				 * This response is standard in Basic authentication. If the header with credentials is missing the server send the response asking for the
+				 * header. The browser will show a popup that requires the user credential.
+				 */
 				Headers<Object> header = new Headers<Object>();
 				header.add("WWW-Authenticate", "Basic realm='spagobi'");
 				response = new ServerResponse("", 401, header);

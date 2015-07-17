@@ -42,7 +42,7 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 		List<Role> roles = new ArrayList<Role>();
 		try {
 
-			JSONObject jsonApplicationData = getApplicationDataAsJSONObject();
+			JSONObject jsonApplicationData = getRolesAsJson();
 
 			JSONArray jsonRolesArray = jsonApplicationData.getJSONArray("roles");
 
@@ -72,17 +72,19 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 	}
 
 	// It looks for informations about the application, such its name and its roles and it returns a json object containing them
-	private static JSONObject getApplicationDataAsJSONObject() {
+	private static JSONObject getRolesAsJson() {
 		try {
 
 			OAuth2Client oauth2Client = new OAuth2Client();
 
 			Properties config = OAuth2Config.getInstance().getConfig();
 
+			// Retrieve the admin's token for REST services authentication
 			String token = oauth2Client.getAdminToken();
 
 			HttpClient httpClient = oauth2Client.getHttpClient();
 
+			// Get roles of the application (specified in the oauth2.config.properties)
 			String url = config.getProperty("REST_BASE_URL") + config.getProperty("ROLES_PATH") + "?application_id=" + config.getProperty("APPLICATION_ID");
 			GetMethod httpget = new GetMethod(url);
 			httpget.addRequestHeader("X-Auth-Token", token);
@@ -102,7 +104,7 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 			return jsonObject;
 
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while getting application information from OAuth2 provider", e);
+			throw new SpagoBIRuntimeException("Error while getting roles list from OAuth2 provider", e);
 		}
 
 	}
