@@ -50,7 +50,7 @@ public class MessageBundle {
 
 	/**
 	 * Retrieves the Locale of the current user checking for its language profile in session.
-	 * 
+	 *
 	 * @return The Locale corresponding to the current user.
 	 */
 	public static Locale getUserLocale() {
@@ -93,9 +93,9 @@ public class MessageBundle {
 	}
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
-	 * 
+	 *
 	 * @param code
 	 *            il codice associato alla stringa.
 	 * @return la stringa recuperata da un file di properties.
@@ -105,9 +105,9 @@ public class MessageBundle {
 	}
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
-	 * 
+	 *
 	 * @param code
 	 *            il codice associato alla stringa.
 	 * @param params
@@ -119,9 +119,9 @@ public class MessageBundle {
 	}
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
-	 * 
+	 *
 	 * @param code
 	 *            il codice associato alla stringa.
 	 * @param bundle
@@ -138,9 +138,9 @@ public class MessageBundle {
 	} // public String getMessage(String code)
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
-	 * 
+	 *
 	 * @param code
 	 *            il codice associato alla stringa.
 	 * @param bundle
@@ -154,9 +154,9 @@ public class MessageBundle {
 	}
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
-	 * 
+	 *
 	 * @param code
 	 *            il codice associato alla stringa.
 	 * @param bundle
@@ -213,9 +213,9 @@ public class MessageBundle {
 	} // public String getMessage(String code)
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
-	 * 
+	 *
 	 * @param code
 	 *            il codice associato alla stringa.
 	 * @param bundle
@@ -237,7 +237,7 @@ public class MessageBundle {
 
 	/**
 	 * Add a bundle name in the lookup list.
-	 * 
+	 *
 	 * @param bundleName
 	 *            Name of the bundle to add to the lookup list.
 	 */
@@ -251,7 +251,7 @@ public class MessageBundle {
 	 * Retrieve a message in a hierarchical way: first it search in the path "properties.action.<action name>.code" or "properties.page.<page name>.code", if
 	 * the search fails it searches in the path "action.<action name>.code" or "page.<page name>.code" in the files enlisted in messages.xml, and if it fails
 	 * again it searches in the path "code" in the files enlisted in messages.xml.
-	 * 
+	 *
 	 * @param code
 	 *            Identifier of the message
 	 * @param responseContainer
@@ -279,7 +279,7 @@ public class MessageBundle {
 
 	/**
 	 * Replace the placeholders with the elements supplied in the list
-	 * 
+	 *
 	 * @param message
 	 *            Original message
 	 * @param params
