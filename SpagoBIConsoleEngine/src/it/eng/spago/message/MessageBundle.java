@@ -93,7 +93,7 @@ public class MessageBundle {
 	}
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 *
 	 *
 	 * @param code
@@ -105,7 +105,7 @@ public class MessageBundle {
 	}
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 *
 	 *
 	 * @param code
@@ -119,7 +119,7 @@ public class MessageBundle {
 	}
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 *
 	 *
 	 * @param code
@@ -138,7 +138,7 @@ public class MessageBundle {
 	} // public String getMessage(String code)
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 *
 	 *
 	 * @param code
@@ -154,7 +154,7 @@ public class MessageBundle {
 	}
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 *
 	 *
 	 * @param code
@@ -213,7 +213,7 @@ public class MessageBundle {
 	} // public String getMessage(String code)
 
 	/**
-	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
+	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprieta' dell'utente che ha richiesto il servizio (language,country).
 	 *
 	 *
 	 * @param code
