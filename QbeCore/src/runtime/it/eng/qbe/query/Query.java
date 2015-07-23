@@ -12,7 +12,7 @@ import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.StatementCompositionException;
 import it.eng.qbe.statement.StatementTockenizer;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
-import it.eng.spagobi.dataset.query.IQuery;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -253,6 +253,20 @@ public class Query implements IQuery {
 		return whereField;
 	}
 
+	public void addWhereField(String name, String description, boolean promptable, String[] leftOperatorValues, String leftOperatorDescription,
+			String leftOperatorType, String[] leftOperatorDefaulttValues, String[] leftOperatorLastValues, String leftOperatorAlias, String operator,
+			String[] rightOperatorValues, String rightOperatorDescription, String rightOperatorType, String[] rightOperatorDefaulttValues,
+			String[] rightOperatorLastValues, String rightOperatorAlias, String booleanConnector) {
+		it.eng.qbe.query.WhereField.Operand leftOperand = new it.eng.qbe.query.WhereField.Operand(leftOperatorValues, leftOperatorDescription,
+				leftOperatorType, leftOperatorDefaulttValues, leftOperatorLastValues, leftOperatorAlias);
+		it.eng.qbe.query.WhereField.Operand rightOperand = new it.eng.qbe.query.WhereField.Operand(rightOperatorValues, rightOperatorDescription,
+				rightOperatorType, rightOperatorDefaulttValues, rightOperatorLastValues, rightOperatorAlias);
+		WhereField whereField = new WhereField(name, description, promptable, leftOperand, operator, rightOperand, booleanConnector);
+
+		whereClause.add(whereField);
+		whereFieldMap.put("$F{" + name + "}", whereField);
+	}
+
 	public HavingField addHavingField(String name, String description, boolean promptable, it.eng.qbe.query.HavingField.Operand leftOperand, String operator,
 			it.eng.qbe.query.HavingField.Operand rightOperand, String booleanConnector) {
 
@@ -490,7 +504,7 @@ public class Query implements IQuery {
 
 		Iterator<InLineCalculatedSelectField> it2 = this.getInLineCalculatedSelectFields(false).iterator();
 		while (it2.hasNext()) {
-			InLineCalculatedSelectField selectField = (InLineCalculatedSelectField) it2.next();
+			InLineCalculatedSelectField selectField = it2.next();
 			if (selectField.isGroupByField()) {
 				groupByFields.add(selectField);
 			}
@@ -714,18 +728,24 @@ public class Query implements IQuery {
 		Set<IModelEntity> me = new HashSet<IModelEntity>();
 		Iterator<IModelField> mfi = mf.iterator();
 		while (mfi.hasNext()) {
-			IModelField iModelField = (IModelField) mfi.next();
+			IModelField iModelField = mfi.next();
 			me.add(iModelField.getParent());
+
 		}
 		return me;
 	}
 
 	public String toSql(String schema, String table) {
 
+		final String whereStart = "WHERE ( ";
+		final String whereEnd = ") ";
+		final String whereEmpty = whereStart + whereEnd;
+
 		String fromClause = "FROM " + schema + "." + table + " ";
 		String selectClause = "SELECT ";
-		String whereClause = "WHERE ( ";
+		String whereClause = whereStart;
 		String groupByClause = "GROUP BY ";
+		String groupByClauseEmpty = groupByClause;
 
 		List<ISelectField> selectFields = getSelectFields(false);
 		List<WhereField> whereFields = getWhereFields();
@@ -738,7 +758,7 @@ public class Query implements IQuery {
 		for (ISelectField select : selectFields) {
 			if (select instanceof SimpleSelectField) {
 				SimpleSelectField simpleField = (SimpleSelectField) select;
-				String columnName = simpleField.getName().split(":")[1];
+				String columnName = extractColumnNameFromFieldName(simpleField.getName());
 				selectClause += simpleField.getFunction().apply(columnName) + " AS " + simpleField.getAlias() + " ";
 				if (selectFields.indexOf(select) != (selectFields.size() - 1)) {
 					selectClause += ", ";
@@ -750,7 +770,7 @@ public class Query implements IQuery {
 		}
 
 		for (WhereField where : whereFields) {
-			String columnName = where.getLeftOperand().values[0].split(":")[1];
+			String columnName = extractColumnNameFromFieldName(where.getLeftOperand().values[0]);
 			String operator = where.getOperator();
 			if (!operator.equals("EQUALS TO")) {
 				throw new SpagoBIEngineRuntimeException(
@@ -767,15 +787,14 @@ public class Query implements IQuery {
 			}
 			if (whereFields.indexOf(where) != (whereFields.size() - 1)) {
 				whereClause += where.getBooleanConnector() + " ";
-			} else {
-				whereClause += ") ";
 			}
 		}
+		whereClause += whereEnd;
 
 		for (ISelectField groupBy : groupByFields) {
 			if (groupBy instanceof SimpleSelectField) {
 				SimpleSelectField simpleField = (SimpleSelectField) groupBy;
-				String columnName = simpleField.getName().split(":")[1];
+				String columnName = extractColumnNameFromFieldName(simpleField.getName());
 				groupByClause += simpleField.getFunction().apply(columnName) + " ";
 				if (groupByFields.indexOf(groupBy) != (groupByFields.size() - 1)) {
 					groupByClause += ", ";
@@ -786,6 +805,11 @@ public class Query implements IQuery {
 			}
 		}
 
-		return selectClause + fromClause + whereClause + groupByClause;
+		return selectClause + fromClause + (whereClause.equals(whereEmpty) ? " " : whereClause)
+				+ (groupByClause.equals(groupByClauseEmpty) ? " " : groupByClause);
+	}
+
+	private String extractColumnNameFromFieldName(String fieldName) {
+		return fieldName.contains(":") ? fieldName.split(":")[1] : fieldName;
 	}
 }

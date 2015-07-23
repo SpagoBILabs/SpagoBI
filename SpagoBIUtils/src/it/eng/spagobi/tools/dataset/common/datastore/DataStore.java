@@ -7,12 +7,12 @@ package it.eng.spagobi.tools.dataset.common.datastore;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.dataset.query.IQuery;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -235,228 +235,6 @@ public class DataStore implements IDataStore {
 		return results;
 	}
 
-	// public IDataStore aggregateRecordsByColumn(String function, int groupFieldIndex, int[] measureFieldIndexes) {
-	// IDataStore aggregatedDataStore = new DataStore();
-	//
-	// if (function.equalsIgnoreCase(AGGR_SUM)) {
-	// aggregateAndSum(groupFieldIndex, measureFieldIndexes);
-	// } else if (function.equalsIgnoreCase(AGGR_COUNT)) {
-	// aggregateAndCount(groupFieldIndex, measureFieldIndexes);
-	// } else if (function.equalsIgnoreCase(AGGR_AVG)) {
-	// aggregateAndCalculateAvg(groupFieldIndex, measureFieldIndexes);
-	// } else if (function.equalsIgnoreCase(AGGR_MIN)) {
-	// aggregateAndFindMin(groupFieldIndex, measureFieldIndexes);
-	// } else if (function.equalsIgnoreCase(AGGR_MAX)) {
-	// aggregateAndFindMax(groupFieldIndex, measureFieldIndexes);
-	// } else {
-	// new SpagoBIServiceException("DataStore: Aggregate records by specific column", "The function" + function
-	// + "is not supported as aggregation function.");
-	// }
-	//
-	// // aggregatedDataStore.getMetaData().addFiedMeta(this.metaData.getFieldMeta(groupFieldIndex));
-	// // aggregatedDataStore.getMetaData().addFiedMeta(this.metaData.getFieldMeta(measureFieldIndex));
-	//
-	// }
-	//
-	// private IDataStore aggregateAndSum(int groupFieldIndex, int[] measureFieldIndexes) {
-	// IDataStore dataStore = new DataStore();
-	// HashMap<String, Double[]> values = new HashMap<String, Double[]>();
-	// Iterator it = iterator();
-	//
-	// while (it.hasNext()) {
-	// IRecord record = (IRecord) it.next();
-	// IField groupField = record.getFieldAt(groupFieldIndex);
-	// String groupFieldValue = String.valueOf(groupField.getValue());
-	// for (int i = 0; i < measureFieldIndexes.length; i++) {
-	// IField measureField = record.getFieldAt(measureFieldIndexes[i]);
-	// Object measureFieldValue = measureField.getValue();
-	// if (groupFieldValue != null && measureFieldValue != null) {
-	// if (measureFieldValue instanceof Number) {
-	// Number number = (Number) measureFieldValue;
-	// Double numericValue = number.doubleValue();
-	// Double[] aggregatedValues = values.get(groupFieldValue);
-	// if (aggregatedValues != null) {
-	// aggregatedValues[i] += numericValue;
-	// } else {
-	// aggregatedValues = new Double[measureFieldIndexes.length];
-	// Arrays.fill(aggregatedValues, 0.0);
-	// aggregatedValues[i] = numericValue;
-	// }
-	// values.put(groupFieldValue, aggregatedValues);
-	// } else {
-	// new SpagoBIServiceException("DataStore: Aggregate and sum records by specific column", "The field " + groupField.getValue()
-	// + " has a value equals to " + measureField.getValue() + ", which is not a number.");
-	// }
-	// } else {
-	// new SpagoBIServiceException("DataStore: Aggregate and sum records by specific column", "No field exists with index " + groupFieldIndex
-	// + " or " + measureFieldIndexes[i]);
-	// }
-	// }
-	// }
-	//
-	// for (String key : values.keySet()) {
-	// IRecord record = new Record();
-	// record.appendField(new Field(key));
-	// record.appendField(new Field(values.get(key)));
-	// dataStore.appendRecord(record);
-	// }
-	//
-	// return dataStore;
-	// }
-	//
-	// private List aggregateAndCount(int groupFieldIndex, int[] measureFieldIndexes) {
-	// HashMap<String, Integer[]> values = new HashMap<String, Integer[]>();
-	// Iterator it = iterator();
-	//
-	// while (it.hasNext()) {
-	// IRecord record = (IRecord) it.next();
-	// IField groupField = record.getFieldAt(groupFieldIndex);
-	// String groupFieldValue = String.valueOf(groupField.getValue());
-	// for (int i = 0; i < measureFieldIndexes.length; i++) {
-	// IField measureField = record.getFieldAt(measureFieldIndexes[i]);
-	// Object measureFieldValue = measureField.getValue();
-	// if (groupFieldValue != null && measureFieldValue != null) {
-	// Integer[] aggregatedValues = values.get(groupFieldValue);
-	// if (aggregatedValues != null) {
-	// aggregatedValues[i];
-	// values.put(groupFieldValue, aggregatedValue + 1);
-	// } else {
-	// values.put(groupFieldValue, 1);
-	// }
-	// } else {
-	// new SpagoBIServiceException("DataStore: Aggregate and count records by specific column", "No field exists with index " + groupFieldIndex
-	// + " or " + measureFieldIndexes[i]);
-	// }
-	// }
-	// }
-	//
-	// List toReturn = new ArrayList();
-	// for (String key : values.keySet()) {
-	// IRecord record = new Record();
-	// record.appendField(new Field(key));
-	// record.appendField(new Field(values.get(key)));
-	// toReturn.add(record);
-	// }
-	// return toReturn;
-	// }
-	//
-	// private List aggregateAndCalculateAvg(int groupFieldIndex, int[] measureFieldIndexes) {
-	// HashMap<String, Double> sums = new HashMap<String, Double>();
-	// HashMap<String, Integer> counters = new HashMap<String, Integer>();
-	// Iterator it = iterator();
-	//
-	// while (it.hasNext()) {
-	// IRecord record = (IRecord) it.next();
-	// IField groupField = record.getFieldAt(groupFieldIndex);
-	// IField measureField = record.getFieldAt(measureFieldIndex);
-	// String groupFieldValue = String.valueOf(groupField.getValue());
-	// Object measureFieldValue = measureField.getValue();
-	// if (groupFieldValue != null && measureFieldValue != null) {
-	// if (measureFieldValue instanceof Number) {
-	// Number number = (Number) measureFieldValue;
-	// Double numericValue = number.doubleValue();
-	// Double aggregatedValue = sums.get(groupFieldValue);
-	// Integer counterValue = counters.get(groupFieldValue);
-	// if (aggregatedValue != null) {
-	// sums.put(groupFieldValue, aggregatedValue + numericValue);
-	// counters.put(groupFieldValue, counterValue + 1);
-	// } else {
-	// sums.put(groupFieldValue, numericValue);
-	// counters.put(groupFieldValue, 1);
-	// }
-	// } else {
-	// new SpagoBIServiceException("DataStore: Aggregate and calculate average of records by specific column", "The field "
-	// + groupField.getValue() + " has a value equals to " + measureField.getValue() + ", which is not a number.");
-	// }
-	// } else {
-	// new SpagoBIServiceException("DataStore: Aggregate and calculate average of records by specific column", "No field exists with index "
-	// + groupFieldIndex + " or " + measureFieldIndex);
-	// }
-	// }
-	// List toReturn = new ArrayList();
-	// for (String key : sums.keySet()) {
-	// IRecord record = new Record();
-	// record.appendField(new Field(key));
-	// record.appendField(new Field(sums.get(key) / counters.get(key)));
-	// toReturn.add(record);
-	// }
-	// return toReturn;
-	// }
-	//
-	// private List aggregateAndFindMin(int groupFieldIndex, int[] measureFieldIndexes) {
-	// HashMap<String, Double> values = new HashMap<String, Double>();
-	// Iterator it = iterator();
-	//
-	// while (it.hasNext()) {
-	// IRecord record = (IRecord) it.next();
-	// IField groupField = record.getFieldAt(groupFieldIndex);
-	// IField measureField = record.getFieldAt(measureFieldIndex);
-	// String groupFieldValue = String.valueOf(groupField.getValue());
-	// Object measureFieldValue = measureField.getValue();
-	// if (groupFieldValue != null && measureFieldValue != null) {
-	// if (measureFieldValue instanceof Number) {
-	// Number number = (Number) measureFieldValue;
-	// Double numericValue = number.doubleValue();
-	// Double aggregatedValue = values.get(groupFieldValue);
-	// if (aggregatedValue == null || numericValue < aggregatedValue) {
-	// values.put(groupFieldValue, numericValue);
-	// }
-	// } else {
-	// new SpagoBIServiceException("DataStore: Aggregate and find min of records by specific column", "The field " + groupField.getValue()
-	// + " has a value equals to " + measureField.getValue() + ", which is not a number.");
-	// }
-	// } else {
-	// new SpagoBIServiceException("DataStore: Aggregate and find min of records by specific column", "No field exists with index " + groupFieldIndex
-	// + " or " + measureFieldIndex);
-	// }
-	// }
-	// List toReturn = new ArrayList();
-	// for (String key : values.keySet()) {
-	// IRecord record = new Record();
-	// record.appendField(new Field(key));
-	// record.appendField(new Field(values.get(key)));
-	// toReturn.add(record);
-	// }
-	// return toReturn;
-	// }
-	//
-	// private List aggregateAndFindMax(int groupFieldIndex, int[] measureFieldIndexes) {
-	// HashMap<String, Double> values = new HashMap<String, Double>();
-	// Iterator it = iterator();
-	//
-	// while (it.hasNext()) {
-	// IRecord record = (IRecord) it.next();
-	// IField groupField = record.getFieldAt(groupFieldIndex);
-	// IField measureField = record.getFieldAt(measureFieldIndex);
-	// String groupFieldValue = String.valueOf(groupField.getValue());
-	// Object measureFieldValue = measureField.getValue();
-	// if (groupFieldValue != null && measureFieldValue != null) {
-	// if (measureFieldValue instanceof Number) {
-	// Number number = (Number) measureFieldValue;
-	// Double numericValue = number.doubleValue();
-	// Double aggregatedValue = values.get(groupFieldValue);
-	// if (aggregatedValue == null || numericValue > aggregatedValue) {
-	// values.put(groupFieldValue, numericValue);
-	// }
-	// } else {
-	// new SpagoBIServiceException("DataStore: Aggregate and find max of records by specific column", "The field " + groupField.getValue()
-	// + " has a value equals to " + measureField.getValue() + ", which is not a number.");
-	// }
-	// } else {
-	// new SpagoBIServiceException("DataStore: Aggregate and find max of records by specific column", "No field exists with index " + groupFieldIndex
-	// + " or " + measureFieldIndex);
-	// }
-	// }
-	// List toReturn = new ArrayList();
-	// for (String key : values.keySet()) {
-	// IRecord record = new Record();
-	// record.appendField(new Field(key));
-	// record.appendField(new Field(values.get(key)));
-	// toReturn.add(record);
-	// }
-	// return toReturn;
-	// }
-
 	public void sortRecords(int fieldIndex) {
 		final int fIndex = fieldIndex;
 
@@ -586,6 +364,10 @@ public class DataStore implements IDataStore {
 		this.cacheDate = cacheDate;
 	}
 
+	public IDataStore aggregateAndFilterRecords(IQuery query) {
+		return aggregateAndFilterRecords(query.toSql(DEFAULT_SCHEMA_NAME, DEFAULT_TABLE_NAME));
+	}
+
 	public IDataStore aggregateAndFilterRecords(String sqlQuery) {
 
 		// **************************************************************************************************************
@@ -656,10 +438,6 @@ public class DataStore implements IDataStore {
 		dataStore.getMetaData().setProperty("resultNumber", resultCount);
 
 		return dataStore;
-	}
-
-	public IDataStore aggregateAndFilterRecords(IQuery query) {
-		return aggregateAndFilterRecords(query.toSql(DEFAULT_SCHEMA_NAME, DEFAULT_TABLE_NAME));
 	}
 
 	private IFieldMetaData getFieldMetaDataFromSelectItem(SelectItem selectItem, HashMap<String, FieldType> fieldTypes) {

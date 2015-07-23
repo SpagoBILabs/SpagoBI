@@ -501,8 +501,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			// functionalities erasing
 			Set hibFunctionalities = hibBIObject.getSbiObjFuncs();
-			for (Iterator it = hibFunctionalities.iterator(); it.hasNext();) {
-				aSession.delete(it.next());
+			for (Iterator it = hibFunctionalities.iterator(); it.hasNext(); ) {
+				aSession.delete((SbiObjFunc) it.next());
 			}
 			// functionalities storing
 			Set hibObjFunc = new HashSet();

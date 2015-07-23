@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.worksheet.services;
 
@@ -66,7 +66,7 @@ import org.json.JSONObject;
 import org.safehaus.uuid.UUIDGenerator;
 
 /**
- * 
+ *
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction {
@@ -247,7 +247,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 
 	/**
 	 * Persist the data set in the db and returns the descriptor of the created table
-	 * 
+	 *
 	 * @param dataset
 	 * @param tableName
 	 * @return
@@ -308,7 +308,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 				 * Do not remove comments from the following line: we cannot change the datatset state, since we are only temporarily persisting the dataset,
 				 * but the dataset itself could change during next user interaction (example: the user is using Qbe and he will change the dataset itself). We
 				 * will use TemporaryTableManager to store this kind of information.
-				 * 
+				 *
 				 * dataset.setDataSourceForReading(getEngineInstance(). getDataSourceForWriting()); dataset.setPersisted(true);
 				 * dataset.setPersistTableName(td.getTableName());
 				 */
@@ -328,7 +328,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 
 	/**
 	 * The table is already present in the db because the dataset is flat or persisted. So we take the descriptor of the table from the metadata of the dataset
-	 * 
+	 *
 	 * @param dataset
 	 * @return
 	 */
@@ -467,7 +467,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 
 	/**
 	 * Sets the worksheet definition into the worksheet engine instance
-	 * 
+	 *
 	 * @param worksheetDefinitionJSON
 	 *            The worksheet definition in JSON format
 	 * @throws Exception
@@ -599,7 +599,14 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		for (long i = 0; i < count; i++) {
 			it.eng.spagobi.tools.dataset.common.datastore.IRecord record = clone.getRecordAt((int) i);
 			IField field = dataStore.getRecordAt((int) i).getFieldAt(0);
-			String description = field.getDescription() != null ? field.getDescription().toString() : field.getValue().toString();
+			String description = "";
+			if (field != null) {
+				if (field.getDescription() != null) {
+					description = field.getDescription().toString();
+				} else if (field.getValue() != null) {
+					description = field.getValue().toString();
+				}
+			}
 			record.appendField(new it.eng.spagobi.tools.dataset.common.datastore.Field(description));
 		}
 

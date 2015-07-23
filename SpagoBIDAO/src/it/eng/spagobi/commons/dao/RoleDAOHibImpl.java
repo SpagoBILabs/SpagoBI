@@ -218,7 +218,6 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			Criteria finder = aSession.createCriteria(SbiExtRoles.class);
 			finder.addOrder(Order.asc("name"));
 
-			finder.setCacheable(true);
 			List hibList = finder.list();
 
 			tx.commit();
