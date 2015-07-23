@@ -213,10 +213,4 @@ public interface ICache {
 	 *            the condition
 	 */
 	void scheduleActivity(ICacheActivity activity, ICacheTrigger trigger);
-
-	/**
-	 * delete cache of joined datasets referring to dataset passed as parameter
-	 *
-	 * @param signature
-	 */
 }

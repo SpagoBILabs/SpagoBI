@@ -25,12 +25,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CockpitEngineInstance extends AbstractEngineInstance {
+	// logger component
+	public static Logger logger = Logger.getLogger(CockpitEngineInstance.class);
 
 	JSONObject template;
 	AssociationManager associationManager;

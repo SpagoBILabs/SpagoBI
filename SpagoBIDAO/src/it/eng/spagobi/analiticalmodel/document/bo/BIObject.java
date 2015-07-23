@@ -485,6 +485,7 @@ public class BIObject implements Serializable, Cloneable {
 	 *            The path to set.
 	 */
 	public void setPath(String path) {
+		this.path = path;
 	}
 
 	/**
