@@ -599,7 +599,14 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		for (long i = 0; i < count; i++) {
 			it.eng.spagobi.tools.dataset.common.datastore.IRecord record = clone.getRecordAt((int) i);
 			IField field = dataStore.getRecordAt((int) i).getFieldAt(0);
-			String description = field.getDescription() != null ? field.getDescription().toString() : field.getValue().toString();
+			String description = "";
+            if (field != null) {
+                if (field.getDescription() != null) {
+                    description = field.getDescription().toString();
+                } else if (field.getValue() != null) {
+                    description = field.getValue().toString();
+                }
+            }
 			record.appendField(new it.eng.spagobi.tools.dataset.common.datastore.Field(description));
 		}
 
