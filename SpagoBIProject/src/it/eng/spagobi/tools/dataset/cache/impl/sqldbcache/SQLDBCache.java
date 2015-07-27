@@ -449,6 +449,9 @@ public class SQLDBCache implements ICache {
 					String datasetLabel = filter.getLeftOperand().getOperandDataSet();
 					leftOperand = filter.getLeftOperand().getOperandValueAsString();
 					if (datasetAlias != null) {
+						if (datasetAlias.get(datasetLabel) == null)
+							continue;
+
 						leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
 					}
 					leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
@@ -965,10 +968,10 @@ public class SQLDBCache implements ICache {
 					// delete also Joined dataset related to current dataset
 					for (String joinedSignature : joinedSignatures) {
 						// this will trigger a DB constraint -> joined references are deleted automatically
-						delete(joinedSignature);
+						deleteJoined(joinedSignature);
 					}
 				}
-				result = dropTableAndRemoveCacheItem(dataSetSignature);
+				result = dropTableAndRemoveCacheItem(dataSetSignature, false);
 			} else {
 				logger.warn("Input parameter [dataSet] is null");
 			}
@@ -1000,18 +1003,18 @@ public class SQLDBCache implements ICache {
 					// delete also Joined dataset related to current dataset
 					for (String joinedSignature : joinedSignatures) {
 						// this will trigger a DB constraint -> joined references are deleted automatically
-						delete(joinedSignature);
+						deleteJoined(joinedSignature);
 					}
 				}
-				result = dropTableAndRemoveCacheItem(signature);
+				result = dropTableAndRemoveCacheItem(signature, false);
 			} else {
-				logger.warn("Input parameter [dataSet] is null");
+				logger.warn("Input parameter [" + signature + "] is null");
 			}
 		} catch (Throwable t) {
 			if (t instanceof CacheException)
 				throw (CacheException) t;
 			else
-				throw new CacheException("An unexpected error occure while deleting dataset from cache", t);
+				throw new CacheException("An unexpected error occure while deleting dataset [" + signature + "] from cache", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1019,14 +1022,36 @@ public class SQLDBCache implements ICache {
 		return result;
 	}
 
-	private boolean dropTableAndRemoveCacheItem(String signature) {
+	private boolean deleteJoined(String joinedSignature) {
+		boolean result = false;
+
+		logger.debug("IN");
+		try {
+			if (joinedSignature != null) {
+				result = dropTableAndRemoveCacheItem(joinedSignature, true);
+			} else {
+				logger.warn("Input parameter [" + joinedSignature + "] is null");
+			}
+		} catch (Throwable t) {
+			if (t instanceof CacheException)
+				throw (CacheException) t;
+			else
+				throw new CacheException("An unexpected error occure while deleting joined dataset [" + joinedSignature + "] from cache", t);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return result;
+	}
+
+	private boolean dropTableAndRemoveCacheItem(String signature, boolean isHash) {
 		logger.debug("IN");
 		logger.debug("delete " + signature);
-		if (getMetadata().containsCacheItem(signature)) {
+		if (getMetadata().containsCacheItem(signature, isHash)) {
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
-			String tableName = getMetadata().getCacheItem(signature).getTable();
+			String tableName = getMetadata().getCacheItem(signature, isHash).getTable();
 			persistedTableManager.dropTableIfExists(getDataSource(), tableName);
-			getMetadata().removeCacheItem(signature);
+			getMetadata().removeCacheItem(signature, isHash);
 			logger.debug("Removed table " + tableName + " from [SQLDBCache] corresponding to the result Set: " + signature);
 			logger.debug("OUT deleted");
 
@@ -1036,54 +1061,6 @@ public class SQLDBCache implements ICache {
 
 		return false;
 	}
-
-	// /*
-	// * (non-Javadoc)
-	// */
-	// @Deprecated
-	// public void deleteDatasetAndJoined(String signature) {
-	// logger.debug("IN");
-	//
-	// boolean deleted = delete(signature);
-	//
-	// // keep track of signatures of joined removed so that they can later be removed from map
-	// List<String> removed = new ArrayList<String>();
-	//
-	// if (deleted == true) {
-	// logger.debug("delete joined dataset cache referring to " + signature);
-	// List<String> joinedSignatures = getMetadata().getJoinedsReferringDataset(signature);
-	// List<String> toRemove = new ArrayList<String>();
-	// if (joinedSignatures != null) {
-	//
-	// for (Iterator iterator = joinedSignatures.iterator(); iterator.hasNext();) {
-	// String joinedSignature = (String) iterator.next();
-	// logger.debug("Joined signature cache to delete " + joinedSignature);
-	// boolean del = delete(joinedSignature);
-	// logger.debug("joined dataset cache " + joinedSignature + " deleted? " + del);
-	// if (del) {
-	// removed.add(joinedSignature);
-	// }
-	// }
-	//
-	// // remove from map all signature in removed List
-	// for (Iterator iterator = removed.iterator(); iterator.hasNext();) {
-	// String sigToRemove = (String) iterator.next();
-	// Set<String> cachedSignatures = getMetadata().getDatasetToJoinedMap().keySet();
-	// for (Iterator iterator2 = cachedSignatures.iterator(); iterator2.hasNext();) {
-	// String cachedSignature = (String) iterator2.next();
-	// List<String> list = getMetadata().getDatasetToJoinedMap().get(cachedSignature);
-	// if (list != null && list.contains(sigToRemove)) {
-	// list.remove(sigToRemove);
-	// }
-	// }
-	// }
-	//
-	// }
-	//
-	// }
-	//
-	// logger.debug("OUT");
-	// }
 
 	/*
 	 * (non-Javadoc)
