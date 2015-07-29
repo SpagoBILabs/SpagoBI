@@ -22,6 +22,7 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -129,10 +130,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	private void addData(String data, DataStore dataStore, MetaData dataStoreMeta) throws ParseException {
-		JSONArray parsedData = JsonPath.read(data, jsonPathItems);
-		if (parsedData == null) {
-			throw new JSONPathDataReaderException(String.format("Items not found in %s with json path %s", data, jsonPathItems));
-		}
+		List<Object> parsedData = getItems(data);
+		
 		for (Object o : parsedData) {
 			IRecord record = new Record(dataStore);
 
@@ -145,15 +144,14 @@ public class JSONPathDataReader extends AbstractDataReader {
 				}
 				String jsonPathValue = (String) fieldMeta.getProperty(JSON_PATH_VALUE_METADATA_PROPERTY);
 				Assert.assertNotNull(jsonPathValue != null, "jsonPathValue!=null");
+				//can be null
 				String stringValue = getJSONPathValue(o, jsonPathValue);
-				if (stringValue == null) {
-					throw new JSONPathDataReaderException(String.format("Value not found in %s with json path %s", o.toString(), jsonPathValue));
-				}
 				IFieldMetaData fm = fieldMeta;
 				Class<?> type = fm.getType();
 				if (type == null) {
 					// dinamically defined, from json data path
 					String typeString = getJSONPathValue(o, (String) fieldMeta.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY));
+					Assert.assertNotNull(typeString, "type of jsonpath type");
 					type = getType(typeString);
 					fm.setType(type);
 					if (type.equals(Date.class)) {
@@ -171,6 +169,23 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 			dataStore.appendRecord(record);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<Object> getItems(String data) {
+		Object parsed = JsonPath.read(data, jsonPathItems);
+		if (parsed == null) {
+			throw new JSONPathDataReaderException(String.format("Items not found in %s with json path %s", data, jsonPathItems));
+		}
+		
+		//can be an array or a single object
+		List<Object> parsedData;
+		if (parsed instanceof List) {
+			parsedData = (List<Object>) parsed;
+		} else {
+			parsedData=Arrays.asList(parsed);
+		}
+		return parsedData;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -225,20 +240,25 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	private static String getJSONPathValue(Object o, String jsonPathValue) {
+		//can be an array with a single value, a single object or also null (not found)
 		Object res = JsonPath.read(o, jsonPathValue);
-		if (res instanceof String) {
-			return (String) res;
+		if (res==null) {
+			return null;
 		}
+		
 		if (res instanceof JSONArray) {
 			JSONArray array = (JSONArray) res;
-			if (array.size() != 1) {
+			if (array.size() > 1) {
 				throw new IllegalArgumentException(String.format("There is no unique value: %s", array.toString()));
 			}
+			if (array.isEmpty()) {
+				return null;
+			}
+			
 			res = array.get(0);
-			Assert.assertTrue(res instanceof String, "res instanceof String");
-			return (String) res;
 		}
-		throw new IllegalArgumentException(String.format("Value not found: %s", res.toString()));
+
+		return res.toString();
 	}
 
 	private void addFieldMetadata(MetaData dataStoreMeta) {
@@ -272,6 +292,10 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	private static Object getValue(String value, IFieldMetaData fmd) throws ParseException {
+		if (value==null) {
+			return null;
+		}
+		
 		Class<?> fieldType = fmd.getType();
 		if (fieldType.equals(String.class)) {
 			return value;
