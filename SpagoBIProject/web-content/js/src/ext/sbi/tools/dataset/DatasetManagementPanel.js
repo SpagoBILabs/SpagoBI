@@ -3,7 +3,7 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
-
+  
 /**
  * Object name
  * 
@@ -14,33 +14,36 @@
  * 
  * [list]
  * 
- * 
- * Public Methods
- * 
+ *  
+ * Public Methods  
+ *  
  * [list]
  * 
  * 
- * Public Events
+ * Public Events 
  * 
  * [list]
  * 
  * Authors - Chiara Chiarelli (chiara.chiarelli@eng.it) Monica Franceschini
- * (monica.franceshini@eng.it)
+ * (monica.franceshini@eng.it) 
+ *
+ * Fabrizio Lovato - fabrizio.lovato@gmail.com
  */
 // var thisPanel;
 Ext.ns("Sbi.tools.dataset");
-
+var ns=Sbi.tools.dataset;
+   
 Sbi.tools.dataset.DatasetManagementPanel = function(config) {
-
+ 
 	// Need this to allow to hide labels
 	Ext.layout.FormLayout.prototype.trackLabels = true;
-
+ 
 	var paramsList = {
 		MESSAGE_DET : "DATASETS_LIST"
 	};
 	var paramsSave = {
 		LIGHT_NAVIGATOR_DISABLED : 'TRUE',
-		MESSAGE_DET : "DATASET_INSERT"
+		MESSAGE_DET : "DATASET_INSERT" 
 	};
 	var paramsDel = {
 		LIGHT_NAVIGATOR_DISABLED : 'TRUE',
@@ -96,7 +99,7 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 
 	// added
 	config.id = 'datasetForm';
-	config.fileUpload = true; // this is a multipart form!!
+	config.fileUpload = true; // this is a multipart form!! 
 	config.isUpload = true;
 	config.method = 'POST';
 	config.enctype = 'multipart/form-data';
@@ -147,6 +150,280 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 
 };
 
+ns.getTextField= function(isRequired,name) {
+	var res= {
+		maxLength : 250,
+		minLength : 1,
+		width : 350,
+		regexText : LN('sbi.roles.alfanumericString'),
+	};
+
+	res.allowBlank = isRequired===true?false:true;
+	if (isRequired===true) {
+		res.validationEvent=true;
+	}
+	res.fieldLabel=LN('sbi.ds.'+name);
+	res.name=name;
+	return new Ext.form.TextField(res);
+};
+
+ns.getTextArea = function(isRequired,name) {
+	var res= {
+		maxLength : 30000,
+		xtype : 'textarea',
+		height : 100,
+		width : 720,
+		regexText : LN('sbi.roles.alfanumericString'),
+	};
+
+	res.allowBlank = isRequired===true?false:true;
+	if (isRequired===true) {
+		res.validationEvent=true;
+	}
+	res.fieldLabel=LN('sbi.ds.'+name);
+	res.name=name;
+	return new Ext.form.TextArea(res);
+};
+
+
+ns.getComboBox = function(isRequired,storeData,name) {
+	var store = new Ext.data.SimpleStore({
+		fields : [ name, 'name' ],
+		data : storeData,
+		autoLoad : false
+	});
+
+	var res = {
+		name : name,
+		store : store,
+		width : 350, // 160,
+		fieldLabel : LN('sbi.ds.'+name),
+		displayField : 'name', 
+		valueField : name, 
+		typeAhead : true,
+		forceSelection : true,
+		mode : 'local',
+		triggerAction : 'all',
+		selectOnFocus : true,
+		editable : false,
+		xtype : 'combo'
+	};
+
+	res.allowBlank = isRequired===true?false:true;
+	if (isRequired===true) {
+		res.validationEvent=true;
+	}
+
+	return new Ext.form.ComboBox(res);
+};
+
+
+ns.getCheckBox = function(name) {
+	var conf={
+		xtype : 'checkbox',
+		itemId : name,
+		name : name,
+		fieldLabel : LN('sbi.ds.'+name)
+	};
+	return new Ext.form.Checkbox(conf);
+} 
+
+
+ns.getEditorGrid = function(userColumns,name) {
+	var config= {
+		id:name,
+		name:name,
+		isFormField:true, 
+		fieldLabel : LN('sbi.ds.'+name),
+		width: 720,
+		height: 120
+	};
+
+	//set the width of columns
+	for (var i=0;i<userColumns.length;i++) {
+		userColumns[i].width=config.width/userColumns.length;
+	}
+	var cm = new Ext.grid.ColumnModel({
+	    columns: userColumns
+	});
+	config.cm=cm;
+
+	var store = new Ext.data.JsonStore({
+	    fields: ['name','value'],
+	    data:{}
+	});
+	config.store=store;
+
+	var res= new Sbi.tools.ManageDatasetParameters(config);
+
+	//simulate a Form Field setValue
+	//@value the string JSON value
+	res.setValue = function(value) {
+		store.removeAll();
+		if (value==null || value.trim().length==0) {
+			return;  
+		}
+		var jsonValue=JSON.parse(value);
+
+		var records=[];
+
+		if (userColumns.length==2) {
+			var record = Ext.data.Record.create([
+			    {name: 'name'},
+			    {name: 'value'},
+			]);
+
+			for (var key in jsonValue) {
+				if (!jsonValue.hasOwnProperty(key)) {
+					continue;
+				}
+				records.push(new record({name:key,value:jsonValue[key]}));
+			}
+		} else {
+			//more than 2
+			var recordFields=[];
+			for (var i=0;i<userColumns.length;i++) {
+				recordFields.push({name:userColumns[i].id});
+			}
+			var record = Ext.data.Record.create(recordFields);
+			for (var i=0;i<jsonValue.length;i++) {
+				var recordData=jsonValue[i];
+				records.push(new record(recordData));
+			}			
+		}
+		store.add(records);
+	};
+
+	//simulate a Form Field getValue
+	res.getValue = function() {
+		
+		var result;
+		if (userColumns.length==2) {
+			result={};
+			for(var i = 0;i< store.getCount();i++){
+				var item = store.getAt(i); //Record
+				result[item.get('name')]=item.get('value')
+			}
+		} else {
+			//more than 2
+			result=[];
+			for(var i = 0;i< store.getCount();i++){
+				var item = store.getAt(i); //Record
+				var rec={};
+				for (var j=0;j<userColumns.length;j++) {
+					rec[userColumns[j].id]=item.get(userColumns[j].id);
+				}
+				result.push(rec);
+			}
+		}
+		return JSON.stringify(result);
+	};
+	return res
+}
+
+ns.getColumn=function(header,id,allowBlank,data) {
+	var res= {
+		header: header, 
+		id:id,
+		sortable: true, 
+		dataIndex: id,  
+		
+	};
+
+	var editor;
+	if (data!==undefined) {
+		var store = new Ext.data.SimpleStore({
+	        fields: [id],
+	        data: data,
+	        autoLoad: false
+	    });
+
+		editor = new Ext.form.ComboBox({
+			name:id,
+			valueField : id,
+			displayField: id,   
+			store: store,
+			typeAhead: true,
+			forceSelection: false,
+			mode: 'local',
+			triggerAction: 'all',
+			selectOnFocus: true,
+			editable: true,
+			allowBlank: allowBlank,
+			validationEvent:true
+		});
+	} else {
+		editor = new Ext.form.TextField({
+			 allowBlank: allowBlank,
+	         validationEvent:true
+		})
+	}
+	res.editor=editor;
+
+	
+	return res;
+};
+
+//REST data set fields with form fields
+
+ns.restHeaderNames = [
+	['Content-Type'],['Accept']
+];
+
+ns.restHeaderValues = [
+	['application/json'],['text/plain']
+];
+
+ns.restRequestHeadersColumns=[ 
+	ns.getColumn(LN('sbi.generic.name'),'name',false,ns.restHeaderNames),
+	ns.getColumn(LN('sbi.generic.value'),'value',true,ns.restHeaderValues),
+];
+
+ns.restJSONPathTypes = [
+	["string"],
+	["int"],
+	["double"],
+	["date yyyy-MM-dd"],
+	["timestamp yyyy-MM-dd HH:mm:ss"],
+	["time HH:mm:ss"],
+	["boolean"]
+];
+
+ns.restJsonPathAttributesColumns=[
+	ns.getColumn(LN('sbi.generic.name'),'name',false),
+	ns.getColumn(LN('sbi.ds.jsonPathValue'),'jsonPathValue',false),
+	ns.getColumn(LN('sbi.ds.jsonPathType'),'jsonPathType',true,ns.restJSONPathTypes)
+];
+
+ns.restFields=['restAddress','restRequestBody','restHttpMethod', 
+	'restRequestHeaders','restJsonPathItems','restDirectlyJSONAttributes','restJsonPathAttributes',
+	'restOffset','restFetchSize','restMaxResults'];
+ns.INDEX_REQUEST_HEADERS=3;
+ns.INDEX_REQUEST_JSON_PATH_ATTRIBUTES=6;
+ns.restFormFields=[
+	[ns.getTextField,[true]],
+	[ns.getTextArea,[false]],
+	[ns.getComboBox,[true,[ //http method
+		['Post','Post'],['Get','Get'],['Put','Put'],['Delete','Delete']
+	]]], 
+	[ns.getEditorGrid,[ns.restRequestHeadersColumns]], //headers 
+	[ns.getTextField,[true]], 
+	[ns.getCheckBox,[]], //directly json attributes
+	[ns.getEditorGrid,[ns.restJsonPathAttributesColumns]], //attributes
+	[ns.getTextField,[false]],
+	[ns.getTextField,[false]],
+	[ns.getTextField,[false]]
+];
+
+//add the rest fields argument to form fields
+(function(){
+	for (var i=0;i<ns.restFields.length;i++) {
+		ns.restFormFields[i][1].push(ns.restFields[i]);
+	}
+})();
+//end REST fields
+
+
 Ext
 		.extend(
 				Sbi.tools.dataset.DatasetManagementPanel,
@@ -185,11 +462,11 @@ Ext
 					qbeDataSetBuilder : null,
 					customDataGrid : null,
 					detailFieldScopeId : null,
-
 					// CKAN detail
-					ckanDetail : null
+					ckanDetail : null,
+					//REST detail
+					restDetail : null,
 
-					,
 					manageFormsDisabling : function() {
 						this.tabs.disable();
 					},
@@ -380,117 +657,32 @@ Ext
 
 					,
 					activateDsTypeForm : function(combo, record, index) {
+						var details = {
+							'File':this.fileDetail,
+							'Query':this.queryDetail,
+							'Java Class':this.jClassDetail,
+							'Script':this.scriptDetail,
+							'Custom':this.customDataDetail,
+							'Web Service':this.WSDetail,
+							'Qbe':this.qbeQueryDetail,
+							'Flat':this.flatDetail,
+							'Ckan':this.ckanDetail,
+							'REST':this.restDetail
+						};
 
+						//make details visible based on combo
 						var dsTypeSelected = record.get('dsTypeCd');
-						if (dsTypeSelected != null && dsTypeSelected == 'File') {
-							this.fileDetail.setVisible(true);
-							this.queryDetail.setVisible(false);
-							this.jClassDetail.setVisible(false);
-							this.scriptDetail.setVisible(false);
-							this.customDataDetail.setVisible(false);
-							this.WSDetail.setVisible(false);
-							this.qbeQueryDetail.setVisible(false);
-							this.flatDetail.setVisible(false);
-							this.ckanDetail.setVisible(false);
-						} else if (dsTypeSelected != null
-								&& dsTypeSelected == 'Query') {
-							this.fileDetail.setVisible(false);
-							this.queryDetail.setVisible(true);
-							this.jClassDetail.setVisible(false);
-							this.customDataDetail.setVisible(false);
-							this.scriptDetail.setVisible(false);
-							this.WSDetail.setVisible(false);
-							this.qbeQueryDetail.setVisible(false);
-							this.flatDetail.setVisible(false);
-							this.ckanDetail.setVisible(false);
-						} else if (dsTypeSelected != null
-								&& dsTypeSelected == 'Java Class') {
-							this.fileDetail.setVisible(false);
-							this.queryDetail.setVisible(false);
-							this.jClassDetail.setVisible(true);
-							this.customDataDetail.setVisible(false);
-							this.scriptDetail.setVisible(false);
-							this.WSDetail.setVisible(false);
-							this.qbeQueryDetail.setVisible(false);
-							this.flatDetail.setVisible(false);
-							this.ckanDetail.setVisible(false);
-						} else if (dsTypeSelected != null
-								&& dsTypeSelected == 'Web Service') {
-							this.fileDetail.setVisible(false);
-							this.queryDetail.setVisible(false);
-							this.customDataDetail.setVisible(false);
-							this.jClassDetail.setVisible(false);
-							this.scriptDetail.setVisible(false);
-							this.WSDetail.setVisible(true);
-							this.qbeQueryDetail.setVisible(false);
-							this.flatDetail.setVisible(false);
-							this.ckanDetail.setVisible(false);
-						} else if (dsTypeSelected != null
-								&& dsTypeSelected == 'Script') {
-							this.fileDetail.setVisible(false);
-							this.queryDetail.setVisible(false);
-							this.jClassDetail.setVisible(false);
-							this.customDataDetail.setVisible(false);
-							this.scriptDetail.setVisible(true);
-							this.WSDetail.setVisible(false);
-							this.qbeQueryDetail.setVisible(false);
-							this.flatDetail.setVisible(false);
-							this.ckanDetail.setVisible(false);
-						} else if (dsTypeSelected != null
-								&& dsTypeSelected == 'Qbe') {
-							this.fileDetail.setVisible(false);
-							this.queryDetail.setVisible(false);
-							this.jClassDetail.setVisible(false);
-							this.customDataDetail.setVisible(false);
-							this.scriptDetail.setVisible(false);
-							this.WSDetail.setVisible(false);
-							this.qbeQueryDetail.setVisible(true);
-							this.flatDetail.setVisible(false);
-							this.ckanDetail.setVisible(false);
-						} else if (dsTypeSelected != null
-								&& dsTypeSelected == 'Custom') {
-							this.fileDetail.setVisible(false);
-							this.queryDetail.setVisible(false);
-							this.jClassDetail.setVisible(false);
-							this.scriptDetail.setVisible(false);
-							this.WSDetail.setVisible(false);
-							this.qbeQueryDetail.setVisible(false);
-							this.customDataDetail.setVisible(true);
-							this.flatDetail.setVisible(false);
-							this.ckanDetail.setVisible(false);
-						} else if (dsTypeSelected != null
-								&& dsTypeSelected == 'Flat') {
-							this.fileDetail.setVisible(false);
-							this.queryDetail.setVisible(false);
-							this.jClassDetail.setVisible(false);
-							this.scriptDetail.setVisible(false);
-							this.WSDetail.setVisible(false);
-							this.qbeQueryDetail.setVisible(false);
-							this.customDataDetail.setVisible(false);
-							this.flatDetail.setVisible(true);
-							this.ckanDetail.setVisible(false);
-						} else if (dsTypeSelected != null
-								&& dsTypeSelected == 'Ckan') {
-							this.fileDetail.setVisible(false);
-							this.queryDetail.setVisible(false);
-							this.jClassDetail.setVisible(false);
-							this.scriptDetail.setVisible(false);
-							this.WSDetail.setVisible(false);
-							this.qbeQueryDetail.setVisible(false);
-							this.customDataDetail.setVisible(false);
-							this.flatDetail.setVisible(false);
-							this.ckanDetail.setVisible(true);
-						} else if (dsTypeSelected != null
-								|| dsTypeSelected == '') {
-							this.fileDetail.setVisible(false);
-							this.queryDetail.setVisible(false);
-							this.jClassDetail.setVisible(false);
-							this.scriptDetail.setVisible(false);
-							this.WSDetail.setVisible(false);
-							this.qbeQueryDetail.setVisible(false);
-							this.customDataDetail.setVisible(false);
-							this.flatDetail.setVisible(false);
-							this.ckanDetail.setVisible(false);
+						if (dsTypeSelected!=null) {
+							var detail=details[dsTypeSelected];
+							if (detail!=null) {
+								detail.setVisible(true);
+							}
+							for (var key in details) {
+								var otherDetail=details[key];
+								if (otherDetail!==detail) {
+									otherDetail.setVisible(false);
+								}
+							}
 						}
 
 						var dsParsList = record.get('pars');
@@ -566,6 +758,13 @@ Ext
 							fileUploaded : thisPanel.fileUploaded,
 							scopeCd : values['scopeCd']
 						};
+
+						//add REST parameters 
+						for (var i=0;i<ns.restFields.length;i++) {
+							var field=ns.restFields[i];
+							requestParameters[field]=values[field]; 
+						}
+
 						arrayPars = this.parsGrid.getParametersValues();
 						if (arrayPars) {
 							requestParameters.pars = Ext.util.JSON
@@ -593,7 +792,8 @@ Ext
 
 					,
 					initConfigObject : function() {
-						this.configurationObject.fields = [ 'id', 'name',
+						var confO=this.configurationObject;
+						confO.fields = [ 'id', 'name',
 								'label', 'description', 'dsTypeCd',
 								'catTypeVn', 'isPublic', 'usedByNDocs',
 								'fileName', 'fileType', 'csvDelimiter',
@@ -617,71 +817,79 @@ Ext
 								'ckanLimitRows', 'ckanXslSheetNumber',
 								'ckanId', 'ckanUrl' ];
 
-						this.configurationObject.emptyRecToAdd = new Ext.data.Record(
-								{
-									id : null,
-									name : '',
-									label : '',
-									description : '',
-									dsTypeCd : '',
-									catTypeVn : '',
-									isPublic : '',
-									usedByNDocs : 0,
-									csvDelimiter : '',
-									fileType : '',
-									csvQuote : '',
-									skipRows : '',
-									limitRows : '',
-									xslSheetNumber : '',
-									fileName : '',
-									query : '',
-									queryScript : '',
-									queryScriptLanguage : '',
-									dataSource : '',
-									wsAddress : '',
-									wsOperation : '',
-									script : '',
-									scriptLanguage : '',
-									jclassName : '',
-									jclassNameForCustom : '',
-									customData : '',
-									pars : [],
-									trasfTypeCd : '',
-									pivotColName : '',
-									pivotColValue : '',
-									pivotRowName : '',
-									pivotIsNumRows : '',
-									isPersisted : '',
-									persistTableName : '',
-									isScheduled : '',
-									schedulingCronLine : '',
-									startDate : '',
-									endDate : '',
-									flatTableName : '',
-									dataSourceFlat : '',
-									qbeSQLQuery : '',
-									qbeJSONQuery : '',
-									qbeDataSource : '',
-									qbeDatamarts : '',
-									dsVersions : [],
-									userIn : '',
-									dateIn : '',
-									versNum : '',
-									versId : '',
-									meta : [],
-									scopeCd : '',
-									ckanFileType : '',
-									ckanCsvDelimiter : '',
-									ckanCsvQuote : '',
-									ckanCsvEncoding : '',
-									ckanSkipRows : '',
-									ckanLimitRows : '',
-									ckanXslSheetNumber : '',
-									ckanId : '',
-									ckanUrl : ''
-								});
+						confO.fields=confO.fields.concat(ns.restFields);
 
-						this.configurationObject.gridColItems = [ {
+						var recordConf={
+							id : null,
+							name : '',
+							label : '',
+							description : '',
+							dsTypeCd : '',
+							catTypeVn : '',
+							isPublic : '',
+							usedByNDocs : 0,
+							csvDelimiter : '',
+							fileType : '',
+							csvQuote : '',
+							skipRows : '',
+							limitRows : '',
+							xslSheetNumber : '',
+							fileName : '',
+							query : '',
+							queryScript : '',
+							queryScriptLanguage : '',
+							dataSource : '',
+							wsAddress : '',
+							wsOperation : '',
+							script : '',
+							scriptLanguage : '',
+							jclassName : '',
+							jclassNameForCustom : '',
+							customData : '',
+							pars : [],
+							trasfTypeCd : '',
+							pivotColName : '',
+							pivotColValue : '',
+							pivotRowName : '',
+							pivotIsNumRows : '',
+							isPersisted : '',
+							persistTableName : '',
+							isScheduled : '',
+							schedulingCronLine : '',
+							startDate : '',
+							endDate : '',
+							flatTableName : '',
+							dataSourceFlat : '',
+							qbeSQLQuery : '',
+							qbeJSONQuery : '',
+							qbeDataSource : '',
+							qbeDatamarts : '',
+							dsVersions : [],
+							userIn : '',
+							dateIn : '',
+							versNum : '',
+							versId : '',
+							meta : [],
+							scopeCd : '',
+							ckanFileType : '',
+							ckanCsvDelimiter : '',
+							ckanCsvQuote : '',
+							ckanCsvEncoding : '',
+							ckanSkipRows : '',
+							ckanLimitRows : '',
+							ckanXslSheetNumber : '',
+							ckanId : '',
+							ckanUrl : ''
+						};
+
+						//add REST fields
+						for (var i=0;i<ns.restFields.length;i++) {
+							recordConf[ns.restFields[i]]='';
+						}
+
+						confO.emptyRecToAdd=new Ext.data.Record(recordConf);
+
+						confO.gridColItems = [ {
 							id : 'label',
 							header : LN('sbi.generic.label'),
 							width : 105,
@@ -705,8 +913,8 @@ Ext
 							dataIndex : 'usedByNDocs'
 						} ];
 
-						this.configurationObject.panelTitle = LN('sbi.ds.panelTitle');
-						this.configurationObject.listTitle = LN('sbi.ds.listTitle');
+						confO.panelTitle = LN('sbi.ds.panelTitle');
+						confO.listTitle = LN('sbi.ds.listTitle');
 
 						var tbButtonsArray = new Array();
 
@@ -754,7 +962,7 @@ Ext
 							scope : this
 						});
 						tbButtonsArray.push(this.tbPersistInfoButton);
-						this.configurationObject.tbButtonsArray = tbButtonsArray;
+						confO.tbButtonsArray = tbButtonsArray;
 
 						this.initTabItems();
 					}
@@ -1455,8 +1663,7 @@ Ext
 										"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
 												: "-5px")
 												: "3px"
-									},
-									items : [ detailFlatTableName,
+									},									items : [ detailFlatTableName,
 											dataSourceFlat ]
 								});
 
@@ -1567,36 +1774,53 @@ Ext
 							name : 'ckanUrl'
 						});
 
-						this.ckanDetail = new Ext.form.FieldSet(
-								{
-									labelWidth : 100,
-									defaults : {
-										border : true
-									},
-									defaultType : 'textfield',
-									autoHeight : true,
-									autoScroll : true,
-									border : true,
-									style : {
-										"margin-left" : "3px",
-										"margin-top" : "0px",
-										"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
-												: "-5px")
-												: "3px"
-									},
-									items : [ this.detailCkanFileType,
-									// this.detailCkanFileName,
-									this.detailCkanCsvDelimiter,
-											this.detailCkanCsvQuote,
-											this.detailCkanCsvEncoding,
-											this.detailCkanSkipRows,
-											this.detailCkanLimitRows,
-											this.detailckanXslSheetNumber,
-											this.detailCkanId,
-											this.detailCkanUrl ]
-								});
+						var getFieldSet=function(detailItems) {
+							var res= {
+								labelWidth : 100,
+								defaults : {
+									border : true
+								},
+								defaultType : 'textfield',
+								autoHeight : true,
+								autoScroll : true,
+								border : true,
+								style : {
+									"margin-left" : "3px",
+									"margin-top" : "0px",
+									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
+											: "-5px")
+											: "3px"
+								},
+								items : detailItems
+							};
+							return new Ext.form.FieldSet(res);
+						};
 
+					
+
+						this.ckanDetail = getFieldSet([
+							this.detailCkanFileType,
+							this.detailCkanCsvDelimiter,
+							this.detailCkanCsvQuote,
+							this.detailCkanCsvEncoding,
+							this.detailCkanSkipRows,
+							this.detailCkanLimitRows,
+							this.detailckanXslSheetNumber,
+							this.detailCkanId,
+							this.detailCkanUrl
+						]);
 						// CKAN Detail Fields - END
+
+						//REST details
+						var restFieldSetItems=[];
+						for (var i=0;i<ns.restFormFields.length;i++) {
+							var formFieldData=ns.restFormFields[i];
+							var formField=formFieldData[0].apply(this,formFieldData[1]);
+							restFieldSetItems.push(formField);
+						}
+						this.restDetail = getFieldSet(restFieldSetItems);
+						this.restRequestHeadersDetail = restFieldSetItems[ns.INDEX_REQUEST_HEADERS];
+						this.restJsonPathAttributesDetails= restFieldSetItems[ns.INDEX_REQUEST_JSON_PATH_ATTRIBUTES];
 
 						var c = {};
 						this.manageParsGrid = new Sbi.tools.ManageDatasetParameters(
@@ -1648,7 +1872,9 @@ Ext
 												this.qbeQueryDetail,
 												this.flatDetail,
 												this.ckanDetail,
-												this.manageParsPanel ]
+												this.restDetail,
+												this.manageParsPanel
+												 ]
 									}
 								});
 					}
@@ -2625,7 +2851,8 @@ Ext
 						if (this.tabs.disabled) {
 							this.manageFormsEnabling();
 						}
-						this.newRecord = new Ext.data.Record({
+
+						var recordConf={
 							id : null,
 							name : '',
 							label : '',
@@ -2686,7 +2913,15 @@ Ext
 							ckanXslSheetNumber : '',
 							ckanId : '',
 							ckanUrl : ''
-						});
+						};
+
+						//add REST params
+						for (var i=0;i<ns.restFields.length;i++) {
+							var field=ns.restFields[i];
+							recordConf[field]='';
+						}
+
+						this.newRecord = new Ext.data.Record(recordConf);
 
 						this.setValues(this.newRecord);
 						this.manageParsGrid.loadItems([]);
@@ -2737,139 +2972,153 @@ Ext
 					buildNewRecordDsVersion : function(values) {
 						var actualValues = this.getValues();
 
-						var newRec = new Ext.data.Record(
-								{
-									id : actualValues['id'],
-									name : actualValues['name'],
-									label : actualValues['label'],
-									usedByNDocs : actualValues['usedByNDocs'],
-									dsVersions : [],
-									pars : values['pars'],
-									description : actualValues['description'],
-									dsTypeCd : values['dsTypeCd'],
-									catTypeVn : values['catTypeVn'],
-									isPublic : values['isPublic'],
-									usedByNDocs : values['usedByNDocs'],
-									fileName : values['fileName'],
-									csvDelimiter : values['csvDelimiter'],
-									skipRows : values['skipRows'],
-									limitRows : values['limitRows'],
-									xslSheetNumber : values['xslSheetNumber'],
-									fileType : values['fileType'],
-									csvQuote : values['csvQuote'],
-									query : values['query'],
-									queryScript : values['queryScript'],
-									queryScriptLanguage : values['queryScriptLanguage'],
-									dataSource : values['dataSource'],
-									wsAddress : values['wsAddress'],
-									wsOperation : values['wsOperation'],
-									script : values['script'],
-									scriptLanguage : values['scriptLanguage'],
-									jclassName : values['jclassName'],
-									customData : values['customData'],
-									trasfTypeCd : values['trasfTypeCd'],
-									pivotColName : values['pivotColName'],
-									pivotColValue : values['pivotColValue'],
-									pivotRowName : values['pivotRowName'],
-									pivotIsNumRows : values['pivotIsNumRows'],
-									isPersisted : values['isPersisted'],
-									persistTableName : values['persistTableName'],
-									isScheduled : values['isScheduled'],
-									schedulingCronLine : values['schedulingCronLine'],
-									startDate : values['startDate'],
-									endDate : [ 'endDate' ],
-									dataSourceFlat : values['dataSourceFlat'],
-									flatTableName : values['flatTableName'],
-									qbeSQLQuery : values['qbeSQLQuery'],
-									qbeJSONQuery : values['qbeJSONQuery'],
-									qbeDataSource : values['qbeDataSource'],
-									qbeDatamarts : values['qbeDatamarts'],
-									userIn : values['userIn'],
-									dateIn : values['dateIn'],
-									versNum : values['versNum'],
-									versId : values['versId'],
-									meta : values['meta'],
-									scopeCd : values['scopeCd'],
-									ckanFileType : values['ckanFileType'],
-									// ckanFileName: values['ckanFileName'],
-									ckanCsvDelimiter : values['ckanCsvDelimiter'],
-									ckanCsvQuote : values['ckanCsvQuote'],
-									ckanCsvEncoding : values['ckanCsvEncoding'],
-									ckanSkipRows : values['ckanSkipRows'],
-									ckanLimitRows : values['ckanLimitRows'],
-									ckanXslSheetNumber : values['ckanXslSheetNumber'],
-									ckanId : values['ckanId'],
-									ckanUrl : values['ckanUrl']
-								});
+						var recordConf={
+							id : actualValues['id'],
+							name : actualValues['name'],
+							label : actualValues['label'],
+							usedByNDocs : actualValues['usedByNDocs'],
+							dsVersions : [],
+							pars : values['pars'],
+							description : actualValues['description'],
+							dsTypeCd : values['dsTypeCd'],
+							catTypeVn : values['catTypeVn'],
+							isPublic : values['isPublic'],
+							usedByNDocs : values['usedByNDocs'],
+							fileName : values['fileName'],
+							csvDelimiter : values['csvDelimiter'],
+							skipRows : values['skipRows'],
+							limitRows : values['limitRows'],
+							xslSheetNumber : values['xslSheetNumber'],
+							fileType : values['fileType'],
+							csvQuote : values['csvQuote'],
+							query : values['query'],
+							queryScript : values['queryScript'],
+							queryScriptLanguage : values['queryScriptLanguage'],
+							dataSource : values['dataSource'],
+							wsAddress : values['wsAddress'],
+							wsOperation : values['wsOperation'],
+							script : values['script'],
+							scriptLanguage : values['scriptLanguage'],
+							jclassName : values['jclassName'],
+							customData : values['customData'],
+							trasfTypeCd : values['trasfTypeCd'],
+							pivotColName : values['pivotColName'],
+							pivotColValue : values['pivotColValue'],
+							pivotRowName : values['pivotRowName'],
+							pivotIsNumRows : values['pivotIsNumRows'],
+							isPersisted : values['isPersisted'],
+							persistTableName : values['persistTableName'],
+							isScheduled : values['isScheduled'],
+							schedulingCronLine : values['schedulingCronLine'],
+							startDate : values['startDate'],
+							endDate : [ 'endDate' ],
+							dataSourceFlat : values['dataSourceFlat'],
+							flatTableName : values['flatTableName'],
+							qbeSQLQuery : values['qbeSQLQuery'],
+							qbeJSONQuery : values['qbeJSONQuery'],
+							qbeDataSource : values['qbeDataSource'],
+							qbeDatamarts : values['qbeDatamarts'],
+							userIn : values['userIn'],
+							dateIn : values['dateIn'],
+							versNum : values['versNum'],
+							versId : values['versId'],
+							meta : values['meta'],
+							scopeCd : values['scopeCd'],
+							ckanFileType : values['ckanFileType'],
+							// ckanFileName: values['ckanFileName'],
+							ckanCsvDelimiter : values['ckanCsvDelimiter'],
+							ckanCsvQuote : values['ckanCsvQuote'],
+							ckanCsvEncoding : values['ckanCsvEncoding'],
+							ckanSkipRows : values['ckanSkipRows'],
+							ckanLimitRows : values['ckanLimitRows'],
+							ckanXslSheetNumber : values['ckanXslSheetNumber'],
+							ckanId : values['ckanId'],
+							ckanUrl : values['ckanUrl']
+						};
+
+						//add REST params
+						for (var i=0;i<ns.restFields.length;i++) {
+							var field=ns.restFields[i];
+							recordConf[field]=values[field];
+						}
+
+						var newRec = new Ext.data.Record(recordConf);
 						return newRec;
 					}
 
 					,
 					buildNewRecordToSave : function(values) {
-						var newRec = new Ext.data.Record(
-								{
-									id : null,
-									name : values['name'],
-									label : '...',
-									usedByNDocs : 0,
-									dsVersions : [],
-									description : values['description'],
-									dsTypeCd : values['dsTypeCd'],
-									catTypeVn : values['catTypeVn'],
-									isPublic : values['isPublic'],
-									usedByNDocs : values['usedByNDocs'],
-									fileName : values['fileName'],
-									csvDelimiter : values['csvDelimiter'],
-									skipRows : values['skipRows'],
-									limitRows : values['limitRows'],
-									xslSheetNumber : values['xslSheetNumber'],
-									fileType : values['fileType'],
-									csvQuote : values['csvQuote'],
-									query : values['query'],
-									queryScript : values['queryScript'],
-									queryScriptLanguage : values['queryScriptLanguage'],
-									dataSource : values['dataSource'],
-									wsAddress : values['wsAddress'],
-									wsOperation : values['wsOperation'],
-									script : values['script'],
-									scriptLanguage : values['scriptLanguage'],
-									customData : values['customData'],
-									jclassName : values['jclassName'],
-									jclassNameForCustom : values['jclassNameForCustom'],
-									trasfTypeCd : values['trasfTypeCd'],
-									pivotColName : values['pivotColName'],
-									pivotColValue : values['pivotColValue'],
-									pivotRowName : values['pivotRowName'],
-									pivotIsNumRows : values['pivotIsNumRows'],
-									isPersisted : values['isPersisted'],
-									persistTableName : values['persistTableName'],
-									isScheduled : values['isScheduled'],
-									schedulingCronLine : values['schedulingCronLine'],
-									startDate : values['startDate'],
-									endDate : [ 'endDate' ],
-									dataSourceFlat : values['dataSourceFlat'],
-									flatTableName : values['flatTableName'],
-									qbeSQLQuery : values['qbeSQLQuery'],
-									qbeJSONQuery : values['qbeJSONQuery'],
-									qbeDataSource : values['qbeDataSource'],
-									qbeDatamarts : values['qbeDatamarts'],
-									userIn : values['userIn'],
-									dateIn : values['dateIn'],
-									versNum : values['versNum'],
-									versId : values['versId'],
-									meta : values['meta'],
-									scopeCd : values['scopeCd'],
-									ckanFileType : values['ckanFileType'],
-									// ckanFileName: values['ckanFileName'],
-									ckanCsvDelimiter : values['ckanCsvDelimiter'],
-									ckanCsvQuote : values['ckanCsvQuote'],
-									ckanCsvEncoding : values['ckanCsvEncoding'],
-									ckanSkipRows : values['ckanSkipRows'],
-									ckanLimitRows : values['ckanLimitRows'],
-									ckanXslSheetNumber : values['ckanXslSheetNumber'],
-									ckanId : values['ckanId'],
-									ckanUrl : values['ckanUrl']
-								});
+
+						var recordConf= {
+							id : null,
+							name : values['name'],
+							label : '...',
+							usedByNDocs : 0,
+							dsVersions : [],
+							description : values['description'],
+							dsTypeCd : values['dsTypeCd'],
+							catTypeVn : values['catTypeVn'],
+							isPublic : values['isPublic'],
+							usedByNDocs : values['usedByNDocs'],
+							fileName : values['fileName'],
+							csvDelimiter : values['csvDelimiter'],
+							skipRows : values['skipRows'],
+							limitRows : values['limitRows'],
+							xslSheetNumber : values['xslSheetNumber'],
+							fileType : values['fileType'],
+							csvQuote : values['csvQuote'],
+							query : values['query'],
+							queryScript : values['queryScript'],
+							queryScriptLanguage : values['queryScriptLanguage'],
+							dataSource : values['dataSource'],
+							wsAddress : values['wsAddress'],
+							wsOperation : values['wsOperation'],
+							script : values['script'],
+							scriptLanguage : values['scriptLanguage'],
+							customData : values['customData'],
+							jclassName : values['jclassName'],
+							jclassNameForCustom : values['jclassNameForCustom'],
+							trasfTypeCd : values['trasfTypeCd'],
+							pivotColName : values['pivotColName'],
+							pivotColValue : values['pivotColValue'],
+							pivotRowName : values['pivotRowName'],
+							pivotIsNumRows : values['pivotIsNumRows'],
+							isPersisted : values['isPersisted'],
+							persistTableName : values['persistTableName'],
+							isScheduled : values['isScheduled'],
+							schedulingCronLine : values['schedulingCronLine'],
+							startDate : values['startDate'],
+							endDate : [ 'endDate' ],
+							dataSourceFlat : values['dataSourceFlat'],
+							flatTableName : values['flatTableName'],
+							qbeSQLQuery : values['qbeSQLQuery'],
+							qbeJSONQuery : values['qbeJSONQuery'],
+							qbeDataSource : values['qbeDataSource'],
+							qbeDatamarts : values['qbeDatamarts'],
+							userIn : values['userIn'],
+							dateIn : values['dateIn'],
+							versNum : values['versNum'],
+							versId : values['versId'],
+							meta : values['meta'],
+							scopeCd : values['scopeCd'],
+							ckanFileType : values['ckanFileType'],
+							// ckanFileName: values['ckanFileName'],
+							ckanCsvDelimiter : values['ckanCsvDelimiter'],
+							ckanCsvQuote : values['ckanCsvQuote'],
+							ckanCsvEncoding : values['ckanCsvEncoding'],
+							ckanSkipRows : values['ckanSkipRows'],
+							ckanLimitRows : values['ckanLimitRows'],
+							ckanXslSheetNumber : values['ckanXslSheetNumber'],
+							ckanId : values['ckanId'],
+							ckanUrl : values['ckanUrl']
+						};
+
+						//add REST params
+						for (var i=0;i<ns.restFields.length;i++) {
+							var field=ns.restFields[i];
+							recordConf[field]=values[field];
+						}
+						var newRec = new Ext.data.Record(recordConf);
 						return newRec;
 					}
 
@@ -2935,6 +3184,12 @@ Ext
 							ckanId : values['ckanId'],
 							ckanUrl : values['ckanUrl']
 						};
+
+						//add REST params
+						for (var i=0;i<ns.restFields.length;i++) {
+							var field=ns.restFields[i];
+							params[field]=values[field];
+						}
 						return params;
 					}
 
@@ -3008,7 +3263,13 @@ Ext
 										'ckanXslSheetNumber',
 										values['ckanXslSheetNumber']), record
 										.set('ckanId', values['ckanId']),
-								record.set('ckanUrl', values['ckanUrl'])
+								record.set('ckanUrl', values['ckanUrl']);
+
+						//add REST params
+						for (var i=0;i<ns.restFields.length;i++) {
+							var field=ns.restFields[i];
+							record.set(field,values[field]);
+						}
 
 						if (arrayPars) {
 							record.set('pars', arrayPars);
@@ -3066,6 +3327,11 @@ Ext
 					,
 					getValues : function() {
 						var values = this.getForm().getFieldValues();
+						//workaround for grid value (grid not recognized as aform field)
+						values[ns.restFields[ns.INDEX_REQUEST_HEADERS]]=
+							this.restRequestHeadersDetail.getValue();
+						values[ns.restFields[ns.INDEX_REQUEST_JSON_PATH_ATTRIBUTES]]=
+							this.restJsonPathAttributesDetails.getValue();
 
 						// in the refactored architecture all detail parts will
 						// be
@@ -3092,6 +3358,9 @@ Ext
 					setValues : function(record) {
 						record.data.jclassNameForCustom = record.data.jclassName;
 						this.getForm().loadRecord(record);
+						//workaround for grid value (grid not recognized as a form field)
+						this.restRequestHeadersDetail.setValue(record.data[ns.restFields[ns.INDEX_REQUEST_HEADERS]]);
+						this.restJsonPathAttributesDetails.setValue(record.data[ns.restFields[ns.INDEX_REQUEST_JSON_PATH_ATTRIBUTES]]);
 
 						// in the refactored architecture all detail parts will
 						// be
