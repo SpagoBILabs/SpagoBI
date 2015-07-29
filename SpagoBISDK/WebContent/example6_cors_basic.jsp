@@ -32,25 +32,28 @@
 	    });
 		
  		execTest6 = function() {
-		    Sbi.sdk.api.getDataSetList({
-		    	callback: function( json, args, success ) {
-		    		if (success){
-		    			var str = "";
-		    			
-		    			for (var key in json){
-			    			str += "<tr><td>" + json[key].label + "</td><td>" + json[key].name + "</td><td>" + json[key].description + "</td></tr>";
-		    			}
-		    			
-		    			document.getElementById('datasets').innerHTML = str;
-		    		}
-				}});
+		    Sbi.sdk.cors.api.getDataSetList({
+		    	basicAuthentication: {
+		    		userName: 'biadmin'
+		    		, password: 'biadmin'
+		    	}
+		    	, callbackOk: function(obj) {
+		    		str = '';
+		    		
+		    		for (var key in obj){
+		    			str += "<tr><td>" + obj[key].label + "</td><td>" + obj[key].name + "</td><td>" + obj[key].description + "</td></tr>";
+	    			}
+	    			
+	    			document.getElementById('datasets').innerHTML = str;
+				}
+		    });
 		};
 	</script>
 </head>
 
 
 <body>
-<h2>Example 6 : getDataSetList</h2>
+<h2>Example 6.1 : getDataSetList with CORS</h2>
 <hr>
 <b>Description: </b> Use <i>getDataSetList</i> function to retrieve the list of all datasets
 <p>
@@ -59,18 +62,21 @@
 <BLOCKQUOTE>
 <PRE>
 execTest6 = function() {
-    Sbi.sdk.api.getDataSetList({
-    	callback: function( json, args, success ) {
-    		if (success){
-    			var str = "";
-    			
-    			for (var key in json){
-	    			str += "&lt;tr&gt;&lt;td&gt;" + json[key].label + "&lt;/td&gt;&lt;td&gt;" + json[key].name + "&lt;/td&gt;&lt;td&gt;" + json[key].description + "&lt;/td&gt;&lt;/tr&gt;";
-    			}
-    			
-    			document.getElementById('datasets').innerHTML = str;
-    		}
-		}});
+    Sbi.sdk.cors.api.getDataSetList({
+    	basicAuthentication: {
+    		userName: 'biadmin'
+    		, password: 'biadmin'
+    	}
+    	, callbackOk: function(obj) {
+    		str = '';
+    		
+    		for (var key in obj){
+    			str += "&lt;tr&gt;&lt;td&gt;" + obj[key].label + "&lt;/td&gt;&lt;td&gt;" + obj[key].name + "&lt;/td&gt;&lt;td&gt;" + obj[key].description + "&lt;/td&gt;&lt;/tr&gt;";
+   			}
+   			
+   			document.getElementById('datasets').innerHTML = str;
+		}
+	});
 };
 </PRE>
 </BLOCKQUOTE>
