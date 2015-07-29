@@ -36,6 +36,10 @@ import org.apache.log4j.Logger;
  */
 public class StringUtilities {
 
+	public static final String START_PARAMETER = "$P{";
+
+	public static final String START_USER_PROFILE_ATTRIBUTE = "${";
+
 	private static transient Logger logger = Logger.getLogger(StringUtilities.class);
 	
 	private static final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -57,7 +61,7 @@ public class StringUtilities {
 	 */
 	public static String substituteParametersInString(String str, Map parameters) throws Exception {
 		logger.debug("IN");
-		int profileAttributeStartIndex = str.indexOf("${");
+		int profileAttributeStartIndex = str.indexOf(START_USER_PROFILE_ATTRIBUTE);
 		if (profileAttributeStartIndex != -1) {
 			str = substituteParametersInString(str, parameters, profileAttributeStartIndex);
 		}
@@ -174,7 +178,7 @@ public class StringUtilities {
 		attribute = quote(attribute);
 		statement = statement.replaceAll("\\$\\{" + attribute + "\\}", replacement);
 
-		parametersStartIndex = statement.indexOf("${", profileAttributeEndIndex);
+		parametersStartIndex = statement.indexOf(START_USER_PROFILE_ATTRIBUTE, profileAttributeEndIndex);
 		if (parametersStartIndex != -1)
 			statement = substituteParametersInString(statement, parameters, parametersStartIndex);
 		logger.debug("OUT");
@@ -258,7 +262,7 @@ public class StringUtilities {
 		boolean changePars = true;
 		while ( changePars ){
 			//int profileAttributeStartIndex = statement.indexOf("$P{");
-			int profileAttributeStartIndex = statement.indexOf("$P{");
+			int profileAttributeStartIndex = statement.indexOf(START_PARAMETER);
 			if (profileAttributeStartIndex != -1) 
 				statement = substituteParametersInString(statement,valuesMap, parType, profileAttributeStartIndex, surroundWithQuotes);
 			else
@@ -467,7 +471,7 @@ public class StringUtilities {
 		boolean changePars = true;
 		while ( changePars ){
 			//int profileAttributeStartIndex = statement.indexOf("$P{");
-			int profileAttributeStartIndex = statement.indexOf("$P{");
+			int profileAttributeStartIndex = statement.indexOf(START_PARAMETER);
 			if (profileAttributeStartIndex != -1) 
 				statement = substituteDatasetParametersInString(statement,valuesMap, parType, profileAttributeStartIndex, surroundWithQuotes);
 			else

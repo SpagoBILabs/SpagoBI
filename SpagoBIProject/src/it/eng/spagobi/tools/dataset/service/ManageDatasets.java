@@ -37,6 +37,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
@@ -83,6 +84,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ManageDatasets extends AbstractSpagoBIAction {
+
+
 
 	// logger component
 	public static Logger logger = Logger.getLogger(ManageDatasets.class);
@@ -1187,6 +1190,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		}
 
+		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_REST_TYPE)) {
+			dataSet=manageRESTDataSet(savingDataset, jsonDsConfig);
+		}
+
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 			String query = getAttributeAsString(DataSetConstants.QUERY);
 			String queryScript = getAttributeAsString(DataSetConstants.QUERY_SCRIPT);
@@ -1329,6 +1336,20 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		dataSet.setConfiguration(jsonDsConfig.toString());
 		return dataSet;
+	}
+
+	private RESTDataSet manageRESTDataSet(boolean savingDataset, JSONObject config) throws JSONException {
+		for (String sa : DataSetConstants.REST_STRING_ATTRIBUTES) {
+			config.put(sa, getAttributeAsString(sa));
+		}
+		for (String ja : DataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
+			config.put(ja, getAttributeAsJSONObject(ja));
+		}
+		for (String ja : DataSetConstants.REST_JSON_ARRAY_ATTRIBUTES) {
+			config.put(ja, getAttributeAsJSONArray(ja));
+		}
+		RESTDataSet res=new RESTDataSet(config);
+		return res;
 	}
 
 	// This method rename a file and move it from resources\dataset\files\temp

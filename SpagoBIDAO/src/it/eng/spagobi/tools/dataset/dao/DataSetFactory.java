@@ -23,6 +23,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
@@ -92,6 +93,10 @@ public class DataSetFactory {
 			toReturn.setDsType(CKAN_DS_TYPE);
 		}
 
+		if (dataSet instanceof RESTDataSet) {
+			toReturn.setDsType(DataSetConstants.DS_REST_NAME);
+		}
+
 		if (dataSet instanceof JDBCDataSet) {
 			toReturn.setDsType(JDBC_DS_TYPE);
 		}
@@ -127,6 +132,10 @@ public class DataSetFactory {
 
 		if (dataSet instanceof FlatDataSet) {
 			toReturn.setDsType(FLAT_DS_TYPE);
+		}
+
+		if (dataSet instanceof RESTDataSet) {
+			toReturn.setDsType(DataSetConstants.DS_REST_NAME);
 		}
 
 		toReturn.setId(dataSet.getId());
@@ -181,6 +190,10 @@ public class DataSetFactory {
 				}
 				fds.setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));
 				fds.setDsType(FILE_DS_TYPE);
+			}
+
+			if (DataSetConstants.DS_REST_TYPE.equalsIgnoreCase(sbiDataSet.getType())) {
+				ds = manageRESTDataSet(jsonConf);
 			}
 
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
@@ -416,5 +429,11 @@ public class DataSetFactory {
 		}
 		logger.debug("OUT");
 		return versionDS;
+	}
+
+	private static RESTDataSet manageRESTDataSet(JSONObject jsonConf) {
+		RESTDataSet res = new RESTDataSet(jsonConf);
+		res.setDsType(DataSetConstants.DS_REST_NAME);
+		return res;
 	}
 }

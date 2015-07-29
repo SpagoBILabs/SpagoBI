@@ -12,6 +12,7 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.Date;
@@ -236,6 +237,8 @@ public class DataSetJSONSerializer implements Serializer {
 						result.put(XSL_FILE_SHEET_NUMBER, xslSheetNumber);
 					}
 
+				
+
 					if (type.equalsIgnoreCase(DataSetConstants.CKAN)) {
 
 						String ckanFileType = jsonConf.getString(DataSetConstants.CKAN_FILE_TYPE);
@@ -332,6 +335,8 @@ public class DataSetJSONSerializer implements Serializer {
 				} else if (type.equalsIgnoreCase(DataSetConstants.FLAT)) {
 					result.put(DATA_SOURCE_FLAT, jsonConf.getString(DataSetConstants.DATA_SOURCE));
 					result.put(FLAT_TABLE_NAME, jsonConf.getString(DataSetConstants.FLAT_TABLE_NAME));
+				}  else	if (DataSetConstants.DS_REST_NAME.equalsIgnoreCase(type)) {
+					manageRESTDataSet(jsonConf, result);
 				}
 			} catch (Exception e) {
 				logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
@@ -359,6 +364,19 @@ public class DataSetJSONSerializer implements Serializer {
 
 		}
 		return result;
+	}
+
+	private static void manageRESTDataSet(JSONObject conf, JSONObject result) throws JSONException {
+		for (String attr : DataSetConstants.REST_ALL_ATTRIBUTES) {
+			if (!conf.has(attr)) {
+				// optional attribute
+				continue;
+			}
+			Object value = conf.get(attr);
+			Assert.assertNotNull(value, "json value");
+			result.put(attr, value.toString());
+		}
+
 	}
 
 	public static Object metadataSerializerChooser(String meta) throws SourceBeanException, JSONException {

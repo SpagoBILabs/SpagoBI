@@ -5,18 +5,17 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.test.AbstractSpagoBITestCase;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -59,6 +58,7 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		IFieldMetaData field2MetaData = metaData.getFieldMeta(1);
 		assertNotNull(field2MetaData);
 		assertEquals("regione", field2MetaData.getName());
+		@SuppressWarnings("unchecked")
 		Iterator<IRecord> records = dataStore.iterator();
 		while(records.hasNext()) {
 			IRecord record = records.next();
@@ -94,6 +94,7 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		assertNotNull(field1MetaData);
 		assertEquals("value", field1MetaData.getName());
 		
+		@SuppressWarnings("unchecked")
 		Iterator<IRecord> records = dataStore.iterator();
 		while(records.hasNext()) {
 			IRecord record = records.next();
@@ -204,6 +205,7 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		IFieldMetaData field2MetaData = metaData.getFieldMeta(1);
 		assertNotNull(field2MetaData);
 		assertEquals("regione", field2MetaData.getName());
+		@SuppressWarnings("unchecked")
 		Iterator<IRecord> records = dataStore.iterator();
 		while(records.hasNext()) {
 			IRecord record = records.next();
