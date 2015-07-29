@@ -32,37 +32,35 @@
 	    });
 		
  		execTest7 = function() {
-		    Sbi.sdk.api.executeDataSet({
+		    Sbi.sdk.cors.api.executeDataSet({
 		    	datasetLabel: 'DS_DEMO_EXTCHART'
 		    	, parameters: {
-		    		par_year: 2011,
+		    		par_year: 1998,
 		    		par_family: 'Food'
 		    	}
-		    	, callback: function( json, args, success ) {
-		    		if (success){
-		    			var str = "<th>Id</th>";
-		    			
-		    			var fields = json.metaData.fields;
-		    			for(var fieldIndex in fields) {
-		    				if (fields[fieldIndex].hasOwnProperty('header'))
-		    					str += '<th>' + fields[fieldIndex]['header'] + '</th>';
-		    			}
-		    			
-		    			str += '<tbody>';
-		    			
-		    			var rows = json.rows;
-		    			for (var rowIndex in rows){
-		    				str += '<tr>';
-		    				for (var colIndex in rows[rowIndex]) {
-		    					str += '<td>' + rows[rowIndex][colIndex] + '</td>';
-		    				}
-		    				str += '</tr>';
-		    			}
-		    			
-		    			str += '</tbody>';
-		    			
-		    			document.getElementById('results').innerHTML = str;
-		    		}
+		    	, callbackOk: function(obj) {
+		    		var str = "<th>Id</th>";
+		    		
+	    			var fields = obj.metaData.fields;
+	    			for(var fieldIndex in fields) {
+	    				if (fields[fieldIndex].hasOwnProperty('header'))
+	    					str += '<th>' + fields[fieldIndex]['header'] + '</th>';
+	    			}
+	    			
+	    			str += '<tbody>';
+	    			
+	    			var rows = obj.rows;
+	    			for (var rowIndex in rows){
+	    				str += '<tr>';
+	    				for (var colIndex in rows[rowIndex]) {
+	    					str += '<td>' + rows[rowIndex][colIndex] + '</td>';
+	    				}
+	    				str += '</tr>';
+	    			}
+	    			
+	    			str += '</tbody>';
+	    			
+	    			document.getElementById('results').innerHTML = str;
 				}});
 		};
 	</script>
@@ -79,37 +77,35 @@
 <BLOCKQUOTE>
 <PRE>
 execTest7 = function() {
-    Sbi.sdk.api.executeDataSet({
+    Sbi.sdk.cors.api.executeDataSet({
     	datasetLabel: 'DS_DEMO_EXTCHART'
     	, parameters: {
-    		par_year: 2011,
+    		par_year: 1998,
     		par_family: 'Food'
     	}
-    	, callback: function( json, args, success ) {
-    		if (success){
-    			var str = "&lt;th&gt;Id&lt;/th&gt;";
-    			
-    			var fields = json.metaData.fields;
-    			for(var fieldIndex in fields) {
-    				if (fields[fieldIndex].hasOwnProperty('header'))
-    					str += '&lt;th&gt;' + fields[fieldIndex]['header'] + '&lt;/th&gt;';
-    			}
-    			
-    			str += '&lt;tbody&gt;';
-    			
-    			var rows = json.rows;
-    			for (var rowIndex in rows){
-    				str += '&lt;tr&gt;';
-    				for (var colIndex in rows[rowIndex]) {
-    					str += '&lt;td&gt;' + rows[rowIndex][colIndex] + '&lt;/td&gt;';
-    				}
-    				str += '&lt;/tr&gt;';
-    			}
-    			
-    			str += '&lt;/tbody&gt;';
-    			
-    			document.getElementById('results').innerHTML = str;
-    		}
+    	, callbackOk: function(obj) {
+    		var str = "&lt;th&gt;Id&lt;/th&gt;";
+    		
+   			var fields = obj.metaData.fields;
+   			for(var fieldIndex in fields) {
+   				if (fields[fieldIndex].hasOwnProperty('header'))
+   					str += '&lt;th&gt;' + fields[fieldIndex]['header'] + '&lt;/th&gt;';
+   			}
+   			
+   			str += '&lt;tbody&gt;';
+   			
+   			var rows = obj.rows;
+   			for (var rowIndex in rows){
+   				str += '&lt;tr&gt;';
+   				for (var colIndex in rows[rowIndex]) {
+   					str += '&lt;td&gt;' + rows[rowIndex][colIndex] + '&lt;/td&gt;';
+   				}
+   				str += '&lt;/tr&gt;';
+   			}
+   			
+   			str += '&lt;/tbody&gt;';
+   			
+   			document.getElementById('results').innerHTML = str;
 		}});
 };
 </PRE>

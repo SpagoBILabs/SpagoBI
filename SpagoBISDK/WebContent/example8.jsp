@@ -24,7 +24,7 @@
 		
  		execTest8 = function() {
  			Sbi.sdk.api.injectWorksheet({
-				datasetLabel: 'DEMO_SALES_COSTS'
+				datasetLabel: 'DS_DEMO_51_COCKPIT'
  				, target: 'worksheet'
 				, height: '600px'
 				, width: '1100px'
@@ -50,7 +50,7 @@ pointing to the url of worksheet start action. In this example the specified tar
 <PRE>
 execTest8 = function() {
 	Sbi.sdk.api.injectWorksheet({
-		datasetLabel: 'DEMO_SALES_COSTS'
+		datasetLabel: 'DS_DEMO_51_COCKPIT'
 		, target: 'worksheet'
 		, height: '600px'
 		, width: '1100px'

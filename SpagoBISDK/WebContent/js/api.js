@@ -4,32 +4,21 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
- Sbi.sdk.namespace('Sbi.sdk.api');
+Sbi.sdk.namespace('Sbi.sdk.api');
 
+/* 
+ * Note that Sbi.sdk.api definition is defined in both api.js and api_jsonp.js.
+ * In api_jsonp.js there are functions that uses jsonp to avoid the same-origin policy.
+ * The same functions were also developed with CORS and they are defined in api_cors.js.
+ * 
+ * jsonp is deprecated, it is highly recommended to use CORS instead of it.
+ * 
+ * NB: CORS functions are inside Sbi.sdk.cors.api namespace and have same names as jsonp counterpart.
+ * */
 Sbi.sdk.apply(Sbi.sdk.api, {
 	
 	elId: 0
 	, dataSetList: {}
-	
-	/*	
-	config = { 
-		params: {
-			user: 'biuser'
-			, password: 'biuser'
-		}
-		
-		, callback: {
-			fn: doThis
-			, scope: this
-			, args: {arg1: 'A', arg2: 'B', ...}
-		}
-	}
-	*/
-	
-	, authenticate:  function ( config ) {	    
-		var serviceUrl = Sbi.sdk.services.getServiceUrl('authenticate', config.params);
-		Sbi.sdk.jsonp.asyncRequest(serviceUrl, config.callback.fn, config.callback.scope, config.callback.args);
-    }
 	
 	, getIFrameHtml: function( serviceUrl, config ) {
 		
@@ -170,38 +159,4 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 		return this.injectIFrame(serviceUrl, config);
 	}
 	
-	, getDataSetList: function( config ) {
-		
-		Sbi.sdk.jsonp.timeout = 10000;
-		
-		var baseUrl = Sbi.sdk.services.baseUrl;
-		var serviceUrl = baseUrl.protocol + '://' + baseUrl.host + ":" + baseUrl.port + '/' + baseUrl.contextPath + '/restful-services/2.0/datasets';
-		
-		Sbi.sdk.jsonp.asyncRequest(serviceUrl, config.callback, this);
-	}
-	
-	, executeDataSet: function( config ) {
-		
-		Sbi.sdk.jsonp.timeout = 20000;
-		
-		var baseUrl = Sbi.sdk.services.baseUrl;
-		var serviceUrl = baseUrl.protocol + '://' + baseUrl.host + ":" + baseUrl.port + '/' + baseUrl.contextPath + '/restful-services/2.0/datasets/';
-		serviceUrl += config.datasetLabel + '/content';
-		
-		if (config.parameters !== undefined) {
-			var first = true;
-			
-			for(var parameter in config.parameters) {
-				if (first) {
-					serviceUrl += '?';
-					first = false;
-				}
-				else serviceUrl += '&';
-				
-				serviceUrl += parameter + '=' + config.parameters[parameter];
-			}
-		}
-		
-		Sbi.sdk.jsonp.asyncRequest(serviceUrl, config.callback, this);
-	}
 });

@@ -25,8 +25,9 @@
 <b>Examples:</b>
 <p>
 <ul>
-<li><a href="loginTAG.jsp">web-services / tag library example</a>
-<li><a href="loginJS.jsp">javascript API example</a>
+<li><a href="loginTAG.jsp">web-services / tag library examples</a>
+<li><a href="loginJS.jsp">javascript API examples</a>
+<li><a href="loginJS_cors.jsp">javascript API examples using CORS</a>
 </ul>
 
 </body>
