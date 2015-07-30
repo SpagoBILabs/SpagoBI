@@ -13,8 +13,8 @@
 	<classpathentry kind="lib" path="lib/hibernate/required/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/required/javassist-3.12.0.GA.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/required/jta-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate/required/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/jpa/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/required/slf4j-api-1.7.10.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/jaxen-1.1-beta-4.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/mysql-connector-java-5.1.7-bin.jar"/>
