@@ -34,6 +34,5 @@
 		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
 		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
-		<nature>net.sf.eclipse.tomcat.tomcatnature</nature>
 	</natures>
 </projectDescription>
