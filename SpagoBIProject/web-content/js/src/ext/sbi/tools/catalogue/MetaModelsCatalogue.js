@@ -185,8 +185,15 @@ Ext.extend(Sbi.tools.catalogue.MetaModelsCatalogue, Sbi.widgets.Catalogue, {
 			text: 'Unlock Model'
 			, handler: function(btn) {
 				
+				var recordId;
+				if (this.selectedRecord.phantom){
+					recordId = this.selectedRecord.data.id;
+				} else {
+					recordId = this.selectedRecord.id
+				}
+				
 				this.services["unlockModel"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-						serviceName: '1.0/modellocker/'+this.selectedRecord.id+'/unlock',
+						serviceName: '1.0/modellocker/'+recordId+'/unlock',
 						baseParams: {}
 				}); 
 				
@@ -247,8 +254,15 @@ Ext.extend(Sbi.tools.catalogue.MetaModelsCatalogue, Sbi.widgets.Catalogue, {
 	        }
 			, handler: function(btn) {
 				
+				var recordId;
+				if (this.selectedRecord.phantom){
+					recordId = this.selectedRecord.data.id;
+				} else {
+					recordId = this.selectedRecord.id
+				}
+				
 				this.services["lockModel"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-						serviceName: '1.0/modellocker/'+this.selectedRecord.id+'/lock',
+						serviceName: '1.0/modellocker/'+recordId+'/lock',
 						baseParams: {}
 				}); 
 				
