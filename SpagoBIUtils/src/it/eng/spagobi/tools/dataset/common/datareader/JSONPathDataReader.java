@@ -58,6 +58,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static final String ATTRIBUTES_DIRECTLY = "attributesDirectly";
 
+	private static final String ID_NAME = "id";
+
 	public static class JSONPathAttribute {
 		private String name;
 		private String jsonPathValue;
@@ -131,7 +133,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private void addData(String data, DataStore dataStore, MetaData dataStoreMeta) throws ParseException {
 		List<Object> parsedData = getItems(data);
-		
+
 		for (Object o : parsedData) {
 			IRecord record = new Record(dataStore);
 
@@ -144,8 +146,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 				}
 				String jsonPathValue = (String) fieldMeta.getProperty(JSON_PATH_VALUE_METADATA_PROPERTY);
 				Assert.assertNotNull(jsonPathValue != null, "jsonPathValue!=null");
-				//can be null
-				String stringValue = getJSONPathValue(o, jsonPathValue);
+				// can be fixed (not real JSONPath) or null (after value calculation)
+				String stringValue = isRealJsonPath(jsonPathValue) ? getJSONPathValue(o, jsonPathValue) : jsonPathValue;
 				IFieldMetaData fm = fieldMeta;
 				Class<?> type = fm.getType();
 				if (type == null) {
@@ -164,7 +166,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 				record.appendField(field);
 			}
 			if (useItemsAttributes) {
-				manageItemsAttributes(o, record, dataStoreMeta,dataStore);
+				manageItemsAttributes(o, record, dataStoreMeta, dataStore);
 			}
 
 			dataStore.appendRecord(record);
@@ -177,13 +179,13 @@ public class JSONPathDataReader extends AbstractDataReader {
 		if (parsed == null) {
 			throw new JSONPathDataReaderException(String.format("Items not found in %s with json path %s", data, jsonPathItems));
 		}
-		
-		//can be an array or a single object
+
+		// can be an array or a single object
 		List<Object> parsedData;
 		if (parsed instanceof List) {
 			parsedData = (List<Object>) parsed;
 		} else {
-			parsedData=Arrays.asList(parsed);
+			parsedData = Arrays.asList(parsed);
 		}
 		return parsedData;
 	}
@@ -207,7 +209,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 				Assert.assertNotNull(value, "value is null");
 				rec.appendField(new Field(value.toString()));
 			} else {
-				//add null value
+				// add null value
 				rec.appendField(new Field(null));
 			}
 		}
@@ -228,24 +230,24 @@ public class JSONPathDataReader extends AbstractDataReader {
 			Object value = jsonObject.get(key);
 			Assert.assertNotNull(value, "value is null");
 			rec.appendField(new Field(value.toString()));
-			
-			//add null to previous records
-			//current record not added
+
+			// add null to previous records
+			// current record not added
 			for (int i = 0; i < dataStore.getRecordsCount(); i++) {
 				IRecord previousRecord = dataStore.getRecordAt(i);
-				Assert.assertTrue(previousRecord!=rec, "previousRecord!=rec");
+				Assert.assertTrue(previousRecord != rec, "previousRecord!=rec");
 				previousRecord.appendField(new Field(null));
 			}
 		}
 	}
 
 	private static String getJSONPathValue(Object o, String jsonPathValue) {
-		//can be an array with a single value, a single object or also null (not found)
+		// can be an array with a single value, a single object or also null (not found)
 		Object res = JsonPath.read(o, jsonPathValue);
-		if (res==null) {
+		if (res == null) {
 			return null;
 		}
-		
+
 		if (res instanceof JSONArray) {
 			JSONArray array = (JSONArray) res;
 			if (array.size() > 1) {
@@ -254,7 +256,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 			if (array.isEmpty()) {
 				return null;
 			}
-			
+
 			res = array.get(0);
 		}
 
@@ -262,11 +264,20 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	private void addFieldMetadata(MetaData dataStoreMeta) {
+		int index = 0;
+		boolean idSet = false;
 		for (JSONPathAttribute jpa : jsonPathAttributes) {
 			FieldMetadata fm = new FieldMetadata();
 			String header = jpa.name;
 			fm.setAlias(header);
 			fm.setName(header);
+			if (ID_NAME.equalsIgnoreCase(header)) {
+				if (idSet) {
+					throw new JSONPathDataReaderException("There is no unique id field.");
+				}
+				idSet=true;
+				dataStoreMeta.setIdField(index);
+			}
 			fm.setProperty(JSON_PATH_VALUE_METADATA_PROPERTY, jpa.jsonPathValue);
 			if (isRealJsonPath(jpa.jsonPathType)) {
 				// dinamically defined
@@ -283,6 +294,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 			}
 			dataStoreMeta.addFiedMeta(fm);
+			index++;
 		}
 	}
 
@@ -292,10 +304,10 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	private static Object getValue(String value, IFieldMetaData fmd) throws ParseException {
-		if (value==null) {
+		if (value == null) {
 			return null;
 		}
-		
+
 		Class<?> fieldType = fmd.getType();
 		if (fieldType.equals(String.class)) {
 			return value;
@@ -315,7 +327,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	private static SimpleDateFormat getSimpleDateFormat(String dateFormat) {
-		SimpleDateFormat res=new SimpleDateFormat(dateFormat);
+		SimpleDateFormat res = new SimpleDateFormat(dateFormat);
 		res.setLenient(true);
 		return res;
 	}
@@ -335,9 +347,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 			String res = typeString.substring(index).trim();
 			if (!res.isEmpty()) {
 				try {
-					new SimpleDateFormat(res); //try the pattern
+					new SimpleDateFormat(res); // try the pattern
 				} catch (IllegalArgumentException e) {
-					throw new JSONPathDataReaderException("Invalid pattern: "+res,e);
+					throw new JSONPathDataReaderException("Invalid pattern: " + res, e);
 				}
 				return res;
 			}
@@ -359,10 +371,10 @@ public class JSONPathDataReader extends AbstractDataReader {
 		return null;
 	}
 
-	private static boolean isRealJsonPath(String jsonPathHeader) {
+	private static boolean isRealJsonPath(String jsonPath) {
 		// don't start with param substitution
-		return jsonPathHeader.startsWith("$")
-				&& (!jsonPathHeader.startsWith(StringUtilities.START_PARAMETER) && !jsonPathHeader.startsWith(StringUtilities.START_USER_PROFILE_ATTRIBUTE));
+		return jsonPath.startsWith("$")
+				&& (!jsonPath.startsWith(StringUtilities.START_PARAMETER) && !jsonPath.startsWith(StringUtilities.START_USER_PROFILE_ATTRIBUTE));
 	}
 
 	private static Class<?> getType(String jsonPathType) {
