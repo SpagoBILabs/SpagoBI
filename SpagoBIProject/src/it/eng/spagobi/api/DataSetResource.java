@@ -59,6 +59,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -78,7 +79,7 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 @Path("/1.0/datasets")
 public class DataSetResource extends AbstractSpagoBIResource {
@@ -90,7 +91,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
 		logger.debug("IN");
-		
+
 		try {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
 			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
@@ -106,6 +107,48 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@GET
+	@Path("/list/persist")
+	public void persistDataSets(@QueryParam("labels") JSONArray labels) {
+		logger.debug("IN");
+
+		for (int i = 0; i < labels.length(); i++) {
+			String label = null;
+			try {
+				label = labels.getString(i);
+				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
+				dataSetManagementAPI.persistDataset(label);
+			} catch (JSONException e) {
+				logger.error("error in persisting dataset with label " + label, e);
+				throw new RuntimeException("error in persisting dataset with label " + label);
+			}
+		}
+
+		logger.debug("OUT");
+	}
+
+	@POST
+	@Path("/list/persist")
+	public void persistDataSetsPost(@FormParam("labels") JSONArray labels) {
+		logger.debug("IN");
+
+		for (int i = 0; i < labels.length(); i++) {
+			String label = null;
+			try {
+				label = labels.getString(i);
+				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
+				dataSetManagementAPI.setUserProfile(getUserProfile());
+				dataSetManagementAPI.persistDataset(label);
+			} catch (JSONException e) {
+				logger.error("error in persisting dataset with label: " + label, e);
+				throw new RuntimeException("error in persisting dataset with label: " + label);
+			}
+		}
+
+		logger.debug("OUT");
+
 	}
 
 	@GET
@@ -1021,7 +1064,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param profile
 	 * @param datasetsJSONArray
 	 * @param typeDocWizard
@@ -1029,7 +1072,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
 	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
 	 *            rifattorizzata al più presto.
-	 *
+	 * 
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
@@ -1098,7 +1141,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			try {
 				// String meta = datasetJSON.getString("meta"); // [A]
 				// isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta); // [A]
-				
+
 				String meta = datasetJSON.optString("meta");
 
 				if (meta != null && !meta.equals(""))
@@ -1156,7 +1199,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Check if the association passed is valid ',' is valid if number of record from association is lower than maximum of single datasets
-	 *
+	 * 
 	 * @param association
 	 */
 
