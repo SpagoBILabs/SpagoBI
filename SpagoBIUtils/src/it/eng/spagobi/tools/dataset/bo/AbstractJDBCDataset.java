@@ -108,7 +108,9 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 		toReturn.setType(DS_TYPE);
 
 		dataProxy = this.getDataProxy();
-		toReturn.setDataSource(dataProxy.getDataSource().toSpagoBiDataSource());
+		if (dataProxy.getDataSource() != null) {
+			toReturn.setDataSource(dataProxy.getDataSource().toSpagoBiDataSource());
+		}
 
 		try {
 			JSONObject jsonConf = new JSONObject();
