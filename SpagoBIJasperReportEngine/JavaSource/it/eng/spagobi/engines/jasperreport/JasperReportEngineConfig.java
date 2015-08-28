@@ -85,18 +85,23 @@ public class JasperReportEngineConfig {
 	}
 
 	public File getTempDir() {
-		File tempDir;
-		// String tempDirPath = (String) getConfigSourceBean().getAttribute("GENERALSETTINGS.tmpdir");
-		String tempDirPath = System.getProperty("java.io.tmpdir");
-		tempDirPath = tempDirPath.concat(System.getProperty("file.separator")).concat((String) getConfigSourceBean().getAttribute("GENERALSETTINGS.tmpdir"));
 
-		if (!tempDirPath.startsWith("/")) {
-			File webinfDir = new File(ConfigSingleton.getRootPath());
-			File appRootDir = webinfDir.getParentFile();
-			tempDir = new File(appRootDir, tempDirPath);
+		File tempDir;
+
+		String configuredTempDir = (String) getConfigSourceBean().getAttribute("GENERALSETTINGS.tmpdir");
+		logger.debug("Configured temp dir is [" + configuredTempDir + "]");
+		File configuredTempDirFile = new File(configuredTempDir);
+
+		if (configuredTempDirFile.isAbsolute()) {
+			tempDir = configuredTempDirFile;
 		} else {
-			tempDir = new File(tempDirPath);
+			logger.debug("Configured temp dir is recognized as relative");
+			String javaIoTmpDir = System.getProperty("java.io.tmpdir");
+			logger.debug("java.io.tmpdir is [" + javaIoTmpDir + "]");
+			tempDir = new File(javaIoTmpDir, configuredTempDir);
 		}
+
+		logger.debug("Temporary directory is [" + tempDir.getAbsolutePath() + "]");
 
 		tempDir.mkdirs();
 
