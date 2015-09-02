@@ -166,6 +166,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 	        url: this.services['saveTenant'],
 	        params: Ext.encode(record),
 	        method: 'POST',
+	        headers: { 'Content-Type': 'application/json' },
 	        success: function(response, options) {
 
 			if(response !== undefined && response.responseText != undefined && response.responseText != null && response.statusText=="OK") {

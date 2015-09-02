@@ -5,6 +5,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.rest.wrappers.MultiReadHttpServletRequest;
 import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -22,7 +23,6 @@ import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.POST;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
@@ -56,6 +56,8 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	@Context
 	private HttpServletRequest servletRequest;
 
+	private MultiReadHttpServletRequest multiReadReq;
+
 	/**
 	 * Preprocess all the REST requests.
 	 *
@@ -68,7 +70,9 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		logger.trace("IN");
 
 		response = null;
+
 		try {
+
 			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
 			serviceUrl = serviceUrl.replaceAll("/1.0/", "/");
 			serviceUrl = serviceUrl.replaceAll("/2.0/", "/");
@@ -90,6 +94,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 
 			// Other checks are required
 			boolean authenticated = isUserAuthenticatedInSpagoBI();
+
 			if (!authenticated) {
 				// try to authenticate the user on the fly using simple-authentication schema
 				profile = authenticateUser();
@@ -286,16 +291,14 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	// be one different context for each distinct executions lunched by the same user on the same borwser.
 	private IEngUserProfile getUserProfileFromSession() {
 		IEngUserProfile engProfile = null;
-		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-		ioManager.initConetxtManager();
 
 		engProfile = (IEngUserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		if (engProfile == null) {
+			FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+			ioManager.initConetxtManager();
 			engProfile = (IEngUserProfile) ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);
-		} else {
-			setUserProfileInSession(engProfile);
+			servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 		}
-
 		return engProfile;
 	}
 
@@ -303,12 +306,11 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
 		ioManager.initConetxtManager();
 		ioManager.getContextManager().set(IEngUserProfile.ENG_USER_PROFILE, engProfile);
-
 		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 	}
 
 	public boolean accept(Class declaring, Method method) {
-		return !method.isAnnotationPresent(POST.class);
-		// return true;
+		// return !method.isAnnotationPresent(POST.class);
+		return true;
 	}
 }
