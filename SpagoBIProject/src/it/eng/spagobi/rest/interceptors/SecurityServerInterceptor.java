@@ -5,7 +5,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.rest.wrappers.MultiReadHttpServletRequest;
 import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -55,8 +54,6 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 
 	@Context
 	private HttpServletRequest servletRequest;
-
-	private MultiReadHttpServletRequest multiReadReq;
 
 	/**
 	 * Preprocess all the REST requests.
