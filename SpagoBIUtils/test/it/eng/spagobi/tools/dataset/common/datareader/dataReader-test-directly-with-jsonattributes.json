@@ -2,7 +2,7 @@
   "contextResponses": [
     {
       "contextElement": {
-      "a":"b",
+      "a":3,
       "c":"d",
       "e":"f",
         "id": "pros6_Meter",
@@ -26,7 +26,7 @@
     },
     {
       "contextElement": {
-      "a":"q",
+      "a":2,
       "e":"r",
       "f":"s",
       "b":"q",

@@ -11,6 +11,10 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.listener.DataSetListenerManager;
+import it.eng.spagobi.tools.dataset.listener.DataSetListenerManagerFactory;
+import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
+import it.eng.spagobi.tools.dataset.notifier.fiware.OrionContextSubscriber;
 import it.eng.spagobi.tools.dataset.utils.ParametersResolver;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -26,11 +30,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RESTDataSet extends ConfigurableDataSet {
+
+	private static final Logger log = Logger.getLogger(RESTDataSet.class);
 
 	public static final String DATASET_TYPE = "SbiRESTDataSet";
 
@@ -41,6 +48,15 @@ public class RESTDataSet extends ConfigurableDataSet {
 	private static final String JSON_PATH_TYPE_JSON_PATH_ATTRIBUTE_PROP_NAME = "jsonPathType";
 
 	private final ParametersResolver parametersResolver = new ParametersResolver();
+
+	private boolean ngsi;
+
+	/**
+	 * for testing purpose
+	 */
+	private boolean ignoreConfigurationOnLoad;
+
+	private boolean notifiable;
 
 	public RESTDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
@@ -70,21 +86,88 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	@Override
 	public void loadData(int offset, int fetchSize, int maxResults) {
-		// reload the configuration for possible changes due to
-		// customizable properties through parameters and/or profile attributes
-		initConf(true);
+		if (!ignoreConfigurationOnLoad) {
+			// reload the configuration for possible changes due to
+			// customizable properties through parameters and/or profile attributes
+			initConf(true);
+		}
 
 		super.loadData(offset, fetchSize, maxResults);
+
+		// notify for all listeners (also for not NGSI datasets)
+		notifyListeners();
+
+		// after the first datastore initialization
+		if (isNgsi() && NotifierServlet.isNotifiable()) {
+			log.info(String.format("Subscribe NGSI dataset with label %s to orion notifications.", getLabel()));
+			subscribeNGSI();
+		}
+	}
+
+	private void notifyListeners() {
+		DataSetListenerManager manager = DataSetListenerManagerFactory.getManager();
+		String owner = getOwner();
+		if (owner == null) {
+			// not user associated, temporary
+			return;
+		}
+		String label = getLabel();
+		if (label == null) {
+			// temporary dataset
+			return;
+		}
+		manager.addCometListenerIfAbsent(owner, label, "1");
+		manager.changedDataSet(owner, label, this);
+	}
+
+	private void subscribeNGSI() {
+		try {
+			OrionContextSubscriber subscriber = new OrionContextSubscriber(this);
+			subscriber.subscribeNGSI();
+			notifiable = true;
+		} catch (Exception e) {
+			log.error("Errror in Orion subscription", e);
+			notifiable = false;
+		}
+	}
+
+	public boolean isNotifiable() {
+		return notifiable;
+	}
+
+	@Override
+	public RESTDataProxy getDataProxy() {
+		return (RESTDataProxy) super.getDataProxy();
+	}
+
+	@Override
+	public JSONPathDataReader getDataReader() {
+		return (JSONPathDataReader) super.getDataReader();
+	}
+
+	/**
+	 * for testing
+	 * 
+	 * @param ignoreConfigurationOnLoad
+	 */
+	public void setIgnoreConfigurationOnLoad(boolean ignoreConfigurationOnLoad) {
+		this.ignoreConfigurationOnLoad = ignoreConfigurationOnLoad;
 	}
 
 	private void initConf(JSONObject jsonConf, boolean resolveParams) {
+		initNGSI(jsonConf, resolveParams);
 		initDataProxy(jsonConf, resolveParams);
 		initDataReader(jsonConf, resolveParams);
 	}
 
+	private void initNGSI(JSONObject jsonConf, boolean resolveParams) {
+		String ngsiProp = getProp(DataSetConstants.REST_NGSI, jsonConf, true, false);
+		this.ngsi = Boolean.parseBoolean(ngsiProp);
+	}
+
 	private void initDataReader(JSONObject jsonConf, boolean resolveParams) {
 		// json data reader attributes
-		String jsonPathItems = getProp(DataSetConstants.REST_JSON_PATH_ITEMS, jsonConf, false, resolveParams);
+		String jsonPathItems = getProp(DataSetConstants.REST_JSON_PATH_ITEMS, jsonConf, true, resolveParams);
 		List<JSONPathAttribute> jsonPathAttributes;
 		try {
 			jsonPathAttributes = getJsonPathAttributes(DataSetConstants.REST_JSON_PATH_ATTRIBUTES, jsonConf, resolveParams);
@@ -93,7 +176,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 		}
 
 		String directlyAttributes = getProp(DataSetConstants.REST_JSON_DIRECTLY_ATTRIBUTES, jsonConf, true, false);
-		setDataReader(new JSONPathDataReader(jsonPathItems, jsonPathAttributes, Boolean.parseBoolean(directlyAttributes)));
+		setDataReader(new JSONPathDataReader(jsonPathItems, jsonPathAttributes, Boolean.parseBoolean(directlyAttributes),this.ngsi));
 	}
 
 	private void initDataProxy(JSONObject jsonConf, boolean resolveParams) {
@@ -131,7 +214,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 		String maxResults = getProp(DataSetConstants.REST_MAX_RESULTS, jsonConf, true, resolveParams);
 
-		setDataProxy(new RESTDataProxy(address, methodEnum, requestBody, requestHeaders, offset, fetchSize, maxResults));
+		setDataProxy(new RESTDataProxy(address, methodEnum, requestBody, requestHeaders, offset, fetchSize, maxResults,isNgsi()));
 	}
 
 	private JSONObject getJSONConfig() {
@@ -262,6 +345,10 @@ public class RESTDataSet extends ConfigurableDataSet {
 			res.append(entry.getValue());
 		}
 		return res.toString();
+	}
+
+	public boolean isNgsi() {
+		return ngsi;
 	}
 
 }

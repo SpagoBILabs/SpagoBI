@@ -33,97 +33,151 @@ public class JSONPathDataReaderTest extends TestCase {
 	private static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 	public void testReadDirectly() throws IOException, ParseException {
-		String json = HelperForTest.getJsonTest("dataReader-test-directly.json", this.getClass());
+		String json = HelperForTest.readFile("dataReader-test-directly.json", this.getClass());
 		List<JSONPathAttribute> jsonPathAttributes = new ArrayList<JSONPathDataReader.JSONPathAttribute>();
-		JSONPathDataReader reader = new JSONPathDataReader("$.contextResponses[*]", jsonPathAttributes,true);
+		JSONPathDataReader reader = new JSONPathDataReader("$.contextResponses[*]", jsonPathAttributes, true, false);
 		IDataStore read = reader.read(json);
-		assertEquals(2,read.getRecordsCount());
-		
+		assertEquals(2, read.getRecordsCount());
+
 		IMetaData md = read.getMetaData();
-		
+
 		IRecord rec0 = read.getRecordAt(0);
 		testRecord0(md, rec0);
 		assertEquals(5, rec0.getFields().size());
-		
+
 		IRecord rec1 = read.getRecordAt(1);
 		testRecord1(md, rec1);
 		assertEquals(5, rec1.getFields().size());
 	}
-	
-	public void testReadDirectlyndJSONAttributes() throws IOException, ParseException {
-		String json = HelperForTest.getJsonTest("dataReader-test-directly-with-jsonattributes.json", this.getClass());
-		List<JSONPathAttribute> jsonPathAttributes = getJsonPathAttributesDirectly();
-		JSONPathDataReader reader = new JSONPathDataReader("$.contextResponses[*].contextElement", jsonPathAttributes,true);
+
+	public void testNGSI() throws IOException, ParseException {
+		String json = HelperForTest.readFile("dataReader-test.json", this.getClass());
+		JSONPathDataReader reader = getJSONPathDataReaderNGSI();
 		IDataStore read = reader.read(json);
-		assertEquals(2,read.getRecordsCount());
-		
+		assertEquals(6, read.getRecordsCount());
+		List<IRecord> records = read.findRecords(getRecordMatcher());
+		assertEquals(1, records.size());
+		IRecord record = records.get(0);
+		boolean[] done = new boolean[4];
+		IMetaData metaData = read.getMetaData();
+		List<IField> fields = record.getFields();
+		for (int i = 0; i < metaData.getFieldCount(); i++) {
+			IFieldMetaData fm = metaData.getFieldMeta(i);
+			if ("downstreamActivePower".equals(fm.getName())) {
+				assertEquals(4.8, (Double) fields.get(i).getValue(), 10E-6);
+				done[0] = true;
+				continue;
+			}
+			if ("atTime".equals(fm.getName())) {
+				assertEquals(fields.get(i).getValue(), new SimpleDateFormat(TIME_FORMAT).parse("2015-07-14T17:19:14.014+0200"));
+				done[1] = true;
+				continue;
+			}
+			if ("upstreamActivePower".equals(fm.getName())) {
+				assertEquals(0, (Double) fields.get(i).getValue(), 10E-6);
+				done[2] = true;
+				continue;
+			}
+			if ("id".equals(fm.getName())) {
+				assertEquals(fields.get(i).getValue(), "pros6_Meter");
+				done[3] = true;
+				continue;
+			}
+		}
+		for (int i = 0; i < done.length; i++) {
+			assertTrue(Integer.toString(i), done[i]);
+		}
+	}
+
+	private IRecordMatcher getRecordMatcher() {
+		return new IRecordMatcher() {
+
+			public boolean match(IRecord record) {
+				for (IField field : record.getFields()) {
+					if ("pros6_Meter".equals(field.getValue())) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+	}
+
+	public void testReadDirectlyndJSONAttributes() throws IOException, ParseException {
+		String json = HelperForTest.readFile("dataReader-test-directly-with-jsonattributes.json", this.getClass());
+		List<JSONPathAttribute> jsonPathAttributes = getJsonPathAttributesDirectly();
+		JSONPathDataReader reader = new JSONPathDataReader("$.contextResponses[*].contextElement", jsonPathAttributes, true, false);
+		IDataStore read = reader.read(json);
+		assertEquals(2, read.getRecordsCount());
+
 		IMetaData md = read.getMetaData();
-		
+
 		IRecord rec0 = read.getRecordAt(0);
 		testRecord0(md, rec0);
-		
-		assertField("atTime",new SimpleDateFormat(TIME_FORMAT).parse("2015-07-14T17:19:14.014+0200"),rec0,md);
-		assertField("downstreamActivePower",Double.parseDouble("4.8"),rec0,md);
-		
+
+		assertField("atTime", new SimpleDateFormat(TIME_FORMAT).parse("2015-07-14T17:19:14.014+0200"), rec0, md);
+		assertField("downstreamActivePower", Double.parseDouble("4.8"), rec0, md);
+
 		IRecord rec1 = read.getRecordAt(1);
 		testRecord1(md, rec1);
-		
-		assertField("atTime",new SimpleDateFormat(TIME_FORMAT).parse("2015-07-14T17:16:14.014+0200"),rec1,md);
-		assertField("downstreamActivePower",Double.parseDouble("3.5"),rec1,md);
+
+		assertField("atTime", new SimpleDateFormat(TIME_FORMAT).parse("2015-07-14T17:16:14.014+0200"), rec1, md);
+		assertField("downstreamActivePower", Double.parseDouble("3.5"), rec1, md);
 	}
 
 	private void testRecord1(IMetaData md, IRecord rec1) {
-		assertField("a","q",rec1,md);
-		assertField("c",null,rec1,md);
-		assertField("e","r",rec1,md);
-		assertField("f","s",rec1,md);
-		assertField("b","q",rec1,md);
+		assertField("a", 2, rec1, md);
+		assertField("c", null, rec1, md);
+		assertField("e", "r", rec1, md);
+		assertField("f", "s", rec1, md);
+		assertField("b", "q", rec1, md);
 	}
 
 	private void testRecord0(IMetaData md, IRecord rec0) {
-		assertField("a","b",rec0,md);
-		assertField("c","d",rec0,md);
-		assertField("e","f",rec0,md);
-		assertField("f",null,rec0,md);
-		assertField("b",null,rec0,md);
+		assertField("a", 3, rec0, md);
+		assertField("c", "d", rec0, md);
+		assertField("e", "f", rec0, md);
+		assertField("f", null, rec0, md);
+		assertField("b", null, rec0, md);
 	}
-			
+
 	private void assertField(String key, Object value, IRecord rec, IMetaData md) {
 		for (int i = 0; i < md.getFieldCount(); i++) {
 			IFieldMetaData fm = md.getFieldMeta(i);
 			if (fm.getName().equals(key)) {
 				if (Double.class.equals(fm.getType())) {
-					assertEquals((Double)value, (Double)rec.getFieldAt(i).getValue(), 10E-6);
+					assertEquals((Double) value, (Double) rec.getFieldAt(i).getValue(), 10E-6);
+				} else {
+					assertEquals(value, rec.getFieldAt(i).getValue());
 				}
-				assertEquals(value, rec.getFieldAt(i).getValue());
 				return;
 			}
 		}
-		fail(key+" "+value+" "+toString(md));
-		
+		fail(key + " " + value + " " + toString(md));
+
 	}
 
 	private String toString(IMetaData md) {
-		StringBuilder res=new StringBuilder();
+		StringBuilder res = new StringBuilder();
 		for (int i = 0; i < md.getFieldCount(); i++) {
 			res.append(md.getFieldMeta(i).getName());
 			res.append('\n');
 		}
 		return res.toString();
 	}
-	
+
 	public void testReadDates() throws IOException, ParseException {
-		String json = HelperForTest.getJsonTest("dataReader-test-dates.json", this.getClass());
+		String json = HelperForTest.readFile("dataReader-test-dates.json", this.getClass());
 		List<JSONPathAttribute> jsonPathAttributes = getJsonPathAttributesDates();
-		JSONPathDataReader reader = new JSONPathDataReader("$.contextResponses[*].contextElement", jsonPathAttributes,false);
+		JSONPathDataReader reader = new JSONPathDataReader("$.contextResponses[*].contextElement", jsonPathAttributes, false, false);
 		IDataStore read = reader.read(json);
-		assertEquals(1,read.getRecordsCount());
-		assertEqualsDates(read,"atTime",new int[]{HOUR_OF_DAY,MINUTE,SECOND},new int[]{18,19,14});
-		assertEqualsDates(read,"atDate",new int[]{YEAR,MONTH,DAY_OF_MONTH},new int[]{2015,AUGUST,14});
-		assertEqualsDates(read,"atTimestamp",new int[]{YEAR,MONTH,DAY_OF_MONTH,HOUR_OF_DAY,MINUTE,SECOND},new int[]{2016,JULY,14,17,19,14});
-		assertEqualsDates(read,"atDateTime",new int[]{YEAR,MONTH,DAY_OF_MONTH,HOUR_OF_DAY,MINUTE,SECOND},new int[]{2015,JULY,13,15,19,14});
-		assertEqualsDates(read,"atDateCustom",new int[]{YEAR,MONTH,DAY_OF_MONTH},new int[]{1986,JANUARY,20});
-		
+		assertEquals(1, read.getRecordsCount());
+		assertEqualsDates(read, "atTime", new int[] { HOUR_OF_DAY, MINUTE, SECOND }, new int[] { 18, 19, 14 });
+		assertEqualsDates(read, "atDate", new int[] { YEAR, MONTH, DAY_OF_MONTH }, new int[] { 2015, AUGUST, 14 });
+		assertEqualsDates(read, "atTimestamp", new int[] { YEAR, MONTH, DAY_OF_MONTH, HOUR_OF_DAY, MINUTE, SECOND }, new int[] { 2015, JULY, 21, 14, 49, 46 });
+		assertEqualsDates(read, "atDateTime", new int[] { YEAR, MONTH, DAY_OF_MONTH, HOUR_OF_DAY, MINUTE, SECOND }, new int[] { 2015, JULY, 22, 14, 49, 46 });
+		assertEqualsDates(read, "atDateCustom", new int[] { YEAR, MONTH, DAY_OF_MONTH }, new int[] { 1986, JANUARY, 20 });
+
 	}
 
 	private static void assertEqualsDates(IDataStore read, String field, int[] calendarFields, int[] values) {
@@ -132,9 +186,9 @@ public class JSONPathDataReaderTest extends TestCase {
 			IFieldMetaData fm = md.getFieldMeta(i);
 			String name = fm.getName();
 			if (field.equals(name)) {
-				IRecord rec = read.getRecordAt(0); //only 1 record
-				Date d=(Date) rec.getFieldAt(i).getValue();
-				Calendar c=Calendar.getInstance();
+				IRecord rec = read.getRecordAt(0); // only 1 record
+				Date d = (Date) rec.getFieldAt(i).getValue();
+				Calendar c = Calendar.getInstance();
 				c.setTime(d);
 				for (int j = 0; j < calendarFields.length; j++) {
 					assertEquals(values[j], c.get(calendarFields[j]));
@@ -146,13 +200,12 @@ public class JSONPathDataReaderTest extends TestCase {
 	}
 
 	public void testRead() throws IOException, ParseException {
-		String json = HelperForTest.getJsonTest("dataReader-test.json", this.getClass());
-		List<JSONPathAttribute> jsonPathAttributes = getJsonPathAttributes();
-		JSONPathDataReader reader = new JSONPathDataReader("$.contextResponses[*].contextElement", jsonPathAttributes,false);
+		String json = HelperForTest.readFile("dataReader-test.json", this.getClass());
+		JSONPathDataReader reader = getJSONPathDataReaderOrion();
 		IDataStore read = reader.read(json);
-		assertEquals(6,read.getRecordsCount());
+		assertEquals(6, read.getRecordsCount());
 		List<IRecord> records = read.findRecords(new IRecordMatcher() {
-			
+
 			public boolean match(IRecord record) {
 				for (IField field : record.getFields()) {
 					if ("pros6_Meter".equals(field.getValue())) {
@@ -163,35 +216,35 @@ public class JSONPathDataReaderTest extends TestCase {
 			}
 		});
 		assertEquals(1, records.size());
-		IRecord record=records.get(0);
-		boolean[] done=new boolean[5];
+		IRecord record = records.get(0);
+		boolean[] done = new boolean[5];
 		IMetaData metaData = read.getMetaData();
 		List<IField> fields = record.getFields();
-		for (int i=0;i< metaData.getFieldCount();i++) {
-			IFieldMetaData fm = metaData.getFieldMeta(i);			
+		for (int i = 0; i < metaData.getFieldCount(); i++) {
+			IFieldMetaData fm = metaData.getFieldMeta(i);
 			if ("downstreamActivePower".equals(fm.getName())) {
-				assertEquals(4.8,(Double)fields.get(i).getValue(),10E-6);
-				done[0]=true;
+				assertEquals(4.8, (Double) fields.get(i).getValue(), 10E-6);
+				done[0] = true;
 				continue;
 			}
 			if ("atTime".equals(fm.getName())) {
 				assertEquals(fields.get(i).getValue(), new SimpleDateFormat(TIME_FORMAT).parse("2015-07-14T17:19:14.014+0200"));
-				done[1]=true;
+				done[1] = true;
 				continue;
 			}
 			if ("upstreamActivePower".equals(fm.getName())) {
-				assertEquals(0,(Double)fields.get(i).getValue(),10E-6);
-				done[2]=true;
+				assertEquals(0, (Double) fields.get(i).getValue(), 10E-6);
+				done[2] = true;
 				continue;
 			}
 			if ("id".equals(fm.getName())) {
 				assertEquals(fields.get(i).getValue(), "pros6_Meter");
-				done[3]=true;
+				done[3] = true;
 				continue;
 			}
 			if ("isPattern".equals(fm.getName())) {
 				assertEquals(fields.get(i).getValue(), Boolean.FALSE);
-				done[4]=true;
+				done[4] = true;
 				continue;
 			}
 		}
@@ -200,13 +253,23 @@ public class JSONPathDataReaderTest extends TestCase {
 		}
 	}
 
+	public static JSONPathDataReader getJSONPathDataReaderOrion() {
+		JSONPathDataReader reader = new JSONPathDataReader("$.contextResponses[*].contextElement", getJsonPathAttributes(), false, false);
+		return reader;
+	}
+
+	public static JSONPathDataReader getJSONPathDataReaderNGSI() {
+		JSONPathDataReader reader = new JSONPathDataReader(null, new ArrayList<JSONPathDataReader.JSONPathAttribute>(), false, true);
+		return reader;
+	}
+
 	private static List<JSONPathAttribute> getJsonPathAttributes() {
 		List<JSONPathAttribute> res = new ArrayList<JSONPathDataReader.JSONPathAttribute>();
 		JSONPathAttribute jpa = new JSONPathAttribute("downstreamActivePower", "$.attributes[?(@.name==downstreamActivePower)].value",
 				"$.attributes[?(@.name==downstreamActivePower)].type");
 		res.add(jpa);
 
-		JSONPathAttribute jpa2 = new JSONPathAttribute("atTime", "$.attributes[?(@.name==atTime)].value", "timestamp "+TIME_FORMAT);
+		JSONPathAttribute jpa2 = new JSONPathAttribute("atTime", "$.attributes[?(@.name==atTime)].value", "timestamp " + TIME_FORMAT);
 		res.add(jpa2);
 
 		JSONPathAttribute jpa3 = new JSONPathAttribute("upstreamActivePower", "$.attributes[?(@.name==upstreamActivePower)].value", "double");
@@ -219,7 +282,7 @@ public class JSONPathDataReaderTest extends TestCase {
 		res.add(jpa5);
 		return res;
 	}
-	
+
 	private static List<JSONPathAttribute> getJsonPathAttributesDates() {
 		List<JSONPathAttribute> res = new ArrayList<JSONPathDataReader.JSONPathAttribute>();
 		res.add(getJSONPathType("atTime"));
@@ -231,32 +294,36 @@ public class JSONPathDataReaderTest extends TestCase {
 	}
 
 	private static JSONPathAttribute getJSONPathType(String name) {
-		return new JSONPathAttribute(name, "$.attributes[?(@.name=="+name+")].value", "$.attributes[?(@.name=="+name+")].type");
+		return new JSONPathAttribute(name, "$.attributes[?(@.name==" + name + ")].value", "$.attributes[?(@.name==" + name + ")].type");
 	}
-	
+
 	private static List<JSONPathAttribute> getJsonPathAttributesDirectly() {
 		List<JSONPathAttribute> res = new ArrayList<JSONPathDataReader.JSONPathAttribute>();
 		JSONPathAttribute jpa = new JSONPathAttribute("downstreamActivePower", "$.attributes[?(@.name==downstreamActivePower)].value",
 				"$.attributes[?(@.name==downstreamActivePower)].type");
 		res.add(jpa);
 
-		JSONPathAttribute jpa2 = new JSONPathAttribute("atTime", "$.attributes[?(@.name==atTime)].value", "timestamp "+TIME_FORMAT);
+		JSONPathAttribute jpa2 = new JSONPathAttribute("atTime", "$.attributes[?(@.name==atTime)].value", "timestamp " + TIME_FORMAT);
 		res.add(jpa2);
 
 		return res;
 	}
 
 	public void testReadFail() throws IOException, ParseException {
-		String json = HelperForTest.getJsonTest("dataReader-test.json", this.getClass());
+		String json = getJSONData();
 		List<JSONPathAttribute> jsonPathAttributes = getJsonPathAttributes();
-		JSONPathDataReader reader = new JSONPathDataReader("$.contextRespo", jsonPathAttributes,false);
-		boolean done=false;
+		JSONPathDataReader reader = new JSONPathDataReader("$.contextRespo", jsonPathAttributes, false, false);
+		boolean done = false;
 		try {
 			reader.read(json);
 		} catch (JSONPathDataReaderException e) {
-			done=true;
+			done = true;
 		}
 		assertTrue(done);
+	}
+
+	public static String getJSONData() throws IOException {
+		return HelperForTest.readFile("dataReader-test.json", JSONPathDataReaderTest.class);
 	}
 
 }

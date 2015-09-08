@@ -37,6 +37,7 @@
 Ext.ns("Sbi.console");
 
 Sbi.console.GridPanel = function(config) {
+		var self=this;
 
 		var defaultSettings = {
 			layout: 'fit'
@@ -106,6 +107,11 @@ Sbi.console.GridPanel = function(config) {
 					this.pagingBar.onLoad(this.store, [], {params: this.store.pagingParams || {}});
 				}, this);
 			}
+
+			//highlight the row when it's updated
+			this.getView().addListener("rowupdated",function(/**GridView*/ gv,/**Number*/ index,/**Record*/ r){
+				jQuery(gv.getRow(index)).effect( "highlight", {}, 3000 );
+			});
 		}
 		
 		var c = Ext.apply(c, {
@@ -905,7 +911,9 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			}
 			
 			if (this.columnId !== undefined && this.columnId === fields[i].header ){
-				fields[i].hidden = true;
+				if (this.showColumnId == null || this.showColumnId == false ) {
+					fields[i].hidden = true;
+				}
 			}
 			tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 			fieldsMap[fields[i].name] = i;
@@ -1304,7 +1312,9 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			}
 			
 			if (this.columnId !== undefined && this.columnId === fields[i].header ){
-				fields[i].hidden = true;
+				if (this.showColumnId == null || this.showColumnId == false ) {
+					fields[i].hidden = true;
+				}
 			}
 			tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 			fieldsMap[fields[i].name] = i;

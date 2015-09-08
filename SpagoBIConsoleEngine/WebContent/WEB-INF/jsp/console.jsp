@@ -94,6 +94,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 		<%@include file="commons/includeExtJS.jspf" %>
 		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSbiConsoleJS.jspf"%>
+		<%@include file="commons/includeCometd.jspf"%>
 		 
 		<!-- Active TEST  -->
 		<!--  %@include file="tests/template.jspf"% -->

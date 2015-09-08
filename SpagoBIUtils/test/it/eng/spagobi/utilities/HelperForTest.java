@@ -10,9 +10,11 @@ public class HelperForTest {
 	private HelperForTest() {
 	}
 
-	public static String getJsonTest(String fileName, Class<?> clazz) throws IOException {
+	public static String readFile(String fileName, Class<?> clazz) throws IOException {
 		InputStream in = clazz.getResourceAsStream(fileName);
-		return IOUtils.toString(in, "UTF-8");
+		String res= IOUtils.toString(in, "UTF-8");
+		in.close();
+		return res;
 	}
 
 	public static boolean all(boolean[] done) {
@@ -22,6 +24,13 @@ public class HelperForTest {
 			}
 		}
 		return true;
+	}
+
+	public static byte[] getFileContent(String fileName, Class<?> clazz) throws IOException {
+		InputStream in = clazz.getResourceAsStream(fileName);
+		byte[] res= IOUtils.toByteArray(in);
+		in.close();
+		return res;
 	}
 
 }

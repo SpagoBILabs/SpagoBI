@@ -30,8 +30,6 @@
     </filter-mapping>
 	
 	
-	
-	
 	<filter>
 		<filter-name>EngineCheckSessionFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EngineCheckSessionFilter</filter-class>
@@ -121,10 +119,13 @@ END-CAS -->
     		<filter-name>SpagoBIAccessFilter</filter-name>
     		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
 	</filter-mapping>
+	
+	<filter-mapping>
+    		<filter-name>SpagoBIAccessFilter</filter-name>
+    		<url-pattern>/cometd/*</url-pattern>
+	</filter-mapping>
 	 
-	 <!--  ============================================================================ -->
-	<!--  SERVLETS								 									   -->
-	<!--  ============================================================================ -->
+	
 	<servlet>
 		<servlet-name>ConfigServlet</servlet-name>
 		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
@@ -135,6 +136,7 @@ END-CAS -->
 		</init-param>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
+
 	
 	 <servlet>
 		<servlet-name>AdapterHTTP</servlet-name>
@@ -147,10 +149,44 @@ END-CAS -->
 		</servlet-class>
 	</servlet>
 	
-	<!--  ============================================================================ -->
-	<!--  SERVLET MAPPINGS						 									   -->
-	<!--  ============================================================================ -->
+	<!-- Notifications and CometD servlets-->
+	<servlet>
+		<servlet-name>NotifierServlet</servlet-name>
+		<servlet-class>it.eng.spagobi.tools.dataset.notifier.NotifierServlet</servlet-class>
+		 
+		<init-param>
+			<param-name>notifyUrl</param-name>
+			<param-value>http://192.168.93.1:8080/SpagoBIConsoleEngine/datasetNotifier</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet>
+      <servlet-name>cometDInitializer</servlet-name>
+      <servlet-class>it.eng.spagobi.tools.dataset.listener.CometDInitializer</servlet-class>
+      <load-on-startup>2</load-on-startup>
+    </servlet>
+  	<servlet>
+      <servlet-name>cometd</servlet-name>
+      <servlet-class>org.cometd.server.CometDServlet</servlet-class>
+      <init-param>
+        <param-name>ws.cometdURLMapping</param-name>
+        <param-value>/cometd/*</param-value>
+      </init-param>
+      <load-on-startup>1</load-on-startup>
+      <async-supported>true</async-supported>
+    </servlet>
+    
+    <servlet-mapping>
+      <servlet-name>cometd</servlet-name>
+      <url-pattern>/cometd/*</url-pattern>
+    </servlet-mapping>
   	
+  	<servlet-mapping>
+		<servlet-name>NotifierServlet</servlet-name>
+		<url-pattern>/datasetNotifier</url-pattern>
+	</servlet-mapping>
+	<!-- Notifications and CometD servlets end-->
+	
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>

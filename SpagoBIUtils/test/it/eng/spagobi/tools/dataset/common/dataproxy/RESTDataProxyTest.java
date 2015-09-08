@@ -30,6 +30,18 @@ import com.xebialabs.restito.server.StubServer;
 
 public class RESTDataProxyTest extends TestCase {
 
+	private static final String RESPONSE_VALID = "{\n" + 
+			"    \"a\": [\n" + 
+			"        {\n" + 
+			"            \"b\": \"b1\",\n" + 
+			"            \"c\": \"c1\"\n" + 
+			"        },\n" + 
+			"        {\n" + 
+			"            \"b\": \"b2\",\n" + 
+			"            \"c\": \"c2\"\n" + 
+			"        }\n" + 
+			"    ]\n" + 
+			"}";
 	private StubServer server;
 	private JSONPathDataReader reader;
 	private RESTDataProxy rdp;
@@ -38,12 +50,35 @@ public class RESTDataProxyTest extends TestCase {
 	protected void setUp() throws Exception {
 		server = new StubServer(8090).run();
 		List<JSONPathAttribute> jsonPathAttributes = getJsonPathAttributes();
-		reader = new JSONPathDataReader("$.a", jsonPathAttributes,false);
+		reader = new JSONPathDataReader("$.a", jsonPathAttributes,false,false);
 		Map<String, String> requestHeaders = new HashMap<String, String>();
 		requestHeaders.put("d", "e");
 		rdp = new RESTDataProxy("http://localhost:8090/c?q=p", HttpMethod.Post, "{\n" + 
 				"    \"id\": \"z\"\n" + 
-				"}", requestHeaders,"myOffset","myFetchSize","myMaxResults");
+				"}", requestHeaders,"myOffset","myFetchSize","myMaxResults",false);
+	}
+	
+	public void testNGSI() {
+		rdp = new RESTDataProxy("http://localhost:8090/v1/queryContext", HttpMethod.Post, "{\n" + 
+				"    \"entities\": [\n" + 
+				"        {\n" + 
+				"            \"isPattern\": \"true\",\n" + 
+				"            \"id\": \".*\"\n" + 
+				"        }\n" + 
+				"    ]\n" + 
+				"}", new HashMap<String, String>(),null,null,null,true);
+		
+		whenHttp(server).match(post("/v1/queryContext"), withPostBodyContaining("{\n" + 
+				"    \"entities\": [\n" + 
+				"        {\n" + 
+				"            \"isPattern\": \"true\",\n" + 
+				"            \"id\": \".*\"\n" + 
+				"        }\n" + 
+				"    ]\n" + 
+				"}"),withHeader( "Accept", "application/json"),withHeader( "Content-Type", "application/json")).then(ok(),
+				stringContent(RESPONSE_VALID));
+		IDataStore load = rdp.load(reader);
+		assertReader(load);
 	}
 
 	private static List<JSONPathAttribute> getJsonPathAttributes() {
@@ -103,18 +138,7 @@ public class RESTDataProxyTest extends TestCase {
 		whenHttp(server).match(new PrintCondition(null),post("/c"), parameter("q", "p"), withPostBodyContaining("{\n" + 
 				"    \"id\": \"z\"\n" + 
 				"}"),parameter("myOffset", "10"),parameter("myFetchSize", "15"),parameter("myMaxResults", "30"),withHeader("d", "e")).then(ok(),
-				stringContent("{\n" + 
-						"    \"a\": [\n" + 
-						"        {\n" + 
-						"            \"b\": \"b1\",\n" + 
-						"            \"c\": \"c1\"\n" + 
-						"        },\n" + 
-						"        {\n" + 
-						"            \"b\": \"b2\",\n" + 
-						"            \"c\": \"c2\"\n" + 
-						"        }\n" + 
-						"    ]\n" + 
-						"}"));
+				stringContent(RESPONSE_VALID));
 		
 		
 		rdp.setFetchSize(15);
@@ -122,6 +146,10 @@ public class RESTDataProxyTest extends TestCase {
 		rdp.setOffset(10);
 		
 		IDataStore load = rdp.load(reader);
+		assertReader(load);
+	}
+
+	private void assertReader(IDataStore load) {
 		assertEquals(2,load.getRecordsCount());
 		boolean[] done=new boolean[2];
 		for (int i = 0; i < load.getRecordsCount(); i++) {
