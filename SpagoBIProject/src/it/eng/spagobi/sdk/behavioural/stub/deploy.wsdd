@@ -30,10 +30,25 @@
         innerType="cmp-ns:SDKAttribute" xmlns:cmp-ns="http://bo.behavioural.sdk.spagobi.eng.it"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkbehavioural"
+        qname="ns:ArrayOf_tns2_SDKRole"
+        type="java:it.eng.spagobi.sdk.behavioural.bo.SDKRole[]"
+        innerType="cmp-ns:SDKRole" xmlns:cmp-ns="http://bo.behavioural.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
       <typeMapping
         xmlns:ns="http://exceptions.sdk.spagobi.eng.it"
         qname="ns:NotAllowedOperationException"
         type="java:it.eng.spagobi.sdk.exceptions.NotAllowedOperationException"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.behavioural.sdk.spagobi.eng.it"
+        qname="ns:SDKRole"
+        type="java:it.eng.spagobi.sdk.behavioural.bo.SDKRole"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
