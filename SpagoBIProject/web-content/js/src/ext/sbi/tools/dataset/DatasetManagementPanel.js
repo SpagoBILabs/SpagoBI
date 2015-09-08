@@ -396,10 +396,11 @@ ns.restJsonPathAttributesColumns=[
 ];
 
 ns.restFields=['restAddress','restRequestBody','restHttpMethod', 
-	'restRequestHeaders','restJsonPathItems','restDirectlyJSONAttributes','restJsonPathAttributes',
+	'restRequestHeaders','restJsonPathItems','restDirectlyJSONAttributes','restNGSI','restJsonPathAttributes',
 	'restOffset','restFetchSize','restMaxResults'];
 ns.INDEX_REQUEST_HEADERS=3;
-ns.INDEX_REQUEST_JSON_PATH_ATTRIBUTES=6;
+ns.INDEX_REQUEST_JSON_PATH_ATTRIBUTES=7;
+//[function,arguments before name argument]
 ns.restFormFields=[
 	[ns.getTextField,[true]],
 	[ns.getTextArea,[false]],
@@ -407,8 +408,9 @@ ns.restFormFields=[
 		['Post','Post'],['Get','Get'],['Put','Put'],['Delete','Delete']
 	]]], 
 	[ns.getEditorGrid,[ns.restRequestHeadersColumns]], //headers 
-	[ns.getTextField,[true]], 
+	[ns.getTextField,[false]],   
 	[ns.getCheckBox,[]], //directly json attributes
+	[ns.getCheckBox,[]], //NGSI
 	[ns.getEditorGrid,[ns.restJsonPathAttributesColumns]], //attributes
 	[ns.getTextField,[false]],
 	[ns.getTextField,[false]],

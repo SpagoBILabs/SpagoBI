@@ -1,6 +1,6 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * Copyright (C) 2015 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.common.datareader;
@@ -22,19 +22,23 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import net.minidev.json.JSONArray;
 
+import org.json.JSONObject;
+
 import com.jayway.jsonpath.JsonPath;
 
 /**
  * This reader convert JSON string to an {@link IDataStore}. The JSON must contains the items to convert, they are found using {@link JsonPath}. The name of
- * each {@link IField} must be defined. The type can be fixed or can be defined dinamically by {@link JsonPath}. The value is found dinamically by
+ * each {@link IField} must be defined. The type can be fixed or can be defined dynamically by {@link JsonPath}. The value is found dynamically by
  * {@link JsonPath}. For an example of usage check the related Test class.
  * 
  * @author fabrizio
@@ -54,11 +58,13 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static final String DEFAULT_TIME_PATTERN = "HH:mm:ss";
 
-	private static final String DEFAULT_TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss";
+	private static final String DEFAULT_TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 	private static final String ATTRIBUTES_DIRECTLY = "attributesDirectly";
 
 	private static final String ID_NAME = "id";
+
+	private static final String ORION_JSON_PATH_ITEMS = "$.contextResponses[*].contextElement";
 
 	public static class JSONPathAttribute {
 		private String name;
@@ -89,38 +95,56 @@ public class JSONPathDataReader extends AbstractDataReader {
 	private final List<JSONPathAttribute> jsonPathAttributes;
 	private final boolean useItemsAttributes;
 
-	public JSONPathDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean useItemsAttributes) {
-		Helper.checkNotNullNotTrimNotEmpty(jsonPathItems, "jsonPathItems");
+	private int idFieldIndex = -2; // not set
+
+	private boolean ngsi;
+
+	private boolean dataReadFirstTime;
+
+	private boolean ngsiDefaultItems;
+
+	public JSONPathDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean useItemsAttributes, boolean ngsi) {
 		Helper.checkWithoutNulls(jsonPathAttributes, "pathAttributes");
 		Helper.checkNotNull(jsonPathAttributes, "jsonPathAttributes");
-		this.jsonPathItems = jsonPathItems;
 		this.jsonPathAttributes = jsonPathAttributes;
 		this.useItemsAttributes = useItemsAttributes;
-	}
+		this.ngsi = ngsi;
 
-	private static boolean isJSON(String responseBody) {
-		try {
-			JSONUtils.toJSONObject(responseBody);
-			return true;
-		} catch (Exception e) {
-			return false;
+		if (ngsi && jsonPathItems == null) {
+			this.jsonPathItems = ORION_JSON_PATH_ITEMS;
+			this.ngsiDefaultItems = true;
+		} else {
+			Helper.checkNotNullNotTrimNotEmpty(jsonPathItems, "jsonPathItems");
+			this.jsonPathItems = jsonPathItems;
 		}
 	}
 
-	public IDataStore read(Object data) {
+	private static JSONObject isJSON(String responseBody) {
+		try {
+			JSONObject res = JSONUtils.toJSONObject(responseBody);
+			return res;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public synchronized IDataStore read(Object data) {
 		Helper.checkNotNull(data, "data");
 		if (!(data instanceof String)) {
 			throw new IllegalArgumentException("data must be a string");
 		}
+
 		String d = (String) data;
-		Assert.assertTrue(isJSON(d), String.format("Data must be a valid JSON: %s", data));
+		JSONObject jsonData = isJSON(d);
+		Assert.assertTrue(jsonData != null, String.format("Data must be a valid JSON: %s", d));
 
 		try {
 			DataStore dataStore = new DataStore();
 			MetaData dataStoreMeta = new MetaData();
 			dataStore.setMetaData(dataStoreMeta);
-			addFieldMetadata(dataStoreMeta);
-			addData(d, dataStore, dataStoreMeta);
+			List<Object> parsedData = getItems(d);
+			addFieldMetadata(dataStoreMeta, parsedData);
+			addData(d, dataStore, dataStoreMeta, parsedData);
 			return dataStore;
 		} catch (ParseException e) {
 			throw new JSONPathDataReaderException(e);
@@ -131,8 +155,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 	}
 
-	private void addData(String data, DataStore dataStore, MetaData dataStoreMeta) throws ParseException {
-		List<Object> parsedData = getItems(data);
+	private void addData(String data, DataStore dataStore, MetaData dataStoreMeta, List<Object> parsedData) throws ParseException {
 
 		for (Object o : parsedData) {
 			IRecord record = new Record(dataStore);
@@ -206,8 +229,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 			String name = fieldMeta.getName();
 			if (jsonObject.containsKey(name)) {
 				Object value = jsonObject.get(name);
-				Assert.assertNotNull(value, "value is null");
-				rec.appendField(new Field(value.toString()));
+				rec.appendField(new Field(value));
 			} else {
 				// add null value
 				rec.appendField(new Field(null));
@@ -223,13 +245,14 @@ public class JSONPathDataReader extends AbstractDataReader {
 			}
 
 			// not found
-			FieldMetadata fm = new FieldMetadata(key, ALL_OTHER_TYPES);
+			Object value = jsonObject.get(key);
+			rec.appendField(new Field(value));
+
+			// calue can be null from json object
+			Class<? extends Object> type = value == null ? ALL_OTHER_TYPES : value.getClass();
+			FieldMetadata fm = new FieldMetadata(key, type);
 			fm.setProperty(ATTRIBUTES_DIRECTLY, true);
 			dsm.addFiedMeta(fm);
-
-			Object value = jsonObject.get(key);
-			Assert.assertNotNull(value, "value is null");
-			rec.appendField(new Field(value.toString()));
 
 			// add null to previous records
 			// current record not added
@@ -263,10 +286,37 @@ public class JSONPathDataReader extends AbstractDataReader {
 		return res.toString();
 	}
 
-	private void addFieldMetadata(MetaData dataStoreMeta) {
-		int index = 0;
+	public synchronized int getIdFieldIndex() {
+		if (idFieldIndex == -2) { // not set
+
+			if (ngsiDefaultItems && !dataReadFirstTime) {
+				throw new IllegalStateException("NGSI Rest Data Reader needs a first read of data");
+			}
+
+			idFieldIndex = -1;
+			for (int i = 0; i < jsonPathAttributes.size(); i++) {
+				if (ID_NAME.equalsIgnoreCase(jsonPathAttributes.get(i).name)) {
+					idFieldIndex = i;
+					break;
+				}
+			}
+		}
+		return idFieldIndex;
+	}
+
+	/**
+	 * 
+	 * @param dataStoreMeta
+	 * @param parsedData
+	 *            list of json object (net.minidev)
+	 */
+	private void addFieldMetadata(MetaData dataStoreMeta, List<Object> parsedData) {
 		boolean idSet = false;
-		for (JSONPathAttribute jpa : jsonPathAttributes) {
+
+		manageNGSI(parsedData);
+
+		for (int index = 0; index < jsonPathAttributes.size(); index++) {
+			JSONPathAttribute jpa = jsonPathAttributes.get(index);
 			FieldMetadata fm = new FieldMetadata();
 			String header = jpa.name;
 			fm.setAlias(header);
@@ -275,7 +325,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 				if (idSet) {
 					throw new JSONPathDataReaderException("There is no unique id field.");
 				}
-				idSet=true;
+				idSet = true;
 				dataStoreMeta.setIdField(index);
 			}
 			fm.setProperty(JSON_PATH_VALUE_METADATA_PROPERTY, jpa.jsonPathValue);
@@ -294,8 +344,59 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 			}
 			dataStoreMeta.addFiedMeta(fm);
-			index++;
 		}
+	}
+
+	private void manageNGSI(List<Object> parsedData) {
+		if (ngsiDefaultItems && !dataReadFirstTime) {
+			List<JSONPathAttribute> ngsiAttributes = getNGSIAttributes(parsedData);
+			updateAttributes(ngsiAttributes);
+		}
+		dataReadFirstTime = true;
+	}
+
+	private void updateAttributes(List<JSONPathAttribute> ngsiAttributes) {
+		Map<String, JSONPathAttribute> localByName = new HashMap<String, JSONPathDataReader.JSONPathAttribute>(jsonPathAttributes.size());
+		for (JSONPathAttribute jpa : jsonPathAttributes) {
+			localByName.put(jpa.name, jpa);
+		}
+
+		for (JSONPathAttribute na : ngsiAttributes) {
+			if (!localByName.containsKey(na.name)) {
+				jsonPathAttributes.add(na);
+
+				// just to assert to not insert duplicates
+				localByName.put(na.name, na);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<JSONPathAttribute> getNGSIAttributes(List<Object> parsedData) {
+		Assert.assertTrue(ngsiDefaultItems, "must be ngsi default items");
+
+		List<JSONPathAttribute> res = new ArrayList<JSONPathAttribute>();
+		if (parsedData.isEmpty()) {
+			return res;
+		}
+
+		Map<String, Object> element = (Map<String, Object>) parsedData.get(0);
+		res.add(new JSONPathAttribute("id", "$.id", "string")); // id of element
+		List<Object> attributes = (List<Object>) element.get("attributes");
+		Assert.assertTrue(attributes != null, "attributes!=null");
+		if (attributes.isEmpty()) {
+			return res;
+		}
+
+		for (Object attr : attributes) {
+			Map<String, Object> attrMap = (Map<String, Object>) attr;
+			String name = (String) attrMap.get("name");
+			String jsonPathValue = "$.attributes[?(@.name==" + name + ")].value";
+			String jsonPathType = "$.attributes[?(@.name==" + name + ")].type";
+			res.add(new JSONPathAttribute(name, jsonPathValue, jsonPathType));
+		}
+
+		return res;
 	}
 
 	private void setDateTypeFormat(IFieldMetaData fm, String jsonPathType) {
@@ -404,11 +505,18 @@ public class JSONPathDataReader extends AbstractDataReader {
 		return ALL_OTHER_TYPES;
 	}
 
+	public boolean isNgsi() {
+		return ngsi;
+	}
+
 	public String getJsonPathItems() {
 		return jsonPathItems;
 	}
 
-	public List<JSONPathAttribute> getJsonPathAttributes() {
+	public synchronized List<JSONPathAttribute> getJsonPathAttributes() {
+		if (ngsiDefaultItems && !dataReadFirstTime) {
+			throw new IllegalStateException("NGSI Rest Data Reader needs a first read of data");
+		}
 		return jsonPathAttributes;
 	}
 

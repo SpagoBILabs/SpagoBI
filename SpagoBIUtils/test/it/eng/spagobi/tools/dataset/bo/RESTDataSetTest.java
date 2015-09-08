@@ -168,12 +168,27 @@ public class RESTDataSetTest extends TestCase {
 		assertEquals(HttpMethod.Post, proxy.getRequestMethod());
 	}
 
-	private String getConfiguration() throws IOException {
-		return HelperForTest.getJsonTest("restdataset-conf.json", RESTDataSetTest.class);
+	public static String getConfiguration() throws IOException {
+		return HelperForTest.readFile("restdataset-conf.json", RESTDataSetTest.class);
 	}
 	
 	private String getConfigurationParams() throws IOException {
-		return HelperForTest.getJsonTest("restdataset-params-conf.json", RESTDataSetTest.class);
+		return HelperForTest.readFile("restdataset-params-conf.json", RESTDataSetTest.class);
+	}
+
+	public static RESTDataSet getRestDataSet() throws IOException {
+		String conf = getConfiguration();
+		return getRestDataSet(conf);
+		
+	}
+	
+	
+
+	public static RESTDataSet getRestDataSet(String conf) {
+		SpagoBiDataSet config = new SpagoBiDataSet();
+		config.setConfiguration(conf);
+		RESTDataSet dataset = new RESTDataSet(config);
+		return dataset;
 	}
 
 }

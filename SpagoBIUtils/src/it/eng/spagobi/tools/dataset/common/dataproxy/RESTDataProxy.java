@@ -1,6 +1,6 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * Copyright (C) 2015 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
@@ -14,7 +14,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +30,11 @@ import org.apache.commons.httpclient.NameValuePair;
  */
 public class RESTDataProxy extends AbstractDataProxy {
 
+	private static final String NGSI_LIMIT = "1000";
 	private static final int OFFSET_NOT_DEFINED = -1;
 	private static final int FETCH_SIZE_NOT_DEFINED = -1;
-	
+	private static final int MAX_RESULT_NOT_DEFINED = -1;
+
 	private final String requestBody;
 	private final String address;
 	private final Map<String, String> requestHeaders;
@@ -41,9 +43,10 @@ public class RESTDataProxy extends AbstractDataProxy {
 	private final String offsetParam;
 	private final String fetchSizeParam;
 	private final String maxResultsParam;
+	private final boolean ngsi;
 
 	public RESTDataProxy(String address, HttpMethod method, String requestBody, Map<String, String> requestHeaders, String offsetParam, String fetchSizeParam,
-			String maxResultsParam) {
+			String maxResultsParam, boolean ngsi) {
 		Helper.checkNotNull(address, "address");
 		Helper.checkNotEmpty(address, "address");
 		Helper.checkNotNull(method, "method");
@@ -70,17 +73,34 @@ public class RESTDataProxy extends AbstractDataProxy {
 		this.address = address;
 		this.method = method;
 		this.requestBody = requestBody;
-		this.requestHeaders = Collections.unmodifiableMap(requestHeaders);
+		this.requestHeaders = new HashMap<String, String>(requestHeaders);
 		this.offsetParam = offsetParam;
 		this.fetchSizeParam = fetchSizeParam;
 		this.maxResultsParam = maxResultsParam;
+		this.ngsi = ngsi;
+		manageHeadersNGSI();
+	}
+
+	private void manageHeadersNGSI() {
+		if (!ngsi) {
+			return;
+		}
+
+		// add NGSI headers if they are not present
+		String[][] ngsiHeaders = new String[][] { { "Accept", "application/json" }, { "Content-Type", "application/json" } };
+		for (String[] header : ngsiHeaders) {
+			if (!requestHeaders.containsKey(header[0])) {
+				requestHeaders.put(header[0], header[1]);
+			}
+		}
 	}
 
 	public IDataStore load(IDataReader dataReader) {
 		try {
 			Helper.checkNotNull(dataReader, "dataReader");
 
-			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody, getQuery());
+			List<NameValuePair> query = getQuery();
+			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody, query);
 			String responseBody = response.getResponseBody();
 			if (response.getStatusCode() != HttpStatus.SC_OK) {
 				throw new RESTDataProxyException(String.format("The response status is not ok: status=%d, response=%s", response.getStatusCode(), responseBody));
@@ -107,10 +127,16 @@ public class RESTDataProxy extends AbstractDataProxy {
 			if (fetchSize != FETCH_SIZE_NOT_DEFINED) {
 				res.add(new NameValuePair(fetchSizeParam, Integer.toString(fetchSize)));
 			}
-		}
-		if (maxResultsParam != null) {
+		} 
+
+		if (maxResultsParam != null && maxResults != MAX_RESULT_NOT_DEFINED) {
 			res.add(new NameValuePair(maxResultsParam, Integer.toString(maxResults)));
+		} else {
+			if (ngsi) {
+				res.add(new NameValuePair("limit", NGSI_LIMIT));
+			}
 		}
+
 		return res;
 	}
 

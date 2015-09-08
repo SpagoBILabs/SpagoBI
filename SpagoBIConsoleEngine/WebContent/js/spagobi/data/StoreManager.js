@@ -82,15 +82,29 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 						}
 						s.load({
 							params: s.pagingParams || {}, 
-							callback: function(){this.ready = true;}, 
+							callback: function(records,options,success){
+								this.ready = true;
+							}, 
 							scope: s, 
 							add: false
 						});
 					},
-					interval: s.refreshTime * 1000 //1 second
+					interval: s.refreshTime * 1000 //s to ms
 				};
 				Ext.TaskMgr.start(task);
 			}
+
+			//manage cometd messages from server
+			if (s.notifyFromServer) {
+		        var cometdConfig = {
+		            contextPath: pageContextPath,
+		            listenerId:"1",
+		            dsLabel:s.dsLabel,
+		            store:s
+		        };
+
+		    	Sbi.tools.dataset.cometd.subscribe(cometdConfig);
+        	}
 		}
 	}
 
@@ -152,7 +166,8 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 					, autoLoad: false
 					, refreshTime: c[i].refreshTime
 					, limitSS: this.limitSS
-					, memoryPagination: c[i].memoryPagination || false 
+					, memoryPagination: c[i].memoryPagination || false
+					, notifyFromServer : c[i].notifyFromServer || false 
 				});
 			}else{
 				//local pagination (default)		
@@ -163,6 +178,7 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 					, refreshTime: c[i].refreshTime
 					, rowsLimit:  c[i].rowsLimit || this.rowsLimit
 					, memoryPagination: c[i].memoryPagination || true	//default pagination type is client side
+					, notifyFromServer : c[i].notifyFromServer || false
 				});
 			}
 			s.ready = c[i].ready || false;
