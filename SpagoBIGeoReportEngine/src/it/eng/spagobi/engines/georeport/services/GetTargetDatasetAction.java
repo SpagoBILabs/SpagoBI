@@ -76,7 +76,8 @@ public class GetTargetDatasetAction extends AbstractBaseServlet {
 				if (fieldMeta.getAlias() != null) {
 					fieldMeta.setAlias(fieldMeta.getAlias());
 				}
-
+				// set the fieldType with the datasets' definition metadata (get settings from the user GUI)
+				fieldMeta.setFieldType(getDsFieldType(dataSet.getDsMetadata(), fieldMeta.getName()));
 			}
 
 			JSONDataWriter dataWriter = new JSONDataWriter();
