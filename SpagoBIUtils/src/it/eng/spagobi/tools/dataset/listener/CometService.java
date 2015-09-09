@@ -51,7 +51,6 @@ public class CometService extends AbstractService {
 		server.createChannelIfAbsent(channelName, new ConfigurableServerChannel.Initializer() {
 			public void configureChannel(ConfigurableServerChannel channel) {
 				channel.setPersistent(true);
-				channel.setLazy(true);
 			}
 		});
 
