@@ -171,7 +171,7 @@ ns.getTextArea = function(isRequired,name) {
 	var res= {
 		maxLength : 30000,
 		xtype : 'textarea',
-		height : 100,
+		height : 200,
 		width : 720,
 		regexText : LN('sbi.roles.alfanumericString'),
 	};
@@ -229,14 +229,14 @@ ns.getCheckBox = function(name) {
 } 
 
 
-ns.getEditorGrid = function(userColumns,name) {
+ns.getEditorGrid = function(height,userColumns,name) {
 	var config= {
 		id:name,
 		name:name,
 		isFormField:true, 
 		fieldLabel : LN('sbi.ds.'+name),
 		width: 720,
-		height: 120
+		height: height
 	};
 
 	//set the width of columns
@@ -407,11 +407,11 @@ ns.restFormFields=[
 	[ns.getComboBox,[true,[ //http method
 		['Post','Post'],['Get','Get'],['Put','Put'],['Delete','Delete']
 	]]], 
-	[ns.getEditorGrid,[ns.restRequestHeadersColumns]], //headers 
+	[ns.getEditorGrid,[150,ns.restRequestHeadersColumns]], //headers 
 	[ns.getTextField,[false]],   
 	[ns.getCheckBox,[]], //directly json attributes
 	[ns.getCheckBox,[]], //NGSI
-	[ns.getEditorGrid,[ns.restJsonPathAttributesColumns]], //attributes
+	[ns.getEditorGrid,[200,ns.restJsonPathAttributesColumns]], //attributes
 	[ns.getTextField,[false]],
 	[ns.getTextField,[false]],
 	[ns.getTextField,[false]]
@@ -1846,8 +1846,10 @@ Ext
 						this.typeTab = new Ext.Panel(
 								{
 									title : LN('sbi.generic.type'),
-									itemId : 'type',
+									itemId : 'type', 
 									width : 350,
+									//it enables the scrolling on type tab
+									autoScroll :true, 
 									items : {
 										id : 'type-detail',
 										itemId : 'type-detail',
