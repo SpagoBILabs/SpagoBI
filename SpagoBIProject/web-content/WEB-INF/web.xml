@@ -17,23 +17,8 @@
     
         <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+        <url-pattern>/servlet/AdapterHTTP</url-pattern>
     </filter-mapping>
-    
-<!--      <filter> -->
-<!--         <filter-name>MultiReadFilter</filter-name> -->
-<!--         <filter-class>it.eng.spagobi.utilities.filters.MultiReadFilter</filter-class> -->
-<!--     </filter> -->
-    
-<!--     <filter-mapping> -->
-<!--         <filter-name>MultiReadFilter</filter-name> -->
-<!--         <url-pattern>/servlet/AdapterHTTP/*</url-pattern> -->
-<!--     </filter-mapping> -->
-    
-<!--     <filter-mapping> -->
-<!--         <filter-name>MultiReadFilter</filter-name> -->
-<!--         <url-pattern>/restful-services/*</url-pattern> -->
-<!--     </filter-mapping> -->
 
 	<filter>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
@@ -105,41 +90,41 @@
 
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 
 <!-- START-CAS
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP</url-pattern>
   </filter-mapping>  
 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP</url-pattern>
   </filter-mapping>   
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP</url-pattern>
   </filter-mapping>  
  END-CAS --> 
 
  	<!-- START OAUTH 2
 	<filter-mapping>
 		<filter-name>OAuthFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
  	END OAUTH 2 -->
 
 	<filter-mapping>
 		<filter-name>ProfileFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>AntiInjectionFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
  
     <!-- START LISTENERS -->
@@ -383,4 +368,5 @@ END-LIFERAY -->
 		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
 	
+
 </web-app>
