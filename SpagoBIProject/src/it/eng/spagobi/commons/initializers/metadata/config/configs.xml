@@ -18,9 +18,9 @@
 <CONFIG label="SPAGOBI.MENU.pathTracked" name="pathTracked" description="pathTracked" isActive="false" valueCheck="true" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.LOOKUP.numberRows" name="SPAGOBI LOOKUP numberRows" description="The numnber of rows showed in each list" isActive="true" valueCheck="20" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
-<CONFIG label="SPAGOBI.RESOURCE_PATH_JNDI_NAME" name="RESOURCE PATH JNDI NAME" description="The name of the JNDI variable that contains the RESOURCE PATH" isActive="true" valueCheck="java:/urls/spagobi_resource_path" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.RESOURCE_PATH_JNDI_NAME" name="RESOURCE PATH JNDI NAME" description="The name of the JNDI variable that contains the RESOURCE PATH" isActive="true" valueCheck="java://comp/env/spagobi_resource_path" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
-<CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="SPAGOBI HOST JNDI" description="HOST JNDI" isActive="true" valueCheck="java:/urls/spagobi_host_url" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="SPAGOBI HOST JNDI" description="HOST JNDI" isActive="true" valueCheck="java://comp/env/spagobi_host_url" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.SPAGO_ADAPTERHTTP_URL" name="ADAPTERHTTP URL" description="ADAPTERHTTP URL" isActive="true" valueCheck="/servlet/AdapterHTTP" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.TEMPLATE_MAX_SIZE" name="TEMPLATE MAX SIZE" description="TEMPLATE MAX SIZE" isActive="true" valueCheck="5242880" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.SPAGOBI_CONTEXT" name="SPAGOBI CONTEXT" description="SPAGOBI CONTEXT" isActive="true" valueCheck="/SpagoBI" valueType="STRING" category="GENERIC_CONFIGURATION"/>
@@ -76,7 +76,7 @@
 <CONFIG label="SPAGOBI_SSO.ACTIVE" name="ACTIVE SSO FLAG" description="ACTIVE SSO FLAG" isActive="true" valueCheck="false" valueType="STRING" category="SECURITY"/>
 <CONFIG label="SPAGOBI_SSO.PASS" name="PASS String" description="Some proxy element use this string to do some security check" isActive="true" valueCheck="PASS" valueType="STRING" category="SECURITY"/>
 <CONFIG label="SPAGOBI_SSO.SECURITY_LOGOUT_URL" name="SECURITY LOGOUT URL" description="" isActive="true" valueCheck="https://athos.engilab.ewebpd.eng.it:1447/cas/logout" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI_SSO.INTEGRATION_CLASS_JNDI" name="SSO INTEGRATION CLASS JNDI" description="SSO INTEGRATION CLASS JNDI" isActive="true" valueCheck="java:/urls/spagobi_sso_class" valueType="STRING" category="SECURITY"/>
+<CONFIG label="SPAGOBI_SSO.INTEGRATION_CLASS_JNDI" name="SSO INTEGRATION CLASS JNDI" description="SSO INTEGRATION CLASS JNDI" isActive="true" valueCheck="java://comp/env/spagobi_sso_class" valueType="STRING" category="SECURITY"/>
 
     <!--  TimeStamp Format of SpagoBI DB-->          
     <!--  PostgresSQL: Uncomment the row below and edit the file to provide Db timestamp info  -->
@@ -101,7 +101,7 @@
 <CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES" name="LANGUAGES" description="All languages supported" isActive="true" valueCheck="[it,IT],[en,US],[fr,FR],[es,ES]" valueType="STRING" category="LANGUAGE_SUPPORTED"/>
 <CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default" name="default" description="default" isActive="true" valueCheck="en,US" valueType="STRING" category="LANGUAGE_SUPPORTED"/>
 
-<CONFIG label="INDEX_INITIALIZATION.jndiResourcePath" name="INDEX_INITIALIZATION.jndiResourcePath" description="" isActive="true" valueCheck="java:/urls/spagobi_resource_path" valueType="STRING" category="SEARCH_ENGINE"/>
+<CONFIG label="INDEX_INITIALIZATION.jndiResourcePath" name="INDEX_INITIALIZATION.jndiResourcePath" description="" isActive="true" valueCheck="java://comp/env/spagobi_resource_path" valueType="STRING" category="SEARCH_ENGINE"/>
 <CONFIG label="INDEX_INITIALIZATION.name" name="INDEX_INITIALIZATION.jndiResourcePath" description="" isActive="true" valueCheck="//idx" valueType="STRING" category="SEARCH_ENGINE"/>
 
 <CONFIG label="SCRIPT_LANGUAGE_DEFAULT" name="SCRIPT LANGUAGE DEFAULT" description="" isActive="true" valueCheck="groovy" valueType="STRING" category="SCRIPT_LANGUAGE"/>
@@ -143,7 +143,7 @@
 <CONFIG label="MAIL.PROFILES.kpi_alarm.password" name="Scheduler Password" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.kpi_alarm.useSSL" name="Use SSL Connection" description="" isActive="true" valueCheck="false" valueType="STRING" category="MAIL"/>
 <CONFIG label="DATA_SET_NULL_VALUE" name="DATA_SET_NULL_VALUE" description="Default value to replace null dataset values" isActive="true" valueCheck="%" valueType="STRING" category="MAIL"/>
-<CONFIG label="JNDI_THREAD_MANAGER" name="JNDI_THREAD_MANAGER" description="Jndi to build work manager" isActive="true" valueCheck="java:/urls/wm/SpagoWorkManager" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="JNDI_THREAD_MANAGER" name="JNDI_THREAD_MANAGER" description="Jndi to build work manager" isActive="true" valueCheck="java:/comp/env/wm/SpagoWorkManager" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
 <CONFIG label="SPAGOBI.SECURITY.CHECK_ROLE_LOGIN" name="SPAGOBI.SECURITY.CHECK_ROLE_LOGIN" description="Check the correct role in login action" isActive="false" valueCheck="false" valueType="STRING" category="SECURITY"/>
 <CONFIG label="SPAGOBI.SECURITY.ROLE_LOGIN" name="SPAGOBI.SECURITY.ROLE_LOGIN" description="The value of the role to check at login module" isActive="false" valueCheck="" valueType="STRING" category="SECURITY"/>
