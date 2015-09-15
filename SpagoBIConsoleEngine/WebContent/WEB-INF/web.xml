@@ -21,12 +21,12 @@
 	
 	   <filter-mapping>
             <filter-name>EncodingFilter</filter-name>
-            <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+            <url-pattern>/servlet/AdapterHTTP</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
             <filter-name>EncodingFilter</filter-name>
-            <url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+            <url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
     </filter-mapping>
 	
 	
@@ -90,18 +90,18 @@ END-CAS -->
 <!-- START-CAS  
   <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP</url-pattern>
   </filter-mapping> 
     	
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP</url-pattern>
   </filter-mapping> 
    	
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP</url-pattern>
   </filter-mapping> 
   
 	<filter-mapping>
@@ -112,17 +112,17 @@ END-CAS -->
 
 	<filter-mapping>
     		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
     		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+    		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
     		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/cometd/*</url-pattern>
+    		<url-pattern>/cometd</url-pattern>
 	</filter-mapping>
 	 
 	
@@ -170,7 +170,7 @@ END-CAS -->
       <servlet-class>org.cometd.server.CometDServlet</servlet-class>
       <init-param>
         <param-name>ws.cometdURLMapping</param-name>
-        <param-value>/cometd/*</param-value>
+        <param-value>/cometd</param-value>
       </init-param>
       <load-on-startup>1</load-on-startup>
       <async-supported>true</async-supported>
@@ -178,7 +178,7 @@ END-CAS -->
     
     <servlet-mapping>
       <servlet-name>cometd</servlet-name>
-      <url-pattern>/cometd/*</url-pattern>
+      <url-pattern>/cometd</url-pattern>
     </servlet-mapping>
   	
   	<servlet-mapping>
@@ -194,7 +194,7 @@ END-CAS -->
 	
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
-		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
 	</servlet-mapping>
     
     <servlet-mapping>

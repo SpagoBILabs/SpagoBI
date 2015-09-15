@@ -22,12 +22,12 @@
     
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/servlet/AccessibilityServlet/*</url-pattern>
+        <url-pattern>/servlet/AccessibilityServlet</url-pattern>
     </filter-mapping>
     
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/servlet/AccessibilityServletBackEnd/*</url-pattern>
+        <url-pattern>/servlet/AccessibilityServletBackEnd</url-pattern>
     </filter-mapping>
     
   
@@ -91,23 +91,23 @@ END-CAS -->
 	<!-- filter mappings -->
 	<filter-mapping>
 		<filter-name>EngineCheckSessionFilter</filter-name>
-		<url-pattern>/servlet/*</url-pattern>
+		<url-pattern>/servlet</url-pattern>
 	</filter-mapping>
 <!-- START-CAS  
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/servlet/AccessibilityServlet/*</url-pattern>
+    <url-pattern>/servlet/AccessibilityServlet</url-pattern>
   </filter-mapping> 
     	
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/servlet/AccessibilityServlet/*</url-pattern>
+    <url-pattern>/servlet/AccessibilityServlet</url-pattern>
   </filter-mapping> 
    	
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/servlet/AccessibilityServlet/*</url-pattern>
+    <url-pattern>/servlet/AccessibilityServlet</url-pattern>
   </filter-mapping> 
   
 	<filter-mapping>
@@ -118,12 +118,12 @@ END-CAS -->
 
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/servlet/AccessibilityServlet/*</url-pattern>
+		<url-pattern>/servlet/AccessibilityServlet</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/servlet/AccessibilityServletBackEnd/*</url-pattern>
+		<url-pattern>/servlet/AccessibilityServletBackEnd</url-pattern>
 	</filter-mapping>
     <servlet>
 		<servlet-name>AccessibilityServlet</servlet-name>

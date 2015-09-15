@@ -26,12 +26,12 @@
     
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+        <url-pattern>/servlet/AdapterHTTP</url-pattern>
     </filter-mapping>
      
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+        <url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
     </filter-mapping>   
 	
 	
@@ -147,12 +147,12 @@ END-CAS -->
 	
 		<filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    	<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 	 
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
 	</filter-mapping>	
 
 	<!--  ============================================================================ -->
@@ -190,7 +190,7 @@ END-CAS -->
 	
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</servlet-mapping>
 	
 	
@@ -208,7 +208,7 @@ END-CAS -->
 -->
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
-		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
 	</servlet-mapping>
   	
 	 <servlet-mapping>
