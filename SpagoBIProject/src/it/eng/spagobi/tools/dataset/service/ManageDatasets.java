@@ -1563,11 +1563,13 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			if (toReturn == null || toReturn.length() == 0) {
 				toReturn = "0";
 			}
-		} else if (type.equalsIgnoreCase(GENERIC_TYPE)) {
+		} else if (type.equalsIgnoreCase(GENERIC_TYPE)) { // generic type just return the found value
 			toReturn = value;
-		} else if (type.equalsIgnoreCase(RAW_TYPE)) {
+		} else if (type.equalsIgnoreCase(RAW_TYPE)) { // raw type deletes the '' if present
 			if ((value.startsWith("'") && value.endsWith("'"))) {
 				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
 			}
 		}
 
