@@ -22,7 +22,7 @@
     
         <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/XXXEngineService1/*</url-pattern>
+        <url-pattern>/XXXEngineService1</url-pattern>
     </filter-mapping>
 	
 <!-- START-CAS
@@ -76,18 +76,18 @@ END-CAS -->
 <!-- START-CAS  
   <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP</url-pattern>
   </filter-mapping> 
     	
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP</url-pattern>
   </filter-mapping> 
    	
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP</url-pattern>
   </filter-mapping> 
   
 	<filter-mapping>
@@ -98,7 +98,7 @@ END-CAS -->
 
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/XXXEngineService1/*</url-pattern>
+		<url-pattern>/XXXEngineService1</url-pattern>
 	</filter-mapping>
 	
   <!--  ============================================================================ -->
