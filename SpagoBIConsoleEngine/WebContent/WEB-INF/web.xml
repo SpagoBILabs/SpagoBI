@@ -80,6 +80,7 @@ END-CAS -->
 		<filter-class>
 			it.eng.spagobi.utilities.filters.SpagoBIAccessFilter
 		</filter-class>
+		<async-supported>true</async-supported>
 	</filter>
 	
 	<filter-mapping>
@@ -122,7 +123,8 @@ END-CAS -->
 	
 	<filter-mapping>
     		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/cometd</url-pattern>
+    		<url-pattern>/cometd/connect</url-pattern>
+    		<url-pattern>/cometd/handshake</url-pattern>
 	</filter-mapping>
 	 
 	
