@@ -208,7 +208,6 @@ public class OrionContextSubscriber {
 		}
 		condition.put("condValues", attributes);
 		res.put("notifyConditions", new JSONArray(new JSONObject[] { condition }));
-		res.put("throttling", "PT5S");
 		return res.toString();
 	}
 
