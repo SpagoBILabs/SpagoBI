@@ -100,7 +100,7 @@ curl http://<spagobi-url>/SpagoBI/restful-services/2.0/datasets/RestMetersValues
 ## Advanced topics
 
 * [Installation and Administration manual](doc/admin/README.md)
-* [Docker Container-based deployment](https://github.com/EngineeringSPA/SpagoBI-Docker/README.md)
+* [Docker Container-based deployment](https://github.com/EngineeringSPA/SpagoBI-Docker)
 
 [Top](#top)
 
