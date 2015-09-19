@@ -291,6 +291,31 @@ Finally, if your SpagoBI Server is behind by a proxy, you have to set its config
 
 That's it! After restarting SpagoBI server you should be able to sign in using a FIWARE account!
 
+SpagoBI Notifications
+---------------------
+In order to use SpagoBI Notifications capabilities, it's necessary to modify some parameters. These parameters are necessary to be able to notify from [Orion Context Broker OCB](https://github.com/telefonicaid/fiware-orion).
+
+Open the file `SpagoBIConsoleEngine/WebContent/WEB-INF/web.xml` and change:
+
+```xml
+		<init-param>
+			<param-name>notifyUrl</param-name>
+			<param-value>http://192.168.93.1:8080/SpagoBIConsoleEngine/datasetNotifier</param-value>
+		</init-param>
+```
+
+with your SpagoBI host url, for example:
+
+```xml
+		<init-param>
+			<param-name>notifyUrl</param-name>
+			<param-value>http://www.my-personal-spagobi.com:8080/SpagoBIConsoleEngine/datasetNotifier</param-value>
+		</init-param>
+```
+
+This url is used by OCB to send notifications to SpagoBI.
+
+
 Using FIWARE IdM and SpagoBI
 ----------------------------
 
