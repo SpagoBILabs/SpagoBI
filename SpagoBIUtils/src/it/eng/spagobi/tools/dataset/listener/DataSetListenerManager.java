@@ -119,7 +119,18 @@ public class DataSetListenerManager {
 		manageListenerResult(res);
 	}
 
-	public void addCometListenerIfAbsent(final String uuid, final String dataSetLabel, final String listenerId) {
+	/**
+	 * If it's not initialized then it does nothing.
+	 * 
+	 * @param uuid
+	 * @param dataSetLabel
+	 * @param listenerId
+	 */
+	public void addCometListenerIfInitializedAndAbsent(final String uuid, final String dataSetLabel, final String listenerId) {
+		if (!CometDInitializerChecker.isCometdInitialized()) {
+			return;
+		}
+		
 		IDataSetListener listener= new IDataSetListener() {
 			
 			public void dataStoreChanged(DataStoreChangedEvent event) throws DataSetListenerException {
@@ -134,4 +145,5 @@ public class DataSetListenerManager {
 		DataStoreListenerOperator op = getOperator(uuid, dataSetLabel);
 		op.addIDataSetListenerIfAbsent(listener,listenerId);
 	}
+	
 }
