@@ -16,6 +16,7 @@ import it.eng.spagobi.tools.dataset.listener.DataSetListenerManagerFactory;
 import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
 import it.eng.spagobi.tools.dataset.notifier.fiware.OrionContextSubscriber;
 import it.eng.spagobi.tools.dataset.utils.ParametersResolver;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
@@ -116,7 +117,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 			// temporary dataset
 			return;
 		}
-		manager.addCometListenerIfAbsent(owner, label, "1");
+		manager.addCometListenerIfInitializedAndAbsent(owner, label, "1");
 		manager.changedDataSet(owner, label, this);
 	}
 
@@ -349,6 +350,16 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	public boolean isNgsi() {
 		return ngsi;
+	}
+	
+	@Override
+	public IDataSource getDataSource() {
+		return null;
+	}
+	
+	@Override
+	public void setDataSource(IDataSource dataSource) {
+		throw new IllegalStateException(RESTDataSet.class.getSimpleName()+" doesn't need the dataSource");
 	}
 
 }
