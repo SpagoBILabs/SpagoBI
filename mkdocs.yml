@@ -2,17 +2,17 @@ site_name: SpagoBI enabling Fiware
 site_url: https://spagobi-fiware.readthedocs.org
 repo_url: https://github.com/EngineeringSPA/SpagoBI-Fiware.git
 site_description: SpagoBI Fiware Documentation
-docs_dir: .
+docs_dir: doc
 site_dir: html
 markdown_extensions: [toc,fenced_code]
 use_directory_urls: false
 theme: readthedocs
 extra_css: ["http://fiware.org/style/monokai_sublime.css"]
 pages:
-- 'Home': 'README.md'
+- 'Home': '../README.md'
 - 'User & Programmers Manual':
-    - 'CKAN': 'doc/user/CKAN/README.md'
-    - 'Javascript SDK': 'doc/user/JS/README.md'
-    - 'NGSI': 'doc/user/NGSI/README.md'
-- 'Admin Guide': 'doc/admin/README.md'
-- 'Docker' : 'docker/README.md'
+    - 'CKAN': 'user/CKAN/README.md'
+    - 'Javascript SDK': 'user/JS/README.md'
+    - 'NGSI': 'user/NGSI/README.md'
+- 'Admin Guide': 'admin/README.md'
+- 'Docker' : '../docker/README.md'
