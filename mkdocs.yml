@@ -9,7 +9,7 @@ use_directory_urls: false
 theme: readthedocs
 extra_css: ["http://fiware.org/style/monokai_sublime.css"]
 pages:
-- 'Home': 'README.md'
+- 'Home': 'index.md'
 - 'User & Programmers Manual':
     - 'CKAN': 'doc/user/CKAN/README.md'
     - 'Javascript SDK': 'doc/user/JS/README.md'
