@@ -2,7 +2,7 @@
 
 SpagoBI is a Business Intelligence Free Platform which uses many FOSS tools as analytical engines. It integrates them in an infrastructure which offers a cross-operativeness and a consistent vision between Report,OLAP,Data Mining,Dashboard and over the DWH.
 
-> http://www.spagobi.org
+> www.spagobi.org
 
 # How to use this image
 
@@ -32,5 +32,4 @@ $ route -n add 172.17.0.0/16 <ip-of-host-Virtual-Machine>
 
 ## License
 
-View http://www.spagobi.org/homepage/opensource/license/ for the software contained in this image.
-
+View license information at www.spagobi.org/homepage/opensource/license/ for the software contained in this image.
