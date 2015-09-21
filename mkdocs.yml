@@ -15,4 +15,4 @@ pages:
     - 'Javascript SDK': 'user/JS/README.md'
     - 'NGSI': 'user/NGSI/README.md'
 - 'Admin Guide': 'admin/README.md'
-- 'Docker' : '../docker/README.md'
+- 'Docker' : 'docker/README.md'
