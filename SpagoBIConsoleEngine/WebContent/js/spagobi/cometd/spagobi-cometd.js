@@ -79,7 +79,51 @@ ns.subscribe = function (config) {
      //only as an example
     cometd.handshake({
         ext: {
-        	'userChannel':channel
+            'userChannel':channel
+        }
+    });
+};
+
+//override this method to the specified store for a bug in grouping in ext 4.
+ns.overrideUpdateGroupsOnUpdate = function (s) {
+    Ext.override(s, {
+         updateGroupsOnUpdate: function(record, modifiedFieldNames){
+            var me = this,
+                groupField = me.getGroupField(),
+                groupName = me.getGroupString(record),
+                groups = me.groups,
+                len, i, items, group;
+                
+            if (modifiedFieldNames && Ext.Array.indexOf(modifiedFieldNames, groupField) !== -1) {
+                
+                items = groups.items;
+                for (i = 0, len = items.length; i < len; ++i) {
+                    group = items[i];
+                    if (group.contains(record)) {
+                        group.remove(record);
+                        break;
+                    }
+                }
+                groups.getByKey(groupName);
+                if (!group) {
+                    group = groups.add(new Ext.data.Group({
+                        key: groupName,
+                        store: me
+                    }));
+                }
+                group.add(record);
+                
+                
+                me.suspendEvents();
+                me.remove(record);
+                me.addSorted(record);
+                me.resumeEvents();
+            } else {
+                var group=groups.getByKey(groupName);
+                if (typeof group != 'undefined') {
+                    group.setDirty();
+                }
+            }
         }
     });
 };
@@ -88,12 +132,14 @@ ns.subscribe = function (config) {
 * s: Store, data: data from cometd server message
 */
 ns.updateStore=function(message,s) {
-
+    var extV="fields" in s ? 3:4;  
     var data=JSON.parse(message.data);
 
-    var getIdColumn=function() {
-        for (var i=0;i<s.fields.getCount();i++) {
-            var field=s.fields.get(i);
+    var getIdColumn=function() {  
+        //the first option is for ext 3, the last is for ext 4
+        var fields= extV==3 ? s.fields : s.getProxy().getModel().fields;
+        for (var i=0;i<fields.getCount();i++) {
+            var field=fields.get(i);
             if (field.name==='id' || field.header==='id') {
                 return field.name;
             }
@@ -101,19 +147,36 @@ ns.updateStore=function(message,s) {
         return null;
     };
 
+    var createRecord=function(dataRec) {
+        if (extV === 3) {
+            return new s.recordType(dataRec); 
+        }
+
+        //Ext 4 version
+        var model=s.getProxy().getModel();
+        var res=new model(dataRec);
+        return res;
+    }
+
 
     var idColumn=getIdColumn(); 
     if (idColumn===null) {
         //no update
         return null;
     }
+
     //added
     var toAdd=[];
     for (var i=0;i<data.added.length;i++) {
         var addRec=data.added[i];
-        toAdd.push(new s.recordType(addRec));
+        toAdd.push(createRecord(addRec));
     }
     s.add(toAdd);
+
+    if (extV === 4 && s.updateGroupsOnUpdateOverridden !== true) {
+        ns.overrideUpdateGroupsOnUpdate(s);
+        s.updateGroupsOnUpdateOverridden=true;
+    }
 
     //updated O(n), can be done in O(1) with id property set
     for (var i=0;i<data.updated.length;i++) {
@@ -125,7 +188,7 @@ ns.updateStore=function(message,s) {
                 continue;
             }
 
-            var newRec=new s.recordType(updRec);
+            var newRec=createRecord(updRec);
 
             //found, update all fields
             for (var k=0;k<toUpd.fields.getCount();k++) {

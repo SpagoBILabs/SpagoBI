@@ -75,7 +75,9 @@ Ext.define('Sbi.extjs.chart.data.StoreManager', {
 					
 					s.load({
 						params: s.pagingParams || {}, 
-						callback: function(){this.ready = true;}, 
+						callback: function(){
+							this.ready = true;
+						}, 
 						scope: s 						
 						//, add: false
 					});
@@ -84,6 +86,19 @@ Ext.define('Sbi.extjs.chart.data.StoreManager', {
 			};
 			Ext.TaskManager.start(task);
 		}
+
+		//manage cometd messages from server
+		if (this.notifyFromServer === true) {
+			s.notifyFromServer = true;
+	        var cometdConfig = {
+	            contextPath: pageContextPath,
+	            listenerId:"1",
+	            dsLabel:s.dsLabel,
+	            store:s
+	        };
+
+	    	Sbi.tools.dataset.cometd.subscribe(cometdConfig);
+    	}
 	}
 	
 	, getStore: function(storeId) {

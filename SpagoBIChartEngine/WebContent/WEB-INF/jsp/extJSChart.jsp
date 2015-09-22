@@ -99,6 +99,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		<%@include file="commons/includeExtJS_410_RC.jspf" %>
 		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSbiChartJS.jspf"%>
+		<%@include file="commons/includeCometd.jspf"%>
 	</head>
 	
 	<body>		
@@ -199,6 +200,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	          
 			}
 
+			Ext.ns("Sbi.user");
+		    Sbi.user.userId = "<%= profile.getUserId() %>";
 			
 	        var config ={};
 	        config.template = template

@@ -79,7 +79,7 @@ ns.subscribe = function (config) {
      //only as an example
     cometd.handshake({
         ext: {
-            'userChannel':channel
+        	'userChannel':channel
         }
     });
 };

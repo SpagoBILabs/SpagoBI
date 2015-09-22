@@ -1,0 +1,14 @@
+<script type="text/javascript">
+	var pageContextPath="${pageContext.request.contextPath}";
+</script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jquery/jquery-2.1.4.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/org/cometd.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jquery/jquery.cometd.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/spagobi/cometd/spagobi-cometd.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jquery/jquery-ui-highlight.js"></script>
+
+
+
+
+	       
