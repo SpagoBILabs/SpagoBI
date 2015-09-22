@@ -181,7 +181,7 @@ At the end of DataSet definition lick on Save button in the upper-right cornet t
 Document Definition
 -------------------
 A *Document* in SpagoBI environment permits to use the DataSet previous created to make reports, statistics, visualization of data etc.. In the following example we create a Document of type *Console* because is strictly related to Rest NGSI DataSet. With this type of Document you can see the notifications of Context Elements changes from OCB in real time.
-So, start to create a Document clickin on folder icon at homepage:
+So, start to create a Document clicking on folder icon at homepage:
 
 ![](media/5.1 Document Creation.png)
 
@@ -356,6 +356,20 @@ Now you can see the data retrieved from OCB:
 Now we modify a Context Element (Cocoa Rest Client is an application to make REST calls ). The change is immediately reflected on Console Document: the speedometers goes up/down and the related line in table becomes yellow with the new value:
 
 ![](media/8 Console Document Changes .png)
+
+### Chart Engine
+
+In addition to Console Engine it's also possible to add notifications capabilities to a Chart Engine Document. The document parameter for this functionality is the following (similar to Console Engine) :
+
+```xml
+	<EXTCHART animate="true" height="500" shadow="true" width="600">
+	<!-- Add this element for notifications -->
+	<NOTIFY_FROM_SERVER />
+	<LEGEND position="bottom"/>
+	...
+``` 
+
+### Demo
 
 You can see the entire video of DataSet creation and Document usage (gif animated):
 
