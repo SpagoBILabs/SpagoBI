@@ -87,12 +87,19 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
 	}
 	
     , initStore: function(config, dsLabel) {
-    	this.storeManager = Ext.create('Sbi.extjs.chart.data.StoreManager',{datasetsConfig: config});
+    	var templ=this.template; 
+    	this.storeManager = Ext.create('Sbi.extjs.chart.data.StoreManager',{
+    		datasetsConfig: config,
+    		notifyFromServer: (templ && templ.notifyFromServer && true ) || false
+    	});
 		this.store = this.storeManager.getStore(dsLabel);
 		if (this.store === undefined) {
 			Sbi.exception.ExceptionHandler.showErrorMessage('Dataset with identifier [' + this.storeId + '] is not correctly configurated');			
 		}else{		
 			this.store.on('load', this.onLoad, this);
+			this.store.on('add', this.onLoad, this);
+            this.store.on('remove', this.onLoad, this);
+            this.store.on('update', this.onLoad, this);
 			this.store.on('exception', Sbi.exception.ExceptionHandler.onStoreLoadException, this);
 		}		
 	}
@@ -101,7 +108,7 @@ Ext.define('Sbi.extjs.chart.ExtJSGenericChartPanel', {
     	if(this.store!=null){
         	var meta = [],
     	    fields = [],
-    	    storeRec = {},
+    	    storeRec = {}, 
     	    store = {};
         	
         	//defines new fields for the store chart
