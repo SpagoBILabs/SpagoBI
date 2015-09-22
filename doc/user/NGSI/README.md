@@ -140,15 +140,15 @@ DataSet creation
 Defining a REST NGSI DataSet in SpagoBI is like to define any other type of DataSet. We need to create a REST DataSet and then make it NGSI enable.
 At the homepage of application, click on DataSet:
 
-![](media/0 DataSet Button.png)
+![](media/0_DataSet_Button.png)
 
 then create a DataSet clicking on Add and fill all main fields (name, label, etc.):
 
-![](media/0.1 Add DataSet.png)
+![](media/0.1_Add_DataSet.png)
 
 Now click on Type tab, select REST type and fill all fields related to a generic REST DataSet plus clicking on NGSI checkbox:
 
-![](media/1 DataSet Rest Generic.png)
+![](media/1_DataSet_Rest_Generic.png)
 
 So you need to define (see also below to simplify these fields):
 
@@ -170,11 +170,11 @@ The fields for items and attributes are written in [JSON Path Notation](https://
 * the attributes: all attributes are fetched
 * the offset and fetch size params
 
-![](media/4 DataSet NGSI Automatic.png)
+![](media/4_DataSet_NGSI_Automatic.png)
 
 If you click on preview button you can see the current data retrieved from OCB defined:
 
-![](media/5 NGSI Automatic Preview.png)
+![](media/5_NGSI_Automatic_Preview.png)
 
 At the end of DataSet definition lick on Save button in the upper-right cornet to save the DataSet.
 
@@ -183,11 +183,11 @@ Document Definition
 A *Document* in SpagoBI environment permits to use the DataSet previous created to make reports, statistics, visualization of data etc.. In the following example we create a Document of type *Console* because is strictly related to Rest NGSI DataSet. With this type of Document you can see the notifications of Context Elements changes from OCB in real time.
 So, start to create a Document clicking on folder icon at homepage:
 
-![](media/5.1 Document Creation.png)
+![](media/5.1_Document_Creation.png)
 
 Fill all fields like any other document but select the Console type/Console Engine:
 
-![](media/5.2 Console Document Creation.png)
+![](media/5.2_Console_Document_Creation.png)
 
 Upload the Console template of your Document. In our example we use this template:
 
@@ -347,15 +347,15 @@ The main difference from an usual Console Template is the `notifyFromServer:true
 
 Save the document clicking on Save button. Now return to the main Document page (where you clicked the Creation Document button) and select the created Document:
 
-![](media/6 Select Document.png)
+![](media/6_Select_Document.png)
 
 Now you can see the data retrieved from OCB:
 
-![](media/7 Console Document.png)
+![](media/7_Console_Document.png)
 
 Now we modify a Context Element (Cocoa Rest Client is an application to make REST calls ). The change is immediately reflected on Console Document: the speedometers goes up/down and the related line in table becomes yellow with the new value:
 
-![](media/8 Console Document Changes .png)
+![](media/8_Console_Document_Changes.png)
 
 ### Chart Engine
 
