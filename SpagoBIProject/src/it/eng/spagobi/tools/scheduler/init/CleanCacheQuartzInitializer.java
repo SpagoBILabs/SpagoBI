@@ -47,9 +47,10 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 	}
 
 	public void initCleanForTenant(SbiTenant tenant) {
+		ISchedulerDAO schedulerDAO = null;
 		try {
 			logger.debug("IN");
-			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+			schedulerDAO = DAOFactory.getSchedulerDAO();
 			schedulerDAO.setTenant(tenant.getName());
 			Job jobDetail = schedulerDAO.loadJob(DEFAULT_JOB_NAME, DEFAULT_JOB_NAME);
 			if (jobDetail == null) {
@@ -88,6 +89,10 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 			logger.debug("OUT");
 		} catch (Exception e) {
 			logger.error("Error while initializing scheduler ", e);
+		} finally {
+			if (schedulerDAO != null) {
+				schedulerDAO.setTenant(null);
+			}
 		}
 	}
 
