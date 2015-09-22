@@ -10,7 +10,7 @@ theme: readthedocs
 extra_css: ["http://fiware.org/style/monokai_sublime.css"]
 pages:
 - 'Home': 'index.md'
-- 'User & Programmers Manual':
+- 'User & Programmers Manuals':
     - 'CKAN': 'user/CKAN/README.md'
     - 'Javascript SDK': 'user/JS/README.md'
     - 'NGSI': 'user/NGSI/README.md'
