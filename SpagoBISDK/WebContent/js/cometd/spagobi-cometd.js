@@ -3,6 +3,25 @@
  * Copyright (C) 2015 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/**
+* @namespace Sbi
+*/
+
+/**
+* @namespace Sbi.tools
+*/
+
+/**
+* @namespace Sbi.tools.dataset
+*/
+
+/** 
+ * This library links datasets CometD notifications from server to frontend.
+ * It permits to subscribe to server notifications and then update Ext JS Store (3 and 4 versions).
+ *
+ * @namespace Sbi.tools.dataset.cometd
+ */
 var nsName="Sbi.tools.dataset.cometd";
 //create namespace
 var ns=(function() {
@@ -19,73 +38,9 @@ var ns=(function() {
     return last;
 })(nsName);
 
-ns.subscribe = function (config) {
-    var $=jQuery;
-    var cometd=$.cometd;
-    
-    var channel='/'+Sbi.user.userId+'/dataset/'+config.dsLabel+'/'+config.listenerId;
-
-     // Function that manages the connection status with the Bayeux server
-    var _connected = false;
-    function _metaConnect(message) {
-        if (cometd.isDisconnected()) {
-            _connected = false;
-            if (config.connectionClosed!=null) {
-                config.connectionClosed();
-            }
-            return;
-        }
-
-        var wasConnected = _connected;
-        _connected = message.successful === true;
-        if (!wasConnected && _connected) {
-            if (config.connectionEstablished!=null) {
-                config.connectionEstablished();
-            }
-        } else if (wasConnected && !_connected) {
-            if (config.connectionBroken!=null) {
-                config.connectionBroken();
-            }
-        }   
-    }
-
-     // Function invoked when first contacting the server and
-    // when the server has lost the state of this client
-    function _metaHandshake(handshake) {
-        if (handshake.successful === true) {
-            cometd.batch(function() {
-                //example of channel
-                cometd.subscribe(channel, function(message) {
-                    var callback=config.messageReceived || ns.updateStore;
-                    callback(message,config.store);
-                });
-            });
-        }
-    }
-
-     // Disconnect when the page unloads
-    $(window).unload(function() {
-        cometd.disconnect(true);
-    });
-
-    var cometURL = location.protocol + "//" + location.host + config.contextPath + "/cometd";
-    cometd.configure({
-        url: cometURL
-    });
-
-    cometd.addListener('/meta/handshake', _metaHandshake);
-    cometd.addListener('/meta/connect', _metaConnect);
-
-     //only as an example
-    cometd.handshake({
-        ext: {
-            'userChannel':channel
-        }
-    });
-};
 
 //override this method to the specified store for a bug in grouping in ext 4.
-ns.overrideUpdateGroupsOnUpdate = function (s) {
+var overrideUpdateGroupsOnUpdate = function (s) {
     Ext.override(s, {
          updateGroupsOnUpdate: function(record, modifiedFieldNames){
             var me = this,
@@ -129,9 +84,10 @@ ns.overrideUpdateGroupsOnUpdate = function (s) {
 };
 
 /**
-* s: Store, data: data from cometd server message
-*/
-ns.updateStore=function(message,s) {
+ * Update the Ext JS Store from data from server. Used only internally.
+ * s: Store, message: data from cometd server message
+ */
+var updateStore=function(message,s) {
     var extV="fields" in s ? 3:4;  
     var data=JSON.parse(message.data);
 
@@ -174,7 +130,7 @@ ns.updateStore=function(message,s) {
     s.add(toAdd);
 
     if (extV === 4 && s.updateGroupsOnUpdateOverridden !== true) {
-        ns.overrideUpdateGroupsOnUpdate(s);
+        overrideUpdateGroupsOnUpdate(s);
         s.updateGroupsOnUpdateOverridden=true;
     }
 
@@ -224,3 +180,87 @@ ns.updateStore=function(message,s) {
         }
     }            
 };
+
+/**
+ * It permits to subscribe to server notifications
+ *  @example
+ *  var cometdConfig = {
+ *    contextPath: pageContextPath,  
+ *    listenerId:"1",
+ *    dsLabel:s.dsLabel,
+ *    store:s
+ *  };
+ *  Sbi.tools.dataset.cometd.subscribe(cometdConfig);
+ *
+ * @method Sbi.tools.dataset.cometd.subscribe
+ * @param {Object} config - the configuration
+ * @param {String} config.contextPath - the context path of engine
+ * @param {String} config.listenerId - the unique id of listener
+ * @param {String} config.dsLabel - the label of dataset
+ * @param {Object} config.store - the Ext JS store
+ */
+ns.subscribe = function (config) {
+    var $=jQuery;
+    var cometd=$.cometd;
+    
+    var channel='/'+Sbi.user.userId+'/dataset/'+config.dsLabel+'/'+config.listenerId;
+
+     // Function that manages the connection status with the Bayeux server
+    var _connected = false;
+    function _metaConnect(message) {
+        if (cometd.isDisconnected()) {
+            _connected = false;
+            if (config.connectionClosed!=null) {
+                config.connectionClosed();
+            }
+            return;
+        }
+
+        var wasConnected = _connected;
+        _connected = message.successful === true;
+        if (!wasConnected && _connected) {
+            if (config.connectionEstablished!=null) {
+                config.connectionEstablished();
+            }
+        } else if (wasConnected && !_connected) {
+            if (config.connectionBroken!=null) {
+                config.connectionBroken();
+            }
+        }   
+    }
+
+     // Function invoked when first contacting the server and
+    // when the server has lost the state of this client
+    function _metaHandshake(handshake) {
+        if (handshake.successful === true) {
+            cometd.batch(function() {
+                //example of channel
+                cometd.subscribe(channel, function(message) {
+                    var callback=config.messageReceived || updateStore;
+                    callback(message,config.store);
+                });
+            });
+        }
+    }
+
+     // Disconnect when the page unloads
+    $(window).unload(function() {
+        cometd.disconnect(true);
+    });
+
+    var cometURL = location.protocol + "//" + location.host + config.contextPath + "/cometd";
+    cometd.configure({
+        url: cometURL
+    });
+
+    cometd.addListener('/meta/handshake', _metaHandshake);
+    cometd.addListener('/meta/connect', _metaConnect);
+
+     //only as an example
+    cometd.handshake({
+        ext: {
+            'userChannel':channel
+        }
+    });
+};
+
