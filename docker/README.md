@@ -35,7 +35,7 @@ $ docker run --name spagobidb -e MYSQL_USER=spagobiuser -e MYSQL_PASSWORD=spagob
 You can use whatever you want for user and password properties. Then run SpagoBI and link it to the previous MySQL container:
 
 ```console
-$ docker run --link spagobidb:db --name spagobiminimal -d spagobi:minimal
+$ docker run --link spagobidb:db --name spagobiminimal -d engineeringspa/spagobi:minimal
 c24b00a79cfd05bf45e4b30fecb0857298f5bc3133b8f468a3be36a796f0c287
 ```
 
