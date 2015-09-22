@@ -12,7 +12,7 @@
 		  
 ## Introduction
 
-This is the code repository for the SpagoBI project related to [Fiware](www.fiware.org).
+This is the code repository for the SpagoBI project related to [Fiware](http://www.fiware.org).
 
 Check also the [FIWARE Catalogue entry for SpagoBI](http://catalogue.fiware.org/enablers/data-visualization-spagobi)
 
