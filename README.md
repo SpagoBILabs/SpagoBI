@@ -27,13 +27,13 @@ SpagoBI is a Business Intelligence Free Platform which uses many FOSS tools as a
 
 If this is your first contact with SpagoBI, it is highly recommended to have a look to the brief [Demo](http://demo.spagobi.org/Demo/index.html#).
 
-## Build and Install
+## Install
 
-Build and Install documentation for SpagoBI can be found at [the corresponding section of the Admin Manual](doc/admin/README.md).
+Install documentation for SpagoBI can be found at [the corresponding section of the Admin Manual](doc/admin/README.md#installation).
 
 ## Running
 
-How to run SpagoBI can be found at [the corresponding section of the Admin Manual](doc/admin/README.md).
+How to start and stop SpagoBI can be found at [the corresponding section of the Admin Manual](doc/admin/README.md#how-to-start-and-stop-spagobi-server).
 
 [Top](#top)
 
@@ -83,14 +83,14 @@ curl http://<spagobi-url>/SpagoBI/restful-services/2.0/datasets/RestMetersValues
 ## API Reference Documentation
 
 * [SpagoBI REST](http://docs.spagobi.apiary.io/#) (Apiary)
-* [SpagoBI Javascript SDK](doc/user/JS/README.md)
 
 [Top](#top)
 
-## SpagoBI User manuals
+## SpagoBI User & Programming manuals
 
 * [SpagoBI NGSI](doc/user/NGSI/README.md)
-* [SpagoBI CKAN](doc/user/CKAN/README.md) 
+* [SpagoBI CKAN](doc/user/CKAN/README.md)
+* [SpagoBI Javascript SDK](doc/user/JS/README.md)
 
 [Top](#top)
 
