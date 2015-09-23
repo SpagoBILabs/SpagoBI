@@ -366,3 +366,8 @@ Sanity check procedures
 -----------------------
 
 Read the related manual [here](sanity.md).
+
+Diagnosis Procedures
+-----------------------
+
+Read the related manual [here](diagnosis.md).
