@@ -1,4 +1,4 @@
-#<a name="top"></a>SpagoBI enabling Fiware
+#<a name="top"></a>SpagoBI
 
 * [Introduction](#introduction)
 * [GEi overall description](#gei-overall-description)
@@ -17,9 +17,9 @@ This is the code repository for the SpagoBI project related to [Fiware](http://w
 Check also the [FIWARE Catalogue entry for SpagoBI](http://catalogue.fiware.org/enablers/data-visualization-spagobi)
 
 Any feedback on this documentation is highly welcome, including bugs, typos
-or things you think should be included but aren't. You can use [github issues](https://github.com/EngineeringSPA/SpagoBI-Fiware/issues) to provide feedback.
+or things you think should be included but aren't. You can use [github issues](https://github.com/EngineeringSPA/SpagoBI/issues) to provide feedback.
 
-You can find the User & Programmer's Manual and the Administration Guide on [readthedocs.org](http://spagobi-fiware.readthedocs.org)
+You can find the User & Programmer's Manual and the Administration Guide on [readthedocs.org](http://spagobi.readthedocs.org)
 
 ## GEi overall description
 
