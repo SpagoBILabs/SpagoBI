@@ -17,4 +17,5 @@ pages:
 - 'Admin Manuals':
     - 'Admin Guide': 'admin/README.md'
     - 'Sanity check procedures': 'admin/sanity.md'
+    - 'Diagnosis procedures': 'admin/diagnosis.md'
 - 'Docker' : 'docker/README.md'
