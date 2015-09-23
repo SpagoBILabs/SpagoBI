@@ -1,7 +1,7 @@
-site_name: SpagoBI enabling Fiware
-site_url: https://spagobi-fiware.readthedocs.org
-repo_url: https://github.com/EngineeringSPA/SpagoBI-Fiware.git
-site_description: SpagoBI Fiware Documentation
+site_name: SpagoBI 
+site_url: https://spagobi.readthedocs.org
+repo_url: https://github.com/EngineeringSPA/SpagoBI.git
+site_description: SpagoBI Documentation
 docs_dir: doc
 site_dir: html
 markdown_extensions: [toc,fenced_code]

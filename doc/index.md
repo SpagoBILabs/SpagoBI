@@ -4,5 +4,5 @@ SpagoBI is a Business Intelligence Free Platform which uses many FOSS tools as a
 
 If this is your first contact with SpagoBI, it is highly recommended to have a look to the brief [Demo](http://demo.spagobi.org/Demo/index.html#).
 
-Github's [README.md](https://github.com/EngineeringSPA/SpagoBI-Fiware) provides a good documentation summary.
+Github's [README.md](https://github.com/EngineeringSPA/SpagoBI) provides a good documentation summary.
 The [Admin Guide](admin/README.md) covers more advanced topics. 
