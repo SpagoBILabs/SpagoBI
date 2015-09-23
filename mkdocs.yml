@@ -14,5 +14,7 @@ pages:
     - 'CKAN': 'user/CKAN/README.md'
     - 'Javascript SDK': 'user/JS/README.md'
     - 'NGSI': 'user/NGSI/README.md'
-- 'Admin Guide': 'admin/README.md'
+- 'Admin Manuals': 
+	- 'Admin Guide': 'admin/README.md'
+	- 'Sanity check procedures': 'admin/sanity.md'
 - 'Docker' : 'docker/README.md'
