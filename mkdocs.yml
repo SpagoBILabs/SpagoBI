@@ -1,6 +1,10 @@
 site_name: SpagoBI 
 site_url: https://spagobi.readthedocs.org
+<<<<<<< HEAD
 repo_url: https://github.com/SpagoBILabs/SpagoBI.git
+=======
+repo_url: https://github.com/EngineeringSPA/SpagoBI.git
+>>>>>>> fix link spagobi readthedocs
 site_description: SpagoBI Documentation
 docs_dir: doc
 site_dir: html
