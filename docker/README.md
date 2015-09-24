@@ -4,28 +4,22 @@ This is the official repository of SpagoBI. SpagoBI is a Business Intelligence F
 
 > [spagobi.org](https://www.spagobi.org)
 
-# Run SpagoBI
+# Run SpagoBI All In One
 
-## Run SpagoBI All In One
+## Run SpagoBI with embedded Database
 
-All in One image contains many demo  example with the DB included. SpagoBI is started in this way:
+All in One image contains many demo examples with the DB included. SpagoBI is started in this way:
 
 ```console
 $ docker run --name spagobi -d engineeringspa/spagobi:all-in-one
 2656735e7ce42c30ae1b284d05e05565b3dbc62fa0118279b31c479b7b0e2cfa
 ```
 
-## Run SpagoBI Minimal
+## Run SpagoBI with MySQL Database
 
-The minimal image contains only these engines:
+It's also possible to run SpagoBI connected to an external MySQL Docker container. It doesn't contain examples, because the examples are in the embedded database. It's like an empty installation.
 
-* SpagoBI Birt Report Engine
-* SpagoBI Cockpit Engine 
-* SpagoBI Qbe Engine
-
-and it runs with an external MySQL Docker container. It doesn't contain examples like the All In One version, it's like an empty installation.
-
-Firstly run the MySQL container for spagobi:
+Firstly run the MySQL Database container for SpagoBI:
 
 ```console
 $ docker run --name spagobidb -e MYSQL_USER=spagobiuser -e MYSQL_PASSWORD=spagobipassword -e MYSQL_DATABASE=spagobidb -e MYSQL_ROOT_PASSWORD=spagobirootpassword -d mysql:5.5
@@ -35,13 +29,13 @@ $ docker run --name spagobidb -e MYSQL_USER=spagobiuser -e MYSQL_PASSWORD=spagob
 You can use whatever you want for user and password properties. Then run SpagoBI and link it to the previous MySQL container:
 
 ```console
-$ docker run --link spagobidb:db --name spagobiminimal -d engineeringspa/spagobi:minimal
+$ docker run --link spagobidb:db --name spagobi -d engineeringspa/spagobi:all-in-one
 c24b00a79cfd05bf45e4b30fecb0857298f5bc3133b8f468a3be36a796f0c287
 ```
 
 # Use SpagoBI
 
-Get the IP of container (use ```spagobiminal``` instead of ```spagobi``` if you ran the minimal image before) :
+Get the IP of container :
 
 ```console
 $ docker inspect --format '{{ .NetworkSettings.IPAddress }}' spagobi
