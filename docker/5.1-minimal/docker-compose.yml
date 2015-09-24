@@ -1,0 +1,13 @@
+spagobidb:
+    image: mysql:5.5
+    environment:
+        - MYSQL_USER=spagobiuser
+        - MYSQL_PASSWORD=spagobipassword
+        - MYSQL_DATABASE=spagobidb
+        - MYSQL_ROOT_PASSWORD=spagobirootpassword
+
+spagobiminimal:
+    image: engineeringspa/spagobi:minimal
+    links:
+        - spagobidb:db
+
