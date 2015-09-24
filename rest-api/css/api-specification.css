@@ -1,0 +1,488 @@
+
+body {
+  padding: 2em 1em 2em 70px;
+  margin: 0;
+  /*font-family: sans-serif;*/
+  font-family: verdana !important;
+  /*color: black;*/
+  color:#404040;
+}
+
+:link { color: #00C; background: transparent }
+:visited { color: #609; background: transparent }
+a:active { color: #C00; background: transparent }
+
+a:link img, a:visited img { border-style: none } 
+
+a{color:#00275a }
+a:hover{color:#00d3de !important}
+
+a img {
+    color: white; 
+}
+
+@media all {                   
+  a img { 
+    color: inherit; 
+    }
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-align: left;
+    color:#00275a !important;font-family:"Neo Tech W02 Medium" !important 
+}
+
+h1, h2, h3 {
+    /*color: #005A9C; */
+    color:#00275a;
+}
+
+
+h1 { 
+    font: 170%;  
+}
+
+h2 { 
+    font: 140%;  
+}
+
+h3 {
+    font: 120%;
+}
+
+h4 {
+    font: bold 100%;
+}
+
+h5 {
+    font: italic 100%;
+}
+
+h6 {
+    font: small-caps 100%;
+}
+
+table, td, th {
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    border-collapse: collapse;
+    padding: 0.15em;
+}
+@media print {
+    .goExample, .goActions {
+        display: none;
+    }
+    
+    /* show url for links only if they are externals*/
+    a:link[href^="http://"]:after, a:visited[href^="http://"]:after, 
+    a:link[href^="https://"]:after, a:visited[href^="https://"]:after,
+    a:link[href^="ftp://"]:after, a:visited[href^="ftp://"]:after { 
+        content:" (" attr(href) ") "; 
+    } 
+}
+
+.packetType{
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+.selfContainedLink:after{
+    content: "" !important;
+}
+
+@media speech {
+ h1, h2, h3 {
+    voice-stress: moderate;
+    }
+ .hide {
+    speak: none;
+ }
+ dt { pause-before: 63ms; }
+}
+
+@media (min-width: 980px) {
+  .container{
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    }
+
+  #TOC-container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20%;
+    height: 100%;
+    overflow: auto;
+  }
+
+  #API-content{
+    margin-left: calc(18%);
+  }
+  #API-content{
+    margin-left: calc(20% - 2em - 15px);
+  }
+
+  #fiware-logo{
+    height: 80px;
+    /*margin-bottom: 15px;*/
+    background: url(../img/fiware.png) no-repeat center center; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    }
+
+}
+
+#fiware-logo{
+    height: 80px;
+    background-color: white!important;
+    /*margin-bottom: 15px;*/
+    background: url(../img/fiware2.png) no-repeat center center; 
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+}
+
+#TOC-container{
+    background-color: #F5F5F5;
+}
+
+#TOC-container ul{
+    padding-left: 0px !important;
+    margin-left: 0 !important;
+}
+
+#TOC-container ul li{
+    width: 100%;
+    display: block;
+}
+
+#TOC-container li a{
+    display: block;
+    padding-top: 0.37em;
+    padding-bottom: 0.37em;
+    color: #333 ;
+    max-width: 100%;
+}
+
+#TOC-container li a:hover{
+   background-color: #e2e2e2;
+   text-decoration: none;
+}
+
+#toc li{
+    font-weight: normal;
+    font-size: 0.97em;
+    line-height: 18px;
+}
+
+#toc>ul>li>a{
+   color: #00275a !important;
+   font-weight: bold;
+
+}
+#TOC-container li a{
+    padding-left: 15px;
+}
+
+#TOC-container li li a{
+    padding-left: 30px;
+}
+
+#TOC-container li li li a{
+    padding-left: 45px;
+}
+
+#TOC-container li li li li a{
+    padding-left: 60px;
+}
+
+#TOC-container li li li li li a{
+    padding-left: 75px;
+}
+
+
+
+#TOC-container h2{
+    margin-left: 15px;
+}
+
+ul.toc, ol.toc {
+  list-style: disc;
+  list-style: none;
+}
+
+.toc li{
+  /*white-space: nowrap;*/
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+
+#toc>ul
+{
+    border-top:10px #00275a solid;
+}
+
+dd{
+    margin-left: 1.2em;
+}
+
+dd dl{
+    margin-bottom: 0px;
+}
+
+.packetType{
+    font-weight: bold;
+    font-style: italic;
+}
+
+.rest-packet-div{
+    margin-top: 15px;
+}
+.parameters-title{
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.parameters-title+dl dl{
+    margin-left:2em;
+}
+
+.attributes-title{
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.attributes-title+dl dl{
+    margin-left:2em;
+}
+
+.resource{
+    border-left: 5px darkgray solid;
+    margin-top: 5px;
+    padding-left: 5px;
+    background-color: #FBF7F7;
+    margin-bottom: 45px;
+}
+
+.resource dl dd>p{
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.action{
+    border-left: 2px blue solid;
+    margin-top: 5px;
+    margin-bottom: 25px;
+    padding-left: 5px;
+    padding-bottom: 15px;
+    background-color: #E0DCF3;
+}
+
+.action dl dd>p{
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.action:nth-child(even){
+    border-left: 2px orange solid;
+    background-color: #F7EAD2;
+}
+
+.action-header{
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.action.GET{
+    background-color: #E0DCF3;
+    border-left: 2px blue solid;
+}
+
+.action.POST{
+    border-left: 2px orange solid;
+    background-color: #F7EAD2;
+}
+
+.action.PUT{
+    border-left: 2px orange solid;
+    background-color: #DEB887;
+}
+
+.action.PATCH{
+    border-left: 2px green solid;
+    background-color: #ECF5CF;
+}
+
+.action.DELETE{
+    border-left: 2px red solid;
+    background-color: #E6BFBF;
+}
+
+.action h4{
+    font-size: 1.05em;
+    font-style: italic;
+    text-decoration: underline;
+    font-weight: bold;
+}   
+
+.resourceExample{
+    border-left: 5px darkgray solid;
+    margin-top: 5px;
+    padding-left: 5px;
+    background-color: #FBF7F7;
+    margin-bottom: 45px;
+}
+
+.resourceExample dl dd>p{
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.actionExample{
+    border-left: 2px blue solid;
+    margin-top: 5px;
+    margin-bottom: 25px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 15px;
+    background-color: #E0DCF3;
+}
+
+.actionExample dl dd>p{
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.actionExample:nth-child(even){
+    border-left: 2px orange solid;
+    background-color: #F7EAD2;
+}
+
+
+.actionExample h4{
+    font-size: 1.05em;
+    font-style: italic;
+    text-decoration: underline;
+    font-weight: bold;
+}   
+
+.actionExample.GET{
+    background-color: #E0DCF3;
+    border-left: 2px blue solid;
+}
+
+.actionExample.POST{
+    border-left: 2px orange solid;
+    background-color: #F7EAD2;
+}
+
+.actionExample.PUT{
+    border-left: 2px orange solid;
+    background-color: #DEB887;
+}
+
+.actionExample.PATCH{
+    border-left: 2px green solid;
+    background-color: #D4EA89;
+}
+
+.actionExample.DELETE{
+    border-left: 2px red solid;
+    background-color: #E6BFBF;
+}
+
+.payload-title{
+    font-size: 1.08em;
+    font-weight: normal;
+    text-decoration: underline;
+    margin-bottom: 7px;
+}
+
+.packetType ~ .payload-title{
+    font-size: 1em;
+    display: block;
+    margin-top: 5px;
+}
+
+.action{
+    overflow: hidden;
+}
+
+.btn-neutral{background-color:#00d3de !important;color:#fff !important}
+.btn{box-shadow:0 0 0 !important;border:0 !important;border-radius:0 !important}
+.btn-neutral:hover{background-color:#00d3de !important;color:#fff !important}
+
+.goExample{
+    margin-top: 20px;
+    float: left;
+    margin-right: 10px;
+}
+
+/*
+.goExample a{
+    padding: 0.25em;
+    background-color: rgba(171, 171, 171, 0.4);
+    border:1px solid;
+}
+*/
+.goApiary {
+    margin-top: 20px;
+}
+
+/*
+.goApiary a{
+    padding: 0.25em;
+    background-color: rgba(171, 171, 171, 0.4);
+    border:1px solid;
+}
+*/
+
+.goActions {
+    margin-top: 20px;
+}
+/*
+.goActions a{
+    padding: 0.25em;
+    background-color: rgba(171, 171, 171, 0.4);
+    border:1px solid;
+}*/
+
+.goActions a, .goApiary a, .goExample a{
+    padding: 0.25em;
+    background-color:#00d3de !important;
+    color:black !important;
+    border: 0;
+}
+.goActions a::after, .goApiary a::after, .goExample a::after{
+    font-family: FontAwesome;
+    content:' \f0a9'
+}
+
+.goActions a:hover, .goApiary a:hover, .goExample a:hover{
+    color:#fff !important;
+    text-decoration: none;
+}
+
+
+.dateLabel, .dateValue{
+    font-size: 1.2em;
+    color: #ababab;
+}
+
+.versionValue{
+    margin-left: 20px;
+}
+

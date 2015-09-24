@@ -1,0 +1,6021 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SpagoBI REST API 2.0</title>
+    <link href="css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/idea.css">
+    <script src="js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="stylesheet" type="text/css" href="css/api-specification.css"> 
+
+    
+</head>
+<body id="respecDocument" class="h-entry">
+<div class="container">
+  <div id="TOC-container">
+    
+<section id="toc">
+
+        <div id="fiware-logo"></div>
+    <ul class="toc">
+
+
+    
+    
+
+
+
+
+
+<li><a href="#API_specification">API Specification</a>
+    <ul class="toc">
+    
+
+                        <li>
+                            
+                                <a href="#default_group" title = "Group default">Default</a>
+                            
+                            <ul class="toc">
+                              
+                                
+                                    <li>
+                                        <a href="#resource_the-documents-resource" title = "Resource The documents resource">Resource The documents resource</a>
+                                        <ul class="toc  ">
+                                        
+                                            
+                                                <li><a href="#action_list-all-documents" title ="GET - List All Documents">GET - List All Documents</a></li>
+                                            
+
+                                        
+                                            
+                                                <li><a href="#action_adds-a-new-document" title ="POST - Adds a new document">POST - Adds a new document</a></li>
+                                            
+
+                                        
+                                        </ul>
+                                    </li>
+                                
+                              
+                                
+                                    <li>
+                                        <a href="#resource_the-document-resource" title = "Resource The document resource">Resource The document resource</a>
+                                        <ul class="toc  ">
+                                        
+                                            
+                                                <li><a href="#action_return-document-with-specified-label" title ="GET - Return document with specified Label">GET - Return document with specified Label</a></li>
+                                            
+
+                                        
+                                            
+                                                <li><a href="#action_update-the-document" title ="PUT - Update the document">PUT - Update the document</a></li>
+                                            
+
+                                        
+                                            
+                                                <li><a href="#action_delete-the-document" title ="DELETE - Delete the document">DELETE - Delete the document</a></li>
+                                            
+
+                                        
+                                        </ul>
+                                    </li>
+                                
+                              
+                                
+                                    <li>
+                                        <a href="#resource_the-template-subresource" title = "Resource The template subresource">Resource The template subresource</a>
+                                        <ul class="toc  ">
+                                        
+                                            
+                                                <li><a href="#action_return-template-with-specified-label" title ="GET - Return template with Specified Label">GET - Return template with Specified Label</a></li>
+                                            
+
+                                        
+                                            
+                                                <li><a href="#action_update-the-template" title ="POST - Update the template">POST - Update the template</a></li>
+                                            
+
+                                        
+                                            
+                                                <li><a href="#action_delete-the-template" title ="DELETE - Delete the template">DELETE - Delete the template</a></li>
+                                            
+
+                                        
+                                        </ul>
+                                    </li>
+                                
+                              
+                                
+                                    <li>
+                                        <a href="#resource_the-parameters-subresource" title = "Resource The parameters subresource">Resource The parameters subresource</a>
+                                        <ul class="toc  ">
+                                        
+                                            
+                                                <li><a href="#action_return-parameters-with-specified-label" title ="GET - Return parameters with Specified Label">GET - Return parameters with Specified Label</a></li>
+                                            
+
+                                        
+                                            
+                                                <li><a href="#action_add-a-parameter" title ="POST - Add a parameter">POST - Add a parameter</a></li>
+                                            
+
+                                        
+                                        </ul>
+                                    </li>
+                                
+                              
+                                
+                                    <li>
+                                        <a href="#resource_the-parameter-subresource" title = "Resource The parameter subresource">Resource The parameter subresource</a>
+                                        <ul class="toc  ">
+                                        
+                                            
+                                                <li><a href="#action_return-parameter-with-specified-id" title ="GET - Return Parameter with specified Id">GET - Return Parameter with specified Id</a></li>
+                                            
+
+                                        
+                                            
+                                                <li><a href="#action_update-the-parameter" title ="PUT - Update the parameter">PUT - Update the parameter</a></li>
+                                            
+
+                                        
+                                            
+                                                <li><a href="#action_delete-the-parameter" title ="DELETE - Delete the parameter">DELETE - Delete the parameter</a></li>
+                                            
+
+                                        
+                                        </ul>
+                                    </li>
+                                
+                              
+                                
+                                    <li>
+                                        <a href="#resource_the-content-subresource" title = "Resource The content subresource">Resource The content subresource</a>
+                                        <ul class="toc  ">
+                                        
+                                            
+                                                <li><a href="#action_return-the-document-content" title ="POST - Return the document content">POST - Return the document content</a></li>
+                                            
+
+                                        
+                                        </ul>
+                                    </li>
+                                
+                              
+                                
+                                    <li>
+                                        <a href="#resource_the-datasets" title = "Resource The datasets">Resource The datasets</a>
+                                        <ul class="toc  ">
+                                        
+                                            
+                                                <li><a href="#action_returns-the-datasets" title ="GET - Returns the datasets">GET - Returns the datasets</a></li>
+                                            
+
+                                        
+                                            
+                                                <li><a href="#action_add-a-dataset" title ="POST - Add a dataset">POST - Add a dataset</a></li>
+                                            
+
+                                        
+                                        </ul>
+                                    </li>
+                                
+                              
+                                
+                                    <li>
+                                        <a href="#resource_the-dataset" title = "Resource The dataset">Resource The dataset</a>
+                                        <ul class="toc  ">
+                                        
+                                            
+                                                <li><a href="#action_return-the-dataset" title ="GET - Return the dataset">GET - Return the dataset</a></li>
+                                            
+
+                                        
+                                            
+                                                <li><a href="#action_update-tha-dataset" title ="PUT - Update tha dataset">PUT - Update tha dataset</a></li>
+                                            
+
+                                        
+                                            
+                                                <li><a href="#action_delete-tha-dataset" title ="DELETE - Delete tha dataset">DELETE - Delete tha dataset</a></li>
+                                            
+
+                                        
+                                        </ul>
+                                    </li>
+                                
+                              
+                                
+                                    <li>
+                                        <a href="#resource_the-dataset-content" title = "Resource The dataset content">Resource The dataset content</a>
+                                        <ul class="toc  ">
+                                        
+                                            
+                                                <li><a href="#action_return-the-dataset's-content" title ="GET - Return the dataset's content">GET - Return the dataset's content</a></li>
+                                            
+
+                                        
+                                        </ul>
+                                    </li>
+                                
+                              
+                                
+                                    <li>
+                                        <a href="#resource_the-engines-resource" title = "Resource The engines resource">Resource The engines resource</a>
+                                        <ul class="toc  ">
+                                        
+                                            
+                                                <li><a href="#action_get-the-engine-resources" title ="GET - Get the engine resources">GET - Get the engine resources</a></li>
+                                            
+
+                                        
+                                        </ul>
+                                    </li>
+                                
+                              
+                                
+                                    <li>
+                                        <a href="#resource_the-engine-resource" title = "Resource The engine resource">Resource The engine resource</a>
+                                        <ul class="toc  ">
+                                        
+                                            
+                                                <li><a href="#action_get-the-engine-specified-resource" title ="GET - Get the engine specified resource">GET - Get the engine specified resource</a></li>
+                                            
+
+                                        
+                                        </ul>
+                                    </li>
+                                
+                              
+                            </ul>
+                        </li>
+                      
+    <li><a href="#examples">Examples</a></li>
+    </ul>
+</li>
+    
+    
+    
+    
+    
+        <li class="tocline"> <a href="#acknowledgements" title = "Acknowledgements"> Acknowledgements </a>
+
+    
+</li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <li><a href="#references">References</a></li>
+    
+   </ul>
+</section>
+
+  </div>
+  <div id="API-content">
+  
+	
+
+	
+
+	
+		<h1>SpagoBI REST API 2.0 </h1>
+	
+
+		<h3>SpagoBI website: <a href="http://www.spagobi.org/">
+					http://www.spagobi.org/</a></h3>
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+		<span class="dateLabel">DATE:</span> <span class="dateValue"> 04 September 2015 </span>
+	
+
+	
+
+	
+
+
+
+
+	
+
+	
+		
+		<dl>
+		
+			
+		
+
+		
+			
+		
+			
+				<dt class="versionLabel">This version:</dt> 
+				<dd class="versionValue"> <a href="http://engineeringspa.github.io/SpagoBI/rest-api2.0">
+					http://engineeringspa.github.io/SpagoBI/rest-api2.0</a> </dd>
+			
+		
+			
+		
+
+		
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+
+
+
+		</dl>
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+
+	
+		<h2 id="editors">Editors</h2>
+		<ul>
+<li>Davide Zerbetto, Engineering Ingegneria Informatica S.p.A</li>
+</ul>
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+		<h2 id="copyright">Copyright</h2>
+		<p>Copyright © 2015 Engineering Ingegneria Informatica S.p.A.
+All rights reserved.</p>
+	
+
+	
+
+	
+
+	
+
+
+<hr>
+
+
+	<h2 id="abstract">Abstract</h2>
+	<p>This specification defines the SpagoBI REST API 2.0. SpagoBI REST API is intended to manage the lifecycle of SpagoBI analytical documents and datasets.</p>
+
+
+
+
+	
+
+	
+
+	
+		<h2 id="status">Status of this document</h2>
+		<p>This is a work in progress and is changing on a monthly basis.</p>
+<p>This specification is licensed under the <a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29">FIWARE Open Specification License</a>.
+Engineering Ingegneria Informatica S.p.A. provides the software associated to SpagoBI as open source: see details <a href="http://www.spagobi.org/homepage/opensource/license/">here</a>.</p>
+	
+
+	
+
+	
+
+	
+
+	
+
+<hr>
+
+    
+    
+
+
+
+
+	
+		
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+
+
+
+
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			<section>
+				<h2 id="authentication"> Authentication</h2>
+<p>In order to use RESTful API you will have to authenticate yourself. You can do that through basic authentication.</p>
+<p>It is not however mandatory to send authentication information if you are already accessing the REST services through a browser and you are logged in SpagoBI, in that case the session will be used to retrieve profile information.</p>
+<p>NB: there is no REST interfaces to manage users. This is because users authenticate using Fiware IdM. So, to manage users you can use IdM RESTful API (https://github.com/ging/fi-ware-idm/wiki/REST-API).</p>
+<p>In the future will implement a second method of authentication: it will require that you send a token in all of your HTTP requests. We will add the token as a resource in our RESTful API so it will be possible to generate the token by sending a POST request to the token resource's url. The response will be a json object containing the token that will be used later on.
+In this way, username and password will be required only the first time. </p>
+
+
+			</section>
+		
+	
+		
+			<section>
+				<h2 id="authorization"> Authorization</h2>
+<p>Each request will give you results accordingly to your roles and tenant (for example, if a document is not visible to members of your tenant it will not be in the list of documents).</p>
+<p>Right now a user can be part at most of one tenant. In future we will probably extend SpagoBI such that a user could be part of more than one.</p>
+<p>When this change will be applied, a request will return all the resources available for each tenant of the user. It will be however added a parameter for specify the tenant to give user the possibility to filter results accordingly to what he will be going to do.</p>
+
+
+			</section>
+		
+	
+		
+			<section>
+				<h2 id="errors"> Errors</h2>
+<p>If the user is not authenticated the response status code will be 401
+The other times an error appears the response code is 200 and the response body contains a json object containing the error messages.</p>
+<ul>
+<li>Response (application/json)<pre><code>    {
+        "service": "",
+        "errors": [
+            {
+                "message": "Document with label [wrong_label] doesn't exist"
+            }
+        ]
+    }
+</code></pre>
+</li>
+</ul>
+
+
+			</section>
+		
+	
+
+
+
+    
+
+  
+  <section id="API_specification">
+      <h1>API Specification</h1>
+      
+
+
+
+
+        
+            <section id="default_group" class="resourceGroup">
+             <div class= "header" ><h2 id="h-default_group"> Default </h2></div>
+        
+	
+        
+            <section id="resource_the-documents-resource" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-documents-resource">The documents resource [/restful-services/2.0/documents]</h3> </div>
+                <p>The documents resource represents the list of documents visible to the authenticate user.</p>
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+
+                    
+                        
+                            <div id="action_list-all-documents" class="action GET">
+                        
+
+                        
+    <h4 id="h-action_list-all-documents">
+        List All Documents -
+        GET
+        
+            /restful-services/2.0/documents
+        
+    </h4>
+
+        
+                            <div id="list-all-documents_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_list-all-documents_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-documents-resource/list-all-documents">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+                        
+                            <div id="action_adds-a-new-document" class="action POST">
+                        
+
+                        
+    <h4 id="h-action_adds-a-new-document">
+        Adds a new document -
+        POST
+        
+            /restful-services/2.0/documents
+        
+    </h4>
+
+        
+                            <div id="adds-a-new-document_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+                                            
+                                            
+                                            
+                                            
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_adds-a-new-document_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-documents-resource/adds-a-new-document">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+            </section>
+        
+            <section id="resource_the-document-resource" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-document-resource">The document resource [/restful-services/2.0/documents/{document_label}]</h3> </div>
+                <p>The document resource represents a specific document.</p>
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				document_label (Required, string
+				)
+			</dt>
+			<dd>
+				the document's label
+				
+			</dd>
+		
+	</dl>
+
+
+                    
+                        
+                            <div id="action_return-document-with-specified-label" class="action GET">
+                        
+
+                        
+    <h4 id="h-action_return-document-with-specified-label">
+        Return document with specified Label -
+        GET
+        
+            /restful-services/2.0/documents/{document_label}
+        
+    </h4>
+
+        
+                            <div id="return-document-with-specified-label_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_return-document-with-specified-label_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-document-resource/return-document-with-specified-label">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+                        
+                            <div id="action_update-the-document" class="action PUT">
+                        
+
+                        
+    <h4 id="h-action_update-the-document">
+        Update the document -
+        PUT
+        
+            /restful-services/2.0/documents/{document_label}
+        
+    </h4>
+
+        
+                            <div id="update-the-document_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+                                            
+                                            
+                                            
+                                            
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_update-the-document_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-document-resource/update-the-document">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+                        
+                            <div id="action_delete-the-document" class="action DELETE">
+                        
+
+                        
+    <h4 id="h-action_delete-the-document">
+        Delete the document -
+        DELETE
+        
+            /restful-services/2.0/documents/{document_label}
+        
+    </h4>
+
+        
+                            <div id="delete-the-document_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_delete-the-document_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-document-resource/delete-the-document">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+            </section>
+        
+            <section id="resource_the-template-subresource" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-template-subresource">The template subresource [/restful-services/2.0/documents/{document_label}/template]</h3> </div>
+                <p>The template resource is optional. It is however mandatory for some type of documents. The templates of a document are versioned, so if you add a new template, the old one will be not deleted.</p>
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				document_label (Required, string
+				)
+			</dt>
+			<dd>
+				the document's label
+				
+			</dd>
+		
+	</dl>
+
+
+                    
+                        
+                            <div id="action_return-template-with-specified-label" class="action GET">
+                        
+
+                        
+    <h4 id="h-action_return-template-with-specified-label">
+        Return template with Specified Label -
+        GET
+        
+            /restful-services/2.0/documents/{document_label}/template
+        
+    </h4>
+
+        
+                            <div id="return-template-with-specified-label_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_return-template-with-specified-label_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-template-subresource/return-template-with-specified-label">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+                        
+                            <div id="action_update-the-template" class="action POST">
+                        
+
+                        
+    <h4 id="h-action_update-the-template">
+        Update the template -
+        POST
+        
+            /restful-services/2.0/documents/{document_label}/template
+        
+    </h4>
+
+        
+                            <div id="update-the-template_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+                                            
+                                            
+                                            
+                                            
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (multipart/form-data)
+        
+    
+        
+    
+            
+            
+     
+</div>
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_update-the-template_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-template-subresource/update-the-template">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+                        
+                            <div id="action_delete-the-template" class="action DELETE">
+                        
+
+                        
+    <h4 id="h-action_delete-the-template">
+        Delete the template -
+        DELETE
+        
+            /restful-services/2.0/documents/{document_label}/template
+        
+    </h4>
+
+        
+                            <div id="delete-the-template_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_delete-the-template_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-template-subresource/delete-the-template">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+            </section>
+        
+            <section id="resource_the-parameters-subresource" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-parameters-subresource">The parameters subresource [/restful-services/2.0/documents/{document_label}/parameters]</h3> </div>
+                <p>A document can have one ore more parameters.</p>
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				document_label (Required, string
+				)
+			</dt>
+			<dd>
+				the document's label
+				
+			</dd>
+		
+	</dl>
+
+
+                    
+                        
+                            <div id="action_return-parameters-with-specified-label" class="action GET">
+                        
+
+                        
+    <h4 id="h-action_return-parameters-with-specified-label">
+        Return parameters with Specified Label -
+        GET
+        
+            /restful-services/2.0/documents/{document_label}/parameters
+        
+    </h4>
+
+        
+                            <div id="return-parameters-with-specified-label_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_return-parameters-with-specified-label_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-parameters-subresource/return-parameters-with-specified-label">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+                        
+                            <div id="action_add-a-parameter" class="action POST">
+                        
+
+                        
+    <h4 id="h-action_add-a-parameter">
+        Add a parameter -
+        POST
+        
+            /restful-services/2.0/documents/{document_label}/parameters
+        
+    </h4>
+
+        
+                            <div id="add-a-parameter_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+                                            
+                                            
+                                            
+                                            
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_add-a-parameter_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-parameters-subresource/add-a-parameter">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+            </section>
+        
+            <section id="resource_the-parameter-subresource" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-parameter-subresource">The parameter subresource [/restful-services/2.0/documents/{document_label}/parameters/{par_id}]</h3> </div>
+                <p>Each parameter is seen as a resource (subresource of parameters) and is uniquely identified by its id.</p>
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				document_label (Required, string
+				)
+			</dt>
+			<dd>
+				the document's label
+				
+			</dd>
+		
+			<dt>
+				par_id (Required, string
+				)
+			</dt>
+			<dd>
+				the parameter's id
+				
+			</dd>
+		
+	</dl>
+
+
+                    
+                        
+                            <div id="action_return-parameter-with-specified-id" class="action GET">
+                        
+
+                        
+    <h4 id="h-action_return-parameter-with-specified-id">
+        Return Parameter with specified Id -
+        GET
+        
+            /restful-services/2.0/documents/{document_label}/parameters/{par_id}
+        
+    </h4>
+
+        
+                            <div id="return-parameter-with-specified-id_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_return-parameter-with-specified-id_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-parameter-subresource/return-parameter-with-specified-id">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+                        
+                            <div id="action_update-the-parameter" class="action PUT">
+                        
+
+                        
+    <h4 id="h-action_update-the-parameter">
+        Update the parameter -
+        PUT
+        
+            /restful-services/2.0/documents/{document_label}/parameters/{par_id}
+        
+    </h4>
+
+        
+                            <div id="update-the-parameter_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+                                            
+                                            
+                                            
+                                            
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_update-the-parameter_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-parameter-subresource/update-the-parameter">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+                        
+                            <div id="action_delete-the-parameter" class="action DELETE">
+                        
+
+                        
+    <h4 id="h-action_delete-the-parameter">
+        Delete the parameter -
+        DELETE
+        
+            /restful-services/2.0/documents/{document_label}/parameters/{par_id}
+        
+    </h4>
+
+        
+                            <div id="delete-the-parameter_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_delete-the-parameter_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-parameter-subresource/delete-the-parameter">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+            </section>
+        
+            <section id="resource_the-content-subresource" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-content-subresource">The content subresource [/restful-services/2.0/documents/{document_label}/content]</h3> </div>
+                <p>In SpagoBI a document can be executed. For a point of view, executing a document can be seen as the act of retrieving its content. For this reason, the content of a document is represented as a sub resource of it.</p>
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				document_label (Required, string
+				)
+			</dt>
+			<dd>
+				the document's label
+				
+			</dd>
+		
+	</dl>
+
+
+                    
+                        
+                            <div id="action_return-the-document-content" class="action POST">
+                        
+
+                        
+    <h4 id="h-action_return-the-document-content">
+        Return the document content -
+        POST
+        
+            /restful-services/2.0/documents/{document_label}/content
+        
+    </h4>
+
+        
+                            <div id="return-the-document-content_body" class="">
+                                <p>In order to execute the document you must put them inside the body payload as a JSON object. There is also the outputType parameter represented as queryParameter.
+It accepts an  "outputType" query parameter, for example "HTML".</p>
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+                                            
+                                            
+                                            
+                                            
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_return-the-document-content_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-content-subresource/return-the-document-content">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+            </section>
+        
+            <section id="resource_the-datasets" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-datasets">The datasets [/restful-services/2.0/datasets]</h3> </div>
+                <p>CRUD operations for Datasets</p>
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+
+                    
+                        
+                            <div id="action_returns-the-datasets" class="action GET">
+                        
+
+                        
+    <h4 id="h-action_returns-the-datasets">
+        Returns the datasets -
+        GET
+        
+            /restful-services/2.0/datasets
+        
+    </h4>
+
+        
+                            <div id="returns-the-datasets_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+                                            
+                                            
+                                            
+                                            
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+            
+            
+     
+</div>
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_returns-the-datasets_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-datasets/returns-the-datasets">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+                        
+                            <div id="action_add-a-dataset" class="action POST">
+                        
+
+                        
+    <h4 id="h-action_add-a-dataset">
+        Add a dataset -
+        POST
+        
+            /restful-services/2.0/datasets
+        
+    </h4>
+
+        
+                            <div id="add-a-dataset_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+                                            
+                                            
+                                            
+                                            
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 201</span> 
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_add-a-dataset_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-datasets/add-a-dataset">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+            </section>
+        
+            <section id="resource_the-dataset" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-dataset">The dataset [/restful-services/2.0/datasets/{dataset_label}]</h3> </div>
+                <p>CRUD operations for a specific dataset</p>
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				dataset_label (Required, string
+				)
+			</dt>
+			<dd>
+				the dataset's label
+				
+			</dd>
+		
+	</dl>
+
+
+                    
+                        
+                            <div id="action_return-the-dataset" class="action GET">
+                        
+
+                        
+    <h4 id="h-action_return-the-dataset">
+        Return the dataset -
+        GET
+        
+            /restful-services/2.0/datasets/{dataset_label}
+        
+    </h4>
+
+        
+                            <div id="return-the-dataset_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_return-the-dataset_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-dataset/return-the-dataset">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+                        
+                            <div id="action_update-tha-dataset" class="action PUT">
+                        
+
+                        
+    <h4 id="h-action_update-tha-dataset">
+        Update tha dataset -
+        PUT
+        
+            /restful-services/2.0/datasets/{dataset_label}
+        
+    </h4>
+
+        
+                            <div id="update-tha-dataset_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+                                            
+                                            
+                                            
+                                            
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_update-tha-dataset_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-dataset/update-tha-dataset">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+                        
+                            <div id="action_delete-tha-dataset" class="action DELETE">
+                        
+
+                        
+    <h4 id="h-action_delete-tha-dataset">
+        Delete tha dataset -
+        DELETE
+        
+            /restful-services/2.0/datasets/{dataset_label}
+        
+    </h4>
+
+        
+                            <div id="delete-tha-dataset_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_delete-tha-dataset_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-dataset/delete-tha-dataset">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+            </section>
+        
+            <section id="resource_the-dataset-content" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-dataset-content">The dataset content [/restful-services/2.0/datasets/{dataset_label}/content]</h3> </div>
+                
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				dataset_label (Required, string
+				)
+			</dt>
+			<dd>
+				the dataset's label
+				
+			</dd>
+		
+	</dl>
+
+
+                    
+                        
+                            <div id="action_return-the-dataset's-content" class="action GET">
+                        
+
+                        
+    <h4 id="h-action_return-the-dataset's-content">
+        Return the dataset's content -
+        GET
+        
+            /restful-services/2.0/datasets/{dataset_label}/content
+        
+    </h4>
+
+        
+                            <div id="return-the-dataset's-content_body" class="">
+                                <p>It accepts a list of multiple query parameters, name1=value1&amp;name2=value2&amp;...&amp;nameN=valueN.</p>
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_return-the-dataset's-content_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-dataset-content/return-the-dataset's-content">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+            </section>
+        
+            <section id="resource_the-engines-resource" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-engines-resource">The engines resource [/restful-services/2.0/engines]</h3> </div>
+                <p>In order to create a document it is mandatory to specify its engine. The list of engines can be retrieved by sending a GET request to the engines resource's url.
+There POST method is not implemented because engines cannot be changed.</p>
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+
+                    
+                        
+                            <div id="action_get-the-engine-resources" class="action GET">
+                        
+
+                        
+    <h4 id="h-action_get-the-engine-resources">
+        Get the engine resources -
+        GET
+        
+            /restful-services/2.0/engines
+        
+    </h4>
+
+        
+                            <div id="get-the-engine-resources_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_get-the-engine-resources_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-engines-resource/get-the-engine-resources">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+            </section>
+        
+            <section id="resource_the-engine-resource" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-engine-resource">The engine resource [/restful-services/2.0/engines/{label}]</h3> </div>
+                
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				label (Required, string
+				)
+			</dt>
+			<dd>
+				the engine's label
+				
+			</dd>
+		
+	</dl>
+
+
+                    
+                        
+                            <div id="action_get-the-engine-specified-resource" class="action GET">
+                        
+
+                        
+    <h4 id="h-action_get-the-engine-specified-resource">
+        Get the engine specified resource -
+        GET
+        
+            /restful-services/2.0/engines/{label}
+        
+    </h4>
+
+        
+                            <div id="get-the-engine-specified-resource_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_get-the-engine-specified-resource_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-engine-resource/get-the-engine-specified-resource">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+                    
+            </section>
+        
+    </section>
+
+<section id="examples">
+    <div class= "header" ><h2>Examples</h2> </div>
+    
+        
+            <section id="resource_group__example" class="resourceGroupExample">
+                <div class= "header" ><h3 id="h-resource_group__example">Default</h3> </div>
+        
+
+                
+                    <section id="resource_the-documents-resource_example" class="resourceExample">
+                         <div class= "header" ><h4 id="h-resource_the-documents-resource_example">The documents resource [/restful-services/2.0/documents]</h4></div>
+                            
+                            
+                            
+
+                            
+                            
+                            
+
+                            
+
+
+                            
+                                <div id="action_list-all-documents_examples" class="actionExample GET">
+
+                                    
+    <h4 id="h-action_list-all-documents_examples">
+        List All Documents -
+        GET
+        
+            /restful-services/2.0/documents
+        
+    </h4>
+
+                
+                                    <div id="action_list-all-documents_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_list-all-documents_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>[
+    {
+        "id": 1,
+        "name": "Accessible sales costs",
+        "description": "",
+        "label": "Sales and costs",
+        "visible": true,
+        "stateCode": "REL",
+        "creationUser": "demo_admin",
+        "objMetaDataAndContents": null,
+        "tenant": "SPAGOBI",
+        "previewFile": null,
+        "docVersion": null,
+        "parametersRegion": "east",
+        "dataSourceLabel": "foodmart",
+        "dataSetLabel": "DEMO_SALES_COSTS",
+        "typeCode": "ACCESSIBLE_HTML",
+        "public": true,
+        "engine": "SpagoBIAccessibleEng",
+        "functionalities": [
+            "/Functionalities/DOC_DEMO/Accessibility"
+        ],
+        "creationDate": "2015-04-20 10:12:08.0"
+    },
+    {
+        "id": 133,
+        "name": "Char Grouped Bar",
+        "description": "Char Grouped Bar",
+        "label": "Char Grouped Bar",
+        "visible": true,
+        "stateCode": "REL",
+        "creationUser": "biadmin",
+        "objMetaDataAndContents": null,
+        "tenant": "SPAGOBI",
+        "previewFile": null,
+        "docVersion": null,
+        "parametersRegion": "east",
+        "dataSourceLabel": "FoodmartHSQL",
+        "dataSetLabel": "DS_DEMO_EXTCHART",
+        "typeCode": "CHART",
+        "public": true,
+        "engine": "SpagoBIJSChartEngine",
+        "functionalities": [
+            "/Functionalities/DOC_DEMO/CHARTS"
+        ],
+        "creationDate": "2014-01-23 11:56:59.0"
+    }
+]
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_list-all-documents">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                                <div id="action_adds-a-new-document_examples" class="actionExample POST">
+
+                                    
+    <h4 id="h-action_adds-a-new-document_examples">
+        Adds a new document -
+        POST
+        
+            /restful-services/2.0/documents
+        
+    </h4>
+
+                
+                                    <div id="action_adds-a-new-document_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+                                                    
+                                                    
+                                                    
+                                                    
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_adds-a-new-document_Request_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>{
+    "id": 1,
+    "name": "Accessible sales costs",
+    "description": "",
+    "label": "Sales and costs",
+    "visible": true,
+    "stateCode": "REL",
+    "creationUser": "demo_admin",
+    "objMetaDataAndContents": null,
+    "tenant": "SPAGOBI",
+    "previewFile": null,
+    "docVersion": null,
+    "parametersRegion": "east",
+    "dataSourceLabel": "foodmart",
+    "dataSetLabel": "DEMO_SALES_COSTS",
+    "typeCode": "ACCESSIBLE_HTML",
+    "public": true,
+    "engine": "SpagoBIAccessibleEng",
+    "functionalities": [
+        "/Functionalities/DOC_DEMO/Accessibility"
+    ],
+    "creationDate": "2015-04-20 10:12:08.0"
+}
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_adds-a-new-document_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_adds-a-new-document">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                    </section>
+            
+                    <section id="resource_the-document-resource_example" class="resourceExample">
+                         <div class= "header" ><h4 id="h-resource_the-document-resource_example">The document resource [/restful-services/2.0/documents/{document_label}]</h4></div>
+                            
+                            
+                            
+
+                            
+                            
+                            
+
+                            
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				document_label (Required, string
+				)
+			</dt>
+			<dd>
+				the document's label
+				
+			</dd>
+		
+	</dl>
+
+
+                            
+                                <div id="action_return-document-with-specified-label_examples" class="actionExample GET">
+
+                                    
+    <h4 id="h-action_return-document-with-specified-label_examples">
+        Return document with specified Label -
+        GET
+        
+            /restful-services/2.0/documents/{document_label}
+        
+    </h4>
+
+                
+                                    <div id="action_return-document-with-specified-label_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_return-document-with-specified-label_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>{
+    "id": 1,
+    "name": "Accessible sales costs",
+    "description": "",
+    "label": "Sales and costs",
+    "visible": true,
+    "stateCode": "REL",
+    "creationUser": "demo_admin",
+    "objMetaDataAndContents": null,
+    "tenant": "SPAGOBI",
+    "previewFile": null,
+    "docVersion": null,
+    "parametersRegion": "east",
+    "dataSourceLabel": "foodmart",
+    "dataSetLabel": "DEMO_SALES_COSTS",
+    "typeCode": "ACCESSIBLE_HTML",
+    "public": true,
+    "engine": "SpagoBIAccessibleEng",
+    "functionalities": [
+        "/Functionalities/DOC_DEMO/Accessibility"
+    ],
+    "creationDate": "2015-04-20 10:12:08.0"
+}
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_return-document-with-specified-label">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                                <div id="action_update-the-document_examples" class="actionExample PUT">
+
+                                    
+    <h4 id="h-action_update-the-document_examples">
+        Update the document -
+        PUT
+        
+            /restful-services/2.0/documents/{document_label}
+        
+    </h4>
+
+                
+                                    <div id="action_update-the-document_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+                                                    
+                                                    
+                                                    
+                                                    
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_update-the-document_Request_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>{
+    "id": 1,
+    "name": "Accessible sales costs",
+    "description": "",
+    "label": "Sales and costs",
+    "visible": true,
+    "stateCode": "REL",
+    "creationUser": "demo_admin",
+    "objMetaDataAndContents": null,
+    "tenant": "SPAGOBI",
+    "previewFile": null,
+    "docVersion": null,
+    "parametersRegion": "east",
+    "dataSourceLabel": "foodmart",
+    "dataSetLabel": "DEMO_SALES_COSTS",
+    "typeCode": "ACCESSIBLE_HTML",
+    "public": true,
+    "engine": "SpagoBIAccessibleEng",
+    "functionalities": [
+        "/Functionalities/DOC_DEMO/Accessibility"
+    ],
+    "creationDate": "2015-04-20 10:12:08.0"
+}
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_update-the-document_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_update-the-document">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                                <div id="action_delete-the-document_examples" class="actionExample DELETE">
+
+                                    
+    <h4 id="h-action_delete-the-document_examples">
+        Delete the document -
+        DELETE
+        
+            /restful-services/2.0/documents/{document_label}
+        
+    </h4>
+
+                
+                                    <div id="action_delete-the-document_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_delete-the-document_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_delete-the-document">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                    </section>
+            
+                    <section id="resource_the-template-subresource_example" class="resourceExample">
+                         <div class= "header" ><h4 id="h-resource_the-template-subresource_example">The template subresource [/restful-services/2.0/documents/{document_label}/template]</h4></div>
+                            
+                            
+                            
+
+                            
+                            
+                            
+
+                            
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				document_label (Required, string
+				)
+			</dt>
+			<dd>
+				the document's label
+				
+			</dd>
+		
+	</dl>
+
+
+                            
+                                <div id="action_return-template-with-specified-label_examples" class="actionExample GET">
+
+                                    
+    <h4 id="h-action_return-template-with-specified-label_examples">
+        Return template with Specified Label -
+        GET
+        
+            /restful-services/2.0/documents/{document_label}/template
+        
+    </h4>
+
+                
+                                    <div id="action_return-template-with-specified-label_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_return-template-with-specified-label_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Disposition: attachment; filename=&#34;my_file&#34;</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>Template is a file, generally an xml.
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_return-template-with-specified-label">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                                <div id="action_update-the-template_examples" class="actionExample POST">
+
+                                    
+    <h4 id="h-action_update-the-template_examples">
+        Update the template -
+        POST
+        
+            /restful-services/2.0/documents/{document_label}/template
+        
+    </h4>
+
+                
+                                    <div id="action_update-the-template_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+                                                    
+                                                    
+                                                    
+                                                    
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (multipart/form-data)
+        
+    
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_update-the-template_Request_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: multipart/form-data
+Content-Disposition: form-data; name=&#34;file&#34;; filename=&#34;my_file&#34;</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>Template is a file, generally an xml.
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_update-the-template_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_update-the-template">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                                <div id="action_delete-the-template_examples" class="actionExample DELETE">
+
+                                    
+    <h4 id="h-action_delete-the-template_examples">
+        Delete the template -
+        DELETE
+        
+            /restful-services/2.0/documents/{document_label}/template
+        
+    </h4>
+
+                
+                                    <div id="action_delete-the-template_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_delete-the-template_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_delete-the-template">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                    </section>
+            
+                    <section id="resource_the-parameters-subresource_example" class="resourceExample">
+                         <div class= "header" ><h4 id="h-resource_the-parameters-subresource_example">The parameters subresource [/restful-services/2.0/documents/{document_label}/parameters]</h4></div>
+                            
+                            
+                            
+
+                            
+                            
+                            
+
+                            
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				document_label (Required, string
+				)
+			</dt>
+			<dd>
+				the document's label
+				
+			</dd>
+		
+	</dl>
+
+
+                            
+                                <div id="action_return-parameters-with-specified-label_examples" class="actionExample GET">
+
+                                    
+    <h4 id="h-action_return-parameters-with-specified-label_examples">
+        Return parameters with Specified Label -
+        GET
+        
+            /restful-services/2.0/documents/{document_label}/parameters
+        
+    </h4>
+
+                
+                                    <div id="action_return-parameters-with-specified-label_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_return-parameters-with-specified-label_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    [
+        {
+            "label":"label1",
+            "url":"url1"
+        },
+        {
+            "label":"label2",
+            "url":"url2"
+        }
+    ]
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_return-parameters-with-specified-label">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                                <div id="action_add-a-parameter_examples" class="actionExample POST">
+
+                                    
+    <h4 id="h-action_add-a-parameter_examples">
+        Add a parameter -
+        POST
+        
+            /restful-services/2.0/documents/{document_label}/parameters
+        
+    </h4>
+
+                
+                                    <div id="action_add-a-parameter_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+                                                    
+                                                    
+                                                    
+                                                    
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_add-a-parameter_Request_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    {
+        "label":"label1",
+        "parameterUrlName":"url1",
+        "parID":"100"
+    }
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_add-a-parameter_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_add-a-parameter">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                    </section>
+            
+                    <section id="resource_the-parameter-subresource_example" class="resourceExample">
+                         <div class= "header" ><h4 id="h-resource_the-parameter-subresource_example">The parameter subresource [/restful-services/2.0/documents/{document_label}/parameters/{par_id}]</h4></div>
+                            
+                            
+                            
+
+                            
+                            
+                            
+
+                            
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				document_label (Required, string
+				)
+			</dt>
+			<dd>
+				the document's label
+				
+			</dd>
+		
+			<dt>
+				par_id (Required, string
+				)
+			</dt>
+			<dd>
+				the parameter's id
+				
+			</dd>
+		
+	</dl>
+
+
+                            
+                                <div id="action_return-parameter-with-specified-id_examples" class="actionExample GET">
+
+                                    
+    <h4 id="h-action_return-parameter-with-specified-id_examples">
+        Return Parameter with specified Id -
+        GET
+        
+            /restful-services/2.0/documents/{document_label}/parameters/{par_id}
+        
+    </h4>
+
+                
+                                    <div id="action_return-parameter-with-specified-id_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_return-parameter-with-specified-id_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    {
+        "label":"label1",
+        "parameterUrlName":"url1"
+    }
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_return-parameter-with-specified-id">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                                <div id="action_update-the-parameter_examples" class="actionExample PUT">
+
+                                    
+    <h4 id="h-action_update-the-parameter_examples">
+        Update the parameter -
+        PUT
+        
+            /restful-services/2.0/documents/{document_label}/parameters/{par_id}
+        
+    </h4>
+
+                
+                                    <div id="action_update-the-parameter_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+                                                    
+                                                    
+                                                    
+                                                    
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_update-the-parameter_Request_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    {
+        "label":"label1",
+        "parameterUrlName":"url1"
+    }
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_update-the-parameter_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_update-the-parameter">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                                <div id="action_delete-the-parameter_examples" class="actionExample DELETE">
+
+                                    
+    <h4 id="h-action_delete-the-parameter_examples">
+        Delete the parameter -
+        DELETE
+        
+            /restful-services/2.0/documents/{document_label}/parameters/{par_id}
+        
+    </h4>
+
+                
+                                    <div id="action_delete-the-parameter_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_delete-the-parameter_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_delete-the-parameter">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                    </section>
+            
+                    <section id="resource_the-content-subresource_example" class="resourceExample">
+                         <div class= "header" ><h4 id="h-resource_the-content-subresource_example">The content subresource [/restful-services/2.0/documents/{document_label}/content]</h4></div>
+                            
+                            
+                            
+
+                            
+                            
+                            
+
+                            
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				document_label (Required, string
+				)
+			</dt>
+			<dd>
+				the document's label
+				
+			</dd>
+		
+	</dl>
+
+
+                            
+                                <div id="action_return-the-document-content_examples" class="actionExample POST">
+
+                                    
+    <h4 id="h-action_return-the-document-content_examples">
+        Return the document content -
+        POST
+        
+            /restful-services/2.0/documents/{document_label}/content
+        
+    </h4>
+
+                
+                                    <div id="action_return-the-document-content_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+                                                    
+                                                    
+                                                    
+                                                    
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_return-the-document-content_Request_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    [
+        {
+                "id":"1",
+                "label":"label1",
+                "type":"type1",
+                "urlName":"myUrl",
+                "values":["v1","v2"]
+        }
+    ]
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_return-the-document-content_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json
+Content-Disposition: attachment; filename=&#34;my_file&#34;</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>documents content as file
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_return-the-document-content">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                    </section>
+            
+                    <section id="resource_the-datasets_example" class="resourceExample">
+                         <div class= "header" ><h4 id="h-resource_the-datasets_example">The datasets [/restful-services/2.0/datasets]</h4></div>
+                            
+                            
+                            
+
+                            
+                            
+                            
+
+                            
+
+
+                            
+                                <div id="action_returns-the-datasets_examples" class="actionExample GET">
+
+                                    
+    <h4 id="h-action_returns-the-datasets_examples">
+        Returns the datasets -
+        GET
+        
+            /restful-services/2.0/datasets
+        
+    </h4>
+
+                
+                                    <div id="action_returns-the-datasets_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+                                                    
+                                                    
+                                                    
+                                                    
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+            
+            
+            
+            
+
+    <span class="payload-title">Payload</span>
+    
+        
+                        <dl class="action-parameters-table">
+                                    <dt>callback
+                                    (Not required,
+                                    string)
+                                    </dt>
+                                    <dd>the callback function for the response, optional</dd>
+                        </dl>
+        
+    
+
+
+
+ 
+            <div id="action_returns-the-datasets_Request_1_body" class=" action-div-body">
+                <p></p>
+
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_returns-the-datasets_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    [
+        {
+            "active": true,
+            "categoryId": null,
+            "commonInfo": {
+                "organization": null,
+                "sbiVersionDe": null,
+                "sbiVersionIn": "4.0",
+                "sbiVersionUp": null,
+                "timeDe": null,
+                "timeIn": 1437646316000,
+                "timeUp": null,
+                "userDe": null,
+                "userIn": "biadmin",
+                "userUp": null
+            },
+            "configuration": {
+                "Query": "select * from business_demo_meter",
+                "dataSource": "Cosmos",
+                "queryScript": "",
+                "queryScriptLanguage": ""
+            },
+            "description": null,
+            "id": {
+                "dsId": 4,
+                "organization": "SPAGOBI",
+                "versionNum": 7
+            },
+            "label": "Meter",
+            "metaVersion": null,
+            "metadata": {
+                "fieldsMeta": [
+                    {
+                        "alias": "id",
+                        "fieldType": "ATTRIBUTE",
+                        "name": "id",
+                        "properties": {},
+                        "type": "java.lang.String"
+                    },
+                    {
+                        "alias": "recvtime",
+                        "fieldType": "ATTRIBUTE",
+                        "name": "recvtime",
+                        "properties": {},
+                        "type": "java.lang.String"
+                    }
+                ],
+                "properties": {
+                    "resultNumber": "3276"
+                }
+            },
+            "name": "Meter",
+            "numRows": false,
+            "owner": "biadmin",
+            "parameters": [],
+            "persistTableName": "",
+            "persisted": false,
+            "pivotColumnName": null,
+            "pivotColumnValue": null,
+            "pivotRowName": null,
+            "publicDS": true,
+            "sbiVersionDe": null,
+            "sbiVersionIn": null,
+            "sbiVersionUp": null,
+            "scope": {
+                "commonInfo": {
+                    "organization": null,
+                    "sbiVersionDe": null,
+                    "sbiVersionIn": "4.0",
+                    "sbiVersionUp": null,
+                    "timeDe": null,
+                    "timeIn": 1436791308000,
+                    "timeUp": null,
+                    "userDe": null,
+                    "userIn": "server",
+                    "userUp": null
+                },
+                "domainCd": "DS_SCOPE",
+                "domainNm": "Dataset scope",
+                "valueCd": "USER",
+                "valueDs": "Dataset scope",
+                "valueId": 185,
+                "valueNm": "User"
+            },
+            "scopeId": 185,
+            "timeDe": null,
+            "timeIn": null,
+            "timeUp": null,
+            "transformerId": null,
+            "type": "SbiQueryDataSet",
+            "userDe": null,
+            "userIn": null,
+            "userUp": null
+        },
+        {
+            "active": true,
+            "categoryId": 150,
+            "commonInfo": {
+                "organization": null,
+                "sbiVersionDe": null,
+                "sbiVersionIn": "4.0",
+                "sbiVersionUp": null,
+                "timeDe": null,
+                "timeIn": 1441025411000,
+                "timeUp": null,
+                "userDe": null,
+                "userIn": "biadmin",
+                "userUp": null
+            },
+            "configuration": {
+                "restAddress": "http://192.168.2.137:1026/v1/queryContext",
+                "restDirectlyJSONAttributes": "false",
+                "restFetchSize": "limit",
+                "restHttpMethod": "Post",
+                "restJsonPathAttributes": [
+                    {
+                        "jsonPathType": "string",
+                        "jsonPathValue": "pros3",
+                        "name": "id"
+                    }
+
+                ],
+                "restJsonPathItems": "$",
+                "restMaxResults": "",
+                "restNGSI": "true",
+                "restOffset": "offset",
+                "restRequestBody": "{ \n    \"entities\": [ \n        {\n            \"isPattern\": \"true\",\n            \"type\":\"Meter\",\n            \"id\": \".*\"\n        }\n    ]\n}",
+                "restRequestHeaders": {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            },
+            "description": "Meters Values",
+            "id": {
+                "dsId": 5,
+                "organization": "SPAGOBI",
+                "versionNum": 10
+            },
+            "label": "RestMetersValues",
+            "metaVersion": null,
+            "metadata": {
+                "fieldsMeta": [
+
+                    {
+                        "alias": "upstreamActivePower",
+                        "fieldType": "ATTRIBUTE",
+                        "name": "upstreamActivePower",
+                        "properties": {
+                            "jsonPathValue": "$.contextResponses[?(@.contextElement.id==pros3_Meter)].contextElement.attributes[?(@.name==upstreamActivePower)].value"
+                        },
+                        "type": "java.lang.Double"
+                    },
+                    {
+                        "alias": "downstreamActivePower",
+                        "fieldType": "ATTRIBUTE",
+                        "name": "downstreamActivePower",
+                        "properties": {
+                            "jsonPathValue": "$.contextResponses[?(@.contextElement.id==pros3_Meter)].contextElement.attributes[?(@.name==downstreamActivePower)].value"
+                        },
+                        "type": "java.lang.Double"
+                    }
+                ],
+                "properties": {}
+            },
+            "name": "RestMetersValues",
+            "numRows": false,
+            "owner": "biadmin",
+            "parameters": [],
+            "persistTableName": "",
+            "persisted": false,
+            "pivotColumnName": null,
+            "pivotColumnValue": null,
+            "pivotRowName": null,
+            "publicDS": true,
+            "sbiVersionDe": null,
+            "sbiVersionIn": null,
+            "sbiVersionUp": null,
+            "scope": null,
+            "scopeId": null,
+            "timeDe": null,
+            "timeIn": null,
+            "timeUp": null,
+            "transformerId": null,
+            "type": "SbiRESTDataSet",
+            "userDe": null,
+            "userIn": null,
+            "userUp": null
+        },
+        {
+            "active": true,
+            "categoryId": null,
+            "commonInfo": {
+                "organization": null,
+                "sbiVersionDe": null,
+                "sbiVersionIn": "4.0",
+                "sbiVersionUp": null,
+                "timeDe": null,
+                "timeIn": 1440514105000,
+                "timeUp": null,
+                "userDe": null,
+                "userIn": "biadmin",
+                "userUp": null
+            },
+            "configuration": {
+                "Query": "select *",
+                "dataSource": "Cosmos",
+                "queryScript": "",
+                "queryScriptLanguage": ""
+            },
+            "description": null,
+            "id": {
+                "dsId": 6,
+                "organization": "SPAGOBI",
+                "versionNum": 1
+            },
+            "label": "LoadCosmos",
+            "metaVersion": null,
+            "metadata": null,
+            "name": "LoadCosmos",
+            "numRows": false,
+            "owner": "biadmin",
+            "parameters": [],
+            "persistTableName": "",
+            "persisted": false,
+            "pivotColumnName": null,
+            "pivotColumnValue": null,
+            "pivotRowName": null,
+            "publicDS": true,
+            "sbiVersionDe": null,
+            "sbiVersionIn": null,
+            "sbiVersionUp": null,
+            "scope": null,
+            "scopeId": null,
+            "timeDe": null,
+            "timeIn": null,
+            "timeUp": null,
+            "transformerId": null,
+            "type": "SbiQueryDataSet",
+            "userDe": null,
+            "userIn": null,
+            "userUp": null
+        },
+        {
+            "active": true,
+            "categoryId": 150,
+            "commonInfo": {
+                "organization": null,
+                "sbiVersionDe": null,
+                "sbiVersionIn": "4.0",
+                "sbiVersionUp": null,
+                "timeDe": null,
+                "timeIn": 1441189575000,
+                "timeUp": null,
+                "userDe": null,
+                "userIn": "biadmin",
+                "userUp": null
+            },
+            "configuration": {
+                "restAddress": "http://192.168.2.137:1026/v1/queryContext",
+                "restDirectlyJSONAttributes": "false",
+                "restFetchSize": "",
+                "restHttpMethod": "Post",
+                "restJsonPathAttributes": [],
+                "restJsonPathItems": "",
+                "restMaxResults": "",
+                "restNGSI": "true",
+                "restOffset": "",
+                "restRequestBody": "{ \n    \"entities\": [ \n        {\n            \"isPattern\": \"true\",\n            \"type\":\"Meter\",\n            \"id\": \".*\"\n        }\n    ]\n}",
+                "restRequestHeaders": {}
+            },
+            "description": "Rest1 Desc",
+            "id": {
+                "dsId": 7,
+                "organization": "SPAGOBI",
+                "versionNum": 2
+            },
+            "label": "Rest2",
+            "metaVersion": null,
+            "metadata": {
+                "fieldsMeta": [
+                    {
+                        "alias": "id",
+                        "fieldType": "ATTRIBUTE",
+                        "name": "id",
+                        "properties": {
+                            "jsonPathValue": "$.id"
+                        },
+                        "type": "java.lang.String"
+                    },
+                    {
+                        "alias": "atTime",
+                        "fieldType": "ATTRIBUTE",
+                        "name": "atTime",
+                        "properties": {
+                            "dateFormat": "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+                            "jsonPathType": "$.attributes[?(@.name==atTime)].type",
+                            "jsonPathValue": "$.attributes[?(@.name==atTime)].value"
+                        },
+                        "type": "java.util.Date"
+                    }
+
+                ],
+                "properties": {}
+            },
+            "name": "Rest2",
+            "numRows": false,
+            "owner": "biadmin",
+            "parameters": [],
+            "persistTableName": "",
+            "persisted": false,
+            "pivotColumnName": null,
+            "pivotColumnValue": null,
+            "pivotRowName": null,
+            "publicDS": true,
+            "sbiVersionDe": null,
+            "sbiVersionIn": null,
+            "sbiVersionUp": null,
+            "scope": null,
+            "scopeId": null,
+            "timeDe": null,
+            "timeIn": null,
+            "timeUp": null,
+            "transformerId": null,
+            "type": "SbiRESTDataSet",
+            "userDe": null,
+            "userIn": null,
+            "userUp": null
+        }
+    ]
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_returns-the-datasets">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                                <div id="action_add-a-dataset_examples" class="actionExample POST">
+
+                                    
+    <h4 id="h-action_add-a-dataset_examples">
+        Add a dataset -
+        POST
+        
+            /restful-services/2.0/datasets
+        
+    </h4>
+
+                
+                                    <div id="action_add-a-dataset_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+                                                    
+                                                    
+                                                    
+                                                    
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_add-a-dataset_Request_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    {
+        "active": true,
+        "categoryId": null,
+        "commonInfo": {
+            "organization": null,
+            "sbiVersionDe": null,
+            "sbiVersionIn": "4.0",
+            "sbiVersionUp": null,
+            "timeDe": null,
+            "timeIn": 1437646316000,
+            "timeUp": null,
+            "userDe": null,
+            "userIn": "biadmin",
+            "userUp": null
+        },
+        "configuration": {
+            "Query": "select * from business_demo_meter",
+            "dataSource": "Cosmos",
+            "queryScript": "",
+            "queryScriptLanguage": ""
+        },
+        "description": null,
+        "id": {
+            "dsId": 4,
+            "organization": "SPAGOBI",
+            "versionNum": 7
+        },
+        "label": "Meter",
+        "metaVersion": null,
+        "metadata": {
+            "fieldsMeta": [
+                {
+                    "alias": "id",
+                    "fieldType": "ATTRIBUTE",
+                    "name": "id",
+                    "properties": {},
+                    "type": "java.lang.String"
+                },
+                {
+                    "alias": "recvtime",
+                    "fieldType": "ATTRIBUTE",
+                    "name": "recvtime",
+                    "properties": {},
+                    "type": "java.lang.String"
+                }
+            ],
+            "properties": {
+                "resultNumber": "3276"
+            }
+        },
+        "name": "Meter",
+        "numRows": false,
+        "owner": "biadmin",
+        "parameters": [],
+        "persistTableName": "",
+        "persisted": false,
+        "pivotColumnName": null,
+        "pivotColumnValue": null,
+        "pivotRowName": null,
+        "publicDS": true,
+        "sbiVersionDe": null,
+        "sbiVersionIn": null,
+        "sbiVersionUp": null,
+        "scope": {
+            "commonInfo": {
+                "organization": null,
+                "sbiVersionDe": null,
+                "sbiVersionIn": "4.0",
+                "sbiVersionUp": null,
+                "timeDe": null,
+                "timeIn": 1436791308000,
+                "timeUp": null,
+                "userDe": null,
+                "userIn": "server",
+                "userUp": null
+            },
+            "domainCd": "DS_SCOPE",
+            "domainNm": "Dataset scope",
+            "valueCd": "USER",
+            "valueDs": "Dataset scope",
+            "valueId": 185,
+            "valueNm": "User"
+        },
+        "scopeId": 185,
+        "timeDe": null,
+        "timeIn": null,
+        "timeUp": null,
+        "transformerId": null,
+        "type": "SbiQueryDataSet",
+        "userDe": null,
+        "userIn": null,
+        "userUp": null
+    }
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 201</span> 
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_add-a-dataset_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Location: 1.0/datasets/datasetLabel</code></pre>
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_add-a-dataset">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                    </section>
+            
+                    <section id="resource_the-dataset_example" class="resourceExample">
+                         <div class= "header" ><h4 id="h-resource_the-dataset_example">The dataset [/restful-services/2.0/datasets/{dataset_label}]</h4></div>
+                            
+                            
+                            
+
+                            
+                            
+                            
+
+                            
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				dataset_label (Required, string
+				)
+			</dt>
+			<dd>
+				the dataset's label
+				
+			</dd>
+		
+	</dl>
+
+
+                            
+                                <div id="action_return-the-dataset_examples" class="actionExample GET">
+
+                                    
+    <h4 id="h-action_return-the-dataset_examples">
+        Return the dataset -
+        GET
+        
+            /restful-services/2.0/datasets/{dataset_label}
+        
+    </h4>
+
+                
+                                    <div id="action_return-the-dataset_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_return-the-dataset_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    {
+        "active": true,
+        "categoryId": null,
+        "commonInfo": {
+            "organization": null,
+            "sbiVersionDe": null,
+            "sbiVersionIn": "4.0",
+            "sbiVersionUp": null,
+            "timeDe": null,
+            "timeIn": 1437646316000,
+            "timeUp": null,
+            "userDe": null,
+            "userIn": "biadmin",
+            "userUp": null
+        },
+        "configuration": {
+            "Query": "select * from business_demo_meter",
+            "dataSource": "Cosmos",
+            "queryScript": "",
+            "queryScriptLanguage": ""
+        },
+        "description": null,
+        "id": {
+            "dsId": 4,
+            "organization": "SPAGOBI",
+            "versionNum": 7
+        },
+        "label": "Meter",
+        "metaVersion": null,
+        "metadata": {
+            "fieldsMeta": [
+                {
+                    "alias": "id",
+                    "fieldType": "ATTRIBUTE",
+                    "name": "id",
+                    "properties": {},
+                    "type": "java.lang.String"
+                },
+                {
+                    "alias": "recvtime",
+                    "fieldType": "ATTRIBUTE",
+                    "name": "recvtime",
+                    "properties": {},
+                    "type": "java.lang.String"
+                }
+            ],
+            "properties": {
+                "resultNumber": "3276"
+            }
+        },
+        "name": "Meter",
+        "numRows": false,
+        "owner": "biadmin",
+        "parameters": [],
+        "persistTableName": "",
+        "persisted": false,
+        "pivotColumnName": null,
+        "pivotColumnValue": null,
+        "pivotRowName": null,
+        "publicDS": true,
+        "sbiVersionDe": null,
+        "sbiVersionIn": null,
+        "sbiVersionUp": null,
+        "scope": {
+            "commonInfo": {
+                "organization": null,
+                "sbiVersionDe": null,
+                "sbiVersionIn": "4.0",
+                "sbiVersionUp": null,
+                "timeDe": null,
+                "timeIn": 1436791308000,
+                "timeUp": null,
+                "userDe": null,
+                "userIn": "server",
+                "userUp": null
+            },
+            "domainCd": "DS_SCOPE",
+            "domainNm": "Dataset scope",
+            "valueCd": "USER",
+            "valueDs": "Dataset scope",
+            "valueId": 185,
+            "valueNm": "User"
+        },
+        "scopeId": 185,
+        "timeDe": null,
+        "timeIn": null,
+        "timeUp": null,
+        "transformerId": null,
+        "type": "SbiQueryDataSet",
+        "userDe": null,
+        "userIn": null,
+        "userUp": null
+    }
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_return-the-dataset">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                                <div id="action_update-tha-dataset_examples" class="actionExample PUT">
+
+                                    
+    <h4 id="h-action_update-tha-dataset_examples">
+        Update tha dataset -
+        PUT
+        
+            /restful-services/2.0/datasets/{dataset_label}
+        
+    </h4>
+
+                
+                                    <div id="action_update-tha-dataset_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+                                                    
+                                                    
+                                                    
+                                                    
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Request </span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_update-tha-dataset_Request_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    {
+        "active": true,
+        "categoryId": null,
+        "commonInfo": {
+            "organization": null,
+            "sbiVersionDe": null,
+            "sbiVersionIn": "4.0",
+            "sbiVersionUp": null,
+            "timeDe": null,
+            "timeIn": 1437646316000,
+            "timeUp": null,
+            "userDe": null,
+            "userIn": "biadmin",
+            "userUp": null
+        },
+        "configuration": {
+            "Query": "select * from business_demo_meter",
+            "dataSource": "Cosmos",
+            "queryScript": "",
+            "queryScriptLanguage": ""
+        },
+        "description": null,
+        "id": {
+            "dsId": 4,
+            "organization": "SPAGOBI",
+            "versionNum": 7
+        },
+        "label": "Meter",
+        "metaVersion": null,
+        "metadata": {
+            "fieldsMeta": [
+                {
+                    "alias": "id",
+                    "fieldType": "ATTRIBUTE",
+                    "name": "id",
+                    "properties": {},
+                    "type": "java.lang.String"
+                },
+                {
+                    "alias": "recvtime",
+                    "fieldType": "ATTRIBUTE",
+                    "name": "recvtime",
+                    "properties": {},
+                    "type": "java.lang.String"
+                }
+            ],
+            "properties": {
+                "resultNumber": "3276"
+            }
+        },
+        "name": "Meter",
+        "numRows": false,
+        "owner": "biadmin",
+        "parameters": [],
+        "persistTableName": "",
+        "persisted": false,
+        "pivotColumnName": null,
+        "pivotColumnValue": null,
+        "pivotRowName": null,
+        "publicDS": true,
+        "sbiVersionDe": null,
+        "sbiVersionIn": null,
+        "sbiVersionUp": null,
+        "scope": {
+            "commonInfo": {
+                "organization": null,
+                "sbiVersionDe": null,
+                "sbiVersionIn": "4.0",
+                "sbiVersionUp": null,
+                "timeDe": null,
+                "timeIn": 1436791308000,
+                "timeUp": null,
+                "userDe": null,
+                "userIn": "server",
+                "userUp": null
+            },
+            "domainCd": "DS_SCOPE",
+            "domainNm": "Dataset scope",
+            "valueCd": "USER",
+            "valueDs": "Dataset scope",
+            "valueId": 185,
+            "valueNm": "User"
+        },
+        "scopeId": 185,
+        "timeDe": null,
+        "timeIn": null,
+        "timeUp": null,
+        "transformerId": null,
+        "type": "SbiQueryDataSet",
+        "userDe": null,
+        "userIn": null,
+        "userUp": null
+    }
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_update-tha-dataset_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_update-tha-dataset">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                                <div id="action_delete-tha-dataset_examples" class="actionExample DELETE">
+
+                                    
+    <h4 id="h-action_delete-tha-dataset_examples">
+        Delete tha dataset -
+        DELETE
+        
+            /restful-services/2.0/datasets/{dataset_label}
+        
+    </h4>
+
+                
+                                    <div id="action_delete-tha-dataset_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_delete-tha-dataset_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_delete-tha-dataset">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                    </section>
+            
+                    <section id="resource_the-dataset-content_example" class="resourceExample">
+                         <div class= "header" ><h4 id="h-resource_the-dataset-content_example">The dataset content [/restful-services/2.0/datasets/{dataset_label}/content]</h4></div>
+                            
+                            
+                            
+
+                            
+                            
+                            
+
+                            
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				dataset_label (Required, string
+				)
+			</dt>
+			<dd>
+				the dataset's label
+				
+			</dd>
+		
+	</dl>
+
+
+                            
+                                <div id="action_return-the-dataset's-content_examples" class="actionExample GET">
+
+                                    
+    <h4 id="h-action_return-the-dataset's-content_examples">
+        Return the dataset's content -
+        GET
+        
+            /restful-services/2.0/datasets/{dataset_label}/content
+        
+    </h4>
+
+                
+                                    <div id="action_return-the-dataset's-content_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_return-the-dataset's-content_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    {
+        "metaData": {
+            "totalProperty": "results",
+            "root": "rows",
+            "id": "id",
+            "fields": [
+                "recNo",
+                {
+                    "name": "column_1",
+                    "header": "MONTH",
+                    "dataIndex": "column_1",
+                    "type": "string"
+                },
+                {
+                    "name": "column_2",
+                    "header": "SALES_STORE",
+                    "dataIndex": "column_2",
+                    "type": "float"
+                },
+                {
+                    "name": "column_3",
+                    "header": "COSTS_STORE",
+                    "dataIndex": "column_3",
+                    "type": "float"
+                },
+                {
+                    "name": "column_4",
+                    "header": "REVENUE",
+                    "dataIndex": "column_4",
+                    "type": "float"
+                },
+                {
+                    "name": "column_5",
+                    "header": "PERC_SALES",
+                    "dataIndex": "column_5",
+                    "type": "float"
+                },
+                {
+                    "name": "column_6",
+                    "header": "PERC_COSTS",
+                    "dataIndex": "column_6",
+                    "type": "float"
+                },
+                {
+                    "name": "column_7",
+                    "header": "PERC_REVENUE",
+                    "dataIndex": "column_7",
+                    "type": "float"
+                }
+            ]
+        },
+        "results": 11,
+        "rows": [
+            {
+                "id": 1,
+                "column_1": "January",
+                "column_2": "71048.40",
+                "column_3": "28416.27",
+                "column_4": "207046.27",
+                "column_5": "9.13",
+                "column_6": "9.11",
+                "column_7": "9.12"
+            },
+            {
+                "id": 2,
+                "column_1": "February",
+                "column_2": "68078.88",
+                "column_3": "27334.47",
+                "column_4": "197757.39",
+                "column_5": "8.75",
+                "column_6": "8.76",
+                "column_7": "8.71"
+            },
+            {
+                "id": 3,
+                "column_1": "March",
+                "column_2": "70768.11",
+                "column_3": "28402.76",
+                "column_4": "206900.17",
+                "column_5": "9.09",
+                "column_6": "9.10",
+                "column_7": "9.11"
+            }
+        ]
+    }
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_return-the-dataset's-content">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                    </section>
+            
+                    <section id="resource_the-engines-resource_example" class="resourceExample">
+                         <div class= "header" ><h4 id="h-resource_the-engines-resource_example">The engines resource [/restful-services/2.0/engines]</h4></div>
+                            
+                            
+                            
+
+                            
+                            
+                            
+
+                            
+
+
+                            
+                                <div id="action_get-the-engine-resources_examples" class="actionExample GET">
+
+                                    
+    <h4 id="h-action_get-the-engine-resources_examples">
+        Get the engine resources -
+        GET
+        
+            /restful-services/2.0/engines
+        
+    </h4>
+
+                
+                                    <div id="action_get-the-engine-resources_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_get-the-engine-resources_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    [
+        {
+            "biobjTypeId": 15,
+            "className": "",
+            "criptable": 0,
+            "description": "Cockpit Engine",
+            "dirUpload": null,
+            "dirUsable": null,
+            "driverName": "it.eng.spagobi.engines.drivers.cockpit.CockpitDriver",
+            "engineTypeId": 55,
+            "id": 25,
+            "label": "SpagoBICockpitEngine",
+            "name": "Cockpit Engine",
+            "secondaryUrl": null,
+            "url": "/SpagoBICockpitEngine/api/1.0/pages/execute",
+            "useDataSet": false,
+            "useDataSource": false
+        },
+        {
+            "biobjTypeId": 7,
+            "className": "",
+            "criptable": 0,
+            "description": "What-If Engine",
+            "dirUpload": null,
+            "dirUsable": null,
+            "driverName": "it.eng.spagobi.engines.drivers.whatif.WhatIfDriver",
+            "engineTypeId": 55,
+            "id": 26,
+            "label": "SpagoBIWhatIfEngine",
+            "name": "What-If Engine",
+            "secondaryUrl": null,
+            "url": "/SpagoBIWhatIfEngine/restful-services/start",
+            "useDataSet": false,
+            "useDataSource": true
+        }
+    ]
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_get-the-engine-resources">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                    </section>
+            
+                    <section id="resource_the-engine-resource_example" class="resourceExample">
+                         <div class= "header" ><h4 id="h-resource_the-engine-resource_example">The engine resource [/restful-services/2.0/engines/{label}]</h4></div>
+                            
+                            
+                            
+
+                            
+                            
+                            
+
+                            
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				label (Required, string
+				)
+			</dt>
+			<dd>
+				the engine's label
+				
+			</dd>
+		
+	</dl>
+
+
+                            
+                                <div id="action_get-the-engine-specified-resource_examples" class="actionExample GET">
+
+                                    
+    <h4 id="h-action_get-the-engine-specified-resource_examples">
+        Get the engine specified resource -
+        GET
+        
+            /restful-services/2.0/engines/{label}
+        
+    </h4>
+
+                
+                                    <div id="action_get-the-engine-specified-resource_body" class=""> 
+                                        
+                                        
+                                        
+                                        
+         
+                                        
+                                            
+                                            
+                                                
+            
+                                                
+                                                    
+                                                
+                                                
+                                                
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+            (application/json)
+        
+    
+            
+            
+            
+            
+
+
+
+ 
+            <div id="action_get-the-engine-specified-resource_Response_1_body" class=" action-div-body">
+                <p></p>
+
+                
+        	         <div class= "header"><p>Headers</p></div>
+                    
+                    
+                        
+                    
+
+        	        <pre><code>Content-Type: application/json</code></pre>
+                
+
+                
+                    <div class= "header"><p>Body</p></div>
+                    <pre><code>    {
+        "biobjTypeId": 15,
+        "className": "",
+        "criptable": 0,
+        "description": "Cockpit Engine",
+        "dirUpload": null,
+        "dirUsable": null,
+        "driverName": "it.eng.spagobi.engines.drivers.cockpit.CockpitDriver",
+        "engineTypeId": 55,
+        "id": 25,
+        "label": "SpagoBICockpitEngine",
+        "name": "Cockpit Engine",
+        "secondaryUrl": null,
+        "url": "/SpagoBICockpitEngine/api/1.0/pages/execute",
+        "useDataSet": false,
+        "useDataSource": false
+    }
+</code></pre>
+                
+
+                
+            </div>
+            
+            
+     
+</div>
+                                                
+                                            
+                                            <div class="goActions">
+                                                <a href="#action_get-the-engine-specified-resource">Go to specification</a>
+                                            </div>
+                                    </div>
+                                </div>
+                            
+                    </section>
+            
+        </section>
+    
+
+
+
+</section>
+  </section>
+  
+   
+
+
+
+	
+
+	
+	  	<section>
+			<h1 id="acknowledgements"> Acknowledgements</h1>
+<p>The editors would like to express their gratitude to the following people who actively contributed to this specification:
+Monica Franceschini, Alessandro Daniele</p>
+
+
+		</section>
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+    
+    
+    
+      <section id="references">
+      <h1>References</h1>
+          <ul>
+              
+                  <li><a href="http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28implicit_patents_license%29">FIWARE Open Specification License</a></li>
+              
+                  <li><a href="http://www.spagobi.org/homepage/opensource/license/">here</a></li>
+              
+          </ul>
+      </section>
+    
+  </div>
+</div>
+</body>
+</html>
