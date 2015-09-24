@@ -33,6 +33,14 @@ $ docker run --link spagobidb:db --name spagobi -d engineeringspa/spagobi:all-in
 c24b00a79cfd05bf45e4b30fecb0857298f5bc3133b8f468a3be36a796f0c287
 ```
 
+### Use docker-compose
+
+It's also possible to use ```docker-compose``` for running SpagoBI with a MySQL container, within a single command. You can fine the compose file definition [here](https://github.com/EngineeringSPA/SpagoBI/tree/master/docker/5.1-all-in-one). Run this command inside the folder with ```docker-compose.yml``` file:
+
+```console
+$ docker-compose up
+```
+
 # Use SpagoBI
 
 Get the IP of container :
