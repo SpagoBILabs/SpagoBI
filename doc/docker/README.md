@@ -1,10 +1,10 @@
 # What is SpagoBI?
 
-SpagoBI is a Business Intelligence Free Platform which uses many FOSS tools as analytical engines. It integrates them in an infrastructure which offers a cross-operativeness and a consistent vision between Report,OLAP,Data Mining,Dashboard and over the DWH.
+This is the official repository of SpagoBI. SpagoBI is a Business Intelligence Free Platform which uses many FOSS tools as analytical engines. It integrates them in an infrastructure which offers a cross-operativeness and a consistent vision between Report,OLAP,Data Mining,Dashboard and over the DWH. 
 
-> www.spagobi.org
+> [spagobi.org](https://www.spagobi.org)
 
-# How to use this image
+# Run SpagoBI
 
 ## Run SpagoBI All In One
 
@@ -39,7 +39,7 @@ $ docker run --link spagobidb:db --name spagobiminimal -d engineeringspa/spagobi
 c24b00a79cfd05bf45e4b30fecb0857298f5bc3133b8f468a3be36a796f0c287
 ```
 
-## Use SpagoBI 
+# Use SpagoBI
 
 Get the IP of container (use ```spagobiminal``` instead of ```spagobi``` if you ran the minimal image before) :
 
@@ -60,6 +60,6 @@ If you run the host with a Virtual Machine (for example in a Mac environment) th
 $ sudo route -n add 172.17.0.0/16 ip-of-host-Virtual-Machine
 ```
 
-## License
+# License
 
-View license information at www.spagobi.org/homepage/opensource/license/ for the software contained in this image.
+View license information [here](https://www.spagobi.org/homepage/opensource/license/) for the software contained in this image.
