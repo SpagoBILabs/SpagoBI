@@ -8,6 +8,15 @@ PUBLIC_ADDRESS=`ip route | grep src | awk '{print $9}'`
 #replace the address of container inside server.xml
 sed -i "s/http:\/\/.*:8080/http:\/\/${PUBLIC_ADDRESS}:8080/g" ${SPAGOBI_DIRECTORY}/conf/server.xml
 
+#wait for MySql if it's a compose image
+if [ -n "$WAIT_MYSQL" ]; then
+	while ! curl http://$DB_PORT_3306_TCP_ADDR:$DB_PORT_3306_TCP_PORT/
+	do
+	  echo "$(date) - still trying to connect to mysql"
+	  sleep 1
+	done
+fi
+
 if [ -n "$DB_ENV_MYSQL_DATABASE" ]; then
 	#copy the original files
 	cp ${SPAGOBI_DIRECTORY}/conf/server.xml.bak ${SPAGOBI_DIRECTORY}/conf/server.xml
@@ -50,6 +59,8 @@ if [ -n "$DB_ENV_MYSQL_DATABASE" ]; then
 	old_delegate='org\.quartz\.impl\.jdbcjobstore\.HSQLDBDelegate'
 	new_delegate='org\.quartz\.impl\.jdbcjobstore\.StdJDBCDelegate'
 	sed -i "s|${old_delegate}|${new_delegate}|" ${SPAGOBI_DIRECTORY}/webapps/SpagoBI/WEB-INF/classes/quartz.properties
+
+
 fi
 
 exec "$@"
