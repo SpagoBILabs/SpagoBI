@@ -36,12 +36,7 @@
 <ul>
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#gei-overall-description">GEi overall description</a></li>
-<li><a href="#build-and-install">Build and Install</a></li>
-<li><a href="#running">Running</a></li>
-<li><a href="#rest-api-example">REST API Example</a></li>
-<li><a href="#api-reference-documentation">API Reference Documentation</a></li>
-<li><a href="#spagobi-user-manuals">SpagoBI User manuals</a></li>
-<li><a href="#advanced-topics">Advanced topics</a></li>
+<li><a href="#restapi">REST API</a></li>
 <li><a href="#license">License</a></li>
 </ul>
 
@@ -65,90 +60,9 @@ or things you think should be included but aren't. You can use <a href="https://
 <p>If this is your first contact with SpagoBI, it is highly recommended to have a look to the brief <a href="http://demo.spagobi.org/Demo/index.html#">Demo</a>.</p>
 
 <h2>
-<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
+<a id="restapi" class="anchor" href="#restapi" aria-hidden="true"><span class="octicon octicon-link"></span></a>REST API</h2>
 
-<p>Install documentation for SpagoBI can be found at <a href="doc/admin/README.md#installation">the corresponding section of the Admin Manual</a>.</p>
-
-<h2>
-<a id="running" class="anchor" href="#running" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running</h2>
-
-<p>How to start and stop SpagoBI can be found at <a href="doc/admin/README.md#how-to-start-and-stop-spagobi-server">the corresponding section of the Admin Manual</a>.</p>
-
-<p><a href="#top">Top</a></p>
-
-<h2>
-<a id="rest-api-example" class="anchor" href="#rest-api-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>REST API Example</h2>
-
-<p>In order to retrieve information about a specified DataSet (<em>RestMetersValues</em> in this example): </p>
-
-<pre><code>curl http://&lt;spagobi-url&gt;/SpagoBI/restful-services/2.0/datasets/RestMetersValues --header '&lt;authentication header&gt;' | python -mjson.tool
-
-{
-    "active": true,
-    "categoryId": 150,
-    "commonInfo": {
-        "organization": null,
-        "sbiVersionDe": null,
-        "sbiVersionIn": "4.0",
-        "sbiVersionUp": null,
-        "timeDe": null,
-        "timeIn": 1441025411000,
-        "timeUp": null,
-        "userDe": null,
-        "userIn": "biadmin",
-        "userUp": null
-    },
-    "configuration": {
-        "restAddress": "http://192.168.2.137:1026/v1/queryContext",
-        "restDirectlyJSONAttributes": "false",
-        "restFetchSize": "limit",
-        "restHttpMethod": "Post",
-        "restJsonPathAttributes": [
-            {
-                "jsonPathType": "string",
-                "jsonPathValue": "pros3",
-                "name": "id"
-            },
-            {
-                "jsonPathType": "double",
-                "jsonPathValue": "$.contextResponses[?(@.contextElement.id==pros3_Meter)].contextElement.attributes[?(@.name==upstreamActivePower)].value",
-                "name": "upstreamActivePower"
-            },
-           ...
-</code></pre>
-
-<p><a href="#top">Top</a></p>
-
-<h2>
-<a id="api-reference-documentation" class="anchor" href="#api-reference-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>API Reference Documentation</h2>
-
-<ul>
-<li>
-<a href="http://docs.spagobi.apiary.io/#">SpagoBI REST</a> (Apiary)</li>
-</ul>
-
-<p><a href="#top">Top</a></p>
-
-<h2>
-<a id="spagobi-user--programming-manuals" class="anchor" href="#spagobi-user--programming-manuals" aria-hidden="true"><span class="octicon octicon-link"></span></a>SpagoBI User &amp; Programming manuals</h2>
-
-<ul>
-<li><a href="doc/user/NGSI/README.md">SpagoBI NGSI</a></li>
-<li><a href="doc/user/CKAN/README.md">SpagoBI CKAN</a></li>
-<li><a href="doc/user/JS/README.md">SpagoBI Javascript SDK</a></li>
-</ul>
-
-<p><a href="#top">Top</a></p>
-
-<h2>
-<a id="advanced-topics" class="anchor" href="#advanced-topics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced topics</h2>
-
-<ul>
-<li><a href="doc/admin/README.md">Installation and Administration manual</a></li>
-<li><a href="docker/README.md">Docker Container-based deployment</a></li>
-</ul>
-
-<p><a href="#top">Top</a></p>
+<p>The REST API version 2.0 documentation is <a href="rest-api/spagobi.html">here</a>.</p>
 
 <h2>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
