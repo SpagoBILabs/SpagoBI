@@ -33,6 +33,16 @@ $ docker run --link spagobidb:db --name spagobi -d engineeringspa/spagobi:all-in
 c24b00a79cfd05bf45e4b30fecb0857298f5bc3133b8f468a3be36a796f0c287
 ```
 
+### Run SpagoBI with an external MySQL Database
+
+You can connect SpagoBI with an external MySQL Database instead of running a MySQL container. It's usfficient to pass the MySQL properties (host, port, username, password, db) to SpagoBI:
+
+```console
+$ docker run --name spagobi -e DB_ENV_MYSQL_USER=spagobi_user -e DB_ENV_MYSQL_PASSWORD=pass -e DB_ENV_MYSQL_DATABASE=spagobi -e DB_PORT_3306_TCP_ADDR=192.168.93.1 -e DB_PORT_3306_TCP_PORT=3306 -d engineeringspa/spagobi:all-in-one
+```
+
+You need to use the host address of your database visible by the docker container. In the example it's ```192.168.93.1```, created by the host Virtual Machine network.
+
 ### Use docker-compose
 
 It's also possible to use ```docker-compose``` for running SpagoBI with a MySQL container, within a single command. You can fine the compose file definition [here](https://github.com/EngineeringSPA/SpagoBI/tree/master/docker/5.1-all-in-one). Run this command inside the folder with ```docker-compose.yml``` file:
