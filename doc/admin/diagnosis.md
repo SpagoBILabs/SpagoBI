@@ -12,23 +12,23 @@ have to resort to more concrete and specific testing to pinpoint the
 exact point of failure and a possible solution. Such specific testing is
 out of the scope of this section.
 
-Please report any bug or problem with SpagoBI by [opening and issue in github.com](https://github.com/EngineeringSPA/SpagoBI/issues/new).
+Please report any bug or problem with SpagoBI by [opening and issue in JIRA](https://spagobi.eng.it/jira/secure/Dashboard.jspa).
 
 ## Resource Availability
 
 Although we haven't done yet a precise profiling on SpagoBI, tests done in our development and testing environment show that
-a host with 2 CPU cores and 8 GB RAM is fine to run SpagoBI with MySQL server.
+a host with 2 CPU cores and 8 GB RAM is the minimum configuration to run SpagoBI with MySQL server.
 
 [Top](#top)
 
 ## Remote Service Access
 
-SpagoBI can run *standalone*, it's a Business Intelligence Application and it can grab the data from different data sources. Thus, it is loosely coupled to other FIWARE GEs.
-However, considering its use in the FIWARE platform, below is a list of the GEs that typically can be
-connected to the broker:
+SpagoBI can run *standalone*, it's a Business Intelligence Application and it can grab the data from different data sources. However, when considering its use in the FIWARE platform, below is a list of the GEs that typically can be
+connected to SpagoBI usage:
 
-* [Orion Context Broker OCB](https://github.com/telefonicaid/fiware-orion) : it can query and analyze the data from OCB and it can be notified if the data changes. Check the [NGSI manual](https://github.com/EngineeringSPA/SpagoBI/blob/master/doc/user/NGSI/README.md)
-* CKAN: it can query and analyze the data from CKAN portal. Check the [CKAN manual](https://github.com/EngineeringSPA/SpagoBI/blob/master/doc/user/CKAN/README.md)
+* [Identity Management - KeyRock](http://catalogue.fiware.org/enablers/identity-management-keyrock) : SpagoBI can use authentication and authorization mechanism provided by the Identity Manament. Check the [admin manual](https://github.com/EngineeringSPA/SpagoBI/tree/master/doc/admin/README.md)
+* [Orion Context Broker](https://github.com/telefonicaid/fiware-orion) : SpagoBI can query and analyze the data coming from Orion and it can be notified if the data changes. Check the [NGSI manual](https://github.com/EngineeringSPA/SpagoBI/blob/master/doc/user/NGSI/README.md)
+* CKAN: SpagoBI can query and analyze the data from CKAN portal. Check the [CKAN manual](https://github.com/EngineeringSPA/SpagoBI/blob/master/doc/user/CKAN/README.md)
 
 [Top](#top)
 
