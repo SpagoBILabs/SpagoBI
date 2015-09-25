@@ -58,8 +58,6 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
 	static private String saveDuplicatedDSError = "error.mesage.description.data.source.saving.duplicated";
 
-	// UserProfile profile;
-
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllDataSources(@Context HttpServletRequest req) {
@@ -68,7 +66,6 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 		List<DataSource> dataSources;
 		List<Domain> dialects = null;
 		UserProfile profile = getUserProfile();
-		// profile = getUserProfile();
 		JSONObject datasorcesJSON = new JSONObject();
 		try {
 			dataSourceDao = DAOFactory.getDataSourceDAO();
@@ -102,11 +99,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 		try {
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-			String id;
-			if (requestBodyJSON.opt("DATASOURCE_ID") instanceof Integer)
-				id = requestBodyJSON.opt("DATASOURCE_ID").toString();
-			else
-				id = (String) requestBodyJSON.opt("DATASOURCE_ID");
+			String id = ((Integer) requestBodyJSON.opt("DATASOURCE_ID")).toString();
 			Assert.assertNotNull(id, deleteNullIdDataSourceError);
 			// if the ds is associated with any BIEngine or BIObjects, creates
 			// an error

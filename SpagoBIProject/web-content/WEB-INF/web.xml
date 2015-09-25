@@ -17,8 +17,23 @@
     
         <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/servlet/AdapterHTTP</url-pattern>
+        <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
     </filter-mapping>
+    
+<!--      <filter> -->
+<!--         <filter-name>MultiReadFilter</filter-name> -->
+<!--         <filter-class>it.eng.spagobi.utilities.filters.MultiReadFilter</filter-class> -->
+<!--     </filter> -->
+    
+<!--     <filter-mapping> -->
+<!--         <filter-name>MultiReadFilter</filter-name> -->
+<!--         <url-pattern>/servlet/AdapterHTTP/*</url-pattern> -->
+<!--     </filter-mapping> -->
+    
+<!--     <filter-mapping> -->
+<!--         <filter-name>MultiReadFilter</filter-name> -->
+<!--         <url-pattern>/restful-services/*</url-pattern> -->
+<!--     </filter-mapping> -->
 
 	<filter>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
@@ -90,41 +105,41 @@
 
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
 
 <!-- START-CAS
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>  
 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>   
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>  
  END-CAS --> 
 
  	<!-- START OAUTH 2
 	<filter-mapping>
 		<filter-name>OAuthFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
  	END OAUTH 2 -->
 
 	<filter-mapping>
 		<filter-name>ProfileFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>AntiInjectionFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
  
     <!-- START LISTENERS -->
@@ -150,11 +165,11 @@
   </servlet>  
 END-LIFERAY -->
 
-<!--     <listener> -->
-<!--         <listener-class> -->
-<!--             org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap -->
-<!--         </listener-class> -->
-<!--     </listener> -->
+    <listener>
+        <listener-class>
+            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
+        </listener-class>
+    </listener>
   
      <!-- servlet for change pwd management -->
    <servlet>
@@ -223,10 +238,10 @@ EXO -->
     	<jsp-file>/WEB-INF/jsp/public/docs.jsp</jsp-file>
 	</servlet>
 	
-<!-- 	<servlet> -->
-<!--         <servlet-name>Resteasy</servlet-name> -->
-<!--         <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class> -->
-<!--     </servlet> -->
+	<servlet>
+        <servlet-name>Resteasy</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
 	
 	<servlet>
         <servlet-name>StickyCaptcha</servlet-name>
@@ -293,10 +308,10 @@ END-LIFERAY -->
     </servlet-mapping>
     <!-- end axis servlet -->
 
-<!--     <servlet-mapping> -->
-<!--         <servlet-name>Resteasy</servlet-name> -->
-<!--         <url-pattern>/restful-services/*</url-pattern> -->
-<!--     </servlet-mapping> -->
+    <servlet-mapping>
+        <servlet-name>Resteasy</servlet-name>
+        <url-pattern>/restful-services/*</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>StickyCaptcha</servlet-name>
@@ -304,16 +319,16 @@ END-LIFERAY -->
     </servlet-mapping>
     
 
-<!--     <context-param> -->
-<!--          <param-name>resteasy.scan</param-name> -->
-<!--         <param-value>true</param-value>     -->
-<!--     </context-param> -->
+    <context-param>
+         <param-name>resteasy.scan</param-name>
+        <param-value>true</param-value>    
+    </context-param>
 
     
-<!--     <context-param> -->
-<!--         <param-name>resteasy.servlet.mapping.prefix</param-name> -->
-<!--         <param-value>/restful-services</param-value> -->
-<!--     </context-param> -->
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/restful-services</param-value>
+    </context-param>
      
 	<!-- END SERVLET MAPPINGS --> 
 
@@ -368,5 +383,4 @@ END-LIFERAY -->
 		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
 	
-
 </web-app>
