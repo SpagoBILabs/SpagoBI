@@ -71,37 +71,37 @@
 
  	 <filter-mapping>
       <filter-name>EncodingFilter</filter-name>
-      <url-pattern>/restful-services</url-pattern>
+      <url-pattern>/restful-services/*</url-pattern>
    </filter-mapping>
   
     <!-- EngineCheckSessionFilter on AdapterHTTP; urls with NEW_SESSION=TRUE will open a new session if previous one has expired -->
     <filter-mapping>
         <filter-name>EngineCheckSessionFilter</filter-name>
-        <url-pattern>/restful-services</url-pattern>
+        <url-pattern>/restful-services/*</url-pattern>
     </filter-mapping>
 
 
 	<!-- START-CAS
 	   <filter-mapping>
 	    <filter-name>CAS Authentication Filter</filter-name>
-	    <url-pattern>/restful-services</url-pattern>
+	    <url-pattern>/restful-services/*</url-pattern>
 	  </filter-mapping>  
 	
 	   <filter-mapping>
 	    <filter-name>CAS Validation Filter</filter-name>
-	    <url-pattern>/restful-services</url-pattern>
+	    <url-pattern>/restful-services/*</url-pattern>
 	  </filter-mapping>   
 	
 	   <filter-mapping>
 	    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-	    <url-pattern>/restful-services</url-pattern>
+	    <url-pattern>/restful-services/*</url-pattern>
 	  </filter-mapping>  
 	 END-CAS --> 
 
 
 	<filter-mapping>
    		<filter-name>SpagoBIAccessFilter</filter-name>
-   		<url-pattern>/restful-services</url-pattern>
+   		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
  
   	<listener>
@@ -199,7 +199,7 @@
     
     <servlet-mapping>
         <servlet-name>Resteasy</servlet-name>
-        <url-pattern>/restful-services</url-pattern>
+        <url-pattern>/restful-services/*</url-pattern>
     </servlet-mapping>
     
 	<servlet-mapping>
