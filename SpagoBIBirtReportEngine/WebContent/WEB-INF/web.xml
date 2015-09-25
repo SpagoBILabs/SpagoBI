@@ -170,7 +170,7 @@
     
         <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/BirtReportServlet/servlet/AdapterHTTP</url-pattern>
+        <url-pattern>/BirtReportServlet</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
