@@ -27,12 +27,12 @@ public class InterceptorUtilities {
 
 	/**
 	 * Get the url of the services. It removes the path parameters from the url
-	 *
+	 * 
 	 * @param req
 	 * @return the url of the service
 	 */
 	public static String getServiceUrl(HttpRequest req) {
-		String serviceUrl = req.getUri().getPath();
+		String serviceUrl = req.getPreprocessedPath();
 		UriInfo uri = req.getUri();
 		// Remove the path parameters
 		int pathParametersLength = uri.getPathParameters().size();
@@ -45,7 +45,7 @@ public class InterceptorUtilities {
 
 	/**
 	 * Get the url of the services. It removes the path parameters from the url
-	 *
+	 * 
 	 * @param req
 	 * @return the url of the service
 	 */
@@ -56,7 +56,7 @@ public class InterceptorUtilities {
 
 	/**
 	 * Trasforms a MultivaluedMap in a HashMap
-	 *
+	 * 
 	 * @param multiMap
 	 * @return
 	 */
@@ -78,7 +78,7 @@ public class InterceptorUtilities {
 
 	/**
 	 * Get the content of a map of object and for every value apply the toString. If the value is an array it iterate in all the entries
-	 *
+	 * 
 	 * @param stringMap
 	 * @param genericMap
 	 */
