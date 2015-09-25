@@ -27,7 +27,7 @@
     
      <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+        <url-pattern>/servlet/AdapterHTTP</url-pattern>
     </filter-mapping>
     
 <!--     <filter> -->
@@ -37,7 +37,7 @@
     
 <!--     <filter-mapping> -->
 <!--         <filter-name>MultiReadFilter</filter-name> -->
-<!--         <url-pattern>/servlet/AdapterHTTP/*</url-pattern> -->
+<!--         <url-pattern>/servlet/AdapterHTTP</url-pattern> -->
 <!--     </filter-mapping> -->
     
 <!--     <filter-mapping> -->
@@ -96,7 +96,7 @@
 
     <filter-mapping>
             <filter-name>SpagoBIAccessFilter</filter-name>
-            <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+            <url-pattern>/servlet/AdapterHTTP</url-pattern>
     </filter-mapping>
 
  	<listener>
