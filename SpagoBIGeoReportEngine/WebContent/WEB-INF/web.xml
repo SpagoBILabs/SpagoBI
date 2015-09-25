@@ -28,11 +28,11 @@
 	
 	   <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+        <url-pattern>/GeoReportEngineStartAction</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/GeoReportEngineStartEditAction/*</url-pattern>
+        <url-pattern>/GeoReportEngineStartEditAction</url-pattern>
     </filter-mapping>    
     
 	
@@ -97,18 +97,18 @@
    
    	<filter-mapping>
     	<filter-name>CAS Authentication Filter</filter-name>
-    	<url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+    	<url-pattern>/GeoReportEngineStartAction</url-pattern>
   	</filter-mapping> 
     	
    	<filter-mapping>
     	<filter-name>CAS Validation Filter</filter-name>
-    	<url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+    	<url-pattern>/GeoReportEngineStartAction</url-pattern>
   	</filter-mapping> 
    	
 
    	<filter-mapping>
     	<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    	<url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+    	<url-pattern>/GeoReportEngineStartAction</url-pattern>
   	</filter-mapping> 
   
   	<filter-mapping>
@@ -120,11 +120,11 @@
 	
 	<filter-mapping>
         <filter-name>SpagoBIAccessFilter</filter-name>
-        <url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+        <url-pattern>/GeoReportEngineStartAction</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SpagoBIAccessFilter</filter-name>
-        <url-pattern>/GeoReportEngineStartEditAction/*</url-pattern>
+        <url-pattern>/GeoReportEngineStartEditAction</url-pattern>
     </filter-mapping>    
 	
 
