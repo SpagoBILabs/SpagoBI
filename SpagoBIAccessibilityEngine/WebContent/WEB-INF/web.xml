@@ -91,7 +91,7 @@ END-CAS -->
 	<!-- filter mappings -->
 	<filter-mapping>
 		<filter-name>EngineCheckSessionFilter</filter-name>
-		<url-pattern>/servlet</url-pattern>
+		<url-pattern>/servlet/*</url-pattern>
 	</filter-mapping>
 <!-- START-CAS  
    <filter-mapping>
