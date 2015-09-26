@@ -3,6 +3,11 @@
 This is the official repository of SpagoBI. SpagoBI is a Business Intelligence Free Platform which uses many FOSS tools as analytical engines. It integrates them in an infrastructure which offers a cross-operativeness and a consistent vision between Report,OLAP,Data Mining,Dashboard and over the DWH. 
 
 > [spagobi.org](https://www.spagobi.org)
+ 
+# Supported tags and respective Dockerfile links
+
+* ```latest```, ```fiware``` : [Dockerfile](https://github.com/EngineeringSPA/SpagoBI/blob/master/docker/5.1-fiware-all-in-one/Dockerfile)
+* ```5.1```, ```all-in-one```, ```5.1-all-in-one```, ```stable``` : [Dockerfile](https://github.com/EngineeringSPA/SpagoBI/blob/master/docker/5.1-all-in-one/Dockerfile)
 
 # Run SpagoBI All In One
 
