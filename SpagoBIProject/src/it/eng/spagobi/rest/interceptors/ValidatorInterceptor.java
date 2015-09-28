@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.interception.Precedence;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.Headers;
-import org.jboss.resteasy.core.ResourceMethod;
+import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
@@ -56,7 +56,7 @@ public class ValidatorInterceptor implements PreProcessInterceptor, AcceptedByMe
 	/**
 	 * Preprocess all the REST requests..
 	 */
-	public ServerResponse preProcess(HttpRequest req, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
+	public ServerResponse preProcess(HttpRequest req, ResourceMethodInvoker resourceMethod) throws Failure, WebApplicationException {
 
 		// start server response as null and perform the validations, if it gets
 		// some value, it will be a valid response and the interceptor will stop

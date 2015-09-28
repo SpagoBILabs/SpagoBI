@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.POST;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
@@ -31,7 +32,7 @@ import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.interception.Precedence;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.Headers;
-import org.jboss.resteasy.core.ResourceMethod;
+import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
@@ -60,16 +61,16 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	 *
 	 * Get the UserProfile from the session and checks if has the grants to execute the service
 	 */
-	public ServerResponse preProcess(HttpRequest request, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
+	public ServerResponse preProcess(HttpRequest request, ResourceMethodInvoker resourceMethod) throws Failure, WebApplicationException {
+
+		// public ServerResponse preProcess(HttpRequest request, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
 
 		ServerResponse response;
 
 		logger.trace("IN");
 
 		response = null;
-
 		try {
-
 			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
 			serviceUrl = serviceUrl.replaceAll("/1.0/", "/");
 			serviceUrl = serviceUrl.replaceAll("/2.0/", "/");
@@ -77,7 +78,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			String methodName = resourceMethod.getMethod().getName();
 
 			logger.info("Receiving request from: " + servletRequest.getRemoteAddr());
-			logger.info("Attempt to invoke method [" + methodName + "] on class [" + resourceMethod.getResourceClass().getName() + "]");
+			// logger.info("Attempt to invoke method [" + methodName + "] on class [" + ((Member) resourceMethod.getEntityClass()).getName() + "]");
 
 			// Check for Services that can be invoked externally without user login in SpagoBI
 			ExternalServiceController externalServiceController = ExternalServiceController.getInstance();
@@ -91,7 +92,6 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 
 			// Other checks are required
 			boolean authenticated = isUserAuthenticatedInSpagoBI();
-
 			if (!authenticated) {
 				// try to authenticate the user on the fly using simple-authentication schema
 				profile = authenticateUser();
@@ -101,10 +101,10 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			}
 
 			if (profile == null) {
-				/*
-				 * This response is standard in Basic authentication. If the header with credentials is missing the server send the response asking for the
-				 * header. The browser will show a popup that requires the user credential.
-				 */
+				// TODO check if the error can be processed by the client
+				// throws unlogged user exception that will be managed by RestExcepionMapper
+				// logger.info("User not logged");
+				// throw new LoggableFailure(request.getUri().getRequestUri().getPath());
 				Headers<Object> header = new Headers<Object>();
 				header.add("WWW-Authenticate", "Basic realm='spagobi'");
 				response = new ServerResponse("", 401, header);
@@ -288,14 +288,16 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	// be one different context for each distinct executions lunched by the same user on the same borwser.
 	private IEngUserProfile getUserProfileFromSession() {
 		IEngUserProfile engProfile = null;
+		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+		ioManager.initConetxtManager();
 
 		engProfile = (IEngUserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		if (engProfile == null) {
-			FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-			ioManager.initConetxtManager();
 			engProfile = (IEngUserProfile) ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);
-			servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+		} else {
+			setUserProfileInSession(engProfile);
 		}
+
 		return engProfile;
 	}
 
@@ -303,11 +305,13 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
 		ioManager.initConetxtManager();
 		ioManager.getContextManager().set(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+
 		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 	}
 
 	public boolean accept(Class declaring, Method method) {
-		// return !method.isAnnotationPresent(POST.class);
-		return true;
+		return !method.isAnnotationPresent(POST.class);
+		// return true;
 	}
+
 }
