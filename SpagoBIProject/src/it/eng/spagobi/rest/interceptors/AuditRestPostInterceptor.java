@@ -57,7 +57,7 @@ public class AuditRestPostInterceptor implements PostProcessInterceptor {
 
 			UserProfile profile = (UserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
-			String actionCode = "[Service:" + serviceUrl + " ; Class:" + response.getResourceClass() + " ; Method:" + response.getResourceMethod() + "]";
+			String actionCode = "[Service:" + serviceUrl + " ; Class:" + response.getEntityClass() /* + " ; Method:" + response.getResourceMethod() */+ "]";
 			String result = "";
 			if (response.getStatus() == 200) {
 				result = "OK";
