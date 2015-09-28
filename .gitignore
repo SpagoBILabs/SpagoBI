@@ -1,0 +1,11 @@
+dist
+**/ant-build
+qbe.core-*.jar
+sbi.utils-*.jar
+sbi.utils.json-*.jar
+sbi.dao-*.jar
+spagobi.core-*.jar
+sbi.security.exo-*.jar
+sbi.security.ldap-*.jar
+sbi.security.liferay-*.jar
+sbi.security.OAuth2-*.jar
