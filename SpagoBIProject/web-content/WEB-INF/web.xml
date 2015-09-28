@@ -115,12 +115,6 @@
 		<servlet-class>com.liferay.portal.kernel.servlet.PortletServlet</servlet-class> 
 		</servlet> END-LIFERAY -->
 
-	<!-- Now RESTEasy is initialized by initializer lib -->
-	<!-- <listener> -->
-	<!-- <listener-class> -->
-	<!-- org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap -->
-	<!-- </listener-class> -->
-	<!-- </listener> -->
 
 	<!-- servlet for change pwd management -->
 	<servlet>
@@ -183,12 +177,6 @@
 		<jsp-file>/WEB-INF/jsp/public/docs.jsp</jsp-file>
 	</servlet>
 
-	<!-- Now is used RESTEasyService.java -->
-	<!-- <servlet> -->
-	<!-- <servlet-name>Resteasy</servlet-name> -->
-	<!-- <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class> -->
-	<!-- </servlet> -->
-
 	<servlet>
 		<servlet-name>StickyCaptcha</servlet-name>
 		<servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
@@ -250,22 +238,10 @@
 	</servlet-mapping>
 	<!-- end axis servlet -->
 
-	<!-- Now is used RESTEasyService.java -->
-	<!-- <servlet-mapping> -->
-	<!-- <servlet-name>Resteasy</servlet-name> -->
-	<!-- <url-pattern>/restful-services/*</url-pattern> -->
-	<!-- </servlet-mapping> -->
-
 	<servlet-mapping>
 		<servlet-name>StickyCaptcha</servlet-name>
 		<url-pattern>/stickyImg</url-pattern>
 	</servlet-mapping>
-
-	<!-- Not used in new RESTEasy releases -->
-	<!-- <context-param> -->
-	<!-- <param-name>resteasy.scan</param-name> -->
-	<!-- <param-value>true</param-value> -->
-	<!-- </context-param> -->
 
 
 	<context-param>
