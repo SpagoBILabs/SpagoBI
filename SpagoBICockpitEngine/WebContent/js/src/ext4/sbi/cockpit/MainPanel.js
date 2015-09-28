@@ -566,9 +566,9 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 				var params = {association: jsonObj};
 
 				Ext.Ajax.request({
-					url: Sbi.config.serviceReg.getServiceUrl('checkAssociation', {
+					url: encodeURI(Sbi.config.serviceReg.getServiceUrl('checkAssociation', {
 						pathParams: params
-					}),
+					})),
 					method: 'POST',
 					params: {
 						requestParam: 'notInRequestBody'
