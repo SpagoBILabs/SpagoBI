@@ -99,12 +99,6 @@
             <url-pattern>/servlet/AdapterHTTP</url-pattern>
     </filter-mapping>
 
-<!--  	<listener> -->
-<!--         <listener-class> -->
-<!--             org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap -->
-<!--         </listener-class> -->
-<!--     </listener> -->
-
 
 	<!--  ============================================================================ -->
 	<!--  FILTER MAPPINGS								 									                                   -->
@@ -157,13 +151,7 @@
   			<param-name>edu.yale.its.tp.cas.proxyUrl</param-name> 
   			<param-value>https://localhost:8443/exo-cas-2/proxy</param-value> 
   		</init-param>
-    </servlet>
-		
-<!--     <servlet> -->
-<!--         <servlet-name>Resteasy</servlet-name> -->
-<!--         <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class> -->
-<!--     </servlet> -->
-    
+    </servlet>    
      
 
 	<!--  ============================================================================ -->
@@ -175,22 +163,11 @@
   		<url-pattern>/proxyReceptor</url-pattern> 
   	</servlet-mapping> 
 
-
-<!--     <servlet-mapping> -->
-<!--         <servlet-name>Resteasy</servlet-name> -->
-<!--         <url-pattern>/api/*</url-pattern> -->
-<!--     </servlet-mapping> -->
-
-<!--     <context-param> -->
-<!--          <param-name>resteasy.scan</param-name> -->
-<!--         <param-value>true</param-value>     -->
-<!--     </context-param> -->
-
     
-<!--     <context-param> -->
-<!--         <param-name>resteasy.servlet.mapping.prefix</param-name> -->
-<!--         <param-value>/api</param-value> -->
-<!--     </context-param> -->
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/api</param-value>
+    </context-param>
     
     <!--  ============================================================================ -->
 	<!--  RESOURCES								 									   -->
