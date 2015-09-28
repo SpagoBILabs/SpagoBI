@@ -31,7 +31,7 @@ public class InterceptorUtilities {
 	 * @return the url of the service
 	 */
 	public static String getServiceUrl(HttpRequest req) {
-		String serviceUrl = req.getPreprocessedPath();
+		String serviceUrl = req.getUri().getPath();
 		UriInfo uri = req.getUri();
 		// Remove the path parameters
 		int pathParametersLength = uri.getPathParameters().size();
