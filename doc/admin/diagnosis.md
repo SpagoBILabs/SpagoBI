@@ -26,9 +26,9 @@ a host with 2 CPU cores and 8 GB RAM is the minimum configuration to run SpagoBI
 SpagoBI can run *standalone*, it's a Business Intelligence Application and it can grab the data from different data sources. However, when considering its use in the FIWARE platform, below is a list of the GEs that typically can be
 connected to SpagoBI usage:
 
-* [Identity Management - KeyRock](http://catalogue.fiware.org/enablers/identity-management-keyrock) : SpagoBI can use authentication and authorization mechanism provided by the Identity Manament. Check the [admin manual](https://github.com/EngineeringSPA/SpagoBI/tree/master/doc/admin/README.md)
-* [Orion Context Broker](https://github.com/telefonicaid/fiware-orion) : SpagoBI can query and analyze the data coming from Orion and it can be notified if the data changes. Check the [NGSI manual](https://github.com/EngineeringSPA/SpagoBI/blob/master/doc/user/NGSI/README.md)
-* CKAN: SpagoBI can query and analyze the data from CKAN portal. Check the [CKAN manual](https://github.com/EngineeringSPA/SpagoBI/blob/master/doc/user/CKAN/README.md)
+* [Identity Management - KeyRock](http://catalogue.fiware.org/enablers/identity-management-keyrock) : SpagoBI can use authentication and authorization mechanism provided by the Identity Manament. Check the [admin manual](https://github.com/SpagoBILabs/SpagoBI/tree/master/doc/admin/README.md)
+* [Orion Context Broker](https://github.com/telefonicaid/fiware-orion) : SpagoBI can query and analyze the data coming from Orion and it can be notified if the data changes. Check the [NGSI manual](https://github.com/SpagoBILabs/SpagoBI/blob/master/doc/user/NGSI/README.md)
+* CKAN: SpagoBI can query and analyze the data from CKAN portal. Check the [CKAN manual](https://github.com/SpagoBILabs/SpagoBI/blob/master/doc/user/CKAN/README.md)
 
 [Top](#top)
 
@@ -46,7 +46,7 @@ following symptoms:
 
 You can verify these situations also checking the log files of Tomcat.
 
-The solution to this problem is [restarting SpagoBI](https://github.com/EngineeringSPA/SpagoBI/tree/master/doc/admin#how-to-start-and-stop-spagobi-server).
+The solution to this problem is [restarting SpagoBI](https://github.com/SpagoBILabs/SpagoBI/tree/master/doc/admin#how-to-start-and-stop-spagobi-server).
 
 [Top](#top)
 

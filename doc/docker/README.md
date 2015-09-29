@@ -6,8 +6,8 @@ This is the official repository of SpagoBI. SpagoBI is a Business Intelligence F
  
 # Supported tags and respective Dockerfile links
 
-* ```latest```, ```fiware``` : [Dockerfile](https://github.com/EngineeringSPA/SpagoBI/blob/master/docker/5.1-fiware-all-in-one/Dockerfile)
-* ```5.1```, ```all-in-one```, ```5.1-all-in-one```, ```stable``` : [Dockerfile](https://github.com/EngineeringSPA/SpagoBI/blob/master/docker/5.1-all-in-one/Dockerfile)
+* ```latest```, ```fiware``` : [Dockerfile](https://github.com/SpagoBILabs/SpagoBI/blob/master/docker/5.1-fiware-all-in-one/Dockerfile)
+* ```5.1```, ```all-in-one```, ```5.1-all-in-one```, ```stable``` : [Dockerfile](https://github.com/SpagoBILabs/SpagoBI/blob/master/docker/5.1-all-in-one/Dockerfile)
 
 # Run SpagoBI All In One
 
@@ -16,7 +16,7 @@ This is the official repository of SpagoBI. SpagoBI is a Business Intelligence F
 All in One image contains many demo examples with the DB included. SpagoBI is started in this way:
 
 ```console
-$ docker run --name spagobi -d engineeringspa/spagobi:all-in-one
+$ docker run --name spagobi -d spagobilabs/spagobi:all-in-one
 2656735e7ce42c30ae1b284d05e05565b3dbc62fa0118279b31c479b7b0e2cfa
 ```
 
@@ -34,7 +34,7 @@ $ docker run --name spagobidb -e MYSQL_USER=spagobiuser -e MYSQL_PASSWORD=spagob
 You can use whatever you want for user and password properties. Then run SpagoBI and link it to the previous MySQL container:
 
 ```console
-$ docker run --link spagobidb:db --name spagobi -d engineeringspa/spagobi:all-in-one
+$ docker run --link spagobidb:db --name spagobi -d spagobilabs/spagobi:all-in-one
 c24b00a79cfd05bf45e4b30fecb0857298f5bc3133b8f468a3be36a796f0c287
 ```
 
@@ -43,14 +43,14 @@ c24b00a79cfd05bf45e4b30fecb0857298f5bc3133b8f468a3be36a796f0c287
 You can connect SpagoBI with an external MySQL Database instead of running a MySQL container. It's usfficient to pass the MySQL properties (host, port, username, password, db) to SpagoBI:
 
 ```console
-$ docker run --name spagobi -e DB_ENV_MYSQL_USER=spagobi_user -e DB_ENV_MYSQL_PASSWORD=pass -e DB_ENV_MYSQL_DATABASE=spagobi -e DB_PORT_3306_TCP_ADDR=192.168.93.1 -e DB_PORT_3306_TCP_PORT=3306 -d engineeringspa/spagobi:all-in-one
+$ docker run --name spagobi -e DB_ENV_MYSQL_USER=spagobi_user -e DB_ENV_MYSQL_PASSWORD=pass -e DB_ENV_MYSQL_DATABASE=spagobi -e DB_PORT_3306_TCP_ADDR=192.168.93.1 -e DB_PORT_3306_TCP_PORT=3306 -d spagobilabs/spagobi:all-in-one
 ```
 
 You need to use the host address of your database visible by the docker container. In the example it's ```192.168.93.1```, created by the host Virtual Machine network.
 
 ### Use docker-compose
 
-It's also possible to use ```docker-compose``` for running SpagoBI with a MySQL container, within a single command. You can fine the compose file definition [here](https://github.com/EngineeringSPA/SpagoBI/tree/master/docker/5.1-all-in-one). Run this command inside the folder with ```docker-compose.yml``` file:
+It's also possible to use ```docker-compose``` for running SpagoBI with a MySQL container, within a single command. You can fine the compose file definition [here](https://github.com/SpagoBILabs/SpagoBI/tree/master/docker/5.1-all-in-one). Run this command inside the folder with ```docker-compose.yml``` file:
 
 ```console
 $ docker-compose up

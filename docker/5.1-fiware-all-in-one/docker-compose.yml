@@ -1,5 +1,5 @@
 spagobi:
-    image: engineeringspa/spagobi:fiware
+    image: spagobilabs/spagobi:fiware
     links:
         - spagobidb:db
     environment:
