@@ -1,6 +1,6 @@
 # What is SpagoBI?
 
-This is the official repository of SpagoBI. SpagoBI is a Business Intelligence Free Platform which uses many FOSS tools as analytical engines. It integrates them in an infrastructure which offers a cross-operativeness and a consistent vision between Report,OLAP,Data Mining,Dashboard and over the DWH. 
+This is the official repository of SpagoBI. SpagoBI is the only entirely Open Source Business Intelligence suite. It covers all the analytical areas of Business Intelligence projects, with innovative themes and engines.
 
 > [spagobi.org](https://www.spagobi.org)
  
