@@ -5,4 +5,15 @@
   <groupId>com.hbql</groupId>
   <artifactId>HBql</artifactId>
   <version>0.90.0.1</version>
+  
+  	<distributionManagement>
+		<snapshotRepository>
+			<id>github</id>
+			<url>https://github.com/SpagoBILabs/SpagoBI/tree/mvn-repo/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>github</id>
+			<url>https://github.com/SpagoBILabs/SpagoBI/tree/mvn-repo/releases</url>
+		</repository>
+	</distributionManagement>
 </project>
