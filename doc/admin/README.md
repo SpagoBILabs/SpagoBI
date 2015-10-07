@@ -138,7 +138,7 @@ Once an organization is created, the owner can always switch between User accoun
 
 Using the Organization account, he can manage the organization: more precisely, he can add new members and assign roles to them. We will talk more about roles later on.
 
-Next step consists on creating the application with your administrator account. In order to do so, click on “My Applications” on the left menu and press the “Add application” button. A 3-steps wizard will be diplayed: in the first step you have to put application's information, such as name, description, URL and callback URL. Last one is part of OAuth2 standard and it is the URL where a user has to be redirected (by the IdM) after he gives the application his permission to access some of his information.
+Next step consists on creating the application with your administrator account. In order to do so, click on “My Applications” on the left menu and press the "Register" button. A 3-steps wizard will be diplayed: in the first step you have to put application's information, such as name, description, URL and callback URL. Last one is part of OAuth2 standard and it is the URL where a user has to be redirected (by the IdM) after he gives the application his permission to access some of his information.
 
 ![](media/SpagoBI_application_creation_step_1.png "SpagoBI_application_creation_step_1.png")
 
@@ -205,18 +205,22 @@ You will see the main SpagoBI Server configuration table. Each row correspond to
 
 Change the following settings (change their VALUE\_CHECK property):
 
--   SPAGOBI\_SSO.ACTIVE = true
--   SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className = it.eng.spagobi.security.OAuth2SecurityInfoProvider
--   SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className = it.eng.spagobi.security.OAuth2SecurityServiceSupplier
--   SPAGOBI\_SSO.SECURITY\_LOGOUT\_URL = <https://account.lab.fiware.org/users/sign_out>
+```
+SPAGOBI_SSO.ACTIVE = true
+SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className = it.eng.spagobi.security.OAuth2SecurityInfoProvider
+SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className = it.eng.spagobi.security.OAuth2SecurityServiceSupplier
+SPAGOBI_SSO.SECURITY_LOGOUT_URL = <https://account.lab.fiware.org/users/sign_out>
+```
 
 Beyond previous settings, there are other configurations that can be made (optional):
 
--   SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.DEV\_ROLE-PATTERN
--   SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.TEST\_ROLE-PATTERN
--   SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.MODEL\_ADMIN-PATTERN
--   SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN
--   SPAGOBI.SECURITY.DEFAULT\_ROLE\_ON\_SIGNUP
+```
+SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.DEV_ROLE-PATTERN
+SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.TEST_ROLE-PATTERN
+SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.MODEL_ADMIN-PATTERN
+SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN
+SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP
+```
 
 The first four are patterns used by SpagoBI to recognize new roles and give them particular privileges. For example, the default VALUE\_CHECK for SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN is "/spagobi/admin". When a user with this role enters SpagoBI, he is recognized as administrator. You can change these patterns and permit SpagoBI to import roles with different names than the default ones. The last one (SPAGOBI.SECURITY.DEFAULT\_ROLE\_ON\_SIGNUP) is the role given to a user that authenticates for the first time and who doesn't have any particular roles. At this point, you need to stop SpagoBI server to activate SSO with the IdM. First of all, edit SPAGOBI\_SERVER\_HOME/conf/server.xml and set spagobi\_sso\_class variable as it.eng.spagobi.services.oauth2.Oauth2SsoService:
 
@@ -253,9 +257,6 @@ Then edit SPAGOBI\_SERVER\_HOME/webapps/SpagoBI/WEB-INF/classes/oauth2.config.pr
 -   AUTHORIZE\_URL contains the URL used to retrieve the access code as specified in OAuth2 standard (when using FIWARE Lab instance use <https://account.lab.fiware.org/oauth2/authorize>)
 -   ACCESS\_TOKEN\_URL contains the URL used to retrieve the token (given the access code) as specified in OAuth2 standard (when using FIWARE Lab instance set it as <https://account.lab.fiware.org/oauth2/token>)
 -   USER\_INFO\_URL contains the URL used to retrieve users' information as specified in OAuth2 standard (when using FIWARE Lab instance set it as <https://account.lab.fiware.org/user>)
-
-<!-- -->
-
 -   REDIRECT\_URI must contain the URL specified as "Callback URL" in the application details
 -   REST\_BASE\_URL is the url of IdM REST services (when using FIWARE Lab instance set it as <http://cloud.lab.fiware.org:4730/v3/>)
 -   TOKEN\_PATH contains the URL path that has to be invoked if you want to obtain the authentication token of an user. It is used, together with REST\_BASE\_URL, ADMIN\_EMAIL and ADMIN\_PASSWORD, to retrieve administrator's authorization token to extract application details (when using FIWARE Lab instance set it as auth/tokens)
@@ -263,13 +264,7 @@ Then edit SPAGOBI\_SERVER\_HOME/webapps/SpagoBI/WEB-INF/classes/oauth2.config.pr
 -   ORGANIZATIONS\_LIST\_PATH is the URL path that has to be invoked if you want to obtain the list of application's organizations (when using FIWARE Lab instance set it as OS-ROLES/organizations/role\_assignments)
 -   ORGANIZATION\_INFO\_PATH contains the URL path that has to be invoked if you want to obtain informations about an organization (when using FIWARE Lab instance set it as projects/)
 -   APPLICATION\_ID is the id of the FIWARE Lab application. To obtain the correct id of the application, open its detail page and look at the browser URL (for example, in FIWARE Lab instance, if your application page's URL is <https://account.lab.fiware.org/idm/myApplications/id_number/>, the APPLICATION\_ID is "id\_number")
-
-<!-- -->
-
 -   ADMIN\_ID is the id of the administrator on IdM. To obtain it, open the user page on the IdM (by clicking on the name of the user on the top right part of the page) and and look at the browser URL (for example, in FIWARE Lab instance, if your user page's URL is <https://account.lab.fiware.org/idm/users/id_number/>, the ADMIN\_ID is "id\_number")
-
-<!-- -->
-
 -   ADMIN\_EMAIL and ADMIN\_PASSWORD are the administrator credentials specified during administrator registration
 
 The default settings were configured considering the FIWARE Lab instance, therefore, if you want to use the same instance, you have only to set the following properties: CLIENT\_ID, SECRET, REDIRECT\_URI, APPLICATION\_ID, ADMIN\_ID, ADMIN\_EMAIL and ADMIN\_PASSWORD.
