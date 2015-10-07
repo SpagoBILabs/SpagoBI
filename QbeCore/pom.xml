@@ -1,0 +1,192 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>it.eng.spagobi</groupId>
+	<artifactId>qbe-core</artifactId>
+	<version>5.1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+
+	<name>${project.groupId}:${project.artifactId}</name>
+
+
+	<dependencies>
+
+		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>spagobi-utils</artifactId>
+			<version>5.1.0-SNAPSHOT</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<version>1.0.0.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.6.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>3.6.2.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.6.2.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.1</version>
+		</dependency>
+
+
+		<!-- <dependency> -->
+		<!-- <groupId>antlr</groupId> -->
+		<!-- <artifactId>antlr</artifactId> -->
+		<!-- <version>2.7.6</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>commons-collections</groupId> -->
+		<!-- <artifactId>commons-collections</artifactId> -->
+		<!-- <version>3.1</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>commons-lang</groupId> -->
+		<!-- <artifactId>commons-lang</artifactId> -->
+		<!-- <version>2.1</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>dom4j</groupId> -->
+		<!-- <artifactId>dom4j</artifactId> -->
+		<!-- <version>1.6.1</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.eclipse.persistence</groupId> -->
+		<!-- <artifactId>eclipselink</artifactId> -->
+		<!-- <version>2.6.0</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.hibernate.javax.persistence</groupId> -->
+		<!-- <artifactId>hibernate-jpa-2.0-api</artifactId> -->
+		<!-- <version>1.0.0.Final</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.hibernate</groupId> -->
+		<!-- <artifactId>hibernate-core</artifactId> -->
+		<!-- <version>3.6.2.Final</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>com.fasterxml.jackson.core</groupId> -->
+		<!-- <artifactId>jackson-annotations</artifactId> -->
+		<!-- <version>2.0.2</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>com.fasterxml.jackson.core</groupId> -->
+		<!-- <artifactId>jackson-databind</artifactId> -->
+		<!-- <version>2.0.2</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>javassist</groupId> -->
+		<!-- <artifactId>javassist</artifactId> -->
+		<!-- <version>3.12.0.GA</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>jaxen</groupId> -->
+		<!-- <artifactId>jaxen</artifactId> -->
+		<!-- <version>1.1.1</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.jgrapht</groupId> -->
+		<!-- <artifactId>jgrapht-jdk1.5</artifactId> -->
+		<!-- <version>0.7.3</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>com.sun.phobos</groupId> -->
+		<!-- <artifactId>jsr223-api</artifactId> -->
+		<!-- <version>1.0</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>log4j</groupId> -->
+		<!-- <artifactId>log4j</artifactId> -->
+		<!-- <version>1.2.9</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>mysql</groupId> -->
+		<!-- <artifactId>mysql-connector-java</artifactId> -->
+		<!-- <version>5.1.33</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>it.eng.spago</groupId> -->
+		<!-- <artifactId>spago-core</artifactId> -->
+		<!-- <version>2.3.0</version> -->
+		<!-- </dependency> -->
+
+	</dependencies>
+
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
