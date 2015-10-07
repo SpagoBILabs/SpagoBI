@@ -1,0 +1,22 @@
+# Informations about OAuth2 application
+CLIENT_ID = <%= node[:spagobi][:oauth2_client_id] %>
+SECRET = <%= node[:spagobi][:oauth2_secret] %>
+APPLICATION_ID = <%= node[:spagobi][:oauth2_client_id] %>
+
+# OAuth2 urls
+AUTHORIZE_URL = <%= node[:spagobi][:oauth2_authorize_url] %>
+ACCESS_TOKEN_URL = <%= node[:spagobi][:oauth2_access_token_url] %>
+USER_INFO_URL = <%= node[:spagobi][:oauth2_user_info_url] %>
+REDIRECT_URI = <%= node[:spagobi][:oauth2_redirect_uri] %>
+
+# REST API urls
+REST_BASE_URL = <%= node[:spagobi][:oauth2_rest_base_url] %>
+TOKEN_PATH = <%= node[:spagobi][:oauth2_token_path] %>
+ROLES_PATH = <%= node[:spagobi][:oauth2_roles_path] %>
+ORGANIZATIONS_LIST_PATH = <%= node[:spagobi][:oauth2_organizations_list_path] %>
+ORGANIZATION_INFO_PATH = <%= node[:spagobi][:oauth2_organization_info_path] %>
+
+# Admin credentials
+ADMIN_ID = <%= node[:spagobi][:oauth2_admin_id] %>
+ADMIN_EMAIL = <%= node[:spagobi][:oauth2_admin_email] %>
+ADMIN_PASSWORD = <%= node[:spagobi][:oauth2_admin_password] %>
