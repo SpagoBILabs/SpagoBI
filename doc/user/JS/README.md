@@ -64,39 +64,39 @@ This documentation is generated from Javascript sources using [jsdoc to markdown
 **Kind**: global namespace  
 
 * [Sbi](#Sbi) : <code>object</code>
-  * [.sdk](#Sbi.sdk) : <code>object</code>
-    * [.api](#Sbi.sdk.api) : <code>object</code>
-      * [.getDocumentHtml(config)](#Sbi.sdk.api.getDocumentHtml)
-      * [.injectDocument(config)](#Sbi.sdk.api.injectDocument)
-      * [.getWorksheetHtml(config)](#Sbi.sdk.api.getWorksheetHtml)
-      * [.injectWorksheet(config)](#Sbi.sdk.api.injectWorksheet)
-      * [.getQbeHtml(config)](#Sbi.sdk.api.getQbeHtml)
-      * [.injectQbe(config)](#Sbi.sdk.api.injectQbe)
-      * [.getDataSetList(config)](#Sbi.sdk.api.getDataSetList)
-      * [.executeDataSet(config)](#Sbi.sdk.api.executeDataSet)
-    * [.cors](#Sbi.sdk.cors) : <code>object</code>
-      * [.api](#Sbi.sdk.cors.api) : <code>object</code>
-        * [.getDataSetList(config)](#Sbi.sdk.cors.api.getDataSetList)
-        * [.executeDataSet(config)](#Sbi.sdk.cors.api.executeDataSet)
+    * [.sdk](#Sbi.sdk) : <code>object</code>
+        * [.api](#Sbi.sdk.api) : <code>object</code>
+            * [.getDocumentHtml(config)](#Sbi.sdk.api.getDocumentHtml)
+            * [.injectDocument(config)](#Sbi.sdk.api.injectDocument)
+            * [.getWorksheetHtml(config)](#Sbi.sdk.api.getWorksheetHtml)
+            * [.injectWorksheet(config)](#Sbi.sdk.api.injectWorksheet)
+            * [.getQbeHtml(config)](#Sbi.sdk.api.getQbeHtml)
+            * [.injectQbe(config)](#Sbi.sdk.api.injectQbe)
+            * [.getDataSetList(config)](#Sbi.sdk.api.getDataSetList)
+            * [.executeDataSet(config)](#Sbi.sdk.api.executeDataSet)
+        * [.cors](#Sbi.sdk.cors) : <code>object</code>
+            * [.api](#Sbi.sdk.cors.api) : <code>object</code>
+                * [.getDataSetList(config)](#Sbi.sdk.cors.api.getDataSetList)
+                * [.executeDataSet(config)](#Sbi.sdk.cors.api.executeDataSet)
 
 <a name="Sbi.sdk"></a>
 ### Sbi.sdk : <code>object</code>
 **Kind**: static namespace of <code>[Sbi](#Sbi)</code>  
 
 * [.sdk](#Sbi.sdk) : <code>object</code>
-  * [.api](#Sbi.sdk.api) : <code>object</code>
-    * [.getDocumentHtml(config)](#Sbi.sdk.api.getDocumentHtml)
-    * [.injectDocument(config)](#Sbi.sdk.api.injectDocument)
-    * [.getWorksheetHtml(config)](#Sbi.sdk.api.getWorksheetHtml)
-    * [.injectWorksheet(config)](#Sbi.sdk.api.injectWorksheet)
-    * [.getQbeHtml(config)](#Sbi.sdk.api.getQbeHtml)
-    * [.injectQbe(config)](#Sbi.sdk.api.injectQbe)
-    * [.getDataSetList(config)](#Sbi.sdk.api.getDataSetList)
-    * [.executeDataSet(config)](#Sbi.sdk.api.executeDataSet)
-  * [.cors](#Sbi.sdk.cors) : <code>object</code>
-    * [.api](#Sbi.sdk.cors.api) : <code>object</code>
-      * [.getDataSetList(config)](#Sbi.sdk.cors.api.getDataSetList)
-      * [.executeDataSet(config)](#Sbi.sdk.cors.api.executeDataSet)
+    * [.api](#Sbi.sdk.api) : <code>object</code>
+        * [.getDocumentHtml(config)](#Sbi.sdk.api.getDocumentHtml)
+        * [.injectDocument(config)](#Sbi.sdk.api.injectDocument)
+        * [.getWorksheetHtml(config)](#Sbi.sdk.api.getWorksheetHtml)
+        * [.injectWorksheet(config)](#Sbi.sdk.api.injectWorksheet)
+        * [.getQbeHtml(config)](#Sbi.sdk.api.getQbeHtml)
+        * [.injectQbe(config)](#Sbi.sdk.api.injectQbe)
+        * [.getDataSetList(config)](#Sbi.sdk.api.getDataSetList)
+        * [.executeDataSet(config)](#Sbi.sdk.api.executeDataSet)
+    * [.cors](#Sbi.sdk.cors) : <code>object</code>
+        * [.api](#Sbi.sdk.cors.api) : <code>object</code>
+            * [.getDataSetList(config)](#Sbi.sdk.cors.api.getDataSetList)
+            * [.executeDataSet(config)](#Sbi.sdk.cors.api.executeDataSet)
 
 <a name="Sbi.sdk.api"></a>
 #### sdk.api : <code>object</code>
@@ -105,14 +105,14 @@ Note that Sbi.sdk.api definition is defined in both api.js and api_jsonp.js.In 
 **Kind**: static namespace of <code>[sdk](#Sbi.sdk)</code>  
 
 * [.api](#Sbi.sdk.api) : <code>object</code>
-  * [.getDocumentHtml(config)](#Sbi.sdk.api.getDocumentHtml)
-  * [.injectDocument(config)](#Sbi.sdk.api.injectDocument)
-  * [.getWorksheetHtml(config)](#Sbi.sdk.api.getWorksheetHtml)
-  * [.injectWorksheet(config)](#Sbi.sdk.api.injectWorksheet)
-  * [.getQbeHtml(config)](#Sbi.sdk.api.getQbeHtml)
-  * [.injectQbe(config)](#Sbi.sdk.api.injectQbe)
-  * [.getDataSetList(config)](#Sbi.sdk.api.getDataSetList)
-  * [.executeDataSet(config)](#Sbi.sdk.api.executeDataSet)
+    * [.getDocumentHtml(config)](#Sbi.sdk.api.getDocumentHtml)
+    * [.injectDocument(config)](#Sbi.sdk.api.injectDocument)
+    * [.getWorksheetHtml(config)](#Sbi.sdk.api.getWorksheetHtml)
+    * [.injectWorksheet(config)](#Sbi.sdk.api.injectWorksheet)
+    * [.getQbeHtml(config)](#Sbi.sdk.api.getQbeHtml)
+    * [.injectQbe(config)](#Sbi.sdk.api.injectQbe)
+    * [.getDataSetList(config)](#Sbi.sdk.api.getDataSetList)
+    * [.executeDataSet(config)](#Sbi.sdk.api.executeDataSet)
 
 <a name="Sbi.sdk.api.getDocumentHtml"></a>
 ##### api.getDocumentHtml(config)
@@ -278,9 +278,9 @@ execTest7 = function() {   Sbi.sdk.api.executeDataSet({   	datasetLabel: 'DS_D
 **Kind**: static namespace of <code>[sdk](#Sbi.sdk)</code>  
 
 * [.cors](#Sbi.sdk.cors) : <code>object</code>
-  * [.api](#Sbi.sdk.cors.api) : <code>object</code>
-    * [.getDataSetList(config)](#Sbi.sdk.cors.api.getDataSetList)
-    * [.executeDataSet(config)](#Sbi.sdk.cors.api.executeDataSet)
+    * [.api](#Sbi.sdk.cors.api) : <code>object</code>
+        * [.getDataSetList(config)](#Sbi.sdk.cors.api.getDataSetList)
+        * [.executeDataSet(config)](#Sbi.sdk.cors.api.executeDataSet)
 
 <a name="Sbi.sdk.cors.api"></a>
 ##### cors.api : <code>object</code>
@@ -290,8 +290,8 @@ There are three main advantages on using CORS over jsonp:<ul> <li>all the meth
 **See**: [api](#Sbi.sdk.api)  
 
 * [.api](#Sbi.sdk.cors.api) : <code>object</code>
-  * [.getDataSetList(config)](#Sbi.sdk.cors.api.getDataSetList)
-  * [.executeDataSet(config)](#Sbi.sdk.cors.api.executeDataSet)
+    * [.getDataSetList(config)](#Sbi.sdk.cors.api.getDataSetList)
+    * [.executeDataSet(config)](#Sbi.sdk.cors.api.executeDataSet)
 
 <a name="Sbi.sdk.cors.api.getDataSetList"></a>
 ###### api.getDataSetList(config)
