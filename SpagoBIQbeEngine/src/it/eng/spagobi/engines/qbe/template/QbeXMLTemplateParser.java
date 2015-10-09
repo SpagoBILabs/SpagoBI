@@ -6,10 +6,12 @@
 package it.eng.spagobi.engines.qbe.template;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.externalservices.ExternalServiceConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser;
+import it.eng.spagobi.engines.qbe.template.transformers.QbeTemplateTransformer;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -73,8 +75,15 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 		JSONObject formJSONTemplate, formValuesJSONTemplate, queryJSON, worksheetJSONTemplate;
 
 		try {
-
 			qbeTemplate = new QbeTemplate();
+
+			QbeTemplateTransformer transformer = new QbeTemplateTransformer();
+
+			try {
+				template = transformer.applyTransformations(template);
+			} catch (SourceBeanException ex) {
+				logger.error("Error while applying template version transformations: keep original one", ex);
+			}
 
 			templateName = template.getName();
 			logger.debug("Parsing template [" + templateName + "] ...");
