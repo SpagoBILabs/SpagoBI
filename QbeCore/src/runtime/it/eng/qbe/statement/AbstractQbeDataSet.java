@@ -382,7 +382,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 	public void setUserProfileAttributes(Map attributes) {
 		this.userProfileAttributes = attributes;
-
+		getStatement().setProfileAttributes(attributes);
 	}
 
 	@Override

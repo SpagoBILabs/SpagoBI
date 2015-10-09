@@ -36,11 +36,13 @@ public interface IStatement {
 	public Query getQuery();
 
 	/*
-	 * the number of the selected entities depends on the statement type and not on the abstract query
+	 * the number of the selected entities depends on the statement type and not
+	 * on the abstract query
 	 * 
 	 * For example the following is the same query expressed in SQL and HQL ...
 	 * 
-	 * -> select f.unit_sales, p.brand_name from fact_sales f, product p where f.id_product = p.id_product
+	 * -> select f.unit_sales, p.brand_name from fact_sales f, product p where
+	 * f.id_product = p.id_product
 	 * 
 	 * -> select f.unit_sales, f.product.brand_name from sales f
 	 * 
@@ -69,6 +71,10 @@ public interface IStatement {
 	public Map getParameters();
 
 	public void setParameters(Map parameters);
+
+	public Map getProfileAttributes();
+
+	public void setProfileAttributes(Map profileAttributes);
 
 	public String getNextAlias(Map entityAliasesMaps);
 

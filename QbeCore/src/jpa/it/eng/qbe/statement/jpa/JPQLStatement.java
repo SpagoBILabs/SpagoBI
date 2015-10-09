@@ -47,7 +47,8 @@ public class JPQLStatement extends AbstractStatement {
 	public void prepare() {
 		String queryStr;
 
-		// one map of entity aliases for each queries (master query + subqueries)
+		// one map of entity aliases for each queries (master query +
+		// subqueries)
 		// each map is indexed by the query id
 		Map<String, Map<String, String>> entityAliasesMaps = new HashMap<String, Map<String, String>>();
 
@@ -55,11 +56,19 @@ public class JPQLStatement extends AbstractStatement {
 
 		if (getParameters() != null) {
 			try {
-				queryStr = StringUtils.replaceParameters(queryStr.trim(), "P", getParameters());
+				queryStr = StringUtils.replaceParameters(queryStr.trim(), "$P", getParameters());
 			} catch (IOException e) {
 				throw new SpagoBIRuntimeException("Impossible to set parameters in query", e);
 			}
+		}
 
+		if (getProfileAttributes() != null) {
+			try {
+				queryStr = StringUtils.replaceParameters(queryStr.trim(), "$", getProfileAttributes());
+
+			} catch (IOException e) {
+				throw new SpagoBIRuntimeException("Impossible to set profile attributes in query", e);
+			}
 		}
 
 		setQueryString(queryStr);
