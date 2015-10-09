@@ -294,7 +294,7 @@ public class ExecutionInstance implements Serializable {
 			/*
 			 * The following lines were commented because there should be not need to check if the parameter is single-value, since if it is single-value then
 			 * it is transient (see initBIParameters method)
-			 * 
+			 *
 			 * if (biParameter.getLovResult() == null) continue; LovResultHandler lovResultHandler; try { lovResultHandler = new
 			 * LovResultHandler(biParameter.getLovResult()); if(lovResultHandler.isSingleValue()) countHidePar ++; } catch (SourceBeanException e) { continue; }
 			 */
@@ -1333,7 +1333,7 @@ public class ExecutionInstance implements Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
