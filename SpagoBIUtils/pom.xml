@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.eng.spagobi</groupId>
-	<artifactId>spagobi-utils</artifactId>
-	<version>5.1.0-SNAPSHOT</version>
+	<artifactId>SpagoBIUtils</artifactId>
+	<version>5.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -56,12 +56,24 @@
 		<dependency>
 			<groupId>it.eng.spago</groupId>
 			<artifactId>spago-portlet</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
 			<version>2.3.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>it.eng.spago</groupId>
 			<artifactId>spago-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
 			<version>2.3.0</version>
 		</dependency>
 
@@ -107,17 +119,11 @@
 			<version>2.3.5.Final</version>
 		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>org.jgrapht</groupId> -->
-		<!-- <artifactId>jgrapht-jdk1.5</artifactId> -->
-		<!-- <version>0.7.3</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-core</artifactId>
 			<version>0.9.1</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.mongodb</groupId>
@@ -212,14 +218,8 @@
 
 		<dependency>
 			<groupId>it.eng.spagobi</groupId>
-			<artifactId>spagobi-utils-json</artifactId>
-			<version>5.1.0-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
+			<artifactId>SpagoBIUtilsJSON</artifactId>
+			<version>5.2.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -228,7 +228,12 @@
 			<version>0.2</version>
 		</dependency>
 
-
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
 
 	</dependencies>
 
@@ -236,6 +241,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
+		<skipTests>true</skipTests>
 	</properties>
 
 	<build>
