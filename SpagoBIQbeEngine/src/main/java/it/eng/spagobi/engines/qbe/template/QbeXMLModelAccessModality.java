@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.template;
 
-import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
+import it.eng.qbe.runtime.model.accessmodality.AbstractModelAccessModality;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.utilities.assertion.Assert;
 

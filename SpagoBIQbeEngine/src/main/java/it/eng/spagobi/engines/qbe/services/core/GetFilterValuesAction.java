@@ -1,22 +1,22 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.core;
 
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.query.CriteriaConstants;
-import it.eng.qbe.query.ExpressionNode;
-import it.eng.qbe.query.Query;
-import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.catalogue.QueryCatalogue;
-import it.eng.qbe.statement.AbstractStatement;
-import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.statement.QbeDatasetFactory;
+import it.eng.qbe.runtime.datasource.IDataSource;
+import it.eng.qbe.runtime.model.structure.IModelEntity;
+import it.eng.qbe.runtime.model.structure.IModelField;
+import it.eng.qbe.runtime.model.structure.IModelStructure;
+import it.eng.qbe.runtime.query.CriteriaConstants;
+import it.eng.qbe.runtime.query.ExpressionNode;
+import it.eng.qbe.runtime.query.Query;
+import it.eng.qbe.runtime.query.WhereField;
+import it.eng.qbe.runtime.query.catalogue.QueryCatalogue;
+import it.eng.qbe.runtime.statement.AbstractStatement;
+import it.eng.qbe.runtime.statement.IStatement;
+import it.eng.qbe.runtime.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;

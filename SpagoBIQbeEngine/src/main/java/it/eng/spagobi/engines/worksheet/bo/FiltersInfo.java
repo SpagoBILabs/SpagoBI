@@ -1,11 +1,11 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.worksheet.bo;
 
-import it.eng.qbe.query.WhereField;
+import it.eng.qbe.runtime.query.WhereField;
 import it.eng.spagobi.engines.worksheet.bo.AttributePresentationOption.AdmissibleValues;
 import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersOnDomainValuesException;
 import it.eng.spagobi.tools.dataset.bo.AbstractCustomDataSet;
@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  *
@@ -29,15 +28,17 @@ public class FiltersInfo {
 	private WorkSheetDefinition workSheetDefinition = null;
 	private IDataSet dataSet = null;
 	private List<WhereField> additionalFilters = null;
-	
+
 	public FiltersInfo(WorkSheetDefinition workSheetDefinition, IDataSet dataSet) {
 		this.workSheetDefinition = workSheetDefinition;
 		this.dataSet = dataSet;
 	}
-	
+
 	/**
 	 * Returns a map where keys are fields' technical names (not seen by the user), and values are fields values (not decoded)
-	 * @param sheetName The sheet name
+	 * 
+	 * @param sheetName
+	 *            The sheet name
 	 * @return Returns a map where keys are fields' technical names (not seen by the user), and values are fields values (not decoded)
 	 * @throws WrongConfigurationForFiltersOnDomainValuesException
 	 */
@@ -47,10 +48,12 @@ public class FiltersInfo {
 		List<Attribute> sheetFilters = sheet.getFiltersOnDomainValues();
 		return WorkSheetDefinition.mergeDomainValuesFilters(globalFilters, sheetFilters);
 	}
-	
+
 	/**
 	 * Returns a map where keys are fields' labels (as seen by the user), and values are fields decoded values (as seen by the user)
-	 * @param sheetName The sheet name
+	 * 
+	 * @param sheetName
+	 *            The sheet name
 	 * @return Returns a map where keys are fields' labels (as seen by the user), and values are fields decoded values (as seen by the user)
 	 * @throws WrongConfigurationForFiltersOnDomainValuesException
 	 */
@@ -75,8 +78,7 @@ public class FiltersInfo {
 		}
 	}
 
-	private Map<String, List<String>> decodeKeys(
-			Map<String, List<String>> decodedValues) {
+	private Map<String, List<String>> decodeKeys(Map<String, List<String>> decodedValues) {
 		IMetaData metadata = dataSet.getMetadata();
 		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
 		Iterator<String> iterator = decodedValues.keySet().iterator();
@@ -93,8 +95,7 @@ public class FiltersInfo {
 		return toReturn;
 	}
 
-	private Map<String, List<String>> getDecodedValues(
-			Map<String, List<String>> rawValues) {
+	private Map<String, List<String>> getDecodedValues(Map<String, List<String>> rawValues) {
 		Map<String, List<String>> toReturn = rawValues;
 		if (dataSet instanceof AbstractCustomDataSet) {
 			AbstractCustomDataSet abstractCustomDataSet = (AbstractCustomDataSet) dataSet;
@@ -104,9 +105,8 @@ public class FiltersInfo {
 		}
 		return toReturn;
 	}
-	
-	private Map<String, List<String>> substituteCodeWithDescriptions(Map<String, List<String>> codesMap,
-			Map<String, List<String>> descriptionsMap) {
+
+	private Map<String, List<String>> substituteCodeWithDescriptions(Map<String, List<String>> codesMap, Map<String, List<String>> descriptionsMap) {
 		Map<String, List<String>> toReturn = codesMap;
 		Iterator<String> it = descriptionsMap.keySet().iterator();
 		while (it.hasNext()) {
@@ -119,19 +119,18 @@ public class FiltersInfo {
 				List<String> codes = codesMap.get(key);
 				List<String> descriptions = descriptionsMap.get(key);
 				List<String> newValues = new ArrayList<String>();
-				for ( int i = 0 ; i < codes.size() ; i++ ) {
+				for (int i = 0; i < codes.size(); i++) {
 					String aCode = codes.get(i);
 					String aDescription = descriptions.get(i);
 					newValues.add(aCode + " - " + aDescription);
 				}
 				toReturn.put(key, newValues);
-			} 
+			}
 		}
 		return toReturn;
 	}
-	
-	private Map<String, List<String>> getCodesToBeDecoded(
-			Map<String, List<String>> filters) {
+
+	private Map<String, List<String>> getCodesToBeDecoded(Map<String, List<String>> filters) {
 		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
 		Iterator<String> iterator = filters.keySet().iterator();
 		while (iterator.hasNext()) {
@@ -143,8 +142,7 @@ public class FiltersInfo {
 		}
 		return toReturn;
 	}
-	
-	
+
 	private AdmissibleValues getAttributePresentation(String fieldId) {
 		WorksheetFieldsOptions options = workSheetDefinition.getFieldsOptions();
 		FieldOptions fieldOptions = options.getOptionsForFieldByFieldId(fieldId);
@@ -171,5 +169,5 @@ public class FiltersInfo {
 	public List<WhereField> getAdditionalFilters() {
 		return additionalFilters;
 	}
-	
+
 }

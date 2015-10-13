@@ -1,33 +1,33 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.registry;
 
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.query.CriteriaConstants;
-import it.eng.qbe.query.ExpressionNode;
-import it.eng.qbe.query.Query;
-import it.eng.qbe.query.WhereField;
-import it.eng.qbe.statement.AbstractQbeDataSet;
-import it.eng.qbe.statement.AbstractStatement;
-import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.runtime.datasource.IDataSource;
+import it.eng.qbe.runtime.model.structure.IModelEntity;
+import it.eng.qbe.runtime.model.structure.IModelField;
+import it.eng.qbe.runtime.model.structure.IModelStructure;
+import it.eng.qbe.runtime.query.CriteriaConstants;
+import it.eng.qbe.runtime.query.ExpressionNode;
+import it.eng.qbe.runtime.query.Query;
+import it.eng.qbe.runtime.query.WhereField;
+import it.eng.qbe.runtime.statement.AbstractQbeDataSet;
+import it.eng.qbe.runtime.statement.AbstractStatement;
+import it.eng.qbe.runtime.statement.IStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
 import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser;
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryJSONDataWriter;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
+import it.eng.spagobi.runtime.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.runtime.engines.qbe.registry.bo.RegistryConfiguration.Column;
+import it.eng.spagobi.runtime.engines.qbe.registry.bo.RegistryConfiguration.Filter;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -55,7 +55,7 @@ import org.json.JSONObject;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- * 
+ *
  */
 
 public class LoadRegistryAction extends ExecuteQueryAction {
@@ -788,12 +788,9 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			// In order to recover subentities the new way if
 			// DEFAULT_MAX_RECURSION_LEVEL is set to zero
 			/*
-			 * QbeEngineInstance engineInstance = getEngineInstance();
-			 * QbeTemplate template = engineInstance.getTemplate(); // takes the
-			 * only datamart's name configured String modelName = (String)
-			 * template.getDatamartNames().get(0); IModelStructure md =
-			 * getDataSource().getModelStructure(); IModelEntity subEntity =
-			 * md.getEntity(column.getSubEntity());
+			 * QbeEngineInstance engineInstance = getEngineInstance(); QbeTemplate template = engineInstance.getTemplate(); // takes the only datamart's name
+			 * configured String modelName = (String) template.getDatamartNames().get(0); IModelStructure md = getDataSource().getModelStructure(); IModelEntity
+			 * subEntity = md.getEntity(column.getSubEntity());
 			 */
 
 			String entityUName = entity.getUniqueName();

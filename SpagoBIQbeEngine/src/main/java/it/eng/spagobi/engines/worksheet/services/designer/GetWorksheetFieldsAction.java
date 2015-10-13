@@ -5,9 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.worksheet.services.designer;
 
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.datasource.dataset.DataSetDataSource;
-import it.eng.qbe.statement.sql.SQLDataSet;
+import it.eng.qbe.dataset.datasource.dataset.DataSetDataSource;
+import it.eng.qbe.runtime.datasource.IDataSource;
+import it.eng.qbe.sql.statement.sql.SQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;

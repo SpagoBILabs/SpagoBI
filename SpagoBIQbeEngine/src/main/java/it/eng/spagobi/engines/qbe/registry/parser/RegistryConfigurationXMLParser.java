@@ -1,15 +1,15 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.registry.parser;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Configuration;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
+import it.eng.spagobi.runtime.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.runtime.engines.qbe.registry.bo.RegistryConfiguration.Column;
+import it.eng.spagobi.runtime.engines.qbe.registry.bo.RegistryConfiguration.Configuration;
+import it.eng.spagobi.runtime.engines.qbe.registry.bo.RegistryConfiguration.Filter;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -19,9 +19,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- * 
+ *
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- * 
+ *
  */
 public class RegistryConfigurationXMLParser {
 
