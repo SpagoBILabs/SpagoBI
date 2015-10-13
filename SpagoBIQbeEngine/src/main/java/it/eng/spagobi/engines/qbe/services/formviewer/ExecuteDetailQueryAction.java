@@ -5,12 +5,12 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.formviewer;
 
-import it.eng.qbe.query.HavingField;
-import it.eng.qbe.query.ISelectField;
-import it.eng.qbe.query.Query;
-import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.serializer.SerializerFactory;
-import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.runtime.query.HavingField;
+import it.eng.qbe.runtime.query.ISelectField;
+import it.eng.qbe.runtime.query.Query;
+import it.eng.qbe.runtime.query.WhereField;
+import it.eng.qbe.runtime.statement.IStatement;
+import it.eng.qbe.serialization.query.serializer.SerializerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
@@ -121,7 +121,7 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 			logger.debug("Form state retrieved as a string: " + jsonEncodedFormState);
 			JSONObject formState = new JSONObject(jsonEncodedFormState);
 			logger.debug("Form state converted into a valid JSONObject: " + formState.toString(3));
-			JSONObject template = (JSONObject) getEngineInstance().getFormState().getConf();
+			JSONObject template = getEngineInstance().getFormState().getConf();
 			logger.debug("Form viewer template retrieved.");
 
 			FormViewerQueryTransformer formViewerQueryTransformer = new FormViewerQueryTransformer();

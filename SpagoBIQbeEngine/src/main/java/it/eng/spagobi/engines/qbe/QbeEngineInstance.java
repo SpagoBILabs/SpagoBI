@@ -5,20 +5,20 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe;
 
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
-import it.eng.qbe.query.Query;
-import it.eng.qbe.query.catalogue.QueryCatalogue;
-import it.eng.qbe.statement.AbstractQbeDataSet;
-import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.statement.QbeDatasetFactory;
+import it.eng.qbe.runtime.datasource.IDataSource;
+import it.eng.qbe.runtime.model.accessmodality.AbstractModelAccessModality;
+import it.eng.qbe.runtime.query.Query;
+import it.eng.qbe.runtime.query.catalogue.QueryCatalogue;
+import it.eng.qbe.runtime.statement.AbstractQbeDataSet;
+import it.eng.qbe.runtime.statement.IStatement;
+import it.eng.qbe.runtime.statement.QbeDatasetFactory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.runtime.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;

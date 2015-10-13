@@ -5,20 +5,20 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.core;
 
-import it.eng.qbe.model.accessmodality.IModelAccessModality;
-import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.query.ExpressionNode;
-import it.eng.qbe.query.ISelectField;
-import it.eng.qbe.query.Query;
-import it.eng.qbe.query.WhereField;
-import it.eng.qbe.statement.AbstractStatement;
-import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.statement.QbeDatasetFactory;
-import it.eng.qbe.statement.graph.GraphManager;
-import it.eng.qbe.statement.graph.bean.QueryGraph;
-import it.eng.qbe.statement.graph.bean.Relationship;
-import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
+import it.eng.qbe.runtime.model.accessmodality.IModelAccessModality;
+import it.eng.qbe.runtime.model.structure.IModelEntity;
+import it.eng.qbe.runtime.model.structure.IModelStructure;
+import it.eng.qbe.runtime.query.ExpressionNode;
+import it.eng.qbe.runtime.query.ISelectField;
+import it.eng.qbe.runtime.query.Query;
+import it.eng.qbe.runtime.query.WhereField;
+import it.eng.qbe.runtime.statement.AbstractStatement;
+import it.eng.qbe.runtime.statement.IStatement;
+import it.eng.qbe.runtime.statement.QbeDatasetFactory;
+import it.eng.qbe.runtime.statement.graph.GraphManager;
+import it.eng.qbe.runtime.statement.graph.bean.QueryGraph;
+import it.eng.qbe.runtime.statement.graph.bean.Relationship;
+import it.eng.qbe.runtime.statement.graph.bean.RootEntitiesGraph;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;

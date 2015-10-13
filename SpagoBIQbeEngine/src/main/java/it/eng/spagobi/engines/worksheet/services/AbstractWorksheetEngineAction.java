@@ -5,12 +5,12 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.worksheet.services;
 
-import it.eng.qbe.query.AbstractSelectField;
-import it.eng.qbe.query.CriteriaConstants;
-import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.WhereField.Operand;
-import it.eng.qbe.serializer.SerializationManager;
-import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.runtime.query.AbstractSelectField;
+import it.eng.qbe.runtime.query.CriteriaConstants;
+import it.eng.qbe.runtime.query.WhereField;
+import it.eng.qbe.runtime.query.WhereField.Operand;
+import it.eng.qbe.runtime.statement.AbstractStatement;
+import it.eng.qbe.serialization.serializer.SerializationManager;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
