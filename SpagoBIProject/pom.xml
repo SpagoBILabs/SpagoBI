@@ -19,8 +19,8 @@
 
 		<dependency>
 			<groupId>it.eng.spagobi</groupId>
-			<artifactId>qbe-core</artifactId>
-			<version>5.1.0-SNAPSHOT</version>
+			<artifactId>QbeCore</artifactId>
+			<version>5.2.0-SNAPSHOT</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -32,8 +32,8 @@
 
 		<dependency>
 			<groupId>it.eng.spagobi</groupId>
-			<artifactId>spagobi-dao</artifactId>
-			<version>5.1.0-SNAPSHOT</version>
+			<artifactId>SpagoBIDAO</artifactId>
+			<version>5.2.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -58,37 +58,37 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>org.jboss.resteasy</groupId> -->
-		<!-- <artifactId>resteasy-jaxrs</artifactId> -->
-		<!-- <version>3.0.9.Final</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>3.0.9.Final</version>
+		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>org.jboss.resteasy</groupId> -->
-		<!-- <artifactId>async-http-servlet-3.0</artifactId> -->
-		<!-- <version>3.0.9.Final</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>async-http-servlet-3.0</artifactId>
+			<version>3.0.9.Final</version>
+		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.httpcomponents</groupId> -->
-		<!-- <artifactId>httpcore</artifactId> -->
-		<!-- <version>4.4.3</version> -->
-		<!-- </dependency> -->
-
-
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.httpcomponents</groupId> -->
-		<!-- <artifactId>httpclient</artifactId> -->
-		<!-- <version>4.5</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.3</version>
+		</dependency>
 
 
-		<!-- <dependency> -->
-		<!-- <groupId>org.jboss.resteasy</groupId> -->
-		<!-- <artifactId>resteasy-servlet-initializer</artifactId> -->
-		<!-- <version>3.0.9.Final</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+			<version>3.0.9.Final</version>
+		</dependency>
 
 
 		<dependency>
@@ -177,8 +177,8 @@
 
 		<dependency>
 			<groupId>it.eng.spagobi</groupId>
-			<artifactId>spagobi-meta-utils</artifactId>
-			<version>5.1.0-SNAPSHOT</version>
+			<artifactId>spagobi-metamodel-utils</artifactId>
+			<version>5.2.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -201,6 +201,8 @@
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<skipTests>true</skipTests>
 	</properties>
 
 	<build>
