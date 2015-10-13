@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.container.strategy;
 
@@ -16,27 +16,26 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- * <b>TO BE USED ONLY INSIDE SPAGOBI CORE, NOT INSIDE EXTERNAL ENGINES</b>.
- * This strategy create/retrieve/destroy the context using the LightNavigationManager.LIGHT_NAVIGATOR_ID attribute contained into 
- * the Spago request SourceBean object.
- * The context is put on ISessionContainer object with a key that has a fix part "SPAGOBI_SESSION_ATTRIBUTE" and a dynamic part, the 
- * LightNavigationManager.LIGHT_NAVIGATOR_ID request attribute; if this attribute is missing, the key used to put context on session is 
- * the static string "SPAGOBI_SESSION_ATTRIBUTE".
- * 
+ * <b>TO BE USED ONLY INSIDE SPAGOBI CORE, NOT INSIDE EXTERNAL ENGINES</b>. This strategy create/retrieve/destroy the context using the
+ * LightNavigationManager.LIGHT_NAVIGATOR_ID attribute contained into the Spago request SourceBean object. The context is put on ISessionContainer object with a
+ * key that has a fix part "SPAGOBI_SESSION_ATTRIBUTE" and a dynamic part, the LightNavigationManager.LIGHT_NAVIGATOR_ID request attribute; if this attribute is
+ * missing, the key used to put context on session is the static string "SPAGOBI_SESSION_ATTRIBUTE".
+ *
  * @author Zerbetto (davide.zerbetto@eng.it)
  *
  */
-public class LightNavigatorContextRetrieverStrategy implements
-		IContextRetrieverStrategy {
+public class LightNavigatorContextRetrieverStrategy implements IContextRetrieverStrategy {
 
 	static private Logger logger = Logger.getLogger(LightNavigatorContextRetrieverStrategy.class);
-	
+
 	private static final String _sessionAttributeBaseKey = "SPAGOBI_SESSION_ATTRIBUTE";
 	private String _key;
-	
+
 	/**
 	 * Look for the LightNavigationManager.LIGHT_NAVIGATOR_ID attribute on request to get the key for context storage on session.
-	 * @param request The Spago SourceBean service request object
+	 *
+	 * @param request
+	 *            The Spago SourceBean service request object
 	 */
 	public LightNavigatorContextRetrieverStrategy(SourceBean request) {
 		logger.debug("IN");
@@ -53,10 +52,11 @@ public class LightNavigatorContextRetrieverStrategy implements
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
 	 * Retrieves the context from the input ISessionContainer instance
 	 */
+	@Override
 	public Context getContext(IBeanContainer sessionContainer) {
 		logger.debug("IN");
 		try {
@@ -71,6 +71,7 @@ public class LightNavigatorContextRetrieverStrategy implements
 	/**
 	 * Creates a new context and puts it on the input ISessionContainer instance
 	 */
+	@Override
 	public Context createContext(IBeanContainer sessionContainer) {
 		logger.debug("IN");
 		try {
@@ -86,6 +87,7 @@ public class LightNavigatorContextRetrieverStrategy implements
 	/**
 	 * Destroys the current context on the input ISessionContainer instance
 	 */
+	@Override
 	public void destroyCurrentContext(IBeanContainer sessionContainer) {
 		logger.debug("IN");
 		try {
@@ -103,8 +105,8 @@ public class LightNavigatorContextRetrieverStrategy implements
 	/**
 	 * Destroys all the contexts on the input ISessionContainer instance older than the number of minutes specified at input.
 	 */
-	public void destroyContextsOlderThan(IBeanContainer session,
-			int minutes) {
+	@Override
+	public void destroyContextsOlderThan(IBeanContainer session, int minutes) {
 		logger.debug("IN");
 		try {
 			synchronized (session) {
