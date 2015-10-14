@@ -18,11 +18,11 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
-<%@page import="it.eng.qbe.serializer.SerializationManager"%>
+<%@page import="it.eng.qbe.serialization.serializer.SerializationManager"%>
 <%@page import="it.eng.spago.configuration.*"%>
-<%@page import="it.eng.qbe.model.structure.IModelStructure"%>
+<%@page import="it.eng.qbe.runtime.model.structure.IModelStructure"%>
 <%@page import="it.eng.spago.base.*"%>
-<%@page import="it.eng.qbe.datasource.configuration.IDataSourceConfiguration"%>
+<%@page import="it.eng.qbe.runtime.datasource.configuration.IDataSourceConfiguration"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineConfig"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineInstance"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>

@@ -25,7 +25,7 @@
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.Locale"%>
 <%@page import="it.eng.spagobi.services.common.EnginConf"%>
-<%@page import="it.eng.qbe.serializer.SerializationManager"%>
+<%@page import="it.eng.qbe.serialization.serializer.SerializationManager"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 

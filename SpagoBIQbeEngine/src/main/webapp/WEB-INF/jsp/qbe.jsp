@@ -19,11 +19,11 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="it.eng.spagobi.engines.worksheet.WorksheetEngineInstance"%>
 <%@page import="it.eng.spagobi.commons.QbeEngineStaticVariables"%>
 <%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
-<%@page import="it.eng.qbe.serializer.SerializationManager"%>
+<%@page import="it.eng.qbe.serialization.serializer.SerializationManager"%>
 <%@page import="it.eng.spago.configuration.*"%>
-<%@page import="it.eng.qbe.model.structure.IModelStructure"%>
+<%@page import="it.eng.qbe.runtime.model.structure.IModelStructure"%>
 <%@page import="it.eng.spago.base.*"%>
-<%@page import="it.eng.qbe.datasource.configuration.IDataSourceConfiguration"%>
+<%@page import="it.eng.qbe.runtime.datasource.configuration.IDataSourceConfiguration"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineConfig"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineInstance"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
@@ -37,8 +37,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="java.util.Iterator"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.services.proxy.SbiDocumentServiceProxy"%>
-<%@page import="it.eng.qbe.query.serializer.SerializerFactory"%>
-<%@page import="it.eng.qbe.query.Query"%>
+<%@page import="it.eng.qbe.serialization.query.serializer.SerializerFactory"%>
+<%@page import="it.eng.qbe.runtime.query.Query"%>
 <%@page import="org.json.JSONArray"%>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
