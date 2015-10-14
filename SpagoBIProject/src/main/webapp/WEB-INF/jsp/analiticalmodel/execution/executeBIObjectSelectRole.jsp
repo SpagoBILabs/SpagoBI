@@ -9,7 +9,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
   
 
 
-<table class='header-table-portlet-section'>		
+<table class='header-table-portlet-section'>
 	<tr class='header-row-portlet-section'>
 		<td class='header-title-column-portlet-section' style='vertical-align:middle;padding-left:5px;'>
 			<spagobi:message key = "SBIDev.docConf.execBIObject.selRoles.Title" />

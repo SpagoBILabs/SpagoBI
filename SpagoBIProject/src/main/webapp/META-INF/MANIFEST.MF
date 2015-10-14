@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
-
-Name: SpagoBI.war
-Implementation-Title: SpagoBI
-Implementation-Version: 5.1.0
+Build-Jdk: 1.7.0_79
+Built-By: federici
+Created-By: Maven Integration for Eclipse
 
