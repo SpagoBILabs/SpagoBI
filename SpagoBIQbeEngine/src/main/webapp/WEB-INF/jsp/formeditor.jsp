@@ -19,8 +19,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <%@page import="it.eng.spago.configuration.*"%>
 <%@page import="it.eng.spago.base.*"%>
-<%@page import="it.eng.qbe.model.structure.IModelStructure"%>
-<%@page import="it.eng.qbe.datasource.configuration.IDataSourceConfiguration"%>
+<%@page import="it.eng.qbe.runtime.model.structure.IModelStructure"%>
+<%@page import="it.eng.qbe.runtime.datasource.configuration.IDataSourceConfiguration"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineConfig"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineInstance"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
