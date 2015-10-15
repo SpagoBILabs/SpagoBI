@@ -1,5 +1,7 @@
 #!/bin/bash
 #SpagoBI Chef installation script
+set -e
+set -x
 
 #install chef 12 client
 wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/10.04/x86_64/chef_12.5.1-1_amd64.deb
