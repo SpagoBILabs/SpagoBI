@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<STATEMENTS>	 		
+
+  <!-- start statements for test console -->	
+  	<STATEMENT name="UPDATE_MONITOR_STATE_TEST" 
+  			   query="UPDATE TEST_CONSOLE SET FLG1 = ? WHERE ID = ? "/>	
+  			   
+	<STATEMENT name="UPDATE_CHECK_STATE_TEST" 
+  			   query="UPDATE TEST_CONSOLE SET FLG6 = ? WHERE ID = ? "/>	 
+  			   
+   <STATEMENT name="UPDATE_ERROR_STATE_TEST" 
+  			   query="UPDATE TEST_CONSOLE SET FLG3 = ? WHERE ID = ? "/>	 
+  			   
+   <STATEMENT name="UPDATE_ALARM_STATE_TEST" 
+  			   query="UPDATE TEST_CONSOLE SET FLG5 = ? WHERE ID = ? "/>	  			 
+  			   
+   <STATEMENT name="UPDATE_ALL_ERRORS_STATE_TEST" 
+  			   query="UPDATE TEST_CONSOLE  SET FLG3 = ?, COLUMN3 = ? 
+  			   		  WHERE  FLG2 = 1  
+  			   		  AND COLUMN1 like ? and COLUMN2 like ? "/>	
+  			   
+   <STATEMENT name="UPDATE_ALL_ALARMS_STATE_TEST" 
+  			   query="UPDATE TEST_CONSOLE  SET FLG5 = ?, COLUMN3 = ? 
+  			   		  WHERE  FLG4 = 1  
+  			   		  AND COLUMN1 like ? and COLUMN2 like ? "/>	
+  			   
+   <STATEMENT name="UPDATE_ALL_VIEWING_STATE_TEST" 
+  			   query="UPDATE TEST_CONSOLE  SET FLG6 = ?, COLUMN3 = ?
+  			    	  WHERE COLUMN1 like ? and COLUMN2 like ? "/>	
+  			    	  
+	<STATEMENT name="UPDATE_ALL_VIEWING_STATE_TEST_BY_CHECK" 
+  			   query="UPDATE TEST_CONSOLE  SET FLG8 = 0, COLUMN3 = ?
+  			    	  WHERE ID IN ($) "/>	  			    	  
+  <!-- end statements for test console -->
+
+  			
+</STATEMENTS>
