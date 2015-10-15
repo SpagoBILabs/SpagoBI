@@ -1,130 +1,163 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>it.eng.spagobi</groupId>
-  <artifactId>SpagoBIJasperReportEngine</artifactId>
-  <version>5.2.0-SNAPSHOT</version>
-  <packaging>war</packaging>
- 
- <name>${project.groupId}:${project.artifactId}</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>it.eng.spagobi</groupId>
+	<artifactId>SpagoBIJasperReportEngine</artifactId>
+	<version>5.2.0-SNAPSHOT</version>
+	<packaging>war</packaging>
 
-  <repositories>
-    <repository>
-      <id>spagobi-releases</id>
-      <url>https://raw.github.com/SpagoBILabs/SpagoBI/mvn-repo/releases</url>
-    </repository>
+	<name>${project.groupId}:${project.artifactId}</name>
 
-    <repository>
-        <id>jaspersoft</id>
-        <name>jaspersoft-releases</name>
-        <url>http://jaspersoft.artifactoryonline.com/jaspersoft/jr-ce-releases</url>
-    </repository>
+	<repositories>
+		<repository>
+			<id>spagobi-releases</id>
+			<url>https://raw.github.com/SpagoBILabs/SpagoBI/mvn-repo/releases</url>
+		</repository>
 
-  </repositories>
+		<repository>
+			<id>jaspersoft</id>
+			<name>jaspersoft-releases</name>
+			<url>http://jaspersoft.artifactoryonline.com/jaspersoft/jr-ce-releases</url>
+		</repository>
 
-  <dependencies>
+	</repositories>
 
-    <dependency>
-      <groupId>it.eng.spagobi</groupId>
-      <artifactId>SpagoBIUtils</artifactId>
-      <version>5.2.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
+	<dependencies>
 
-    <dependency>
-      <groupId>net.sf.jasperreports</groupId>
-      <artifactId>jasperreports</artifactId>
-      <version>6.1.0</version>
-      <type>jar</type>
-    </dependency>
+		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>QbeCore</artifactId>
+			<version>5.2.0-SNAPSHOT</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>batik</groupId>
+					<artifactId>batik-1.5-fop</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
-    <dependency>
-      <groupId>com.google.code.maven-play-plugin.com.jamonapi</groupId>
-      <artifactId>jamon</artifactId>
-      <version>2.7</version>
-    </dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>it.eng.spagobi</groupId> -->
+		<!-- <artifactId>SpagoBIUtils</artifactId> -->
+		<!-- <version>5.2.0-SNAPSHOT</version> -->
+		<!-- <scope>compile</scope> -->
+		<!-- </dependency> -->
 
-    <dependency>
-      <groupId>net.sf.jasperreports</groupId>
-      <artifactId>jasperreports-fonts</artifactId>
-      <version>6.0.0</version>
-      <type>jar</type>
-    </dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>6.1.0</version>
+			<type>jar</type>
+		</dependency>
 
-    <dependency>
-      <groupId>net.sf.jasperreports</groupId>
-      <artifactId>jasperreports-chart-themes</artifactId>
-      <version>6.1.0</version>
-      <type>jar</type>
-    </dependency>
+		<dependency>
+			<groupId>com.jamonapi</groupId>
+			<artifactId>jamon</artifactId>
+			<version>2.81</version>
+		</dependency>
 
-    <dependency>
-      <groupId>org.safehaus.jug</groupId>
-      <artifactId>jug</artifactId>
-      <version>2.0.0</version>
-    </dependency>
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.5.1</version>
+		</dependency>
 
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.15</version>
-    </dependency>
+		<dependency>
+			<groupId>com.fdsapi</groupId>
+			<artifactId>fdsapi</artifactId>
+			<version>1.2</version>
+		</dependency>
 
-    <dependency>
-      <groupId>it.eng.spago</groupId>
-      <artifactId>spago-core</artifactId>
-      <version>2.3.0</version>
-    </dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.google.code.maven-play-plugin.com.jamonapi</groupId> -->
+		<!-- <artifactId>jamon</artifactId> -->
+		<!-- <version>2.7</version> -->
+		<!-- </dependency> -->
 
-  </dependencies>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-fonts</artifactId>
+			<version>6.0.0</version>
+			<type>jar</type>
+		</dependency>
 
-  <properties>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <skipTests>true</skipTests>
-  </properties>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-chart-themes</artifactId>
+			<version>6.1.0</version>
+			<type>jar</type>
+		</dependency>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.6</version>
-        <configuration>
-          <!-- <archive> -->
-          <!-- <manifest> -->
-          <!-- <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile> -->
-          <!-- </manifest> -->
-          <!-- </archive> -->
-          <containerConfigXML>/src/main/webapp/META-INF</containerConfigXML>
-        </configuration>
-      </plugin>
+		<!-- <dependency> -->
+		<!-- <groupId>org.safehaus.jug</groupId> -->
+		<!-- <artifactId>jug</artifactId> -->
+		<!-- <version>2.0.0</version> -->
+		<!-- <classifier>lgpl</classifier> -->
+		<!-- </dependency> -->
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+		<!-- <dependency> -->
+		<!-- <groupId>log4j</groupId> -->
+		<!-- <artifactId>log4j</artifactId> -->
+		<!-- <version>1.2.15</version> -->
+		<!-- </dependency> -->
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+		<!-- <dependency> -->
+		<!-- <groupId>it.eng.spago</groupId> -->
+		<!-- <artifactId>spago-core</artifactId> -->
+		<!-- <version>2.3.0</version> -->
+		<!-- </dependency> -->
+
+	</dependencies>
+
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<skipTests>true</skipTests>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<!-- <archive> -->
+					<!-- <manifest> -->
+					<!-- <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile> -->
+					<!-- </manifest> -->
+					<!-- </archive> -->
+					<containerConfigXML>/src/main/webapp/META-INF</containerConfigXML>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
