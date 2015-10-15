@@ -9,9 +9,9 @@ import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
-import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
 import it.eng.spagobi.tools.dataset.notifier.NotifierManager;
 import it.eng.spagobi.tools.dataset.notifier.NotifierManagerFactory;
+import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
 import it.eng.spagobi.tools.dataset.notifier.UserLabelId;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -43,10 +43,12 @@ public class OrionContextSubscriber {
 
 	private final String label;
 
+	private final String authToken;
+
 	public OrionContextSubscriber(RESTDataSet dataSet, String spagoBInotifyAddress) {
 		Helper.checkNotNull(dataSet, "dataSet");
 
-		user = dataSet.getUserUniqueIdentifier();
+		user = dataSet.getUserId();
 		if (user == null || user.isEmpty()) {
 			throw new NGSISubscribingException("No user associated with dataset");
 		}
@@ -55,6 +57,8 @@ public class OrionContextSubscriber {
 		if (user == null || user.isEmpty()) {
 			throw new NGSISubscribingException("No label associated with dataset");
 		}
+		
+		authToken=dataSet.getOAuth2Token();
 
 		this.proxy = dataSet.getDataProxy();
 		this.dataReader = dataSet.getDataReader();
@@ -149,10 +153,18 @@ public class OrionContextSubscriber {
 		return subResp.getString("subscriptionId");
 	}
 
-	private Map<String, String> getSubscriptionRequestHeaders() {
+	private Map<String, String> getSubscriptionRequestHeaders() throws MalformedURLException {
 		// same as data proxy
-		return proxy.getRequestHeaders();
+		Map<String, String> res = proxy.getRequestHeaders();
+		if (OAuth2Utils.isOAuth2()) {
+			if (authToken!=null) {
+				res.putAll(OAuth2Utils.getOAuth2Headers(authToken));
+			}
+		}
+		return res;
 	}
+
+	
 
 	/**
 	 * <pre>
