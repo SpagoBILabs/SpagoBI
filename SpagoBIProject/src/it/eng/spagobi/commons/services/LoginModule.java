@@ -344,7 +344,7 @@ public class LoginModule extends AbstractHttpModule {
 							userDao.updateSbiUser(user, user.getId());
 						}
 					} catch (Exception e) {
-						logger.error("Error while update user's dtLastAccess: " + e);
+						logger.error("Error while update user's dtLastAccess: ", e);
 					}
 				}
 			}
@@ -407,7 +407,7 @@ public class LoginModule extends AbstractHttpModule {
 			permSess.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 
 		} catch (Exception e) {
-			logger.error("Reading user information... ERROR");
+			logger.error("Reading user information... ERROR", e);
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "ERR");
 			throw new SecurityException("Reading user information... ERROR", e);
 		}
@@ -508,7 +508,7 @@ public class LoginModule extends AbstractHttpModule {
 						tmpEndForUnused = StringUtilities.stringToDate(sdf.format(cal.getTime()), DATE_FORMAT);
 						logger.debug("End Date For Unused: " + tmpEndForUnused);
 					} catch (Exception e) {
-						logger.error("The control pwd goes on error: " + e);
+						logger.error("The control pwd goes on error: ", e);
 					}
 				}
 				if (tmpEndForUnused != null && currentDate.compareTo(tmpEndForUnused) >= 0) {
