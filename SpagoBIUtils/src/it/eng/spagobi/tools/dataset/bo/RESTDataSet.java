@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
@@ -107,18 +108,19 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	private void notifyListeners() {
 		DataSetListenerManager manager = DataSetListenerManagerFactory.getManager();
-		String owner = getOwner();
-		if (owner == null) {
-			// not user associated, temporary
+		String uuid=getUserUniqueIdentifier();
+		if (uuid==null) {
+			// temporary dataset
 			return;
 		}
+		
 		String label = getLabel();
 		if (label == null) {
 			// temporary dataset
 			return;
 		}
-		manager.addCometListenerIfInitializedAndAbsent(owner, label, "1");
-		manager.changedDataSet(owner, label, this);
+		manager.addCometListenerIfInitializedAndAbsent(uuid, label, "1");
+		manager.changedDataSet(uuid, label, this);
 	}
 
 	private void subscribeNGSI() {
@@ -360,6 +362,16 @@ public class RESTDataSet extends ConfigurableDataSet {
 	@Override
 	public void setDataSource(IDataSource dataSource) {
 		throw new IllegalStateException(RESTDataSet.class.getSimpleName()+" doesn't need the dataSource");
+	}
+
+	public String getUserUniqueIdentifier() {
+		UserProfile up = getUserProfile();
+		if (up == null) {
+			return null;
+		}
+		
+		String uuid = (String) up.getUserUniqueIdentifier();
+		return uuid;
 	}
 
 }

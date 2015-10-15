@@ -46,7 +46,7 @@ public class OrionContextSubscriber {
 	public OrionContextSubscriber(RESTDataSet dataSet, String spagoBInotifyAddress) {
 		Helper.checkNotNull(dataSet, "dataSet");
 
-		user = dataSet.getOwner();
+		user = dataSet.getUserUniqueIdentifier();
 		if (user == null || user.isEmpty()) {
 			throw new NGSISubscribingException("No user associated with dataset");
 		}

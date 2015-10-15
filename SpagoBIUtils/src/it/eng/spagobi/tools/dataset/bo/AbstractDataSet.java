@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
@@ -96,6 +97,7 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	protected Integer scopeId;
 	protected String scopeCd;
+	protected UserProfile userProfile;
 
 	private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
@@ -791,24 +793,14 @@ public abstract class AbstractDataSet implements IDataSet {
 		this.datasourceForReading = datasourceForReading;
 	}
 
-	// /**
-	// * Returns the datasource on whgich dataset can write
-	// * If the associated datasource is read and write takes that, otherwise takes the write default one
-	// */
-	// public IDataSource getDataSourceForWriting() {
-	// logger.debug("IN");
-	// IDataSource toReturn = null;
-	//
-	// if(getDataSource() != null && getDataSource().checkIsReadOnly() == false ){
-	// toReturn = getDataSource();
-	// }
-	// else{
-	// DAOFactory
-	//
-	// }
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
 
-	// logger.debug("OUT");
-	// return toReturn;
-	// }
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
+	}
+
+	
 
 }
