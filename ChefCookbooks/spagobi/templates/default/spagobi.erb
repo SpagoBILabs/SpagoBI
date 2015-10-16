@@ -37,6 +37,21 @@ stop() {
         fi
 
         <%= node['spagobi']['home_dir'] %><%= node['spagobi']['server_dir'] %>bin/shutdown.sh
+
+        echo -n "Stopping spagobi"
+        start=`date +%s`
+        end=`date +%s`
+        while ( ps aux | grep -q [j]ava.*SpagoBI.* ) && [ $((end-start)) -lt 300 ]; do 
+            echo -n "."
+            sleep 2
+            end=`date +%s`
+        done
+        echo
+        if ps aux | grep -q [j]ava.*SpagoBI.*; then
+          echo "spagobi didn't stop correctly"
+          exit 2
+        fi
+
         ### Now, delete the lock file ###
         rm -f $LOCK_FILE
         echo "spagobi server stopped."
