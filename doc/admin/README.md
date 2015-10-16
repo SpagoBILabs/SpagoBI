@@ -209,7 +209,7 @@ Change the following settings (change their VALUE\_CHECK property):
 SPAGOBI_SSO.ACTIVE = true
 SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className = it.eng.spagobi.security.OAuth2SecurityInfoProvider
 SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className = it.eng.spagobi.security.OAuth2SecurityServiceSupplier
-SPAGOBI_SSO.SECURITY_LOGOUT_URL = <https://account.lab.fiware.org/users/sign_out>
+SPAGOBI_SSO.SECURITY_LOGOUT_URL = https://account.lab.fiware.org
 ```
 
 Beyond previous settings, there are other configurations that can be made (optional):
