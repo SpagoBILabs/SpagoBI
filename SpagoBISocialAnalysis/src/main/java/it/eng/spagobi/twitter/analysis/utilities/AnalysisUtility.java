@@ -76,7 +76,7 @@ public class AnalysisUtility {
 
 		logger.debug("Method findCountryCodeFromUserLocation(): Start");
 
-		String countryCode = "";
+		String countryCode = null;
 
 		try {
 			String locationEncoded = "";

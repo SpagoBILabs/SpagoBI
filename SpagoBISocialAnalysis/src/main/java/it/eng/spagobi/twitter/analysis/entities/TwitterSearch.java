@@ -17,9 +17,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -43,7 +45,8 @@ public class TwitterSearch implements Serializable {
 	private static final long serialVersionUID = -7513781474878719973L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "TWITTER_SEARCH_GEN")
+	@TableGenerator(name = "TWITTER_SEARCH_GEN", initialValue = 1, allocationSize = 1, table = "TWITTER_HIBERNATE_SEQUENCES", pkColumnName = "SEQUENCE_NAME", valueColumnName = "NEXT_VAL", pkColumnValue = "TWITTER_SEARCH")
 	@Column(name = "search_id")
 	@NotNull
 	private long searchID;
@@ -86,7 +89,7 @@ public class TwitterSearch implements Serializable {
 	private boolean failed = false;
 
 	@Column(name = "fail_message")
-	//@Length(max = 1000)
+	// @Length(max = 1000)
 	private String failMessage;
 
 	@Column(name = "boolean_operator")
