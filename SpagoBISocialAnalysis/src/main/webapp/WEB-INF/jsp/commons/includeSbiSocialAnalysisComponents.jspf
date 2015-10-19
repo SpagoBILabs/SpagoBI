@@ -1,0 +1,27 @@
+
+
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/social-jquery-locale.js"></script>
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/tabs-locale.js"></script>
+
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/summary-locale.js"></script>	
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/summary-timeline.js"></script>
+
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/topics-locale.js"></script>
+
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/network-locale.js"></script>
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/interactions-graph.js"></script>	
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/interactions-network.js"></script>	
+
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/distribution-locale.js"></script>	
+
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/sentiment-locale.js"></script>
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/sentiment-topics.js"></script>
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/sentiment-radar.js"></script>	
+
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/impact-locale.js"></script>		
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/followers-timeline.js"></script>
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/clicks-timeline.js"></script>
+
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/roi-locale.js"></script>	
+
+<script src="<%= application.getContextPath() %>/js/spagobi/social/analysis/tabs/loading-results.js"></script>		

@@ -1,0 +1,45 @@
+<!-- 
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
+ -->
+ 
+ <script type="text/javascript" src="<%= application.getContextPath() %>/js/lib/extjs-4/ext-all-debug.js"/></script>
+
+<!-- Include localized labels  -->
+<script type="text/javascript" src="<%= application.getContextPath() %>/js/spagobi/formats/<%=locale %>.js"/></script>
+
+<script type="text/javascript" src="<%= application.getContextPath() %>/js/spagobi/formats/LocaleUtils.js"></script>
+
+<!-- Include SOCIALANALYSIS stylesheets -->
+<link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/twitter.css" />
+<link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/timeline.css" >
+<link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/socialAnalysis.css" >
+<link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/jquery-jvectormap-1.2.2.css" media="screen"/>
+<link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/jquery.qtip.css" />
+<link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/jqcloud.css" />
+<link rel="stylesheet" type="text/css" href="<%= application.getContextPath() %>/css/jquery-ui.min.css" />
+
+
+<!-- Show result page javascript/jquery  -->
+
+
+    <script src="<%= application.getContextPath() %>/js/lib/others/jquery-2.1.1.min.js"></script>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/jquery.flot.js"></script>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/jquery.flot.time.js"></script>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/jquery.flot.selection.js"></script>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/jquery.flot.navigate.js"></script>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/d3.min.js"></script>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/d3pie.min.js"></script>
+	<script src="<%= application.getContextPath() %>/js/lib/others/d3pie.min.js"></script>
+	<script src="<%= application.getContextPath() %>/js/lib/others/jquery-jvectormap-1.2.2.min.js"></script>
+	<script src="<%= application.getContextPath() %>/js/lib/others/jquery-jvectormap-world-mill-en.js"></script>
+	<script type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/jquery.qtip.js"></script>
+	<script type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/freewall.js"></script>
+	<script type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/jquery.qtip.js"></script>
+	<script type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/jqcloud-1.0.4.js"></script>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/d3.geo.projection.v0.min.js"></script>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/topojson.v1.min.js"></script>
+	<script src="<%= application.getContextPath() %>/js/lib/others/jquery-ui.js"></script>
+	<script language="javascript" type="text/javascript" src="<%= application.getContextPath() %>/js/lib/others/RadarChart.js"></script>
+<%-- 	<script src="<%= application.getContextPath() %>/js/lib/others/social-jquery-locale.js"></script> --%>
+	
