@@ -182,7 +182,7 @@ public class TwitterCacheImpl implements ITwitterCache {
 				twitterUserFromDB.setLanguageCode(twitterUser.getLanguageCode());
 				twitterUserFromDB.setName(twitterUser.getName());
 
-				if (!twitterUserFromDB.getLocation().equalsIgnoreCase(twitterUser.getLocation())) {
+				if (twitterUserFromDB.getLocation() != null && !twitterUserFromDB.getLocation().equalsIgnoreCase(twitterUser.getLocation())) {
 
 					logger.debug("Method saveTweet(): Updating Twitter User. Different location found, calling new geocoding");
 
@@ -380,7 +380,7 @@ public class TwitterCacheImpl implements ITwitterCache {
 			this.daoService = new DaoService();
 		}
 
-		String query = "from TwitterSearch search where search.type = ? and search.loading = 1";
+		String query = "from TwitterSearch search where search.type = ? and search.loading = true";
 
 		TwitterSearch twitterSearch = daoService.singleResultQuery(query, SearchTypeEnum.STREAMINGAPI);
 
@@ -426,7 +426,7 @@ public class TwitterCacheImpl implements ITwitterCache {
 			this.daoService = new DaoService();
 		}
 
-		String query = "update TwitterSearch search set search.loading = 0 where search.type = ?";
+		String query = "update TwitterSearch search set search.loading = false where search.type = ?";
 
 		daoService.updateFromQuery(query, SearchTypeEnum.STREAMINGAPI);
 
@@ -443,7 +443,7 @@ public class TwitterCacheImpl implements ITwitterCache {
 			this.daoService = new DaoService();
 		}
 
-		String query = "from TwitterSearchScheduler ts where ts.active = 1 and ts.twitterSearch.deleted = 0";
+		String query = "from TwitterSearchScheduler ts where ts.active = true and ts.twitterSearch.deleted = false";
 
 		List<TwitterSearchScheduler> searchSchedulers = daoService.listFromQuery(query);
 
@@ -461,7 +461,7 @@ public class TwitterCacheImpl implements ITwitterCache {
 			this.daoService = new DaoService();
 		}
 
-		String query = "from TwitterMonitorScheduler tms where tms.twitterSearch.deleted = 0 and tms.active = 1";
+		String query = "from TwitterMonitorScheduler tms where tms.twitterSearch.deleted = false and tms.active = true";
 
 		List<TwitterMonitorScheduler> monitorSchedulers = daoService.listFromQuery(query);
 
@@ -479,7 +479,7 @@ public class TwitterCacheImpl implements ITwitterCache {
 			this.daoService = new DaoService();
 		}
 
-		String query = "from TwitterMonitorScheduler tms where tms.twitterSearch.searchID = ? and tms.twitterSearch.deleted = 0";
+		String query = "from TwitterMonitorScheduler tms where tms.twitterSearch.searchID = ? and tms.twitterSearch.deleted = false";
 
 		TwitterMonitorScheduler monitorScheduler = daoService.singleResultQuery(query, searchID);
 
@@ -542,7 +542,7 @@ public class TwitterCacheImpl implements ITwitterCache {
 			this.daoService = new DaoService();
 		}
 
-		String query = "from TwitterSearch search where search.type = 'SEARCHAPI' and search.loading = 1";
+		String query = "from TwitterSearch search where search.type = 'SEARCHAPI' and search.loading = true";
 
 		List<TwitterSearch> searches = daoService.listFromQuery(query);
 

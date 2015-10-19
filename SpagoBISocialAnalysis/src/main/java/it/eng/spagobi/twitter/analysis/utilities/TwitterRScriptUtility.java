@@ -1,7 +1,5 @@
 package it.eng.spagobi.twitter.analysis.utilities;
 
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,32 +37,39 @@ public class TwitterRScriptUtility {
 
 			rservicesProp.load(inputStream);
 
-			Assert.assertNotNull(rservicesProp, "Impossible to call R REST services without a valid rservices.properties file");
+			// Assert.assertNotNull(rservicesProp, "Impossible to call R REST services without a valid rservices.properties file");
 
-			String base_path = rservicesProp.getProperty("rservicesBasePath");
+			if (rservicesProp != null) {
 
-			// String urlString = RSERVICEPATH_BASE + RSCRIPT_SENTIMENT + "&searchId=" + searchId + "&libraries=" + RSCRIPT_SENTIMENT_LIBS;
-			String urlString = base_path + RSCRIPT_SENTIMENT + "&search_id=" + searchId + "&libraries=" + RSCRIPT_SENTIMENT_LIBS;
+				String base_path = rservicesProp.getProperty("rservicesBasePath");
 
-			logger.debug("Method callSentimentRScript() - URL is: " + urlString);
+				if (base_path != null && !base_path.trim().equals("")) {
 
-			URL url = new URL(urlString);
+					// String urlString = RSERVICEPATH_BASE + RSCRIPT_SENTIMENT + "&searchId=" + searchId + "&libraries=" + RSCRIPT_SENTIMENT_LIBS;
+					String urlString = base_path + RSCRIPT_SENTIMENT + "&search_id=" + searchId + "&libraries=" + RSCRIPT_SENTIMENT_LIBS;
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+					logger.debug("Method callSentimentRScript() - URL is: " + urlString);
 
-			logger.debug("Method callSentimentRScript(): Reading Sentiment R Script result message..");
+					URL url = new URL(urlString);
 
-			String line = null;
+					BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
-			String json = "";
+					logger.debug("Method callSentimentRScript(): Reading Sentiment R Script result message..");
 
-			while ((line = reader.readLine()) != null) {
-				json = json + line;
+					String line = null;
+
+					String json = "";
+
+					while ((line = reader.readLine()) != null) {
+						json = json + line;
+					}
+
+					logger.debug("Method callSentimentRScript(): R Script result is " + json);
+
+					reader.close();
+				}
 			}
 
-			reader.close();
-
-			logger.debug("Method callSentimentRScript(): R Script result is " + json);
 		} catch (FileNotFoundException e) {
 			logger.debug("Method callSentimentRScript(): Sentiment script not found.");
 		} catch (IOException e) {
@@ -87,31 +92,38 @@ public class TwitterRScriptUtility {
 
 			rservicesProp.load(inputStream);
 
-			Assert.assertNotNull(rservicesProp, "Impossible to call R REST services without a valid rservices.properties file");
+			// Assert.assertNotNull(rservicesProp, "Impossible to call R REST services without a valid rservices.properties file");
 
-			String base_path = rservicesProp.getProperty("rservicesBasePath");
+			if (rservicesProp != null) {
 
-			String urlString = base_path + RSCRIPT_TOPICS + "&search_id=" + searchId + "&libraries=" + RSCRIPT_TOPICS_LIBS;
+				String base_path = rservicesProp.getProperty("rservicesBasePath");
 
-			logger.debug("URL is: " + urlString);
+				if (base_path != null && !base_path.trim().equals("")) {
 
-			URL url = new URL(urlString);
+					String urlString = base_path + RSCRIPT_TOPICS + "&search_id=" + searchId + "&libraries=" + RSCRIPT_TOPICS_LIBS;
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+					logger.debug("URL is: " + urlString);
 
-			logger.debug("Method callTopicsRScript(): Reading Topics R Script result message..");
+					URL url = new URL(urlString);
 
-			String line = null;
+					BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
-			String json = "";
+					logger.debug("Method callTopicsRScript(): Reading Topics R Script result message..");
 
-			while ((line = reader.readLine()) != null) {
-				json = json + line;
+					String line = null;
+
+					String json = "";
+
+					while ((line = reader.readLine()) != null) {
+						json = json + line;
+					}
+
+					logger.debug("Method callTopicsRScript(): R Script result is " + json);
+
+					reader.close();
+				}
 			}
 
-			reader.close();
-
-			logger.debug("Method callTopicsRScript(): R Script result is " + json);
 		} catch (FileNotFoundException e) {
 			logger.debug("Method callTopicsRScript(): Topics script not found.");
 		} catch (IOException e) {

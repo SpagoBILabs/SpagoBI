@@ -43,11 +43,11 @@ public class TwitterMessageObject {
 
 	// twitter_data fields
 	private long tweetID = -1;
-	private java.sql.Date dateCreatedAt;
-	private java.sql.Timestamp timeCreatedAt;
+	private final java.sql.Date dateCreatedAt;
+	private final java.sql.Timestamp timeCreatedAt;
 	private String sourceClient = "";
 	private String tweetText = "";
-	private String tweetTextTranslated = "";
+	private final String tweetTextTranslated = "";
 	private double geoLatitude;
 	private double geoLongitude;
 	private String hashtags = "";
@@ -61,9 +61,9 @@ public class TwitterMessageObject {
 	private boolean isFavorited = false;
 	private int favoritedCount = 0;
 	private String replyToScreenName = "";
-	private String replyToUserId = "";
-	private String replyToTweetId = "";
-	private String originalRTTweetId = "";
+	private Long replyToUserId;
+	private Long replyToTweetId;
+	private Long originalRTTweetId;
 	private boolean isSensitive = false;
 	private int mediaCount = 0;
 
@@ -86,8 +86,8 @@ public class TwitterMessageObject {
 	private java.sql.Date startDate;
 	private java.sql.Date endDate;
 
-	private TwitterUser twitterUser;
-	private TwitterData twitterData;
+	private final TwitterUser twitterUser;
+	private final TwitterData twitterData;
 
 	public TwitterMessageObject(Status tweet) {
 
@@ -196,18 +196,18 @@ public class TwitterMessageObject {
 		if (tweet.getInReplyToUserId() == -1) {
 			replyToUserId = null;
 		} else {
-			replyToUserId = String.valueOf(tweet.getInReplyToUserId());
+			replyToUserId = tweet.getInReplyToUserId();
 		}
 		// If the represented Tweet is a reply, this field will contain the
 		// integer representation of the original Tweet's ID.
 		if (tweet.getInReplyToStatusId() == -1) {
 			replyToTweetId = null;
 		} else {
-			replyToTweetId = String.valueOf(tweet.getInReplyToStatusId());
+			replyToTweetId = tweet.getInReplyToStatusId();
 		}
 		if (tweet.isRetweet()) {
 			// The id of the original tweet that was retweeted
-			originalRTTweetId = String.valueOf(tweet.getRetweetedStatus().getId());
+			originalRTTweetId = tweet.getRetweetedStatus().getId();
 		} else {
 			originalRTTweetId = null;
 		}

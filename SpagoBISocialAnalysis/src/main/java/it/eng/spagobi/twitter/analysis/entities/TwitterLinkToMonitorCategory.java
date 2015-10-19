@@ -8,10 +8,12 @@ package it.eng.spagobi.twitter.analysis.entities;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
@@ -21,13 +23,14 @@ import org.hibernate.validator.constraints.Length;
  */
 
 @Entity
-@Table(name = "TWITTER_LINK_TO_MONITOR_CATEGORY")
+@Table(name = "TWITTER_LINK_TO_MONITOR_CAT")
 public class TwitterLinkToMonitorCategory {
 
 	@Id
 	@Column(name = "id")
 	@NotNull
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "TWITTER_LINK_TO_MONITOR_CAT_GEN")
+	@TableGenerator(name = "TWITTER_LINK_TO_MONITOR_CAT_GEN", allocationSize = 1, initialValue = 1, table = "TWITTER_HIBERNATE_SEQUENCES", pkColumnName = "SEQUENCE_NAME", valueColumnName = "NEXT_VAL", pkColumnValue = "TWITTER_LINK_TO_MONITOR_CAT")
 	private long id;
 
 	@OneToOne

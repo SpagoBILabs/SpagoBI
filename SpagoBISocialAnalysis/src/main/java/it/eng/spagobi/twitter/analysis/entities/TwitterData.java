@@ -127,16 +127,13 @@ public class TwitterData implements Serializable {
 	private String replyToScreenName;
 
 	@Column(name = "reply_to_user_id")
-	@Length(max = 45)
-	private String replyToUserId;
+	private Long replyToUserId;
 
 	@Column(name = "reply_to_tweet_id")
-	@Length(max = 45)
-	private String replyToTweetId;
+	private Long replyToTweetId;
 
 	@Column(name = "original_RT_tweet_id")
-	@Length(max = 45)
-	private String originalRTTweetId;
+	private Long originalRTTweetId;
 
 	@Column(name = "is_sensitive", columnDefinition = "boolean", length = 1)
 	@NotNull
@@ -175,8 +172,8 @@ public class TwitterData implements Serializable {
 	public TwitterData(long tweetID, TwitterUser twitterUser, TwitterSearch twitterSearch, Calendar dateCreatedAt, Calendar timeCreatedAt, String sourceClient,
 			String tweetText, String tweetTextTranslated, double geoLatitude, double geoLongitude, String hashtags, String mentions, int retweetCount,
 			boolean isRetweet, String languageCode, String placeCountry, String placeName, String urlCited, boolean isFavorited, int favoritedCount,
-			String replyToScreenName, String replyToUserId, String replyToTweetId, String originalRTTweetId, boolean isSensitive, int mediaCount,
-			String topics, boolean isPositive, boolean isNeutral, boolean isNegative) {
+			String replyToScreenName, Long replyToUserId, Long replyToTweetId, Long originalRTTweetId, boolean isSensitive, int mediaCount, String topics,
+			boolean isPositive, boolean isNeutral, boolean isNegative) {
 
 		this.tweetID = tweetID;
 		this.twitterUser = twitterUser;
@@ -210,7 +207,7 @@ public class TwitterData implements Serializable {
 		this.isNegative = isNegative;
 	}
 
-	public TwitterData(boolean isRetweet, String replyToTweetId) {
+	public TwitterData(boolean isRetweet, Long replyToTweetId) {
 		this.isRetweet = isRetweet;
 		this.replyToTweetId = replyToTweetId;
 	}
@@ -243,7 +240,7 @@ public class TwitterData implements Serializable {
 		this.topics = topics;
 	}
 
-	public TwitterData(TwitterSearch twitterSearch, TwitterUser twitterUser, String replyToUserId, String originalRTTweetId, TwitterUser replyUser,
+	public TwitterData(TwitterSearch twitterSearch, TwitterUser twitterUser, Long replyToUserId, Long originalRTTweetId, TwitterUser replyUser,
 			TwitterUser rtUser) {
 		this.twitterSearch = twitterSearch;
 		this.twitterUser = twitterUser;
@@ -421,27 +418,27 @@ public class TwitterData implements Serializable {
 		this.replyToScreenName = replyToScreenName;
 	}
 
-	public String getReplyToUserId() {
+	public Long getReplyToUserId() {
 		return replyToUserId;
 	}
 
-	public void setReplyToUserId(String replyToUserId) {
+	public void setReplyToUserId(Long replyToUserId) {
 		this.replyToUserId = replyToUserId;
 	}
 
-	public String getReplyToTweetId() {
+	public Long getReplyToTweetId() {
 		return replyToTweetId;
 	}
 
-	public void setReplyToTweetId(String replyToTweetId) {
+	public void setReplyToTweetId(Long replyToTweetId) {
 		this.replyToTweetId = replyToTweetId;
 	}
 
-	public String getOriginalRTTweetId() {
+	public Long getOriginalRTTweetId() {
 		return originalRTTweetId;
 	}
 
-	public void setOriginalRTTweetId(String originalRTTweetId) {
+	public void setOriginalRTTweetId(Long originalRTTweetId) {
 		this.originalRTTweetId = originalRTTweetId;
 	}
 

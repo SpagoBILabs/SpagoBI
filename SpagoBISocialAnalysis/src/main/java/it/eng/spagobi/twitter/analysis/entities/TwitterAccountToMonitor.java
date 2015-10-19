@@ -10,10 +10,12 @@ import java.util.Calendar;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -29,7 +31,8 @@ import org.hibernate.validator.constraints.Length;
 public class TwitterAccountToMonitor {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "TWITTER_ACCOUNTS_TO_MONITOR_GEN")
+	@TableGenerator(name = "TWITTER_ACCOUNTS_TO_MONITOR_GEN", allocationSize = 1, initialValue = 1, table = "TWITTER_HIBERNATE_SEQUENCES", pkColumnName = "SEQUENCE_NAME", valueColumnName = "NEXT_VAL", pkColumnValue = "TWITTER_ACCOUNTS_TO_MONITOR")
 	@Column(name = "id")
 	@NotNull
 	private long id;
