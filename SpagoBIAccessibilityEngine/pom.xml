@@ -34,6 +34,10 @@
 					<groupId>xerces</groupId>
 					<artifactId>xerces</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>xalan</groupId>
+					<artifactId>xalan</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -54,6 +58,12 @@
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
 			<version>1.5.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.0</version>
 		</dependency>
 
 
