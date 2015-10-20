@@ -1,0 +1,57 @@
+#chart {
+  width: 600px;
+  height: 500px;
+  background: #ddd;
+}
+
+
+
+text {
+  pointer-events: none;
+  text-shadow: 2px 1px 9px #FFFFFF;
+  font-weight: bold;
+}
+
+.grandparent text {
+  font-weight: bold;
+}
+
+rect {
+  fill: none;
+  stroke: #fff;
+  pointer-events: all;
+}
+
+rect.parent,
+.grandparent rect {
+  stroke-width: 2px;
+}
+
+.grandparent rect {
+  fill: orange;
+}
+
+.grandparent:hover rect {
+  fill: #ee9700 !important;
+}
+
+.children rect.parent,
+.grandparent rect {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.children rect.parent {
+  fill: #bbb;
+  fill-opacity: .2;
+}
+
+.children:hover rect.child {
+  fill: #bbb !important;
+
+}
+
+
+svg {
+  font: 10px sans-serif;
+}

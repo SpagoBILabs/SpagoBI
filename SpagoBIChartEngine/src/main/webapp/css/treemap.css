@@ -1,0 +1,55 @@
+
+        body {
+            overflow: hidden;
+            margin: 2;
+            font-size: 12px;
+            font-family: "Helvetica Neue", Helvetica;
+        }
+
+        .footer {
+            z-index: 1;
+            display: block;
+            font-size: 12px;
+            font-weight: 200;
+            text-shadow: 0 1px 0 #fff;
+            width:90%;
+        }
+
+        svg {
+            overflow: hidden;
+        }
+
+        rect {
+            pointer-events: all;
+            cursor: pointer;
+            stroke: #EEEEEE;
+        }
+
+        .chart {
+            display: block;
+            margin: auto;
+        }
+
+        .label {
+            stroke: #000000;
+            fill: #000000;
+            stroke-width: 0;
+            margin: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .parent .label {
+            font-size: 12px;
+            stroke: #FFFFFF;
+            fill: #FFFFFF;
+        }
+
+        .child .label {
+            font-size: 11px;
+        }
+
+        .cell {
+            font-size: 11px;
+            cursor: pointer
+        }
