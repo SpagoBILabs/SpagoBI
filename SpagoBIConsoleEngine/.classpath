@@ -11,7 +11,6 @@
 			<attribute name="owner.project.facets" value="jst.web"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/bayeux-api-3.0.5.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/cometd-java-common-3.0.5.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/cometd-java-server-3.0.5.jar"/>
@@ -25,5 +24,10 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jetty-util-9.2.12.v20150709.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jetty-util-ajax-9.2.12.v20150709.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/slf4j-simple-1.7.12.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JDK 7">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
