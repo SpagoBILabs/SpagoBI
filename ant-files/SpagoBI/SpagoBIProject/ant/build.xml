@@ -709,7 +709,10 @@
 				<file name="./src/ext4/sbi/tools/model/MetaModelsBrowser.js" />
 				<file name="./src/ext4/sbi/tools/model/MetaModelsView.js" />
 				<file name="./src/ext4/sbi/tools/model/MetaModelModel.js" />
-
+				
+				<file name="./src/ext4/sbi/tools/document/SmartFilterBrowser.js" />
+				<file name="./src/ext4/sbi/tools/document/SmartFilterView.js" />
+				<file name="./src/ext4/sbi/tools/document/SmartFilterModel.js" />
 
 				<file name="./src/ext4/sbi/tools/measure/MeasuresCatalogue.js" />
 				<file name="./src/ext4/sbi/tools/measure/MeasureModel.js" />
