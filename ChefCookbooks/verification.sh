@@ -36,5 +36,4 @@ ssh ubuntu@$IP <<-'ENDSSH'
 	  exit 3
 	fi
 	echo "SpagoBI is correctly running"
-	exit 0
 ENDSSH

@@ -150,13 +150,35 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 
 };
 
-ns.getTextField= function(isRequired,name) {
+ns.infoButton=function(htmlFile) {
+	new Ext.Window({
+		autoLoad : {
+			url : Sbi.config.contextName + '/themes/'
+					+ Sbi.config.currTheme
+					+ '/html/'+htmlFile
+		},
+		layout : 'fit',
+		width : 620,
+		height : 410,
+		autoScroll : true,
+		closeAction : 'close',
+		buttonAlign : 'left',
+		plain : true,
+		title : LN('sbi.ds.help')
+	}).show();
+};
+
+ns.getTextField= function(isRequired,htmlFile,name) {
 	var res= {
 		maxLength : 250,
 		minLength : 1,
 		width : 350,
 		regexText : LN('sbi.roles.alfanumericString'),
 	};
+
+	if (htmlFile!==null) {
+		ns.applyHelp(res,htmlFile);
+	}
 
 	res.allowBlank = isRequired===true?false:true;
 	if (isRequired===true) {
@@ -185,6 +207,20 @@ ns.getTextArea = function(isRequired,name) {
 	return new Ext.form.TextArea(res);
 };
 
+//appli a help button to a form field label
+ns.applyHelp=function(config,htmlFile) {
+	if (typeof config.listeners == 'undefined') {
+		config.listeners={};
+	}
+	config.listeners.afterrender = function( field ) {
+		var labelDom=field.label.dom;
+		var label=field.fieldLabel;
+		labelDom.innerHTML=label+' <button class="x-btn-text icon-info">&nbsp;&nbsp;&nbsp;</button>:';
+		labelDom.getElementsByTagName("button")[0].addEventListener('click', function() {
+		   ns.infoButton(htmlFile);
+		});
+	}
+};
 
 ns.getComboBox = function(isRequired,storeData,name) {
 	var store = new Ext.data.SimpleStore({
@@ -193,11 +229,12 @@ ns.getComboBox = function(isRequired,storeData,name) {
 		autoLoad : false
 	});
 
+	var label=LN('sbi.ds.'+name);
 	var res = {
 		name : name,
 		store : store,
 		width : 350, // 160,
-		fieldLabel : LN('sbi.ds.'+name),
+		fieldLabel : label,
 		displayField : 'name', 
 		valueField : name, 
 		typeAhead : true,
@@ -218,18 +255,23 @@ ns.getComboBox = function(isRequired,storeData,name) {
 };
 
 
-ns.getCheckBox = function(name) {
+ns.getCheckBox = function(htmlFile,name) {
 	var conf={
 		xtype : 'checkbox',
 		itemId : name,
 		name : name,
 		fieldLabel : LN('sbi.ds.'+name)
 	};
+
+
+	if (htmlFile!==null) {
+		ns.applyHelp(conf,htmlFile);
+	}
 	return new Ext.form.Checkbox(conf);
 } 
 
 
-ns.getEditorGrid = function(height,userColumns,name) {
+ns.getEditorGrid = function(height,userColumns,htmlFile,name) {
 	var config= {
 		id:name,
 		name:name,
@@ -238,6 +280,10 @@ ns.getEditorGrid = function(height,userColumns,name) {
 		width: 720,
 		height: height
 	};
+
+	if (htmlFile!==null) {
+		ns.applyHelp(config,htmlFile);
+	}
 
 	//set the width of columns
 	for (var i=0;i<userColumns.length;i++) {
@@ -402,19 +448,19 @@ ns.INDEX_REQUEST_HEADERS=3;
 ns.INDEX_REQUEST_JSON_PATH_ATTRIBUTES=7;
 //[function,arguments before name argument]
 ns.restFormFields=[
-	[ns.getTextField,[true]],
+	[ns.getTextField,[true,null]],
 	[ns.getTextArea,[false]],
 	[ns.getComboBox,[true,[ //http method
 		['Post','Post'],['Get','Get'],['Put','Put'],['Delete','Delete']
 	]]], 
-	[ns.getEditorGrid,[150,ns.restRequestHeadersColumns]], //headers 
-	[ns.getTextField,[false]],   
-	[ns.getCheckBox,[]], //directly json attributes
-	[ns.getCheckBox,[]], //NGSI
-	[ns.getEditorGrid,[200,ns.restJsonPathAttributesColumns]], //attributes
-	[ns.getTextField,[false]],
-	[ns.getTextField,[false]],
-	[ns.getTextField,[false]]
+	[ns.getEditorGrid,[150,ns.restRequestHeadersColumns,null]], //headers 
+	[ns.getTextField,[false,"restdataset-jsonpath-items.html"]],   //JSON Path Items
+	[ns.getCheckBox,["restdataset-attributes-directly.html"]], //directly json attributes
+	[ns.getCheckBox,["restdataset-ngsi.html"]], //NGSI
+	[ns.getEditorGrid,[200,ns.restJsonPathAttributesColumns,"restdataset-json-path-attributes.html"]], //attributes
+	[ns.getTextField,[false,null]],
+	[ns.getTextField,[false,null]],
+	[ns.getTextField,[false,null]]
 ];
 
 //add the rest fields argument to form fields

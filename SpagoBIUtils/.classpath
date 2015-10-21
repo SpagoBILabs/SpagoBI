@@ -103,11 +103,6 @@
 			<attribute name="owner.project.facets" value="jst.utility"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/jaxb-api-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/classmate-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-validator-5.2.0.CR1.jar"/>
@@ -116,5 +111,10 @@
 	<classpathentry kind="lib" path="lib/validation-api-1.1.0.Final.jar"/>
 	<classpathentry kind="lib" path="lib/commons-validator-1.1.4.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.8.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JDK 7">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
