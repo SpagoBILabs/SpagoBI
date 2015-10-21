@@ -43,6 +43,11 @@
 			<version>2.1.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.5.1</version>
+		</dependency>
 
 	</dependencies>
 
