@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="SpagoBIDataMiningEngine" 
-		 version="2.4" 
+		 version="3.0" 
 		 xmlns="http://java.sun.com/xml/ns/j2ee" 
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_3_0.xsd">
 
 	<display-name>DataMining</display-name>
 	<description>
@@ -105,12 +105,12 @@ END-CAS -->
 	<!-- EngineCheckSessionFilter on AdapterHTTP; urls with NEW_SESSION=TRUE will open a new session if previous one has expired -->
     <filter-mapping>
             <filter-name>EncodingFilter</filter-name>
-            <url-pattern>/restful-services</url-pattern>
+            <url-pattern>/restful-services/*</url-pattern>
     </filter-mapping>
     
     <filter-mapping>
         <filter-name>EngineCheckSessionFilter</filter-name>
-        <url-pattern>/restful-services</url-pattern>
+        <url-pattern>/restful-services/*</url-pattern>
     </filter-mapping>
 
 <!-- START-CAS 
@@ -139,7 +139,7 @@ END-CAS -->
 	
 	<filter-mapping>
     		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/restful-services</url-pattern>
+    		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 	
 	
@@ -156,12 +156,6 @@ END-CAS -->
 	<!--  LISTENERS								 									   -->
 	<!--  ============================================================================ -->
 
-
-    <listener>
-        <listener-class>
-            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
-        </listener-class>
-    </listener>
 
 	<!--  ============================================================================ -->
 	<!--  SERVLETS								 									   -->
@@ -189,11 +183,6 @@ END-CAS -->
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
 	</servlet>
-	
-	<servlet>
-        <servlet-name>Resteasy</servlet-name>
-        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-    </servlet>
     
     <servlet>
 		<servlet-name>ExternalResourceServlet</servlet-name>
@@ -219,11 +208,6 @@ END-CAS -->
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/servlet/AdapterHTTPTest</url-pattern>
 	</servlet-mapping>
-	
-    <servlet-mapping>
-        <servlet-name>Resteasy</servlet-name>
-        <url-pattern>/restful-services</url-pattern>
-    </servlet-mapping>
     
     <servlet-mapping>
 		<servlet-name>ExternalResourceServlet</servlet-name>
@@ -259,12 +243,6 @@ END-CAS -->
 	  	<error-code>500</error-code>
 	  	<location>/html/error.html</location>
 	  </error-page>
-	  
-
-    <context-param>
-         <param-name>resteasy.scan</param-name>
-        <param-value>true</param-value>    
-    </context-param>
     
     <context-param>
         <param-name>resteasy.servlet.mapping.prefix</param-name>
