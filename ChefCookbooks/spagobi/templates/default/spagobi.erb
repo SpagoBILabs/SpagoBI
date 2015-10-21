@@ -16,14 +16,13 @@ LOCK_FILE=/run/lock/spagobi
 start() {
         echo "starting spagobi server"
 
-        if [ -f "$LOCK_FILE" ]; then
+        if ps aux | grep -q [j]ava.*SpagoBI.*; then
             echo "spagobi server is already running."
             return 0
         fi
 
         <%= node['spagobi']['home_dir'] %><%= node['spagobi']['server_dir'] %>bin/startup.sh
-        ### Create the lock file ###
-        touch $LOCK_FILE
+       
         echo "spagobi server running."
 }
 
@@ -31,7 +30,7 @@ start() {
 stop() {
         echo "stopping spagobi server"
 
-        if [ ! -f "$LOCK_FILE" ]; then
+        if ! ps aux | grep -q [j]ava.*SpagoBI.*; then
             echo "spagobi server is already stopped."
             return 0
         fi
@@ -52,13 +51,11 @@ stop() {
           exit 2
         fi
 
-        ### Now, delete the lock file ###
-        rm -f $LOCK_FILE
         echo "spagobi server stopped."
 }
 
 status() {
-    if [ -f "$LOCK_FILE" ]; then
+    if ps aux | grep -q [j]ava.*SpagoBI.*; then
         echo "spagobi server running."
     else 
         echo "spagobi server is not running."
