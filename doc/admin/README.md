@@ -60,6 +60,27 @@ Then you have to configure some environment variables defined in SPAGOBI\_SERVER
 -   spagobi\_service\_url is an URL used by the external engines to communicate with SpagoBI core; since SpagoBI core and external engines are installed on the same application server, you can leave it as "localhost";
 -   spagobi\_host\_url is the URL that is used by the client browsers to communicate with SpagoBI; you **must** change it to the actual SpagoBI URL.
 
+Installation with provided scripts
+----------------------------------
+
+It's possible to install SpagoBI into an Ubuntu 14.04 machine, using this command:
+
+```
+curl https://raw.githubusercontent.com/SpagoBILabs/SpagoBI/master/ChefCookbooks/installation.sh | ssh -i <identity file> <sudo user>@<ip of machine>
+```
+
+which installs a clean SpagoBI running on MySQL.
+
+If you want to install SpagoBI with many demo examples then use:
+
+```
+curl https://raw.githubusercontent.com/SpagoBILabs/SpagoBI/master/ChefCookbooks/installation.sh | ssh -i <identity file> <sudo user>@<ip of machine> 'bash /dev/stdin demo'
+```
+
+Then you can access SpagoBI on `http://<ip of machine>:8080/SpagoBI`.
+
+
+
 How to start and stop SpagoBI Server
 ------------------------------------
 
