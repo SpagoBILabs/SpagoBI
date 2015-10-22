@@ -211,12 +211,20 @@ file "#{node[:spagobi][:home_dir]}#{node[:spagobi][:file_name]}" do
     action :delete
 end
 
-
-template "#{node[:spagobi][:home_dir]}#{node[:spagobi][:server_dir]}conf/server.xml" do
-    source "server.xml.erb"
-    owner node[:spagobi][:server_user]
-    group node[:spagobi][:server_group]
-    mode 0755
+if node[:demo] == true
+    template "#{node[:spagobi][:home_dir]}#{node[:spagobi][:server_dir]}conf/server.xml" do
+        source "server-demo.xml.erb"
+        owner node[:spagobi][:server_user]
+        group node[:spagobi][:server_group]
+        mode 0755
+    end
+else
+    template "#{node[:spagobi][:home_dir]}#{node[:spagobi][:server_dir]}conf/server.xml" do
+        source "server.xml.erb"
+        owner node[:spagobi][:server_user]
+        group node[:spagobi][:server_group]
+        mode 0755
+    end
 end
 
 
