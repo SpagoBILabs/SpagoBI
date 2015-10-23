@@ -10,6 +10,7 @@ if [ ! -d "/opt/chef" ]; then
 fi
 
 #download recipes
+sudo apt-get update
 sudo apt-get -y install subversion
 rm -rf cookbooks
 svn checkout https://github.com/SpagoBILabs/SpagoBI/trunk/ChefCookbooks/ cookbooks
