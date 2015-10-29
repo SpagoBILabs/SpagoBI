@@ -120,6 +120,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 						response.put("errorMessage", stacktrace.substring(startIndex, endIndex));
 					responseFailure = e;
 					response.put("testExecuted", "false");
+					throw e;
 				}
 			} else if (typeLov.equalsIgnoreCase("FIXED_LIST")) {
 				FixedListDetail fixlistDet = FixedListDetail.fromXML(looProvider);
