@@ -120,6 +120,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 						response.put("errorMessage", stacktrace.substring(startIndex, endIndex));
 					responseFailure = e;
 					response.put("testExecuted", "false");
+					throw e;
 				}
 			} else if (typeLov.equalsIgnoreCase("FIXED_LIST")) {
 				FixedListDetail fixlistDet = FixedListDetail.fromXML(looProvider);
@@ -317,9 +318,8 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 	}
 
 	/**
-	 * Find the attributes of the first row of the xml passed at input: this xml
-	 * is assumed to be: &lt;ROWS&gt; &lt;ROW attribute_1="value_of_attribute_1"
-	 * ... /&gt; .... &lt;ROWS&gt;
+	 * Find the attributes of the first row of the xml passed at input: this xml is assumed to be: &lt;ROWS&gt; &lt;ROW attribute_1="value_of_attribute_1" ...
+	 * /&gt; .... &lt;ROWS&gt;
 	 * 
 	 * @param rowsSourceBean
 	 *            The sourcebean to be parsed
