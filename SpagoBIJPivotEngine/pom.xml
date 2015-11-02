@@ -110,6 +110,18 @@
 			<version>2.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.fdsapi</groupId>
+			<artifactId>fdsapi</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<properties>
