@@ -1,106 +1,163 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>SpagoBIGeoReportEngine</groupId>
-  <artifactId>SpagoBIGeoReportEngine</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
-  
-  <name>${project.groupId}:${project.artifactId}</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>SpagoBIGeoReportEngine</groupId>
+	<artifactId>SpagoBIGeoReportEngine</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 
-  <repositories>
-    <repository>
-      <id>spagobi-releases</id>
-      <url>https://raw.github.com/SpagoBILabs/SpagoBI/mvn-repo/releases</url>
-    </repository>
-  </repositories>
+	<name>${project.groupId}:${project.artifactId}</name>
 
-  <dependencies>
+	<repositories>
+		<repository>
+			<id>spagobi-releases</id>
+			<url>https://raw.github.com/SpagoBILabs/SpagoBI/mvn-repo/releases</url>
+		</repository>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net repository</name>
+			<url>http://download.java.net/maven/2</url>
+		</repository>
+		<repository>
+			<id>osgeo</id>
+			<name>Open Source Geospatial Foundation Repository</name>
+			<url>http://download.osgeo.org/webdav/geotools/</url>
+		</repository>
+		<repository>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<id>boundless</id>
+			<name>Boundless Maven Repository</name>
+			<url>http://repo.boundlessgeo.com/main</url>
+		</repository>
+	</repositories>
 
-    <dependency>
-      <groupId>it.eng.spagobi</groupId>
-      <artifactId>QbeCore</artifactId>
-      <version>5.2.0-SNAPSHOT</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>batik</groupId>
-          <artifactId>batik-1.5-fop</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+	<dependencies>
 
-    <dependency>
-      <groupId>it.eng.spagobi</groupId>
-      <artifactId>SpagoBIDAO</artifactId>
-      <version>5.2.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
+		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>QbeCore</artifactId>
+			<version>5.2.0-SNAPSHOT</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>batik</groupId>
+					<artifactId>batik-1.5-fop</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
-    <dependency>
-      <groupId>it.eng.spagobi</groupId>
-      <artifactId>SpagoUtilsJSON</artifactId>
-      <version>5.2.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-   
-    <dependency>
-      <groupId>it.eng.spagobi</groupId>
-      <artifactId>spagobi-metamodel-utils</artifactId>
-      <version>5.2.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
+		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>SpagoBIDAO</artifactId>
+			<version>5.2.0-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- <dependency> -->
+		<!-- <groupId>it.eng.spagobi</groupId> -->
+		<!-- <artifactId>spagobi-metamodel-utils</artifactId> -->
+		<!-- <version>5.2.0-SNAPSHOT</version> -->
+		<!-- <scope>compile</scope> -->
+		<!-- </dependency> -->
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>2.7.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-swing</artifactId>
+			<version>2.7.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geojson</artifactId>
+			<version>2.7.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mapfish.print</groupId>
+			<artifactId>print-lib</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.5.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>2.4</version>
+			<classifier>jdk15</classifier>
+		</dependency>
 
 
-  </dependencies>
+	</dependencies>
 
-  <properties>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <skipTests>true</skipTests>
-  </properties>
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<skipTests>true</skipTests>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<geotools.version>13.2</geotools.version>
+	</properties>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.6</version>
-        <configuration>
-          <!-- <archive> -->
-          <!-- <manifest> -->
-          <!-- <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile> -->
-          <!-- </manifest> -->
-          <!-- </archive> -->
-          <containerConfigXML>/src/main/webapp/META-INF</containerConfigXML>
-        </configuration>
-      </plugin>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<!-- <archive> -->
+					<!-- <manifest> -->
+					<!-- <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile> -->
+					<!-- </manifest> -->
+					<!-- </archive> -->
+					<containerConfigXML>/src/main/webapp/META-INF</containerConfigXML>
+				</configuration>
+			</plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
