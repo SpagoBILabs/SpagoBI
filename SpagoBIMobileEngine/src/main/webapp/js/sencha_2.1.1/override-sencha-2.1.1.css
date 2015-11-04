@@ -1,0 +1,5 @@
+/*Set a max height to the toolbars*/
+
+.x-container.x-toolbar-dark.x-toolbar.x-stretched.x-dock-item.x-docked-top{
+	max-height: 40px;
+}
