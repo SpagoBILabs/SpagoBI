@@ -1,0 +1,40 @@
+<link rel="stylesheet" href="../css/add2home.css" type="text/css">
+<link rel="apple-touch-icon" href="../img/iOS-57.png" /> 
+<link rel="apple-touch-icon" sizes="72x72" href="../img/iOS-72.png" /> 
+<link rel="apple-touch-icon" sizes="114x114" href="../img/iOS-114.png" /> 
+<link rel="apple-touch-startup-image" href="../img/startup.png">
+
+<script type="text/javascript">var addToHomeConfig = { touchIcon:true };</script> 
+<script type="text/javascript" src="../js/add2home/add2home.js"></script> 
+
+<link rel="stylesheet" href="../js/sencha_2.1.1/resources/css/sencha-touch.css" type="text/css"/>
+
+<link rel="stylesheet" href="../css/Ext.ux.grid.View.css" type="text/css"/>
+
+<!-- script type="text/javascript" src="../js/sencha_2.1.1/sencha-touch-debug.js"></script-->
+<script type="text/javascript" src="../js/sencha_2.1.1/sencha-touch-all.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/override-sencha-2.1.1.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/sencha_220/chart/series/Gauge.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/sencha_220/chart/SpaceFillingChart.js"></script>
+
+<script type="text/javascript" src="../js/add2home/add2home.js"></script>
+
+<!-- script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.TouchGridPanel.js"></script-->
+<script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.grid/feature/Feature.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.grid/feature/Abstract.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.grid/feature/CheckboxSelection.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.grid/feature/Editable.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.grid/feature/Paging.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.grid/feature/Sorter.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.grid/List.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.grid/View.js"></script>
+
+<script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.PagingToolbar.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/Ext.ux.touch.CustomSelectField.js"></script>
+
+
+<script type="text/javascript" src="../js/sencha_2.1.1/ux/touch/graphics/ColorPatterns.js"></script>
+
+<link rel="stylesheet" href="../js/sencha_2.1.1/override-sencha-2.1.1.css" type="text/css"/>
+<link rel="stylesheet" href="../css/custom/custom.css" type="text/css">
+
