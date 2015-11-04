@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>edu.princeton.cup</groupId>
+  <artifactId>java-cup</artifactId>
+  <versioning>
+    <release>11b</release>
+    <versions>
+      <version>11b</version>
+    </versions>
+    <lastUpdated>20151104163718</lastUpdated>
+  </versioning>
+</metadata>
