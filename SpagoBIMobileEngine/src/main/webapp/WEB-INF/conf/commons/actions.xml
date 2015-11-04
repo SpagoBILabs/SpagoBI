@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ================================================================================= -->
+<!-- MOBILE BASE ACTIONS 																   -->
+<!-- ================================================================================= -->
+
+<ACTIONS>
+	<ACTION name="START_ACTION" 
+			class="it.eng.spago.dispatching.action.EmptyAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	<ACTION name="LOGIN_ACTION" 
+			class="it.eng.spagobi.engine.mobile.service.LoginAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+ 	<ACTION name="DOCUMENT_BROWSER_ACTION" 
+			class="it.eng.spagobi.engine.mobile.service.DocumentBrowserAction"  
+			scope="REQUEST">	
+		
+		<CONFIG></CONFIG>
+	</ACTION>
+
+	
+	
+<!-- ================================================================================= -->
+<!-- DOCUMENT EXECUTION ACTIONS															   -->
+<!-- ================================================================================= -->
+	
+	<ACTION name="GET_ROLES_FOR_EXECUTION_ACTION" 
+ 		class="it.eng.spagobi.analiticalmodel.execution.service.GetRolesForExecutionAction" scope="REQUEST">
+ 	<CONFIG/>
+	 </ACTION>
+	 
+	 <ACTION name="START_EXECUTION_PROCESS_ACTION" 
+	 	class="it.eng.spagobi.analiticalmodel.execution.service.StartNewExecutionProcess" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
+	 
+	<!-- PARAMETERS -->
+	 
+	  <ACTION name="GET_PARAMETERS_FOR_EXECUTION_ACTION" 
+	 	class="it.eng.spagobi.engine.mobile.service.GetDocumentParametersAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
+	 
+	 <ACTION name="GET_PARAMETER_VALUES_FOR_EXECUTION_ACTION" 
+	 	class="it.eng.spagobi.analiticalmodel.execution.service.GetParameterValuesForExecutionAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
+	 
+	 <ACTION name="EXECUTE_MOBILE_TABLE_ACTION" 
+	 	class="it.eng.spagobi.engine.mobile.table.service.ExecuteMobileTableAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
+	 
+	 	 <ACTION name="EXECUTE_MOBILE_CHART_ACTION" 
+	 	class="it.eng.spagobi.engine.mobile.chart.service.ExecuteMobileChartAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
+
+	<ACTION name="EXECUTE_MOBILE_COMPOSED_ACTION" 
+	 	class="it.eng.spagobi.engine.mobile.composed.service.ExecuteMobileComposedAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION>
+		<ACTION name="GET_DOCUMENT_INFO_ACTION" 
+	 	class="it.eng.spagobi.analiticalmodel.execution.service.GetDocumentInfoAction" scope="REQUEST">
+	 	<CONFIG/>
+	 </ACTION> 
+	 
+	  <ACTION name="LOGOUT_ACTION" class="it.eng.spagobi.commons.services.LogoutAction" scope="REQUEST">
+ 		<CONFIG/>
+ 	</ACTION> 
+	 
+</ACTIONS>
