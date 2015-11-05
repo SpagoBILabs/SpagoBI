@@ -28,7 +28,7 @@
     
         <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
-       <url-pattern>/restful-services</url-pattern>
+       <url-pattern>/restful-services/*</url-pattern>
     </filter-mapping>
 	
 	<filter>
@@ -102,7 +102,7 @@ END-CAS -->
 	<!-- EngineCheckSessionFilter on AdapterHTTP; urls with NEW_SESSION=TRUE will open a new session if previous one has expired -->
     <filter-mapping>
         <filter-name>EngineCheckSessionFilter</filter-name>
-        <url-pattern>/restful-services</url-pattern>
+        <url-pattern>/restful-services/*</url-pattern>
     </filter-mapping>
 
 <!-- START-CAS 
@@ -131,7 +131,7 @@ END-CAS -->
 	
 	<filter-mapping>
     		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/restful-services</url-pattern>
+    		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 	
 	<!-- 
@@ -147,12 +147,6 @@ END-CAS -->
 	<!--  LISTENERS								 									   -->
 	<!--  ============================================================================ -->
 
-
-    <listener>
-        <listener-class>
-            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
-        </listener-class>
-    </listener>
 
 	<!--  ============================================================================ -->
 	<!--  SERVLETS								 									   -->
@@ -180,11 +174,6 @@ END-CAS -->
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
 	</servlet>
-	
-	<servlet>
-        <servlet-name>Resteasy</servlet-name>
-        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-    </servlet>
     
     
     <!--  ============================================================================ -->
@@ -205,12 +194,6 @@ END-CAS -->
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/servlet/AdapterHTTPTest</url-pattern>
 	</servlet-mapping>
-	
-    <servlet-mapping>
-        <servlet-name>Resteasy</servlet-name>
-        <url-pattern>/restful-services</url-pattern>
-    </servlet-mapping>
-
     
     
 	<session-config>
