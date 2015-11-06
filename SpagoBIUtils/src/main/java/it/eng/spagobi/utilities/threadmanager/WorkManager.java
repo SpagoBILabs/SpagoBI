@@ -206,23 +206,6 @@ public class WorkManager {
 
 			try {
 				jndiResource = context.lookup(workManagerResourceName);
-				logger.debug("STEP1-new2");
-
-				ldapResource = context.lookup("ldap_unicredit");
-				// logger.debug("STEP1-new3");
-				// NamingEnumeration<NameClassPair> listnames = context.list("");
-				// logger.debug("STEP2");
-				// while (listnames.hasMoreElements()) {
-				// NameClassPair ncp = listnames.nextElement();
-				// logger.debug("STEP CICLO:" + ncp.getName());
-				// NamingEnumeration<NameClassPair> tempList = context.list(ncp.getName());
-				//
-				// // while (tempList.hasMoreElements()) {
-				// // NameClassPair ncpTemp = listnames.nextElement();
-				// // logger.debug("STEP INT CICLO:" + ncpTemp.getName());
-				// // }
-				// }
-				logger.debug("Resource ldap_unicredit is: " + ldapResource);
 
 			} catch (NamingException ne) {
 				logger.warn("Resource [" + workManagerResourceName + "] is not bound in this context");
