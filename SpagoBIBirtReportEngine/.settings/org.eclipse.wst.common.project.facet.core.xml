@@ -3,8 +3,8 @@
   <runtime name="Apache Tomcat v7.0"/>
   <fixed facet="jst.java"/>
   <fixed facet="jst.web"/>
-  <installed facet="jst.web" version="2.4"/>
   <installed facet="jboss.m2" version="1.0"/>
   <installed facet="jst.java" version="1.7"/>
   <installed facet="jboss.portlet" version="1.0"/>
+  <installed facet="jst.web" version="3.0"/>
 </faceted-project>
