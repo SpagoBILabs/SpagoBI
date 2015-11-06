@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
 <wb-module deploy-name="SpagoBI">
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
+        <dependent-module archiveName="spagobi-core-5.2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spagobi-core/spagobi-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="QbeCore-5.2.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/QbeCore/QbeCore">
             <dependency-type>uses</dependency-type>
         </dependent-module>
