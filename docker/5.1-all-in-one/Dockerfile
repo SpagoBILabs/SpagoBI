@@ -2,7 +2,6 @@ FROM java:7
 
 ENV SPAGOBI_VERSION=5.1.0-r24688
 ENV SPAGOBI_URL=http://download.forge.ow2.org/spagobi/All-In-One-SpagoBI-${SPAGOBI_VERSION}.zip
-ENV SPAGOBI_SHA=d74dcac7341a488822e85f6dd0a4f6f641ad07c41b1d834d55dc9bcc353c6576
 ENV SPAGOBI_MYSQL_SCRIPT_URL=http://download.forge.ow2.org/spagobi/mysql-dbscript-5.1.0_19012015.zip
 
 RUN apt-get update && apt-get install -y wget coreutils unzip mysql-client
@@ -10,7 +9,6 @@ RUN apt-get update && apt-get install -y wget coreutils unzip mysql-client
 #download spagobi all in one and extract it
 WORKDIR /home
 RUN wget "${SPAGOBI_URL}" -O SpagoBI.zip && \
-	echo "${SPAGOBI_SHA}  SpagoBI.zip" | sha256sum -c - && \
 	unzip SpagoBI.zip && \
 	mv All-In-One-SpagoBI-${SPAGOBI_VERSION} SpagoBI && \
 	rm SpagoBI.zip
