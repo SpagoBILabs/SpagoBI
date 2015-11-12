@@ -1,4 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>it.eng.spagobi</groupId>
@@ -9,6 +10,57 @@
  
   <artifactId>SpagoBIXXXSpagoEngine</artifactId>
   <packaging>war</packaging>
+
+  <dependencies>
+  	<dependency>
+		<groupId>it.eng.spagobi</groupId>
+		<artifactId>SpagoBIUtils</artifactId>
+		<version>5.2.0-SNAPSHOT</version>
+	</dependency>
+
+	<dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>1.1.1</version>
+    </dependency>
+
+    <dependency>
+	    <groupId>log4j</groupId>
+	    <artifactId>log4j</artifactId>
+	    <version>1.2.8</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.jamonapi</groupId>
+		<artifactId>jamon</artifactId>
+		<version>2.81</version>
+	</dependency>
+
+	<dependency>
+	    <groupId>portlet-api</groupId>
+	    <artifactId>portlet-api</artifactId>
+	    <version>1.0</version>
+	</dependency>
+
+	<dependency>
+	    <groupId>it.eng.spago</groupId>
+	    <artifactId>spago-core</artifactId>
+	    <version>2.3.0</version>
+	</dependency>
+
+	<dependency>
+	    <groupId>it.eng.spago</groupId>
+	    <artifactId>spago-portlet</artifactId>
+	    <version>2.3.0</version>
+	</dependency>
+
+	<dependency>
+	    <groupId>it.eng.spago</groupId>
+	    <artifactId>spago-web</artifactId>
+	    <version>2.3.0</version>
+	</dependency>
+	
+  </dependencies>
 
 
 </project>
