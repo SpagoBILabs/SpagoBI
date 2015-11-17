@@ -42,5 +42,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/groovy-all-2.1.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

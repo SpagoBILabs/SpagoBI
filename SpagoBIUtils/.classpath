@@ -10,8 +10,6 @@
 	<classpathentry kind="lib" path="lib/axis.jar"/>
 	<classpathentry kind="lib" path="lib/jaxrpc.jar"/>
 	<classpathentry kind="lib" path="lib/portlet-api-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/groovy-all-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib/groovy.engine.jar"/>
 	<classpathentry kind="lib" path="lib/javascript.engine.jar"/>
 	<classpathentry kind="lib" path="lib/js.jar"/>
 	<classpathentry kind="lib" path="lib/jsr223.jar"/>
@@ -116,5 +114,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/groovy-all-2.1.6.jar" sourcepath="/Users/fabrizio/.gradle/caches/modules-2/files-2.1/org.codehaus.groovy/groovy-all/2.1.6/d3b861ec887a4abd351052edca7fbacdc8b9ddbd/groovy-all-2.1.6-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
