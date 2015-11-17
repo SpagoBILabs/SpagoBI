@@ -3,11 +3,17 @@
  */
 package org.json;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
 import junit.framework.TestCase;
 
 import org.junit.Before;
-
-import com.fasterxml.jackson.databind.node.NodeCursor.Object;
 
 /**
  * The Class TestJSONArray.
@@ -22,7 +28,7 @@ public class TestJSONArray extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -681,7 +687,7 @@ public class TestJSONArray extends TestCase {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see java.io.Writer#write(char[], int, int)
 			 */
 			@Override
@@ -691,7 +697,7 @@ public class TestJSONArray extends TestCase {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see java.io.Writer#flush()
 			 */
 			@Override
@@ -701,7 +707,7 @@ public class TestJSONArray extends TestCase {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see java.io.Writer#close()
 			 */
 			@Override
@@ -890,7 +896,7 @@ public class TestJSONArray extends TestCase {
 
 	/**
 	 * Tests the put method using map.
-	 * 
+	 *
 	 * @throws JSONException
 	 */
 	public void testPut_Map() {
