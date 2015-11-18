@@ -34,6 +34,11 @@ public class GroovySandboxTest {
 		expectException(true, "b=['q':new File('q.txt'),'r':new ArrayList()]");
 		expectException(true, "b=['q':new File('q.txt'),'r':new ArrayList()]");
 	}
+	
+	@Test
+	public void testReflection() {
+		expectException(true, "a=String.class.forName('java.io.File').newInstance('a')");		
+	}
 
 	@Test
 	public void testAddClass() {
