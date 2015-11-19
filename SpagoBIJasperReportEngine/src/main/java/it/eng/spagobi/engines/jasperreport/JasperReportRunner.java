@@ -44,6 +44,14 @@ import java.util.ResourceBundle;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,9 +92,9 @@ import sun.misc.BASE64Encoder;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+//import com.sun.image.codec.jpeg.JPEGCodec;
+//import com.sun.image.codec.jpeg.JPEGEncodeParam;
+//import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 /**
  * Jasper Report implementation built to provide all methods to run a report inside SpagoBI. It is the jasper report Engine implementation for SpagoBI.
@@ -447,7 +455,7 @@ public class JasperReportRunner {
 	/**
 	 * This method builds the html header string to be injected on report HTML output. This is necessary in order to inject the document.domain javascript
 	 * directive
-	 * 
+	 *
 	 * @return the HTML head tag as a string
 	 */
 	/*
@@ -647,11 +655,22 @@ public class JasperReportRunner {
 				message += "<IMAGE page=\"" + count + "\">";
 				BufferedImage image = (BufferedImage) iterImgs.next();
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(baos);
-				JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(image);
-				encodeParam.setQuality(1.0f, true);
-				encoder.setJPEGEncodeParam(encodeParam);
-				encoder.encode(image);
+
+				ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
+				ImageOutputStream ios = ImageIO.createImageOutputStream(baos);
+				imageWriter.setOutput(ios);
+				IIOMetadata imageMetaData = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(image), null);
+				ImageWriteParam par = imageWriter.getDefaultWriteParam();
+				par.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+				par.setCompressionQuality(1.0f);
+				imageWriter.write(imageMetaData, new IIOImage(image, null, null), par);
+
+				// JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(baos);
+				// JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(image);
+				// encodeParam.setQuality(1.0f, true);
+				// encoder.setJPEGEncodeParam(encodeParam);
+				// encoder.encode(image);
+
 				byte[] byteImg = baos.toByteArray();
 				baos.close();
 				BASE64Encoder encoder64 = new BASE64Encoder();
@@ -700,11 +719,22 @@ public class JasperReportRunner {
 			}
 			// gets byte of the jpeg image
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(baos);
-			JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(finalImage);
-			encodeParam.setQuality(1.0f, true);
-			encoder.setJPEGEncodeParam(encodeParam);
-			encoder.encode(finalImage);
+
+			ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
+			ImageOutputStream ios = ImageIO.createImageOutputStream(baos);
+			imageWriter.setOutput(ios);
+			IIOMetadata imageMetaData = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(finalImage), null);
+			ImageWriteParam par = imageWriter.getDefaultWriteParam();
+			par.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+			par.setCompressionQuality(1.0f);
+			imageWriter.write(imageMetaData, new IIOImage(finalImage, null, null), par);
+
+			// JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(baos);
+			// JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(finalImage);
+			// encodeParam.setQuality(1.0f, true);
+			// encoder.setJPEGEncodeParam(encodeParam);
+			// encoder.encode(finalImage);
+
 			bytes = baos.toByteArray();
 			baos.close();
 
