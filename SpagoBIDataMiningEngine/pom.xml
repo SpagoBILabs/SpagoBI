@@ -99,4 +99,81 @@
 
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>development</id>
+		</profile>
+		<profile>
+			<id>production</id>
+			<activation>
+				<property>
+					<name>minimized-dir</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>compress</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<!-- <outputDirectory>${project.build.directory}/minimized</outputDirectory> -->
+							<webappDirectory>${minimized-dir}</webappDirectory>
+							<!-- Minify only, do not obfuscate -->
+							<nomunge>true</nomunge>
+							<excludes>
+								<exclude>**/*.css</exclude>
+								<exclude>**/lib/**/*.js</exclude>
+								<exclude>**/spagobi/formats/en.js</exclude>
+								<exclude>**/spagobi/formats/es.js</exclude>
+								<exclude>**/spagobi/formats/fr.js</exclude>
+								<exclude>**/spagobi/formats/it.js</exclude>
+								<exclude>**/spagobi/commons/extObjTemplate.js</exclude>
+								<exclude>**/spagobi/console/ChartWidget_bck.js</exclude>
+								<exclude>**/spagobi/widgets/FilteringToolbar.js</exclude>
+								<exclude>**/spagobi/widgets/LookupField.js</exclude>
+								<exclude>**/spagobi/widgets/PagingToolbar.js</exclude>
+								<exclude>**/spagobi/widgets/TriggerFieldMultiButton.js</exclude>
+								<exclude>**/spagobi/commons/Settings.js</exclude>
+								<exclude>**/spagobi/datamining-all-${project.version}.js</exclude>
+							</excludes>
+							<aggregations>
+								<aggregation>
+									<inputDir>${minimized-dir}/js/spagobi</inputDir>
+									<output>${basedir}/src/main/webapp/js/spagobi/datamining-all-${project.version}.js</output>
+									<includes>
+										<include>overrides/overrides-min.js</include>
+										<include>service/ServiceRegistry-min.js</include>
+										<include>service/RestService-min.js</include>
+										<include>commons/Format-min.js</include>
+										<include>commons/Utils-min.js</include>
+										<include>commons/Log-min.js</include>
+										<include>formats/LocaleUtils-min.js</include>
+										<include>widgets/Help-min.js</include>
+										<include>exception/ExceptionHandler-min.js</include>
+										<include>datamining/ResultPanel-min.js</include>
+										<include>datamining/UploadPanel-min.js</include>
+										<include>datamining/OutputPanel-min.js</include>
+										<include>datamining/OutputsTabPanel-min.js</include>
+										<include>datamining/CommandsTabPanel-min.js</include>
+										<include>datamining/DataMiningPanel-min.js</include>
+										<include>datamining/FillVariablesPanel-min.js</include>
+										<include>**/*.js</include>
+									</includes>
+									<insertNewLine>true</insertNewLine>
+								</aggregation>
+							</aggregations>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
