@@ -49,6 +49,7 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipTests>true</skipTests>
+		<minimized-dir>${project.build.directory}/minimized</minimized-dir>
 	</properties>
 
 	<build>
