@@ -27,6 +27,61 @@
 			<version>1.5.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>development</id>
+		</profile>
+		<profile>
+			<id>production</id>
+			<activation>
+				<property>
+					<name>minimized-dir</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>compress</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<webappDirectory>${minimized-dir}</webappDirectory>
+							<!-- Minify only, do not obfuscate -->
+							<nomunge>true</nomunge>
+							<excludes>
+								<exclude>**/*.css</exclude>
+								<exclude>**/lib/**/*.js</exclude>
+								<exclude>commonj-all-${project.version}.js</exclude>
+							</excludes>
+							<aggregations>
+								<aggregation>
+									<inputDir>${minimized-dir}/js/spagobi</inputDir>
+									<output>${basedir}/src/main/webapp/js/spagobi/commonj-all-${project.version}.js</output>
+									<includes>
+										<include>**/*.js</include>
+									</includes>
+									<insertNewLine>true</insertNewLine>
+								</aggregation>
+							</aggregations>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
