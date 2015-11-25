@@ -116,7 +116,62 @@
 			<scope>provided</scope>
 		</dependency>
 
-
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>development</id>
+		</profile>
+		<profile>
+			<id>production</id>
+			<activation>
+				<property>
+					<name>minimized-dir</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>compress</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<webappDirectory>${minimized-dir}</webappDirectory>
+							<!-- Minify only, do not obfuscate -->
+							<nomunge>true</nomunge>
+							<excludes>
+								<exclude>**/*.css</exclude>
+								<exclude>**/lib/**/*.js</exclude>
+								<exclude>**/src/ext/sbi/formats/de.js</exclude>
+								<exclude>**/src/ext/sbi/formats/en.js</exclude>
+								<exclude>**/src/ext/sbi/formats/es.js</exclude>
+								<exclude>**/src/ext/sbi/formats/fr.js</exclude>
+								<exclude>**/src/ext/sbi/formats/it.js</exclude>
+								<exclude>**/src/ext/sbi/commons/Settings.js</exclude>
+								<exclude>**/src/ext/sbi/georeport-all-${project.version}.js</exclude>
+								<exclude>**/src/ext/sbi/georeport-all-debug.js</exclude>
+							</excludes>
+							<aggregations>
+								<aggregation>
+									<inputDir>${minimized-dir}/js/src/ext/sbi</inputDir>
+									<output>${basedir}/src/main/webapp/js/src/ext/sbi/georeport-all-${project.version}.js</output>
+									<includes>
+										<include>**/*.js</include>
+									</includes>
+									<insertNewLine>true</insertNewLine>
+								</aggregation>
+							</aggregations>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
