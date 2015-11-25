@@ -37,4 +37,61 @@
 
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>development</id>
+		</profile>
+		<profile>
+			<id>production</id>
+			<activation>
+				<property>
+					<name>minimized-dir</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>compress</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<webappDirectory>${minimized-dir}</webappDirectory>
+							<!-- Minify only, do not obfuscate -->
+							<nomunge>true</nomunge>
+							<excludes>
+								<exclude>**/*.css</exclude>
+								<exclude>**/lib/**/*.js</exclude>
+								<exclude>**/js/add2home/*.js</exclude>
+								<exclude>**/js/messageResource/*.js</exclude>
+								<exclude>**/js/sencha_2.1.1/**/*.js</exclude>
+								<exclude>**/js/spagobi/config/*.js</exclude>
+								<exclude>**/spagobi/formats/en.js</exclude>
+								<exclude>**/spagobi/formats/es.js</exclude>
+								<exclude>**/spagobi/formats/fr.js</exclude>
+								<exclude>**/spagobi/formats/it.js</exclude>
+								<exclude>**/spagobi/mobile-all-${project.version}.js</exclude>
+							</excludes>
+							<aggregations>
+								<aggregation>
+									<inputDir>${minimized-dir}/js/spagobi</inputDir>
+									<output>${basedir}/src/main/webapp/js/spagobi/mobile-all-${project.version}.js</output>
+									<includes>
+										<include>**/*.js</include>
+									</includes>
+									<insertNewLine>true</insertNewLine>
+								</aggregation>
+							</aggregations>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
