@@ -1,6 +1,7 @@
 
 ##### SPAGOBI GENERIC ATTRIBUTES #############################################
 
+default["demo"] = false
 default["spagobi"]["home_dir"] = "/opt/spagobi/"
 default["spagobi"]["server_dir"] = "All-in-One-SpagoBI-5.1-1feb2d97af/"
 default["spagobi"]["file_name"] = "All-in-One-SpagoBI-5.1-1feb2d97af.zip"
@@ -14,8 +15,15 @@ default["spagobi"]["Xms"] = 512
 default["spagobi"]["Xmx"] = 1024
 default["spagobi"]["MaxPermSize"] = 512
 default["spagobi"]["java_security_egd"] = "file:/dev/./urandom"
-default["spagobi"]["db_dialect"] = "org.hibernate.dialect.MySQLDialect"
-default["spagobi"]["quartz_driver"] = "org.quartz.impl.jdbcjobstore.StdJDBCDelegate"
+
+if node[:demo] == true
+	default["spagobi"]["db_dialect"] = "org.hibernate.dialect.HSQLDialect"
+	default["spagobi"]["quartz_driver"] = "org.quartz.impl.jdbcjobstore.HSQLDBDelegate"
+else
+	default["spagobi"]["db_dialect"] = "org.hibernate.dialect.MySQLDialect"
+	default["spagobi"]["quartz_driver"] = "org.quartz.impl.jdbcjobstore.StdJDBCDelegate"
+end
+
 
 ###### OAUTH 2 #################################################
 
