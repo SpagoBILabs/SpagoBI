@@ -95,7 +95,7 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 			}
 
 			//manage cometd messages from server
-			if (s.notifyFromServer) {
+			if (s.notifyFromServer === true) {
 		        var cometdConfig = {
 		            contextPath: pageContextPath,
 		            listenerId:"1",
