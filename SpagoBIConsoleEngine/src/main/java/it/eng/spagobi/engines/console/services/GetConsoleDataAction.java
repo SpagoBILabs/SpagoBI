@@ -10,6 +10,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.console.ConsoleEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
+import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
@@ -33,6 +34,7 @@ import com.jamonapi.MonitorFactory;
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  */
+@SuppressWarnings("serial")
 public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 
 	public static final String SERVICE_NAME = "EXECUTE_DATASET";
@@ -52,11 +54,11 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 	// logger component
 	private static Logger logger = Logger.getLogger(GetConsoleDataAction.class);
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void service(SourceBean request, SourceBean response) {
 
 		String dataSetLabel;
-		String user;
 		String callback;
 		String locale;
 		Integer start;
@@ -110,7 +112,14 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 			Map params = consoleEngineInstance.getAnalyticalDrivers();
 			params.put(LOCALE, locale);
 			dataSet.setParamsMap(params);
-			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
+
+			UserProfile userProfile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(userProfile));
+			if (dataSet instanceof AbstractDataSet) {
+				AbstractDataSet ads = (AbstractDataSet) dataSet;
+				ads.setUserProfile(userProfile);
+			}
+
 			// gets the max number of rows for the table
 			// String strRowLimit = ConsoleEngineConfig.getInstance().getProperty("CONSOLE-TABLE-ROWS-LIMIT");
 			// rowsLimit = (strRowLimit == null)? -1 : Integer.parseInt(strRowLimit);
