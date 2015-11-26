@@ -12,6 +12,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONResponse;
@@ -26,10 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -75,9 +72,6 @@ public class ValidateExpressionAction extends AbstractQbeEngineAction {
 		Map parameters;
 		Map qFields;
 		Map dmFields;
-
-		ScriptEngineManager scriptManager;
-		ScriptEngine groovyScriptEngine;
 
 		logger.debug("IN");
 
@@ -176,22 +170,24 @@ public class ValidateExpressionAction extends AbstractQbeEngineAction {
 				validationException = new SpagoBIEngineServiceException(getActionName(), msg);
 				jsonResponse = new JSONFailure(validationException);
 			} else {
-				scriptManager = new ScriptEngineManager();
-				groovyScriptEngine = scriptManager.getEngineByName("groovy");
+
+				Map<String, Object> bindings = new HashMap<String, Object>();
 
 				// bindings ...
-				groovyScriptEngine.put("attributes", attributes);
-				groovyScriptEngine.put("parameters", parameters);
-				groovyScriptEngine.put("qFields", qFields);
-				groovyScriptEngine.put("dmFields", dmFields);
-				groovyScriptEngine.put("fields", qFields);
-				groovyScriptEngine.put("api", new GroovyScriptAPI());
+				bindings.put("attributes", attributes);
+				bindings.put("parameters", parameters);
+				bindings.put("qFields", qFields);
+				bindings.put("dmFields", dmFields);
+				bindings.put("fields", qFields);
+				bindings.put("api", new GroovyScriptAPI());
 
 				Object calculatedValue = null;
 				try {
-					calculatedValue = groovyScriptEngine.eval(expression);
+					GroovySandbox gs = new GroovySandbox(new Class[] { GroovyScriptAPI.class });
+					gs.setBindings(bindings);
+					calculatedValue = gs.evaluate(expression);
 					jsonResponse = new JSONAcknowledge();
-				} catch (ScriptException e) {
+				} catch (Exception e) {
 					SpagoBIEngineServiceException validationException;
 					Throwable t = e;
 					String msg = t.getMessage();

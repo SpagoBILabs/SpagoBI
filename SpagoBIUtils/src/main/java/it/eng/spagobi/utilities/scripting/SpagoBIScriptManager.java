@@ -6,6 +6,7 @@
 package it.eng.spagobi.utilities.scripting;
 
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,6 +40,7 @@ public class SpagoBIScriptManager {
 		return runScript(script, language, bindings, null);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object runScript(String script, String language, Map<String, Object> bindings, List imports) {
 
 		Object results;
@@ -47,13 +49,6 @@ public class SpagoBIScriptManager {
 
 		results = null;
 		try {
-			ScriptEngine scriptEngine = getScriptEngine(language);
-
-			if (scriptEngine == null) {
-				throw new RuntimeException("No engine available to execute scripts of type [" + language + "]");
-			} else {
-				logger.debug("Found engine [" + scriptEngine.NAME + "]");
-			}
 
 			if (imports != null) {
 				StringBuffer importsBuffer = new StringBuffer();
@@ -69,6 +64,22 @@ public class SpagoBIScriptManager {
 				}
 				script = importsBuffer.toString() + script;
 			}
+
+			if (isGroovy(language)) {
+				GroovySandbox gs = new GroovySandbox();
+				gs.setBindings(bindings);
+				results = gs.evaluate(script);
+				return results;
+			}
+
+			ScriptEngine scriptEngine = getScriptEngine(language);
+
+			if (scriptEngine == null) {
+				throw new RuntimeException("No engine available to execute scripts of type [" + language + "]");
+			} else {
+				logger.debug("Found engine [" + ScriptEngine.NAME + "]");
+			}
+
 			ScriptContext scriptContext = new SimpleScriptContext();
 			if (bindings != null) {
 				Bindings scriptBindings = new SimpleBindings(bindings);
@@ -84,6 +95,10 @@ public class SpagoBIScriptManager {
 			logger.debug("OUT");
 		}
 		return results;
+	}
+
+	private boolean isGroovy(String language) {
+		return "groovy".equalsIgnoreCase(language);
 	}
 
 	public boolean isEngineSupported(String name) {
