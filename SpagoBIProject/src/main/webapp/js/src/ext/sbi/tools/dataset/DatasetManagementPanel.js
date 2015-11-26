@@ -215,7 +215,7 @@ ns.applyHelp=function(config,htmlFile) {
 	config.listeners.afterrender = function( field ) {
 		var labelDom=field.label.dom;
 		var label=field.fieldLabel;
-		labelDom.innerHTML=label+' <button class="x-btn-text icon-info">&nbsp;&nbsp;&nbsp;</button>:';
+		labelDom.innerHTML='<button class="x-btn-text icon-info">&nbsp;&nbsp;&nbsp;</button> '+label+":";
 		labelDom.getElementsByTagName("button")[0].addEventListener('click', function() {
 		   ns.infoButton(htmlFile);
 		});
