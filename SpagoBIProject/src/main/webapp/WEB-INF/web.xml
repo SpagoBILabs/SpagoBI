@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app id="WebApp_ID" version="3.0" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_3_0.xsd">
 	<display-name>SpagoBI</display-name>
     <description>
         This application is a portlet. It can not be used outside a portal.
@@ -164,12 +164,6 @@
         <servlet-class>com.liferay.portal.kernel.servlet.PortletServlet</servlet-class>
   </servlet>  
 END-LIFERAY -->
-
-    <listener>
-        <listener-class>
-            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
-        </listener-class>
-    </listener>
   
      <!-- servlet for change pwd management -->
    <servlet>
@@ -239,11 +233,6 @@ EXO -->
 	</servlet>
 	
 	<servlet>
-        <servlet-name>Resteasy</servlet-name>
-        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-    </servlet>
-	
-	<servlet>
         <servlet-name>StickyCaptcha</servlet-name>
         <servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
         <init-param>
@@ -309,21 +298,9 @@ END-LIFERAY -->
     <!-- end axis servlet -->
 
     <servlet-mapping>
-        <servlet-name>Resteasy</servlet-name>
-        <url-pattern>/restful-services/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>StickyCaptcha</servlet-name>
         <url-pattern>/stickyImg</url-pattern>
     </servlet-mapping>
-    
-
-    <context-param>
-         <param-name>resteasy.scan</param-name>
-        <param-value>true</param-value>    
-    </context-param>
-
     
     <context-param>
         <param-name>resteasy.servlet.mapping.prefix</param-name>
