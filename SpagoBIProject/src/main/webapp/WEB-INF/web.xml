@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="WebApp_ID" version="3.0" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_3_0.xsd">
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>SpagoBI</display-name>
     <description>
         This application is a portlet. It can not be used outside a portal.
@@ -19,6 +19,21 @@
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/servlet/AdapterHTTP</url-pattern>
     </filter-mapping>
+    
+<!--      <filter> -->
+<!--         <filter-name>MultiReadFilter</filter-name> -->
+<!--         <filter-class>it.eng.spagobi.utilities.filters.MultiReadFilter</filter-class> -->
+<!--     </filter> -->
+    
+<!--     <filter-mapping> -->
+<!--         <filter-name>MultiReadFilter</filter-name> -->
+<!--         <url-pattern>/servlet/AdapterHTTP</url-pattern> -->
+<!--     </filter-mapping> -->
+    
+<!--     <filter-mapping> -->
+<!--         <filter-name>MultiReadFilter</filter-name> -->
+<!--         <url-pattern>/restful-services/*</url-pattern> -->
+<!--     </filter-mapping> -->
 
 	<filter>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
@@ -150,11 +165,11 @@
   </servlet>  
 END-LIFERAY -->
 
-<!--     <listener> -->
-<!--         <listener-class> -->
-<!--             org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap -->
-<!--         </listener-class> -->
-<!--     </listener> -->
+    <listener>
+        <listener-class>
+            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
+        </listener-class>
+    </listener>
   
      <!-- servlet for change pwd management -->
    <servlet>
@@ -223,10 +238,10 @@ EXO -->
     	<jsp-file>/WEB-INF/jsp/public/docs.jsp</jsp-file>
 	</servlet>
 	
-<!-- 	<servlet> -->
-<!--         <servlet-name>Resteasy</servlet-name> -->
-<!--         <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class> -->
-<!--     </servlet> -->
+	<servlet>
+        <servlet-name>Resteasy</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
 	
 	<servlet>
         <servlet-name>StickyCaptcha</servlet-name>
@@ -293,10 +308,10 @@ END-LIFERAY -->
     </servlet-mapping>
     <!-- end axis servlet -->
 
-<!--     <servlet-mapping> -->
-<!--         <servlet-name>Resteasy</servlet-name> -->
-<!--         <url-pattern>/restful-services/*</url-pattern> -->
-<!--     </servlet-mapping> -->
+    <servlet-mapping>
+        <servlet-name>Resteasy</servlet-name>
+        <url-pattern>/restful-services/*</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>StickyCaptcha</servlet-name>
@@ -304,16 +319,16 @@ END-LIFERAY -->
     </servlet-mapping>
     
 
-<!--     <context-param> -->
-<!--          <param-name>resteasy.scan</param-name> -->
-<!--         <param-value>true</param-value>     -->
-<!--     </context-param> -->
+    <context-param>
+         <param-name>resteasy.scan</param-name>
+        <param-value>true</param-value>    
+    </context-param>
 
     
-<!--     <context-param> -->
-<!--         <param-name>resteasy.servlet.mapping.prefix</param-name> -->
-<!--         <param-value>/restful-services</param-value> -->
-<!--     </context-param> -->
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/restful-services</param-value>
+    </context-param>
      
 	<!-- END SERVLET MAPPINGS --> 
 
@@ -368,5 +383,4 @@ END-LIFERAY -->
 		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
 	
-
 </web-app>
