@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2015 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.notifier.fiware;
 
@@ -9,9 +9,9 @@ import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
-import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
 import it.eng.spagobi.tools.dataset.notifier.NotifierManager;
 import it.eng.spagobi.tools.dataset.notifier.NotifierManagerFactory;
+import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
 import it.eng.spagobi.tools.dataset.notifier.UserLabelId;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -46,7 +46,7 @@ public class OrionContextSubscriber {
 	public OrionContextSubscriber(RESTDataSet dataSet, String spagoBInotifyAddress) {
 		Helper.checkNotNull(dataSet, "dataSet");
 
-		user = dataSet.getOwner();
+		user = dataSet.getUserUniqueIdentifier();
 		if (user == null || user.isEmpty()) {
 			throw new NGSISubscribingException("No user associated with dataset");
 		}
@@ -67,7 +67,7 @@ public class OrionContextSubscriber {
 
 	/**
 	 * Called from {@link RESTDataSet}
-	 * 
+	 *
 	 * @param dataSet
 	 * @param user
 	 * @param label
@@ -132,7 +132,7 @@ public class OrionContextSubscriber {
 	 *   }
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @param respBody
 	 * @return
 	 * @throws JSONException
@@ -177,7 +177,7 @@ public class OrionContextSubscriber {
 	 *     "throttling": "PT5S"
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @return
 	 * @throws JSONException
 	 */
