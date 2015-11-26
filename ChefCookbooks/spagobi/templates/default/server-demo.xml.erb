@@ -49,7 +49,8 @@
     <Environment name="spagobi_sso_class" type="java.lang.String" value="<%= node['spagobi']['spagobi_sso_class'] %>"/>
     <Environment name="spagobi_service_url" type="java.lang.String" value="http://<%= node['spagobi']['public_ip'] %>:8080/SpagoBI"/>   
     <Environment name="spagobi_host_url" type="java.lang.String" value="http://<%= node['spagobi']['public_ip'] %>:8080"/>
-    
+   
+   <!-- 
 	<Resource auth="Container" 
 		driverClassName="com.mysql.jdbc.Driver" 
 		maxActive="20" 
@@ -59,10 +60,9 @@
 		password="<%= node[:spagobi][:db_password] %>" 
 		type="javax.sql.DataSource" 
 		url="jdbc:mysql://127.0.0.1:3306/<%= node[:spagobi][:db_name] %>" 
-		username="<%= node[:spagobi][:db_username] %>" />
+		username="<%= node[:spagobi][:db_username] %>" /> -->
 
 
-	<!--	  
 		<Resource name="jdbc/spagobi" auth="Container"
           		type="javax.sql.DataSource" driverClassName="org.hsqldb.jdbcDriver"
           		url="jdbc:hsqldb:file:${catalina.base}/database/spagobi"
@@ -85,7 +85,6 @@
           		username="sa" password="" maxActive="20" maxIdle="10"
           		maxWait="-1"/>
 
-	-->
 
     <Resource auth="Container" factory="de.myfoo.commonj.work.FooWorkManagerFactory" 
           maxThreads="5" name="wm/SpagoWorkManager" 
