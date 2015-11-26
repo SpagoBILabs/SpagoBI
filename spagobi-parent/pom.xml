@@ -23,6 +23,7 @@
 		<module>../spagobi-commons-core</module>
 		<module>../spagobi-metamodel-core</module>
 		<module>../spagobi-metamodel-utils</module>
+		<module>../spagobi.birt.oda</module>
 		<module>../spagobi-core</module>
 		<module>../SpagoBIProject</module>
 		<module>../SpagoBIAccessibilityEngine</module>
