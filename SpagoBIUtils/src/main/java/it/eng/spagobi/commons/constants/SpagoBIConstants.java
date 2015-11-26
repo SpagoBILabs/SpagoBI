@@ -437,4 +437,6 @@ public class SpagoBIConstants {
 	public static final String DS_SCOPE_USER = "USER";
 
 	public static final String ENABLE_DATASET_PERSISTENCE = "EnableDatasetPersistence";
+
+	public static final String SPAGOBI_SECURITY_PORTAL_SECURITY_CLASS_PROP_NAME = "SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className";
 }

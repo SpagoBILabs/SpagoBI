@@ -43,10 +43,12 @@ public class OrionContextSubscriber {
 
 	private final String label;
 
+	private final String authToken;
+
 	public OrionContextSubscriber(RESTDataSet dataSet, String spagoBInotifyAddress) {
 		Helper.checkNotNull(dataSet, "dataSet");
 
-		user = dataSet.getUserUniqueIdentifier();
+		user = dataSet.getUserId();
 		if (user == null || user.isEmpty()) {
 			throw new NGSISubscribingException("No user associated with dataset");
 		}
@@ -55,6 +57,8 @@ public class OrionContextSubscriber {
 		if (user == null || user.isEmpty()) {
 			throw new NGSISubscribingException("No label associated with dataset");
 		}
+
+		authToken = dataSet.getOAuth2Token();
 
 		this.proxy = dataSet.getDataProxy();
 		this.dataReader = dataSet.getDataReader();
@@ -149,9 +153,15 @@ public class OrionContextSubscriber {
 		return subResp.getString("subscriptionId");
 	}
 
-	private Map<String, String> getSubscriptionRequestHeaders() {
+	private Map<String, String> getSubscriptionRequestHeaders() throws MalformedURLException {
 		// same as data proxy
-		return proxy.getRequestHeaders();
+		Map<String, String> res = proxy.getRequestHeaders();
+		if (OAuth2Utils.isOAuth2()) {
+			if (authToken != null) {
+				res.putAll(OAuth2Utils.getOAuth2Headers(authToken));
+			}
+		}
+		return res;
 	}
 
 	/**

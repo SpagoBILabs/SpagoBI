@@ -108,7 +108,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	private void notifyListeners() {
 		DataSetListenerManager manager = DataSetListenerManagerFactory.getManager();
-		String uuid = getUserUniqueIdentifier();
+		String uuid = getUserId();
 		if (uuid == null) {
 			// temporary dataset
 			return;
@@ -206,7 +206,15 @@ public class RESTDataSet extends ConfigurableDataSet {
 		Map<String, String> requestHeaders;
 		try {
 			requestHeaders = getRequestHeadersPropMap(DataSetConstants.REST_REQUEST_HEADERS, jsonConf, resolveParams);
-		} catch (JSONException e) {
+
+			// add bearer token for OAuth Fiware
+			if (resolveParams && OAuth2Utils.isOAuth2() && !OAuth2Utils.containsOAuth2(requestHeaders)) {
+				String oAuth2Token = getOAuth2Token();
+				if (oAuth2Token != null) {
+					requestHeaders.putAll(OAuth2Utils.getOAuth2Headers(oAuth2Token));
+				}
+			}
+		} catch (Exception e) {
 			throw new ConfigurationException("Problems in configuration of data proxy", e);
 		}
 
@@ -218,6 +226,16 @@ public class RESTDataSet extends ConfigurableDataSet {
 		String maxResults = getProp(DataSetConstants.REST_MAX_RESULTS, jsonConf, true, resolveParams);
 
 		setDataProxy(new RESTDataProxy(address, methodEnum, requestBody, requestHeaders, offset, fetchSize, maxResults, isNgsi()));
+	}
+
+	public String getOAuth2Token() {
+		UserProfile up = getUserProfile();
+		if (up == null) {
+			return null;
+		}
+
+		String uuid = (String) up.getUserUniqueIdentifier();
+		return uuid;
 	}
 
 	private JSONObject getJSONConfig() {
@@ -365,13 +383,13 @@ public class RESTDataSet extends ConfigurableDataSet {
 		throw new IllegalStateException(RESTDataSet.class.getSimpleName() + " doesn't need the dataSource");
 	}
 
-	public String getUserUniqueIdentifier() {
+	public String getUserId() {
 		UserProfile up = getUserProfile();
 		if (up == null) {
 			return null;
 		}
 
-		String uuid = (String) up.getUserUniqueIdentifier();
+		String uuid = (String) up.getUserId();
 		return uuid;
 	}
 
