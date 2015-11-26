@@ -101,7 +101,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
 	 */
 	@Override
@@ -114,7 +114,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.GenericServlet#destroy()
 	 */
 	@Override
@@ -125,7 +125,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest , javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
@@ -676,10 +676,10 @@ public class BirtReportServlet extends HttpServlet {
 		try {
 			task.run();
 		} catch (Exception e) {
-			logger.error("Error while running the report: " + e);
-			e.printStackTrace();
+			throw e; // we throw the exception as it is, since this is caught in the service method
+		} finally {
+			task.close();
 		}
-		task.close();
 
 		// commented by Davide Zerbetto on 12/10/2009: there are problems with
 		// MIF (Ext ManagedIFrame library) library
