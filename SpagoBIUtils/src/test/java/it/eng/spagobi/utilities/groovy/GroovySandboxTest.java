@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.Assert;
+
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class GroovySandboxTest {
@@ -34,10 +35,10 @@ public class GroovySandboxTest {
 		expectException(true, "b=['q':new File('q.txt'),'r':new ArrayList()]");
 		expectException(true, "b=['q':new File('q.txt'),'r':new ArrayList()]");
 	}
-	
+
 	@Test
 	public void testReflection() {
-		expectException(true, "a=String.class.forName('java.io.File').newInstance('a')");		
+		expectException(true, "a=String.class.forName('java.io.File').newInstance('a')");
 	}
 
 	@Test

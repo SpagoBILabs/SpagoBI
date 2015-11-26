@@ -410,6 +410,8 @@ ns.getColumn=function(header,id,allowBlank,data) {
 	return res;
 };
 
+
+
 //REST data set fields with form fields
 
 ns.restHeaderNames = [
@@ -446,7 +448,7 @@ ns.restFields=['restAddress','restRequestBody','restHttpMethod',
 	'restOffset','restFetchSize','restMaxResults'];
 ns.INDEX_REQUEST_HEADERS=3;
 ns.INDEX_REQUEST_JSON_PATH_ATTRIBUTES=7;
-//[function,arguments before name argument]
+//[function,[arguments before name argument]]
 ns.restFormFields=[
 	[ns.getTextField,[true,null]],
 	[ns.getTextArea,[false]],
@@ -462,6 +464,22 @@ ns.restFormFields=[
 	[ns.getTextField,[false,null]],
 	[ns.getTextField,[false,null]]
 ];
+
+//check if parameters are correctly present
+ns.checkRESTParams = function (params) {
+	//check if NGSI is set or JSON Path items is present
+	if (params[ns.restFields[4]]==='' && params[ns.restFields[6]]===false) {
+		Sbi.exception.ExceptionHandler.showErrorMessage( LN('sbi.ds.restJsonPathItemsError'), LN('sbi.generic.serviceError'));
+		return false;
+	}
+	
+	//check if NGSI is set or JSON Path Attributes is not empty or NGSI is set
+	if (params[ns.restFields[6]]===false && params[ns.restFields[5]]===false && params[ns.restFields[ns.INDEX_REQUEST_JSON_PATH_ATTRIBUTES]].length<=2) {
+		Sbi.exception.ExceptionHandler.showErrorMessage( LN('sbi.ds.restJsonPathAttributesError'), LN('sbi.generic.serviceError'));
+		return false;
+	}
+	return true;
+};
 
 //add the rest fields argument to form fields
 (function(){
@@ -3429,6 +3447,13 @@ Ext
 					save : function() {
 						this.setSchedulingCronLine();
 						var values = this.getValues();
+						if (values['dsTypeCd']==='REST') {
+							var check=ns.checkRESTParams(values);
+							if (check === false) { 
+								return;
+							}
+						}
+						
 						var idRec = values['id'];
 						if (idRec == 0 || idRec == null || idRec === '') {
 							this.doSave("yes");
