@@ -3,7 +3,7 @@ package it.eng.spagobi.utilities.groovy;
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2015 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 import groovy.lang.GroovyShell;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
@@ -49,6 +49,7 @@ import org.codehaus.groovy.control.customizers.SecureASTCustomizer;
 
 /**
  * This class permits to run Groovy scripts in a safe mode allowing only a strictly set of classes.
+ * 
  * @author fabrizio
  *
  */
@@ -57,8 +58,8 @@ public class GroovySandbox {
 	private final static Class<?>[] CLASSES_WHITELIST = new Class[] { Date.class, List.class, ArrayList.class, Vector.class, Collection.class, HashSet.class,
 			HashMap.class, Set.class, Map.class, Math.class, TreeSet.class, Arrays.class, Collections.class, DateFormat.class, SimpleDateFormat.class,
 			DecimalFormat.class, NumberFormat.class, MessageFormat.class, Formatter.class, TreeSet.class, TreeMap.class, DataSetVariable.class,
-			java.sql.Date.class, Time.class, Timestamp.class, Blob.class, NClob.class,StringBuilder.class,StringBuffer.class,Float.class, Double.class, Long.class, BigDecimal.class,
-			String.class, BigInteger.class};
+			java.sql.Date.class, Time.class, Timestamp.class, Blob.class, NClob.class, StringBuilder.class, StringBuffer.class, Float.class, Double.class,
+			Long.class, BigDecimal.class, String.class, BigInteger.class };
 
 	private final static Class<?>[] CONSTANT_TYTPE_CLASSES_WHITELIST = new Class[] { Integer.class, Float.class, Long.class, Double.class, BigDecimal.class,
 			Integer.TYPE, Long.TYPE, Float.TYPE, Double.TYPE, String.class, BigInteger.class, Object.class };
@@ -72,8 +73,9 @@ public class GroovySandbox {
 	}
 
 	/**
-	 * 
-	 * @param addedClasses add classes to permitted classes
+	 *
+	 * @param addedClasses
+	 *            add classes to permitted classes
 	 */
 	public GroovySandbox(Class<?>[] addedClasses) {
 		Helper.checkNotNull(addedClasses, "addedClasses");
@@ -90,6 +92,7 @@ public class GroovySandbox {
 
 	/**
 	 * Evalaute the script retrieved from url
+	 * 
 	 * @param url
 	 * @return
 	 * @throws CompilationFailedException
@@ -101,14 +104,14 @@ public class GroovySandbox {
 		setBindingsOnShell(sandboxShell);
 
 		URLConnection conn = url.openConnection();
-		BufferedReader br=null;
+		BufferedReader br = null;
 
 		Object res;
 		try {
-			 br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			res = sandboxShell.evaluate(br);
 		} finally {
-			if (br!=null) {
+			if (br != null) {
 				br.close();
 			}
 
@@ -118,6 +121,7 @@ public class GroovySandbox {
 
 	/**
 	 * Set the bindings variables
+	 * 
 	 * @param bindings
 	 */
 	public void setBindings(Map<String, Object> bindings) {
@@ -150,11 +154,11 @@ public class GroovySandbox {
 		secure.setImportsWhitelist(getStringClasses("", CLASSES_WHITELIST, addedClasses, new Class[] { Object.class }));
 		secure.setStaticStarImportsWhitelist(getStringClasses(".*", CLASSES_WHITELIST, addedClasses));
 
-		secure.setStaticImportsWhitelist(getStaticImportMethods(CLASSES_WHITELIST,addedClasses));
+		secure.setStaticImportsWhitelist(getStaticImportMethods(CLASSES_WHITELIST, addedClasses));
 
 		secure.setConstantTypesClassesWhiteList(getClasses(CONSTANT_TYTPE_CLASSES_WHITELIST, CLASSES_WHITELIST, addedClasses));
 		// add also Object.class
-		secure.setReceiversClassesWhiteList(getClasses(CLASSES_WHITELIST, addedClasses,new Class[] {  Object.class }));
+		secure.setReceiversClassesWhiteList(getClasses(CLASSES_WHITELIST, addedClasses, new Class[] { Object.class }));
 
 		CompilerConfiguration res = new CompilerConfiguration();
 		res.addCompilationCustomizers(imports, secure);
@@ -163,7 +167,7 @@ public class GroovySandbox {
 
 	private static List<String> getStaticImportMethods(Class<?>[]... classeses) {
 		List<String> res = new ArrayList<String>();
-		for (Class<?>[] classes : classeses) {			
+		for (Class<?>[] classes : classeses) {
 			for (Class<?> clazz : classes) {
 				for (Method m : clazz.getMethods()) {
 					res.add(clazz.getName() + "." + m.getName());
@@ -196,7 +200,7 @@ public class GroovySandbox {
 		for (Class<?>[] classesWhitelist : classesWhitelists) {
 			for (Class clazz : classesWhitelist) {
 				res.add(clazz.getName() + add);
-				res.add(getArrayClass(clazz).getName()+add);
+				res.add(getArrayClass(clazz).getName() + add);
 			}
 		}
 		return res;
@@ -204,6 +208,7 @@ public class GroovySandbox {
 
 	/**
 	 * It's necessary for adding also arrays of all permitted classes
+	 * 
 	 * @param clazz
 	 * @return
 	 */
