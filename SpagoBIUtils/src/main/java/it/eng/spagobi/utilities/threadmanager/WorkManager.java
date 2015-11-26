@@ -202,7 +202,6 @@ public class WorkManager {
 			}
 
 			Object jndiResource = null;
-			Object ldapResource = null;
 
 			try {
 				jndiResource = context.lookup(workManagerResourceName);
