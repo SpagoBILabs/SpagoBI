@@ -103,10 +103,6 @@
    		<filter-name>SpagoBIAccessFilter</filter-name>
    		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
- 
-  	<listener>
-        <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
-    </listener>
     
     <listener>
         <listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
@@ -117,12 +113,6 @@
    </listener> 
     
     <context-param>
-         <param-name>resteasy.scan</param-name>
-        <param-value>true</param-value>    
-    </context-param>
-
-    
-    <context-param>
         <param-name>resteasy.servlet.mapping.prefix</param-name>
         <param-value>/restful-services</param-value>
     </context-param>
@@ -130,11 +120,6 @@
   <!--  ============================================================================ -->
 	<!--  SERVLETS								 									   -->
 	<!--  ============================================================================ -->
-
-    <servlet>
-        <servlet-name>Resteasy</servlet-name>
-        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-    </servlet>
 	 
 	 <servlet>
 		<servlet-name>TwitterSummaryTabServlet</servlet-name>
@@ -196,11 +181,6 @@
 	<!--  ============================================================================ -->
 	<!--  SERVLET MAPPINGS						 									   -->
 	<!--  ============================================================================ -->
-    
-    <servlet-mapping>
-        <servlet-name>Resteasy</servlet-name>
-        <url-pattern>/restful-services/*</url-pattern>
-    </servlet-mapping>
     
 	<servlet-mapping>
 		<servlet-name>TwitterSummaryTabServlet</servlet-name>
