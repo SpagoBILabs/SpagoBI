@@ -1,0 +1,121 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>it.eng.spagobi</groupId>
+	<artifactId>spagobi-parent</artifactId>
+	<version>5.2.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>${project.groupId}:${project.artifactId}</name>
+
+	<repositories>
+		<repository>
+			<id>spagobi-releases</id>
+			<url>https://raw.github.com/SpagoBILabs/SpagoBI/mvn-repo/releases</url>
+		</repository>
+	</repositories>
+
+	<modules>
+		<module>../QbeCore</module>
+		<module>../SpagoBIDAO</module>
+		<module>../SpagoBIUtils</module>
+		<module>../SpagoBIUtilsJSON</module>
+		<module>../spagobi-commons-core</module>
+		<module>../spagobi-metamodel-core</module>
+		<module>../spagobi-metamodel-utils</module>
+		<module>../spagobi.birt.oda</module>
+		<module>../spagobi-core</module>
+		<module>../SpagoBIProject</module>
+		<module>../SpagoBIAccessibilityEngine</module>
+		<module>../SpagoBIBirtReportEngine</module>
+		<module>../SpagoBIChartEngine</module>
+		<module>../SpagoBICockpitEngine</module>
+		<module>../SpagoBICommonJEngine</module>
+		<module>../SpagoBIConsoleEngine</module>
+		<module>../SpagoBIDataMiningEngine</module>
+		<module>../SpagoBIGeoEngine</module>
+		<module>../SpagoBIGeoReportEngine</module>
+		<module>../SpagoBIJasperReportEngine</module>
+		<module>../SpagoBIJPivotEngine</module>
+		<module>../SpagoBIMobileEngine</module>
+		<module>../SpagoBINetworkEngine</module>
+		<module>../SpagoBIQbeEngine</module>
+		<module>../SpagoBISocialAnalysis</module>
+		<module>../SpagoBITalendEngine</module>
+		<module>../SpagoBIWhatIfEngine</module>
+	</modules>
+
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<skipTests>true</skipTests>
+		<minimized-dir>${project.build.directory}/minimized</minimized-dir>
+	</properties>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Built-By>SpagoBI Labs</Built-By>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Built-By>SpagoBI Labs</Built-By>
+						</manifestEntries>
+					</archive>
+					<containerConfigXML>/src/main/webapp/META-INF</containerConfigXML>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>

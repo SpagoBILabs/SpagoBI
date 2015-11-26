@@ -1,56 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtils"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate-3.6.2.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-core-2.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-databind-2.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/ehcache-1.1.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtilsJSON"/>
-	<classpathentry kind="lib" path="lib/spago-core-2.2.0.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/QbeCore"/>
-	<classpathentry kind="lib" path="lib/quartz-1.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-validator-1.1.4.jar"/>
-	<classpathentry kind="lib" path="lib/jug-2.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/mail-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/portlet-api-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/spago-portlet-2.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/spago-profile-2.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/spago-web-2.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.8.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-core-3.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-highlighter-3.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/jtidy-r938.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-annotations-2.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/axis-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/axis-jaxrpc-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/axis-saaj-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/axis-wsdl4j-1.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/wss4j-1.5.7.jar"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.9.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="lib/jamon-2.7.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0">
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
 		<attributes>
-			<attribute name="owner.project.facets" value="jst.utility"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/classmate-1.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate-validator-5.2.0.CR1.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate-validator-cdi-5.2.0.CR1.jar"/>
-	<classpathentry kind="lib" path="lib/jboss-logging-3.2.1.Final.jar"/>
-	<classpathentry kind="lib" path="lib/validation-api-1.1.0.Final.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JDK 7">
+	<classpathentry including="**/*.java" kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
 		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry including="**/*.java" kind="src" path="src/test/resources"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
