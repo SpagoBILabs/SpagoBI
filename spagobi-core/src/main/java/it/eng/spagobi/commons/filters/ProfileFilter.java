@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.filters;
 
@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
- * 
+ *
  *         This filter tries to build the user profile object, using the user identifier
  */
 
@@ -46,10 +46,12 @@ public class ProfileFilter implements Filter {
 
 	private static transient Logger logger = Logger.getLogger(ProfileFilter.class);
 
+	@Override
 	public void destroy() {
 		// do nothing
 	}
 
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		// logger.debug("IN");
 		try {
@@ -207,19 +209,22 @@ public class ProfileFilter implements Filter {
 		logger.debug("Tenant [" + tenantId + "] set into TenantManager");
 	}
 
+	@Override
 	public void init(FilterConfig config) throws ServletException {
 		// do nothing
+		logger.debug("IN");
+		logger.debug("OUT");
 	}
 
 	/**
 	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
 	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
-	 * 
+	 *
 	 * @param httpRequest
 	 *            The http request
-	 * 
+	 *
 	 * @return the current user unique identified
-	 * 
+	 *
 	 * @throws Exception
 	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
