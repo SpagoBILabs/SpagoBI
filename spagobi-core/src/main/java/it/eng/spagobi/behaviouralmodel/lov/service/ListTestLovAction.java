@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.behaviouralmodel.lov.service;
@@ -58,7 +58,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 public class ListTestLovAction extends AbstractSpagoBIAction {
 
@@ -120,6 +120,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 						response.put("errorMessage", stacktrace.substring(startIndex, endIndex));
 					responseFailure = e;
 					response.put("testExecuted", "false");
+					throw e;
 				}
 			} else if (typeLov.equalsIgnoreCase("FIXED_LIST")) {
 				FixedListDetail fixlistDet = FixedListDetail.fromXML(looProvider);
@@ -265,7 +266,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 
 	/**
 	 * Executes a select statement.
-	 * 
+	 *
 	 * @param requestContainer
 	 *            The request container object
 	 * @param responseContainer
@@ -276,9 +277,9 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 	 *            the datasource
 	 * @param columnsNames
 	 *            the columns names
-	 * 
+	 *
 	 * @return A generic object containing the Execution results
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
@@ -317,10 +318,9 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 	}
 
 	/**
-	 * Find the attributes of the first row of the xml passed at input: this xml
-	 * is assumed to be: &lt;ROWS&gt; &lt;ROW attribute_1="value_of_attribute_1"
-	 * ... /&gt; .... &lt;ROWS&gt;
-	 * 
+	 * Find the attributes of the first row of the xml passed at input: this xml is assumed to be: &lt;ROWS&gt; &lt;ROW attribute_1="value_of_attribute_1" ...
+	 * /&gt; .... &lt;ROWS&gt;
+	 *
 	 * @param rowsSourceBean
 	 *            The sourcebean to be parsed
 	 * @return the list of the attributes of the first row
