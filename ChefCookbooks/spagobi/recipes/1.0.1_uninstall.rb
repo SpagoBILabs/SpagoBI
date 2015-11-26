@@ -2,7 +2,6 @@
 # Cookbook Name:: spagobi
 # Recipe:: default
 #
-# Copyright 2015, SpagoBI Labs
 #
 # All rights reserved - Do Not Redistribute
 #
