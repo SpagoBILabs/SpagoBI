@@ -1,12 +1,12 @@
 /**
- * 
+ *
  * LICENSE: see LICENSE.html file
- * 
+ *
  */
 package com.tonbeller.jpivot.mondrian;
 
 import groovy.lang.Binding;
-import groovy.util.GroovyScriptEngine;
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -39,8 +39,7 @@ import com.tonbeller.wcf.table.DefaultTableRow;
 import com.tonbeller.wcf.table.TableRow;
 
 /**
- * A wcf table model for drill through data,
- * requires an sql query and connection information to be set.
+ * A wcf table model for drill through data, requires an sql query and connection information to be set.
  */
 
 public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel {
@@ -56,37 +55,40 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 	private String catalogExtension;
 	private int maxResults;
 	private String scriptRootUrl;
-	private List scripts = new ArrayList(); 
-	private GroovyScriptEngine scriptEngine = null;
-	
+	private List scripts = new ArrayList();
+
 	private DataSource dataSource;
 	private static Context jndiContext;
 
 	private boolean ready = false;
-	
+
 	private TableRow[] rows = new TableRow[0];
-	private String [] columnTitles = new String[0];
+	private String[] columnTitles = new String[0];
 
 	public ScriptableMondrianDrillThroughTableModel() {
 	}
 
+	@Override
 	public int getRowCount() {
-		if ( !ready ) {
+		if (!ready) {
 			executeQuery();
 		}
 		return rows.length;
 	}
 
+	@Override
 	public TableRow getRow(int rowIndex) {
-		if ( !ready ) {
+		if (!ready) {
 			executeQuery();
 		}
 		return rows[rowIndex];
 	}
 
+	@Override
 	public String getTitle() {
 		return title;
 	}
+
 	/**
 	 * @return
 	 */
@@ -110,19 +112,20 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 	}
 
 	/**
-	 * wcf table component calls this method from it's constructor
-	 * to get the number of columns
-	 * 
+	 * wcf table component calls this method from it's constructor to get the number of columns
+	 *
 	 */
+	@Override
 	public int getColumnCount() {
-		if ( !ready ) {
+		if (!ready) {
 			executeQuery();
 		}
 		return columnTitles.length;
 	}
 
+	@Override
 	public String getColumnTitle(int columnIndex) {
-		if ( !ready ) {
+		if (!ready) {
 			executeQuery();
 		}
 		return columnTitles[columnIndex];
@@ -130,12 +133,14 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 
 	/**
 	 * execute sql query
+	 *
 	 * @throws Exception
-	 */	
+	 */
 	private void executeQuery() {
-		Connection con=null;
+		Connection con = null;
 		try {
 			InputStream catExtIs = ScriptableMondrianDrillThroughTableModel.class.getClassLoader().getResourceAsStream("/" + catalogExtension);
+			URL scriptsBaseURL = null;
 			if (catExtIs != null) {
 				Digester catExtDigester = new Digester();
 				catExtDigester.push(this);
@@ -144,8 +149,7 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 				catExtDigester.addSetProperties("extension/script");
 				catExtDigester.addSetNext("extension/script", "addScript");
 				catExtDigester.parse(catExtIs);
-				URL scriptsBaseURL = Thread.currentThread().getContextClassLoader().getResource(scriptRootUrl);
-				scriptEngine = new GroovyScriptEngine(new URL[] {scriptsBaseURL});
+				scriptsBaseURL = Thread.currentThread().getContextClassLoader().getResource(scriptRootUrl);
 			}
 			con = getConnection();
 			Statement s = con.createStatement();
@@ -155,9 +159,9 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 			int numCols = md.getColumnCount();
 			List columnTitlesList = new ArrayList();
 			// set column headings
-			for ( int i = 0; i < numCols; i++ ) {
-				//	columns are 1 based
-				columnTitlesList.add(i, md.getColumnName(i+1));
+			for (int i = 0; i < numCols; i++) {
+				// columns are 1 based
+				columnTitlesList.add(i, md.getColumnName(i + 1));
 			}
 			// loop through rows
 			List tempRows = new ArrayList();
@@ -167,21 +171,25 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 				List rowList = new ArrayList();
 				scriptInput.clear();
 				// loop on columns, 1 based
-				for ( int i = 0; i < numCols; i++ ) {
-					rowList.add(i, rs.getObject(i+1));
-					scriptInput.put(columnTitlesList.get(i), rs.getObject(i+1));
+				for (int i = 0; i < numCols; i++) {
+					rowList.add(i, rs.getObject(i + 1));
+					scriptInput.put(columnTitlesList.get(i), rs.getObject(i + 1));
 				}
 				binding.setVariable("input", scriptInput);
 				// loop on script columns
 				for (ListIterator sIt = scripts.listIterator(); sIt.hasNext();) {
-					final ScriptColumn sc = (ScriptColumn)sIt.next();
-					scriptEngine.run(sc.getFile(), binding);
+					final ScriptColumn sc = (ScriptColumn) sIt.next();
+					if (scriptInput != null) {
+						GroovySandbox gs = new GroovySandbox();
+						gs.setBindings(scriptInput);
+						gs.evaluate(scriptsBaseURL);
+					}
 					final Object output = binding.getVariable("output");
 					if (output instanceof Map) {
-						Map outMap = (Map)output;
-						rowList.add(sc.getPosition() - 1, new DefaultCell((String)outMap.get("URL"), (String)outMap.get("Value")));
+						Map outMap = (Map) output;
+						rowList.add(sc.getPosition() - 1, new DefaultCell((String) outMap.get("URL"), (String) outMap.get("Value")));
 					} else if (output instanceof String) {
-						rowList.add(sc.getPosition() - 1, (String)output);
+						rowList.add(sc.getPosition() - 1, output);
 					} else {
 						throw new Exception("Unknown groovy script return type (neither a Map nor a String).");
 					}
@@ -191,10 +199,10 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 			rs.close();
 			// loop on script columns
 			for (ListIterator sIt = scripts.listIterator(); sIt.hasNext();) {
-				final ScriptColumn sc = (ScriptColumn)sIt.next();
+				final ScriptColumn sc = (ScriptColumn) sIt.next();
 				columnTitlesList.add(sc.getPosition() - 1, sc.getTitle());
 			}
-			columnTitles = (String[])columnTitlesList.toArray(new String[0]);
+			columnTitles = (String[]) columnTitlesList.toArray(new String[0]);
 			rows = (TableRow[]) tempRows.toArray(new TableRow[0]);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -206,7 +214,7 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 			Object[] row = new Object[1];
 			row[0] = e.toString();
 			rows[0] = new DefaultTableRow(row);
-			ready=false;
+			ready = false;
 			return;
 		} finally {
 			try {
@@ -217,9 +225,10 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 		}
 		ready = true;
 	}
-	
+
 	/**
 	 * get sql connection
+	 *
 	 * @return
 	 * @throws SQLException
 	 */
@@ -227,10 +236,8 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 		if (dataSourceName == null) {
 
 			if (jdbcUrl == null) {
-				throw new RuntimeException(
-						"Mondrian Connect string '" +
-						"' must contain either '" + RolapConnectionProperties.Jdbc +
-						"' or '" + RolapConnectionProperties.DataSource + "'");
+				throw new RuntimeException("Mondrian Connect string '" + "' must contain either '" + RolapConnectionProperties.Jdbc + "' or '"
+						+ RolapConnectionProperties.DataSource + "'");
 			}
 			return DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword);
 		} else {
@@ -244,19 +251,19 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 			try {
 				dataSource = (DataSource) getJndiContext().lookup(dataSourceName);
 			} catch (NamingException e) {
-				throw new RuntimeException("Error while looking up data source (" +
-						dataSourceName + ")", e);
+				throw new RuntimeException("Error while looking up data source (" + dataSourceName + ")", e);
 			}
 		}
 		return dataSource;
 	}
-	
+
 	private Context getJndiContext() throws NamingException {
 		if (jndiContext == null) {
 			jndiContext = new InitialContext();
 		}
 		return jndiContext;
 	}
+
 	/**
 	 * @return
 	 */
@@ -327,58 +334,58 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 		this.caption = caption;
 	}
 
-    /**
-     * @return
-     */
-    public String getDataSourceName() {
-        return dataSourceName;
-    }
+	/**
+	 * @return
+	 */
+	public String getDataSourceName() {
+		return dataSourceName;
+	}
 
-    /**
-     * @param string
-     */
-    public void setDataSourceName(String string) {
-        dataSourceName = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setDataSourceName(String string) {
+		dataSourceName = string;
+	}
 
-    /**
-     * @return
-     */
-    public String getCatalogExtension() {
-        return catalogExtension;
-    }
+	/**
+	 * @return
+	 */
+	public String getCatalogExtension() {
+		return catalogExtension;
+	}
 
-    /**
-     * @param string
-     */
-    public void setCatalogExtension(String string) {
-    	catalogExtension = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setCatalogExtension(String string) {
+		catalogExtension = string;
+	}
 
-    /**
-     * @return
-     */
+	/**
+	 * @return
+	 */
 	public int getMaxResults() {
 		return maxResults;
 	}
 
-    /**
-     * @param string
-     */
+	/**
+	 * @param string
+	 */
 	public void setMaxResults(int maxResults) {
 		this.maxResults = maxResults;
 	}
 
-    /**
-     * @return
-     */
+	/**
+	 * @return
+	 */
 	public List getScripts() {
 		return scripts;
 	}
 
-    /**
-     * @param List
-     */
+	/**
+	 * @param List
+	 */
 	public void setScripts(List scripts) {
 		this.scripts = scripts;
 	}
@@ -387,16 +394,16 @@ public class ScriptableMondrianDrillThroughTableModel extends AbstractTableModel
 		this.scripts.add(column);
 	}
 
-    /**
-     * @return
-     */
+	/**
+	 * @return
+	 */
 	public String getScriptRootUrl() {
 		return scriptRootUrl;
 	}
 
-    /**
-     * @param String
-     */
+	/**
+	 * @param String
+	 */
 	public void setScriptRootUrl(String scriptRootUrl) {
 		this.scriptRootUrl = scriptRootUrl;
 	}

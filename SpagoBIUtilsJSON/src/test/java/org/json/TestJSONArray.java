@@ -28,7 +28,7 @@ public class TestJSONArray extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -687,7 +687,7 @@ public class TestJSONArray extends TestCase {
 
 			/*
 			 * (non-Javadoc)
-			 *
+			 * 
 			 * @see java.io.Writer#write(char[], int, int)
 			 */
 			@Override
@@ -697,7 +697,7 @@ public class TestJSONArray extends TestCase {
 
 			/*
 			 * (non-Javadoc)
-			 *
+			 * 
 			 * @see java.io.Writer#flush()
 			 */
 			@Override
@@ -707,7 +707,7 @@ public class TestJSONArray extends TestCase {
 
 			/*
 			 * (non-Javadoc)
-			 *
+			 * 
 			 * @see java.io.Writer#close()
 			 */
 			@Override

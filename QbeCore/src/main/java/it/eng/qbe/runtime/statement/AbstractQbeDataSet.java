@@ -35,16 +35,13 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
 
@@ -223,16 +220,14 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			IFieldMetaData fieldMeta = (IFieldMetaData) calculatedFieldsMeta.get(i);
 			DataSetVariable variable = (DataSetVariable) fieldMeta.getProperty("variable");
 
-			ScriptEngineManager scriptManager = new ScriptEngineManager();
-			ScriptEngine groovyScriptEngine = scriptManager.getEngineByName("groovy");
-
+			Map<String, Object> groovyBindings = new HashMap<String, Object>();
 			// handle bindings
 			// ... static bindings first
 			Iterator it = bindings.keySet().iterator();
 			while (it.hasNext()) {
 				String bindingName = (String) it.next();
 				Object bindingValue = bindings.get(bindingName);
-				groovyScriptEngine.put(bindingName, bindingValue);
+				groovyBindings.put(bindingName, bindingValue);
 			}
 
 			// ... then runtime bindings
@@ -245,18 +240,20 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				columns[j] = record.getFieldAt(j).getValue();
 			}
 
-			groovyScriptEngine.put("qFields", qFields); // key = alias
-			groovyScriptEngine.put("dmFields", dmFields); // key = id
-			groovyScriptEngine.put("fields", qFields); // default key = alias
-			groovyScriptEngine.put("columns", columns); // key = col-index
-			groovyScriptEngine.put("api", new GroovyScriptAPI());
+			groovyBindings.put("qFields", qFields); // key = alias
+			groovyBindings.put("dmFields", dmFields); // key = id
+			groovyBindings.put("fields", qFields); // default key = alias
+			groovyBindings.put("columns", columns); // key = col-index
+			groovyBindings.put("api", new GroovyScriptAPI());
 
 			// show time
 			Object calculatedValue = null;
 			try {
-				calculatedValue = groovyScriptEngine.eval(variable.getExpression());
+				GroovySandbox groovySandbox = new GroovySandbox(new Class[] { GroovyScriptAPI.class });
+				groovySandbox.setBindings(groovyBindings);
+				calculatedValue = groovySandbox.evaluate(variable.getExpression());
 
-			} catch (ScriptException ex) {
+			} catch (Exception ex) {
 				calculatedValue = "NA";
 				ex.printStackTrace();
 			}
