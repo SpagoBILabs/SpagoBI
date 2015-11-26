@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -145,7 +146,14 @@ public class UserUtilities {
 				return null;
 			checkTenant(user);
 			user.setFunctions(readFunctionality(user));
-			return new UserProfile(user);
+			UserProfile profile = new UserProfile(user);
+			// putting locale language and country on user attributes:
+			if (profile != null) {
+				Locale defaultLocale = GeneralUtilities.getDefaultLocale();
+				profile.addAttributes(SpagoBIConstants.LANGUAGE, defaultLocale.getLanguage());
+				profile.addAttributes(SpagoBIConstants.COUNTRY, defaultLocale.getCountry());
+			}
+			return profile;
 
 		} catch (Exception e) {
 			logger.error("Exception while creating user profile", e);
@@ -703,7 +711,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 *
+	 * 
 	 * is this method in the right place?
 	 */
 
