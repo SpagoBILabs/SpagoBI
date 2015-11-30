@@ -30,6 +30,7 @@
 <DOMAIN valueCd="DATE" valueNm="sbidomains.nm.date" domainCd="PAR_TYPE" domainNm="Parameter type" valueDs="sbidomains.ds.date"/>
 <DOMAIN valueCd="NUM" valueNm="sbidomains.nm.num" domainCd="PAR_TYPE" domainNm="Parameter type" valueDs="sbidomains.ds.num"/>
 <DOMAIN valueCd="STRING" valueNm="sbidomains.nm.string" domainCd="PAR_TYPE" domainNm="Parameter type" valueDs="sbidomains.ds.string"/>
+<DOMAIN valueCd="DATE_RANGE" valueNm="sbidomains.nm.dateRange" domainCd="PAR_TYPE" domainNm="Parameter type" valueDs="sbidomains.ds.dateRange"/>
 <DOMAIN valueCd="USER" valueNm="sbidomains.nm.user" domainCd="ROLE_TYPE" domainNm="Role type" valueDs="sbidomains.ds.user"/>
 <DOMAIN valueCd="ADMIN" valueNm="sbidomains.nm.admin" domainCd="ROLE_TYPE" domainNm="Role type" valueDs="sbidomains.ds.admin"/>
 <DOMAIN valueCd="DEV_ROLE" valueNm="sbidomains.nm.dev_role" domainCd="ROLE_TYPE" domainNm="Role type" valueDs="sbidomains.ds.dev_role"/>

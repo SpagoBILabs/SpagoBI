@@ -5,34 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.dbaccess.Utils;
-import it.eng.spago.dbaccess.sql.DataConnection;
-import it.eng.spago.dbaccess.sql.DataRow;
-import it.eng.spago.dbaccess.sql.SQLCommand;
-import it.eng.spago.dbaccess.sql.mappers.SQLMapper;
-import it.eng.spago.dbaccess.sql.result.DataResult;
-import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.objects.Couple;
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -51,12 +24,45 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dbaccess.Utils;
+import it.eng.spago.dbaccess.sql.DataConnection;
+import it.eng.spago.dbaccess.sql.DataRow;
+import it.eng.spago.dbaccess.sql.SQLCommand;
+import it.eng.spago.dbaccess.sql.mappers.SQLMapper;
+import it.eng.spago.dbaccess.sql.result.DataResult;
+import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.DateRangeUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.objects.Couple;
+
 //import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 
 /**
  * Defines the <code>QueryDetail</code> objects. This object is used to store Query Wizard detail information.
  */
 public class QueryDetail extends AbstractLOV implements ILovDetail {
+	public static final String TRUE_CONDITION = " ( 1 = 1 ) ";
+
 	private static transient Logger logger = Logger.getLogger(QueryDetail.class);
 
 	private String dataSource = "";
@@ -357,6 +363,12 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *            The execution instance
 	 */
 	private void addFilter(StringBuffer buffer, ObjParuse dependency, List<BIObjectParameter> BIObjectParameters) {
+		BIObjectParameter fatherParameter = getFatherParameter(dependency, BIObjectParameters);
+		if (isDateRange(fatherParameter)) {
+			buffer.append(getDateRangeClause(dependency, fatherParameter));
+			return;
+		}
+
 		String operator = findOperator(dependency, BIObjectParameters);
 		String value = findValue(dependency, BIObjectParameters);
 		if (value != null) {
@@ -366,9 +378,82 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			buffer.append(" " + value + " ");
 			buffer.append(" ) ");
 		} else {
-			buffer.append(" ( 1 = 1 ) "); // in case a filter has no value, add
-											// a TRUE condition
+			buffer.append(TRUE_CONDITION);
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected String getDateRangeClause(ObjParuse dependency, BIObjectParameter fp) {
+		Assert.assertNotNull(fp, "param must be present");
+		List values = fp.getParameterValues();
+		if (notContainsValue(values)) {
+			return TRUE_CONDITION;
+		}
+
+		// Example: 21-10-2019_6Y
+		String value = (String) values.get(0);
+		String typeFilter = dependency.getFilterOperation();
+
+		// operators
+		String left = null;
+		String right = null;
+		if (SpagoBIConstants.NOT_IN_RANGE_FILTER.equals(typeFilter)) {
+			left = "<";
+			right = ">";
+		} else if (SpagoBIConstants.IN_RANGE_FILTER.equals(typeFilter)) {
+			left = ">=";
+			right = "<=";
+		} else {
+			Assert.assertUnreachable("filter not supported");
+		}
+
+		// valid format
+		Date[] startEnd = DateRangeUtils.getDateRangeDates(value);
+		boolean isDateFormat = isDateFormat(getDataSourceDialect());
+		// formats accepted by #composeStringToDt
+		String dateFormat = isDateFormat ? "dd/MM/YYYY" : "dd/MM/YYYY HH:mm:ss";
+		DateFormat df = new SimpleDateFormat(dateFormat);
+		Date startDate = startEnd[0];
+		Date endDate = startEnd[1];
+		if (!isDateFormat) {
+			// add 1 day to end date because it will be transformed to timestamp
+			endDate = DateRangeUtils.addDay(endDate);
+			right = SpagoBIConstants.IN_RANGE_FILTER.equals(typeFilter) ? right = "<" : ">=";
+		}
+		String startDateS = df.format(startDate);
+		String endDateS = df.format(endDate);
+
+		// for query
+		String startDateSQLValue = getSQLDateValue(startDateS, true);
+		String endDateSQLValue = getSQLDateValue(endDateS, true);
+		String columnSQLName = getColumnSQLName(dependency.getFilterColumn());
+
+		// result something line (column>=date start AND column<=date end)
+		String res = String.format(" ( %s%s%s AND %s%s%s) ", columnSQLName, left, startDateSQLValue, columnSQLName, right, endDateSQLValue);
+		return res;
+	}
+
+	/**
+	 * These dialacts use date formats. The others dialects use timestamp format
+	 *
+	 * @param dataSourceDialect
+	 * @return
+	 */
+	private boolean isDateFormat(String dataSourceDialect) {
+		return DIALECT_TERADATA.equals(dataSourceDialect) || DIALECT_INGRES.equals(dataSourceDialect) || DIALECT_HSQL.equals(dataSourceDialect);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static boolean notContainsValue(List values) {
+		return values == null || values.isEmpty() || (values.size() == 1 && values.get(0).equals(""));
+	}
+
+	public static boolean isDateRange(BIObjectParameter biObjectParameter) {
+		if (biObjectParameter != null) {
+			Parameter parameter = biObjectParameter.getParameter();
+			return parameter != null && DATE_RANGE_TYPE.equals(parameter.getType());
+		}
+		return false;
 	}
 
 	private String getColumnSQLName(String columnName) {
@@ -388,11 +473,13 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *            The execution instance
 	 * @return the value to be used in the wrapped statement
 	 */
+	@SuppressWarnings("rawtypes")
 	private String findValue(ObjParuse dependency, List<BIObjectParameter> BIObjectParameters) {
 		String typeFilter = dependency.getFilterOperation();
 		BIObjectParameter fatherPar = getFatherParameter(dependency, BIObjectParameters);
+		Assert.assertNotNull(fatherPar, "param must be present");
 		List values = fatherPar.getParameterValues();
-		if (values == null || values.isEmpty() || (values.size() == 1 && values.get(0).equals(""))) {
+		if (notContainsValue(values)) {
 			return null;
 		}
 		String firstValue = (String) values.get(0);
@@ -462,9 +549,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		} else if (parameterType.equals(SpagoBIConstants.STRING_TYPE_FILTER)) {
 			return "'" + escapeString(value) + "'";
 		} else if (parameterType.equals(SpagoBIConstants.DATE_TYPE_FILTER)) {
-			validateDate(value);
-			String dialect = getDataSourceDialect();
-			String toReturn = composeStringToDt(dialect, value);
+			String toReturn = getSQLDateValue(value, false);
 			return toReturn;
 		} else {
 			logger.error("Parameter type not supported: [" + parameterType + "]");
@@ -472,9 +557,18 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		}
 	}
 
+	private String getSQLDateValue(String value, boolean notValidate) {
+		if (!notValidate) {
+			validateDate(value);
+		}
+		String dialect = getDataSourceDialect();
+		String toReturn = composeStringToDt(dialect, value);
+		return toReturn;
+	}
+
 	private void validateNumber(String value) {
-		if (!(GenericValidator.isInt(value) || GenericValidator.isFloat(value) || GenericValidator.isDouble(value) || GenericValidator.isShort(value) || GenericValidator
-				.isLong(value))) {
+		if (!(GenericValidator.isInt(value) || GenericValidator.isFloat(value) || GenericValidator.isDouble(value) || GenericValidator.isShort(value)
+				|| GenericValidator.isLong(value))) {
 			throw new SecurityException("Input value " + value + " is not a valid number");
 		}
 	}
@@ -483,8 +577,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		String dateFormat = GeneralUtilities.getServerDateFormat();
 		String timestampFormat = GeneralUtilities.getServerTimeStampFormat();
 		if (!GenericValidator.isDate(value, dateFormat, true) && !GenericValidator.isDate(value, timestampFormat, true)) {
-			throw new SecurityException("Input value " + value + " is not a valid date according to the date format " + dateFormat + " or timestamp format "
-					+ timestampFormat);
+			throw new SecurityException(
+					"Input value " + value + " is not a valid date according to the date format " + dateFormat + " or timestamp format " + timestampFormat);
 		}
 	}
 
@@ -495,27 +589,37 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	private void setDataSourceDialect() {
 		SpagoBiDataSource ds = getDataSourceByLabel(dataSource);
 		if (ds != null) {
-			databaseDialect = ds.getHibDialectClass();
-			if (databaseDialect.equalsIgnoreCase(DIALECT_MYSQL)) {
-				ALIAS_DELIMITER = "`";
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_HSQL)) {
-				ALIAS_DELIMITER = "\"";
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_INGRES)) {
-				ALIAS_DELIMITER = "\""; // TODO check it!!!!
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE)) {
-				ALIAS_DELIMITER = "\"";
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE9i10g)) {
-				ALIAS_DELIMITER = "\"";
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_POSTGRES)) {
-				ALIAS_DELIMITER = "\"";
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_SQLSERVER)) {
-				ALIAS_DELIMITER = ""; // TODO check it!!!!
-			} else if (databaseDialect.equalsIgnoreCase(DIALECT_TERADATA)) {
-				ALIAS_DELIMITER = "\"";
-			} else {
-				logger.error("Cannot determine alias delimiter since the database dialect is not set or not recognized!! Using empty string as alias delimiter");
-				ALIAS_DELIMITER = "";
-			}
+			String databaseDialect = ds.getHibDialectClass();
+			setDataSourceDialect(databaseDialect);
+		}
+	}
+
+	/**
+	 * For testing
+	 *
+	 * @param databaseDialect
+	 */
+	protected void setDataSourceDialect(String databaseDialect) {
+		this.databaseDialect = databaseDialect;
+		if (databaseDialect.equalsIgnoreCase(DIALECT_MYSQL)) {
+			ALIAS_DELIMITER = "`";
+		} else if (databaseDialect.equalsIgnoreCase(DIALECT_HSQL)) {
+			ALIAS_DELIMITER = "\"";
+		} else if (databaseDialect.equalsIgnoreCase(DIALECT_INGRES)) {
+			ALIAS_DELIMITER = "\""; // TODO check it!!!!
+		} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE)) {
+			ALIAS_DELIMITER = "\"";
+		} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE9i10g)) {
+			ALIAS_DELIMITER = "\"";
+		} else if (databaseDialect.equalsIgnoreCase(DIALECT_POSTGRES)) {
+			ALIAS_DELIMITER = "\"";
+		} else if (databaseDialect.equalsIgnoreCase(DIALECT_SQLSERVER)) {
+			ALIAS_DELIMITER = ""; // TODO check it!!!!
+		} else if (databaseDialect.equalsIgnoreCase(DIALECT_TERADATA)) {
+			ALIAS_DELIMITER = "\"";
+		} else {
+			logger.error("Cannot determine alias delimiter since the database dialect is not set or not recognized!! Using empty string as alias delimiter");
+			ALIAS_DELIMITER = "";
 		}
 	}
 

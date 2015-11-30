@@ -5,6 +5,11 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.constants;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Defines all SpagoBI's constants.
  */
@@ -112,10 +117,9 @@ public class SpagoBIConstants {
 	public static final String LESS_OR_EQUAL_FILTER = "lessequal";
 	public static final String GREATER_FILTER = "greater";
 	public static final String GREATER_OR_EQUAL_FILTER = "greaterequal";
-	// public static final String LESS_FILTER_TEXT = "less";
-	// public static final String LESS_OR_EQUAL_FILTER_TEXT = "lessequal";
-	// public static final String GREATER_FILTER_TEXT = "greater";
-	// public static final String GREATER_OR_EQUAL_FILTER_TEXT = "greaterequal";
+	public static final String IN_RANGE_FILTER = "inrange";
+	public static final String NOT_IN_RANGE_FILTER = "notinrange";
+
 	public static final String NUMBER_TYPE_FILTER = "NUM";
 	public static final String STRING_TYPE_FILTER = "STRING";
 	public static final String DATE_TYPE_FILTER = "DATE";
@@ -439,4 +443,14 @@ public class SpagoBIConstants {
 	public static final String ENABLE_DATASET_PERSISTENCE = "EnableDatasetPersistence";
 
 	public static final String SPAGOBI_SECURITY_PORTAL_SECURITY_CLASS_PROP_NAME = "SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className";
+
+	// Date Range
+	public static final String DATE_RANGE_OPTION_QUANTITY_PREFIX = "dateRangeOptionQuantity_";
+	public static final String DATE_RANGE_OPTION_TYPE_PREFIX = "dateRangeOptionType_";
+	public static final Set<String> DATE_RANGE_VALID_TYPES = Collections
+			.unmodifiableSet(new HashSet<String>(Arrays.asList("years", "months", "days", "weeks")));
+	public static final String DATE_RANGE_TYPE_JSON = "type";
+	public static final String DATE_RANGE_QUANTITY_JSON = "quantity";
+	public static final String DATE_RANGE_TYPE = "DATE_RANGE";
+	public static final String DATE_RANGE_OPTIONS_KEY = "options";
 }

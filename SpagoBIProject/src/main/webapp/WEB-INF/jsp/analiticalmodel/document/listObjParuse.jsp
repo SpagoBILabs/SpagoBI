@@ -7,6 +7,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
   
 
 
+<%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter"%>
+<%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.service.DetailParameterModule"%>
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
 <%@ page import="java.util.List,
@@ -50,6 +52,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 	String correlationsObjParuseUrl=urlBuilder.getResourceLink(request, "js/analiticalmodel/document/correlationsObjParuse.js");
 	String viewsObjParuseUrl=urlBuilder.getResourceLink(request, "js/analiticalmodel/document/viewsObjParuse.js");
+	
+	
 %>
 
 
@@ -230,9 +234,42 @@ function addRightBreak(index) {
       correlationManager.setPostCondition(index, postcond);
   }	  	  
   
-  
+//enable or siable the date range filter based on param selected
+function selectedParam() {	
+	var selectBox = document.getElementById("dependSelect");
+	if (selectBox == null) {
+		return false;
+	}
+	var selectedOption = selectBox.options[selectBox.selectedIndex];
+
+	var conditionSelect = document.getElementById("conditionSelect");
+	var conditionSelectOptions = conditionSelect.options;
+
+	for (var i=0;i<conditionSelectOptions.length;i++) {
+		var option =conditionSelectOptions[i];
+		var idr=option.getAttribute("data-is-date-range");
+		if (selectedOption.getAttribute("data-is-date-range") === 'true') {
+			//enable only in range filters
+			option.disabled = !(idr === 'true');
+		} else {
+			//date range false
+			option.disabled = (idr === 'true');
+		}
+	}
+	return true;
+} 
+
+//for setting the first time of visualization
+function checkSelectedParam() {
+	var done=selectedParam();
+	if (done === false) {
+    	setTimeout( checkSelectedParam, 500 );
+	}
+}
   
 function generateCorrBlockHtml(indexCorr) {
+	checkSelectedParam();
+
 	var correlation = null;
     if(indexCorr!=null) {
        correlation = correlationManager.getCorrelation(indexCorr);
@@ -240,16 +277,17 @@ function generateCorrBlockHtml(indexCorr) {
     blockHtml = "";
 	blockHtml += "<br/>";
 	blockHtml += "<div class='div_detail_area_forms_objParuse'>";
-	blockHtml += "<table>";
+	blockHtml += "<table >";
 	blockHtml += "	<tr>";
 	blockHtml += "		<td width='50%' style='color:#074B88;font-weight:bold;'>";
 	blockHtml += "		 	<span style='font-size:10pt;'><spagobi:message key = "SBIDev.listObjParuses.dependsFrom" args="<%=biParam.getLabel()%>"/></span>";
 	blockHtml += "		</td>";
 	blockHtml += "		<td>";
-	blockHtml += "			<select style='width:150px' id='dependSelect' name='dependFrom'>";
+	blockHtml += "			<select style='width:150px' id='dependSelect' name='dependFrom' onchange='selectedParam();'>";
 	<%
 		for(int i=0; i<otherBiParameters.size(); i++) {
 			BIObjectParameter otherBiParameter = (BIObjectParameter) otherBiParameters.get(i);
+			boolean isDateRange =DetailParameterModule.isDateRange(otherBiParameter);
 	%>
 	selBiParam = " "; 
 	if(correlation!=null) {
@@ -257,7 +295,7 @@ function generateCorrBlockHtml(indexCorr) {
         selBiParam  = " selected ";
     }
 }
-	blockHtml += "  			<option value='<%=otherBiParameter.getId()%>' "+selBiParam+" >";
+	blockHtml += "  			<option value='<%=otherBiParameter.getId()%>' data-is-date-range='<%=isDateRange%>' "+selBiParam+">";
 	blockHtml += "    				<%=otherBiParameter.getLabel()%>";
 	blockHtml += "  			</option>";
 	<%
@@ -275,6 +313,7 @@ function generateCorrBlockHtml(indexCorr) {
 	blockHtml += "		<td>";
 	//blockHtml += "		  <br/>";
 	blockHtml += "			<select style='width:150px' id='conditionSelect' name='condition'>";
+	
 	selLogOper = " ";
 	if(correlation!=null) {
     if(correlation.condition=='<%=SpagoBIConstants.START_FILTER%>') {
@@ -347,6 +386,29 @@ if(correlation!=null) {
 	blockHtml += "  <option value='<%=SpagoBIConstants.GREATER_OR_EQUAL_FILTER%>' "+selLogOper+"   >";
 	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isGreaterOrEqualThan" />";
 	blockHtml += "  </option>";
+	
+	//Date Range filter
+		selLogOper = " ";
+		if(correlation!=null) {
+		    if(correlation.condition=='<%=SpagoBIConstants.IN_RANGE_FILTER%>') {
+		        selLogOper  = " selected ";
+		    }
+		}
+		blockHtml += "  <option value='<%=SpagoBIConstants.IN_RANGE_FILTER%>' data-is-date-range='true' "+selLogOper+" >";
+		blockHtml += "	   <spagobi:message key = "SBIListLookPage.inRange" />";
+		blockHtml += "  </option>";
+		
+		selLogOper = " ";
+		if(correlation!=null) {
+		    if(correlation.condition=='<%=SpagoBIConstants.NOT_IN_RANGE_FILTER%>') {
+		        selLogOper  = " selected ";
+		    }
+		}
+		blockHtml += "  <option value='<%=SpagoBIConstants.NOT_IN_RANGE_FILTER%>' data-is-date-range='true' "+selLogOper+" >";
+		blockHtml += "	   <spagobi:message key = "SBIListLookPage.notInRange" />";
+		blockHtml += "  </option>";
+	
+
 	blockHtml += "</select></td></tr>";
 	
 	
@@ -616,6 +678,12 @@ function getFilterOpNameFromCode(filterOpCode) {
     if(filterOpCode=='<%=SpagoBIConstants.NOT_CONTAIN_FILTER%>') {
         return '<spagobi:message key = "SBIListLookPage.notcontains" />';
      }
+    if(filterOpCode=='<%=SpagoBIConstants.IN_RANGE_FILTER%>') {
+        return '<spagobi:message key = "SBIListLookPage.inRange" />';
+     }
+    if(filterOpCode=='<%=SpagoBIConstants.NOT_IN_RANGE_FILTER%>') {
+        return '<spagobi:message key = "SBIListLookPage.notInrange" />';
+     }
 }
     
 //************************************ End correlation checks ************************************
@@ -721,12 +789,11 @@ function generateViewBlockHtml(indexView) {
 	blockHtml += "			<span style='font-size:8pt;color:#074B88;'><spagobi:message key="SBIDev.listObjParuses.viewOperatorExplanation" args="<%=biParam.getLabel()%>" /></span>";
 	blockHtml += "		</td>";
 	blockHtml += "		<td align='center'>";
-	//blockHtml += "		  <br/>";
 	blockHtml += "			<select style='width:150px' id='conditionViewSelect' name='condition'>";
 
 	selLogOper = " ";
 
-	//alert('disegno value '+ view.valueCond +' name '+view.nameCond);
+	
 	if(view!=null) {
    		 if(view.valueCond=='<%=SpagoBIConstants.CONTAIN_FILTER%>') {
      		  selLogOper  = " selected ";
@@ -755,15 +822,6 @@ function generateViewBlockHtml(indexView) {
 	blockHtml += "		<td width='50%' style='color:#074B88;font-weight:bold;'>";
 	blockHtml += "		 	<span style='font-size:10pt;'><spagobi:message key = "SBIDev.listObjParuses.listValues" args="<%=biParam.getLabel()%>"/></span>";
 	blockHtml += "		</td>";
-	
-	//blockHtml += "<span style='color:#074B88;font-weight:bold;'><spagobi:message key="SBIDev.listObjParuses.listValues" args="<%=biParam.getLabel()%>" /></span>";
-	//blockHtml += "<hr/>";
-	//blockHtml += "<table style='border-spacing:5px;border-collapse:separate;'>";
-	//blockHtml += "<tr height='30px'>";
-	//blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.isActive" /></td>";
-	//blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.values" /></td>";
-	//blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.viewLabel" /></td>";
-	//blockHtml += "</tr>";
 	
 
     if(view && view.viewLabel) {

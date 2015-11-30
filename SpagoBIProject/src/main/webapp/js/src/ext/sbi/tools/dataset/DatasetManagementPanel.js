@@ -170,7 +170,7 @@ ns.infoButton=function(htmlFile) {
 
 ns.getTextField= function(isRequired,htmlFile,name) {
 	var res= {
-		maxLength : 250,
+		maxLength : 500,
 		minLength : 1,
 		width : 350,
 		regexText : LN('sbi.roles.alfanumericString'),
