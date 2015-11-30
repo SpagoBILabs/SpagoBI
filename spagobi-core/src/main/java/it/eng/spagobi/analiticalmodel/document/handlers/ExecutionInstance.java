@@ -5,6 +5,32 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -25,12 +51,14 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.service.DetailParameterModule;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
@@ -47,33 +75,11 @@ import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
+import it.eng.spagobi.utilities.DateRangeUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.objects.Couple;
-
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * This class represents a document execution instance. This contains the following attributes: 1. execution flow id: it is the id of an execution flow
@@ -113,8 +119,8 @@ public class ExecutionInstance implements Serializable {
 	 *            the execution role
 	 * @throws Exception
 	 */
-	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole,
-			String executionModality, Locale locale) throws Exception {
+	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality,
+			Locale locale) throws Exception {
 
 		logger.debug("IN: input parameters: userProfile = [" + userProfile + "]; flowId = [" + flowId + "]; executionId = [" + executionId + "]; "
 				+ "biobjectId" + biobjectId + "]; executionRole = [" + executionRole + "]");
@@ -133,14 +139,14 @@ public class ExecutionInstance implements Serializable {
 		initBIParameters();
 	}
 
-	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole,
-			String executionModality, boolean displayToolbar, Locale locale) throws Exception {
+	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality,
+			boolean displayToolbar, Locale locale) throws Exception {
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, locale);
 		this.displayToolbar = displayToolbar;
 	}
 
-	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole,
-			String executionModality, boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
+	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality,
+			boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, displayToolbar, locale);
 		this.displaySliders = displaySliders;
 	}
@@ -606,8 +612,8 @@ public class ExecutionInstance implements Serializable {
 
 			List values = biparam.getParameterValues();
 			if (biparam.isRequired() && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
-				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null,
-						null, null);
+				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null, null,
+						null);
 				errorsOnChecks.add(error);
 			}
 
@@ -1199,23 +1205,20 @@ public class ExecutionInstance implements Serializable {
 						Iterator r = list.iterator();
 						while (r.hasNext()) {
 							String value = (String) r.next();
+
 							if (value != null && !value.equals("")) {
-								// encoding value
-								try {
-									value = URLEncoder.encode(value, "UTF-8");
-								} catch (UnsupportedEncodingException e) {
-									logger.warn("UTF-8 encoding is not supported!!!", e);
-									logger.warn("Using system encoding...");
-									value = URLEncoder.encode(value);
+
+								String parameterUrlName = aParameter.getParameterUrlName();
+								if (DetailParameterModule.isDateRange(aParameter.getParameter())) {
+									manageDateRangeParameter(value, buffer, parameterUrlName);
+									continue;
 								}
-								buffer.append("&" + aParameter.getParameterUrlName() + "=" + value);
+
+								addParamValue(parameterUrlName, value, buffer);
 							}
 						}
 					}
-					/*
-					 * ParameterValuesEncoder encoder = new ParameterValuesEncoder(); String encodedValue = encoder.encode(aParameter); if(encodedValue!=null &&
-					 * !encodedValue.equals("")){ buffer.append("&" + aParameter.getParameterUrlName() + "=" + encodedValue); }
-					 */
+
 				}
 			}
 			url = buffer.toString();
@@ -1223,6 +1226,46 @@ public class ExecutionInstance implements Serializable {
 
 		logger.debug("OUT: returning url = [" + url + "]");
 		return url;
+	}
+
+	@SuppressWarnings("deprecation")
+	private static String encode(String value) {
+		try {
+			return URLEncoder.encode(value, "UTF-8");
+		} catch (Exception e) {
+			logger.warn("UTF-8 encoding is not supported!!! Using system encoding...", e);
+			return URLEncoder.encode(value);
+		}
+	}
+
+	/**
+	 * Example: 21-10-2019_6Y
+	 *
+	 * @param value
+	 * @param buffer
+	 * @param paramName
+	 * @throws ParseException
+	 * @throws UnsupportedEncodingException
+	 */
+	protected static void manageDateRangeParameter(String value, StringBuffer buffer, String paramName) {
+
+		Date[] dates = DateRangeUtils.getDateRangeDates(value);
+		String option = DateRangeUtils.getOption(value);
+		// parameters to pass to engine
+		addParamValue(paramName + "_begin", toString(dates[0]), buffer);
+		addParamValue(paramName + "_duration", option, buffer);
+		addParamValue(paramName + "_end", toString(dates[1]), buffer);
+	}
+
+	private static void addParamValue(String name, String value, StringBuffer buffer) {
+		buffer.append("&" + name + "=" + encode(value));
+	}
+
+	private static String toString(Date d) {
+		SingletonConfig config = SingletonConfig.getInstance();
+		String formatSB = config.getConfigValue("SPAGOBI.DATE-FORMAT.format");
+		formatSB = formatSB == null ? "dd/MM/yyyy" : formatSB;
+		return new SimpleDateFormat(formatSB).format(d);
 	}
 
 	private void addSystemParametersForExternalEngines(Map mapPars, Locale locale) {

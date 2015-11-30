@@ -9,14 +9,6 @@ import static java.util.Calendar.MINUTE;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.SECOND;
 import static java.util.Calendar.YEAR;
-import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecordMatcher;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.utilities.HelperForTest;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -26,6 +18,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecordMatcher;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.HelperForTest;
 import junit.framework.TestCase;
 
 public class JSONPathDataReaderTest extends TestCase {
@@ -199,6 +199,27 @@ public class JSONPathDataReaderTest extends TestCase {
 		fail();
 	}
 
+	public void testReadNull() throws IOException, ParseException {
+		String json = HelperForTest.readFile("dataReader-test-null.json", this.getClass());
+		JSONPathDataReader reader = getJSONPathDataReaderNull();
+		IDataStore read = reader.read(json);
+		assertEquals(2, read.getRecordsCount());
+		IRecord rec1 = read.getRecordAt(0);
+		IMetaData metaData = read.getMetaData();
+		boolean done=false;
+		for (int i = 0; i < metaData.getFieldCount(); i++) {
+			IFieldMetaData fieldMeta = metaData.getFieldMeta(i);
+			if ("a".equals(fieldMeta.getName())) {
+				IField field = rec1.getFieldAt(i);
+				assertNull(field.getValue());
+				done = true;
+			}
+			
+		}
+		
+		assertTrue(done);
+	}
+
 	public void testRead() throws IOException, ParseException {
 		String json = HelperForTest.readFile("dataReader-test.json", this.getClass());
 		JSONPathDataReader reader = getJSONPathDataReaderOrion();
@@ -253,8 +274,23 @@ public class JSONPathDataReaderTest extends TestCase {
 		}
 	}
 
+	public void testReadNoData() throws IOException, ParseException {
+		String json = HelperForTest.readFile("dataReader-test-no-data.json", this.getClass());
+		JSONPathDataReader reader = getJSONPathDataReaderOrion();
+		IDataStore read = reader.read(json);
+		assertEquals(0, read.getRecordsCount());
+		IMetaData metaData = read.getMetaData();
+		int fieldCount = metaData.getFieldCount();
+		assertEquals(5, fieldCount);
+	}
+
 	public static JSONPathDataReader getJSONPathDataReaderOrion() {
 		JSONPathDataReader reader = new JSONPathDataReader("$.contextResponses[*].contextElement", getJsonPathAttributes(), false, false);
+		return reader;
+	}
+
+	public static JSONPathDataReader getJSONPathDataReaderNull() {
+		JSONPathDataReader reader = new JSONPathDataReader("$.contextResponses[*]", getJsonPathAttributesNull(), false, false);
 		return reader;
 	}
 
@@ -280,6 +316,20 @@ public class JSONPathDataReaderTest extends TestCase {
 
 		JSONPathAttribute jpa5 = new JSONPathAttribute("isPattern", "$.isPattern", "boolean");
 		res.add(jpa5);
+		return res;
+	}
+
+	private static List<JSONPathAttribute> getJsonPathAttributesNull() {
+		List<JSONPathAttribute> res = new ArrayList<JSONPathDataReader.JSONPathAttribute>();
+		JSONPathAttribute jpa = new JSONPathAttribute("a", "$.a", "string");
+		res.add(jpa);
+
+		JSONPathAttribute jpa2 = new JSONPathAttribute("c", "$.c", "string");
+		res.add(jpa2);
+
+		JSONPathAttribute jpa3 = new JSONPathAttribute("e", "$.e", "string");
+		res.add(jpa3);
+
 		return res;
 	}
 

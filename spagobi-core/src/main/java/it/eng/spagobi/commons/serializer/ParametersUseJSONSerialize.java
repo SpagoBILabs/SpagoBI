@@ -30,7 +30,9 @@ public class ParametersUseJSONSerialize implements Serializer {
 	public static final String DEFAULTFORMULA = "DEFAULTFORMULA";
 	public static final String ROLESLIST = "ROLESLIST";
 	public static final String CONSTLIST = "CONSTLIST";
+	private static final String OPTIONS = "OPTIONS";
 
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 
 		JSONObject result = null;
@@ -58,6 +60,7 @@ public class ParametersUseJSONSerialize implements Serializer {
 			result.put(EXPENDABLE, parameterUse.isMaximizerEnabled());
 			result.put(DEFAULTLOVID, parameterUse.getIdLovForDefault());
 			result.put(DEFAULTFORMULA, parameterUse.getDefaultFormula());
+			result.put(OPTIONS, parameterUse.getOptions());
 
 			JSONArray ja = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(parameterUse.getAssociatedRoles(), null);
 			if (ja != null) {

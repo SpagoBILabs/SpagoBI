@@ -46,6 +46,16 @@
 
 Ext.ns("Sbi.execution");
 
+var assert= function(condition, message) {
+    if (!condition) {
+        message = message || "Assertion failed";
+        if (typeof Error !== "undefined") {
+            throw new Error(message);
+        }
+        throw message; // Fallback
+    }
+};
+
 Sbi.execution.ParametersPanel = function(config, doc) {
 	
 	var defaultSettings = {
@@ -1168,7 +1178,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var field = this.fields[p];
 			if(field.isVisible()) {
 				this.addField(field, index++);
-				//var field = this.createField( this.parameters[0] );
 				this.addField(field, index++);
 				Sbi.trace('[ParametersPanel.refreshFields] : field [' + p + '] succesfully added');
 			} else {
@@ -1187,7 +1196,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var newPanel = new Ext.Panel({
 	        layout: 'form'
 	        , autoDestroy: false
-	        //, title: 'miaoooooo'
 	        , colspan: this.columnNo > 1 ? field.colspan : 1
 	        , border: false
 	        , autoScroll: true
@@ -1280,7 +1288,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		baseConfig.format = Sbi.config.localizedDateFormat;
 		
-		field = new Ext.form.DateField(baseConfig);
+		var field = new Ext.form.DateField(baseConfig);
 		
 		if(p.value !== undefined && p.value !== null) {	
 			var dt = Sbi.commons.Format.date(p.value, Sbi.config.clientServerDateFormat);
@@ -1291,8 +1299,132 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 	}
 
-	, createLookupField: function( baseConfig, executionInstance )  {
+	/*
+	*	Create a DateRange field. This is a field set of 3 fields: Start Date,
+	*	Combobox of options and readonly End Date. It simulates a field with set/getValue methods.
+	*
+	*/
+	, createDateRangeField : function( baseConfig, executionInstance ) {
+		var p = baseConfig.parameter;
+
+		//start date field
+		var confStart=Ext.apply({isDateRange:true}, baseConfig);
+		var start = this.createDateField(confStart,executionInstance);
+		start.addListener('valid',function(){refreshEnd();});
+
+		//combobox of options
+		var confPeriods = Ext.apply({
+				isDateRange:true,
+				cls:'date-range-param',
+				select : function(){refreshEnd();}
+			}, baseConfig);
+		var periods = this.createComboField(confPeriods,executionInstance);
+
+		//readonly end date field
+		var confEnd = Ext.apply({isDateRange:true,cls:'date-range-param',readOnly:true}, baseConfig);
+		var end = this.createDateField(confEnd,executionInstance);
 		
+		var res = new Ext.form.FieldSet({
+			items:[start,periods,end],
+			cls:'date-range-param'
+		});
+
+		//return type (years,months...) and quantity (1,3...) of date range
+		function getTypeQuantity() {
+			//value = type + "_" + quantity
+			var periodDate = periods.getValue();
+			if (periodDate == null || periodDate.length == 0) {
+				return null;
+			}
+
+			var typeQuantity=periodDate.split("_");
+			assert(typeQuantity.length == 2,"not valid date range value");
+			return typeQuantity;
+		}
+
+		//refresh the end date based on start date and option selected
+		function refreshEnd() {
+			var typeQuantity=getTypeQuantity();
+			if (typeQuantity === null) {
+				return; //not defined
+			}
+
+			var startDate = start.getValue();
+			if (startDate == null) {
+				return null;
+			}
+
+			var type=typeQuantity[0]; var quantity=typeQuantity[1];
+
+			//possible values in detailParameter.jsp
+			var newDate = null;
+			if (type === 'days') {
+				newDate  = new Date(startDate.getTime()+86400000*parseInt(quantity));
+			} else if (type === 'weeks') {
+				newDate  = new Date(startDate.getTime()+86400000*7*parseInt(quantity));
+			} else if (type === 'months') {
+				newDate = new Date(startDate.getTime());
+				newDate.setMonth(newDate.getMonth() + parseInt(quantity));
+			} else if (type === 'years') {
+				newDate = new Date(startDate.getTime());
+				newDate.setFullYear(newDate.getFullYear() + parseInt(quantity));
+			}
+			assert(newDate != null,"date range type not supported: "+type);
+			end.setValue(newDate);
+		}
+
+		//pad with 0, s:int
+		function padDate(s) {
+			var res=""+s;
+			assert(res.length === 1 || res.length === 2,"at least one digit must be present");
+			if (res.length === 1) { //1
+				res="0"+res;
+			}
+			return res;
+		}
+
+		//for simulating a field
+		Ext.applyIf(res, {
+			getValue : function () {
+				var typeQuantity=getTypeQuantity();
+				if (typeQuantity === null) {
+					return '';
+				}
+
+				var startDate = start.getValue();
+				if (startDate == null) {
+					return '';
+				}
+
+				var type=typeQuantity[0]; var quantity=typeQuantity[1];
+				//6 years -> 6Y
+				//return  day-month-year_6Y
+				var res=padDate(startDate.getDate())+"-"+padDate(startDate.getMonth()+1)+"-"+startDate.getFullYear();
+				res+="_"+(quantity+type.charAt(0)).toUpperCase();
+				return res;
+			},
+			setValue : function (value) {
+				//nothing
+			},
+			getRawValue : function () {
+				return this.getValue();
+			},
+			setRawValue : function (value) {
+				//nothing
+			},
+			clearInvalid : function() {
+				start.clearInvalid();
+				periods.clearInvalid();
+				end.clearInvalid();
+			},
+			allowBlank:true, //permits to execute document when it's empty
+			name : p.id
+		});
+
+		return res;
+	}
+
+	, createLookupField: function( baseConfig, executionInstance )  {
 		var p = baseConfig.parameter;
 		
 		var params = this.getBaseParams(p, executionInstance, 'complete');
@@ -1304,7 +1436,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			return true;
 		}, this);
 		
-		field = new Sbi.widgets.LookupField(Ext.apply(baseConfig, {
+		var field = new Sbi.widgets.LookupField(Ext.apply(baseConfig, {
 			  store: store
 				, params: params
 				, readOnly: true
@@ -1325,7 +1457,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		params.LIGHT_NAVIGATOR_DISABLED = 'TRUE';
 		
 		
-		field = new Sbi.widgets.TreeLookUpField(Ext.apply(baseConfig,{
+		var field = new Sbi.widgets.TreeLookUpField(Ext.apply(baseConfig,{
 			params: params, 
 			allowInternalNodeSelection: p.allowInternalNodeSelection,
 			service: this.services['getParameterValueForExecutionService']
@@ -1368,7 +1500,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var sliderWidth = 200 * p.colspan;
 		baseConfig.width  = sliderWidth;
 		
-		field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
+		var field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
 			multiSelect: p.multivalue,
 			store :  store,
 			displayField:'label',
@@ -1386,12 +1518,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		return field;
 	}
 	
-	, createComboField: function( baseConfig, executionInstance ) {
+	, createComboField: function( baseConfig, executionInstance ) { 
 		
 		var p = baseConfig.parameter;
 		
 		if(!p.colspan) p.colspan = 1;
-		var comboWidth = 200 * p.colspan;
+		var comboWidth = (baseConfig.isDateRange?180:200) * p.colspan;
 		baseConfig.width  = comboWidth;
 		
 		var store = this.createCompleteStore(p, executionInstance, 'simple');
@@ -1424,7 +1556,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}
 		
 		
-		field = new Ext.ux.Andrie.Select(Ext.apply(baseConfig, {
+		var field = new Ext.ux.Andrie.Select(Ext.apply(baseConfig, {
 			multiSelect: p.multivalue
 			//, minLength:2
 			, editable  : false			    
@@ -1460,6 +1592,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var store = this.createCompleteStore(p, executionInstance, 'simple');
 		
+		var field = null;
 		if(p.multivalue) {	
 			field = new Sbi.widgets.CheckboxField(Ext.apply(baseConfig, {
 	           store : store
@@ -1506,6 +1639,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		labelStyle += 'width: '+this.baseConfig.fieldLabelWidth+'px;';
 		baseConfig.labelStyle = labelStyle;
 		
+
 		if((this.mandatoryFieldAdditionalString!=null && this.mandatoryFieldAdditionalString!=undefined) && p.mandatory === true ){
 			if(baseConfig.fieldDefaultLabel!=undefined && baseConfig.fieldDefaultLabel!=null){
 				baseConfig.fieldDefaultLabel =  baseConfig.fieldDefaultLabel+' *';
@@ -1515,8 +1649,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 		}
 		
-		if(p.type === 'DATE' && p.selectionType !== 'MAN_IN') {		
+
+		if((p.type === 'DATE' && p.selectionType !== 'MAN_IN') ) {		
 			field = this.createDateField( baseConfig, this.executionInstance );
+		} else if (p.type === 'DATE_RANGE') {
+			field = this.createDateRangeField( baseConfig, this.executionInstance );
 		} else if(p.selectionType === 'LIST') {
 			var baseParams = {};
 			Ext.apply(baseParams, this.executionInstance);
@@ -1564,19 +1701,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		} else if(p.selectionType === 'SLIDER') { 
 			field = this.createSliderField( baseConfig, this.executionInstance );
 		} else { 
-//			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
-//				baseConfig.format = Sbi.config.localizedDateFormat;
-//				field = new Ext.form.DateField(baseConfig);
-//				if(p.type ==='DATE_DEFAULT') {
-//					field.setValue(new Date());
-//				}		
-//			} else {
+
 				if (p.enableMaximizer) {
 					field = new Sbi.execution.LookupFieldWithMaximize(baseConfig);
 				} else {
 					field = new Ext.form.TextField(baseConfig);
 				}	
-//			}			
+		
 		}
 		
 		if(!field) {

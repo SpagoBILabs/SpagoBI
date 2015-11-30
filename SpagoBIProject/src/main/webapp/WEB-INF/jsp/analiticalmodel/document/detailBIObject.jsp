@@ -861,7 +861,9 @@ function saveDocument(goBack) {
 				</div>	
 
         <script>
-            Ext.get('deletePreviewLink').on('click', function(){
+            var dpl=Ext.get('deletePreviewLink');
+            if (dpl) {
+            	dpl.on('click', function() {
                 
             	
             	<% if(obj.getPreviewFile()!= null){ %>
@@ -910,7 +912,9 @@ function saveDocument(goBack) {
 
                 <% }%>
             	}
-     );
+           
+     		);  
+          }
             
         </script>
 

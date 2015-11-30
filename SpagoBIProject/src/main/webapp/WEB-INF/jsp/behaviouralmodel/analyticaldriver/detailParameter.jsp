@@ -281,9 +281,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
    // list of modalityValues
    IModalitiesValueDAO aModalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
    List allModalitiesValues = aModalitiesValueDAO.loadAllModalitiesValueOrderByCode();  
-   
-   //IDomainDAO domaindao = DAOFactory.getDomainDAO() ;
-   //List typeLov = domaindao.loadListDomainsByType("INPUT_TYPE");
 
 %>
 
@@ -409,48 +406,53 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			   value="<%=paruse.getDescription() == null ? "" : StringEscapeUtils.escapeHtml(paruse.getDescription())%>" maxlength="160">
 	</div>
 	
+<%if (!parameter.getType().equals("DATE_RANGE")) { %>
 	<div class='div_detail_label'>
 		<span class='portlet-form-field-label'>
-		  		<%if(parameter.getType().equals("DATE")){ %>
-  					<spagobi:message key = "SBIDev.ListParamUse.parInfo.Default"/>
-  				<%}else{ %>
-  					<spagobi:message key = "SBIDev.ListParamUse.parInfo.Name"/>
-  				<%} %>
+	  		<%if(parameter.getType().equals("DATE")){ %>
+				<spagobi:message key = "SBIDev.ListParamUse.parInfo.Default"/>
+			<%} else{ %>
+				<spagobi:message key = "SBIDev.ListParamUse.parInfo.Name"/>
+			<%} %>
 
-	</span>
+		</span>
 	</div>
-	
+<% }  %>
+
+<%if (!parameter.getType().equals("DATE_RANGE")) { %>
 	<div class='div_detail_form' id = 'divForm' >
-	<% String lovName = null;
-  	   Integer idLov = null;
-  	   idLov = paruse.getIdLov();
-  	   Integer idLovInit = new Integer(-1);
-  	   if(idLov!= null){
-  	   if(!idLov.toString().equals(idLovInit.toString())) {
-  		   	ModalitiesValue modVal  = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(idLov);
-  			lovName = modVal.getName();
-  	   }
-  	   }
-  	   
-  	%>
-  		<% 
-    	boolean isManualInput = false;
-  		boolean maximizerEnabled = false;
-  		String maximizerDisabled = disabled;
-    	boolean isLov = false;
-    	int manual = 0;
-    	if (paruse.getManualInput()!= null) {
-    		manual = paruse.getManualInput().intValue();
-    	}
-    	if(manual > 0) { 
-    		isManualInput = true;
-    		maximizerEnabled = paruse.isMaximizerEnabled();
-    	} else {
-    		isLov = true;
-    		maximizerEnabled = false;
-    		maximizerDisabled = "disabled";
-    	}
-    %> 
+<% }   
+
+  String lovName = null;
+  Integer idLov = null;
+  idLov = paruse.getIdLov();
+  Integer idLovInit = new Integer(-1);
+  if(idLov!= null){
+  if(!idLov.toString().equals(idLovInit.toString())) {
+   	ModalitiesValue modVal  = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(idLov);
+	lovName = modVal.getName();
+  }
+  }
+  
+	boolean isManualInput = false;
+	boolean maximizerEnabled = false;
+	String maximizerDisabled = disabled;
+	boolean isLov = false;
+	int manual = 0;
+	if (paruse.getManualInput()!= null) {
+		manual = paruse.getManualInput().intValue();
+	}
+	if(manual > 0) { 
+		isManualInput = true;
+		maximizerEnabled = paruse.isMaximizerEnabled();
+	} else {
+		isLov = true;
+		maximizerEnabled = false;
+		maximizerDisabled = "disabled";
+	}
+%> 
+    
+<%if (!parameter.getType().equals("DATE_RANGE")) { %>
   		<input type="radio" name="valueSelection"  id ="valueSelection" value="lov" <%=disabled%> <% if(isLov) { out.println(" checked='checked' "); } %> onClick = "lovControl();manualInputSelection=this.value;" />
   	
 		<input 	class='portlet-form-input-field' type="text" id="paruseLovName" <%=disabled%>
@@ -464,16 +466,17 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		   		src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/detail.gif", currTheme)%>' 
 		   		title='Lov Lookup' alt='Lov Lookup'/>
 			 
-		 </div>	
+	</div>
+<% }  %>
 		 
 		 
-		 <div class='div_detail_label'>
-	<span class='portlet-form-field-label'>
-		&nbsp;
-	</span>
+<%if(!parameter.getType().equals("DATE") && !parameter.getType().equals("DATE_RANGE")){ %>
+	<div class='div_detail_label'>
+		<span class='portlet-form-field-label'>
+			&nbsp;
+		</span>
 	</div>	
-		<div class='div_detail_form' id = 'divForm' >
-	<%if(!parameter.getType().equals("DATE")){ %>
+	<div class='div_detail_form' id = 'divForm' >
 		<select class='portlet-form-input-field' NAME="selectionType" id="paruseSelType" <% if (isManualInput) { out.print("disabled='disabled'"); } %>>
 		<% 
 		 String curr_seltype_val = paruse.getSelectionType();
@@ -486,26 +489,19 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
         	<%=domain.getTranslatedValueName(locale)%>
        <%} %>
        </select>  
-       	<%}else{ 
-	%>
-		<input type="hidden" NAME="selectionType" id="paruseSelType" value="COMBOBOX" />
-
-	<%}%>
-       </div>	     
+    </div>	     
+<% } else { %>
+	<input type="hidden" NAME="selectionType" id="paruseSelType" value="COMBOBOX" />
+<%}%>
 	
-	
-
 
 	<div class='div_detail_label'>
 		<span class='portlet-form-field-label'>
 			<spagobi:message key = "SBIDev.paramUse.manInputCheck" />
 		</span>
 	</div>
-	<div class='div_detail_form'>
-		
-		<input type="radio"  name="valueSelection" <%=disabled%> id ="valueSelection" value="man_in" <% if(isManualInput) { out.println(" checked='checked' "); } %> onClick = "lovControl();manualInputSelection=this.value;" ></input>
-    	
-
+	<div class='div_detail_form'>	
+		<input type="radio"  name="valueSelection" <%=disabled%> id ="valueSelection" value="man_in" <% if(isManualInput || parameter.getType().equals("DATE_RANGE")) { out.println(" checked='checked' "); } %> onClick = "lovControl();manualInputSelection=this.value;" ></input>
 	</div>
 	
 	<div class='div_detail_label'>
@@ -518,7 +514,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	</div>
 	
 	
-	<% 
+	<%
+
 	String defaultLovName = null;
     Integer idLovForDefault = paruse.getIdLovForDefault() != null ? paruse.getIdLovForDefault() : -1;
     Integer idLovInitForDefault = new Integer(-1);
@@ -528,7 +525,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     }
     String defaultFormula = paruse.getDefaultFormula() != null ? paruse.getDefaultFormula().trim() : "";
     %>
-	
+
+<% if (!parameter.getType().equals("DATE_RANGE")) { %>
     <div class='div_detail_label'>
         <span class='portlet-form-field-label'>
             <spagobi:message key = "SBIDev.paramUse.defaultValue" />
@@ -571,6 +569,91 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
             <option value="LAST" <%= defaultFormula.equals("LAST") ? "selected='selected'" : "" %> ><spagobi:message key="SBIDev.paramUse.useFormulaForDefault.LAST" /></option>
        </select>
     </div>
+<% } else {%>
+
+  
+  <!-- Date Range management -->
+	<div class='div_detail_label'>
+		<span class='portlet-form-field-label'>Options</span>
+	</div>
+
+	<div class='div_detail_form' style="height: auto;">
+		<table id='dateRangeTableOptions'>
+			<tr class='portlet-form-field-label'>
+				<th ></th>
+				<th >Period</th>
+				<th>Quantity</th>
+				<!-- add button: in the header -->
+				<th>
+					<a alt='Add option' title='Add option' href='javascript:addDateRangeTableOption()'><img src='/SpagoBI/themes/sbi_default/img/new.png'></a>
+				</th>
+			</tr>
+		</table>
+	</div>
+
+
+	<script type="text/javascript">
+		var currentDateRangeOptionId=0;
+		//[[value, description]]
+		var dateRangeOptions = [["years","<spagobi:message key = "SBIDev.paramUse.years" />"],["months","<spagobi:message key = "SBIDev.paramUse.months" />"],["weeks","<spagobi:message key = "SBIDev.paramUse.weeks" />"],["days","<spagobi:message key = "SBIDev.paramUse.days" />"]];
+		
+		var optionsToLoad = '<%=paruse.getOptions()==null?"":paruse.getOptions() %>';
+		if (optionsToLoad.length != 0) {
+			addDateRangeTableOptions(JSON.parse(optionsToLoad).options);
+		} else {
+			//at least 1 option, with 1 years (0 options not allowed)
+			addDateRangeTableOptions([{type:dateRangeOptions[0][0],quantity:1}]);
+		}
+
+		/**
+		* Add the existing saved options
+		*/
+		function addDateRangeTableOptions(options) {
+			for (var i=0;i<options.length;i++) {
+				var opt=options[i]; //{type:,quantity:}
+				addDateRangeTableOption(opt);
+			}
+		}
+
+		/** 
+		* Add a saved or new option to table: opt = {type:,quantity:} , can be null (new option added)
+		*/
+		function addDateRangeTableOption(opt) {
+			var table=document.getElementById('dateRangeTableOptions');
+			var row=table.insertRow(-1);
+			var remove=row.insertCell(-1);
+			remove.innerHTML="<a alt='Remove option' title='Remove option' onclick='removeRow(this)'><img src='/SpagoBI/themes/sbi_default/img/erase.gif'></a>"
+			
+			var type=row.insertCell(-1);
+			type.innerHTML=getTypeCombo(currentDateRangeOptionId,opt?opt.type:null);
+			
+			var quantity=row.insertCell(-1);
+			quantity.innerHTML="<input type='number' required='true' name='dateRangeOptionQuantity_"+currentDateRangeOptionId+"' value='"+(opt?opt.quantity:"1")+"' ></input>"
+			
+			row.insertCell(-1); //add
+			currentDateRangeOptionId+=1;
+		}
+
+		//return the HTML of combobox of type of period (years,months and days)
+		function getTypeCombo(optionId,type) {
+			var res = "<select name='dateRangeOptionType_"+optionId+"'>";
+			for (var i=0;i<dateRangeOptions.length;i++) {
+				res+="<option value='"+dateRangeOptions[i][0]+"' "+(type===dateRangeOptions[i][0]?"selected":"")+">"+dateRangeOptions[i][1]+"</option>";
+			}
+			res+="</select>";
+			return res;
+		}
+
+		//remove a row of table
+		function removeRow(removeButton) {
+			var cell=removeButton.parentNode;
+			var row=cell.parentNode;
+			var table=row.parentNode;
+			table.removeChild(row);
+		}
+	</script>
+	
+<% } %>
 </div>
 
 
@@ -731,7 +814,7 @@ function isParuseformModified () {
 	var paruseLabel = document.getElementById('paruseLabel').value;
 	var paruseName = document.getElementById('paruseName').value;
 	var paruseDescription = document.getElementById('paruseDescription').value;
-	var paruseLovId = document.getElementById('paruseLovId').value;
+	var paruseLovId = document.getElementById('paruseLovId')?document.getElementById('paruseLovId').value:'';
 	var manIn;
 	if (manualInputSelection == 'lov') {
 		manIn = 0;

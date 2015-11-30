@@ -5,6 +5,22 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexport;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+
 import it.eng.qbe.runtime.dataset.QbeDataSet;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -157,22 +173,6 @@ import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.bo.UdpValue;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 
 /**
  * Implements methods to insert exported metadata into the exported database
@@ -1040,9 +1040,9 @@ public class ExporterMetadata {
 
 	/*
 	 * public void insertKpiDocuments(KpiDocuments docs, Session session) throws EMFUserError { logger.debug("IN"); try { Transaction tx =
-	 * session.beginTransaction(); session.save(hibBIObj); tx.commit(); }catch (Exception e) {
-	 * logger.error("Error while inserting biobject into export database " , e); throw new EMFUserError(EMFErrorSeverity.ERROR, "8005",
-	 * ImportManager.messageBundle); }finally{ logger.debug("OUT"); } }
+	 * session.beginTransaction(); session.save(hibBIObj); tx.commit(); }catch (Exception e) { logger.error(
+	 * "Error while inserting biobject into export database " , e); throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
+	 * }finally{ logger.debug("OUT"); } }
 	 */
 
 	/**
@@ -1335,6 +1335,7 @@ public class ExporterMetadata {
 			hibParuse.setMaximizerEnabled(parUse.isMaximizerEnabled());
 			hibParuse.setSelectionType(parUse.getSelectionType());
 			hibParuse.setMultivalue(parUse.isMultivalue() ? new Integer(1) : new Integer(0));
+			hibParuse.setOptions(parUse.getOptions());
 			session.save(hibParuse);
 			tx.commit();
 		} catch (Exception e) {
@@ -1433,8 +1434,8 @@ public class ExporterMetadata {
 					// dipendenze non dovrebbero essere riutilizzabili, per
 					// cui vengono inseriti una sola volta
 					Query hibQuery = session.createQuery(" from SbiObjParview where id.sbiObjPar.objParId = " + objParview.getObjParId()
-							+ " and id.sbiObjParFather.objParId = " + objParview.getObjParFatherId() + " and id.compareValue = '"
-							+ objParview.getCompareValue() + "'" + " and id.operation = '" + objParview.getOperation() + "'");
+							+ " and id.sbiObjParFather.objParId = " + objParview.getObjParFatherId() + " and id.compareValue = '" + objParview.getCompareValue()
+							+ "'" + " and id.operation = '" + objParview.getOperation() + "'");
 					List hibList = hibQuery.list();
 					if (!hibList.isEmpty()) {
 						continue;
@@ -1853,8 +1854,8 @@ public class ExporterMetadata {
 			for (Iterator iterator = hibAuthorizations.iterator(); iterator.hasNext();) {
 				SbiAuthorizations authorizations = (SbiAuthorizations) iterator.next();
 
-				Query hibQuery = session.createQuery(" from SbiAuthorizationsRoles where id.roleId= " + role.getId() + " and id.authorizationId = "
-						+ authorizations.getId());
+				Query hibQuery = session
+						.createQuery(" from SbiAuthorizationsRoles where id.roleId= " + role.getId() + " and id.authorizationId = " + authorizations.getId());
 
 				List hibAuthRole = hibQuery.list();
 				if (!hibAuthRole.isEmpty()) {
