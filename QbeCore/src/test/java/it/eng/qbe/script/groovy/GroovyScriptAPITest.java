@@ -1,7 +1,6 @@
 package it.eng.qbe.script.groovy;
 
 import it.eng.qbe.runtime.script.groovy.GroovyScriptAPI;
-import it.eng.spagobi.utilities.groovy.GroovySandboxTest;
 import junit.framework.TestCase;
 
 public class GroovyScriptAPITest extends TestCase {
