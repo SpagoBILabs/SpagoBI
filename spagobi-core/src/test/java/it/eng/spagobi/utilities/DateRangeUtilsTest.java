@@ -1,6 +1,7 @@
 package it.eng.spagobi.utilities;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,7 +16,7 @@ public class DateRangeUtilsTest {
 		UtilitiesForTest.setUpMasterConfiguration();
 		DateRangeUtils.setDATE_FORMAT_SERVER("dd/MM/yyyy");
 	}
-	
+
 	@Test
 	public void testIsInDateRangeFilter() {
 		String valuefilter = "24-12-2018_3M";
@@ -24,7 +25,7 @@ public class DateRangeUtilsTest {
 		boolean isInRange = DateRangeUtils.isInDateRangeFilter(valuefilter, typeFilter, value);
 		assertTrue(isInRange);
 	}
-	
+
 	@Test
 	public void testIsNotInDateRangeFilter() {
 		String valuefilter = "24-12-2018_3Y";
