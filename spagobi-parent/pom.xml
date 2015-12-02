@@ -51,7 +51,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipTests>true</skipTests>
 		<minimized-dir>${project.build.directory}/minimized</minimized-dir>
-		<tomcat.home>D:/apache-tomcat-7.0.62_Maven</tomcat.home>
+		<tomcat.home>/home/spagobi/apache-tomcat-7.0.50</tomcat.home>
 	</properties>
 
 	<build>
