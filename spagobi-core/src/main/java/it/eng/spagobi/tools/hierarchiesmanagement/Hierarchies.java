@@ -21,6 +21,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.hierarchiesmanagement;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -28,21 +38,9 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
-import junit.framework.Assert;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
- * 
+ *
  */
 public class Hierarchies {
 
@@ -67,7 +65,6 @@ public class Hierarchies {
 		// Load the XML file definition used for the hierarchies
 		File definitionFile = new File(getResourcePath() + File.separator + "hierarchies" + File.separator + HIERARCHIES_FILE_NAME + ".xml");
 		boolean fileExists = definitionFile.exists();
-		Assert.assertTrue("The model with the definition of the hierarchies must be uploaded in the server. ", fileExists);
 
 		if (!definitionFile.isFile()) {
 			logger.error("No hierarchies definitions file loaded");
@@ -104,7 +101,7 @@ public class Hierarchies {
 
 	/**
 	 * Get the hierarchy table name prefix of the passed dimension
-	 * 
+	 *
 	 * @param dimension
 	 *            the dimension name
 	 * @return the prefix name of the table that contains hierarchies
@@ -128,7 +125,7 @@ public class Hierarchies {
 
 	/**
 	 * Get the hierarchy table foreign key name of the passed dimension
-	 * 
+	 *
 	 * @param dimension
 	 *            the dimension name
 	 * @return the foreign key name of the table that contains hierarchies
@@ -152,7 +149,7 @@ public class Hierarchies {
 
 	/**
 	 * Get the corresponding datasource name for the dimension
-	 * 
+	 *
 	 * @param dimension
 	 *            the dimension name
 	 * @return the datasource name
@@ -182,7 +179,7 @@ public class Hierarchies {
 
 	/**
 	 * Gets the path to the model with the hierarchies
-	 * 
+	 *
 	 * @return
 	 */
 
