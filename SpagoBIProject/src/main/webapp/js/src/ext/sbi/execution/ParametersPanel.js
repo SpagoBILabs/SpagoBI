@@ -689,6 +689,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	     });
 	}
 
+	, isNorth: function() {
+		return this.parametersRegion == 'north';
+	}
+
 	, initializeParametersPanel: function( parameters, reset ) {
 			
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : IN');
@@ -1193,6 +1197,32 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	
 	, addField: function(field, index) {
 		field.isTransient = false;
+
+		//manage date range on 'north' layout
+		if (field.isDateRange && this.isNorth()) {
+			var leftStart = new Ext.Panel({
+		        layout: 'form',
+		        border: false,
+		        cls:'date-range-param-start-panel-north',
+		        items : [ field.dateRangeItem[0] ]
+			});
+
+			var mainTable = new Ext.Panel({
+			    layout:'table',
+			    border: false,
+			    colspan: 1,
+			    cls:'date-range-param-table-panel-north',
+			    layoutConfig: {
+			        columns: 2
+			    }
+			});
+
+			mainTable.add(leftStart);
+			mainTable.add(field.dateRangeItem[1]);
+
+			this.tableContainer.add ( mainTable );
+		}
+
 		var newPanel = new Ext.Panel({
 	        layout: 'form'
 	        , autoDestroy: false
@@ -1203,11 +1233,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	        	padding : '' + this.fieldsPadding + 'px 0px 0px ' + this.fieldsPadding + 'px'  // padding is applied on top and left regions
 	        	, maxHeight : '' + this.maxFieldHeight + 'px'
 	        }
-	        , items : [ field ]
+	        , items : [ field.isDateRange && this.isNorth()? field.dateRangeItem[2]:field ]
 		});
 		this.tableContainer.add ( newPanel );
-
-		
 	}
 	
 	, addEmptyField: function(field, index) {
@@ -1308,20 +1336,42 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var p = baseConfig.parameter;
 
 		//start date field
-		var confStart=Ext.apply({isDateRange:true}, baseConfig);
+		var confStart=Ext.apply({
+			isDateRange:true
+		}, baseConfig);
+		if (this.isNorth()) {
+			confStart.cls='date-range-param-start-north';
+		} else {
+			confStart.cls='date-range-param-start-right';
+		}
 		var start = this.createDateField(confStart,executionInstance);
 		start.addListener('valid',function(){refreshEnd();});
 
 		//combobox of options
 		var confPeriods = Ext.apply({
 				isDateRange:true,
-				cls:'date-range-param',
 				select : function(){refreshEnd();}
 			}, baseConfig);
+		if (this.isNorth()) {
+			confPeriods.cls='date-range-param-periods-north';
+			confPeriods.fieldWidth=100;
+		}  else {
+			confPeriods.cls='date-range-param-periods-right';
+		}
+
 		var periods = this.createComboField(confPeriods,executionInstance);
 
 		//readonly end date field
-		var confEnd = Ext.apply({isDateRange:true,cls:'date-range-param',readOnly:true}, baseConfig);
+		var confEnd = Ext.apply({
+			isDateRange:true,
+			readOnly:true
+		}, baseConfig);
+		if (this.isNorth()) {
+			confEnd.cls='date-range-param-end-north';
+			confEnd.fieldWidth=100;
+		} else {
+			confEnd.cls='date-range-param-end-right';
+		}
 		var end = this.createDateField(confEnd,executionInstance);
 		
 		var res = new Ext.form.FieldSet({
@@ -1404,13 +1454,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				return res;
 			},
 			setValue : function (value) {
-				//nothing
+				//the default value will be only for start
+				start.setValue(value);
 			},
 			getRawValue : function () {
 				return this.getValue();
 			},
 			setRawValue : function (value) {
-				//nothing
+				//the default value will be only for start
+				start.setRawValue(value);
 			},
 			clearInvalid : function() {
 				start.clearInvalid();
@@ -1418,7 +1470,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				end.clearInvalid();
 			},
 			allowBlank:true, //permits to execute document when it's empty
-			name : p.id
+			name : p.id,
+			isDateRange: true,
+			dateRangeItem: [start,periods,end]
 		});
 
 		return res;
@@ -1523,7 +1577,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var p = baseConfig.parameter;
 		
 		if(!p.colspan) p.colspan = 1;
-		var comboWidth = (baseConfig.isDateRange?180:200) * p.colspan;
+		var comboWidth = (baseConfig.isDateRange && this.isNorth()?100:200) * p.colspan;
 		baseConfig.width  = comboWidth;
 		
 		var store = this.createCompleteStore(p, executionInstance, 'simple');
