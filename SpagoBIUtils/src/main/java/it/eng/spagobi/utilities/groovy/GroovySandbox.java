@@ -1,16 +1,8 @@
 package it.eng.spagobi.utilities.groovy;
 
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2015 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-import groovy.lang.GroovyShell;
-import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
-import it.eng.spagobi.utilities.Helper;
-
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -42,14 +34,26 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import org.apache.commons.io.IOUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer;
 
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2015 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+import groovy.lang.GroovyShell;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
  * This class permits to run Groovy scripts in a safe mode allowing only a strictly set of classes.
- * 
+ *
  * @author fabrizio
  *
  */
@@ -59,10 +63,11 @@ public class GroovySandbox {
 			HashMap.class, Set.class, Map.class, Math.class, TreeSet.class, Arrays.class, Collections.class, DateFormat.class, SimpleDateFormat.class,
 			DecimalFormat.class, NumberFormat.class, MessageFormat.class, Formatter.class, TreeSet.class, TreeMap.class, DataSetVariable.class,
 			java.sql.Date.class, Time.class, Timestamp.class, Blob.class, NClob.class, StringBuilder.class, StringBuffer.class, Float.class, Double.class,
-			Long.class, BigDecimal.class, String.class, BigInteger.class };
+			Long.class, BigDecimal.class, String.class, BigInteger.class, Integer.class, Character.class, Byte.class };
 
 	private final static Class<?>[] CONSTANT_TYTPE_CLASSES_WHITELIST = new Class[] { Integer.class, Float.class, Long.class, Double.class, BigDecimal.class,
-			Integer.TYPE, Long.TYPE, Float.TYPE, Double.TYPE, String.class, BigInteger.class, Object.class };
+			Integer.TYPE, Long.TYPE, Float.TYPE, Double.TYPE, Character.TYPE, Byte.TYPE, String.class, BigInteger.class, Object.class, Character.class,
+			Byte.class };
 
 	private final Class<?>[] addedClasses;
 
@@ -83,16 +88,20 @@ public class GroovySandbox {
 	}
 
 	public Object evaluate(String script) {
-		Helper.checkNotNull(script, "script");
-		GroovyShell sandboxShell = getSandboxShell();
-		setBindingsOnShell(sandboxShell);
-		Object res = sandboxShell.evaluate(script);
-		return res;
+		try {
+			Helper.checkNotNull(script, "script");
+			GroovyShell sandboxShell = getSandboxShell();
+			setBindingsOnShell(sandboxShell);
+			Object res = sandboxShell.evaluate(script);
+			return res;
+		} catch (CompilationFailedException | IOException e) {
+			throw new SpagoBIRuntimeException("Error evaluating groovy script", e);
+		}
 	}
 
 	/**
 	 * Evalaute the script retrieved from url
-	 * 
+	 *
 	 * @param url
 	 * @return
 	 * @throws CompilationFailedException
@@ -121,7 +130,7 @@ public class GroovySandbox {
 
 	/**
 	 * Set the bindings variables
-	 * 
+	 *
 	 * @param bindings
 	 */
 	public void setBindings(Map<String, Object> bindings) {
@@ -141,7 +150,7 @@ public class GroovySandbox {
 		}
 	}
 
-	public CompilerConfiguration getSandboxConfiguration() {
+	private CompilerConfiguration getSandboxConfiguration() throws IOException {
 		ImportCustomizer imports = new ImportCustomizer();
 		SecureASTCustomizer secure = new SecureASTCustomizer();
 		secure.setClosuresAllowed(true);
@@ -154,7 +163,9 @@ public class GroovySandbox {
 		secure.setImportsWhitelist(getStringClasses("", CLASSES_WHITELIST, addedClasses, new Class[] { Object.class }));
 		secure.setStaticStarImportsWhitelist(getStringClasses(".*", CLASSES_WHITELIST, addedClasses));
 
-		secure.setStaticImportsWhitelist(getStaticImportMethods(CLASSES_WHITELIST, addedClasses));
+		List<String> staticImportMethods = getStaticImportMethods(CLASSES_WHITELIST, addedClasses);
+		addPredefinedMethods(staticImportMethods);
+		secure.setStaticImportsWhitelist(staticImportMethods);
 
 		secure.setConstantTypesClassesWhiteList(getClasses(CONSTANT_TYTPE_CLASSES_WHITELIST, CLASSES_WHITELIST, addedClasses));
 		// add also Object.class
@@ -163,6 +174,29 @@ public class GroovySandbox {
 		CompilerConfiguration res = new CompilerConfiguration();
 		res.addCompilationCustomizers(imports, secure);
 		return res;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void addPredefinedMethods(List<String> staticImportMethods) throws IOException {
+
+		try (InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(SpagoBIConstants.PREDEFINED_GROOVY_SCRIPT_FILE_NAME)) {
+			List<String> lines = IOUtils.readLines(stream, "UTF-8");
+			for (String line : lines) {
+				if (line.contains("public ")) {
+					// found method: es: public String getMultiValueProfileAttribute(String attrName...
+					int index = line.indexOf('(');
+					assert (index >= 0);
+					int first = index;
+					while (first - 1 >= 0 && line.charAt(first - 1) != ' ') {
+						first--;
+					}
+					String name = line.substring(first, index);
+					staticImportMethods.add("java.lang.Object." + name);
+				}
+			}
+
+		}
+
 	}
 
 	private static List<String> getStaticImportMethods(Class<?>[]... classeses) {
@@ -178,7 +212,7 @@ public class GroovySandbox {
 		return res;
 	}
 
-	public GroovyShell getSandboxShell() {
+	private GroovyShell getSandboxShell() throws IOException {
 		return new GroovyShell(getSandboxConfiguration());
 	}
 
@@ -208,7 +242,7 @@ public class GroovySandbox {
 
 	/**
 	 * It's necessary for adding also arrays of all permitted classes
-	 * 
+	 *
 	 * @param clazz
 	 * @return
 	 */

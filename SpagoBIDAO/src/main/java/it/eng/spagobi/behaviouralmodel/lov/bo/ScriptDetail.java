@@ -5,6 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.sql.DataRow;
@@ -21,16 +31,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * Defines the <code>ScriptDetail</code> objects. This object is used to store Script Wizard detail information.
@@ -245,15 +245,9 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		setScript(cleanScript);
 
 		List<Object> imports = null;
+		String languageScript = this.languageScript;
 		if ("groovy".equals(languageScript)) {
-			imports = new ArrayList<Object>();
-			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
-			try {
-				logger.debug("predefinedGroovyScript.groovy file URL is equal to [" + url + "]");
-				imports.add(url);
-			} catch (Throwable t) {
-				logger.warn("Impossible to load predefinedGroovyScript.groovy", t);
-			}
+			imports = getGroovyImports();
 		} else if ("ECMAScript".equals(languageScript) || "rhino-nonjdk".equals(languageScript)) {
 			imports = new ArrayList<Object>();
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
@@ -263,8 +257,12 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			} catch (Throwable t) {
 				logger.warn("Impossible to load predefinedJavascriptScript.js", t);
 			}
+		} else if (languageScript == null || languageScript.trim().isEmpty()) {
+			logger.warn("Language script is not defined, Groovy will be used");
+			languageScript = "groovy";
+			imports = getGroovyImports();
 		} else {
-			logger.debug("There is no predefined script file to import for scripting language [" + languageScript + "]");
+			logger.warn("There is no predefined script file to import for scripting language [" + languageScript + "]");
 		}
 
 		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
@@ -277,6 +275,18 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		}
 		logger.debug("OUT");
 		return result;
+	}
+
+	private List<Object> getGroovyImports() {
+		List<Object> imports = new ArrayList<Object>();
+		URL url = Thread.currentThread().getContextClassLoader().getResource(SpagoBIConstants.PREDEFINED_GROOVY_SCRIPT_FILE_NAME);
+		try {
+			logger.debug("predefinedGroovyScript.groovy file URL is equal to [" + url + "]");
+			imports.add(url);
+		} catch (Throwable t) {
+			logger.warn("Impossible to load predefinedGroovyScript.groovy", t);
+		}
+		return imports;
 	}
 
 	public DataStore getLovResultAsDataStore(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
@@ -357,8 +367,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			}
 
 		} catch (Exception e) {
-			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "checkSintax", "the result of the lov is not formatted "
-					+ "with the right structure so it will be wrapped inside an xml envelope");
+			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "checkSintax",
+					"the result of the lov is not formatted " + "with the right structure so it will be wrapped inside an xml envelope");
 			toconvert = true;
 		}
 		return toconvert;

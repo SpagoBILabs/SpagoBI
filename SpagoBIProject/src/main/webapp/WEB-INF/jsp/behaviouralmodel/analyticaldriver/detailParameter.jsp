@@ -31,6 +31,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
                  java.util.Iterator" %>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 
 
 <%
@@ -406,7 +407,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			   value="<%=paruse.getDescription() == null ? "" : StringEscapeUtils.escapeHtml(paruse.getDescription())%>" maxlength="160">
 	</div>
 	
-<%if (!parameter.getType().equals("DATE_RANGE")) { %>
+<%if (!parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
 	<div class='div_detail_label'>
 		<span class='portlet-form-field-label'>
 	  		<%if(parameter.getType().equals("DATE")){ %>
@@ -419,7 +420,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	</div>
 <% }  %>
 
-<%if (!parameter.getType().equals("DATE_RANGE")) { %>
+<%if (!parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
 	<div class='div_detail_form' id = 'divForm' >
 <% }   
 
@@ -452,7 +453,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	}
 %> 
     
-<%if (!parameter.getType().equals("DATE_RANGE")) { %>
+<%if (!parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
   		<input type="radio" name="valueSelection"  id ="valueSelection" value="lov" <%=disabled%> <% if(isLov) { out.println(" checked='checked' "); } %> onClick = "lovControl();manualInputSelection=this.value;" />
   	
 		<input 	class='portlet-form-input-field' type="text" id="paruseLovName" <%=disabled%>
@@ -470,7 +471,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <% }  %>
 		 
 		 
-<%if(!parameter.getType().equals("DATE") && !parameter.getType().equals("DATE_RANGE")){ %>
+<%if(!parameter.getType().equals("DATE") && !parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)){ %>
 	<div class='div_detail_label'>
 		<span class='portlet-form-field-label'>
 			&nbsp;
@@ -501,7 +502,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		</span>
 	</div>
 	<div class='div_detail_form'>	
-		<input type="radio"  name="valueSelection" <%=disabled%> id ="valueSelection" value="man_in" <% if(isManualInput || parameter.getType().equals("DATE_RANGE")) { out.println(" checked='checked' "); } %> onClick = "lovControl();manualInputSelection=this.value;" ></input>
+		<input type="radio"  name="valueSelection" <%=disabled%> id ="valueSelection" value="man_in" <% if(isManualInput || parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { out.println(" checked='checked' "); } %> onClick = "lovControl();manualInputSelection=this.value;" ></input>
 	</div>
 	
 	<div class='div_detail_label'>
@@ -526,10 +527,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     String defaultFormula = paruse.getDefaultFormula() != null ? paruse.getDefaultFormula().trim() : "";
     %>
 
-<% if (!parameter.getType().equals("DATE_RANGE")) { %>
+
     <div class='div_detail_label'>
         <span class='portlet-form-field-label'>
+<% if (!parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
             <spagobi:message key = "SBIDev.paramUse.defaultValue" />
+<% } else {%>
+			<spagobi:message key = "SBIDev.paramUse.defaultValueStartDate" />
+<% } %>
         </span>
     </div>
         <div class='div_detail_form'>
@@ -543,7 +548,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     </div>
     <div class='div_detail_form'>
         <input type="radio" name="defaultMethod" id="defaultMethod" value="lov" <%= idLovForDefault != -1 ? "checked='checked'" : "" %> />
+
         <spagobi:message key="SBIDev.paramUse.useLovForDefault" />
+        
         <input  class='portlet-form-input-field' type="text" id="paruseLovForDefaultName"
                 name="paruseLovForDefaultName" size="40" 
                 value="<%= defaultLovName != null ? StringEscapeUtils.escapeHtml(defaultLovName) : "" %>" maxlength="100" readonly>
@@ -556,6 +563,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
                 title='Lov for default Lookup' alt='Lov for default Lookup'/>
     
     </div>
+<% if (!parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
     <div class='div_detail_label'>
         <span class='portlet-form-field-label'>
             &nbsp;
@@ -569,7 +577,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
             <option value="LAST" <%= defaultFormula.equals("LAST") ? "selected='selected'" : "" %> ><spagobi:message key="SBIDev.paramUse.useFormulaForDefault.LAST" /></option>
        </select>
     </div>
-<% } else {%>
+<% } %>
+<% if (parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
 
   
   <!-- Date Range management -->

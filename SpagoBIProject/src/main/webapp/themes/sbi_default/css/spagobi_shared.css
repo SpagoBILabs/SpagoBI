@@ -736,12 +736,43 @@ IMG {
 	visibility: hidden;
 }
 
-input.date-range-param + img {
-	visibility: hidden;
-}
 
-/* remove border and padding */
-fieldset.date-range-param {
-	border: none;
-	padding: 0px;
-}
+/* ParametersPanel layout */
+
+	/* All layouts */
+
+	/* remove date select image from end param (north and right)*/
+	input.date-range-param-end-north + img,
+	input.date-range-param-end-right + img {
+		visibility: hidden;
+	}
+
+	/* remove border and padding */
+	fieldset.date-range-param {
+		border: none;
+		padding: 0px;
+	}
+
+
+	/* top layout*/
+
+	input.date-range-param-start-north,
+	input.date-range-param-end-north,
+	input.date-range-param-periods-north {
+		width: 100px !important;
+	}
+
+	/* start param */
+	.date-range-param-table-panel-north td:nth-child(1) {
+		width: 250px;
+	}
+
+	/* periods param */
+	.date-range-param-table-panel-north td:nth-child(2) {
+		width: 150px;
+	}
+
+	.date-range-param-start-panel-north label {
+		padding-left: 5px !important;
+	}
+

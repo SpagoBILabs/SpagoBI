@@ -5,9 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.utilities.scripting;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.groovy.GroovySandbox;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,6 +24,9 @@ import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 public class SpagoBIScriptManager {
 
@@ -66,18 +66,12 @@ public class SpagoBIScriptManager {
 			}
 
 			if (isGroovy(language)) {
-				GroovySandbox gs = new GroovySandbox();
-				gs.setBindings(bindings);
-				results = gs.evaluate(script);
-				return results;
+				return evaluateGroovy(script, bindings);
 			}
 
 			ScriptEngine scriptEngine = getScriptEngine(language);
-
 			if (scriptEngine == null) {
-				throw new RuntimeException("No engine available to execute scripts of type [" + language + "]");
-			} else {
-				logger.debug("Found engine [" + ScriptEngine.NAME + "]");
+				throw new SpagoBIRuntimeException(String.format("Script engine not found for language %s", language));
 			}
 
 			ScriptContext scriptContext = new SimpleScriptContext();
@@ -86,18 +80,22 @@ public class SpagoBIScriptManager {
 				scriptContext.setBindings(scriptBindings, ScriptContext.ENGINE_SCOPE);
 			}
 			scriptEngine.setContext(scriptContext);
-
 			results = scriptEngine.eval(script);
-
-		} catch (Throwable t) {
+			return results;
+		} catch (Exception t) {
 			throw new SpagoBIRuntimeException("An unexpected error occured while executing script", t);
 		} finally {
 			logger.debug("OUT");
 		}
-		return results;
 	}
 
-	private boolean isGroovy(String language) {
+	private static Object evaluateGroovy(String script, Map<String, Object> bindings) throws IOException {
+		GroovySandbox gs = new GroovySandbox();
+		gs.setBindings(bindings);
+		return gs.evaluate(script);
+	}
+
+	private static boolean isGroovy(String language) {
 		return "groovy".equalsIgnoreCase(language);
 	}
 
