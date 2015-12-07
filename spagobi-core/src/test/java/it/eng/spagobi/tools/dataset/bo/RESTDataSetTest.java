@@ -1,19 +1,19 @@
 package it.eng.spagobi.tools.dataset.bo;
 
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
-import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
-import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
-import it.eng.spagobi.utilities.HelperForTest;
-import it.eng.spagobi.utilities.exceptions.ConfigurationException;
-import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
+import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
+import it.eng.spagobi.utilities.HelperForTest;
+import it.eng.spagobi.utilities.UtilitiesForTest;
+import it.eng.spagobi.utilities.exceptions.ConfigurationException;
+import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import junit.framework.TestCase;
 
 public class RESTDataSetTest extends TestCase {
@@ -25,36 +25,41 @@ public class RESTDataSetTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+
+		UtilitiesForTest.setUpTestJNDI();
+		UtilitiesForTest.setUpMasterConfiguration();
+
 		config = new SpagoBiDataSet();
 		conf = getConfiguration();
 		config.setConfiguration(conf);
-		
+
 		configParams = new SpagoBiDataSet();
 		confParams = getConfigurationParams();
 		configParams.setConfiguration(confParams);
+
 	}
 
 	public void testRESTDataSet() throws IOException, URISyntaxException {
 		RESTDataSet rds = new RESTDataSet(config);
-		RESTDataProxy proxy = (RESTDataProxy) rds.getDataProxy();
+		RESTDataProxy proxy = rds.getDataProxy();
 		checkProxy(proxy);
-		JSONPathDataReader dataReader = (JSONPathDataReader) rds.getDataReader();
+		JSONPathDataReader dataReader = rds.getDataReader();
 		checkReader(dataReader);
 	}
-	
+
 	public void testRESTDataSetParams() throws IOException, URISyntaxException {
 		RESTDataSet rds = new RESTDataSet(configParams);
 		rds.setUserProfileAttributes(getUserProfileAttributes());
 		rds.setParamsMap(getParamsMap());
 		rds.initConf(true);
-		RESTDataProxy proxy = (RESTDataProxy) rds.getDataProxy();
+		RESTDataProxy proxy = rds.getDataProxy();
 		checkProxyParams(proxy);
-		JSONPathDataReader dataReader = (JSONPathDataReader) rds.getDataReader();
+		JSONPathDataReader dataReader = rds.getDataReader();
 		checkReaderParams(dataReader);
 	}
 
-	private static  Map<String,Object> getParamsMap() {
-		Map<String, Object> res=new HashMap<String, Object>();
+	private static Map<String, Object> getParamsMap() {
+		Map<String, Object> res = new HashMap<String, Object>();
 		res.put("address", "addP");
 		res.put("entity", "entityP");
 		res.put("header_q", "headerP");
@@ -66,7 +71,7 @@ public class RESTDataSetTest extends TestCase {
 	}
 
 	private static Map<String, Object> getUserProfileAttributes() {
-		Map<String, Object> res=new HashMap<String, Object>();
+		Map<String, Object> res = new HashMap<String, Object>();
 		res.put("address", "addU");
 		res.put("entity", "entityU");
 		res.put("header_q", "headerU");
@@ -118,10 +123,10 @@ public class RESTDataSetTest extends TestCase {
 		for (int i = 0; i < done.length; i++) {
 			assertTrue(Integer.toString(i), done[i]);
 		}
-		
-		assertTrue(reader.isUseItemsAttributes());
+
+		assertTrue(reader.isUseDirectlyAttributes());
 	}
-	
+
 	private void checkReaderParams(JSONPathDataReader reader) {
 		assertEquals("$.contextResponses[*].elU", reader.getJsonPathItems());
 		List<JSONPathAttribute> jpas = reader.getJsonPathAttributes();
@@ -155,9 +160,9 @@ public class RESTDataSetTest extends TestCase {
 		assertEquals("offset1", proxy.getOffsetParam());
 		assertEquals("fetch1", proxy.getFetchSizeParam());
 		assertEquals("max1", proxy.getMaxResultsParam());
-		
+
 	}
-	
+
 	private void checkProxyParams(RESTDataProxy proxy) throws URISyntaxException {
 		assertEquals("{\"id\":\"z\"},{\"entity\":\"entityP\"}", proxy.getRequestBody());
 		Map<String, String> rh = proxy.getRequestHeaders();
@@ -169,20 +174,18 @@ public class RESTDataSetTest extends TestCase {
 	}
 
 	public static String getConfiguration() throws IOException {
-		return HelperForTest.readFile("restdataset-conf.json", RESTDataSetTest.class);
+		return HelperForTest.readFile("rest-dataset/restdataset-conf.json", RESTDataSetTest.class);
 	}
-	
+
 	private String getConfigurationParams() throws IOException {
-		return HelperForTest.readFile("restdataset-params-conf.json", RESTDataSetTest.class);
+		return HelperForTest.readFile("rest-dataset/restdataset-params-conf.json", RESTDataSetTest.class);
 	}
 
 	public static RESTDataSet getRestDataSet() throws IOException {
 		String conf = getConfiguration();
 		return getRestDataSet(conf);
-		
+
 	}
-	
-	
 
 	public static RESTDataSet getRestDataSet(String conf) {
 		SpagoBiDataSet config = new SpagoBiDataSet();

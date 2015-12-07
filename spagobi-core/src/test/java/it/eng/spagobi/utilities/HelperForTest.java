@@ -11,8 +11,8 @@ public class HelperForTest {
 	}
 
 	public static String readFile(String fileName, Class<?> clazz) throws IOException {
-		InputStream in = clazz.getResourceAsStream(fileName);
-		String res= IOUtils.toString(in, "UTF-8");
+		InputStream in = clazz.getClassLoader().getResourceAsStream(fileName);
+		String res = IOUtils.toString(in, "UTF-8");
 		in.close();
 		return res;
 	}
@@ -28,7 +28,7 @@ public class HelperForTest {
 
 	public static byte[] getFileContent(String fileName, Class<?> clazz) throws IOException {
 		InputStream in = clazz.getResourceAsStream(fileName);
-		byte[] res= IOUtils.toByteArray(in);
+		byte[] res = IOUtils.toByteArray(in);
 		in.close();
 		return res;
 	}
