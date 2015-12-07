@@ -757,9 +757,8 @@ IMG {
 	/* top layout*/
 
 	input.date-range-param-start-north,
-	input.date-range-param-end-north,
 	input.date-range-param-periods-north {
-		width: 100px !important;
+		width: 70px !important;
 	}
 
 	/* start param */
@@ -774,5 +773,14 @@ IMG {
 
 	.date-range-param-start-panel-north label {
 		padding-left: 5px !important;
+	}
+
+	.date-range-param-start-panel-north {
+		width: 202px !important;
+	}
+
+	/* periods param remove 2px for alignment */
+	.date-range-param-table-panel-north td:nth-child(2) > div {
+		margin-top: -2px;
 	}
 
