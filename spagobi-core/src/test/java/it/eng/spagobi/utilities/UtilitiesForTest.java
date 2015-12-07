@@ -15,6 +15,8 @@ import javax.sql.DataSource;
 
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.configuration.FileCreatorConfiguration;
+import it.eng.spagobi.commons.SimpleSingletonConfigCache;
+import it.eng.spagobi.commons.SingletonConfig;
 
 public class UtilitiesForTest {
 
@@ -24,13 +26,13 @@ public class UtilitiesForTest {
 	}
 
 	public static void setUpMasterConfiguration() throws FileNotFoundException, IOException {
-		ConfigSingleton.setConfigurationCreation(new FileCreatorConfiguration(getTestProperty("trunk.root")+"/SpagoBIProject/web-content"));
+		ConfigSingleton.setConfigurationCreation(new FileCreatorConfiguration(getTestProperty("trunk.root") + "/SpagoBIProject/web-content"));
 		ConfigSingleton.setConfigFileName("/WEB-INF/conf/master.xml");
 	}
 
 	private static String getTestProperty(String name) throws FileNotFoundException, IOException {
-		Properties props=new Properties();
-		props.load(UtilitiesForTest.class.getResourceAsStream("test.properties"));
+		Properties props = new Properties();
+		props.load(UtilitiesForTest.class.getClassLoader().getResourceAsStream("test.properties"));
 		return props.getProperty(name);
 	}
 
@@ -49,6 +51,10 @@ public class UtilitiesForTest {
 		ic.bind("java://comp/env/spagobi_service_url", "http://localhost:8080/spagobi");
 		ic.bind("java://comp/env/spagobi_host_url", "http://localhost:8080");
 		ic.bind("java://comp/env/spagobi_sso_class", "it.eng.spagobi.services.common.FakeSsoService");
+
+		SimpleSingletonConfigCache cache = new SimpleSingletonConfigCache();
+		cache.setProperty("SPAGOBI_SSO.INTEGRATION_CLASS_JNDI", "java:/comp/env/spagobi_sso_class");
+		SingletonConfig.getInstance().setCache(cache);
 	}
 
 	private static DataSource getSpagoBIDataSource() {
@@ -103,7 +109,7 @@ public class UtilitiesForTest {
 			@Override
 			public Connection getConnection() throws SQLException {
 				try {
-					return DriverManager.getConnection(getTestProperty("db.url"),getTestProperty("db.user"), getTestProperty("db.password"));
+					return DriverManager.getConnection(getTestProperty("db.url"), getTestProperty("db.user"), getTestProperty("db.password"));
 				} catch (IOException e) {
 					throw new SQLException(e);
 				}

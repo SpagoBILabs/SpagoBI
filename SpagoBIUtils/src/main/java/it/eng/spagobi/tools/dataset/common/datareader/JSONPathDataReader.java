@@ -1,9 +1,24 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2015 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.common.datareader;
+
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+
+import org.json.JSONObject;
+
+import com.jayway.jsonpath.JsonPath;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -18,29 +33,13 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import java.math.BigInteger;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
-
 import net.minidev.json.JSONArray;
-
-import org.json.JSONObject;
-
-import com.jayway.jsonpath.JsonPath;
 
 /**
  * This reader convert JSON string to an {@link IDataStore}. The JSON must contains the items to convert, they are found using {@link JsonPath}. The name of
  * each {@link IField} must be defined. The type can be fixed or can be defined dynamically by {@link JsonPath}. The value is found dynamically by
  * {@link JsonPath}. For an example of usage check the related Test class.
- * 
+ *
  * @author fabrizio
  *
  */
@@ -67,9 +66,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 	private static final String ORION_JSON_PATH_ITEMS = "$.contextResponses[*].contextElement";
 
 	public static class JSONPathAttribute {
-		private String name;
-		private String jsonPathValue;
-		private String jsonPathType;
+		private final String name;
+		private final String jsonPathValue;
+		private final String jsonPathType;
 
 		public JSONPathAttribute(String name, String jsonPathValue, String jsonPathType) {
 			this.name = name;
@@ -93,21 +92,21 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private final String jsonPathItems;
 	private final List<JSONPathAttribute> jsonPathAttributes;
-	private final boolean useItemsAttributes;
+	private final boolean useDirectlyAttributes;
 
 	private int idFieldIndex = -2; // not set
 
-	private boolean ngsi;
+	private final boolean ngsi;
 
 	private boolean dataReadFirstTime;
 
 	private boolean ngsiDefaultItems;
 
-	public JSONPathDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean useItemsAttributes, boolean ngsi) {
+	public JSONPathDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean useDirectlyAttributes, boolean ngsi) {
 		Helper.checkWithoutNulls(jsonPathAttributes, "pathAttributes");
 		Helper.checkNotNull(jsonPathAttributes, "jsonPathAttributes");
 		this.jsonPathAttributes = jsonPathAttributes;
-		this.useItemsAttributes = useItemsAttributes;
+		this.useDirectlyAttributes = useDirectlyAttributes;
 		this.ngsi = ngsi;
 
 		if (ngsi && jsonPathItems == null) {
@@ -128,6 +127,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 	}
 
+	@Override
 	public synchronized IDataStore read(Object data) {
 		Helper.checkNotNull(data, "data");
 		if (!(data instanceof String)) {
@@ -188,8 +188,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 				IField field = new Field(getValue(stringValue, fm));
 				record.appendField(field);
 			}
-			if (useItemsAttributes) {
-				manageItemsAttributes(o, record, dataStoreMeta, dataStore);
+			if (useDirectlyAttributes) {
+				manageDirectlyAttributes(o, record, dataStoreMeta, dataStore);
 			}
 
 			dataStore.appendRecord(record);
@@ -214,7 +214,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void manageItemsAttributes(Object data, IRecord rec, MetaData dsm, DataStore dataStore) {
+	private static void manageDirectlyAttributes(Object data, IRecord rec, MetaData dsm, DataStore dataStore) {
 		Assert.assertTrue(data instanceof Map, "data instanceof Map");
 		Map jsonObject = (Map) data;
 
@@ -229,6 +229,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 			String name = fieldMeta.getName();
 			if (jsonObject.containsKey(name)) {
 				Object value = jsonObject.get(name);
+				value = normalizeNumber(value);
 				rec.appendField(new Field(value));
 			} else {
 				// add null value
@@ -246,10 +247,16 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 			// not found
 			Object value = jsonObject.get(key);
+			value = normalizeNumber(value);
 			rec.appendField(new Field(value));
 
-			// calue can be null from json object
+			// value can be null from json object
 			Class<? extends Object> type = value == null ? ALL_OTHER_TYPES : value.getClass();
+			if (Number.class.isAssignableFrom(type)) {
+				// use always double for numbers, just to prevent problems
+				// if it's represented as an integer without trailing 0
+				type = Double.class;
+			}
 			FieldMetadata fm = new FieldMetadata(key, type);
 			fm.setProperty(ATTRIBUTES_DIRECTLY, true);
 			dsm.addFiedMeta(fm);
@@ -262,6 +269,18 @@ public class JSONPathDataReader extends AbstractDataReader {
 				previousRecord.appendField(new Field(null));
 			}
 		}
+	}
+
+	private static Object normalizeNumber(Object value) {
+		if (value == null) {
+			return value;
+		}
+		if (Number.class.isAssignableFrom(value.getClass())) {
+			// use always double for numbers, just to prevent problems
+			// if it's represented as an integer without trailing 0
+			value = ((Number) value).doubleValue();
+		}
+		return value;
 	}
 
 	private static String getJSONPathValue(Object o, String jsonPathValue) {
@@ -305,7 +324,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param dataStoreMeta
 	 * @param parsedData
 	 *            list of json object (net.minidev)
@@ -422,6 +441,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 			return getSimpleDateFormat(dateFormat).parse(value);
 		} else if (fieldType.equals(Boolean.class)) {
 			return Boolean.valueOf(value);
+		} else if (fieldType.equals(Long.class)) {
+			return Long.valueOf(value);
 		}
 		Assert.assertUnreachable(String.format("Impossible to resolve field type: %s", fieldType));
 		throw new RuntimeException(); // unreachable
@@ -435,7 +456,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	/**
 	 * format like: 'date yyyyMMdd'
-	 * 
+	 *
 	 * @param typeString
 	 * @return
 	 */
@@ -520,7 +541,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		return jsonPathAttributes;
 	}
 
-	public boolean isUseItemsAttributes() {
-		return useItemsAttributes;
+	public boolean isUseDirectlyAttributes() {
+		return useDirectlyAttributes;
 	}
 }
