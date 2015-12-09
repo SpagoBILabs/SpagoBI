@@ -21,9 +21,9 @@ public class GroovySandboxTest {
 		expectException(false, "List a=new ArrayList()");
 		expectException(false, "a=new HashSet()");
 		expectException(false, "a=[new Date(10)]");
-		expectException(false, "a=[new Date(10)]");
 		expectException(false, "b=['q':new Date(10),'r':new ArrayList()]");
 		expectException(false, "a=new Integer(2)");
+		expectException(false, "Date d=new java.text.SimpleDateFormat('yyyy').parse('2015')");
 
 		expectException(true, "println('a')");
 		expectException(true, "a=1+query;println(a)");
@@ -34,6 +34,7 @@ public class GroovySandboxTest {
 		expectException(true, "Scanner b=new Scanner(new File('')); b.next()");
 		expectException(true, "b=['q':new File('q.txt'),'r':new ArrayList()]");
 		expectException(true, "b=['q':new File('q.txt'),'r':new ArrayList()]");
+		expectException(true, "Formatter fr = new Formatter('/tmp/test.jsp');fr.format('<html></html>');fr.close();");
 	}
 
 	@Test
