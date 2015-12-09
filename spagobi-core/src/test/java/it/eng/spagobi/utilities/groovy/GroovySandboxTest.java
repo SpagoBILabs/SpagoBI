@@ -18,6 +18,7 @@ public class GroovySandboxTest {
 		expectException(false, "a='1'+2");
 		expectException(false, "Date a=new Date()\nb=a.getTime()");
 		expectException(false, "a=new ArrayList()");
+		expectException(false, "a=new ArrayList();a.add(3);a.add('q');");
 		expectException(false, "List a=new ArrayList()");
 		expectException(false, "a=new HashSet()");
 		expectException(false, "a=[new Date(10)]");
@@ -39,7 +40,11 @@ public class GroovySandboxTest {
 
 	@Test
 	public void testReflection() {
-		expectException(true, "a=String.class.forName('java.io.File').newInstance('a')");
+		expectException(true, "a=String.class.forName('java.io.File')");
+		expectException(true, "a=String.class.forName('java.io.File').getConstructor(String.class).newInstance('a');");
+		// no reflection at all
+		expectException(true, "a=String.class.forName('java.lang.String')");
+
 	}
 
 	@Test

@@ -160,7 +160,6 @@ public class GroovySandbox {
 
 		// add also Object.class
 		secure.setImportsWhitelist(getStringClasses("", CLASSES_WHITELIST, addedClasses, new Class[] { Object.class }));
-		secure.setStaticStarImportsWhitelist(getStringClasses(".*", CLASSES_WHITELIST, addedClasses));
 
 		List<String> staticImportMethods = getStaticImportMethods(CLASSES_WHITELIST, addedClasses);
 		addPredefinedMethods(staticImportMethods);
