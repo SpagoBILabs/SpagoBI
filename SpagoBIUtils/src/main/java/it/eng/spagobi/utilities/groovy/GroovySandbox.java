@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,9 +60,9 @@ public class GroovySandbox {
 
 	private final static Class<?>[] CLASSES_WHITELIST = new Class[] { Date.class, List.class, ArrayList.class, Vector.class, Collection.class, HashSet.class,
 			HashMap.class, Set.class, Map.class, Math.class, TreeSet.class, Arrays.class, Collections.class, DateFormat.class, SimpleDateFormat.class,
-			DecimalFormat.class, NumberFormat.class, MessageFormat.class, Formatter.class, TreeSet.class, TreeMap.class, DataSetVariable.class,
-			java.sql.Date.class, Time.class, Timestamp.class, Blob.class, NClob.class, StringBuilder.class, StringBuffer.class, Float.class, Double.class,
-			Long.class, BigDecimal.class, String.class, BigInteger.class, Integer.class, Character.class, Byte.class };
+			DecimalFormat.class, NumberFormat.class, MessageFormat.class, TreeSet.class, TreeMap.class, DataSetVariable.class, java.sql.Date.class, Time.class,
+			Timestamp.class, Blob.class, NClob.class, StringBuilder.class, StringBuffer.class, Float.class, Double.class, Long.class, BigDecimal.class,
+			String.class, BigInteger.class, Integer.class, Character.class, Byte.class };
 
 	private final static Class<?>[] CONSTANT_TYTPE_CLASSES_WHITELIST = new Class[] { Integer.class, Float.class, Long.class, Double.class, BigDecimal.class,
 			Integer.TYPE, Long.TYPE, Float.TYPE, Double.TYPE, Character.TYPE, Byte.TYPE, String.class, BigInteger.class, Object.class, Character.class,
