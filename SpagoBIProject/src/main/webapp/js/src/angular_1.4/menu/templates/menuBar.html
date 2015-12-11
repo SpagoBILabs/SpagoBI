@@ -12,18 +12,18 @@
 	       </li>
 	  </ul>  
 	  <!-- Tabs button --> 
-	  <!--   
+	     
       <div>
       	<ul class="nav nav-pills" role="tablist">
-   			 <li role="presentation" class="active"><a href="#userMenu" aria-controls="userMenu" role="tab" data-toggle="tab">User Menu</a></li>
-   			<li role="presentation"><a href="#customMenu" aria-controls="customMenu" role="tab" data-toggle="tab">Custom Menu</a></li>
+   			 <li role="presentation" class="active"><a href="#userMenu" aria-controls="userMenu" role="tab" data-toggle="tab">Functionalities</a></li>
+   			<li role="presentation"><a href="#customMenu" aria-controls="customMenu" role="tab" data-toggle="tab">Documents</a></li>
 		</ul>
       </div>
-      -->
+      
       <!-- End tabs button -->
-      <div class="container-fluid" >
+      <div class="tab-content" >
       <!-- User Menu -->
-      <div  id="userMenu"> 
+      <div  id="userMenu" class="tab-pane fade in active"> 
 	      <ul class="nav sidebar-nav">
 	        <!--   <li class="dropdown">
 	            <ul id=settings-dropdown class=dropdown-menu >
@@ -35,23 +35,23 @@
       </div>
       <!-- End User Menu -->    
       <!-- Custom Menu -->
-      <!-- 
-      <div id="customMenu">
+      
+      <div id="customMenu" class="tab-pane fade">
 	      <ul id="customMenu" class="nav sidebar-nav">
 	      	<li data-ng-repeat="custom in customs"> 
-	      	<a data-ng-if="!custom.menu" href="#" title="{{custom.text}}" data-ng-click="menuCall(custom.src,custom.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">label</i>  {{custom.text}}</a> 
-	      	<a data-toggle="dropdown" data-ng-if="custom.menu" href="#custom-dropdown" title="{{custom.text}}"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">menu</i>  {{custom.text}} <b class="caret caretPosition"></b></a> 
+	      	<a data-ng-if="!custom.menu" href="#" title="{{custom.text}}" data-ng-click="menuCall(custom.src,custom.linkType)"> <i aria-hidden="true" class="sidebar-icon-menu material-icons md-32">label</i>  {{custom.text}}</a> 
+	      	<a data-toggle="dropdown" data-ng-if="custom.menu" href="#custom-dropdown" title="{{custom.text}}"> <i aria-hidden="true" class="sidebar-icon-menu material-icons md-32">menu</i>  {{custom.text}} <b class="caret caretPosition"></b></a> 
 	      		<ul data-ng-if="custom.menu" class="nav sidebar-nav">
 	      		<li class="dropdown">
 	      		 <ul  id=custom-dropdown class=dropdown-menu >
-	            	<li data-ng-repeat="menu in custom.menu"><a href="#" title="{{menu.text}}" data-ng-click="menuCall(menu.src,menu.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">label_outline</i>  {{menu.text}}</a> </li>
+	            	<li data-ng-repeat="menu in custom.menu"><a href="#" title="{{menu.text}}" data-ng-click="menuCall(menu.src,menu.linkType)"> <i aria-hidden="true" class="sidebar-icon-menu material-icons md-32">label_outline</i>  {{menu.text}}</a> </li>
 	       		 </ul>
 	       		</li> 
 	       		</ul>
 	      	</li>
 	      </ul>
       </div>
-     -->
+    
       <!-- End Custom Menu -->
       </div>
                <div class="top-bar"><button aria-label="Close Menu" type="button" class="sidebar-toggle" data-ng-click="toggleMenu()"> <i aria-hidden="true" class="material-icons">chevron_left</i> </button></div>
