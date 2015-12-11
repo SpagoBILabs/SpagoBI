@@ -1396,13 +1396,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		//refresh the end date based on start date and option selected
 		function refreshEnd() {
 			var typeQuantity=getTypeQuantity();
-			if (typeQuantity === null) {
+			if (typeQuantity == null || typeQuantity == '') {
+				end.setValue('');
 				return; //not defined
 			}
 
 			var startDate = start.getValue();
-			if (startDate == null) {
-				return null;
+			if (startDate == null || startDate == '') {
+				end.setValue('');
+				return ;
 			}
 
 			var type=typeQuantity[0]; var quantity=typeQuantity[1];
@@ -1455,15 +1457,45 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				return res;
 			},
 			setValue : function (value) {
-				//the default value will be only for start
+				if (value == null || value === '') {
+					start.setValue(value);
+					periods.setValue(value);
+					return;
+				}
+
+				if (value instanceof Date) {
+					start.setValue(value);
+					return;
+				}
+
+				//contains the complete value
+				if (value.indexOf('_') !== -1) {
+					//day-month-year_6Y
+					//set start
+					var dqp=value.split("_");
+					var ds=dqp[0].split("-"); //day-month-year split, 3 length
+					start.setValue(new Date(parseInt(ds[2]),parseInt(ds[1])-1,parseInt(ds[0]),0,0,0,0));
+
+					//set period
+					var type=dqp[1].substring(dqp[1].length-1); //Y
+					var quantity=dqp[1].substring(0,dqp[1].length-1); //6
+					var translate={'Y':'years','M':'months','W':'weeks','D':'days'};
+					var typeTranslate=translate[type];
+					var newPeriodVale=typeTranslate+"_"+quantity;
+					//set async because values could be not loaded
+					periods.store.reload({callback:function(){periods.setValue(newPeriodVale);}});
+					return;
+				}
+
+				//set only start because contains only start value
 				start.setValue(value);
 			},
-			getRawValue : function () {
+			getRawValue : function () { 
 				return this.getValue();
 			},
 			setRawValue : function (value) {
 				//the default value will be only for start
-				start.setRawValue(value);
+				this.setValue(value); 
 			},
 			clearInvalid : function() {
 				start.clearInvalid();

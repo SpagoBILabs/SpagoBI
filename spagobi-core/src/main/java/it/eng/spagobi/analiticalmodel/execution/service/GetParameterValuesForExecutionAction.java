@@ -33,7 +33,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.service.DetailParameterModule;
 import it.eng.spagobi.behaviouralmodel.lov.bo.DependenciesPostProcessingLov;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
@@ -43,6 +42,7 @@ import it.eng.spagobi.commons.serializer.JSONStoreFeedTransformer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.services.DelegatedBasicListService;
+import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheInterface;
@@ -238,7 +238,7 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 			// Date Range managing
 			try {
 				Parameter parameter = biObjectParameter.getParameter();
-				if (DetailParameterModule.isDateRange(parameter)) {
+				if (DateRangeDAOUtilities.isDateRange(parameter)) {
 					manageDataRange(biObjectParameter, executionInstance);
 					return;
 				}

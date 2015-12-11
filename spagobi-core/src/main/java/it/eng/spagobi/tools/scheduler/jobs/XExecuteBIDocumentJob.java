@@ -1,41 +1,9 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.scheduler.jobs;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionController;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterValuesRetriever;
-import it.eng.spagobi.behaviouralmodel.check.bo.Check;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ExecutionProxy;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.events.EventsManager;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
-import it.eng.spagobi.tools.scheduler.Formula;
-import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
-import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
-import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.tools.scheduler.dispatcher.DocumentDispatcher;
-import it.eng.spagobi.tools.scheduler.dispatcher.UniqueMailDocumentDispatchChannel;
-import it.eng.spagobi.tools.scheduler.to.DispatchContext;
-import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
-import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.mime.MimeUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,10 +25,45 @@ import org.quartz.Trigger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionController;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterValuesRetriever;
+import it.eng.spagobi.behaviouralmodel.check.bo.Check;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
+import it.eng.spagobi.commons.utilities.ExecutionProxy;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.events.EventsManager;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
+import it.eng.spagobi.tools.scheduler.Formula;
+import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
+import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.tools.scheduler.dispatcher.DocumentDispatcher;
+import it.eng.spagobi.tools.scheduler.dispatcher.UniqueMailDocumentDispatchChannel;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
+import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
+import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.mime.MimeUtils;
+
 public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
 	static private Logger logger = Logger.getLogger(XExecuteBIDocumentJob.class);
 
+	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		logger.debug("IN");
 		try {
@@ -323,6 +326,11 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						}
 					}
 
+					// date range
+					String dateRangeParametersString = jobDataMap.getString(documentInstanceName + DateRangeDAOUtilities.DATE_RANGE_PARAMETER_SUFFIX);
+					logger.debug("Daterange parameter configuration for documet [" + documentLabel + "] is equal to [" + dateRangeParametersString + "]");
+					setDateRangeParameters(document, dateRangeParametersString);
+
 					// do some checks : exec the document only if all its parameter are filled
 					if (executionController.directExecution()) {
 
@@ -454,10 +462,10 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						}
 
 					} else {
-						logger.warn("The document with label " + documentInstanceName + " cannot be executed directly, "
-								+ "maybe some prameters are not filled ");
-						throw new Exception("The document with label " + documentInstanceName + " cannot be executed directly, "
-								+ "maybe some prameters are not filled ");
+						logger.warn(
+								"The document with label " + documentInstanceName + " cannot be executed directly, " + "maybe some prameters are not filled ");
+						throw new Exception(
+								"The document with label " + documentInstanceName + " cannot be executed directly, " + "maybe some prameters are not filled ");
 					}
 				}
 
@@ -640,6 +648,35 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
+	private void setDateRangeParameters(BIObject biobj, String dateRangeParametersString) {
+		logger.debug("IN");
+		try {
+			List parameters = biobj.getBiObjectParameters();
+			if (parameters == null || parameters.isEmpty()) {
+				logger.debug("Document has no parameters");
+				return;
+			}
+
+			if (dateRangeParametersString == null || dateRangeParametersString.trim().isEmpty()) {
+				logger.debug("No date range parameters found");
+				return;
+			}
+
+			String[] dateRangeParameters = dateRangeParametersString.split(";");
+			for (int i = 0; i < dateRangeParameters.length; i++) {
+				BIObjectParameter parameter = (BIObjectParameter) parameters.get(i);
+				String drParam = dateRangeParameters[i]; // name=options
+				String[] nameValue = drParam.split("=");
+				Assert.assertTrue(nameValue.length == 2, "name Value is not in the correct format: " + Arrays.toString(nameValue));
+				parameter.setDateRangePeriod(nameValue[1]);
+			}
+
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
 	private void setUseFormulaParameters(BIObject biobj, String useFormulaParametersString) {
 		logger.debug("IN");
 		try {
@@ -683,7 +720,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
 	/**
 	 * This method fills maiLOptions Map, whose aim is to contain mails ettings store d in tab that flags the unique mail options
-	 * 
+	 *
 	 * @param document
 	 * @param dispatchContext
 	 * @return
@@ -714,8 +751,8 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 		}
 
 		String descriptionSuffix = dispatchContext.getDescriptionSuffix();
-		String containedFileName = dispatchContext.getContainedFileName() != null && !dispatchContext.getContainedFileName().equals("") ? dispatchContext
-				.getContainedFileName() : document.getName();
+		String containedFileName = dispatchContext.getContainedFileName() != null && !dispatchContext.getContainedFileName().equals("")
+				? dispatchContext.getContainedFileName() : document.getName();
 		String zipFileName = dispatchContext.getZipMailName() != null && !dispatchContext.getZipMailName().equals("") ? dispatchContext.getZipMailName()
 				: "Zipped_Documents";
 		zipFileName = zipFileName + "_" + dateStr;
@@ -758,7 +795,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 		return mailOptions;
 	}
 
-	public static File createTempDirectory(String tempFolderName) throws IOException {
+	private static File createTempDirectory(String tempFolderName) throws IOException {
 		final File temp;
 
 		temp = File.createTempFile("temp", tempFolderName);

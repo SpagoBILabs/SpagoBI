@@ -10,7 +10,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,19 +50,18 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.service.DetailParameterModule;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.ParameterValuesDecoder;
@@ -1164,7 +1162,7 @@ public class ExecutionInstance implements Serializable {
 			Map mapPars = aEngineDriver.getParameterMap(object, userProfile, executionRole);
 			// adding "system" parameters
 			addSystemParametersForExternalEngines(mapPars, locale);
-
+			manageDateRangeExternal(mapPars);
 			url = GeneralUtilities.getUrl(engine.getUrl(), mapPars);
 
 		}
@@ -1209,7 +1207,7 @@ public class ExecutionInstance implements Serializable {
 							if (value != null && !value.equals("")) {
 
 								String parameterUrlName = aParameter.getParameterUrlName();
-								if (DetailParameterModule.isDateRange(aParameter.getParameter())) {
+								if (DateRangeDAOUtilities.isDateRange(aParameter.getParameter())) {
 									manageDateRangeParameter(value, buffer, parameterUrlName);
 									continue;
 								}
@@ -1226,6 +1224,31 @@ public class ExecutionInstance implements Serializable {
 
 		logger.debug("OUT: returning url = [" + url + "]");
 		return url;
+	}
+
+	private void manageDateRangeExternal(Map mapPars) {
+		List parameters = object.getBiObjectParameters();
+		if (parameters != null && parameters.size() > 0) {
+			Iterator it = parameters.iterator();
+			while (it.hasNext()) {
+				BIObjectParameter aParameter = (BIObjectParameter) it.next();
+
+				List list = aParameter.getParameterValues();
+				if (list != null && !list.isEmpty()) {
+					Iterator r = list.iterator();
+					while (r.hasNext()) {
+						String value = (String) r.next();
+						if (value != null && !value.equals("")) {
+							String parameterUrlName = aParameter.getParameterUrlName();
+							if (DateRangeDAOUtilities.isDateRange(aParameter.getParameter())) {
+								manageDateRangeParameter(value, mapPars, parameterUrlName);
+							}
+						}
+					}
+				}
+
+			}
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1247,25 +1270,26 @@ public class ExecutionInstance implements Serializable {
 	 * @throws ParseException
 	 * @throws UnsupportedEncodingException
 	 */
-	protected static void manageDateRangeParameter(String value, StringBuffer buffer, String paramName) {
+	public static void manageDateRangeParameter(String value, Object bufferOrMap, String paramName) {
 
 		Date[] dates = DateRangeUtils.getDateRangeDates(value);
 		String option = DateRangeUtils.getOption(value);
 		// parameters to pass to engine
-		addParamValue(paramName + "_begin", toString(dates[0]), buffer);
-		addParamValue(paramName + "_duration", option, buffer);
-		addParamValue(paramName + "_end", toString(dates[1]), buffer);
+		addParamValue(paramName + DateRangeUtils.BEGIN_SUFFIX, DateRangeDAOUtilities.toStringForParamUrl(dates[0]), bufferOrMap);
+		addParamValue(paramName + DateRangeUtils.DURATION_SUFFIX, option, bufferOrMap);
+		addParamValue(paramName + DateRangeUtils.END_SUFFIX, DateRangeDAOUtilities.toStringForParamUrl(dates[1]), bufferOrMap);
 	}
 
-	private static void addParamValue(String name, String value, StringBuffer buffer) {
-		buffer.append("&" + name + "=" + encode(value));
-	}
-
-	private static String toString(Date d) {
-		SingletonConfig config = SingletonConfig.getInstance();
-		String formatSB = config.getConfigValue("SPAGOBI.DATE-FORMAT.format");
-		formatSB = formatSB == null ? "dd/MM/yyyy" : formatSB;
-		return new SimpleDateFormat(formatSB).format(d);
+	private static void addParamValue(String name, String value, Object bufferOrMap) {
+		if (bufferOrMap instanceof StringBuffer) {
+			StringBuffer buffer = (StringBuffer) bufferOrMap;
+			buffer.append("&" + name + "=" + encode(value));
+		} else if (bufferOrMap instanceof Map) {
+			Map map = (Map) bufferOrMap;
+			map.put(name, value);
+		} else {
+			Assert.assertUnreachable("url construction unsupported");
+		}
 	}
 
 	private void addSystemParametersForExternalEngines(Map mapPars, Locale locale) {

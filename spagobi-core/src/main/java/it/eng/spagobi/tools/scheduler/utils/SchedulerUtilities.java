@@ -1,26 +1,10 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.tools.scheduler.utils;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.SpagoBITracer;
-import it.eng.spagobi.tools.scheduler.Formula;
-import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
-import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
-import it.eng.spagobi.tools.scheduler.to.DispatchContext;
-import it.eng.spagobi.tools.scheduler.to.JobInfo;
-import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,20 +15,38 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.tools.scheduler.Formula;
+import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
+import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
+import it.eng.spagobi.tools.scheduler.to.JobInfo;
+import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 public class SchedulerUtilities {
 
 	/**
 	 * Gets the named history snapshot.
-	 * 
+	 *
 	 * @param allsnapshots
 	 *            the allsnapshots
 	 * @param namesnap
 	 *            the namesnap
 	 * @param hist
 	 *            the hist
-	 * 
+	 *
 	 * @return the named history snapshot
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -76,14 +78,14 @@ public class SchedulerUtilities {
 
 	/**
 	 * Gets the snapshots by name.
-	 * 
+	 *
 	 * @param allsnapshots
 	 *            the allsnapshots
 	 * @param namesnap
 	 *            the namesnap
-	 * 
+	 *
 	 * @return the snapshots by name
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -101,10 +103,10 @@ public class SchedulerUtilities {
 
 	/**
 	 * Gets the sB from web service response.
-	 * 
+	 *
 	 * @param response
 	 *            the response
-	 * 
+	 *
 	 * @return the sB from web service response
 	 */
 	public static SourceBean getSBFromWebServiceResponse(String response) {
@@ -120,10 +122,10 @@ public class SchedulerUtilities {
 
 	/**
 	 * Check result of ws call.
-	 * 
+	 *
 	 * @param resultSB
 	 *            the result sb
-	 * 
+	 *
 	 * @return true, if successful
 	 */
 	public static boolean checkResultOfWSCall(SourceBean resultSB) {
@@ -145,10 +147,10 @@ public class SchedulerUtilities {
 
 	/**
 	 * Gets the job info from job source bean.
-	 * 
+	 *
 	 * @param jobDetSB
 	 *            the job det sb
-	 * 
+	 *
 	 * @return the job info from job source bean
 	 */
 	public static JobInfo getJobInfoFromJobSourceBean(SourceBean jobDetSB) {
@@ -210,6 +212,22 @@ public class SchedulerUtilities {
 						}
 					}
 
+					SourceBean dateRangeSB = (SourceBean) jobParSB.getFilteredSourceBeanAttribute("JOB_PARAMETER", "name",
+							biobjlbl + DateRangeDAOUtilities.DATE_RANGE_PARAMETER_SUFFIX);
+					Map<String, String> dateRangeParameters = new HashMap<String, String>();
+					if (dateRangeSB != null) {
+						String drValue = (String) dateRangeSB.getAttribute("value");
+						String[] drValues = drValue.split(";");
+						for (int count = 0; count < drValues.length; count++) {
+							// paramName=period
+							String drValuePeriod = drValues[count];
+							// paramName,period
+							String[] drValuePeriodSplit = drValuePeriod.split("=");
+							Assert.assertTrue(drValuePeriodSplit.length == 2, "not a valid format");
+							dateRangeParameters.put(drValuePeriodSplit[0], drValuePeriodSplit[1]);
+						}
+					}
+
 					String queryString = (String) queryStringSB.getAttribute("value");
 					String[] parCouples = queryString.split("%26");
 					Iterator iterbiobjpar = biobjpars.iterator();
@@ -246,6 +264,12 @@ public class SchedulerUtilities {
 								}
 							}
 						}
+
+						// manage date range
+						String dateRangeValue = dateRangeParameters.get(biobjpar.getParameterUrlName());
+						if (dateRangeValue != null) {
+							jobInfo.putDateRangePeriod(biobj, biobjpar, dateRangeValue);
+						}
 					}
 					// calculate parameter
 					biobjects.add(biobj);
@@ -261,12 +285,12 @@ public class SchedulerUtilities {
 
 	/**
 	 * Gets the trigger info from trigger source bean.
-	 * 
+	 *
 	 * @param triggerInfoSB
 	 *            the trigger det sb
 	 * @param jobInfoSB
 	 *            the job det sb
-	 * 
+	 *
 	 * @return the trigger info from trigger source bean
 	 */
 	public static TriggerInfo getTriggerInfoFromTriggerSourceBean(SourceBean triggerInfoSB, SourceBean jobInfoSB) {
@@ -304,8 +328,8 @@ public class SchedulerUtilities {
 		for (Integer biobjId : biobjIds) {
 			index++;
 			DispatchContext dispatchContext = new DispatchContext();
-			SourceBean dispatchContextSB = (SourceBean) triggerInfoSB.getFilteredSourceBeanAttribute("JOB_PARAMETERS.JOB_PARAMETER", "name", "biobject_id_"
-					+ biobjId.toString() + "__" + index);
+			SourceBean dispatchContextSB = (SourceBean) triggerInfoSB.getFilteredSourceBeanAttribute("JOB_PARAMETERS.JOB_PARAMETER", "name",
+					"biobject_id_" + biobjId.toString() + "__" + index);
 			if (dispatchContextSB != null) {
 				String encodedDispatchContext = (String) dispatchContextSB.getAttribute("value");
 				dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
@@ -320,10 +344,10 @@ public class SchedulerUtilities {
 
 	/**
 	 * From save info string.
-	 * 
+	 *
 	 * @param encodedDispatchContext
 	 *            the encoded dispatch context
-	 * 
+	 *
 	 * @return the save info
 	 */
 	public static DispatchContext decodeDispatchContext(String encodedDispatchContext) {

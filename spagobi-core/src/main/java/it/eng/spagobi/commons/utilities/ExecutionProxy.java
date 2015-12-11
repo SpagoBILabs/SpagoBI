@@ -5,34 +5,13 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.utilities;
 
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.ResponseContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.dispatching.service.DefaultRequestContext;
-import it.eng.spago.error.EMFErrorHandler;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.engines.InternalEngineIFace;
-import it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.drivers.IEngineDriver;
-import it.eng.spagobi.engines.drivers.geo.GeoDriver;
-import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
-import it.eng.spagobi.monitoring.dao.AuditManager;
-import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +25,35 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
+
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
+import it.eng.spago.base.SessionContainer;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dispatching.service.DefaultRequestContext;
+import it.eng.spago.error.EMFErrorHandler;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.engines.InternalEngineIFace;
+import it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.drivers.IEngineDriver;
+import it.eng.spagobi.engines.drivers.geo.GeoDriver;
+import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
+import it.eng.spagobi.monitoring.dao.AuditManager;
+import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.utilities.DateRangeUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ExecutionProxy {
 
@@ -237,6 +245,7 @@ public class ExecutionProxy {
 			}
 
 			adjustParametersForExecutionProxy(aEngineDriver, mapPars, modality);
+			manageDateRange(mapPars);
 
 			// pass ticket ...
 			String pass = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.PASS");
@@ -319,6 +328,72 @@ public class ExecutionProxy {
 		}
 		logger.debug("OUT");
 		return response;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void manageDateRange(Map mapPars) {
+		List<BIObjectParameter> params = biObject.getBiObjectParameters();
+		if (params == null) {
+			return;
+		}
+		for (BIObjectParameter param : params) {
+			Parameter par = param.getParameter();
+			if (par == null) {
+				continue;
+			}
+
+			Integer id = par.getId();
+			if (id == null) {
+				continue;
+			}
+
+			try {
+				// check if is date range parameter
+				Parameter parDetail = DAOFactory.getParameterDAO().loadForDetailByParameterID(id);
+				if (!DateRangeDAOUtilities.isDateRange(parDetail)) {
+					continue;
+				}
+
+				// url name of param
+				String name = param.getParameterUrlName();
+
+				List parameterValues = param.getParameterValues();
+				Assert.assertTrue(parameterValues.size() >= 1, "must have at least 1 value");
+				String startDateValue = (String) parameterValues.get(0);
+
+				// from xml, format number_type long, Es.: 3_months
+				String option = param.getDateRangePeriod();
+				Assert.assertNotNull(option, "date range option period must be defined");
+
+				DateFormat df = getDateRangeFormat(mapPars);
+				// values
+				Date start = df.parse(startDateValue);
+				String duration = DateRangeUtils.getDuration(option);
+				Date end = DateRangeUtils.getDateRangeEndDate(start, option);
+
+				// parameters derived from values
+				mapPars.put(name + DateRangeUtils.BEGIN_SUFFIX, DateRangeDAOUtilities.toStringForParamUrl(start));
+				mapPars.put(name + DateRangeUtils.DURATION_SUFFIX, duration);
+				mapPars.put(name + DateRangeUtils.END_SUFFIX, DateRangeDAOUtilities.toStringForParamUrl(end));
+			} catch (EMFUserError | ParseException e) {
+				throw new SpagoBIRuntimeException("Error in date range parameter management", e);
+			}
+		}
+
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static DateFormat getDateRangeFormat(Map mapPars) {
+		// it's also in map
+		String pattern = (String) mapPars.get("dateformat");
+		if (pattern == null || pattern.isEmpty()) {
+			DateRangeDAOUtilities.getDefaultServerPattern();
+		}
+		if (pattern == null || pattern.isEmpty()) {
+			pattern = DateRangeUtils.DATE_RANGE_VALUE_PATTERN;
+		}
+		DateFormat df = new SimpleDateFormat(pattern);
+		return df;
 	}
 
 	private String getExternalEngineUrl(Engine eng) {
