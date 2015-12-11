@@ -290,14 +290,7 @@ body {
 }
 /* ---- ADMIN SIDEBAR STYLE ------------------------*/
 #contieniLinkAdmin{
-background: #f2f5f6; /* Old browsers */
-background: -moz-linear-gradient(top,  #ECEFF1 0%, #e3eaed 37%, #BDBDBD 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ECEFF1), color-stop(37%,#e3eaed), color-stop(100%,#BDBDBD)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #ECEFF1 0%,#e3eaed 37%,#BDBDBD 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  #ECEFF1 0%,#e3eaed 37%,#BDBDBD 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  #ECEFF1 0%,#e3eaed 37%,#BDBDBD 100%); /* IE10+ */
-background: linear-gradient(to bottom,  #ECEFF1 0%,#e3eaed 37%,#BDBDBD 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', endColorstr='#BDBDBD',GradientType=0 ); /* IE6-9 */
+background: #00D3DE; /* W3C */
   position: fixed;
   height: 95%;
   top: 30px;
@@ -319,23 +312,21 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
 }
 
 #contieniLinkAdmin h4 {
-    color: #F0F1F2;
-    margin-top: 5px;
+    color: #ffffff;
     font-size: 14px;
     font-weight: 300;
     font-family: 'Verdana', 'Helvetica Neue, Helvetica, Arial', sans-serif;
-    border-radius: 3px;
-    background: #3B668C;
-    padding: 4px;
+    border-radius: 3px 3px 0 0;
+    background: #002D67;
+    padding: 7px;
     width: 90%;
-  
+    border-bottom: solid #208CE8;
 }
 #contieniLinkAdmin ul {
-  padding-top:10px;
-  padding-left: 5px;
-  list-style: none;
-  font-family: 'Verdana', 'Helvetica Neue, Helvetica, Arial', sans-serif;
-  font-weight: 100;
+    padding-top: 10px;
+    list-style: none;
+    font-family: 'Verdana', 'Helvetica Neue, Helvetica, Arial', sans-serif;
+    font-weight: 100;
 }
 
 #contieniLinkAdmin li {
@@ -348,19 +339,20 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
   left: -1em;
   content: "";
   font-size: 12px;
+  color: #002D67;
 }
 #contieniLinkAdmin li a{
-  text-decoration: none;
-  color: black;
-  font-size:12px;
-  -webkit-transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-  -o-transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-  transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-  font-weight: 300;
+    text-decoration: none;
+    color: #002D67;
+    font-size: 12px;
+    -webkit-transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+    -o-transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+    transition: color 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+    font-weight: 300;
 }
 
 #contieniLinkAdmin li a:hover{
-  color: #44619d;
+  color: #FFFFFF;
 }
 
 #contieniLinkAdmin.open {
@@ -394,17 +386,31 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
     top: 20px !important;
     color: #f5f5f5 !important;
 }	
-
-.nav-pills>li>a {
-   color: #ADBDCC;
-   border-radius:0px;
-   font-family: 'Verdana', 'Helvetica Neue, Helvetica, Arial', sans-serif;
-}
-
 .nav>li>a:focus, .nav>li>a:hover {
     text-decoration: none;
     background-color: #243C51;
 }
+.nav-pills>li>a {
+    color: #002D67;
+    border-radius: 0px;
+    font-family: 'Verdana', 'Helvetica Neue, Helvetica, Arial', sans-serif;
+    border-bottom: solid rgba(117, 117, 117, 0.32);
+    margin-bottom: 3px;
+}
+
+.nav-pills>li>a:hover, .nav-pills>li>a:focus {
+    background-color: #002D67;
+    color: #ffffff;
+    border-bottom: solid rgb(51, 122, 183);
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+    color: #fff;
+    background-color: #337ab7;
+    border-bottom: solid #4DB8C8;
+}
+
+
 
 .dropdown-menu {
   display: none;
@@ -849,9 +855,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
     background: #002D67;
     margin-left: -16px;
     padding: 4px;
-    padding-top: 6px;
+    padding-top: 8px;
     padding-left: 7px;
     height: 41px;
+    vertical-align: middle;
 }
 .sidebar-inverse .sidebar-nav li:hover > a,
 .sidebar-inverse .sidebar-nav li > a:hover,
