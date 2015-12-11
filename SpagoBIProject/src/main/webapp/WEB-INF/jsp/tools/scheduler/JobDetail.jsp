@@ -5,6 +5,10 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
  
   
+<%@page import="it.eng.spagobi.utilities.assertion.Assert"%>
+<%@page import="org.json.JSONArray"%>
+<%@page import="org.json.JSONObject"%>
+<%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse"%>
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
 <%@page import="it.eng.spago.base.SourceBean"%>
@@ -294,6 +298,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	Windows.addObserver(observerLRLshow);
 	Windows.addObserver(observerLRLclose);
 	Windows.addObserver(observerLRLdestroy);
+	
+	
 
 </script>
 
@@ -595,6 +601,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				Iterator iterPars = pars.iterator();
 				while(iterPars.hasNext()) {
 					BIObjectParameter biobjpar = (BIObjectParameter)iterPars.next();
+					Integer parId = biobjpar.getParID();
+					Parameter parameter = pardao.loadForDetailByParameterID(parId);
 					ParameterValuesRetriever strategy = biobjpar.getParameterValuesRetriever();
 					String concatenatedValue = "";
 					List values = biobjpar.getParameterValues();
@@ -618,7 +626,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				    	
 				    	<div style="float:left;width:500px;margin-bottom:30px;">
 
+<%if (!parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
 				    		<spagobi:message key = "scheduler.parameterValuesStrategyQuestion"  bundle="component_scheduler_messages"/>
+<% } else {%>
+	<spagobi:message key = "scheduler.parameterValuesStrategyQuestionDateRange"  bundle="component_scheduler_messages"/>
+<% } %>
 				    		<br>
 				    		<div style="height: 2px" >&nbsp;</div>
 						  	<select name='<%="par_"+biobj.getId()+"_"+index+"_"+biobjpar.getParameterUrlName()+"_strategy"%>'
@@ -631,8 +643,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									<spagobi:message key = "scheduler.loadAtRuntimeStrategy"  bundle="component_scheduler_messages"/>
 								</option>
 								<% 
-								Integer parId = biobjpar.getParID();
-								Parameter parameter = pardao.loadForDetailByParameterID(parId);
+								
 								if (parameter.isTemporal()) { %>
 									<option value='useFormula' <%= (strategy != null && strategy instanceof FormulaParameterValuesRetriever) ? "selected='selected'" : "" %>>
 										<spagobi:message key = "scheduler.useFormulaStrategy"  bundle="component_scheduler_messages"/>
@@ -781,6 +792,50 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								</div>
 				    	
 				    	
+				    			<!-- Date Range -->
+				    			
+				    			<%if (parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) {
+				    				
+								List<ParameterUse> parUses = DAOFactory.getParameterUseDAO().loadParametersUseByParId(parId);
+								Assert.assertTrue(parUses.size()==1,"parUse");
+								ParameterUse parUse=parUses.get(0);
+								//at least 1
+								String options=parUse.getOptions();
+								final String optionsKey="options";
+								Assert.assertTrue(options!=null && options.contains(optionsKey),"options");
+								JSONObject json=new JSONObject(options);
+								JSONArray jsonOptions=json.getJSONArray(optionsKey);
+		
+								%>
+				    				<div style="margin-top:10px;">
+						    			<spagobi:message key = "scheduler.dateRangePeriod"  bundle="component_scheduler_messages"/>
+						    			
+							    		<br>
+							    		<div style="height: 2px" >&nbsp;</div>
+									  	<select name='<%="par_"+biobj.getId()+"_"+index+"_"+biobjpar.getParameterUrlName()+"_period"%>'
+													id='<%="par_"+biobj.getId()+"_"+index+"_"+biobjpar.getParameterUrlName()+"_period"%>'>
+													
+																					<%
+										for (int i=0;i<jsonOptions.length();i++) {
+											JSONObject option=jsonOptions.getJSONObject(i);
+											int quantity=option.getInt("quantity");
+											String type=option.getString("type");
+											//can be null (not previously selected)
+											String valueSelected=jobInfo.getDateRangePeriod(biobj, biobjpar);
+											String value=""+quantity+"_"+type;
+											boolean isSelected=value.equals(valueSelected);
+				
+						    				 %>
+						    				 <option value='<%=value %>' <%=(isSelected?"selected":"") %>>
+												<%=quantity %>&nbsp;<%=type %>
+											</option>
+																	
+										<% } %>
+				    				 
+										</select>
+									</div>
+								<% } %>
+				    	
 						</div>
 					</div>
 					<div style="clear:left;"></div>
@@ -836,6 +891,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 
 </form>
+
+
 
  
 <%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>

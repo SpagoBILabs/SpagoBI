@@ -33,7 +33,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spago.validation.coordinator.ValidationCoordinator;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
@@ -1144,14 +1143,6 @@ public class DetailParameterModule extends AbstractHttpModule {
 			errorHandler.addError(error);
 		}
 
-	}
-
-	public static boolean isDateRange(BIObjectParameter biObjectParameter) {
-		return biObjectParameter != null && isDateRange(biObjectParameter.getParameter());
-	}
-
-	public static boolean isDateRange(Parameter parameter) {
-		return parameter != null && DATE_RANGE_TYPE.equals(parameter.getType());
 	}
 
 }

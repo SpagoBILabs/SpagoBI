@@ -11,13 +11,37 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * Utilities to manage the Date Range Analitycs Driver
- * 
+ *
  * @author fabrizio
  *
  */
 public class DateRangeUtils {
 
-	private static final SimpleDateFormat DATE_RANGE_VALUE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+	private static final String WEEKS_SHORT = "W";
+
+	private static final String DAYS_SHORT = "D";
+
+	private static final String MONTHS_SHORT = "M";
+
+	private static final String YEARS_SHORT = "Y";
+
+	private static final String WEEKS_LONG = "weeks";
+
+	private static final String DAYS_LONG = "days";
+
+	private static final String MONTHS_LONG = "months";
+
+	private static final String YEARS_LONG = "years";
+
+	public static final String END_SUFFIX = "_end";
+
+	public static final String DURATION_SUFFIX = "_duration";
+
+	public static final String BEGIN_SUFFIX = "_begin";
+
+	public static final String DATE_RANGE_VALUE_PATTERN = "dd-MM-yyyy";
+
+	public static final SimpleDateFormat DATE_RANGE_VALUE_FORMAT = new SimpleDateFormat(DATE_RANGE_VALUE_PATTERN);
 
 	/**
 	 * for testing reasons
@@ -26,7 +50,7 @@ public class DateRangeUtils {
 
 	/**
 	 * Get the correctly date
-	 * 
+	 *
 	 * @param startDateString
 	 * @return
 	 */
@@ -41,29 +65,90 @@ public class DateRangeUtils {
 	}
 
 	/**
+	 * Get the duration in short format (es. 6W) from the option which can be in long format or short format
+	 *
+	 * @param option
+	 * @return
+	 */
+	public static String getDuration(String option) {
+		Helper.checkNotTrimNotEmpty(option, "option");
+
+		int under = option.indexOf('_');
+		if (under == -1) {
+			// short format
+			return option;
+		}
+
+		// long format
+		String typeLong = option.substring(under + 1);
+		String type;
+
+		switch (typeLong) {
+		case YEARS_LONG:
+			type = YEARS_SHORT;
+			break;
+
+		case MONTHS_LONG:
+			type = MONTHS_SHORT;
+			break;
+
+		case DAYS_LONG:
+			type = DAYS_SHORT;
+			break;
+
+		case WEEKS_LONG:
+			type = WEEKS_SHORT;
+			break;
+
+		default:
+			Assert.assertUnreachable("type of option not supported");
+			type = null; // for compilation
+			break;
+		}
+
+		String res = option.replace("_" + typeLong, type);
+		return res;
+	}
+
+	/**
 	 * Get the end date by the start date and option. Note that both dates are is at start of the day (00:00).
-	 * 
+	 *
 	 * @param startDate
 	 * @param option
 	 * @return
 	 */
-	private static Date getDateRangeEndDate(Date startDate, String option) {
-		char type = option.charAt(option.length() - 1);
+	public static Date getDateRangeEndDate(Date startDate, String option) {
 		int calendarAddType = 0;
+		int under = option.indexOf('_');
+		int endQuantity;
+		String type;
+		if (under != -1) {
+			// format 6_weeks
+			type = option.substring(under + 1);
+			endQuantity = under;
+		} else {
+			// format , 6W
+			type = "" + option.charAt(option.length() - 1);
+			endQuantity = option.length() - 1;
+		}
 		switch (type) {
-		case 'Y':
+		case YEARS_LONG:
+		case YEARS_SHORT:
 			calendarAddType = Calendar.YEAR;
 			break;
 
-		case 'M':
+		case MONTHS_LONG:
+		case MONTHS_SHORT:
 			calendarAddType = Calendar.MONTH;
 			break;
 
-		case 'D':
+		case DAYS_LONG:
+		case DAYS_SHORT:
 			calendarAddType = Calendar.DAY_OF_YEAR;
 			break;
 
-		case 'W':
+		case WEEKS_LONG:
+		case WEEKS_SHORT:
 			calendarAddType = Calendar.WEEK_OF_YEAR;
 			break;
 
@@ -72,18 +157,17 @@ public class DateRangeUtils {
 			break;
 		}
 
-		int quantity = Integer.parseInt(option.substring(0, option.length() - 1));
+		int quantity = Integer.parseInt(option.substring(0, endQuantity));
 		Calendar c = Calendar.getInstance();
 		c.setTime(startDate);
 		c.add(calendarAddType, quantity);
 		Date res = c.getTime();
-		Assert.assertTrue(!startDate.equals(res), "start date can't be equal to end date");
 		return res;
 	}
 
 	/**
 	 * Get the date range from the Date Range value. Es. of value: 20-10-2014_6M.
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */
@@ -101,7 +185,7 @@ public class DateRangeUtils {
 
 	/**
 	 * Get the Date Range option from the global value, es: 10-12-2019_2Y
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */
@@ -115,7 +199,7 @@ public class DateRangeUtils {
 
 	/**
 	 * Add a day to to the end date fix the problem with the date range
-	 * 
+	 *
 	 * @param d
 	 * @return
 	 */
@@ -140,7 +224,7 @@ public class DateRangeUtils {
 
 	/**
 	 * Check if the value is admitted by the Date Range Filter
-	 * 
+	 *
 	 * @param valuefilter
 	 *            the value of filter, es: 10-12-2019_2Y
 	 * @param typeFilter
@@ -199,4 +283,5 @@ public class DateRangeUtils {
 	protected static void setDATE_FORMAT_SERVER(String dATE_FORMAT_SERVER) {
 		DATE_FORMAT_SERVER = dATE_FORMAT_SERVER;
 	}
+
 }

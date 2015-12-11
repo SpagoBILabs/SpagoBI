@@ -5,11 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.bo;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.services.validation.Alphanumeric;
-import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
-import it.eng.spagobi.services.validation.NoSpaces;
-
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +16,11 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.services.validation.Alphanumeric;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.NoSpaces;
 
 /**
  * Defines a <code>BIObjectParameter</code> object.
@@ -101,6 +101,8 @@ public class BIObjectParameter implements Serializable {
 	private boolean isIterative = false;
 
 	private ParameterValuesRetriever parameterValuesRetriever = null;
+
+	private String dateRangePeriod;
 
 	/**
 	 * Gets the id.
@@ -518,6 +520,15 @@ public class BIObjectParameter implements Serializable {
 
 	public void setThickPerc(Integer thickPerc) {
 		this.thickPerc = thickPerc;
+	}
+
+	@JsonIgnore
+	public String getDateRangePeriod() {
+		return dateRangePeriod;
+	}
+
+	public void setDateRangePeriod(String dateRangePeriod) {
+		this.dateRangePeriod = dateRangePeriod;
 	}
 
 }
