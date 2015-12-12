@@ -1364,7 +1364,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		//readonly end date field
 		var confEnd = Ext.apply({
 			isDateRange:true,
-			readOnly:true
+			readOnly:true,
+			allowBlank:true
 		}, baseConfig);
 		confEnd.fieldLabel = confEnd.fieldLabel+" End";
 		if (this.isNorth()) {
@@ -1502,10 +1503,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				periods.clearInvalid();
 				end.clearInvalid();
 			},
-			allowBlank:true, //permits to execute document when it's empty
 			name : p.id,
 			isDateRange: true,
-			dateRangeItem: [start,periods,end]
+			dateRangeItem: [start,periods,end],
+			allowBlank:true //permits to execute document when it's empty
 		});
 
 		return res;

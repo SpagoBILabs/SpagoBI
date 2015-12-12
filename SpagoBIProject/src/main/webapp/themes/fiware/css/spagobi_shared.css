@@ -698,8 +698,7 @@ IMG {
 /*Date Range driver CSS */
 
 /*date range param: to hide label of second and third fields*/
-.date-range-param .x-fieldset-body div:nth-child(2) label,
-.date-range-param .x-fieldset-body div:nth-child(3) label {
+.date-range-param .x-fieldset-body div:nth-child(2) label {
 	visibility: hidden;
 }
 
@@ -736,12 +735,50 @@ IMG {
 	visibility: hidden;
 }
 
-input.date-range-param + img {
-	visibility: hidden;
-}
 
-/* remove border and padding */
-fieldset.date-range-param {
-	border: none;
-	padding: 0px;
-}
+/* ParametersPanel layout */
+
+	/* All layouts */
+
+	/* remove date select image from end param (north and right)*/
+	input.date-range-param-end-north + img,
+	input.date-range-param-end-right + img {
+		visibility: hidden;
+	}
+
+	/* remove border and padding */
+	fieldset.date-range-param {
+		border: none;
+		padding: 0px;
+	}
+
+
+	/* top layout*/
+
+	input.date-range-param-start-north,
+	input.date-range-param-periods-north {
+		width: 70px !important;
+	}
+
+	/* start param */
+	.date-range-param-table-panel-north td:nth-child(1) {
+		width: 250px;
+	}
+
+	/* periods param */
+	.date-range-param-table-panel-north td:nth-child(2) {
+		width: 150px;
+	}
+
+	.date-range-param-start-panel-north label {
+		padding-left: 5px !important;
+	}
+
+	.date-range-param-start-panel-north {
+		width: 202px !important;
+	}
+
+	/* periods param remove 2px for alignment */
+	.date-range-param-table-panel-north td:nth-child(2) > div {
+		margin-top: -2px;
+	}

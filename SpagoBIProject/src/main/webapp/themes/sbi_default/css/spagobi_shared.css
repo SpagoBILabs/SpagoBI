@@ -698,8 +698,7 @@ IMG {
 /*Date Range driver CSS */
 
 /*date range param: to hide label of second and third fields*/
-.date-range-param .x-fieldset-body div:nth-child(2) label,
-.date-range-param .x-fieldset-body div:nth-child(3) label {
+.date-range-param .x-fieldset-body div:nth-child(2) label {
 	visibility: hidden;
 }
 
