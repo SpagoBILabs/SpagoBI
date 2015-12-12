@@ -607,6 +607,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					if(field.isTransient == false && (value==undefined || value==null || value.length==0)){
 						return false;
 					}
+					
+					if (field.isDateRange) {
+						value = field.getValue();
+						if (field.getValue()==null || field.getValue()=='') {
+							return false;
+						}
+					}
 				}
 			}
 			return true;
@@ -1506,7 +1513,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			name : p.id,
 			isDateRange: true,
 			dateRangeItem: [start,periods,end],
-			allowBlank:true //permits to execute document when it's empty
+			allowBlank:baseConfig.allowBlank
 		});
 
 		return res;
