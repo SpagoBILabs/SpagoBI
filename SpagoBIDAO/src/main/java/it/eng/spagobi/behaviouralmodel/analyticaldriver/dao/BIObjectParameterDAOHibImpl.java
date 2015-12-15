@@ -237,10 +237,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#insertBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
 	@Override
-	public void insertBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError {
+	public Integer insertBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError {
 
 		Session aSession = null;
 		Transaction tx = null;
+		Integer idToReturn = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -271,6 +272,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			aSession.save(hibObjectParameterNew);
 
 			tx.commit();
+			idToReturn = hibObjectParameterNew.getObjParId();
 		} catch (HibernateException he) {
 			logException(he);
 
@@ -287,7 +289,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			}
 
 		}
-
+		return idToReturn;
 	}
 
 	/**

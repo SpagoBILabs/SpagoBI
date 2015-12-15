@@ -87,7 +87,7 @@ public interface IBIObjectParameterDAO extends ISpagoBIDao {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public void insertBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError;
+	public Integer insertBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError;
 
 	/**
 	 * Implements the query to erase a BIObjectParameter. All information needed is stored into the input <code>aBIObjectParameter</code> object.
