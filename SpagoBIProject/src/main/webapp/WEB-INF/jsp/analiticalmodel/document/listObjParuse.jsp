@@ -7,6 +7,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
   
 
 
+<%@page import="it.eng.spagobi.commons.utilities.DateRangeDAOUtilities"%>
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter"%>
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.service.DetailParameterModule"%>
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
@@ -26,9 +27,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
                  it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue,
                  it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail,
                  it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter,
-                 it.eng.spagobi.behaviouralmodel.lov.handlers.LovManager
-                 it.eng.spagobi.commons.utilities.it.eng.spagobi.commons.utilities"
-                  %>
+                 it.eng.spagobi.behaviouralmodel.lov.handlers.LovManager" %>
                  
 <%
 	SourceBean moduleResponse = (SourceBean) aServiceResponse.getAttribute("ListObjParuseModule");
