@@ -16,6 +16,6 @@
     <resource-ref>
         <res-ref-name>worker/worker</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
-        <jndi-name>java:global/SpagoBIWorkManager</jndi-name>
+        <jndi-name>java:global/SpagoWorkManager</jndi-name>
     </resource-ref>
 </jboss-web>
