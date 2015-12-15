@@ -816,7 +816,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 													id='<%="par_"+biobj.getId()+"_"+index+"_"+biobjpar.getParameterUrlName()+"_period"%>'>
 													
 																					<%
-										boolean oneSelected = false;
+									
 										for (int i=0;i<jsonOptions.length();i++) {
 											JSONObject option=jsonOptions.getJSONObject(i);
 											int quantity=option.getInt("quantity");
@@ -825,11 +825,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 											String valueSelected=jobInfo.getDateRangePeriod(biobj, biobjpar);
 											String value=""+quantity+"_"+type;
 											boolean isSelected=value.equals(valueSelected);
-											oneSelected = oneSelected || isSelected;
-											//at least one selected
-											if (i==jsonOptions.length()-1 && !oneSelected) {
-												isSelected = true;
-											}
 				
 						    				 %>
 						    				 <option value='<%=value %>' <%=(isSelected?"selected":"") %>>
