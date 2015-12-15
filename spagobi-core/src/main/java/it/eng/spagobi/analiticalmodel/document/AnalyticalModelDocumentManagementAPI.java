@@ -5,6 +5,17 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.document;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -14,8 +25,10 @@ import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.SubObjectDAOHibImpl;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
@@ -29,15 +42,6 @@ import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.tools.objmetadata.dao.ObjMetadataDAOHibImpl;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -54,6 +58,7 @@ public class AnalyticalModelDocumentManagementAPI {
 	private IObjMetadataDAO metadataPropertyDAO;
 	private IObjMetacontentDAO metadataContentDAO;
 	private SubObjectDAOHibImpl subObjectDAO;
+	private IObjParuseDAO objParuseDAO;
 
 	// default for document parameters
 	public static final Integer REQUIRED = 0;
@@ -80,6 +85,9 @@ public class AnalyticalModelDocumentManagementAPI {
 
 			metadataContentDAO = DAOFactory.getObjMetacontentDAO();
 			metadataContentDAO.setUserProfile(userProfile);
+
+			objParuseDAO = DAOFactory.getObjParuseDAO();
+			objParuseDAO.setUserProfile(userProfile);
 
 			subObjectDAO = new SubObjectDAOHibImpl();
 			subObjectDAO.setUserProfile(userProfile);
@@ -198,8 +206,8 @@ public class AnalyticalModelDocumentManagementAPI {
 					throw new SpagoBIRuntimeException("Analytical driver " + analyticalDriver + " cannot be loaded", t);
 				}
 			} else {
-				throw new SpagoBIRuntimeException("Unable to manage an analytical driver descriptor of type ["
-						+ analyticalDriverDescriptor.getClass().getName() + "]");
+				throw new SpagoBIRuntimeException(
+						"Unable to manage an analytical driver descriptor of type [" + analyticalDriverDescriptor.getClass().getName() + "]");
 			}
 		} catch (SpagoBIRuntimeException t) {
 			throw t; // nothing to add just re-throw
@@ -480,8 +488,8 @@ public class AnalyticalModelDocumentManagementAPI {
 				}
 				String metadataPropertyName = documentMatadataPropertyJSON.optString(MetadataJSONSerializer.NAME);
 				if (metadataPropertyId == null && metadataPropertyName == null) {
-					throw new SpagoBIRuntimeException("Attributes [" + MetadataJSONSerializer.METADATA_ID + "] and [" + MetadataJSONSerializer.NAME
-							+ "] cannot be both null");
+					throw new SpagoBIRuntimeException(
+							"Attributes [" + MetadataJSONSerializer.METADATA_ID + "] and [" + MetadataJSONSerializer.NAME + "] cannot be both null");
 				}
 
 				if (metadataPropertyId == null) {
@@ -498,8 +506,8 @@ public class AnalyticalModelDocumentManagementAPI {
 
 				String documentMetadataPropertyValue = documentMatadataPropertyJSON.getString(MetadataJSONSerializer.TEXT);
 				if (documentMetadataPropertyValue == null) {
-					throw new SpagoBIRuntimeException("Attributes [" + MetadataJSONSerializer.TEXT + "] of metadata property cannot [" + metadataPropertyId
-							+ "] be null");
+					throw new SpagoBIRuntimeException(
+							"Attributes [" + MetadataJSONSerializer.TEXT + "] of metadata property cannot [" + metadataPropertyId + "] be null");
 				}
 
 				ObjMetacontent documentMatadataProperty = documentMetadataPropertyDAO.loadObjMetacontent(metadataPropertyId, document.getId(), subObjectId); // TODO
@@ -566,16 +574,53 @@ public class AnalyticalModelDocumentManagementAPI {
 			List<BIObjectParameter> parameters = sourceDocument.getBiObjectParameters();
 
 			if (parameters != null && !parameters.isEmpty()) {
-				for (BIObjectParameter parameter : parameters) {
-					parameter.setBiObjectID(destinationDocument.getId());
-					parameter.setId(null);
+
+				Map<String, Integer> previousUrlNametoIdObjParMap = new HashMap<String, Integer>();
+				Map<Integer, Integer> previousToNewBiObjParIdsMap = new HashMap<Integer, Integer>();
+
+				for (BIObjectParameter biObjParameter : parameters) {
+
+					Integer previousObjParId = biObjParameter.getId();
+					biObjParameter.setBiObjectID(destinationDocument.getId());
+					biObjParameter.setId(null);
 					try {
-						documentParameterDAO.insertBIObjectParameter(parameter);
+						Integer newObjParId = documentParameterDAO.insertBIObjectParameter(biObjParameter);
+						previousUrlNametoIdObjParMap.put(biObjParameter.getParameterUrlName(), previousObjParId);
+						previousToNewBiObjParIdsMap.put(previousObjParId, newObjParId);
 					} catch (Throwable t) {
-						throw new SpagoBIRuntimeException("Impossible to copy parameter [" + parameter.getLabel() + "] from document [" + sourceDocumentLabel
-								+ "] to document [" + destinationDocumentLabel + "]", t);
+						throw new SpagoBIRuntimeException("Impossible to copy parameter [" + biObjParameter.getLabel() + "] from document ["
+								+ sourceDocumentLabel + "] to document [" + destinationDocumentLabel + "]", t);
 					}
 				}
+				logger.debug("Parameter copied, now copy dependencies");
+
+				// for all obj parameters
+				for (BIObjectParameter biObjParameter : parameters) {
+					String urlName = biObjParameter.getParameterUrlName();
+					Integer previousObjParId = previousUrlNametoIdObjParMap.get(urlName);
+					// copy Paruse
+					try {
+						List objParuses = objParuseDAO.loadObjParuses(previousObjParId);
+						// for all obj paruses
+						for (Iterator iterator = objParuses.iterator(); iterator.hasNext();) {
+							ObjParuse objParuse = (ObjParuse) iterator.next();
+							Integer previousObjFatherParId = objParuse.getObjParFatherId();
+							Integer newObjParId = previousToNewBiObjParIdsMap.get(previousObjParId);
+							Integer newObjFatherParId = previousToNewBiObjParIdsMap.get(previousObjFatherParId);
+							// change from previous the ObjPar Reference and insert new
+							objParuse.setObjParId(newObjParId);
+							objParuse.setObjParFatherId(newObjFatherParId);
+							objParuseDAO.insertObjParuse(objParuse);
+						}
+
+					} catch (Throwable t) {
+						logger.error("Impossible to copy paruses [" + biObjParameter.getLabel() + "] from document [" + sourceDocumentLabel + "] to document ["
+								+ destinationDocumentLabel + "] of parameter " + biObjParameter.getLabel());
+						throw new SpagoBIRuntimeException("Impossible to copy paruses [" + biObjParameter.getLabel() + "] from document [" + sourceDocumentLabel
+								+ "] to document [" + destinationDocumentLabel + "] of parameter " + biObjParameter.getLabel(), t);
+					}
+				}
+
 			} else {
 				logger.warn("Document [" + sourceDocumentLabel + "] have no parameters");
 			}
@@ -734,8 +779,8 @@ public class AnalyticalModelDocumentManagementAPI {
 			try {
 				documentParameterDAO.insertBIObjectParameter(documentParameter);
 			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("Impossible to save parameter whose label is equal to [" + analyticalDriverDescriptor + "] to document ["
-						+ document + "]", t);
+				throw new SpagoBIRuntimeException(
+						"Impossible to save parameter whose label is equal to [" + analyticalDriverDescriptor + "] to document [" + document + "]", t);
 			}
 
 			if (document.getBiObjectParameters() == null) {
@@ -746,8 +791,8 @@ public class AnalyticalModelDocumentManagementAPI {
 		} catch (SpagoBIRuntimeException t) {
 			throw t; // nothing to add just re-throw
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unsespected error occured while adding parameter [" + analyticalDriverDescriptor + "] to document ["
-					+ documentDescriptor + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unsespected error occured while adding parameter [" + analyticalDriverDescriptor + "] to document [" + documentDescriptor + "]", t);
 		}
 	}
 
