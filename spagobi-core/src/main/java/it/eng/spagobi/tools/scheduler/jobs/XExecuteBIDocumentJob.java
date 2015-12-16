@@ -652,7 +652,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 	private void setDateRangeParameters(BIObject biobj, String dateRangeParametersString) {
 		logger.debug("IN");
 		try {
-			List parameters = biobj.getBiObjectParameters();
+			List<BIObjectParameter> parameters = biobj.getBiObjectParameters();
 			if (parameters == null || parameters.isEmpty()) {
 				logger.debug("Document has no parameters");
 				return;
@@ -665,11 +665,19 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
 			String[] dateRangeParameters = dateRangeParametersString.split(";");
 			for (int i = 0; i < dateRangeParameters.length; i++) {
-				BIObjectParameter parameter = (BIObjectParameter) parameters.get(i);
 				String drParam = dateRangeParameters[i]; // name=options
 				String[] nameValue = drParam.split("=");
 				Assert.assertTrue(nameValue.length == 2, "name Value is not in the correct format: " + Arrays.toString(nameValue));
-				parameter.setDateRangePeriod(nameValue[1]);
+				String name = nameValue[0];
+				String value = nameValue[1];
+				for (BIObjectParameter parameter : parameters) {
+					if (!name.equals(parameter.getParameterUrlName())) {
+						continue;
+					}
+					parameter.setDateRangePeriod(value);
+					break;
+				}
+
 			}
 
 		} finally {
