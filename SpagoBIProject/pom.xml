@@ -61,6 +61,12 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb-driver</artifactId>
+			<version>8.0.2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>javax</groupId>
