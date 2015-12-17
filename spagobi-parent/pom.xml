@@ -23,14 +23,15 @@
 		<module>../spagobi-commons-core</module>
 		<module>../spagobi-metamodel-core</module>
 		<module>../spagobi-metamodel-utils</module>
-
 		<module>../spagobi-core</module>
 		<module>../SpagoBIProject</module>
-		<module>../spagobi.birt.oda</module>
+		<module>../SpagoBICockpitEngine</module>
+		<module>../SpagoBIQbeEngine</module>
+
+<!-- 	<module>../spagobi.birt.oda</module>
 		<module>../SpagoBIAccessibilityEngine</module>
 		<module>../SpagoBIBirtReportEngine</module>
 		<module>../SpagoBIChartEngine</module>
-		<module>../SpagoBICockpitEngine</module>
 		<module>../SpagoBICommonJEngine</module>
 		<module>../SpagoBIConsoleEngine</module>
 		<module>../SpagoBIDataMiningEngine</module>
@@ -40,10 +41,9 @@
 		<module>../SpagoBIJPivotEngine</module>
 		<module>../SpagoBIMobileEngine</module>
 		<module>../SpagoBINetworkEngine</module>
-		<module>../SpagoBIQbeEngine</module>
 		<module>../SpagoBISocialAnalysis</module>
 		<module>../SpagoBITalendEngine</module>
-		<module>../SpagoBIWhatIfEngine</module>
+		<module>../SpagoBIWhatIfEngine</module> -->
 	</modules>
 
 	<properties>
