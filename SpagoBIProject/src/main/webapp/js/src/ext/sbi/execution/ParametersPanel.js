@@ -968,6 +968,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				|| theField.behindParameter.selectionType === 'LIST' 
 				|| theField.behindParameter.selectionType === 'SLIDER') {
 				this.fields[p].on('change', this.onUpdateDependentFields, this);
+			}else if (theField.behindParameter.type === 'DATE_RANGE') {
+				this.fields[p].on_change(function(field) {
+					this.updateDependentFields( field, true);
+				} , this);
 			} else if(theField.behindParameter.typeCode == 'MAN_IN') {
 				
 				if(theField.behindParameter.type == "DATE"){
@@ -1401,6 +1405,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			return typeQuantity;
 		}
 
+		//calback function for dependant fields
+		var on_changes=[];
+		var bindings = [];
+		var refreshDeps = function () {
+			for (var i=0;i<on_changes.length;i++) {
+				on_changes[i].call(bindings[i],res);
+			}
+		}
+		
 		//refresh the end date based on start date and option selected
 		function refreshEnd() {
 			var typeQuantity=getTypeQuantity();
@@ -1432,7 +1445,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 			assert(newDate != null,"date range type not supported: "+type);
 			end.setValue(newDate);
+			
+			refreshDeps();
 		}
+		
+		
 
 		//pad with 0, s:int
 		function padDate(s) {
@@ -1443,7 +1460,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 			return res;
 		}
-
+		
+		
 		//for simulating a field
 		Ext.applyIf(res, {
 			getValue : function () {
@@ -1513,7 +1531,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			name : p.id,
 			isDateRange: true,
 			dateRangeItem: [start,periods,end],
-			allowBlank:baseConfig.allowBlank
+			allowBlank:baseConfig.allowBlank,
+			on_change : function (callback,binding) {
+				on_changes.push(callback);
+				bindings.push(binding);
+			}
 		});
 
 		return res;
