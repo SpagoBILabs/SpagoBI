@@ -1374,7 +1374,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			readOnly:true,
 			allowBlank:true
 		}, baseConfig);
-		confEnd.fieldLabel = confEnd.fieldLabel+" End";
+		confEnd.fieldLabel+=" "+LN('sbi.execution.parametersselection.dateRangeEnd');
 		if (this.isNorth()) {
 			confEnd.cls='date-range-param-end-north';
 			confEnd.fieldWidth=100;

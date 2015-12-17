@@ -11,6 +11,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 
 public class DateRangeDAOUtilities {
 
+	private static final String DATE_FORMAT_PATTERN = "SPAGOBI.DATE-FORMAT-SERVER.format";
 	public static final String DATE_RANGE_PARAMETER_SUFFIX = "_dateRange";
 
 	public static boolean isDateRange(BIObjectParameter biObjectParameter) {
@@ -23,13 +24,13 @@ public class DateRangeDAOUtilities {
 
 	public static String toStringForParamUrl(Date d) {
 		SingletonConfig config = SingletonConfig.getInstance();
-		String formatSB = config.getConfigValue("SPAGOBI.DATE-FORMAT.format");
+		String formatSB = config.getConfigValue(DATE_FORMAT_PATTERN);
 		formatSB = formatSB == null ? "dd/MM/yyyy" : formatSB;
 		return new SimpleDateFormat(formatSB).format(d);
 	}
 
 	public static String getDefaultServerPattern() {
-		String pattern = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
+		String pattern = SingletonConfig.getInstance().getConfigValue(DATE_FORMAT_PATTERN);
 		return pattern;
 	}
 
