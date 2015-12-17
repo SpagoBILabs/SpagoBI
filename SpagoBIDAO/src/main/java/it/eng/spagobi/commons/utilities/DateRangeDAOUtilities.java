@@ -12,6 +12,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 public class DateRangeDAOUtilities {
 
 	private static final String DATE_FORMAT_PATTERN = "SPAGOBI.DATE-FORMAT-SERVER.format";
+
 	public static final String DATE_RANGE_PARAMETER_SUFFIX = "_dateRange";
 
 	public static boolean isDateRange(BIObjectParameter biObjectParameter) {
