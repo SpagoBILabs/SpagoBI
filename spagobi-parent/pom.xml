@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.eng.spagobi</groupId>
 	<artifactId>spagobi-parent</artifactId>
-	<version>5.2.0-SNAPSHOT</version>
+	<version>5.2.0</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -23,9 +23,11 @@
 		<module>../spagobi-commons-core</module>
 		<module>../spagobi-metamodel-core</module>
 		<module>../spagobi-metamodel-utils</module>
-		<module>../spagobi.birt.oda</module>
+
 		<module>../spagobi-core</module>
 		<module>../SpagoBIProject</module>
+		<!--  
+				<module>../spagobi.birt.oda</module>
 		<module>../SpagoBIAccessibilityEngine</module>
 		<module>../SpagoBIBirtReportEngine</module>
 		<module>../SpagoBIChartEngine</module>
@@ -42,7 +44,7 @@
 		<module>../SpagoBIQbeEngine</module>
 		<module>../SpagoBISocialAnalysis</module>
 		<module>../SpagoBITalendEngine</module>
-		<module>../SpagoBIWhatIfEngine</module>
+		<module>../SpagoBIWhatIfEngine</module> -->
 	</modules>
 
 	<properties>
