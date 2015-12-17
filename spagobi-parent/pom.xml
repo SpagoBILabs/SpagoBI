@@ -28,7 +28,7 @@
 		<module>../SpagoBICockpitEngine</module>
 		<module>../SpagoBIQbeEngine</module>
 
-<!-- 	<module>../spagobi.birt.oda</module>
+		<module>../spagobi.birt.oda</module>
 		<module>../SpagoBIAccessibilityEngine</module>
 		<module>../SpagoBIBirtReportEngine</module>
 		<module>../SpagoBIChartEngine</module>
@@ -43,7 +43,7 @@
 		<module>../SpagoBINetworkEngine</module>
 		<module>../SpagoBISocialAnalysis</module>
 		<module>../SpagoBITalendEngine</module>
-		<module>../SpagoBIWhatIfEngine</module> -->
+		<module>../SpagoBIWhatIfEngine</module> 
 	</modules>
 
 	<properties>
