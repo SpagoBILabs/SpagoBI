@@ -16,6 +16,8 @@
 	</repositories>
 
 	<modules>
+		<module>../cas</module>
+
 		<module>../QbeCore</module>
 		<module>../SpagoBIDAO</module>
 		<module>../SpagoBIUtils</module>
