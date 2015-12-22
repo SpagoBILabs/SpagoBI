@@ -5,6 +5,20 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -23,20 +37,6 @@ import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class RESTDataSet extends ConfigurableDataSet {
 
@@ -89,6 +89,8 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	@Override
 	public void loadData(int offset, int fetchSize, int maxResults) {
+		log.info("Executing dataset start");
+
 		if (!ignoreConfigurationOnLoad) {
 			// reload the configuration for possible changes due to
 			// customizable properties through parameters and/or profile attributes
@@ -105,6 +107,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 			log.info(String.format("Subscribe NGSI dataset with label %s to orion notifications.", getLabel()));
 			subscribeNGSI();
 		}
+		log.info("Executing dataset stop");
 	}
 
 	private void notifyListeners() {

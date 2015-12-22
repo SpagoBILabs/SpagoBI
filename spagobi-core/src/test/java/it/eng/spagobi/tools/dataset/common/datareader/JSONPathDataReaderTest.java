@@ -200,6 +200,15 @@ public class JSONPathDataReaderTest extends TestCase {
 		fail();
 	}
 
+	public void testStress() throws IOException {
+		long time = System.currentTimeMillis();
+		// 80 mb file, ~3.500.000 lines, ~90.000 rows
+		String json = HelperForTest.readFile("rest-dataset/dataReader-test-stress.json", this.getClass());
+		JSONPathDataReader reader = getJSONPathDataReaderOrion();
+		reader.read(json);
+		assertTrue(System.currentTimeMillis() - time < 15000000);
+	}
+
 	public void testRead() throws IOException, ParseException {
 		String json = HelperForTest.readFile("rest-dataset/dataReader-test.json", this.getClass());
 		JSONPathDataReader reader = getJSONPathDataReaderOrion();
