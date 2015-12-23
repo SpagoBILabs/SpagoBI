@@ -20,7 +20,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipTests>true</skipTests>
 		<minimized-dir>${project.build.directory}/minimized</minimized-dir>
-		
+
 		<!-- For eclipse plugin -->
 		<m2e.jpa.activation>false</m2e.jpa.activation>
 		<m2e.jsf.activation>false</m2e.jsf.activation>
@@ -39,7 +39,7 @@
 		<module>../spagobi-metamodel-utils</module>
 		<module>../spagobi-core</module>
 		<module>../spagobi.birt.oda</module>
-		
+
 		<module>../SpagoBIProject</module>
 		<module>../SpagoBICockpitEngine</module>
 		<module>../SpagoBIQbeEngine</module>
@@ -116,6 +116,26 @@
 							<outputDirectory>${tomcat.home}/webapps</outputDirectory>
 						</configuration>
 					</plugin>
+
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.4.1</version>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${tomcat.home}/webapps</directory>
+									<includes>
+										<include>${project.artifactId}.war</include>
+										<include>${project.artifactId}/**</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+
 				</plugins>
 			</build>
 		</profile>
@@ -224,11 +244,31 @@
 			</properties>
 			<build>
 				<plugins>
+				
+				<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.4.1</version>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${wildfly.home}/standalone/deployments</directory>
+									<includes>
+										<include>${project.artifactId}.war</include>
+										<include>${project.artifactId}.war.deployed</include>
+										<include>${project.artifactId}.war.failed</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+					
 					<plugin>
 						<artifactId>maven-war-plugin</artifactId>
 						<version>2.6</version>
 						<configuration>
-							<!-- TODO: remove depedency instead of lib -->
+							<!-- TODO: remove depedency instead of directly libs -->
 							<packagingExcludes>%regex[WEB-INF/tlds/.*portlet\.tld],
 								%regex[WEB-INF/lib/async-http-servlet.*],
 								%regex[WEB-INF/lib/httpclient-4.*],
@@ -237,12 +277,11 @@
 								%regex[WEB-INF/lib/resteasy-jaxrs-3.*],
 								%regex[WEB-INF/lib/resteasy-servlet-initializer-3.*]
 							</packagingExcludes>
-							<useCache>true</useCache>
 
 							<outputDirectory>${wildfly.home}/standalone/deployments</outputDirectory>
 						</configuration>
 
-					<!-- Necessary for string replacing in web resources -->
+						<!-- Necessary for string replacing in web resources -->
 						<executions>
 							<execution>
 								<id>prepare-war</id>
