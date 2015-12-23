@@ -19,7 +19,6 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipTests>true</skipTests>
-		<minimized-dir>${project.build.directory}/minimized</minimized-dir>
 
 		<!-- For eclipse plugin -->
 		<m2e.jpa.activation>false</m2e.jpa.activation>
@@ -244,8 +243,8 @@
 			</properties>
 			<build>
 				<plugins>
-				
-				<plugin>
+
+					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-clean-plugin</artifactId>
 						<version>2.4.1</version>
@@ -263,7 +262,7 @@
 							</filesets>
 						</configuration>
 					</plugin>
-					
+
 					<plugin>
 						<artifactId>maven-war-plugin</artifactId>
 						<version>2.6</version>
@@ -277,7 +276,7 @@
 								%regex[WEB-INF/lib/resteasy-jaxrs-3.*],
 								%regex[WEB-INF/lib/resteasy-servlet-initializer-3.*]
 							</packagingExcludes>
-
+							<useCache>true</useCache>
 							<outputDirectory>${wildfly.home}/standalone/deployments</outputDirectory>
 						</configuration>
 
@@ -423,6 +422,94 @@
 								</configuration>
 							</execution>
 
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>production</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin</artifactId>
+						<version>1.5.1</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>compress</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<!-- Minify only, do not obfuscate -->
+							<nomunge>true</nomunge>
+							<jswarn>false</jswarn>
+							<statistics>false</statistics>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<useCache>true</useCache>
+						</configuration>
+
+						<!-- Necessary for string replacing in web resources -->
+						<executions>
+							<execution>
+								<id>prepare-war</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>exploded</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+						<executions>
+							<execution>
+								<id>include-minimized-js</id>
+
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/*jspf</include>
+									</includes>
+									<regex>false</regex>
+									<quiet>false</quiet>
+									<replacements>
+										<replacement>
+											<token><![CDATA[<!-- START-PRODUCTION]]></token>
+											<value><![CDATA[<!-- START-PRODUCTION -->]]></value>
+										</replacement>
+										<replacement>
+											<token><![CDATA[END-PRODUCTION -->]]></token>
+											<value><![CDATA[<!-- END-PRODUCTION -->]]></value>
+										</replacement>
+										<replacement>
+											<token><![CDATA[<!-- START-DEBUG -->]]></token>
+											<value><![CDATA[<!-- START-DEBUG]]></value>
+										</replacement>
+										<replacement>
+											<token><![CDATA[<!-- END-DEBUG -->]]></token>
+											<value><![CDATA[END-DEBUG -->]]></value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
 						</executions>
 					</plugin>
 				</plugins>
