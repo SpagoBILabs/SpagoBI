@@ -22,5 +22,5 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- END-DEBUG -->
  
 <!-- START-PRODUCTION
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit-all.js'></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/spagobi/cockpit-all-5.2.0.js'></script>
 END-PRODUCTION -->

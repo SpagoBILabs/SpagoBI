@@ -1,30 +1,66 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>it.eng.spagobi</groupId>
-    <artifactId>spagobi-parent</artifactId>
-    <version>5.2.0</version>
-    <relativePath>../spagobi-parent/pom.xml</relativePath>
-  </parent>
- 
-  <artifactId>SpagoBISDK</artifactId>
-  <packaging>war</packaging>
-
-  <dependencies>
-  	<dependency>
+	<parent>
 		<groupId>it.eng.spagobi</groupId>
-		<artifactId>SpagoBIUtils</artifactId>
+		<artifactId>spagobi-parent</artifactId>
 		<version>5.2.0</version>
-	</dependency>
+		<relativePath>../spagobi-parent/pom.xml</relativePath>
+	</parent>
 
-	<dependency>
-	    <groupId>axis</groupId>
-	    <artifactId>axis</artifactId>
-	    <version>1.4</version>
-	</dependency>
+	<artifactId>SpagoBISDK</artifactId>
+	<packaging>war</packaging>
 
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>SpagoBIUtils</artifactId>
+			<version>5.2.0</version>
+		</dependency>
 
+		<dependency>
+			<groupId>axis</groupId>
+			<artifactId>axis</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>production</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin</artifactId>
+						<version>1.5.1</version>
+						<configuration>
+							<excludes>
+								<exclude>**/*.css</exclude>
+								<exclude>**/cometd/*.js</exclude>
+							</excludes>
+							<aggregations>
+								<aggregation>
+									<output>${project.build.directory}/${project.build.finalName}/js/sbisdk-all-production.js</output>
+									<inputDir>${project.build.directory}/${project.build.finalName}/js</inputDir>
+									<includes>
+										<include>commons-min.js</include>
+										<include>ajax-min.js</include>
+										<include>jsonp-min.js</include>
+										<include>cors-min.js</include>
+										<include>services-min.js</include>
+										<include>api_jsonp-min.js</include>
+										<include>api_cors-min.js</include>
+										<include>api-min.js</include>
+									</includes>
+									<insertNewLine>true</insertNewLine>
+								</aggregation>
+							</aggregations>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

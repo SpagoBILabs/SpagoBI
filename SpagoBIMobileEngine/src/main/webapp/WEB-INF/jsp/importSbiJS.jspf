@@ -24,6 +24,7 @@
 		    });
 	</script>
 
+<!-- START-DEBUG -->
 <script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'></script>
 <script type="text/javascript" src="../js/spagobi/app.js"></script>		
 <script type="text/javascript" src="../js/spagobi/MobileModels.js"></script>
@@ -46,3 +47,8 @@
 <script type="text/javascript" src="../js/spagobi/widgets/CustomToolbar.js"></script>
 <script type="text/javascript" src='../js/spagobi/formats/LocaleUtils.js'/></script>
 <script type="text/javascript" src='../js/spagobi/formats/<%=locale.getLanguage()%>.js'/></script>
+<!-- END-DEBUG -->
+
+<!-- START-PRODUCTION
+<script type="text/javascript" src='../js/spagobi/mobile-all-5.2.0.js'></script>
+END-PRODUCTION -->

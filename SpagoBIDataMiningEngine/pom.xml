@@ -103,32 +103,14 @@
 
 	<profiles>
 		<profile>
-			<id>development</id>
-		</profile>
-		<profile>
 			<id>production</id>
-			<activation>
-				<property>
-					<name>minimized-dir</name>
-				</property>
-			</activation>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>net.alchim31.maven</groupId>
 						<artifactId>yuicompressor-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>compress</goal>
-								</goals>
-							</execution>
-						</executions>
+						<version>1.5.1</version>
 						<configuration>
-							<!-- <outputDirectory>${project.build.directory}/minimized</outputDirectory> -->
-							<webappDirectory>${minimized-dir}</webappDirectory>
-							<!-- Minify only, do not obfuscate -->
-							<nomunge>true</nomunge>
 							<excludes>
 								<exclude>**/*.css</exclude>
 								<exclude>**/lib/**/*.js</exclude>
@@ -143,12 +125,11 @@
 								<exclude>**/spagobi/widgets/PagingToolbar.js</exclude>
 								<exclude>**/spagobi/widgets/TriggerFieldMultiButton.js</exclude>
 								<exclude>**/spagobi/commons/Settings.js</exclude>
-								<exclude>**/spagobi/datamining-all-${project.version}.js</exclude>
 							</excludes>
 							<aggregations>
 								<aggregation>
-									<inputDir>${minimized-dir}/js/spagobi</inputDir>
-									<output>${basedir}/src/main/webapp/js/spagobi/datamining-all-${project.version}.js</output>
+									<inputDir>${project.build.directory}/${project.build.finalName}/js/spagobi</inputDir>
+									<output>${project.build.directory}/${project.build.finalName}/js/spagobi/datamining-all-${js.version}.js</output>
 									<includes>
 										<include>overrides/overrides-min.js</include>
 										<include>service/ServiceRegistry-min.js</include>

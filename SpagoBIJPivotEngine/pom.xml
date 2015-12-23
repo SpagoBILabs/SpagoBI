@@ -40,19 +40,6 @@
 			<version>1.8</version>
 		</dependency>
 
-
-		<!-- <dependency> -->
-		<!-- <groupId>com.tonbeller</groupId> -->
-		<!-- <artifactId>wcf</artifactId> -->
-		<!-- <version>1.8.0-130820</version> -->
-		<!-- </dependency> -->
-
-		<!-- <dependency> -->
-		<!-- <groupId>com.tonbeller</groupId> -->
-		<!-- <artifactId>jpivot</artifactId> -->
-		<!-- <version>1.8.0-130701</version> -->
-		<!-- </dependency> -->
-
 		<dependency>
 			<groupId>eigenbase</groupId>
 			<artifactId>eigenbase-xom</artifactId>
@@ -196,5 +183,24 @@
 
 	</dependencies>
 
-	
+		<profiles>
+		<profile>
+			<id>production</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin</artifactId>
+						<version>1.5.1</version>
+						<executions>
+							<execution>
+								<id>default-compress-exec</id>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

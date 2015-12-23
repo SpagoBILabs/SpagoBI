@@ -24,6 +24,9 @@
 		<m2e.jpa.activation>false</m2e.jpa.activation>
 		<m2e.jsf.activation>false</m2e.jsf.activation>
 		<m2e.jaxrs.activation>false</m2e.jaxrs.activation>
+		
+		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
+		<js.version>5.2.0</js.version>
 	</properties>
 
 	<modules>
@@ -439,6 +442,7 @@
 						<version>1.5.1</version>
 						<executions>
 							<execution>
+								<id>default-compress-exec</id>
 								<goals>
 									<goal>compress</goal>
 								</goals>

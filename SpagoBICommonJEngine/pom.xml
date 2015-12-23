@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -38,40 +37,22 @@
 
 	<profiles>
 		<profile>
-			<id>development</id>
-		</profile>
-		<profile>
 			<id>production</id>
-			<activation>
-				<property>
-					<name>minimized-dir</name>
-				</property>
-			</activation>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>net.alchim31.maven</groupId>
 						<artifactId>yuicompressor-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>compress</goal>
-								</goals>
-							</execution>
-						</executions>
+						<version>1.5.1</version>
 						<configuration>
-							<webappDirectory>${minimized-dir}</webappDirectory>
-							<!-- Minify only, do not obfuscate -->
-							<nomunge>true</nomunge>
 							<excludes>
 								<exclude>**/*.css</exclude>
 								<exclude>**/lib/**/*.js</exclude>
-								<exclude>commonj-all-${project.version}.js</exclude>
 							</excludes>
 							<aggregations>
 								<aggregation>
-									<inputDir>${minimized-dir}/js/spagobi</inputDir>
-									<output>${basedir}/src/main/webapp/js/spagobi/commonj-all-${project.version}.js</output>
+									<inputDir>${project.build.directory}/${project.build.finalName}/js/spagobi</inputDir>
+									<output>${project.build.directory}/${project.build.finalName}/js/spagobi/commonj-all-${js.version}.js</output>
 									<includes>
 										<include>**/*.js</include>
 									</includes>
@@ -84,9 +65,9 @@
 			</build>
 		</profile>
 
-		
+
 	</profiles>
 
-	
+
 
 </project>

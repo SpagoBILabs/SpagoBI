@@ -123,7 +123,7 @@
 							</excludes>
 							<aggregations>
 								<aggregation>
-									<output>${project.build.directory}/${project.build.finalName}/js/src/ext/sbi-all-5.2.0.js</output>
+									<output>${project.build.directory}/${project.build.finalName}/js/src/ext/sbi-all-${js.version}.js</output>
 									<inputDir>${project.build.directory}/${project.build.finalName}/js</inputDir>
 									<includes>
 										<include>src/ext/sbi/commons/Format-min.js</include>
@@ -204,7 +204,7 @@
 									<insertNewLine>true</insertNewLine>
 								</aggregation>
 								<aggregation>
-									<output>${project.build.directory}/${project.build.finalName}/js/src/ext/sbi-all-ext311-5.2.0.js</output>
+									<output>${project.build.directory}/${project.build.finalName}/js/src/ext/sbi-all-ext311-${js.version}.js</output>
 									<inputDir>${project.build.directory}/${project.build.finalName}/js</inputDir>
 									<includes>
 										<include>src/ext/sbi/commons/Log-min.js</include>
@@ -320,7 +320,7 @@
 									<insertNewLine>true</insertNewLine>
 								</aggregation>
 								<aggregation>
-									<output>${project.build.directory}/${project.build.finalName}/js/src/ext4/sbi-all-ext410-5.2.0.js</output>
+									<output>${project.build.directory}/${project.build.finalName}/js/src/ext4/sbi-all-ext410-${js.version}.js</output>
 									<inputDir>${project.build.directory}/${project.build.finalName}/js</inputDir>
 									<includes>
 										<include>src/ext/sbi/formats/LocaleUtils-min.js</include>

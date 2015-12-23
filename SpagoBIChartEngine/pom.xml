@@ -83,31 +83,14 @@
 
 	<profiles>
 		<profile>
-			<id>development</id>
-		</profile>
-		<profile>
 			<id>production</id>
-			<activation>
-				<property>
-					<name>minimized-dir</name>
-				</property>
-			</activation>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>net.alchim31.maven</groupId>
 						<artifactId>yuicompressor-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>compress</goal>
-								</goals>
-							</execution>
-						</executions>
+						<version>1.5.1</version>
 						<configuration>
-							<webappDirectory>${minimized-dir}</webappDirectory>
-							<!-- Minify only, do not obfuscate -->
-							<nomunge>true</nomunge>
 							<excludes>
 								<exclude>**/*.css</exclude>
 								<exclude>**/lib/**/*.js</exclude>
@@ -116,12 +99,12 @@
 								<exclude>**/spagobi/formats/fr.js</exclude>
 								<exclude>**/spagobi/formats/it.js</exclude>
 								<exclude>**/spagobi/commons/Settings.js</exclude>
-								<exclude>**/spagobi/chart-all-${project.version}.js</exclude>
+								<exclude>**/cometd/**/*.js</exclude>
 							</excludes>
 							<aggregations>
 								<aggregation>
-									<inputDir>${minimized-dir}/js/spagobi</inputDir>
-									<output>${basedir}/src/main/webapp/js/spagobi/chart-all-${project.version}.js</output>
+									<output>${project.build.directory}/${project.build.finalName}/js/spagobi/chart-all-${js.version}.js</output>
+									<inputDir>${project.build.directory}/${project.build.finalName}/js/spagobi</inputDir>
 									<includes>
 										<include>overrides/overrides-min.js</include>
 										<include>exception/ExceptionHandler-min.js</include>
@@ -144,10 +127,6 @@
 				</plugins>
 			</build>
 		</profile>
-
-
 	</profiles>
-
-
 
 </project>
