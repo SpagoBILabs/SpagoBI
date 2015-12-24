@@ -24,7 +24,7 @@
 		<m2e.jpa.activation>false</m2e.jpa.activation>
 		<m2e.jsf.activation>false</m2e.jsf.activation>
 		<m2e.jaxrs.activation>false</m2e.jaxrs.activation>
-		
+
 		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
 		<js.version>5.2.0</js.version>
 	</properties>
@@ -434,28 +434,32 @@
 		<profile>
 			<id>production</id>
 			<build>
+
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>net.alchim31.maven</groupId>
+							<artifactId>yuicompressor-maven-plugin</artifactId>
+							<version>1.5.1</version>
+							<executions>
+								<execution>
+									<id>default-compress-exec</id>
+									<goals>
+										<goal>compress</goal>
+									</goals>
+								</execution>
+							</executions>
+							<configuration>
+								<!-- Minify only, do not obfuscate -->
+								<nomunge>true</nomunge>
+								<jswarn>false</jswarn>
+								<statistics>false</statistics>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+				
 				<plugins>
-
-					<plugin>
-						<groupId>net.alchim31.maven</groupId>
-						<artifactId>yuicompressor-maven-plugin</artifactId>
-						<version>1.5.1</version>
-						<executions>
-							<execution>
-								<id>default-compress-exec</id>
-								<goals>
-									<goal>compress</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<!-- Minify only, do not obfuscate -->
-							<nomunge>true</nomunge>
-							<jswarn>false</jswarn>
-							<statistics>false</statistics>
-						</configuration>
-					</plugin>
-
 					<plugin>
 						<artifactId>maven-war-plugin</artifactId>
 						<version>2.6</version>
