@@ -15,7 +15,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cas-server-webapp</artifactId>
 	<packaging>war</packaging>
-	<name>JA-SIG CAS Web Application</name>
+	<name>CAS</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
