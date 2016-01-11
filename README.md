@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/SpagoBILabs/SpagoBI.svg?branch=master)](https://travis-ci.org/SpagoBILabs/SpagoBI)
+
 #<a name="top"></a>SpagoBI
 
 * [Introduction](#introduction)
