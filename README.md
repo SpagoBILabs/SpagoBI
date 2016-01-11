@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/SpagoBILabs/SpagoBI.svg?branch=master)](https://travis-ci.org/SpagoBILabs/SpagoBI)
 
-#<a name="top"></a>SpagoBI
+
+#<a name="top"></a>SpagoBI [![Build Status](https://travis-ci.org/SpagoBILabs/SpagoBI.svg?branch=master)](https://travis-ci.org/SpagoBILabs/SpagoBI)
 
 * [Introduction](#introduction)
 * [GEi overall description](#gei-overall-description)
