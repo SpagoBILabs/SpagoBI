@@ -4,4 +4,4 @@ jdk:
   - oraclejdk7
 
 script:
-  - mvn-eng -f spagobi-parent/pom.xml clean package 
+  - mvn -f spagobi-parent/pom.xml clean package 
