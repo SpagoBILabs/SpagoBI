@@ -18,6 +18,8 @@
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
 		<skipTests>true</skipTests>
 
 		<!-- For eclipse plugin -->
@@ -83,6 +85,7 @@
 						</archive>
 					</configuration>
 				</plugin>
+				
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
@@ -91,6 +94,15 @@
 					<!-- The versioon suffix from .war is removed -->
 					<configuration>
 						<warName>${project.artifactId}</warName>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.19.1</version>
+					<configuration>
+						<skipTests>${skipTests}</skipTests>
 					</configuration>
 				</plugin>
 			</plugins>

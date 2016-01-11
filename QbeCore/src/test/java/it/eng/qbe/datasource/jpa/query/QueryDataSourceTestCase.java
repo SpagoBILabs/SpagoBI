@@ -5,17 +5,17 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.datasource.jpa.query;
 
+import java.io.File;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
 import it.eng.qbe.datasource.AbstractDataSourceTestCase;
 import it.eng.qbe.jpa.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.jpa.datasource.jpa.JPADriver;
 import it.eng.qbe.runtime.datasource.DriverManager;
 import it.eng.qbe.runtime.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.runtime.datasource.configuration.IDataSourceConfiguration;
-
-import java.io.File;
-import java.util.List;
-
-import javax.persistence.EntityManager;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -33,7 +33,7 @@ public class QueryDataSourceTestCase extends AbstractDataSourceTestCase {
 
 		File file = new File(QBE_FILE);
 		configuration = new FileDataSourceConfiguration(modelName, file);
-		configuration.loadDataSourceProperties().put("connection", connection);
+		configuration.loadDataSourceProperties().put("datasource", connection);
 		dataSource = DriverManager.getDataSource(JPADriver.DRIVER_ID, configuration, false);
 	}
 
