@@ -342,9 +342,9 @@ Each parameter is seen as a resource (subresource of parameters) and is uniquely
 
 
 
-## The content subresource [/restful-services/2.0/documents/{document_label}/content]
+## The content subresource: document execution [/restful-services/2.0/documents/{document_label}/content]
 
-In SpagoBI a document can be executed. For a point of view, executing a document can be seen as the act of retrieving its content. For this reason, the content of a document is represented as a sub resource of it.
+In SpagoBI a document can be executed. For a point of view, executing a document can be seen as the act of retrieving its content. For this reason, the content of a document is represented as a subresource of it.
 
 + Parameters
     + document_label (string) - the document's label
@@ -352,8 +352,8 @@ In SpagoBI a document can be executed. For a point of view, executing a document
 
 ### Return the document content [POST]
 
-In order to execute the document you must put them inside the body payload as a JSON object. There is also the outputType parameter represented as queryParameter.
-It accepts an  "outputType" query parameter, for example "HTML".
+In order to execute the document you must put the document's parameters inside the body payload as a JSON object. There is also the outputType parameter represented as queryParameter.
+It accepts an output type, for example "HTML" or "PDF". The available output types depend from the kind of document. Check the available export types from the SpagoBI web application, inside the view of document. 
         
 + Request (application/json)
         
@@ -362,10 +362,10 @@ It accepts an  "outputType" query parameter, for example "HTML".
                 [
                     {
                             "id":"1",
-                            "label":"label1",
-                            "type":"type1",
-                            "urlName":"myUrl",
-                            "values":["v1","v2"]
+                            "label":"Country",
+                            "type":"string",
+                            "urlName":"country",
+                            "values":["Italy","USA"]
                     }
                 ]
 
