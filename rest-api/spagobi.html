@@ -1778,7 +1778,7 @@ The other times an error appears the response code is 200 and the response body 
             </section>
         
             <section id="resource_the-content-subresource" class="resource">
-                 <div class= "header" ><h3 id="h-resource_the-content-subresource">The content subresource [/restful-services/2.0/documents/{document_label}/content]</h3> </div>
+                 <div class= "header" ><h3 id="h-resource_the-content-subresource">The content subresource: document execution [/restful-services/2.0/documents/{document_label}/content]</h3> </div>
                 <p>In SpagoBI a document can be executed. For a point of view, executing a document can be seen as the act of retrieving its content. For this reason, the content of a document is represented as a sub resource of it.</p>
                 
                 
@@ -1828,8 +1828,7 @@ The other times an error appears the response code is 200 and the response body 
 
         
                             <div id="return-the-document-content_body" class="">
-                                <p>In order to execute the document you must put them inside the body payload as a JSON object. There is also the outputType parameter represented as queryParameter.
-It accepts an  "outputType" query parameter, for example "HTML".</p>
+                                <p>In order to execute the document you must put the document's parameters inside the body payload as a JSON object. There is also the outputType parameter represented as queryParameter. It accepts an output type, for example "HTML" or "PDF". The available output types depend from the kind of document. Check the available export types from the SpagoBI web application, inside the view of document.</p>
                                 
                                 
                                 
@@ -4292,11 +4291,11 @@ Content-Disposition: form-data; name=&#34;file&#34;; filename=&#34;my_file&#34;<
                     <div class= "header"><p>Body</p></div>
                     <pre><code>    [
         {
-                "id":"1",
-                "label":"label1",
-                "type":"type1",
-                "urlName":"myUrl",
-                "values":["v1","v2"]
+               	"id": "1",
+		    "label": "Country",
+		    "type": "string",
+		    "urlName": "country",
+		    "values": ["Italy","USA"]
         }
     ]
 </code></pre>
