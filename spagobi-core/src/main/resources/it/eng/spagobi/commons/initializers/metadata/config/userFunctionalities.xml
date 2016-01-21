@@ -21,6 +21,7 @@
 <USER_FUNCTIONALITY name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
 <USER_FUNCTIONALITY name="ProfileAttributeManagement" description="ProfileAttributeManagement"/>
 <USER_FUNCTIONALITY name="DataSourceManagement" description="DataSourceManagement"/>
+<USER_FUNCTIONALITY name="DataSourceRead" description="DataSourceRead"/>
 <USER_FUNCTIONALITY name="DocumentUserManagement" description="DocumentUserManagement"/>
 <USER_FUNCTIONALITY name="DocumentDeleteManagement" description="DocumentDeleteManagement"/>
 <USER_FUNCTIONALITY name="DocumentStateManagement" description="DocumentStateManagement"/>

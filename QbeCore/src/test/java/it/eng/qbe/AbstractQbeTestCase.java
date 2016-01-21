@@ -5,14 +5,13 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe;
 
+import java.util.List;
+import java.util.Set;
+
 import it.eng.qbe.runtime.datasource.IDataSource;
 import it.eng.qbe.runtime.model.structure.IModelEntity;
 import it.eng.qbe.runtime.model.structure.IModelStructure;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
-
-import java.util.List;
-import java.util.Set;
-
 import junit.framework.TestCase;
 
 /**
@@ -27,9 +26,9 @@ public abstract class AbstractQbeTestCase extends TestCase {
 
 	public static String CONNECTION_DIALECT = "org.hibernate.dialect.MySQLDialect";
 	public static String CONNECTION_DRIVER = "com.mysql.jdbc.Driver";
-	public static String CONNECTION_URL = "jdbc:mysql://localhost:3306/foodmart_key";
-	public static String CONNECTION_USER = "root";
-	public static String CONNECTION_PWD = "root";
+	public static String CONNECTION_URL = "jdbc:mysql://localhost/foodmart_key_test";
+	public static String CONNECTION_USER = "spagobi_test";
+	public static String CONNECTION_PWD = "";
 
 	@Override
 	protected void setUp() throws Exception {

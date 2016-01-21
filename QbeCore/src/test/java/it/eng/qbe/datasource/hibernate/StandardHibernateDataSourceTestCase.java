@@ -5,14 +5,14 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.datasource.hibernate;
 
+import java.io.File;
+
 import it.eng.qbe.datasource.AbstractDataSourceTestCase;
 import it.eng.qbe.hibernate.datasource.hibernate.HibernateDataSource;
 import it.eng.qbe.hibernate.datasource.hibernate.HibernateDriver;
 import it.eng.qbe.runtime.datasource.DriverManager;
 import it.eng.qbe.runtime.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.runtime.datasource.configuration.IDataSourceConfiguration;
-
-import java.io.File;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -30,7 +30,7 @@ public class StandardHibernateDataSourceTestCase extends AbstractDataSourceTestC
 
 		File file = new File(QBE_FILE);
 		configuration = new FileDataSourceConfiguration(modelName, file);
-		configuration.loadDataSourceProperties().put("connection", connection);
+		configuration.loadDataSourceProperties().put("datasource", connection);
 		dataSource = DriverManager.getDataSource(HibernateDriver.DRIVER_ID, configuration);
 
 		testEntityUniqueName = "it.eng.spagobi.Customer::Customer";

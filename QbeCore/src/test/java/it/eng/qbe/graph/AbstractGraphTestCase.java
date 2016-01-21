@@ -5,15 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.graph;
 
-import it.eng.qbe.datasource.AbstractDataSourceTestCase;
-import it.eng.qbe.jpa.datasource.jpa.JPADriver;
-import it.eng.qbe.runtime.datasource.DriverManager;
-import it.eng.qbe.runtime.datasource.configuration.FileDataSourceConfiguration;
-import it.eng.qbe.runtime.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.runtime.model.structure.IModelEntity;
-import it.eng.qbe.runtime.model.structure.IModelStructure;
-import it.eng.qbe.runtime.statement.graph.bean.Relationship;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +21,16 @@ import org.jgrapht.alg.KShortestPaths;
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.Multigraph;
 
-public class AbstractGraphTestCase extends AbstractDataSourceTestCase {
+import it.eng.qbe.datasource.AbstractDataSourceTestCase;
+import it.eng.qbe.jpa.datasource.jpa.JPADriver;
+import it.eng.qbe.runtime.datasource.DriverManager;
+import it.eng.qbe.runtime.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.runtime.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.runtime.model.structure.IModelEntity;
+import it.eng.qbe.runtime.model.structure.IModelStructure;
+import it.eng.qbe.runtime.statement.graph.bean.Relationship;
+
+public abstract class AbstractGraphTestCase extends AbstractDataSourceTestCase {
 
 	IModelStructure modelStructure;
 	private static final String QBE_FILE = "test-resources/jpa/jpaImpl/eclipselink/datamart.jar";

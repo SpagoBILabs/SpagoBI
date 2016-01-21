@@ -77,8 +77,22 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>4.2.0.Final</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.38</version>
+			<scope>test</scope>
+		</dependency>
+
 
 	</dependencies>
 
-	
+
 </project>
