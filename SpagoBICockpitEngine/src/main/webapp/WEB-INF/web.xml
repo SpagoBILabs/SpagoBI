@@ -148,11 +148,6 @@
 	<!--  ============================================================================ -->
 	<!--  SERVLET MAPPINGS						 									                               -->
 	<!--  ============================================================================ -->
-	    
- 	<servlet-mapping>
-  		<servlet-name>ProxyTicketReceptor</servlet-name> 
-  		<url-pattern>/proxyReceptor</url-pattern> 
-  	</servlet-mapping> 
     
     <context-param>
         <param-name>resteasy.servlet.mapping.prefix</param-name>
