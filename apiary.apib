@@ -354,7 +354,8 @@ In SpagoBI a document can be executed. For a point of view, executing a document
 
 In order to execute the document you must put the document's parameters inside the body payload as a JSON object. There is also the outputType parameter represented as queryParameter.
 It accepts an output type, for example "HTML" or "PDF". The available output types depend from the kind of document. Check the available export types from the SpagoBI web application, inside the view of document. 
-For what concerns other document parameters the only mandatory attributes are "urlName" and "values"; system automatically detects the referred analytical driver by "urlName".
+
+For what concerns other document parameters the only mandatory attributes are "urlName" and "values"; system automatically detects the referred analytical driver by specified "urlName".
         
 + Request (application/json)
         
