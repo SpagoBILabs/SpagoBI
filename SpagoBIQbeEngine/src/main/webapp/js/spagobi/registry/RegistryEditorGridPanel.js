@@ -1267,8 +1267,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					}
 				}	
 				if (isMasterField && oldValue != '' && oldValue != newValue){				
-				   alert(LN('sbi.registry.registryeditorgridpanel.warningDependences.1') +'\'' + lstDependences + '\' ' +
-						 LN('sbi.registry.registryeditorgridpanel.warningDependences.2') );
+				   alert(String.format(LN('sbi.registry.registryeditorgridpanel.warningDependences.1'), '\'' + lstDependences + '\' ' )
+						   + LN('sbi.registry.registryeditorgridpanel.warningDependences.2') );
 				}
 			}
 		});
