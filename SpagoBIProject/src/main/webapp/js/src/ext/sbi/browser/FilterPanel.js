@@ -23,7 +23,7 @@ Sbi.browser.FilterPanel = function(config) {
 	var label;
 	
 	// set defaults
-	label = LN('sbi.browser.misc.x') + ' ' + LN('sbi.browser.document.name');
+	label = LN('sbi.browser.document.byname');
 	this.sortRadioGroup.push(
 			new Ext.form.Radio({
 				boxLabel: label, name: 'sort', hideLabel: true, inputValue: 'name', checked: true
@@ -42,7 +42,7 @@ Sbi.browser.FilterPanel = function(config) {
 			var meta = config.browserConfig.metaDocument[i];
 			
 			if(meta.sortable && meta.id != 'name') {
-				label = LN('sbi.browser.misc.x') + ' ' + LN('sbi.browser.document.' + meta.id);
+				label = LN('sbi.browser.document.by' + meta.id);
 				this.sortRadioGroup.push(
 						new Ext.form.Radio({
 							boxLabel: label, name: 'sort', hideLabel: true, inputValue: meta.id
@@ -52,7 +52,7 @@ Sbi.browser.FilterPanel = function(config) {
 			}
 			
 			if(meta.groupable) {
-				label = LN('sbi.browser.misc.x') + ' ' + LN('sbi.browser.document.' + meta.id);
+				label = LN('sbi.browser.document.by' + meta.id);
 				this.groupRadioGroup.push(
 						new Ext.form.Radio({
 							boxLabel: label, name: 'group', hideLabel: true, inputValue: meta.id
