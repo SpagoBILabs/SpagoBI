@@ -1165,7 +1165,7 @@ CREATE TABLE  SBI_THRESHOLD_VALUE  (
        ID_THRESHOLD_VALUE   INTEGER NOT NULL ,
        THRESHOLD_ID         INTEGER NOT NULL,
        SEVERITY_ID          INTEGER,
-       POSITION             INTEGER,
+       KPI_POSITION         INTEGER,
        MIN_VALUE            NUMERIC,
        MAX_VALUE            NUMERIC,
        LABEL                VARCHAR(20) NOT NULL,
