@@ -26,7 +26,7 @@
             <column name="colour" length="20" />
         </property>
         <property name="position" type="integer">
-            <column name="position" />
+            <column name="kpi_position" />
         </property>
 		<property name="maxClosed" type="boolean">
             <column name="max_closed" />
