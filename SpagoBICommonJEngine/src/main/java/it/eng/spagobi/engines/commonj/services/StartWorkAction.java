@@ -42,7 +42,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 import commonj.work.Work;
 import commonj.work.WorkEvent;
@@ -59,7 +59,6 @@ public class StartWorkAction extends AbstractEngineAction {
 	private ContentServiceProxy contentProxy;
 	String documentId;
 	String documentLabel;
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
 	String userId=null;
 	HttpSession session = null;
 	HttpServletRequest httpRequest = null;
@@ -336,7 +335,7 @@ FUNCTIONS FROM ACTION ENGINE
 			}	
 			try {
 				if(template == null)throw new SpagoBIEngineRuntimeException("There are no template associated to document [" + documentId + "]");
-				templateContent = DECODER.decodeBuffer(template.getContent());
+				templateContent = DatatypeConverter.parseBase64Binary(template.getContent());
 			} catch (Throwable e) {
 				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException("COmmonj", "Impossible to get template's content", e);
 				engineException.setDescription("Impossible to get template's content:  " + e.getMessage());

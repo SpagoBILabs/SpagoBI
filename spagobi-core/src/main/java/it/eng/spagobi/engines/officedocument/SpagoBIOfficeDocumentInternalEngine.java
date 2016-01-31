@@ -31,7 +31,7 @@ import it.eng.spagobi.utilities.mime.MimeUtils;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 public class SpagoBIOfficeDocumentInternalEngine implements InternalEngineIFace {
 

@@ -36,8 +36,8 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.bind.DatatypeConverter;
 
 public class InsertNotesAction extends AbstractHttpAction {
 	
@@ -129,12 +129,7 @@ public class InsertNotesAction extends AbstractHttpAction {
 			else if(parName.equals("OLD_NOTES")){
 				
 				String oldNotest = (String)request.getAttribute("OLD_NOTES");
-				try {
-					oldNotes =new String(new BASE64Decoder().decodeBuffer(oldNotest));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
+				oldNotes =new String(DatatypeConverter.parseBase64Binary(oldNotest)); 
 			}
 			else if(parName.equals("notes")){
 				notes = (String)request.getAttribute("notes");
@@ -173,12 +168,7 @@ public class InsertNotesAction extends AbstractHttpAction {
 		    		
 		    		String tempOldNotest = getNotes(execIdentifier, objId );
 		    		String tempOldNotes = "" ;
-		    		try {
-		    			tempOldNotes =new String(new BASE64Decoder().decodeBuffer(tempOldNotest));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} 
+		    		tempOldNotes =new String(DatatypeConverter.parseBase64Binary(tempOldNotest)); 
 		    		
 		    		if (tempOldNotes.equals(oldNotes)){
 		    			saveNotes(execIdentifier, objId, notes,profile2);
@@ -190,7 +180,7 @@ public class InsertNotesAction extends AbstractHttpAction {
 		     }
 		    
 		    
-		    String notesEnc = new BASE64Encoder().encode(notes.getBytes());
+		    String notesEnc = DatatypeConverter.printBase64Binary(notes.getBytes());
 			response.setAttribute("OBJECT_ID", objId);
 		    response.setAttribute("NOTES_CONFLICT", conflict);
 		    response.setAttribute("execIdentifier", execIdentifier);
@@ -212,7 +202,7 @@ public class InsertNotesAction extends AbstractHttpAction {
 				
 				if(objnotes!=null){
 					byte[] notestemp = objnotes.getContent();
-					notes = new BASE64Encoder().encode(notestemp);
+					notes = DatatypeConverter.printBase64Binary(notestemp);
 					//notes = new String(objnotes.getContent());
 				}
 				

@@ -30,7 +30,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.olap4j.OlapDataSource;
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
 
@@ -39,7 +39,6 @@ import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
  */
 public class WhatIfEngineConfig {
 
-	private static final BASE64Encoder ENCODER = new BASE64Encoder();
 
 	private EnginConf engineConfig;
 
@@ -254,10 +253,10 @@ public class WhatIfEngineConfig {
 		String valueBase64 = null;
 		if (v != null) {
 			try {
-				valueBase64 = ENCODER.encode(v.getBytes("UTF-8"));
+				valueBase64 = DatatypeConverter.printBase64Binary(v.getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException e) {
 				logger.error("UTF-8 encoding not supported!!!!!", e);
-				valueBase64 = ENCODER.encode(v.getBytes());
+				valueBase64 = DatatypeConverter.printBase64Binary(v.getBytes());
 			}
 		}
 		return valueBase64;

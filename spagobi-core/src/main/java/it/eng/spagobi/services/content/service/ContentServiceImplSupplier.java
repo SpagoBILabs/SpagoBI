@@ -32,7 +32,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -129,8 +129,7 @@ public class ContentServiceImplSupplier {
 				}
 			}
 
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			content.setContent(bASE64Encoder.encode(template));
+			content.setContent(DatatypeConverter.printBase64Binary(template));
 			logger.debug("template read");
 			content.setFileName(temp.getName());
 		} catch (NumberFormatException e) {
@@ -223,8 +222,7 @@ public class ContentServiceImplSupplier {
 				}
 			}
 			
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			content.setContent(bASE64Encoder.encode(template));
+			content.setContent(DatatypeConverter.printBase64Binary(template));
 			logger.debug("template read");
 			content.setFileName(temp.getName());
 		} catch (NumberFormatException e) {

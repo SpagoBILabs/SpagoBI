@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -77,8 +77,6 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	private DataSourceServiceProxy datasourceProxy;
 	private DataSetServiceProxy datasetProxy;
 	private MetamodelServiceProxy metamodelProxy;
-
-	protected static final BASE64Decoder DECODER = new BASE64Decoder();
 
 	public static final String AUDIT_ID = "SPAGOBI_AUDIT_ID";
 	public static final String DOCUMENT_ID = "document";
@@ -274,7 +272,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		try {
 			if (template == null)
 				throw new SpagoBIEngineRuntimeException("There are no template associated to document [" + documentId + "]");
-			templateContent = DECODER.decodeBuffer(template.getContent());
+			templateContent = DatatypeConverter.parseBase64Binary(template.getContent());
 		} catch (Throwable e) {
 			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Impossible to get template's content", e);
 			engineException.setDescription("Impossible to get template's content:  " + e.getMessage());
@@ -440,13 +438,8 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 			logger.debug("IN");
 
 			spagoBISubObject = getContentServiceProxy().readSubObjectContent(getAnalysisMetadata().getId().toString());
-			try {
-				rowData = DECODER.decodeBuffer(spagoBISubObject.getContent());
-				analysisStateRowData = rowData;
-			} catch (IOException e) {
-				logger.warn("Impossible to decode the content of " + getAnalysisMetadata().getId().toString() + " subobject");
-				return null;
-			}
+			rowData = DatatypeConverter.parseBase64Binary(spagoBISubObject.getContent());
+			analysisStateRowData = rowData;
 
 			logger.debug("OUT");
 		}

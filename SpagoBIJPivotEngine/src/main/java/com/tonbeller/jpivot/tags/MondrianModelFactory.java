@@ -32,7 +32,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.xml.sax.SAXException;
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 import com.tonbeller.jpivot.core.ModelFactory;
 import com.tonbeller.jpivot.mondrian.MondrianModel;
@@ -47,7 +47,6 @@ import com.tonbeller.wcf.expr.ExprUtils;
 public class MondrianModelFactory {
 	private static Logger logger = Logger.getLogger(MondrianModelFactory.class);
 
-	private static final BASE64Encoder ENCODER = new BASE64Encoder();
 	
 	private MondrianModelFactory() {
 	}
@@ -147,10 +146,10 @@ public class MondrianModelFactory {
 							String valueBase64 = null;
 							if (value != null) {
 								try {
-									valueBase64 = ENCODER.encode(value.getBytes("UTF-8"));
+									valueBase64 = DatatypeConverter.printBase64Binary(value.getBytes("UTF-8"));
 								} catch (UnsupportedEncodingException e) {
 									logger.error("UTF-8 encoding not supported!!!!!", e);
-									valueBase64 = ENCODER.encode(value.getBytes());
+									valueBase64 = DatatypeConverter.printBase64Binary(value.getBytes());
 								}
 							}
 							logger.debug("Attribute value in Base64 encoding is " + valueBase64);

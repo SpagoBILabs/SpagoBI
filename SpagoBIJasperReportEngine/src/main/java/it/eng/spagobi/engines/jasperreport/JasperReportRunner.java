@@ -87,8 +87,8 @@ import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 import org.xml.sax.InputSource;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.bind.DatatypeConverter;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -203,8 +203,7 @@ public class JasperReportRunner {
 			}
 			logger.debug("Read the template." + template.getFileName());
 			InputStream is = null;
-			BASE64Decoder bASE64Decoder = new BASE64Decoder();
-			byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
+			byte[] templateContent = DatatypeConverter.parseBase64Binary(template.getContent());
 			is = new java.io.ByteArrayInputStream(templateContent);
 
 			if (template.getFileName().indexOf(".zip") > -1) {
@@ -673,8 +672,7 @@ public class JasperReportRunner {
 
 				byte[] byteImg = baos.toByteArray();
 				baos.close();
-				BASE64Encoder encoder64 = new BASE64Encoder();
-				String encodedImage = encoder64.encode(byteImg);
+				String encodedImage = DatatypeConverter.printBase64Binary(byteImg);
 				message += encodedImage;
 				message += "</IMAGE>";
 				count++;
@@ -1031,8 +1029,7 @@ public class JasperReportRunner {
 					template.getFileName();
 					logger.debug("Read the template.(subreport)" + template.getFileName());
 					InputStream is = null;
-					BASE64Decoder bASE64Decoder = new BASE64Decoder();
-					byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
+					byte[] templateContent = DatatypeConverter.parseBase64Binary(template.getContent());
 					is = new java.io.ByteArrayInputStream(templateContent);
 					String str = new String(templateContent);
 

@@ -28,14 +28,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 public class MetaModelsNeedExportManager extends AbstractTypesExportManager {
 
 
 	static private Logger logger = Logger.getLogger(MetaModelsNeedExportManager.class);
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
-
 
 	public MetaModelsNeedExportManager(String type, ExporterMetadata exporter,
 			ExportManager manager) {

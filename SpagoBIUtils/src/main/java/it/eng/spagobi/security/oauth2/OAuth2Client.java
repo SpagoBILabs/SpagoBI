@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 public class OAuth2Client {
 	private static Logger logger = Logger.getLogger(OAuth2Client.class);
@@ -146,7 +146,7 @@ public class OAuth2Client {
 	// The generated PostMethod object is used to retrieve access token (OAuth2)
 	private PostMethod createPostMethodForAccessToken() {
 		String authorizationCredentials = config.getProperty("CLIENT_ID") + ":" + config.getProperty("SECRET");
-		String encoded = new String(new BASE64Encoder().encode(authorizationCredentials.getBytes()));
+		String encoded = new String(DatatypeConverter.printBase64Binary(authorizationCredentials.getBytes()));
 		encoded = encoded.replaceAll("\n", "");
 		encoded = encoded.replaceAll("\r", "");
 

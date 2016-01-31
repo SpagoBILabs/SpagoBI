@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
 import org.xml.sax.InputSource;
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.talend.TalendEngine;
@@ -256,8 +256,7 @@ public class JobUploadService extends AbstractEngineStartServlet {
 		
 		String template = getTemplate(language, projectName, jobName);
 		
-		BASE64Encoder encoder = new BASE64Encoder();
-		String templateBase64Coded = encoder.encode(template.getBytes());		
+		String templateBase64Coded = DatatypeConverter.printBase64Binary(template.getBytes());		
 		
 		TalendEngineConfig config = TalendEngineConfig.getInstance();
 		
@@ -332,8 +331,7 @@ public class JobUploadService extends AbstractEngineStartServlet {
 	    template += "language=\"" + contextName + "\" />\n";
 	    template += "</etl>";
 	    
-	    BASE64Encoder encoder = new BASE64Encoder();
-	    String templateBase64Coded = encoder.encode(template.getBytes());		
+	    String templateBase64Coded = DatatypeConverter.printBase64Binary(template.getBytes());		
 	    
 	    TalendEngineConfig config = TalendEngineConfig.getInstance();
 	    

@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 
 
@@ -56,7 +56,6 @@ public class ExportExtChartsAction extends AbstractEngineAction {
 	
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(ExportExtChartsAction.class);
-    private static final BASE64Decoder DECODER = new BASE64Decoder();
     
     public static final String ENGINE_NAME = "SpagoBIChartEngine";
 		

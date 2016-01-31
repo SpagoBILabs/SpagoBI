@@ -22,7 +22,7 @@ import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * The Class ExportHighChartsAction.
@@ -42,7 +42,6 @@ public class ExportHighChartsAction extends AbstractEngineAction {
 
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(ExportHighChartsAction.class);
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
 
 	public static final String ENGINE_NAME = "SpagoBIChartEngine";
 

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 public class GetOfficeContentAction extends AbstractHttpAction {
 
@@ -87,8 +87,7 @@ public class GetOfficeContentAction extends AbstractHttpAction {
 			logger.debug("Mime type is = " + mimeType);
 			response.setContentType(mimeType);
 
-			BASE64Decoder bASE64Decoder = new BASE64Decoder();
-			byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
+			byte[] templateContent = DatatypeConverter.parseBase64Binary(template.getContent());
 			
 			response.getOutputStream().write(templateContent);
 			response.setContentLength(templateContent.length);

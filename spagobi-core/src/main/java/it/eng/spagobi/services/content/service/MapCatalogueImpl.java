@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -81,8 +81,7 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
             	logger.info("Template map is empty. Try uploadyng the svg.");
             	return null;
             }
-            BASE64Encoder bASE64Encoder = new BASE64Encoder();
-    	    content.setContent(bASE64Encoder.encode(template));
+    	    content.setContent(DatatypeConverter.printBase64Binary(template));
     	    logger.debug("template read");
     	    content.setFileName(mapName +".svg");
     	    
@@ -171,8 +170,7 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
 		}
  		else if(operation.equalsIgnoreCase(DOWNLOAD)) {
  		   byte[] file=readFile(path);
- 		   BASE64Encoder bASE64Encoder = new BASE64Encoder();
- 		   strRet=bASE64Encoder.encode(file);
+		   strRet=DatatypeConverter.printBase64Binary(file);
 		}
  		return strRet;
  	} catch(Exception e) {

@@ -73,7 +73,7 @@ import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -600,8 +600,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					template.getFileName();
 					logger.debug("Read the template.(subreport)" + template.getFileName());
 					InputStream is = null;
-					BASE64Decoder bASE64Decoder = new BASE64Decoder();
-					byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
+					byte[] templateContent = DatatypeConverter.parseBase64Binary(template.getContent());
 					is = new java.io.ByteArrayInputStream(templateContent);
 					String str = new String(templateContent);
 

@@ -18,7 +18,7 @@ import java.security.MessageDigest;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -126,8 +126,7 @@ public class FileDataProxy extends AbstractDataProxy {
 	public String getMD5Checksum() {
 		logger.debug("IN");
 		byte[] checksum = this.createChecksum();
-		BASE64Encoder encoder = new BASE64Encoder();
-		String encoded = encoder.encode(checksum);
+		String encoded = DatatypeConverter.printBase64Binary(checksum);
 		logger.debug("OUT: returning [" + encoded + "]");
 		return encoded;
 	}

@@ -29,7 +29,7 @@ import net.sf.jasperreports.export.ExporterConfiguration;
 import net.sf.jasperreports.export.ExporterInput;
 import net.sf.jasperreports.export.ExporterOutput;
 import net.sf.jasperreports.export.ReportExportConfiguration;
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
@@ -76,8 +76,7 @@ public class JRImageBase64Exporter extends JRImageExporter {
 				byte[] byteImg = baos.toByteArray();
 
 				baos.close();
-				BASE64Encoder encoder64 = new BASE64Encoder();
-				String encodedImage = encoder64.encode(byteImg);
+				String encodedImage = DatatypeConverter.printBase64Binary(byteImg);
 
 				message += encodedImage;
 				message += "</IMAGE>";
