@@ -9,3 +9,7 @@ sbi.security.exo-*.jar
 sbi.security.ldap-*.jar
 sbi.security.liferay-*.jar
 sbi.security.OAuth2-*.jar
+target/
+.classpath
+.project
+cas/.settings
