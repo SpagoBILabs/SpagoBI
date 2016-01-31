@@ -16,7 +16,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * @author Franco vuoto (franco.vuoto@eng.it)
@@ -54,8 +54,7 @@ public class AsymmetricProviderSingleton {
 	public String enCrypt(String value) {
 		byte[] result = mac.doFinal(value.getBytes());
 
-		BASE64Encoder encoder = new BASE64Encoder();
-		String encoded = encoder.encode(result);
+		String encoded = DatatypeConverter.printBase64Binary(result);
 
 		return encoded;
 	}

@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
@@ -230,16 +230,9 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			templateName = template.getFileName();
 			logger.debug("Read the template [" + template.getFileName() + "]");
 			
-			try {
-				// BASE64Decoder cannot be used in a static way, since it is not thread-safe;
-				// see https://spagobi.eng.it/jira/browse/SPAGOBI-881
-				BASE64Decoder decoder = new BASE64Decoder();
-				templateContent = decoder.decodeBuffer(template.getContent());
-			} catch (IOException e) {
-				throw new SpagoBIRuntimeException(
-						"Impossible to get content from template ["
-								+ template.getFileName() + "]", e);
-			}
+			// BASE64Decoder cannot be used in a static way, since it is not thread-safe;
+			// see https://spagobi.eng.it/jira/browse/SPAGOBI-881
+			templateContent = DatatypeConverter.parseBase64Binary(template.getContent());
 		} else {
 			logger.warn("Document template is not defined or it is impossible to get it from the server");
 		}

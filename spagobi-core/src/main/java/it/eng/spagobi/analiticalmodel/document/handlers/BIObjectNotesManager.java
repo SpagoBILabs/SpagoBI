@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * Manages and implements utilities and task execution for BIObject notes functionality
@@ -69,7 +69,6 @@ public class BIObjectNotesManager {
 			logger.debug("identifier produced : " + identif);
 		}
 		
-		BASE64Encoder encoder = new BASE64Encoder();
 		
 		String ecodedIdentif = "";
 		int index = 0;
@@ -80,7 +79,7 @@ public class BIObjectNotesManager {
 			} catch (Exception e) {
 				tmpStr = identif.substring(index, identif.length());
 			}
-			String tmpEncoded = encoder.encode(tmpStr.getBytes());
+			String tmpEncoded = DatatypeConverter.printBase64Binary(tmpStr.getBytes());
 			ecodedIdentif = ecodedIdentif + tmpEncoded;
 			index = index + 10;
 		}
@@ -140,7 +139,6 @@ public class BIObjectNotesManager {
 		 	}
 		}
 		logger.debug("identifier produced : " + identif);
-		BASE64Encoder encoder = new BASE64Encoder();
 		
 		String ecodedIdentif = "";
 		int index = 0;
@@ -151,7 +149,7 @@ public class BIObjectNotesManager {
 			} catch (Exception e) {
 				tmpStr = identif.substring(index, identif.length());
 			}
-			String tmpEncoded = encoder.encode(tmpStr.getBytes());
+			String tmpEncoded = DatatypeConverter.printBase64Binary(tmpStr.getBytes());
 			ecodedIdentif = ecodedIdentif + tmpEncoded;
 			index = index + 10;
 		}

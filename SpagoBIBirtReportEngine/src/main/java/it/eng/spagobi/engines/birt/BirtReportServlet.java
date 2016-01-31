@@ -81,7 +81,7 @@ import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 import org.xml.sax.InputSource;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
@@ -246,8 +246,7 @@ public class BirtReportServlet extends HttpServlet {
 		InputStream is = null;
 		byte[] templateContent = null;
 		try {
-			BASE64Decoder bASE64Decoder = new BASE64Decoder();
-			templateContent = bASE64Decoder.decodeBuffer(template.getContent());
+			templateContent = DatatypeConverter.parseBase64Binary(template.getContent());
 			is = new java.io.ByteArrayInputStream(templateContent);
 		} catch (Throwable t) {
 			logger.warn("Error on decompile", t);

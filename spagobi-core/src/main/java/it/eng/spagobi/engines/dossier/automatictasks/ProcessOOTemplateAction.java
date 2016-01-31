@@ -37,7 +37,7 @@ import org.jbpm.graph.def.ActionHandler;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
@@ -336,8 +336,7 @@ public class ProcessOOTemplateAction implements ActionHandler {
 	    logger.debug("first images sourcebean recovered");
 	    String firstImgBase64 = firstImageSB.getCharacters();
 	    logger.debug("base 64 encoded image bytes retrived " + firstImgBase64);
-	    BASE64Decoder decoder = new BASE64Decoder();
-	    byte[] firstImg = decoder.decodeBuffer(firstImgBase64);
+	    byte[] firstImg = DatatypeConverter.parseBase64Binary(firstImgBase64);
 	    logger.debug("image bytes decoded " + firstImg);
 	    // store image into cms
 	    IDossierPartsTempDAO dptDAO = DAOFactory.getDossierPartsTempDAO();

@@ -11,6 +11,8 @@ import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
 
 import java.io.IOException;
 
+import javax.xml.bind.DatatypeConverter;
+
 public abstract class AbstractEngineStartRestService extends AbstractEngineRestService {
 
 	/**
@@ -78,13 +80,8 @@ public abstract class AbstractEngineStartRestService extends AbstractEngineRestS
 			logger.debug("IN");
 
 			spagoBISubObject = getContentServiceProxy().readSubObjectContent(getAnalysisMetadata().getId().toString());
-			try {
-				rowData = DECODER.decodeBuffer(spagoBISubObject.getContent());
-				analysisStateRowData = rowData;
-			} catch (IOException e) {
-				logger.warn("Impossible to decode the content of " + getAnalysisMetadata().getId().toString() + " subobject");
-				return null;
-			}
+			rowData = DatatypeConverter.parseBase64Binary(spagoBISubObject.getContent());
+			analysisStateRowData = rowData;
 
 			logger.debug("OUT");
 		}

@@ -24,7 +24,7 @@ import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.print.PrintTranscoder;
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -54,7 +54,6 @@ public class ExportHighCharts {
 
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(ExportHighCharts.class);
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
 
 	public static final String ENGINE_NAME = "SpagoBIChartEngine";
 

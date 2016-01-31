@@ -22,7 +22,7 @@ import javax.activation.DataHandler;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 import org.apache.axis.attachments.ManagedMemoryDataSource;
 
 public class ArtifactServiceImplSupplier {

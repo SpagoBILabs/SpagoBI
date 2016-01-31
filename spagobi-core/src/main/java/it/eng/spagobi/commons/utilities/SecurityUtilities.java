@@ -28,7 +28,7 @@ import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 
 /**
@@ -117,8 +117,7 @@ public class SecurityUtilities {
 	 * @return String Base64 string of the bytes
 	 */
 	public String encodeBase64(byte[] bytes) {
-		BASE64Encoder encoder = new BASE64Encoder();
-		String encoded = encoder.encode(bytes);
+		String encoded = DatatypeConverter.printBase64Binary(bytes);
 		return encoded;
 	}
 	
