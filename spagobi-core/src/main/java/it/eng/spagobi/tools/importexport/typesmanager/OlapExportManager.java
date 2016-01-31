@@ -20,13 +20,12 @@ import it.eng.spagobi.tools.importexport.ExporterMetadata;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 public class OlapExportManager extends AbstractTypesExportManager {
 
 
 	static private Logger logger = Logger.getLogger(OlapExportManager.class);
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
 
 
 	public OlapExportManager(String type, ExporterMetadata exporter,

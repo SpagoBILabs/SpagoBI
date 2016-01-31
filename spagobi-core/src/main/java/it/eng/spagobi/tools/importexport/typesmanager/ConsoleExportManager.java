@@ -24,13 +24,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 public class ConsoleExportManager extends AbstractTypesExportManager {
 
 
 	static private Logger logger = Logger.getLogger(ConsoleExportManager.class);
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
 
 
 	public ConsoleExportManager(String type, ExporterMetadata exporter,

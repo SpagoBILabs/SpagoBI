@@ -45,7 +45,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 public class AccessibilityServlet extends HttpServlet {
 
@@ -407,8 +407,7 @@ public class AccessibilityServlet extends HttpServlet {
 		InputStream is = null;
 		byte[] byteContent = null;
 		try {
-			BASE64Decoder bASE64Decoder = new BASE64Decoder();
-			byteContent = bASE64Decoder.decodeBuffer(templateContent.getContent());
+			byteContent = DatatypeConverter.parseBase64Binary(templateContent.getContent());
 			is = new java.io.ByteArrayInputStream(byteContent);
 		} catch (Throwable t) {
 			logger.warn("Error on decompile", t);

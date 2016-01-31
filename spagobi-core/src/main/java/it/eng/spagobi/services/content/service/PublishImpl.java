@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -64,12 +64,11 @@ public class PublishImpl extends AbstractServiceImpl {
 
     private String publishTemplate(String user, HashMap attributes) {
 	logger.debug("IN");
-	BASE64Decoder decoder = new BASE64Decoder();
 	String encodedTemplate = (String) attributes.get("TEMPLATE");
 	byte[] buffer = null;
 	try {
 
-	    buffer = decoder.decodeBuffer(encodedTemplate);
+	    buffer = DatatypeConverter.parseBase64Binary(encodedTemplate);
 	    String template = new String(buffer);
 	    attributes.put("TEMPLATE", template);
 	    String label = (String) attributes.get("LABEL");
@@ -82,9 +81,6 @@ public class PublishImpl extends AbstractServiceImpl {
 	    }
 	    return "OK";
 	} catch (EMFUserError e) {
-	    logger.error("IOException when decode template", e);
-	    return "KO";
-	} catch (IOException e) {
 	    logger.error("IOException when decode template", e);
 	    return "KO";
 	} finally {

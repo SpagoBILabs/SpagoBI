@@ -14,7 +14,7 @@ import mondrian.olap.Util;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -25,7 +25,6 @@ import sun.misc.BASE64Decoder;
 public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchemaProcessor {
 	private static Logger logger = Logger.getLogger(SpagoBIFilterDynamicSchemaProcessor.class);
 
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
 
 	Integer indexProgression = null;
 
@@ -143,10 +142,10 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 				logger.debug("Attribute value in Base64 encoding is " + attrValueBase64);
 				String value = null;
 				try {
-					value = new String(DECODER.decodeBuffer(attrValueBase64), "UTF-8");
+					value = new String(DatatypeConverter.parseBase64Binary(attrValueBase64), "UTF-8");
 				} catch (UnsupportedEncodingException e) {
 					logger.error("UTF-8 encoding not supported!!!!!", e);
-					value = new String(DECODER.decodeBuffer(attrValueBase64));
+					value = new String(DatatypeConverter.parseBase64Binary(attrValueBase64));
 				}
 				logger.debug("change attribute " + att + " with  [" + value + "]");
 
@@ -177,10 +176,10 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 				logger.debug("Parameter value in Base64 encoding is " + attrValueBase64);
 				String value = null;
 				try {
-					value = new String(DECODER.decodeBuffer(attrValueBase64), "UTF-8");
+					value = new String(DatatypeConverter.parseBase64Binary(attrValueBase64), "UTF-8");
 				} catch (UnsupportedEncodingException e) {
 					logger.error("UTF-8 encoding not supported!!!!!", e);
-					value = new String(DECODER.decodeBuffer(attrValueBase64));
+					value = new String(DatatypeConverter.parseBase64Binary(attrValueBase64));
 				}
 				logger.debug("change attribute " + att + " with  [" + value + "]");
 

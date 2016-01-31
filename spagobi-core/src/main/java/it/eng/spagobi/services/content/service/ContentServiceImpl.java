@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Encoder;
+import javax.xml.bind.DatatypeConverter;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -295,8 +295,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 			ISubObjectDAO subdao = DAOFactory.getSubObjectDAO();
 			SubObject subobj = subdao.getSubObject(id);
 			byte[] cont = subobj.getContent();
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			content.setContent(bASE64Encoder.encode(cont));
+			content.setContent(DatatypeConverter.printBase64Binary(cont));
 			content.setFileName(subobj.getName());
 			return content;
 		} catch (NumberFormatException e) {
@@ -319,8 +318,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 			SubObject subobj = subdao.getSubObjectByNameAndBIObjectId(
 					subObjectName, objId);
 			byte[] cont = subobj.getContent();
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			content.setContent(bASE64Encoder.encode(cont));
+			content.setContent(DatatypeConverter.printBase64Binary(cont));
 			content.setFileName(subobj.getName());
 			return content;
 		} catch (NumberFormatException e) {

@@ -23,7 +23,7 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.log4j.Logger;
 import org.w3c.dom.svg.SVGDocument;
 
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 import sun.rmi.runtime.Log;
 
 // TODO: Auto-generated Javadoc
@@ -36,8 +36,6 @@ public class SVGMapLoader {
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(SVGMapLoader.class);
-	
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
 	
 	
 	/** The document factory. */
@@ -74,7 +72,7 @@ public class SVGMapLoader {
 	public SVGDocument loadMapAsDocument(Content map) throws IOException {
 		String mapContent;
 		
-		mapContent = new String( DECODER.decodeBuffer(map.getContent()) );
+		mapContent = new String( DatatypeConverter.parseBase64Binary(map.getContent()) );
 		documentFactory = new SAXSVGDocumentFactory(parser);
 		return (SVGDocument)documentFactory.createDocument( null, new StringReader(mapContent) );
 	}
