@@ -312,7 +312,8 @@ public class AdapterHTTP extends HttpServlet {
     	
         // Create a new file upload handler
     	ServletFileUpload upload = new ServletFileUpload(factory);
-
+    	upload.setHeaderEncoding(request.getCharacterEncoding());
+    	
         // Parse the request
         List fileItems = upload.parseRequest(request);
         Iterator iter = fileItems.iterator();
@@ -321,7 +322,7 @@ public class AdapterHTTP extends HttpServlet {
 
             if (item.isFormField()) {
                 String name = item.getFieldName();
-                String value = item.getString();
+                String value = new String(item.getString().getBytes("ISO-8859-1"), request.getCharacterEncoding());
                 serviceRequest.setAttribute(name, value);
             } else {
                 processFileField(item, requestContext);
