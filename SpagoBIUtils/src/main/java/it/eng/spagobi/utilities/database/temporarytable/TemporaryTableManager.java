@@ -571,7 +571,7 @@ public class TemporaryTableManager {
 		int n = cleanRoot.length();
 		for (int i = 0; i < n; i++) {
 			char c = cleanRoot.charAt(i);
-			if (Character.isLetter(c)) {
+			if (Character.isLetter(c) || Character.isDigit(c)) {
 				sb.append(c);
 			}
 		}
