@@ -5,14 +5,29 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.api.v2;
 
+import static it.eng.spagobi.tools.glossary.util.Util.fromDocumentLight;
+import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterDAOHibImpl;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.CriteriaParameter;
+import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.indexing.IndexingConstants;
+import it.eng.spagobi.commons.utilities.indexing.LuceneSearcher;
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
@@ -20,12 +35,20 @@ import it.eng.spagobi.sdk.documents.impl.DocumentsServiceImpl;
 import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -34,11 +57,21 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.store.FSDirectory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -55,7 +88,64 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		List<BIObjectParameter> parameters = document.getBiObjectParameters();
+
+		for (BIObjectParameter parameter : parameters) {
+			parameter.setParameter(loadAnalyticalDriver(parameter));
+		}
+
 		return JsonConverter.objectToJson(parameters, parameters.getClass());
+	}
+
+	@GET
+	@Path("/withData")
+	public Response getDocumentsBeforeDate(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr, @Context HttpServletRequest req)
+			throws EMFInternalError {
+		IBIObjectDAO documentsDao = null;
+		String data = null;
+		List<BIObject> allObjects;
+		List<BIObject> objects = null;
+		Integer functionalityId = getNumberOrNull(folderIdStr);
+
+		boolean isTypeFilterValid = type != null && !type.isEmpty();
+		boolean isFolderFilterValid = functionalityId != null;
+
+		data = req.getParameter("data");
+		System.out.println(data);
+		if (data == null || data.equals("")) {
+			throw new SpagoBIRuntimeException("The data passed in the request is null or empty");
+		}
+
+		try {
+			documentsDao = DAOFactory.getBIObjectDAO();
+			allObjects = documentsDao.loadDocumentsBeforeDate(data);
+			UserProfile profile = getUserProfile();
+			objects = new ArrayList<BIObject>();
+			for (BIObject obj : allObjects) {
+				if (ObjectsAccessVerifier.canSee(obj, profile) && (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))
+						&& (!isFolderFilterValid || obj.getFunctionalities().contains(functionalityId)))
+					objects.add(obj);
+			}
+			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
+			return Response.ok(toBeReturned).build();
+		} catch (EMFUserError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	@GET
+	@Path("/{id}/roles")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getRolesByDocumentId(@PathParam("id") Integer id) {
+		try {
+			List<String> lst = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id);
+			return JsonConverter.objectToJson(lst, lst.getClass());// SbiExtRoles.class
+		} catch (EMFUserError e) {
+			logger.error("Error while try to retrieve the specified parameter", e);
+			throw new SpagoBIRuntimeException("Error while try to retrieve roles by document id [" + id + "]", e);
+		}
 	}
 
 	@GET
@@ -66,8 +156,9 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		BIObjectParameter parameter = null;
 		try {
 			parameterDAO = DAOFactory.getBIObjectParameterDAO();
-
 			parameter = parameterDAO.loadBiObjParameterById(id);
+
+			parameter.setParameter(loadAnalyticalDriver(parameter));
 		} catch (EMFUserError e) {
 			logger.error("Error while try to retrieve the specified parameter", e);
 			throw new SpagoBIRuntimeException("Error while try to retrieve the specified parameter", e);
@@ -85,6 +176,17 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		}
 
 		return JsonConverter.objectToJson(parameter, BIObjectParameter.class);
+	}
+
+	private Parameter loadAnalyticalDriver(BIObjectParameter biPar) {
+		try {
+			ParameterDAOHibImpl parameterDAO = (ParameterDAOHibImpl) DAOFactory.getParameterDAO();
+
+			return parameterDAO.loadForDetailByParameterID(biPar.getParameter().getId());
+		} catch (EMFUserError e) {
+			logger.error("Error while retrieving analytical driver associated with the parameter", e);
+			throw new SpagoBIRuntimeException("Error while retrieving analytical driver associated with the parameter", e);
+		}
 	}
 
 	@POST
@@ -258,6 +360,226 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		@Override
 		protected IEngUserProfile getUserProfile() throws Exception {
 			return DocumentResource.this.getUserProfile();
+		}
+	}
+
+	@GET
+	@Path("/listDocument")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getDocumentSearchAndPaginate(@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
+			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr,
+			@QueryParam("excludeType") String excludeType, @QueryParam("scope") String scope) throws EMFInternalError {
+		logger.debug("IN");
+		UserProfile profile = getUserProfile();
+		IBIObjectDAO documentsDao = null;
+		List<BIObject> filterObj = null;
+		Integer page = getNumberOrNull(pageStr);
+		Integer item_per_page = getNumberOrNull(itemPerPageStr);
+		List<CriteriaParameter> disjunctions = new ArrayList<CriteriaParameter>();
+		if (label != null && !label.isEmpty()) {
+			disjunctions.add(new CriteriaParameter("label", label, Match.ILIKE));
+		}
+		if (name != null && !name.isEmpty()) {
+			disjunctions.add(new CriteriaParameter("name", name, Match.ILIKE));
+		}
+		if (descr != null && !descr.isEmpty()) {
+			disjunctions.add(new CriteriaParameter("descr", descr, Match.ILIKE));
+		}
+
+		String UserFilter = profile.getIsSuperadmin() ? null : profile.getUserId().toString();
+
+		// in glossary, the user with admin role and specific authorization can see all document of the organization
+		if (scope != null && scope.compareTo("GLOSSARY") == 0) {
+			if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[] { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })) {
+				UserFilter = null;
+			}
+		}
+
+		List<CriteriaParameter> restritions = new ArrayList<CriteriaParameter>();
+
+		// filter document if is USER profile
+		// Commented out: this kind of logic has to be handled by the "ObjectsAccessVerifier.canSee" utility method (ATHENA-138/SBI-532/SBI-533)
+		/*
+		 * if (UserFilter != null) { restritions.add(new CriteriaParameter("creationUser", UserFilter, Match.EQ)); }
+		 */
+
+		if (excludeType != null) {
+			restritions.add(new CriteriaParameter("objectTypeCode", excludeType, Match.NOT_EQ));
+		}
+		try {
+			documentsDao = DAOFactory.getBIObjectDAO();
+
+			filterObj = documentsDao.loadPaginatedSearchBIObjects(page, item_per_page, disjunctions, restritions);
+			JSONArray jarr = new JSONArray();
+			if (filterObj != null) {
+				for (BIObject sbiob : filterObj) {
+					if (ObjectsAccessVerifier.canSee(sbiob, profile))
+						jarr.put(fromDocumentLight(sbiob));
+				}
+			}
+			JSONObject jo = new JSONObject();
+			jo.put("item", jarr);
+			jo.put("itemCount", documentsDao.countBIObjects());
+
+			return jo.toString();
+		} catch (Exception e) {
+			logger.error("Error while getting the list of documents", e);
+			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@GET
+	@Path("/searchDocument")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getDocumentByLucene(@QueryParam("value") String valueFilter, @QueryParam("attributes") String attributes,
+			@QueryParam("similar") Boolean similar) {
+		logger.debug("IN");
+
+		try {
+			UserProfile profile = getUserProfile();
+
+			List<String> fieldsToSearch = new ArrayList<String>();
+			String metaDataToSearch = null;
+
+			if (attributes != null && !attributes.isEmpty()) {
+				if (attributes.equalsIgnoreCase("ALL")) {
+					// search in all fields
+					fieldsToSearch.add(IndexingConstants.BIOBJ_LABEL);
+					fieldsToSearch.add(IndexingConstants.BIOBJ_NAME);
+					fieldsToSearch.add(IndexingConstants.BIOBJ_DESCR);
+					fieldsToSearch.add(IndexingConstants.METADATA);
+					// search metadata binary content
+					fieldsToSearch.add(IndexingConstants.CONTENTS);
+					// search subobject fields
+					fieldsToSearch.add(IndexingConstants.SUBOBJ_DESCR);
+					fieldsToSearch.add(IndexingConstants.SUBOBJ_NAME);
+				} else if (attributes.equalsIgnoreCase("LABEL")) {
+					// search in label field
+					fieldsToSearch.add(IndexingConstants.BIOBJ_LABEL);
+				} else if (attributes.equalsIgnoreCase("NAME")) {
+					// search in name field
+					fieldsToSearch.add(IndexingConstants.BIOBJ_NAME);
+				} else if (attributes.equalsIgnoreCase("DESCRIPTION")) {
+					// search in description field
+					fieldsToSearch.add(IndexingConstants.BIOBJ_DESCR);
+				} else {
+					// search in categories
+					metaDataToSearch = attributes;
+					fieldsToSearch.add(IndexingConstants.CONTENTS);
+				}
+			}
+
+			String indexBasePath = "";
+			String jndiBeanName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+			if (jndiBeanName != null) {
+				indexBasePath = SpagoBIUtilities.readJndiResource(jndiBeanName);
+			}
+			String indexFolderPath = indexBasePath + "/idx";
+			HashMap<String, Object> hashMap = null;
+			List<BIObject> biobjects = new ArrayList<BIObject>();
+			try {
+				IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexFolderPath)), true);
+				IndexSearcher searcher = new IndexSearcher(reader);
+
+				String[] fields = new String[fieldsToSearch.size()];
+				fieldsToSearch.toArray(fields);
+
+				// getting documents
+				if (similar != null && similar) {
+					hashMap = LuceneSearcher.searchIndexFuzzy(searcher, valueFilter, indexFolderPath, fields, metaDataToSearch);
+				} else {
+					hashMap = LuceneSearcher.searchIndex(searcher, valueFilter, indexFolderPath, fields, metaDataToSearch);
+				}
+				ScoreDoc[] hits = (ScoreDoc[]) hashMap.get("hits");
+
+				if (hits != null) {
+					Set<Integer> alreadyAddedObjectIds = new HashSet<Integer>();
+					for (int i = 0; i < hits.length; i++) {
+						ScoreDoc hit = hits[i];
+						Document doc = searcher.doc(hit.doc);
+						String biobjIdString = doc.get(IndexingConstants.BIOBJ_ID);
+						Integer biobjId = Integer.valueOf(biobjIdString);
+
+						BIObject biobject = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(biobjId);
+						if (biobject != null) {
+							if (ObjectsAccessVerifier.canSee(biobject, profile)) {
+								if (alreadyAddedObjectIds.add(biobjId)) {
+									biobjects.add(biobject);
+								}
+							}
+						}
+					}
+				}
+				searcher.close();
+			} catch (CorruptIndexException e) {
+				logger.error(e.getMessage(), e);
+				throw new SpagoBIException("Index corrupted", e);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+				throw new SpagoBIException("Unable to read index", e);
+			} catch (ParseException e) {
+				logger.error(e.getMessage(), e);
+				throw new SpagoBIException("Wrong query syntax", e);
+			}
+
+			JSONArray documentsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(biobjects, null);
+			for (int i = 0; i < documentsJSON.length(); i++) {
+				JSONObject jsonobj = documentsJSON.getJSONObject(i);
+				String biobjid = jsonobj.getString("id");
+				String summary = (String) hashMap.get(biobjid);
+				jsonobj.put("summary", summary);
+				String views = (String) hashMap.get(biobjid + "-views");
+				jsonobj.put("views", views);
+			}
+
+			String toBeReturned = documentsJSON.toString();
+			return Response.ok(toBeReturned).build();
+		} catch (Exception e) {
+			logger.error("Error while getting the list of documents", e);
+			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@GET
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getDocuments(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr) {
+		logger.debug("IN");
+		IBIObjectDAO documentsDao = null;
+		List<BIObject> allObjects = null;
+		List<BIObject> objects = null;
+
+		Integer functionalityId = getNumberOrNull(folderIdStr);
+
+		boolean isTypeFilterValid = type != null && !type.isEmpty();
+		boolean isFolderFilterValid = functionalityId != null;
+
+		try {
+			documentsDao = DAOFactory.getBIObjectDAO();
+			allObjects = documentsDao.loadAllBIObjects();
+
+			UserProfile profile = getUserProfile();
+			objects = new ArrayList<BIObject>();
+
+			for (BIObject obj : allObjects) {
+				try {
+					if (ObjectsAccessVerifier.canSee(obj, profile) && (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))
+							&& (!isFolderFilterValid || obj.getFunctionalities().contains(functionalityId)))
+						objects.add(obj);
+				} catch (EMFInternalError e){}
+			}
+
+			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
+			return Response.ok(toBeReturned).build();
+		} catch (Exception e) {
+			logger.error("Error while getting the list of documents", e);
+			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
+		} finally {
+			logger.debug("OUT");
 		}
 	}
 }

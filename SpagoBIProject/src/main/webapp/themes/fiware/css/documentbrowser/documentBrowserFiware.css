@@ -1,0 +1,62 @@
+.header {
+	font-size: 32px !important;
+	background-color: #223b68 !important;
+	color: #ffffff !important;
+}
+
+.searchheader {
+	background-color: #223b68 !important;
+	color: #ffffff !important;
+}
+
+.subheader {
+	font-size: 16px !important;
+	background-color: #00D3DE !important;
+  	color: #000000 !important;
+}
+
+.subheader {
+	font-size: 16px !important;
+	background-color: #00D3DE !important;
+  	color: #000000 !important;
+}
+
+.md-button {
+	text-transform: initial;
+}
+
+.md-button.md-raised {
+	background-color: #bec3cc;
+}
+
+.selected-doc {
+	background-color: #efefef;
+}
+
+input.searchheader{
+	border-color: white;
+}
+
+md-input-container.md-input-focused:not(.md-input-invalid) input.searchheader{
+	border-color: white;
+}
+
+md-toolbar.header div.md-icon{
+	border-color: white;
+}
+
+.md-card-title {
+	padding: 10px 10px 10px;
+	font-family: NeoTechStdMedium,Arial, Helvetica, sans-serif;
+	background-color: #efefef !important
+}
+
+.md-card-title-headline {
+	font-size: 16px !important;
+  	color: #233c68 !important;
+}
+
+.md-card-title-subheadline {
+	font-size: 12px !important;
+  	color: #808080 !important;
+}

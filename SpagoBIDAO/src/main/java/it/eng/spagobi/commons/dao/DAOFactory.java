@@ -65,6 +65,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
+import it.eng.spagobi.tools.glossary.dao.IGlossaryDAO;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
@@ -860,5 +861,16 @@ public class DAOFactory {
 	public static ICacheDAO getCacheDao() {
 		return (ICacheDAO) createDAOInstance("CacheDAO");
 	}
-
+	
+	/**
+	 * Gets the Glossary dao.
+	 *
+	 * @return the Glossary dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static IGlossaryDAO getGlossaryDAO() throws EMFUserError {
+		return (IGlossaryDAO) createDAOInstance("GlossaryDAO");
+	}
 }

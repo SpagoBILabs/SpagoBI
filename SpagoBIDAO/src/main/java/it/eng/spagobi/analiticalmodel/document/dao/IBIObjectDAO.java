@@ -15,8 +15,10 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -400,4 +402,30 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 */
 	public List searchBIObjects(String valueFilter, String typeFilter, String columnFilter, String isGlobal, Integer nodeFilter, IEngUserProfile profile)
 			throws EMFUserError;
+	
+	/**
+	 * Loads all the BIObjects ordered by parameter column.
+	 *
+	 * @param filterOrder
+	 *            the filter order
+	 *
+	 * @return the list of BIObjects
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
+	 */
+	public List loadDocumentsBeforeDate(String data) throws EMFUserError;
+	
+	/**
+	 * Loads all BIObjects filtered by parameters specified in 'restrictions' (AND condition) and in 'disjunctions' (OR condition) with capability of pagination
+	 *
+	 * @param page
+	 * @param item_per_page
+	 * @param disjunctions
+	 * @param restrictions
+	 * @return
+	 * @throws EMFUserError
+	 */
+	public List<BIObject> loadPaginatedSearchBIObjects(Integer page, Integer item_per_page, Collection<CriteriaParameter> disjunctions,
+			Collection<CriteriaParameter> restrictions) throws EMFUserError;
 }

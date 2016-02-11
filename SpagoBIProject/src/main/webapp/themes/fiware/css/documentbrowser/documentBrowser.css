@@ -1,0 +1,57 @@
+.header {
+	background-color: #3b668c !important;
+  	color: #ffffff !important;
+}
+
+.toolbar-button-custom {
+	min-width: 50px;
+	width: 50px;
+}
+
+.md-button.md-raised {
+	background-color: #BBBBBB;
+}
+
+.selected-doc {
+	background-color: #E8EAF6;
+}
+
+.REPORT-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_report.png')!important;}
+
+.OLAP-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_olap.png')!important;}
+
+.OFFICE_DOC-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_officedoc.png')!important;}
+
+.DASH-icon {background-image:	url('../../img/analiticalmodel/browser/small_version/document_chart.png')!important;}
+
+.CHART-icon {background-image:	url('../../img/analiticalmodel/browser/small_version/document_chart.png')!important;}
+
+.DOCUMENT_COMPOSITE-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_cockpits.png')!important;}
+
+.ETL-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_etl.png')!important;}
+
+.DATA_MINING-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_datamining.png')!important;}
+
+.MAP-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_locatiointelligence.png')!important;}
+
+.DATAMART-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_qbe.png')	!important;}
+
+.DOSSIER-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_dossier.png')!important;}
+
+.KPI-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_kpi.png')!important;}
+
+.SMART_FILTER-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_smart_filter.png')!important;}
+
+.WORKSHEET-icon {background-image:	url('../../img/analiticalmodel/browser/small_version/document_adhocreporting.png')!important;}
+
+.ACCESSIBLE_HTML-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_acc.png')!important;}
+
+.CONSOLE-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_console.png')!important;}
+
+.MOBILE_REPORT-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_mobile_report.png')!important;}
+
+.MOBILE_CHART-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_mobile_chart.png')!important;}
+
+.MOBILE_COCKPIT-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_mobile_cockpit.png')!important;}
+
+.NETWORK-icon {background-image:url('../../img/analiticalmodel/browser/small_version/document_network.png')!important;}

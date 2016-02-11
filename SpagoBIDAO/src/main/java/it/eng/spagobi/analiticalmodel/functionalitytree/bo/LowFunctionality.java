@@ -1,35 +1,56 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.functionalitytree.bo;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.Xss;
 
 import java.io.Serializable;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 /**
  * Defines a <code>LowFunctionality</code> object.
- * 
+ *
  * @author sulis
  */
-public class LowFunctionality  implements Serializable  {
+public class LowFunctionality implements Serializable {
 
 	private Integer id;
-	
+
 	private Integer parentId;
 
+	@ExtendedAlphanumeric
+	@Size(max = 40)
 	private String name = "";
 
+	@ExtendedAlphanumeric
+	@Size(max = 160)
+	@Xss
 	private String description = "";
 
+	@ExtendedAlphanumeric
+	@NotEmpty
+	@Size(max = 20)
 	private String codType = ""; // code of the type of the functionality
 
+	@ExtendedAlphanumeric
+	@NotEmpty
+	@Size(max = 40)
 	private String code = ""; // code of the functionality
 
+	@ExtendedAlphanumeric
+	@Size(max = 400)
+	@Xss
 	private String path = null;
 
 	private Role[] execRoles = null;
@@ -37,18 +58,19 @@ public class LowFunctionality  implements Serializable  {
 	private Role[] devRoles = null;
 
 	private Role[] testRoles = null;
-	
+
 	private Role[] createRoles = null;
 
 	private IEngUserProfile profile = null;
-	
+
 	private List biObjects = null;
-	
+
+	@NotNull
 	private Integer prog = null;
-	
+
 	/**
 	 * Gets the description.
-	 * 
+	 *
 	 * @return Low Functionality description
 	 */
 	public String getDescription() {
@@ -57,26 +79,28 @@ public class LowFunctionality  implements Serializable  {
 
 	/**
 	 * Sets the description.
-	 * 
-	 * @param description The low functionality description to set
+	 *
+	 * @param description
+	 *            The low functionality description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
 	 * Gets the id.
-	 * 
+	 *
 	 * @return Low Functionality id
 	 */
 	public Integer getId() {
 		return id;
 	}
-	
+
 	/**
 	 * Sets the id.
-	 * 
-	 * @param id The low functionality id to set
+	 *
+	 * @param id
+	 *            The low functionality id to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -84,17 +108,18 @@ public class LowFunctionality  implements Serializable  {
 
 	/**
 	 * Gets the name.
-	 * 
+	 *
 	 * @return Low Functionality name
 	 */
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Sets the name.
-	 * 
-	 * @param name The low functionality name to set
+	 *
+	 * @param name
+	 *            The low functionality name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -102,17 +127,18 @@ public class LowFunctionality  implements Serializable  {
 
 	/**
 	 * Gets the cod type.
-	 * 
+	 *
 	 * @return Low Functionality code Type
 	 */
 	public String getCodType() {
 		return codType;
 	}
-	
+
 	/**
 	 * Sets the cod type.
-	 * 
-	 * @param codType The low functionality code type to set
+	 *
+	 * @param codType
+	 *            The low functionality code type to set
 	 */
 	public void setCodType(String codType) {
 		this.codType = codType;
@@ -120,66 +146,68 @@ public class LowFunctionality  implements Serializable  {
 
 	/**
 	 * Gets the code.
-	 * 
+	 *
 	 * @return Low Functionality code
 	 */
 	public String getCode() {
 		return code;
 	}
-	
+
 	/**
 	 * Sets the code.
-	 * 
-	 * @param code The low functionality code to set
+	 *
+	 * @param code
+	 *            The low functionality code to set
 	 */
 	public void setCode(String code) {
 		this.code = code;
 	}
 
-	
 	/**
 	 * constructor.
 	 */
 	public LowFunctionality() {
 		this.setCodType("LOW_FUNCT");
 	}
-	
+
 	/**
 	 * Gets the dev roles.
-	 * 
+	 *
 	 * @return Low Functionality develop roles
 	 */
 	public Role[] getDevRoles() {
 		return devRoles;
 	}
-	
+
 	/**
 	 * Sets the dev roles.
-	 * 
-	 * @param devRoles The low functionality develop roles to set
+	 *
+	 * @param devRoles
+	 *            The low functionality develop roles to set
 	 */
 	public void setDevRoles(Role[] devRoles) {
 		this.devRoles = devRoles;
 	}
-	
+
 	/**
 	 * Gets the exec roles.
-	 * 
+	 *
 	 * @return Low Functionality execution roles
 	 */
 	public Role[] getExecRoles() {
 		return execRoles;
 	}
-	
+
 	/**
 	 * Sets the exec roles.
-	 * 
-	 * @param execRoles The low functionality execution roles to set
+	 *
+	 * @param execRoles
+	 *            The low functionality execution roles to set
 	 */
 	public void setExecRoles(Role[] execRoles) {
 		this.execRoles = execRoles;
 	}
-	
+
 	public Role[] getCreateRoles() {
 		return createRoles;
 	}
@@ -187,38 +215,40 @@ public class LowFunctionality  implements Serializable  {
 	public void setCreateRoles(Role[] createRoles) {
 		this.createRoles = createRoles;
 	}
-	
+
 	/**
 	 * Gets the path.
-	 * 
+	 *
 	 * @return Low Functionality path
 	 */
 	public String getPath() {
 		return path;
 	}
-	
+
 	/**
 	 * Sets the path.
-	 * 
-	 * @param path The low functionality path to set
+	 *
+	 * @param path
+	 *            The low functionality path to set
 	 */
 	public void setPath(String path) {
 		this.path = path;
 	}
-	
+
 	/**
 	 * Gets the test roles.
-	 * 
+	 *
 	 * @return Low Functionality test roles
 	 */
 	public Role[] getTestRoles() {
 		return testRoles;
 	}
-	
+
 	/**
 	 * Sets the test roles.
-	 * 
-	 * @param testRoles The low functionality test roles to set
+	 *
+	 * @param testRoles
+	 *            The low functionality test roles to set
 	 */
 	public void setTestRoles(Role[] testRoles) {
 		this.testRoles = testRoles;
@@ -226,7 +256,7 @@ public class LowFunctionality  implements Serializable  {
 
 	/**
 	 * Gets the parent id.
-	 * 
+	 *
 	 * @return the parent id
 	 */
 	public Integer getParentId() {
@@ -235,8 +265,9 @@ public class LowFunctionality  implements Serializable  {
 
 	/**
 	 * Sets the parent id.
-	 * 
-	 * @param parentId the new parent id
+	 *
+	 * @param parentId
+	 *            the new parent id
 	 */
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
@@ -244,7 +275,7 @@ public class LowFunctionality  implements Serializable  {
 
 	/**
 	 * Gets the bi objects.
-	 * 
+	 *
 	 * @return the bi objects
 	 */
 	public List getBiObjects() {
@@ -253,8 +284,9 @@ public class LowFunctionality  implements Serializable  {
 
 	/**
 	 * Sets the bi objects.
-	 * 
-	 * @param biObjects the new bi objects
+	 *
+	 * @param biObjects
+	 *            the new bi objects
 	 */
 	public void setBiObjects(List biObjects) {
 		this.biObjects = biObjects;
@@ -262,7 +294,7 @@ public class LowFunctionality  implements Serializable  {
 
 	/**
 	 * Gets the prog.
-	 * 
+	 *
 	 * @return the prog
 	 */
 	public Integer getProg() {
@@ -271,12 +303,12 @@ public class LowFunctionality  implements Serializable  {
 
 	/**
 	 * Sets the prog.
-	 * 
-	 * @param prog the new prog
+	 *
+	 * @param prog
+	 *            the new prog
 	 */
 	public void setProg(Integer prog) {
 		this.prog = prog;
 	}
 
-	
 }

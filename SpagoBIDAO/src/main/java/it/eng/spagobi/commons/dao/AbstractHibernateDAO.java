@@ -12,12 +12,16 @@ import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -241,5 +245,248 @@ public class AbstractHibernateDAO {
 		if (aSession != null && aSession.isOpen()) {
 			aSession.close();
 		}
+	}
+	
+	/**
+	 * Erases a record from db
+	 * 
+	 * @param clazz
+	 * @param id
+	 */
+	public void delete(Class<? extends SbiHibernateModel> clazz, Serializable id) {
+		Session session = null;
+		Transaction tx = null;
+		LogMF.debug(logger, "IN: id = [{0}]", id);
+
+		try {
+			if (id == null) {
+				throw new IllegalArgumentException("Input parameter [id] cannot be null");
+			}
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				tx = session.beginTransaction();
+				Assert.assertNotNull(tx, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+
+			Object obj = session.get(clazz, id);
+			if (obj == null) {
+				throw new SpagoBIDOAException("Object of type [" + clazz + "] whose id is equal to [" + id + "] was not found");
+			}
+			session.delete(obj);
+			tx.commit();
+
+		} catch (Throwable t) {
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIDOAException("An unexpected error occured while deleting object of type [" + clazz + "] whose id is equal to [" + id + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+	}
+	
+	/**
+	 * Executes the passed method inside a single transaction
+	 * 
+	 * @param executeOnTransaction
+	 * @return
+	 */
+	public <T> T executeOnTransaction(IExecuteOnTransaction<T> executeOnTransaction) {
+		T returnObj = null;
+		Session session = null;
+		Transaction tx = null;
+		logger.debug("IN: executeOnTransaction");
+
+		try {
+			session = getSession();
+			Assert.assertNotNull(session, "session cannot be null");
+			tx = session.beginTransaction();
+			Assert.assertNotNull(tx, "transaction cannot be null");
+			returnObj = executeOnTransaction.execute(session);
+			tx.commit();
+		} catch (Throwable t) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw new SpagoBIDOAException("Error executing on transaction ", t);
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+			logger.debug("OUT: executeOnTransaction");
+		}
+		return returnObj;
+	}
+	
+	/**
+	 * Persists a new object and returns its id
+	 * 
+	 * @param obj
+	 * @return objId
+	 */
+	public Serializable insert(SbiHibernateModel obj) {
+		Session session = null;
+		Serializable objId = null;
+		Transaction tx = null;
+		LogMF.debug(logger, "IN: obj = [{0}]", obj);
+
+		try {
+			if (obj == null) {
+				throw new IllegalArgumentException("Input parameter cannot be null");
+			}
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				tx = session.beginTransaction();
+				Assert.assertNotNull(tx, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			updateSbiCommonInfo4Insert(obj);
+
+			objId = session.save(obj);
+			tx.commit();
+		} catch (Throwable t) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw new SpagoBIDOAException("Error saving a new object of type [" + obj.getClass() + "] ", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+
+		return objId;
+	}
+	
+	public <T extends SbiHibernateModel> List<T> list(Class<T> clazz) {
+		if (clazz == null) {
+			throw new IllegalArgumentException("Input parameter 'clazz' cannot be null");
+		}
+		return list(clazz, null);
+	}
+
+	public <T extends SbiHibernateModel> List<T> list(ICriterion<T> criterion) {
+		if (criterion == null) {
+			throw new IllegalArgumentException("Input parameter 'criteria' cannot be null");
+		}
+		return list(null, criterion);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T extends SbiHibernateModel> List<T> list(Class<T> clazz, ICriterion<T> criterion) {
+		List<T> ret = null;
+		Session session = null;
+		try {
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			Criteria criteria = null;
+			if (criterion == null) {
+				criteria = session.createCriteria(clazz);
+			} else {
+				criteria = criterion.evaluate(session);
+			}
+			ret = criteria.list();
+		} catch (Throwable t) {
+			throw new SpagoBIDOAException("An unexpected error occured while fetching objects of type [" + clazz + "] ", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return ret;
+	}
+	
+	/**
+	 * Updates an existing object
+	 * 
+	 * @param obj
+	 */
+	public void update(SbiHibernateModel obj) {
+		Session session = null;
+		Transaction tx = null;
+		LogMF.debug(logger, "IN: obj = [{0}]", obj);
+
+		try {
+			if (obj == null) {
+				throw new IllegalArgumentException("Input parameter cannot be null");
+			}
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				tx = session.beginTransaction();
+				Assert.assertNotNull(tx, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			updateSbiCommonInfo4Update(obj);
+			session.update(obj);
+			tx.commit();
+		} catch (Throwable t) {
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIDOAException("Error updating an object of type [" + obj.getClass() + "] ", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+	}
+	
+	/**
+	 * Loads an object of type "clazz" whose id is "id"
+	 * 
+	 * @param clazz
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends SbiHibernateModel> T load(Class<T> clazz, Serializable id) {
+		Session session = null;
+		T toReturn = null;
+
+LogMF.debug(logger, "IN: id = [{0}]", id);
+
+		try {
+			if (id == null) {
+				throw new IllegalArgumentException("Input parameter [id] cannot be null");
+			}
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			Object obj = session.get(clazz, id);
+
+			if (obj != null) {
+				toReturn = (T) obj;
+				session.flush();
+			} else {
+				throw new SpagoBIDOAException("Object not found");
+			}
+		} catch (Throwable t) {
+			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose id is equal to [" + id + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+
+		return toReturn;
 	}
 }

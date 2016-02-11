@@ -8,9 +8,12 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataSetDAO {
 
@@ -162,6 +165,29 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 		}
 
 		return transaction;
+	}
+	
+	@Override
+	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id, String organiz) {
+		Session session;
+		List<SbiDataSet> list = null;
+		SbiDataSet sbiDataSet = null;
+		try {
+			session = getSession();
+			Criteria c = session.createCriteria(SbiDataSet.class);
+			c.addOrder(Order.asc("label"));
+			c.add(Restrictions.eq("id.dsId", id));
+			if (organiz != null) {
+				c.add(Restrictions.eq("id.organization", organiz));
+			}
+			c.add(Restrictions.eq("active", true));
+
+			sbiDataSet = (SbiDataSet) c.uniqueResult();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sbiDataSet;
 	}
 
 }
