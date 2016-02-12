@@ -1,7 +1,7 @@
 angular.module('bread_crumb', ['ngMaterial'])
 .directive('breadCrumb', function() {
 	return {
-		templateUrl: '/knowage/js/src/angular_1.4/tools/commons/templates/bread_crumb.html',
+		templateUrl: '/SpagoBI/js/src/angular_1.4/tools/commons/templates/bread_crumb.html',
 		controller: breadCrumbControllerFunction,
 		scope: {
 			ngModel:'=',

@@ -1,6 +1,6 @@
 <%-- 
 	This files must be use in every 
-	SpagoBI${pageContext.request.contextPath}/Knowage page that 
+	SpagoBI${pageContext.request.contextPath} page that 
 	makes use of AngularJS  
 --%>
 
