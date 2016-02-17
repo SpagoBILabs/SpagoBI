@@ -109,7 +109,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	private void notifyListeners() {
 		DataSetListenerManager manager = DataSetListenerManagerFactory.getManager();
-		String uuid = getUserId();
+		String uuid = getUserUniqueIdentifier();
 		if (uuid == null) {
 			// temporary dataset
 			return;
@@ -384,14 +384,14 @@ public class RESTDataSet extends ConfigurableDataSet {
 		throw new IllegalStateException(RESTDataSet.class.getSimpleName() + " doesn't need the dataSource");
 	}
 
-	public String getUserId() {
+	public String getUserUniqueIdentifier() {
 		UserProfile up = getUserProfile();
 		if (up == null) {
 			return null;
 		}
 
-		String uuid = (String) up.getUserId();
+		String uuid = (String) up.getUserUniqueIdentifier();
 		return uuid;
 	}
-
+	
 }

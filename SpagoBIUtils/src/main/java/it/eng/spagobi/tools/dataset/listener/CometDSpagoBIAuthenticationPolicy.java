@@ -46,7 +46,7 @@ public class CometDSpagoBIAuthenticationPolicy extends DefaultSecurityPolicy {
 			return false;
 		}
 		String channel = (String) ext.get(USER_CHANNEL_PROP_NAME);
-		log.warn("User channel not present");
+		log.debug("User channel [" + channel +"]");
 		if (channel == null) {
 			return false;
 		}
@@ -54,6 +54,7 @@ public class CometDSpagoBIAuthenticationPolicy extends DefaultSecurityPolicy {
 		String userChannel = CometServiceManager.getUserChannel(channel);
 		BayeuxContext context = server.getContext();
 		String userId = (String) context.getHttpSessionAttribute(SpagoBIAccessFilter.USER_ID_ATTRIBUTE_NAME);
+		log.debug("Comparing [" + userChannel +"] with [" + userId + "] ...");
 		return userChannel.equals(userId);
 	}
 
