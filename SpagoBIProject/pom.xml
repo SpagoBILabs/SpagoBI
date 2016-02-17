@@ -25,6 +25,24 @@
 		</dependency>
 
 		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>SpagoBIOAuth2SecurityProvider</artifactId>
+			<version>5.2.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>SpagoBILdapSecurityProvider</artifactId>
+			<version>5.2.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>SpagoBILiferaySecurityProvider</artifactId>
+			<version>5.2.0</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
