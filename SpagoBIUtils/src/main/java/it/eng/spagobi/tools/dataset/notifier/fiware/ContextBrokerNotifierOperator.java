@@ -108,6 +108,7 @@ public class ContextBrokerNotifierOperator implements INotifierOperator {
 	}
 
 	public void notify(HttpServletRequest req, HttpServletResponse resp,String reqBody) {
+		log.debug("IN");
 		// updated and added (there is no disctinction in the notification)
 		List<IRecord> updatedOrAdded = getUpdatedOrAddedRecords(req,reqBody);
 		if (updatedOrAdded==null) {

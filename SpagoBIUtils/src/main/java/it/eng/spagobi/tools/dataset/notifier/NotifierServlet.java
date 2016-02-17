@@ -52,8 +52,10 @@ public class NotifierServlet extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		log.debug("IN");
 		NotifierManager manager = NotifierManagerFactory.getManager();
 		manager.manage(req, resp);
+		log.debug("OUT");
 	}
 
 }

@@ -134,7 +134,7 @@ public class DataSetListenerManager {
 		IDataSetListener listener= new IDataSetListener() {
 			
 			public void dataStoreChanged(DataStoreChangedEvent event) throws DataSetListenerException {
-				
+				log.debug("uuid = [" + uuid + "], listenerId = [" + listenerId + "]");
 				//notify the frontend clients about the dataStore changes
 				CometServiceManager manager = CometServiceManagerFactory.getManager();
 				manager.dataStoreChanged(uuid, dataSetLabel, event,listenerId);

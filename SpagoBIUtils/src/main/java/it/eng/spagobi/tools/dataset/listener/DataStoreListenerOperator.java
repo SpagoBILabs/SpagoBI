@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 /**
  * 
  * 
@@ -27,6 +29,8 @@ import java.util.Map;
 public class DataStoreListenerOperator {
 
 	private static final int ID_NOT_DEFINED = -1;
+	
+	private static final Logger log = Logger.getLogger(DataStoreListenerOperator.class);
 
 	private final Map<String, IDataSetListener> listeners = new HashMap<String, IDataSetListener>();
 
@@ -40,6 +44,7 @@ public class DataStoreListenerOperator {
 	private final DataStoreCloner dataStoreCloner = new DataStoreCloner();
 
 	public synchronized void addIDataSetListenerIfAbsent(IDataSetListener listener, String listenerId) {
+		log.debug("IN: listenerId = [" + listenerId + "]");
 		Helper.checkNotNull(listener, "listener");
 		Helper.checkNotNullNotTrimNotEmpty(listenerId, "listenerId");
 

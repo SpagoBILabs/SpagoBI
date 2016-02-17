@@ -201,7 +201,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			}
 
 			Ext.ns("Sbi.user");
-		    Sbi.user.userId = "<%= profile.getUserId() %>";
+		    Sbi.user.userId = "<%= profile.getUserUniqueIdentifier() %>";
 			
 	        var config ={};
 	        config.template = template
