@@ -44,6 +44,10 @@
 		<module>../spagobi-core</module>
 		<module>../spagobi.birt.oda</module>
 
+		<module>../SpagoBIOAuth2SecurityProvider</module>
+		<module>../SpagoBILdapSecurityProvider</module>
+		<module>../SpagoBILiferaySecurityProvider</module> 
+
 		<module>../SpagoBIProject</module>
 		<module>../SpagoBICockpitEngine</module>
 		<module>../SpagoBIQbeEngine</module>
