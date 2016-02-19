@@ -15,6 +15,12 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>org.dspace.xmlui.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2</version>
@@ -43,6 +49,12 @@
 			<groupId>it.eng.spago</groupId>
 			<artifactId>spago-core</artifactId>
 			<version>2.3.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>hibernate</artifactId>
+					<groupId>org.hibernate</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
