@@ -18,6 +18,12 @@
 			<groupId>it.eng.spagobi</groupId>
 			<artifactId>SpagoBIUtils</artifactId>
 			<version>5.2.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>batik</groupId>
+					<artifactId>batik-1.5-fop</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
