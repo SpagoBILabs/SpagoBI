@@ -236,37 +236,38 @@ function addRightBreak(index) {
   }	  	  
  
 //enable or siable the date range filter based on param selected
-function selectedParam() {	
-	var selectBox = document.getElementById("dependSelect");
-	if (selectBox == null) {
-		return false;
-	}
-	var selectedOption = selectBox.options[selectBox.selectedIndex];
+  function selectedParam() {	
+  	var selectBox = document.getElementById("dependSelect");
+  	if (selectBox == null) {
+  		return false;
+  	}
+  	var selectedOption = selectBox.options[selectBox.selectedIndex];
 
-	var conditionSelect = document.getElementById("conditionSelect");
-	var conditionSelectOptions = conditionSelect.options;
-	var selectedDriverIsDataRange = selectedOption.getAttribute("data-is-date-range");
-	selectedDriverIsDataRange = selectedDriverIsDataRange == null || selectedDriverIsDataRange == undefined || selectedDriverIsDataRange == "false"  ? "false" : "true";
-	
-	var selectedIndex = -1;
-	 
-	for (var i=0;i<conditionSelectOptions.length;i++) {
-		var optIsDataRange = conditionSelectOptions[i].getAttribute("data-is-date-range");
-		optIsDataRange = optIsDataRange == null || optIsDataRange == undefined || optIsDataRange == "false" ? "false" : "true"; 
-		if (optIsDataRange  !== selectedDriverIsDataRange){
-			conditionSelectOptions[i].hide();
-		}else{
-			conditionSelectOptions[i].show();
-			if (selectedIndex == -1) {
-				selectedIndex = i;
-			}
-		}
-	}
-	conditionSelect.selectedIndex = selectedIndex;
-	return true;
-} 
-  
-  
+  	var conditionSelect = document.getElementById("conditionSelect");
+  	var conditionSelectOptions = conditionSelect.options;
+  	var selectedDriverIsDataRange = selectedOption.getAttribute("data-is-date-range");
+  	selectedDriverIsDataRange = selectedDriverIsDataRange == null || selectedDriverIsDataRange == undefined || selectedDriverIsDataRange == "false"  ? "false" : "true";
+  	
+  	var selectedIndex = -1;
+      
+  	for (var i=0;i<conditionSelectOptions.length;i++) {
+  		var optIsDataRange = conditionSelectOptions[i].getAttribute("data-is-date-range");
+  		optIsDataRange = optIsDataRange == null || optIsDataRange == undefined || optIsDataRange == "false" ? "false" : "true"; 
+  		if (optIsDataRange  !== selectedDriverIsDataRange){
+  			conditionSelectOptions[i].hide();
+  		}else{
+  			conditionSelectOptions[i].show();
+  			if (selectedIndex == -1) {
+  				selectedIndex = i;
+  			}
+  		}
+  	}
+  	if (conditionSelectOptions[conditionSelect.selectedIndex].style.display == "none" && selectedIndex >= 0){
+  		conditionSelect.selectedIndex = selectedIndex;
+  	}
+  	return true;
+  } 
+    
   
 //for setting the first time of visualization
 function checkSelectedParam() {
