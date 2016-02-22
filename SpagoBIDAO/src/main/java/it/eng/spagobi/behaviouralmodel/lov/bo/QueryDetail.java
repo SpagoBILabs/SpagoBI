@@ -397,13 +397,22 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		// operators
 		String left = null;
 		String right = null;
+		String central = null;
 		if (SpagoBIConstants.NOT_IN_RANGE_FILTER.equals(typeFilter)) {
 			left = "<";
 			right = ">";
 		} else if (SpagoBIConstants.IN_RANGE_FILTER.equals(typeFilter)) {
 			left = ">=";
 			right = "<=";
-		} else {
+		} else if (SpagoBIConstants.LESS_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_END_FILTER.equals(typeFilter)){
+			central = "<";
+		} else if (SpagoBIConstants.LESS_OR_EQUAL_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_OR_EQUAL_END_FILTER.equals(typeFilter)){
+			central = "<=";
+		} else if (SpagoBIConstants.GREATER_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_END_FILTER.equals(typeFilter)){
+			central = ">";
+		} else if (SpagoBIConstants.GREATER_OR_EQUAL_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_OR_EQUAL_END_FILTER.equals(typeFilter)){
+			central = ">=";
+		}else {
 			Assert.assertUnreachable("filter not supported");
 		}
 
@@ -427,9 +436,19 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		String startDateSQLValue = getSQLDateValue(startDateS, true);
 		String endDateSQLValue = getSQLDateValue(endDateS, true);
 		String columnSQLName = getColumnSQLName(dependency.getFilterColumn());
-
+		String res=null;
 		// result something line (column>=date start AND column<=date end)
-		String res = String.format(" ( %s%s%s AND %s%s%s) ", columnSQLName, left, startDateSQLValue, columnSQLName, right, endDateSQLValue);
+		if (SpagoBIConstants.NOT_IN_RANGE_FILTER.equals(typeFilter) || SpagoBIConstants.IN_RANGE_FILTER.equals(typeFilter)){
+			res = String.format(" ( %s%s%s AND %s%s%s) ", columnSQLName, left, startDateSQLValue, columnSQLName, right, endDateSQLValue);
+		}else if (SpagoBIConstants.LESS_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_OR_EQUAL_BEGIN_FILTER.equals(typeFilter) 
+				|| SpagoBIConstants.GREATER_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_OR_EQUAL_BEGIN_FILTER.equals(typeFilter)){
+			res = String.format(" ( %s%s%s) ", columnSQLName, central, startDateSQLValue);
+		}else if (SpagoBIConstants.LESS_END_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_OR_EQUAL_END_FILTER.equals(typeFilter) 
+				|| SpagoBIConstants.GREATER_END_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_OR_EQUAL_END_FILTER.equals(typeFilter)){
+			res = String.format(" ( %s%s%s) ", columnSQLName, central, endDateSQLValue);
+		}else {
+			res = TRUE_CONDITION;
+		}
 		return res;
 	}
 
@@ -636,9 +655,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		if (dialect != null) {
 			if (dialect.equalsIgnoreCase(DIALECT_MYSQL)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " STR_TO_DATE(" + date + ",'%d/%m/%Y %h:%i:%s') ";
+					toReturn = " STR_TO_DATE(" + date + ",'%d/%m/%Y %H:%i:%s') ";
 				} else {
-					toReturn = " STR_TO_DATE('" + date + "','%d/%m/%Y %h:%i:%s') ";
+					toReturn = " STR_TO_DATE('" + date + "','%d/%m/%Y %H:%i:%s') ";
 				}
 			} else if (dialect.equalsIgnoreCase(DIALECT_HSQL)) {
 				try {
