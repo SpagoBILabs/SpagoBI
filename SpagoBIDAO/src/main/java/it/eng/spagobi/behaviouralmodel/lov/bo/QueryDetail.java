@@ -424,7 +424,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		DateFormat df = new SimpleDateFormat(dateFormat);
 		Date startDate = startEnd[0];
 		Date endDate = startEnd[1];
-		if (!isDateFormat) {
+		if (central == null && !isDateFormat) {
 			// add 1 day to end date because it will be transformed to timestamp
 			endDate = DateRangeUtils.addDay(endDate);
 			right = SpagoBIConstants.IN_RANGE_FILTER.equals(typeFilter) ? right = "<" : ">=";
