@@ -29,8 +29,10 @@ import org.apache.commons.fileupload.ParameterParser;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -243,6 +245,15 @@ public class RestUtilities {
 		Assert.assertTrue(port != null, "port proxy != null");
 		int p = Integer.parseInt(port);
 		client.getHostConfiguration().setProxy(proxyHost, p);
+		
+		String proxyUser = System.getProperty("http.proxyUsername");
+		String proxyPassword = System.getProperty("http.proxyPassword");
+		if (proxyUser != null) {
+			log.debug("Setting proxy authentication configuration ...");
+			HttpState state = new HttpState();
+			state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUser, proxyPassword));
+			client.setState(state);
+		}
 
 	}
 
