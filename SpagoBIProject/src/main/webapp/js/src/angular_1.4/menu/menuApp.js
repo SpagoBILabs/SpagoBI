@@ -151,7 +151,7 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
     	 			var aLocale = Sbi.config.supportedLocales[j];
      				var languageItem = {
     					text: aLocale.language,
-    					iconCls:'icon-' + aLocale.language,
+    					iconCls:'icon-' + aLocale.country,
     					href: $scope.getLanguageUrl(aLocale),
     					linkType: 'execUrl'
     				};

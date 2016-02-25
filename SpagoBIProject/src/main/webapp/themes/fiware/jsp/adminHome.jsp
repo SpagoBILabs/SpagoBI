@@ -43,7 +43,7 @@ Ext.onReady(function () {
  				var aLanguagesMenuItem = new Ext.menu.Item({
 					id: '',
 					text: aLocale.language,
-					iconCls:'icon-' + aLocale.language,
+					iconCls:'icon-' + aLocale.country,
 					href: this.getLanguageUrl(aLocale)
 				})
  				languagesMenuItems.push(aLanguagesMenuItem);
