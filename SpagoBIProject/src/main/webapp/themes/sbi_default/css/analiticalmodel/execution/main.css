@@ -236,19 +236,43 @@
 }
 
 .icon-it {
-	background-image: url('../../../img/it_IT.gif') !important;
+	background-image: url('../../../img/flags/it.gif') !important;
 }
 
-.icon-en {
-	background-image: url('../../../img/en_US.gif') !important;
+.icon-us {
+	background-image: url('../../../img/flags/us.gif') !important;
+}
+
+.icon-gb {
+	background-image: url('../../../img/flags/gb.gif') !important;
 }
 
 .icon-fr {
-	background-image: url('../../../img/fr_FR.gif') !important;
+	background-image: url('../../../img/flags/fr.gif') !important;
 }
 
 .icon-es {
-	background-image: url('../../../img/es_ES.gif') !important;
+	background-image: url('../../../img/flags/es.gif') !important;
+}
+
+.icon-jp {
+	background-image: url('../../../img/flags/jp.gif') !important;
+}
+
+.icon-cn {
+	background-image: url('../../../img/flags/cn.gif') !important;
+}
+
+.icon-kr {
+	background-image: url('../../../img/flags/kr.gif') !important;
+}
+
+.icon-de {
+	background-image: url('../../../img/flags/de.gif') !important;
+}
+
+.icon-br {
+	background-image: url('../../../img/flags/br.gif') !important;
 }
 
 .icon-exit {
