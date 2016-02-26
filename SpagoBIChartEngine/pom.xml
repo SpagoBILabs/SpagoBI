@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlets</artifactId>
-			<version>9.2.12.v20150709</version>
+			<version>9.3.2.v20150730</version>
 		</dependency>
 
 		<dependency>
