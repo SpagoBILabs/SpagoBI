@@ -62,6 +62,10 @@
 
 	<profiles>
 		<profile>
+			<id>jbossEAP7</id>
+		</profile>
+	
+		<profile>
 			<id>development</id>
 		</profile>
 		<profile>

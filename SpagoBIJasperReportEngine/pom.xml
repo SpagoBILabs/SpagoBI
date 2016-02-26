@@ -150,6 +150,10 @@
 		</profile>
 
 		<profile>
+			<id>jbossEAP7</id>
+		</profile>
+		
+		<profile>
 			<id>cas-enabled</id>
 			<properties>
 				<enable.cas.start>&lt;!--</enable.cas.start>

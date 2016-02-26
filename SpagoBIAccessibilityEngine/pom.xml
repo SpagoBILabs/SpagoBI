@@ -70,6 +70,10 @@
 				<war.deploy.dir>${tomcat.home}/webapps/${project.artifactId}</war.deploy.dir>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>jbossEAP7</id>
+		</profile>
 
 		<profile>
 			<id>cas-enabled</id>

@@ -60,6 +60,10 @@
 
 	<profiles>
 		<profile>
+			<id>jbossEAP7</id>
+		</profile>
+		
+		<profile>
 			<id>tomcat-deploy</id>
 			<properties>
 				<war.deploy.dir>${tomcat.home}/webapps/${project.artifactId}</war.deploy.dir>
