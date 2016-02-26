@@ -649,6 +649,205 @@
 			</build>
 		</profile>
 
+
+		<profile>
+			<id>jbossEAP7</id>
+			<properties>
+				<!-- To specify another folder use your settings.xml -->
+				<wildfly.home>D:/Program Files/jboss-eap-7.0</wildfly.home>
+			</properties>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.4.1</version>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${wildfly.home}/standalone/deployments</directory>
+									<includes>
+										<include>${project.artifactId}.war</include>
+										<include>${project.artifactId}.war.deployed</include>
+										<include>${project.artifactId}.war.failed</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<!-- TODO: remove depedency instead of directly libs -->
+							<packagingExcludes>
+								%regex[WEB-INF/tlds/.*portlet\.tld],
+								%regex[WEB-INF/tlds/*liferay-portlet\.tld"],
+								
+								%regex[WEB-INF/lib/httpclient-4.*],
+								%regex[WEB-INF/lib/httpcore-4.*],
+								%regex[WEB-INF/lib/jaxrs-api-*],
+								%regex[WEB-INF/lib/resteasy-multipart-provider-*],
+								%regex[WEB-INF/lib/resteasy-jaxrs-*],
+								%regex[WEB-INF/lib/resteasy-jaxb-provider-*],
+								<!-- 
+								%regex[WEB-INF/lib/resteasy-servlet-initializer-3.*]
+								 -->
+							</packagingExcludes>
+							<useCache>true</useCache>
+							<outputDirectory>${wildfly.home}/standalone/deployments</outputDirectory>
+						</configuration>
+
+						<!-- Necessary for string replacing in web resources -->
+						<executions>
+							<execution>
+								<id>prepare-war</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>exploded</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+
+						<executions>
+							<!-- java:/comp/env to java: for jdbc jndi -->
+							<execution>
+								<id>jdnc-jndi</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/jbpm.hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/quartz.properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>java:/comp/env</token>
+									<value>java:</value>
+								</configuration>
+							</execution>
+
+							<!-- logs base folder -->
+							<execution>
+								<id>log</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/*properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<replacements>
+										<replacement>
+											<token>catalina.home</token>
+											<value>jboss.server.log.dir</value>
+										</replacement>
+										<replacement>
+											<token>catalina.base</token>
+											<value>jboss.server.log.dir</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+
+
+							<!-- configs engine jndi and work manager -->
+							<execution>
+								<id>configs-engine</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/configs.xml</include>
+										<include>${project.build.directory}/**/engine-config.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<replacements>
+										<replacement>
+											<token>java:/comp/env/wm/SpagoWorkManager</token>
+											<value>java:global/SpagoWorkManager</value>
+										</replacement>
+										<replacement>
+											<token>java://comp/env</token>
+											<value>java:/urls</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+
+							<!-- context and web workmanager -->
+							<execution>
+								<id>context-web</id>
+
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/context.xml</include>
+										<include>${project.build.directory}/**/web.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<quiet>false</quiet>
+									<replacements>
+										<replacement>
+											<token>wm/SpagoWorkManager</token>
+											<value>SpagoWorkManager</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+
+							<!-- web workmanager jndi ref -->
+							<execution>
+								<id>web-spagowork</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/web.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<replacements>
+										<replacement>
+											<token>&lt;res-ref-name&gt;SpagoWorkManager&lt;/res-ref-name&gt;</token>
+											<value>&lt;res-ref-name&gt;SpagoWorkManager&lt;/res-ref-name&gt;
+												&lt;jndi-name&gt;java:global/SpagoWorkManager&lt;/jndi-name&gt;</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 		
 		<profile>
 			<id>wildfly</id>
