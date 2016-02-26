@@ -63,7 +63,10 @@
 	</dependencies>
 
 	<profiles>
-
+		<profile>
+			<id>jbossEAP7</id>
+		</profile>
+		
 		<profile>
 			<id>tomcat-deploy</id>
 			<properties>
