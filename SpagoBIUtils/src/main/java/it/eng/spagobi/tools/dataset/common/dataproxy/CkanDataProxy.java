@@ -22,9 +22,10 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.log4j.Logger;
 
 import sun.misc.BASE64Encoder;
@@ -45,6 +46,7 @@ public class CkanDataProxy extends AbstractDataProxy {
 		throw new UnsupportedOperationException("method CkanDataProxy not yet implemented");
 	}
 
+	@Override
 	public IDataStore load(IDataReader dataReader) {
 
 		IDataStore dataStore = null;
@@ -91,17 +93,18 @@ public class CkanDataProxy extends AbstractDataProxy {
 	private InputStream getInputStreamFromURL(String fileURL, String ckanApiKey) throws IOException {
 		logger.debug("IN");
 		HttpClient httpClient = CKANClient.getHttpClient();
-		GetMethod httpget = new GetMethod(fileURL);
+		HttpGet httpget = new HttpGet(fileURL);
 		InputStream is = null;
 		try {
 			int statusCode = -1;
 			// For FIWARE CKAN instance
-			httpget.setRequestHeader("X-Auth-Token", ckanApiKey);
+			httpget.addHeader("X-Auth-Token", ckanApiKey);
 			// For ANY CKAN instance
 			// httpget.setRequestHeader("Authorization", ckanApiKey);
-			statusCode = httpClient.executeMethod(httpget);
+			HttpResponse response = httpClient.execute(httpget);
+			statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == HttpStatus.SC_OK) {
-				is = httpget.getResponseBodyAsStream();
+				is = response.getEntity().getContent();
 			}
 			logger.debug("OUT");
 		} catch (Throwable t) {

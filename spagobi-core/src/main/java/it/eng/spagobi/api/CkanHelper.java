@@ -32,9 +32,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -86,7 +87,7 @@ public class CkanHelper {
 
 	private void downloadAndSaveFile(String fileURL, String ckanApiKey, File saveTo) {
 		logger.debug("IN");
-		GetMethod httpget = new GetMethod(fileURL);
+		HttpGet httpget = new HttpGet(fileURL);
 
 		try {
 			InputStream is = null;
@@ -95,12 +96,13 @@ public class CkanHelper {
 				int statusCode = -1;
 				HttpClient httpClient = CKANClient.getHttpClient();
 				// For FIWARE CKAN instance
-				httpget.setRequestHeader("X-Auth-Token", ckanApiKey);
+				httpget.addHeader("X-Auth-Token", ckanApiKey);
 				// For ANY CKAN instance
 				// httpget.setRequestHeader("Authorization", ckanApiKey);
-				statusCode = httpClient.executeMethod(httpget);
+				HttpResponse response = httpClient.execute(httpget);
+				statusCode = response.getStatusLine().getStatusCode();
 				if (statusCode == HttpStatus.SC_OK) {
-					is = httpget.getResponseBodyAsStream();
+					is = response.getEntity().getContent();
 					fos = new FileOutputStream(saveTo);
 
 					logger.debug("Saving file...");

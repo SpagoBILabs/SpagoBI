@@ -17,11 +17,11 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.json.JSONArray;
 
 /**
- * 
+ *
  * @author Gavardi Giulio(giulio.gavardi@eng.it)
  */
 
@@ -38,7 +38,7 @@ public class DataSetPersister {
 
 		logger.debug("Call service URL " + serverUrl);
 
-		ApacheHttpClientExecutor httpExecutor = new ApacheHttpClientExecutor(CKANClient.getHttpClient());
+		ApacheHttpClient4Executor httpExecutor = new ApacheHttpClient4Executor(CKANClient.getHttpClient());
 		ClientRequest request = new ClientRequest(serviceUrl, httpExecutor);
 
 		JSONArray array = new JSONArray();
