@@ -210,7 +210,7 @@ ${enable.cas.start} END-CAS -->
 			com.tonbeller.tbutils.res.ResourcesFactoryContextListener
 		</listener-class>
 	</listener>
-
+<!-- 
 	<servlet>
 		<servlet-name>MDXQueryServlet</servlet-name>
 		<servlet-class>
@@ -224,7 +224,7 @@ ${enable.cas.start} END-CAS -->
 			</param-value>
 		</init-param>
 	</servlet>
-
+ -->
 	<servlet>
 		<servlet-name>MondrianXmlaServlet</servlet-name>
 		<servlet-class>
