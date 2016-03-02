@@ -44,13 +44,20 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -67,7 +74,7 @@ public final class CKANClient {
 
 	private Connection connection = null;
 	private ObjectMapper mapper = null;
-	private ApacheHttpClientExecutor httpExecutor = null;
+	private ApacheHttpClient4Executor httpExecutor = null;
 	private final int DEFAULT_SEARCH_FACET_LIMIT = -1;
 	/** Unlimited **/
 	private final int DEFAULT_SEARCH_FACET_MIN_COUNT = 1;
@@ -90,7 +97,7 @@ public final class CKANClient {
 		logger.debug("Initialising CKANClient");
 		this.connection = c;
 		mapper = new ObjectMapper();
-		httpExecutor = new ApacheHttpClientExecutor(getHttpClient());
+		httpExecutor = new ApacheHttpClient4Executor(getHttpClient());
 		logger.debug("CKANClient initialised");
 	}
 
@@ -108,26 +115,34 @@ public final class CKANClient {
 		String proxyPassword = System.getProperty("http.proxyPassword");
 
 		logger.debug("Setting REST client");
-		HttpClient httpClient = new HttpClient();
-		httpClient.setConnectionTimeout(500);
+
+		ClientConnectionManager cm = new ThreadSafeClientConnManager();
+		DefaultHttpClient httpClient = new DefaultHttpClient(cm);
+
+		HttpParams httpParams = new BasicHttpParams();
+
+		HttpConnectionParams.setConnectionTimeout(httpParams, 500);
+		// HttpConnectionParams.setSoTimeout(httpParams, 15000);
 
 		if (proxyHost != null && proxyPortInt > 0) {
+			logger.debug("Setting proxy " + proxyHost + ":" + proxyPortInt);
 			if (proxyUsername != null && proxyPassword != null) {
 				logger.debug("Setting proxy with authentication");
-				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-				HttpState state = new HttpState();
-				state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUsername, proxyPassword));
-				httpClient.setState(state);
+				httpClient.getCredentialsProvider().setCredentials(new AuthScope(proxyHost, proxyPortInt),
+						new org.apache.http.auth.UsernamePasswordCredentials(proxyUsername, proxyPassword));
 				logger.debug("Proxy with authentication set");
 			} else {
 				// Username and/or password not acceptable. Trying to set proxy without credentials
-				logger.debug("Setting proxy without authentication");
-				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-				logger.debug("Proxy without authentication set");
+				logger.debug("No authentication credentials provided");
+				HttpHost proxy = new HttpHost(proxyHost, proxyPortInt);
+				httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 			}
 		} else {
 			logger.debug("No proxy configuration found");
 		}
+
+		httpClient.setParams(httpParams);
+
 		logger.debug("REST client set");
 
 		return httpClient;
