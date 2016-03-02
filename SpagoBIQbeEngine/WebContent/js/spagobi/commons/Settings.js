@@ -58,7 +58,7 @@ Sbi.settings.qbe = {
 			, enableTbExpWizardBtn: true
 			, enableTbRemoveAllFilterBtn: true
 			, enableTbAddFilterBtn: true
-			, enableRowRemoveBtn: false 
+			, enableRowRemoveBtn: true 
 			, columns : {
 				'filterId': {hideable: true, hidden: false, sortable: false, editable: true}
 				, 'filterDescripion': {hideable: true, hidden: true, sortable: false, editable: true}
