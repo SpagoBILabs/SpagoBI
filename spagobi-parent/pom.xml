@@ -256,7 +256,7 @@
 			<id>jbossEAP7</id>
 			<properties>
 				<!-- To specify another folder use your settings.xml -->
-				<wildfly.home>D:/Program Files/jboss-eap-7.0</wildfly.home>
+				<jboss.home>D:/Program Files/jboss-eap-7.0</jboss.home>
 			</properties>
 			<build>
 				<plugins>
@@ -268,7 +268,7 @@
 						<configuration>
 							<filesets>
 								<fileset>
-									<directory>${wildfly.home}/standalone/deployments</directory>
+									<directory>${jboss.home}/standalone/deployments</directory>
 									<includes>
 										<include>${project.artifactId}.war</include>
 										<include>${project.artifactId}.war.deployed</include>
@@ -300,7 +300,7 @@
 								 -->
 							</packagingExcludes>
 							<useCache>true</useCache>
-							<outputDirectory>${wildfly.home}/standalone/deployments</outputDirectory>
+							<outputDirectory>${jboss.home}/standalone/deployments</outputDirectory>
 						</configuration>
 
 						<!-- Necessary for string replacing in web resources -->
