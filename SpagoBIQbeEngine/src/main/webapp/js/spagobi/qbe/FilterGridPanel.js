@@ -556,7 +556,8 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 			
 			var delButtonColumn = new Ext.grid.ButtonColumn(
 			Ext.apply({
-		       header: LN('sbi.qbe.filtergridpanel.headers.delete')
+//		       header: LN('sbi.qbe.filtergridpanel.headers.delete')
+		       header:  LN('sbi.qbe.filtergridpanel.headers.delete.column')
 		       , tooltip: LN('sbi.qbe.filtergridpanel.headers.delete')
 		       , dataIndex: 'deleteButton'
 		       , imgSrc: '../img/actions/delete.gif'
