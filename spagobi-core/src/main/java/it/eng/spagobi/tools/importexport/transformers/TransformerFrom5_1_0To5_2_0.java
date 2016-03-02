@@ -6,6 +6,10 @@
 package it.eng.spagobi.tools.importexport.transformers;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,6 +17,7 @@ import java.sql.Statement;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.importexport.ITransformer;
 
 public class TransformerFrom5_1_0To5_2_0 implements ITransformer {
@@ -46,6 +51,10 @@ public class TransformerFrom5_1_0To5_2_0 implements ITransformer {
 		logger.debug("IN");
 		Connection conn = null;
 		try {
+
+			logger.debug("change POSITION keyword modifying archive");
+			changeKeyWord(pathImpTmpFolder, archiveName);
+
 			conn = TransformersUtilities.getConnectionToDatabase(pathImpTmpFolder, archiveName);
 			fixSbiParuse(conn);
 
@@ -61,6 +70,50 @@ public class TransformerFrom5_1_0To5_2_0 implements ITransformer {
 				logger.error("Error closing connection to export database", e);
 			}
 		}
+	}
+
+	private void changeKeyWord(String path, String archiveName) {
+		logger.debug("IN");
+		FileWriter fw = null;
+		try {
+			String pathScript = path + "/" + archiveName;
+			pathScript = pathScript.replaceAll("\\\\/", "/");
+			pathScript += "/metadata";
+			String pathFileScript = pathScript + "/metadata.script";
+
+			logger.debug("take file at " + pathFileScript);
+			File scriptFile = new File(pathFileScript);
+
+			if (scriptFile.exists() == true) {
+				logger.debug("file exists");
+				InputStream targetStream = new FileInputStream(scriptFile);
+				String content = StringUtilities.convertStreamToString(targetStream);
+				content = content.replaceAll("POSITION INTEGER DEFAULT NULL", "KPI_POSITION INTEGER DEFAULT NULL");
+
+				fw = new FileWriter(scriptFile, false);
+				fw.write(content);
+
+				logger.debug("wrote the content on metadata.script");
+
+			} else {
+				logger.debug("File does not exist");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error in alterating the archive file", e);
+		} finally {
+			if (fw != null) {
+				try {
+					fw.flush();
+					fw.close();
+				} catch (IOException e) {
+					logger.error("Error closing stream", e);
+				}
+			}
+
+		}
+
+		logger.debug("OUT");
 	}
 
 	private void fixSbiParuse(Connection conn) throws Exception {
