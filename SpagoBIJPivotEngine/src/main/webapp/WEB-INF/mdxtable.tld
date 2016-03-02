@@ -37,7 +37,7 @@ You must accept the terms of that agreement to use this software.
   <tag>
     <name>transform</name>
     <tag-class>mondrian.web.taglib.TransformTag</tag-class>
-    <body-content>EMPTY</body-content>
+    <body-content>empty</body-content>
 
     <attribute>
       <name>query</name>
