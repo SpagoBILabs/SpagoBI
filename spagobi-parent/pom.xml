@@ -32,7 +32,7 @@
 	</properties>
 
 	<modules>
-		<module>../cas</module>
+ 		<module>../cas</module>
 
 		<module>../QbeCore</module>
 		<module>../SpagoBIDAO</module>
@@ -42,29 +42,29 @@
 		<module>../spagobi-metamodel-core</module>
 		<module>../spagobi-metamodel-utils</module>
 		<module>../spagobi-core</module>
-		<module>../spagobi.birt.oda</module>
+ 		<module>../spagobi.birt.oda</module>  
 
 		<module>../SpagoBIOAuth2SecurityProvider</module>
 		<module>../SpagoBILdapSecurityProvider</module>
 		<module>../SpagoBILiferaySecurityProvider</module> 
 
 		<module>../SpagoBIProject</module>
-		<module>../SpagoBICockpitEngine</module>
+ 		<module>../SpagoBICockpitEngine</module> 
 		<module>../SpagoBIQbeEngine</module>
-		<module>../SpagoBIAccessibilityEngine</module>
-		<module>../SpagoBIBirtReportEngine</module>
-		<module>../SpagoBIChartEngine</module>
-		<module>../SpagoBICommonJEngine</module>
-		<module>../SpagoBIConsoleEngine</module>
-		<module>../SpagoBIDataMiningEngine</module>
-		<module>../SpagoBIGeoEngine</module>
-		<module>../SpagoBIGeoReportEngine</module>
-		<module>../SpagoBIJasperReportEngine</module>
-		<module>../SpagoBIJPivotEngine</module>
-		<module>../SpagoBIMobileEngine</module>
-		<module>../SpagoBINetworkEngine</module>
-		<module>../SpagoBISocialAnalysis</module>
-		<module>../SpagoBITalendEngine</module>
+ 		<module>../SpagoBIAccessibilityEngine</module> 
+		<module>../SpagoBIBirtReportEngine</module> 
+ 		<module>../SpagoBIChartEngine</module> 
+ 		<module>../SpagoBICommonJEngine</module> 
+ 		<module>../SpagoBIConsoleEngine</module> 
+		<module>../SpagoBIDataMiningEngine</module> 
+ 		<module>../SpagoBIGeoEngine</module> 
+ 		<module>../SpagoBIGeoReportEngine</module> 
+		<module>../SpagoBIJasperReportEngine</module> 
+ 		<module>../SpagoBIJPivotEngine</module> 
+ 		<module>../SpagoBIMobileEngine</module> 
+ 		<module>../SpagoBINetworkEngine</module>
+ 		<module>../SpagoBISocialAnalysis</module>
+ 		<module>../SpagoBITalendEngine</module>
 		<module>../SpagoBIWhatIfEngine</module>
 	</modules>
 
@@ -114,12 +114,118 @@
 	</build>
 
 	<profiles>
+		
+		<profile>
+			<id>postgresql</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+
+						<executions>
+							<!-- replace hibernate dialect -->
+							<execution>
+								<id>hibernate-dialect</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/jbpm.hibernate.cfg.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>MySQLDialect</token>
+									<value>PostgreSQLDialect</value>
+								</configuration>
+							</execution>
+							
+							<!-- replace quartz delegate class-->
+							<execution>
+								<id>quartz-driverDelegate</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/quartz.properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>StdJDBCDelegate</token>
+									<value>PostgreSQLDelegate</value>
+								</configuration>
+							</execution>
+							
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>hsqldb</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+
+						<executions>
+							<!-- replace hibernate dialect -->
+							<execution>
+								<id>hibernate-dialect</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/jbpm.hibernate.cfg.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>MySQLDialect</token>
+									<value>HSQLDialect</value>
+								</configuration>
+							</execution>
+							
+							<!-- replace quartz delegate class-->
+							<execution>
+								<id>quartz-driverDelegate</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/quartz.properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>StdJDBCDelegate</token>
+									<value>HSQLDBDelegate</value>
+								</configuration>
+							</execution>
+							
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 
 		<profile>
 			<id>tomcat</id>
 			<properties>
 				<!-- To specify another folder use your settings.xml -->
-				<tomcat.home>/home/spagobi/apache-tomcat-7.0.50</tomcat.home>
+				<tomcat.home>D:\Program Files\Apache Software Foundation\Tomcat 7.0</tomcat.home>
 			</properties>
 			<build>
 				<plugins>
@@ -449,13 +555,12 @@
 				</plugins>
 			</build>
 		</profile>
-
-		
+			
 		<profile>
 			<id>wildfly</id>
 			<properties>
 				<!-- To specify another folder use your settings.xml -->
-				<wildfly.home>/home/spagobi/wildfly</wildfly.home>
+				<wildfly.home>D:/Program Files/wildfly</wildfly.home>
 			</properties>
 			<build>
 				<plugins>
