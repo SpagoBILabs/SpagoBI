@@ -16,7 +16,7 @@
 
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.target>1.7/maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
 		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
@@ -114,12 +114,118 @@
 	</build>
 
 	<profiles>
+		
+		<profile>
+			<id>postgresql</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+
+						<executions>
+							<!-- replace hibernate dialect -->
+							<execution>
+								<id>hibernate-dialect</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/jbpm.hibernate.cfg.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>MySQLDialect</token>
+									<value>PostgreSQLDialect</value>
+								</configuration>
+							</execution>
+							
+							<!-- replace quartz delegate class-->
+							<execution>
+								<id>quartz-driverDelegate</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/quartz.properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>StdJDBCDelegate</token>
+									<value>PostgreSQLDelegate</value>
+								</configuration>
+							</execution>
+							
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>hsqldb</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+
+						<executions>
+							<!-- replace hibernate dialect -->
+							<execution>
+								<id>hibernate-dialect</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/jbpm.hibernate.cfg.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>MySQLDialect</token>
+									<value>HSQLDialect</value>
+								</configuration>
+							</execution>
+							
+							<!-- replace quartz delegate class-->
+							<execution>
+								<id>quartz-driverDelegate</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/quartz.properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>StdJDBCDelegate</token>
+									<value>HSQLDBDelegate</value>
+								</configuration>
+							</execution>
+							
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 
 		<profile>
 			<id>tomcat</id>
 			<properties>
 				<!-- To specify another folder use your settings.xml -->
-				<tomcat.home>/home/spagobi/apache-tomcat-7.0.50</tomcat.home>
+				<tomcat.home>D:\Program Files\Apache Software Foundation\Tomcat 7.0</tomcat.home>
 			</properties>
 			<build>
 				<plugins>
@@ -454,7 +560,7 @@
 			<id>wildfly</id>
 			<properties>
 				<!-- To specify another folder use your settings.xml -->
-				<wildfly.home>/home/spagobi/wildfly</wildfly.home>
+				<wildfly.home>D:/Program Files/wildfly</wildfly.home>
 			</properties>
 			<build>
 				<plugins>
