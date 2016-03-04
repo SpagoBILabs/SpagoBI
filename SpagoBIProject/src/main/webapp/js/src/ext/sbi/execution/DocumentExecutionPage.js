@@ -1078,12 +1078,17 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	
 	, doRefreshLastExecution : function () {
 		Sbi.trace('[DocumentExecutionPage.doRefreshLastExecution]: IN');
-		var lastState = this.getLastParametersFormState();
-        this.parametersPanel.setFormState(lastState);
+        this.restoreLastParametersFormState();
         this.refreshDocument();
 		Sbi.trace('[DocumentExecutionPage.doRefreshLastExecution]: OUT');
 	}
 	
+	, restoreLastParametersFormState : function() {
+		Sbi.trace('[DocumentExecutionPage.restoreLastParametersFormState]: IN');
+		var lastState = this.getLastParametersFormState();
+        this.parametersPanel.setFormState(lastState);
+		Sbi.trace('[DocumentExecutionPage.restoreLastParametersFormState]: OUT');	
+	}
 	
 	, doExecuteDocumunt: function(executionInstance, formState) {
 		this.memorizeParametersInSession();
