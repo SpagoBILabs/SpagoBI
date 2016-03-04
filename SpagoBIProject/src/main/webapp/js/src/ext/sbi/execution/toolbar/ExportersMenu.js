@@ -211,9 +211,9 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 		},
 		//'SMART_FILTER': null,
 		'WORKSHEET': {
-			 'PDF'    : function() { this.exportWorksheetsTo('application/pdf'); }
-			,'XLS'    : function() { this.exportWorksheetsTo('application/vnd.ms-excel'); }
-			,'XLSX'    : function() { this.exportWorksheetsTo('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); }
+			 'PDF'    : function() { this.checkParsFormBeforeExportWorksheetsTo('application/pdf'); }
+			,'XLS'    : function() { this.checkParsFormBeforeExportWorksheetsTo('application/vnd.ms-excel'); }
+			,'XLSX'    : function() { this.checkParsFormBeforeExportWorksheetsTo('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); }
 		},
 		'NETWORK': {
 			 'PDF'     : function() { this.exportNetworkTo('pdf'); }
@@ -482,7 +482,7 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 *  - <code>getDocumentWindow</code> that returns the window that contains the executed document
 	 */
 	, getToolbar: function() {
-		this.toolbar;
+		return this.toolbar;
 	}
 	
 	/**
@@ -806,6 +806,37 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	    } else {
 	    	window.open(exportationUrl, 'name','resizable=1,height=750,width=1000');
 	    }
+	}
+	
+	, checkParsFormBeforeExportWorksheetsTo: function (mimeType, records) {
+		Sbi.debug('[ExportersMenu.checkParsFormBeforeExportWorksheetsTo] : IN');
+		
+
+		if (this.getToolbar().controller.isParametersFormChangedSinceLastExecution()) {
+			Ext.MessageBox.show({
+				title : LN('sbi.generic.warning')
+				, msg : LN('sbi.execution.executionpage.toolbar.parameterschangedbeforeexport')
+				, buttons : {
+					yes: LN('sbi.execution.executionpage.toolbar.usepreviousselection')
+					, cancel: LN('sbi.general.cancel')}
+				, fn : function(btn, text) {
+					if (btn == 'yes') {
+						// restore dei parametri
+						this.getToolbar().controller.restoreLastParametersFormState();
+						// chiamare l'export
+						this.exportWorksheetsTo(mimeType, records);
+					}
+				}
+				, scope: this
+				, icon: Ext.MessageBox.QUESTION
+			});
+		}
+		else{
+			// call export if parameters did not change
+			this.exportWorksheetsTo(mimeType, records);
+		}
+		
+		Sbi.debug('[ExportersMenu.checkParsFormBeforeExportWorksheetsTo] : OUT');
 	}
 	
 	, exportWorksheetsTo: function (mimeType, records) {
