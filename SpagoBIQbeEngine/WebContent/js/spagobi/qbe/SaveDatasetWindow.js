@@ -7,7 +7,7 @@
 Ext.ns("Sbi.qbe");
 
 Sbi.qbe.SaveDatasetWindow = function(config) {
-
+	
 	// init properties...
 	var defaultSettings = {
 		// public
@@ -36,8 +36,12 @@ Sbi.qbe.SaveDatasetWindow = function(config) {
 	
 	var c = Ext.apply({}, config, {
 		buttons : [{ 
-			  iconCls: 'icon-save' 	
-			, handler: this.saveDatasetHandler
+			   handler: function() {this.close();}
+			, scope: this
+			, text: LN('sbi.qbe.messagewin.cancel')
+        	},{ 
+//			  iconCls: 'icon-save' 	,
+			   handler: this.saveDatasetHandler
 			, scope: this
 			, text: LN('sbi.generic.actions.save')
            }]
