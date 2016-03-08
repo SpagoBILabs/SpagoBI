@@ -137,7 +137,7 @@
 								<exclude>**/extjs/**/*.js</exclude>
 								<exclude>**/js/kpi/*.js</exclude>
 								<exclude>**/prototype/**/*.js</exclude>
-								<exclude>**/lib/*.js</exclude>
+								<exclude>**/lib/**/*.js</exclude>
 <!--								<exclude>**/lib/d3/*.js</exclude>
 								<exclude>**/lib/ext-2.0.1/*.js</exclude>
 								<exclude>**/lib/ext-2.0.1/adapter/**/*.js</exclude>
