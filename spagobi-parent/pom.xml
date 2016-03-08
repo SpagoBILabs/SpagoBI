@@ -751,6 +751,9 @@
 
 		<profile>
 			<id>production</id>
+			<properties>
+    <minimized-dir>${project.build.directory}/${project.artifactId}/minimized</minimized-dir>
+   </properties>
 			<build>
 
 				<pluginManagement>
