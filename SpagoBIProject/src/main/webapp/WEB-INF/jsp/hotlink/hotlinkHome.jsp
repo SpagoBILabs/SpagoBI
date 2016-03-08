@@ -90,8 +90,9 @@ Ext.onReady(function(){
 			Map params = new HashMap();
 			params.put("ACTION_NAME", ExecuteDocumentAction.SERVICE_NAME);
 			params.put(ObjectsTreeConstants.OBJECT_ID, rm.getObjId().toString());
-			String parameters = rm.getParameters() != null ? rm.getParameters() : "";
-			params.put(ObjectsTreeConstants.PARAMETERS, parameters);
+			String parameters = rm.getParameters() != null ? StringEscapeUtils.escapeJavaScript(rm.getParameters()) : "";
+			//parameter aren't passed because we want always ask them
+			//params.put(ObjectsTreeConstants.PARAMETERS, parameters);
 			params.put(SpagoBIConstants.IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS, "true");
 			String subObjName = rm.getSubObjName();
 			if (subObjName != null) {
@@ -244,7 +245,8 @@ Ext.onReady(function(){
 			Map params = new HashMap();
 			params.put("ACTION_NAME", ExecuteDocumentAction.SERVICE_NAME);
 			params.put(ObjectsTreeConstants.OBJECT_ID, hotlink.getObjId().toString());
-			params.put(ObjectsTreeConstants.PARAMETERS, hotlink.getParameters() != null ? StringEscapeUtils.escapeJavaScript(hotlink.getParameters()) : "");
+			//parameter aren't passed because we want always ask them
+			//params.put(ObjectsTreeConstants.PARAMETERS, hotlink.getParameters() != null ? StringEscapeUtils.escapeJavaScript(hotlink.getParameters()) : "");
 			params.put(SpagoBIConstants.IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS, "true");
 			String subObjName = hotlink.getSubObjName();
 			if (subObjName != null) {
@@ -317,7 +319,8 @@ Ext.onReady(function(){
 			Map params = new HashMap();
 			params.put("ACTION_NAME", ExecuteDocumentAction.SERVICE_NAME);
 			params.put(ObjectsTreeConstants.OBJECT_ID, hotlink.getObjId().toString());
-			params.put(ObjectsTreeConstants.PARAMETERS, hotlink.getParameters() != null ? StringEscapeUtils.escapeJavaScript(hotlink.getParameters()) : "");
+			//parameter aren't passed because we want always ask them
+			//params.put(ObjectsTreeConstants.PARAMETERS, hotlink.getParameters() != null ? StringEscapeUtils.escapeJavaScript(hotlink.getParameters()) : "");
 			params.put(SpagoBIConstants.IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS, "true");
 			String subObjName = hotlink.getSubObjName();
 			if (subObjName != null) {
