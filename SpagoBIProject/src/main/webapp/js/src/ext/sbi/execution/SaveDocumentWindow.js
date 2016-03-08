@@ -82,12 +82,16 @@ Sbi.execution.SaveDocumentWindow = function(config) {
 	var c = Ext.apply({}, config, {
 		id:'popup_docSave',
 		layout: 'anchor', //'fit',
-		width: 640,
+		width: 450, //640,
 		height:350,
 		closeAction: 'close',
 		buttons:[{ 
-			  iconCls: 'icon-save' 	
-			, handler: this.saveDocument
+			  handler: function() {this.close();}
+			, scope: this
+			, text: LN('sbi.generic.cancel')
+	    	},{ 
+//			  iconCls: 'icon-save' ,	
+			  handler: this.saveDocument
 			, scope: this
 			, text: LN('sbi.generic.update')
            }],
@@ -276,7 +280,8 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 			                        msg: content,
 			                        width: 150,
 			                        buttons: Ext.MessageBox.OK
-			                   });              
+			                   });            
+			                   thisPanel.close();
 				      		}else{			
 				      			Ext.MessageBox.show({
 				                        title: LN('sbi.generic.result'),

@@ -98,8 +98,8 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			height: 300,//450,
 			closeAction: 'destroy',
 			buttons:[{ 
-				  iconCls: 'icon-save' 	
-				, handler: this.saveDocument
+//				  iconCls: 'icon-save', 	
+				  handler: this.saveDocument
 				, scope: this
 				, text: LN('sbi.generic.update')
 	           }],
@@ -361,7 +361,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 						                }
 		                            	
 		                                Ext.MessageBox.hide(); 
-		                                if (this.destroy) this.destroy();
+		                                if (thisWindow.destroy) thisWindow.destroy();
 					      		    }
 				                });
 

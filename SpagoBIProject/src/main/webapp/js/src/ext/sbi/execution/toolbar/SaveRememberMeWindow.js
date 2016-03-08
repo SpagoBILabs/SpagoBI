@@ -136,6 +136,7 @@ Ext.extend(Sbi.execution.toolbar.SaveRememberMeWindow, Ext.Window, {
 			      				msg: message,
 			      				modal: false,
 			      				buttons: Ext.MessageBox.OK,
+			      				fn: this.close(),
 			      				width:300,
 			      				icon: icon,
 			      				animEl: 'root-menu'        			
