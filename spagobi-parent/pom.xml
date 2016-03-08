@@ -18,6 +18,7 @@
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<minimized-dir>${project.build.directory}/${project.artifactId}/minimized</minimized-dir>
 		
 		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
 		<skipTests>true</skipTests>
@@ -225,7 +226,7 @@
 			<id>tomcat</id>
 			<properties>
 				<!-- To specify another folder use your settings.xml -->
-				<tomcat.home>D:\Program Files\Apache Software Foundation\Tomcat 7.0</tomcat.home>
+				<tomcat.home>/home/spagobi/apache-tomcat-7.0.50/</tomcat.home>
 			</properties>
 			<build>
 				<plugins>
