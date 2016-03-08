@@ -160,6 +160,7 @@
 								<exclude>**/src/ext/sbi/formats/fr.js</exclude>
 								<exclude>**/src/ext/sbi/formats/it.js</exclude>
 								<exclude>**/src/ext4/extjs4classstub.js</exclude>
+								<exclude>**/angular_1.4/**</exclude>
 							</excludes>
 							<aggregations>
 								<aggregation>
