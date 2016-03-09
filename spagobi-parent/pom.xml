@@ -394,9 +394,10 @@
 							<packagingExcludes>
 								%regex[WEB-INF/tlds/.*portlet\.tld],
 								%regex[WEB-INF/tlds/*liferay-portlet\.tld"],
-								
+								<!--
 								%regex[WEB-INF/lib/httpclient-4.*],
 								%regex[WEB-INF/lib/httpcore-4.*],
+								-->
 								%regex[WEB-INF/lib/jaxrs-api-*],
 								%regex[WEB-INF/lib/resteasy-multipart-provider-*],
 								%regex[WEB-INF/lib/resteasy-jaxrs-*],
@@ -591,8 +592,10 @@
 							<!-- TODO: remove depedency instead of directly libs -->
 							<packagingExcludes>%regex[WEB-INF/tlds/.*portlet\.tld],
 								%regex[WEB-INF/lib/async-http-servlet.*],
+								<!--
 								%regex[WEB-INF/lib/httpclient-4.*],
 								%regex[WEB-INF/lib/httpcore-4.*],
+								-->
 								%regex[WEB-INF/lib/jaxrs-api-3.*],
 								%regex[WEB-INF/lib/resteasy-jaxrs-3.*],
 								%regex[WEB-INF/lib/resteasy-servlet-initializer-3.*]
