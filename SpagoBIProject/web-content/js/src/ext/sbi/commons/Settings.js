@@ -131,6 +131,7 @@ Sbi.settings.execution = {
 		
 		, toolbar:{
 			hideForEngineLabels:[]	//list of engines without toolbar 
+		  , hideRankFunctionality: false
 		}
 		
 		, parametersselectionpage : {
