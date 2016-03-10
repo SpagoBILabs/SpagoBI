@@ -556,8 +556,10 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
     		'	                </div> '+
     		'	            </fieldset> '+
     		'	        </form> '+
-    		'	         <ul class="order" id="sortList">'+
-    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
+//    		'	         <ul class="order" id="sortList">'+
+    		'	        <ul class="order" id="sortList"> ' + '<span id="sortLabel">'+LN('sbi.ds.orderComboLabel')+'</span> ' +
+//    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
+    		'	            <li id="dateIn"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'dateIn\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
     		'	            <li id="name"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
     		'	            <li id="owner"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationUser\')">'+LN('sbi.ds.owner')+'</a></li> '+
     		'	        </ul> '+
@@ -723,16 +725,18 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		var sortEls = Ext.get('sortList').dom.childNodes;
 		//move the selected value to the first element
 		for(var i=0; i< sortEls.length; i++){
-			if (sortEls[i].id == value){					
-				sortEls[i].className = 'active';
+			if (sortEls[i].id == value){		
+				var sortObj = Ext.get('sortLabel').dom;
+				sortObj.innerHTML = sortEls[i].textContent;
+//				sortEls[i].className = 'active';
 				break;
 			} 
 		}
 		//append others elements
 		for(var i=0; i< sortEls.length; i++){
-			if (sortEls[i].id !== value){
+//			if (sortEls[i].id !== value){
 				sortEls[i].className = '';		
-			}
+//			}
 		}
 		
 
