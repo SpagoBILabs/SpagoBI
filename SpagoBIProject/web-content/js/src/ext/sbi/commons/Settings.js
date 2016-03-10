@@ -87,9 +87,14 @@ Sbi.settings.myanalysis = {
 		 defaultFilter: 'All'
 
 		, showReportFilter: true
-		, showCockpitFilter: true
-		, showMapFilter: true
-		, showAllFilter: true		
+		, showCockpitFilter: false
+		, showMapFilter: false
+		, showAllFilter: true
+		// next flags show (true) or hide (false) specific buttons in create analysis popup
+		// (obviously the engines must be correctly installed in the server):
+		, createReportButton: true	
+		, createCockpitButton: true
+		, createGeoButton: true
 };
 
 /**

@@ -573,10 +573,14 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	, addNewDocument : function() {		 
 		var config =  {};
 		config.user = this.user;
-		config.useCockpitEngine = this.useCockpitEngine;
-		config.useWSEngine = this.useWSEngine;
-		config.useQbeEngine = this.useQbeEngine;
-		config.useGeoEngine = this.useGeoEngine;
+//		config.useCockpitEngine = this.useCockpitEngine;
+//		config.useWSEngine = this.useWSEngine;
+//		config.useQbeEngine = this.useQbeEngine;
+//		config.useGeoEngine = this.useGeoEngine;
+		config.useCockpitEngine = (Sbi.settings.myanalysis.createCockpitButton == true && this.useCockpitEngine == true) ? true : false;
+		config.useWSEngine = (Sbi.settings.myanalysis.createReportButton == true && this.useWSEngine == true) ? true : false;
+		config.useQbeEngine = (Sbi.settings.myanalysis.createReportButton == true && this.useQbeEngine == true) ? true : false;
+		config.useGeoEngine = (Sbi.settings.myanalysis.createGeoButton == true && this.useGeoEngine == true) ? true : false;
 		config.isNew = true;
 	
 		this.wizardWin =  Ext.create('Sbi.adhocreporting.MyAnalysisWizard',config);	
