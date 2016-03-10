@@ -326,19 +326,19 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 			}, this);
 			
 			storeComm.load();
-
-			this.docCommunity = Ext.create('Ext.form.ComboBox', {
-			    fieldLabel: LN('sbi.community.title'),
-			    queryMode: 'local',
-			    store: storeComm,
-			    displayField: 'name',
-			    valueField: 'functCode',
-			    width: 300,
-			    allowBlank: true,
-			    editable: false,
-			    padding: '10 0 0 0'
-			});
-		    
+			if (storeComm.getTotalCount() > 0){
+				this.docCommunity = Ext.create('Ext.form.ComboBox', {
+				    fieldLabel: LN('sbi.community.title'),
+				    queryMode: 'local',
+				    store: storeComm,
+				    displayField: 'name',
+				    valueField: 'functCode',
+				    width: 300,
+				    allowBlank: true,
+				    editable: false,
+				    padding: '10 0 0 0'
+				});
+			}		    
 		    if(this.shareWindow != null){			
 				this.shareWindow.destroy();
 				this.shareWindow.close();
@@ -444,7 +444,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	                    }
 	                    p.isShare = "true"; //is a share operation
 	                    p.functs =  Ext.JSON.encode(this.treePanel.returnCheckedIdNodesArray());
-	                    p.communityId = this.docCommunity.getValue();
+	                    if (this.docCommunity != null) p.communityId = this.docCommunity.getValue();
 	                    
 	                	Ext.Ajax.request({
 	                         url: this.services['shareDocument'],
