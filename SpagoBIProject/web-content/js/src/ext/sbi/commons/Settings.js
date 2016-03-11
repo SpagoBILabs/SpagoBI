@@ -87,7 +87,7 @@ Sbi.settings.myanalysis = {
 		 defaultFilter: 'All'
 
 		, showReportFilter: true
-		, showCockpitFilter: false
+		, showCockpitFilter: true
 		, showMapFilter: false
 		, showAllFilter: true
 		// next flags show (true) or hide (false) specific buttons in create analysis popup
