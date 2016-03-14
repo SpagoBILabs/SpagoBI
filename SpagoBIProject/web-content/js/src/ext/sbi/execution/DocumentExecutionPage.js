@@ -915,7 +915,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		});
 		
 		this.subobjectWin = new Ext.Window({
-			title: "Execute customized view...",
+			title: LN("sbi.execution.subobjects.title"), //"Execute customized view...",
 			layout: 'fit',
 			width: 600,
 			height: 400,
