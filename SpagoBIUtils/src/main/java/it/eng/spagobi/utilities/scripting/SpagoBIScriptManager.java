@@ -5,6 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.utilities.scripting;
 
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,9 +27,6 @@ import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
 
 import org.apache.log4j.Logger;
-
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 public class SpagoBIScriptManager {
 
@@ -57,6 +57,8 @@ public class SpagoBIScriptManager {
 						importsBuffer.append(this.getImportedScript((File) importedScriptReference) + "\n");
 					} else if (importedScriptReference instanceof URL) {
 						importsBuffer.append(this.getImportedScript((URL) importedScriptReference) + "\n");
+					} else if (importedScriptReference instanceof String) {
+						importsBuffer.append(((String) importedScriptReference) + "\n");
 					} else {
 						logger.warn("Impossible to resolve import reference of type [" + importedScriptReference.getClass().getName() + "]");
 					}
