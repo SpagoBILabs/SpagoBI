@@ -12,6 +12,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>
 
 <link id="spagobi-ext-4" rel="styleSheet" href ="<%=contextName %>/themes/<%= currTheme %>/css/home40/layout.css" type="text/css" />
+<link id="spagobi-angular" rel="styleSheet"	href="<%=contextName %>/themes/<%= currTheme %>/css/menuBar/style.css" type="text/css" />
+
 
 <%
 /*

@@ -395,7 +395,6 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
 	
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/bootstrap/css/bootstrap.min.css">
-	<link id="spagobi-angular" rel="styleSheet"	href="${pageContext.request.contextPath}/themes/<%= currTheme %>/css/menuBar/style.css" type="text/css" />
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
 
