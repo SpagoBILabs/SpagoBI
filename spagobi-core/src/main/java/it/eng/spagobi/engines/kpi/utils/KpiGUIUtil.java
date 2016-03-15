@@ -1,15 +1,9 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.kpi.utils;
-
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
-import it.eng.spagobi.engines.kpi.bo.KpiLine;
-import it.eng.spagobi.kpi.config.bo.Kpi;
-import it.eng.spagobi.kpi.config.bo.KpiValue;
-import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,119 +19,121 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.engines.kpi.bo.KpiLine;
+import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.bo.KpiValue;
+import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
+
 public class KpiGUIUtil {
 	static transient Logger logger = Logger.getLogger(KpiGUIUtil.class);
 	private ExecutionInstance kpiInstance;
 	private Locale kpiInstanceLocale;
-	private List parameters ;
-	
-	
-	public void setExecutionInstance(ExecutionInstance instance, Locale locale){
+	private List parameters;
+
+	public void setExecutionInstance(ExecutionInstance instance, Locale locale) {
 		kpiInstance = instance;
 		kpiInstanceLocale = locale;
-		
+
 	}
 
 	public JSONObject recursiveGetJsonObject(KpiLine kpiLine) {
 		Monitor monitor = MonitorFactory.start("kpi.engines.KpiGUIUtil.recursiveGetJsonObject");
 		JSONObject jsonToReturn = new JSONObject();
 		try {
-			if(!kpiLine.isVisible()){
-				jsonToReturn.put("hidden",true);
-			}else{
-				jsonToReturn.put("hidden",false);
+			if (!kpiLine.isVisible()) {
+				jsonToReturn.put("hidden", true);
+			} else {
+				jsonToReturn.put("hidden", false);
 			}
-			
-			
+
 			String name = kpiLine.getModelNodeName();
-			String label = kpiLine.getModelInstanceNodeId()+"";
+			String label = kpiLine.getModelInstanceNodeId() + "";
 			jsonToReturn.put("statusLabel", label);
-			if(name.length() >= 50){
-				name = name.substring(0,50) + "...";
+			if (name.length() >= 50) {
+				name = name.substring(0, 50) + "...";
 			}
 			jsonToReturn.put("name", name);
 
-
 			jsonToReturn.put("qtip", kpiLine.getModelNodeName());
-			
-			List<KpiLine> children = (List<KpiLine>) kpiLine.getChildren();
+
+			List<KpiLine> children = kpiLine.getChildren();
 
 			if (children != null) {
-				
+
 				JSONArray jsonArrayChildren = new JSONArray();
 				for (int i = 0; i < children.size(); i++) {
 
 					KpiLine kpiChildLine = children.get(i);
-					JSONObject child  = recursiveGetJsonObject(kpiChildLine);
+					JSONObject child = recursiveGetJsonObject(kpiChildLine);
 					jsonArrayChildren.put(child);
 				}
 				jsonToReturn.put("children", jsonArrayChildren);
 			}
-			KpiValue kpivalue= kpiLine.getValue();
+			KpiValue kpivalue = kpiLine.getValue();
 			if (kpivalue != null) {
 				jsonToReturn.put("actual", kpiLine.getValue().getValue());
 				jsonToReturn.put("target", kpiLine.getValue().getTarget());
-				
+
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 				Date bdate = kpiLine.getValue().getBeginDate();
 				Date edate = kpiLine.getValue().getEndDate();
-				if(bdate != null && edate != null){
+				if (bdate != null && edate != null) {
 					jsonToReturn.putOpt("beginDt", sdf.format(bdate));
 					jsonToReturn.putOpt("endDt", sdf.format(edate));
 				}
 
-				if(children != null && !children.isEmpty()){
+				if (children != null && !children.isEmpty()) {
 					jsonToReturn.put("iconCls", "folder");
 					jsonToReturn.put("cls", "node-folder");
-				}else{
-					jsonToReturn.put("iconCls","has-kpi");
+				} else {
+					jsonToReturn.put("iconCls", "has-kpi");
 				}
-			}else{				
+			} else {
 				jsonToReturn.put("actual", "");
 				jsonToReturn.put("target", "");
-				if(children != null && !children.isEmpty()){
+				if (children != null && !children.isEmpty()) {
 					jsonToReturn.put("iconCls", "folder");
 					jsonToReturn.put("cls", "node-folder");
-				}else{
-					jsonToReturn.put("iconCls","has-kpi");
+				} else {
+					jsonToReturn.put("iconCls", "has-kpi");
 				}
 
 			}
 			String color = detectColor(kpivalue);
 			jsonToReturn.put("status", color);
 			jsonToReturn.put("expanded", true);
-			
+
 			setKpiInfos(kpiLine, jsonToReturn);
 			setDetailInfos(kpiLine, jsonToReturn);
-			
-			//documents
+
+			// documents
 			List documents = kpiLine.getDocuments();
-			if(documents != null && !documents.isEmpty()){
-				String docLabel =(String)documents.get(0);
-				//return only one document
+			if (documents != null && !documents.isEmpty()) {
+				String docLabel = (String) documents.get(0);
+				// return only one document
 				jsonToReturn.putOpt("documentLabel", docLabel);
-				//gets url for execution
+				// gets url for execution
 
 				ExecutionInstance docExecInst = ExecutionInstance.getExecutionInstanceByLabel(kpiInstance, docLabel, kpiInstanceLocale);
 				String executionUrl = docExecInst.getExecutionUrl(kpiInstanceLocale);
 				jsonToReturn.putOpt("documentExecUrl", executionUrl);
 			}
 
-
-
 		} catch (JSONException e) {
 			logger.error("Error setting children");
 		} catch (Exception e) {
 			logger.error("Error getting execution instances");
-		}finally{
+		} finally {
 			monitor.stop();
 		}
 
 		return jsonToReturn;
 
 	}
-	private void setKpiInfos(KpiLine kpiLine, JSONObject row) throws JSONException{
-		
+
+	private void setKpiInfos(KpiLine kpiLine, JSONObject row) throws JSONException {
+
 		Monitor monitor = MonitorFactory.start("kpi.engines.KpiGUIUtil.setKpiInfos");
 
 		row.putOpt("trend", kpiLine.getTrend());
@@ -151,31 +147,32 @@ public class KpiGUIUtil {
 		row.putOpt("measureTypeCd", kpi.getMeasureTypeCd());
 		row.putOpt("scaleName", kpi.getMetricScaleCd());
 		row.putOpt("targetAudience", kpi.getTargetAudience());
-		
+
 		row.putOpt("kpiInstId", kpiLine.getKpiInstId());
 		monitor.stop();
 
 	}
-	private void setDetailInfos(KpiLine kpiLine, JSONObject row){
-		
+
+	private void setDetailInfos(KpiLine kpiLine, JSONObject row) {
+
 		Monitor monitor = MonitorFactory.start("kpi.engines.KpiGUIUtil.setDetailInfos");
-		
+
 		JSONArray thresholds = new JSONArray();
-		if(kpiLine.getValue() != null){
+		if (kpiLine.getValue() != null) {
 			Double weight = kpiLine.getValue().getWeight();
-			
+
 			List thrs = kpiLine.getValue().getThresholdValues();
-			if(thrs != null ){
-				
-				for(int i=0; i< thrs.size(); i++){
+			if (thrs != null) {
+
+				for (int i = 0; i < thrs.size(); i++) {
 					JSONObject threshold = new JSONObject();
-					ThresholdValue tv = (ThresholdValue)thrs.get(i);
+					ThresholdValue tv = (ThresholdValue) thrs.get(i);
 					String color = tv.getColourString();
 					String label = tv.getLabel();
 					String type = tv.getThresholdType();
 					Double max = tv.getMaxValue();
 					Double min = tv.getMinValue();
-					Double achieve = tv.getValue();//used to define the value to achieve
+					Double achieve = tv.getValue();// used to define the value to achieve
 					try {
 						threshold.putOpt("color", color);
 						threshold.putOpt("label", label);
@@ -183,9 +180,9 @@ public class KpiGUIUtil {
 						threshold.putOpt("max", max);
 						threshold.putOpt("min", min);
 						threshold.putOpt("achieve", achieve);
-						
+
 						thresholds.put(threshold);
-						
+
 					} catch (JSONException e) {
 						logger.error("Error setting threshold");
 					}
@@ -200,49 +197,50 @@ public class KpiGUIUtil {
 		}
 		monitor.stop();
 	}
-	private String detectColor(KpiValue value){
+
+	private String detectColor(KpiValue value) {
 		String ret = "";
-		if(value == null || value.getValue() == null){
+		if (value == null || value.getValue() == null) {
 			return ret;
 		}
 
 		ThresholdValue thrVal = value.getThresholdOfValue();
-		if(thrVal != null ){
-			if(thrVal.getColourString() != null){
+		if (thrVal != null) {
+			if (thrVal.getColourString() != null) {
 				return thrVal.getColourString();
 			}
-			
-		}else{
-			//calculate it
+
+		} else {
+			// calculate it
 			String val = value.getValue();
 			ret = getStatus(value.getThresholdValues(), Double.parseDouble(val));
-			
+
 		}
 
 		return ret;
-		
+
 	}
+
 	public String getStatus(List thresholdValues, double val) {
 		logger.debug("IN");
 		String status = "";
-		if(thresholdValues!=null && !thresholdValues.isEmpty()){
+		if (thresholdValues != null && !thresholdValues.isEmpty()) {
 			Iterator it = thresholdValues.iterator();
 
-			while(it.hasNext()){
-				ThresholdValue t = (ThresholdValue)it.next();
+			while (it.hasNext()) {
+				ThresholdValue t = (ThresholdValue) it.next();
 				String type = t.getThresholdType();
 				Double min = t.getMinValue();
 				Double max = t.getMaxValue();
-				if(val <= max && val >= min){
+				if (val <= max && val >= min) {
 					status = t.getColourString();
-				}		
+				}
 				logger.debug("New interval added to the Vector");
 			}
 		}
 		logger.debug("OUT");
 		return status;
-		
+
 	}
-	
 
 }
