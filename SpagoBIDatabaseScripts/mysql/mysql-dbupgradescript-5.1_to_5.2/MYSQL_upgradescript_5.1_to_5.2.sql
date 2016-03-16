@@ -68,3 +68,6 @@ INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, V
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
 commit;
 
+--  add mail subject to alarms
+ ALTER TABLE SBI_ALARM ADD COLUMN MAIL_SUBJ VARCHAR(256);
+  ALTER TABLE SBI_ALARM MODIFY COLUMN URL VARCHAR(256);
