@@ -14,11 +14,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
-
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.importexport.ITransformer;
+import main.java.it.eng.spagobi.tools.importexport.ITransformer;
 
 public class TransformerFrom5_1_0To5_2_0 implements ITransformer {
 
@@ -57,6 +53,7 @@ public class TransformerFrom5_1_0To5_2_0 implements ITransformer {
 
 			conn = TransformersUtilities.getConnectionToDatabase(pathImpTmpFolder, archiveName);
 			fixSbiParuse(conn);
+			fixSbiAlarm(conn);
 
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);
@@ -122,6 +119,22 @@ public class TransformerFrom5_1_0To5_2_0 implements ITransformer {
 		String sql = "";
 		try {
 			sql = "ALTER TABLE SBI_PARUSE ADD COLUMN OPTIONS VARCHAR(4000) DEFAULT NULL;";
+			stmt.executeUpdate(sql);
+
+		} catch (Exception e) {
+			logger.error("Error in altering SBI_PARUSE", e);
+		}
+
+		logger.debug("OUT");
+
+	}
+
+	private void fixSbiAlarm(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			sql = "ALTER TABLE SBI_ALARM ADD COLUMN MAIL_SUBJ VARCHAR(256) DEFAULT NULL;";
 			stmt.executeUpdate(sql);
 
 		} catch (Exception e) {
