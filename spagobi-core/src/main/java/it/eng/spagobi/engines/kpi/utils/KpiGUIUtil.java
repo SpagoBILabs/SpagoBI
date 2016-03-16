@@ -11,10 +11,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import javax.management.monitor.Monitor;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import main.java.it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
-import main.java.it.eng.spagobi.engines.kpi.bo.KpiLine;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.engines.kpi.bo.KpiLine;
+import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.bo.KpiValue;
+import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 
 public class KpiGUIUtil {
 	static transient Logger logger = Logger.getLogger(KpiGUIUtil.class);
@@ -106,8 +115,7 @@ public class KpiGUIUtil {
 				jsonToReturn.putOpt("documentLabel", docLabel);
 				// gets url for execution
 
-				ExecutionInstance docExecInst = ExecutionInstance.getExecutionInstanceByLabel(kpiInstance, docLabel,
-						kpiInstanceLocale);
+				ExecutionInstance docExecInst = ExecutionInstance.getExecutionInstanceByLabel(kpiInstance, docLabel, kpiInstanceLocale);
 				String executionUrl = docExecInst.getExecutionUrl(kpiInstanceLocale);
 				jsonToReturn.putOpt("documentExecUrl", executionUrl);
 			}
