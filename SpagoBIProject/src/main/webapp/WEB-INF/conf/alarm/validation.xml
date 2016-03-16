@@ -20,11 +20,14 @@
 					<VALIDATOR validatorName="ALFANUMERIC"/>
 					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
 				</FIELD>
+				<FIELD name="mailSubj" label="mailSubj">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="250"/>
+				</FIELD>
 				<FIELD name="text" label="text">
 					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
 				</FIELD>
 				<FIELD name="url" label="url">
-					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="256"/>
 				</FIELD>	
 				<FIELD name="autoDisabled" label="autoDisabled">
 					<VALIDATOR validatorName="BOOLEAN"/>
