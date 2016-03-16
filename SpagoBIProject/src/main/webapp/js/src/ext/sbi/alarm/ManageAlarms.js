@@ -100,7 +100,8 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	                	    	          , 'label'
 	                	    	          , 'modality'
 	                	    	          , 'singleEvent'
-	                	    	          , 'autoDisabled'
+	                	    	          //, 'autoDisabled'
+	                	    	          , 'mailSubj'	                	    	          
 	                	    	          , 'text'
 	                	    	          , 'url'
 	                	    	          , 'contacts'
@@ -114,8 +115,9 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 										description:'',
 										label:'',
 										modality:'MAIL',
-										singleEvent: false,
-										autoDisabled: false,
+										singleEvent: true,
+										//autoDisabled: false,
+										mailSubj:'',
 										text:'',
 										url: '',
 										contacts: []
@@ -134,15 +136,16 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
     
     fillOptions : function(row, rec) {	 
        	var singleEvent = rec.get('singleEvent');
-       	var autoDisabled = rec.get('autoDisabled');
+       	//var autoDisabled = rec.get('autoDisabled');
        	var modality = rec.get('modality');
+       	var mailSubj = rec.get('mailSubj');
        	
        	this.detailTab.items.each(function(item){	  
        		if(item.getItemId() == 'alarm-detail'){ 
        		  item.items.each(function(item){	  
            		   if(item.getItemId() == 'options'){
            		   		item.setValue('singleEvent', singleEvent);
-           		   		item.setValue('autoDisabled', autoDisabled);
+           		   		//item.setValue('autoDisabled', autoDisabled);
      		   }else if(item.getItemId() == 'modality'){
                		  	if(modality =='SMS'){
    	                  		item.onSetValue( 'sms',true);
@@ -270,19 +273,6 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 		             maxLength:200
 	             };	
 	  	   
-	  	   var detailFieldModality = {
-		            xtype: 'radiogroup',
-		            itemId: 'modality',
-		            name: 'mod',
-		            boxMinWidth  : 50,
-		            boxMaxWidth  : 200,
-		            boxMinHeight  : 100,
-		            fieldLabel: LN('sbi.alarms.alarmModality'),
-		            items: [
-	             		{boxLabel: LN('sbi.alarms.MAIL'),id:'mail',name: 'modality', inputValue: 1, checked: true},
-				        {boxLabel: LN('sbi.alarms.SMS'),id:'sms',name: 'modality', inputValue: 2}	
-		            ]
-		         };	
 	  	   
 	  	 var detailFieldOptions = new Ext.form.CheckboxGroup({
 	            xtype: 'checkboxgroup',
@@ -294,8 +284,8 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	            hideLabel  : false,
 	            fieldLabel: LN('sbi.alarms.options'),
 	            items: [
-	                {boxLabel: LN('sbi.alarms.alarmSingleEvent'), name: 'singleEvent', checked:false},
-	                {boxLabel: LN('sbi.alarms.alarmAutoDisabled'), name: 'autoDisabled', checked:false}
+	                {boxLabel: LN('sbi.alarms.alarmSingleEvent'), name: 'singleEvent', checked:true},
+	               // {boxLabel: LN('sbi.alarms.alarmAutoDisabled'), name: 'autoDisabled', checked:false}
 	            ]
              });	
 	  	 
@@ -304,8 +294,17 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
                 name: 'url',
                 allowBlank: true,
                 validationEvent:true,
-	            	 maxLength:20
+	            	 maxLength:256
             };	
+	  	
+	  	var detailFieldMailSubj = {
+                fieldLabel:  LN('sbi.alarms.alarmMailSubj'),
+                name: 'mailSubj',
+                allowBlank: true,
+                validationEvent:true,
+	            maxLength:200
+        };	
+		
 	  	
 	  	var detailFieldMailText = {
                 fieldLabel:  LN('sbi.alarms.alarmMailText'),
@@ -337,7 +336,8 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 		             },
 		             items: [detailFieldId, detailFieldName, detailFieldLabel, detailFieldDescr, 
-		                     detailFieldModality, detailFieldOptions, detailFieldUrl, detailFieldMailText]
+		                     //detailFieldModality, 
+		                     detailFieldOptions, detailFieldUrl, detailFieldMailSubj, detailFieldMailText]
 	    	}
 	    });
 	}
@@ -563,6 +563,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	   var params = {
 	      	name : values['name'],
 	      	description : values['description'],
+	      	mailSubj : values['mailSubj'],
 	      	text : values['text'],
 	      	url : values['url'],
 	      	label : values['label'] 
@@ -580,13 +581,13 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
        	  params.modality ='MAIL';
        }
        
-       var autoDis = false;
-       if(values['autoDisabled']=='on'){
-          params.autoDisabled = true;	 
-          autoDis = true;         
-       }else{
-       	  params.autoDisabled = false;
-       }
+//       var autoDis = false;
+//       if(values['autoDisabled']=='on'){
+//          params.autoDisabled = true;	 
+//          autoDis = true;         
+//       }else{
+//       	  params.autoDisabled = false;
+//       }
        
        var singleEv = false;
        if(values['singleEvent']=='on'){
@@ -656,8 +657,9 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	   }
 
    	   if(idRec ==0 || idRec == null || idRec === ''){
-	       newRec =new Ext.data.Record({'name': values['name'],'description': values['description'],'text':values['text']
-	       							   ,'url': values['url'],'label': values['label'],'modality':mod,'autoDisabled':autoDis,'singleEvent':singleEv
+	       newRec =new Ext.data.Record({'name': values['name'],'description': values['description'],'mailSubj':values['mailSubj'],'text':values['text']
+	       							   ,'url': values['url'],'label': values['label'],'modality':mod,//'autoDisabled':autoDis,
+	       							   'singleEvent':singleEv
 	       							   ,'contacts': alarmContacts,'kpi': kpiId,'threshold': thrId});	       
 	   }else{
 			var record;
@@ -668,12 +670,14 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	   	        	record = tempRecord;
 				}			   
 	   	    }	
+			record.set('label',values['label']);
 			record.set('name',values['name']);
 			record.set('description',values['description']);
+			record.set('mailSubj',values['mailSubj']);
 			record.set('text',values['text']);
 			record.set('url',values['url']);
 			record.set('modality',mod);
-			record.set('autoDisabled',autoDis);
+			//record.set('autoDisabled',autoDis);
 			record.set('singleEvent',singleEv);			
 			record.set('contacts', alarmContacts);
 			record.set('kpi', kpiId);
@@ -849,8 +853,9 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 											description:'',
 											label:'',
 											modality:'MAIL',
-											singleEvent: false,
-											autoDisabled: false,
+											singleEvent: true,
+											//autoDisabled: false,
+											mailSubj:'',
 											text:'',
 											url: '',
 											contacts: []
