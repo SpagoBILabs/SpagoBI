@@ -10,22 +10,23 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
  */
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.tools.dataset.ckan.CKANClient;
+import it.eng.spagobi.tools.dataset.ckan.CKANConfig;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.HttpResponse;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.log4j.Logger;
 
 import sun.misc.BASE64Encoder;
@@ -53,11 +54,14 @@ public class CkanDataProxy extends AbstractDataProxy {
 		InputStream inputStream = null;
 
 		try {
-			Map profileAttributes = this.getProfile();
-			Assert.assertNotNull(profileAttributes, "User profile attributes not found!!");
-			// the ckan api key is the user unique identifier: see it.eng.spagobi.security.OAuth2SecurityServiceSupplier
-			String ckanApiKey = (String) profileAttributes.get("userUniqueIdentifier");
-			Assert.assertNotNull(ckanApiKey, "User unique identifier not found!!");
+			String ckanApiKey = null;
+			if (CKANConfig.getInstance().getCkanIdMProperty() == true) {
+				Map profileAttributes = this.getProfile();
+				Assert.assertNotNull(profileAttributes, "User profile attributes not found!!");
+				// the ckan api key is the user unique identifier: see it.eng.spagobi.security.OAuth2SecurityServiceSupplier
+				ckanApiKey = (String) profileAttributes.get("userUniqueIdentifier");
+				Assert.assertNotNull(ckanApiKey, "User unique identifier not found!!");
+			}
 
 			// recover the file from resources!
 			String filePath = this.resPath;
@@ -92,19 +96,22 @@ public class CkanDataProxy extends AbstractDataProxy {
 
 	private InputStream getInputStreamFromURL(String fileURL, String ckanApiKey) throws IOException {
 		logger.debug("IN");
-		HttpClient httpClient = CKANClient.getHttpClient();
-		HttpGet httpget = new HttpGet(fileURL);
+		HttpMethodBase method = null;
 		InputStream is = null;
 		try {
-			int statusCode = -1;
-			// For FIWARE CKAN instance
-			httpget.addHeader("X-Auth-Token", ckanApiKey);
-			// For ANY CKAN instance
-			// httpget.setRequestHeader("Authorization", ckanApiKey);
-			HttpResponse response = httpClient.execute(httpget);
-			statusCode = response.getStatusLine().getStatusCode();
+			Map<String, String> requestHeaders = new HashMap<String, String>();
+			if (ckanApiKey != null) {
+				// For FIWARE CKAN instance
+				requestHeaders.put("X-Auth-Token", ckanApiKey);
+				// For ANY CKAN instance
+				// httpget.setRequestHeader("Authorization", ckanApiKey);
+			}
+			HttpClient client = new HttpClient();
+			method = RestUtilities.getHttpMethodBase(RestUtilities.HttpMethod.Get, fileURL, requestHeaders, null, null);
+			RestUtilities.setHttpClientProxy(client, fileURL);
+			int statusCode = client.executeMethod(method);
 			if (statusCode == HttpStatus.SC_OK) {
-				is = response.getEntity().getContent();
+				is = method.getResponseBodyAsStream();
 			}
 			logger.debug("OUT");
 		} catch (Throwable t) {

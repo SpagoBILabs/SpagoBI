@@ -12,17 +12,20 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.ckan.CKANClient;
+import it.eng.spagobi.tools.dataset.ckan.CKANConfig;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -32,10 +35,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.http.HttpResponse;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,7 +60,10 @@ public class CkanHelper {
 		try {
 			IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			UserProfile userProfile = (UserProfile) profile;
-			String ckanApiKey = userProfile.getUserUniqueIdentifier().toString();
+			String ckanApiKey = null;
+			if (CKANConfig.getInstance().getCkanIdMProperty() == true) {
+				ckanApiKey = userProfile.getUserUniqueIdentifier().toString();
+			}
 
 			String fileURL = request.getParameter("url");
 			String fileName = request.getParameter("id");
@@ -87,22 +92,25 @@ public class CkanHelper {
 
 	private void downloadAndSaveFile(String fileURL, String ckanApiKey, File saveTo) {
 		logger.debug("IN");
-		HttpGet httpget = new HttpGet(fileURL);
-
 		try {
 			InputStream is = null;
 			FileOutputStream fos = null;
+			HttpMethodBase method = null;
 			try {
-				int statusCode = -1;
-				HttpClient httpClient = CKANClient.getHttpClient();
-				// For FIWARE CKAN instance
-				httpget.addHeader("X-Auth-Token", ckanApiKey);
-				// For ANY CKAN instance
-				// httpget.setRequestHeader("Authorization", ckanApiKey);
-				HttpResponse response = httpClient.execute(httpget);
-				statusCode = response.getStatusLine().getStatusCode();
+				Map<String, String> requestHeaders = new HashMap<String, String>();
+				if (ckanApiKey != null) {
+					// For FIWARE CKAN instance
+					requestHeaders.put("X-Auth-Token", ckanApiKey);
+					// For ANY CKAN instance
+					// httpget.setRequestHeader("Authorization", ckanApiKey);
+				}
+
+				HttpClient client = new HttpClient();
+				method = RestUtilities.getHttpMethodBase(RestUtilities.HttpMethod.Get, fileURL, requestHeaders, null, null);
+				RestUtilities.setHttpClientProxy(client, fileURL);
+				int statusCode = client.executeMethod(method);
 				if (statusCode == HttpStatus.SC_OK) {
-					is = response.getEntity().getContent();
+					is = method.getResponseBodyAsStream();
 					fos = new FileOutputStream(saveTo);
 
 					logger.debug("Saving file...");
@@ -127,7 +135,9 @@ public class CkanHelper {
 				if (is != null) {
 					is.close();
 				}
-				httpget.releaseConnection();
+				if (method != null) {
+					method.releaseConnection();
+				}
 				logger.debug("OUT");
 			}
 		} catch (IOException ioe) {

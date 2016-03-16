@@ -42,4 +42,20 @@ public class CKANConfig {
 	public Properties getConfig() {
 		return configs;
 	}
+
+	public String getCkanUrlProperty() {
+		if (configs != null) {
+			return configs.getProperty("ckan.url");
+		} else {
+			return null;
+		}
+	}
+
+	public boolean getCkanIdMProperty() {
+		if (configs != null) {
+			return Boolean.parseBoolean(configs.getProperty("ckan.idm"));
+		} else {
+			return false;
+		}
+	}
 }
