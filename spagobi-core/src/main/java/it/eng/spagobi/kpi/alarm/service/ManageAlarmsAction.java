@@ -11,7 +11,31 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import main.java.it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmDAO;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
+import it.eng.spagobi.kpi.config.bo.KpiAlarmInstance;
+import it.eng.spagobi.kpi.config.bo.KpiInstance;
+import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
+import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
+import it.eng.spagobi.kpi.threshold.dao.IThresholdValueDAO;
+import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONAcknowledge;
+import it.eng.spagobi.utilities.service.JSONSuccess;
 
 public class ManageAlarmsAction extends AbstractSpagoBIAction {
 
@@ -132,8 +156,7 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction {
 					alarm.setSbiKpiInstance(sbiKpiInstance);
 				}
 				if (thresholdId != null) {
-					SbiThresholdValue sbiThresholdValue = DAOFactory.getThresholdValueDAO()
-							.loadSbiThresholdValueById(thresholdId);
+					SbiThresholdValue sbiThresholdValue = DAOFactory.getThresholdValueDAO().loadSbiThresholdValueById(thresholdId);
 					alarm.setSbiThresholdValue(sbiThresholdValue);
 				}
 
@@ -161,8 +184,7 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while saving alarm", e);
 			} catch (IOException e) {
 				logger.error("Exception occurred while writing response to client", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while writing response to client",
-						e);
+				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while writing response to client", e);
 			} catch (JSONException e) {
 				logger.error("JSON Exception", e);
 				e.printStackTrace();
@@ -177,8 +199,7 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction {
 
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving user to delete", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while retrieving user to delete",
-						e);
+				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while retrieving user to delete", e);
 			}
 		} else if (serviceType != null && serviceType.equalsIgnoreCase(TRESHOLDS_LIST)) {
 			Integer id = getAttributeAsInteger(ID);

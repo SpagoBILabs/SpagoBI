@@ -14,7 +14,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import main.java.it.eng.spagobi.tools.importexport.ITransformer;
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.importexport.ITransformer;
 
 public class TransformerFrom5_1_0To5_2_0 implements ITransformer {
 
