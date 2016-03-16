@@ -27,7 +27,7 @@ import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 public class SbiAlarm extends SbiHibernateModel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 4950020055410842408L;
 	private Integer id;
@@ -40,6 +40,7 @@ public class SbiAlarm extends SbiHibernateModel {
 	private String label;
 	private String name;
 	private String descr;
+	private String mailSubj;
 	private String text;
 	private String url;
 	private Set<SbiAlarmContact> sbiAlarmContacts = new HashSet<SbiAlarmContact>(0);
@@ -47,9 +48,8 @@ public class SbiAlarm extends SbiHibernateModel {
 	public SbiAlarm() {
 	}
 
-	public SbiAlarm(Boolean singleEvent, SbiObjects sbiObjects, SbiThresholdValue sbiThresholdValue,
-			SbiKpiInstance sbiKpiInstance, SbiDomains sbiDomains, Boolean autoDisabled, String label, String name,
-			String descr, String text, String url, Set<SbiAlarmContact> sbiAlarmContacts) {
+	public SbiAlarm(Boolean singleEvent, SbiObjects sbiObjects, SbiThresholdValue sbiThresholdValue, SbiKpiInstance sbiKpiInstance, SbiDomains sbiDomains,
+			Boolean autoDisabled, String label, String name, String descr, String mailSubj, String text, String url, Set<SbiAlarmContact> sbiAlarmContacts) {
 		this.singleEvent = singleEvent;
 		this.autoDisabled = autoDisabled;
 		this.sbiObjects = sbiObjects;
@@ -59,6 +59,7 @@ public class SbiAlarm extends SbiHibernateModel {
 		this.label = label;
 		this.name = name;
 		this.descr = descr;
+		this.mailSubj = mailSubj;
 		this.text = text;
 		this.url = url;
 		this.sbiAlarmContacts = sbiAlarmContacts;
@@ -168,6 +169,14 @@ public class SbiAlarm extends SbiHibernateModel {
 		this.sbiAlarmContacts = sbiAlarmContacts;
 	}
 
+	public String getMailSubj() {
+		return mailSubj;
+	}
+
+	public void setMailSubj(String mailSubj) {
+		this.mailSubj = mailSubj;
+	}
+
 	/**
 	 * Constructs a <code>String</code> with all attributes in name = value format.
 	 *
@@ -177,12 +186,10 @@ public class SbiAlarm extends SbiHibernateModel {
 	public String toString() {
 		final String TAB = ", ";
 		StringBuffer retValue = new StringBuffer();
-		retValue.append("SbiAlarm ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(TAB)
-				.append("singleEvent = ").append(this.singleEvent).append(TAB).append("autoDisabled = ")
-				.append(this.autoDisabled).append(TAB).append("label = ").append(this.label).append(TAB)
-				.append("name = ").append(this.name).append(TAB).append("descr = ").append(this.descr).append(TAB)
-				.append("text = ").append(this.text).append(TAB).append("url = ").append(this.url).append(TAB)
-				.append(" )");
+		retValue.append("SbiAlarm ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(TAB).append("singleEvent = ")
+				.append(this.singleEvent).append(TAB).append("autoDisabled = ").append(this.autoDisabled).append(TAB).append("label = ").append(this.label)
+				.append(TAB).append("name = ").append(this.name).append(TAB).append("descr = ").append(this.descr).append(TAB).append("mailSubj = ")
+				.append(this.mailSubj).append(TAB).append("text = ").append(this.text).append(TAB).append("url = ").append(this.url).append(TAB).append(" )");
 		return retValue.toString();
 	}
 

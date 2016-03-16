@@ -110,8 +110,7 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 							if (kpiVal.doubleValue() >= min && kpiVal.doubleValue() <= max) {
 								isAlarming = true;
 								thresholdValue = "Min:" + min + "-Max:" + max;
-								logger.debug("The value " + kpiVal.doubleValue() + " is in the RANGE " + thresholdValue
-										+ " and so an Alarm will be scheduled");
+								logger.debug("The value " + kpiVal.doubleValue() + " is in the RANGE " + thresholdValue + " and so an Alarm will be scheduled");
 							}
 
 						} else if (type.equals("MINIMUM")) {
@@ -122,8 +121,7 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 							if (kpiVal.doubleValue() <= min) {
 								isAlarming = true;
 								thresholdValue = "Min:" + min;
-								logger.debug("The value " + kpiVal.doubleValue() + " is lower than " + thresholdValue
-										+ " and so an Alarm will be scheduled");
+								logger.debug("The value " + kpiVal.doubleValue() + " is lower than " + thresholdValue + " and so an Alarm will be scheduled");
 							}
 
 						} else if (type.equals("MAXIMUM")) {
@@ -134,8 +132,7 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 							if (kpiVal.doubleValue() >= max) {
 								isAlarming = true;
 								thresholdValue = "Max:" + max;
-								logger.debug("The value " + kpiVal.doubleValue() + " is higher than " + thresholdValue
-										+ " and so an Alarm will be scheduled");
+								logger.debug("The value " + kpiVal.doubleValue() + " is higher than " + thresholdValue + " and so an Alarm will be scheduled");
 							}
 						}
 
@@ -386,12 +383,13 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 		toReturn.setLabel(sbiAlarm.getLabel());
 		toReturn.setName(sbiAlarm.getName());
 		toReturn.setText(sbiAlarm.getText());
+		toReturn.setMailSubj(sbiAlarm.getMailSubj());
 		toReturn.setUrl(sbiAlarm.getUrl());
 
-		Boolean autoDis = (sbiAlarm.isAutoDisabled() != null) ? sbiAlarm.isAutoDisabled() : null;
-		if (autoDis != null) {
-			toReturn.setAutoDisabled(autoDis.booleanValue());
-		}
+		// Boolean autoDis = (sbiAlarm.isAutoDisabled() != null) ? sbiAlarm.isAutoDisabled() : null;
+		// if (autoDis != null) {
+		// toReturn.setAutoDisabled(autoDis.booleanValue());
+		// }
 
 		Boolean single = (sbiAlarm.isSingleEvent() != null) ? sbiAlarm.isSingleEvent() : null;
 		if (single != null) {
