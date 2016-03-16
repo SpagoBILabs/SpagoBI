@@ -5,19 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.kpi.alarm.service;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.kpi.alarm.bo.AlertSendingItem;
-import it.eng.spagobi.kpi.alarm.dao.SbiAlarmContactDAOHibImpl;
-import it.eng.spagobi.kpi.alarm.dao.SbiAlarmEventDAOHibImpl;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent;
-import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
-import it.eng.spagobi.tools.scheduler.to.DispatchContext;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,13 +34,26 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.kpi.alarm.bo.AlertSendingItem;
+import it.eng.spagobi.kpi.alarm.dao.SbiAlarmContactDAOHibImpl;
+import it.eng.spagobi.kpi.alarm.dao.SbiAlarmEventDAOHibImpl;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent;
+import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
+
 public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 
 	static private Logger logger = Logger.getLogger(AlarmInspectorJob.class);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
 	 */
 
@@ -68,7 +68,7 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
 	 */
 	@Override
