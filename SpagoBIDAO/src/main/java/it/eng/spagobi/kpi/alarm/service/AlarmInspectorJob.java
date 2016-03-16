@@ -5,19 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.kpi.alarm.service;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.kpi.alarm.bo.AlertSendingItem;
-import it.eng.spagobi.kpi.alarm.dao.SbiAlarmContactDAOHibImpl;
-import it.eng.spagobi.kpi.alarm.dao.SbiAlarmEventDAOHibImpl;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent;
-import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
-import it.eng.spagobi.tools.scheduler.to.DispatchContext;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,13 +34,26 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.kpi.alarm.bo.AlertSendingItem;
+import it.eng.spagobi.kpi.alarm.dao.SbiAlarmContactDAOHibImpl;
+import it.eng.spagobi.kpi.alarm.dao.SbiAlarmEventDAOHibImpl;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent;
+import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
+
 public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 
 	static private Logger logger = Logger.getLogger(AlarmInspectorJob.class);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
 	 */
 
@@ -68,7 +68,7 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
 	 */
 	@Override
@@ -109,14 +109,16 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 					logger.debug("Created AlertSendingItem: " + alertSendingItem);
 
 				List<SbiAlarmContact> sbiAlarmContactList = new ArrayList<SbiAlarmContact>();
-				List<SbiAlarmContact> associatedContactList = new ArrayList<SbiAlarmContact>(sbiAlarm.getSbiAlarmContacts());
+				List<SbiAlarmContact> associatedContactList = new ArrayList<SbiAlarmContact>(
+						sbiAlarm.getSbiAlarmContacts());
 
 				if (resource != null) {
 					if (logger.isDebugEnabled())
 						logger.debug("Resource enhanced: " + resource);
 
 					for (SbiAlarmContact associatedContact : associatedContactList) {
-						if (resource.equals(associatedContact.getResources()) || associatedContact.getResources() == null) {
+						if (resource.equals(associatedContact.getResources())
+								|| associatedContact.getResources() == null) {
 							sbiAlarmContactList.add(associatedContact);
 
 							if (logger.isDebugEnabled())
@@ -211,7 +213,8 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 
 				subject.append(sbiAlarm.getLabel());
 
-				text.append("<font size=\"4\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.alarm") + " </font><font color=\"red\" size=\"4\"><b>");
+				text.append("<font size=\"4\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.alarm")
+						+ " </font><font color=\"red\" size=\"4\"><b>");
 				text.append(sbiAlarm.getName());
 				text.append("</b></font><ul>");
 
@@ -221,27 +224,32 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 				text.append("<li><font size=\"2\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.text") + ": ");
 				text.append(sbiAlarm.getText());
 				text.append("</font></li>");
-				text.append("<li><font size=\"2\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.description") + ": ");
+				text.append(
+						"<li><font size=\"2\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.description") + ": ");
 				text.append(sbiAlarm.getDescr());
 				text.append("</font></li>");
 				text.append("</ul><br>");
-				text.append("<font size=\"3\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.kpi.details") + ":</font><ul>");
+				text.append("<font size=\"3\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.kpi.details")
+						+ ":</font><ul>");
 				text.append("<li><font size=\"2\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.kpi.name") + ": ");
 				text.append(sbiAlarmEvent.getKpiName());
 				text.append("</font></li>");
 				text.append("<li><font size=\"2\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.kpi.date") + ": ");
 				text.append(sbiAlarmEvent.getEventTs());
 				text.append("</font></li>");
-				text.append("<li><font size=\"2\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.kpi.value") + ": ");
+				text.append(
+						"<li><font size=\"2\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.kpi.value") + ": ");
 				text.append(sbiAlarmEvent.getKpiValue());
 				text.append("</font></li>");
-				text.append("<li><font size=\"2\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.kpi.threshold") + ": ");
+				text.append("<li><font size=\"2\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.kpi.threshold")
+						+ ": ");
 				text.append(sbiAlarmEvent.getThresholdValue());
 				text.append("</font></li>");
 
 				String res = sbiAlarmEvent.getResources();
 				if (res != null) {
-					text.append("<li><font size=\"2\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.kpi.resources") + ":");
+					text.append("<li><font size=\"2\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.kpi.resources")
+							+ ":");
 					text.append(res);
 					text.append("</font></li>");
 				}
@@ -256,7 +264,8 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 			String email = sbiAlarmContact.getEmail();
 			if (email != null) {
 				sInfo.setMailTos(email);
-				sInfo.setMailSubj(msgBuilder.getMessage("sbi.kpi.alarm.mail.subject") + ": " + new Date() + " [" + sbiAlarmContact.getName() + "]");
+				sInfo.setMailSubj(msgBuilder.getMessage("sbi.kpi.alarm.mail.subject") + ": " + new Date() + " ["
+						+ sbiAlarmContact.getName() + "]");
 				sInfo.setMailTxt(text.toString());
 			}
 
@@ -282,7 +291,8 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 			logger.debug(smtphost + " " + smtpport + " use SSL: " + smtpssl);
 			// Custom Trusted Store Certificate Options
 			String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file");
-			String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password");
+			String trustedStorePassword = SingletonConfig.getInstance()
+					.getConfigValue("MAIL.PROFILES.trustedStore.password");
 			int smptPort = 25;
 
 			if ((smtphost == null) || smtphost.trim().equals(""))
