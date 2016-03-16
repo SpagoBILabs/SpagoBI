@@ -5,6 +5,35 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexport;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -76,35 +105,6 @@ import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 public class ImportUtilities {
 
@@ -741,8 +741,8 @@ public class ImportUtilities {
 			newObjParuse.setFilterColumn(exportedObjParuse.getFilterColumn());
 			entitiesAssociations(exportedObjParuse, newObjParuse, sessionCurrDB, metaAss);
 		} catch (EMFUserError e) {
-			logger.error("Error in making new SbiObjParuse starting with SbiObjParuse realted to parameter "
-					+ exportedObjParuse.getId().getSbiObjPar().getLabel());
+			logger.error(
+					"Error in making new SbiObjParuse starting with SbiObjParuse realted to parameter " + exportedObjParuse.getId().getSbiObjPar().getLabel());
 			throw e;
 		}
 		logger.debug("OUT");
@@ -761,8 +761,8 @@ public class ImportUtilities {
 
 			entitiesAssociations(exportedSbiObjParuse, exisingSbiObjParuse, sessionCurrDB, metaAss);
 		} catch (EMFUserError e) {
-			logger.error("Error in updating SbiObjParuse starting with SbiObjParuse related to parameter "
-					+ exportedSbiObjParuse.getId().getSbiObjPar().getLabel());
+			logger.error(
+					"Error in updating SbiObjParuse starting with SbiObjParuse related to parameter " + exportedSbiObjParuse.getId().getSbiObjPar().getLabel());
 			throw e;
 		}
 		logger.debug("OUT");
@@ -859,14 +859,16 @@ public class ImportUtilities {
 
 			entitiesAssociations(exportedParuse, newParuse, sessionCurrDB, metaAss);
 		} catch (EMFUserError e) {
-			logger.error("Error in making new SbiParuse with id " + exportedParuse.getLabel() + " of parameter " + exportedParuse.getSbiParameters().getLabel());
+			logger.error(
+					"Error in making new SbiParuse with id " + exportedParuse.getLabel() + " of parameter " + exportedParuse.getSbiParameters().getLabel());
 			throw e;
 		}
 		logger.debug("OUT");
 		return newParuse;
 	}
 
-	public SbiParuse modifyExisting(SbiParuse exportedParuse, SbiParuse exisingParuse, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+	public SbiParuse modifyExisting(SbiParuse exportedParuse, SbiParuse exisingParuse, Session sessionCurrDB, MetadataAssociations metaAss)
+			throws EMFUserError {
 		logger.debug("IN");
 		try {
 			exisingParuse.setDescr(exportedParuse.getDescr());
@@ -887,8 +889,8 @@ public class ImportUtilities {
 			entitiesAssociations(exportedParuse, exisingParuse, sessionCurrDB, metaAss);
 
 		} catch (EMFUserError e) {
-			logger.error("Error in updating new SbiParuse with id " + exportedParuse.getLabel() + " of parameter "
-					+ exportedParuse.getSbiParameters().getLabel());
+			logger.error(
+					"Error in updating new SbiParuse with id " + exportedParuse.getLabel() + " of parameter " + exportedParuse.getSbiParameters().getLabel());
 			throw e;
 		}
 		logger.debug("OUT");
@@ -1150,21 +1152,19 @@ public class ImportUtilities {
 			/*
 			 *
 			 * Iterator objParsIt = objPars.iterator(); while (objParsIt.hasNext()) { SbiObjPar objPar = (SbiObjPar) objParsIt.next(); // for each
-			 * biobjectparameter deletes all its dependencies, if any Query query =
-			 * sessionCurrDB.createQuery(" from SbiObjParuse where id.sbiObjPar.objParId = " + objPar.getObjParId()); logger.debug("delete dependencies"); List
-			 * dependencies = query.list(); if (dependencies != null && !dependencies.isEmpty()) { Iterator it = dependencies.iterator(); while (it.hasNext()) {
-			 * SbiObjParuse aSbiObjParuse = (SbiObjParuse) it.next(); sessionCurrDB.delete(aSbiObjParuse); } }
+			 * biobjectparameter deletes all its dependencies, if any Query query = sessionCurrDB.createQuery(
+			 * " from SbiObjParuse where id.sbiObjPar.objParId = " + objPar.getObjParId()); logger.debug("delete dependencies"); List dependencies =
+			 * query.list(); if (dependencies != null && !dependencies.isEmpty()) { Iterator it = dependencies.iterator(); while (it.hasNext()) { SbiObjParuse
+			 * aSbiObjParuse = (SbiObjParuse) it.next(); sessionCurrDB.delete(aSbiObjParuse); } }
 			 *
-			 * // for each biobjectparameter deletes all its visual dependencies, if any Query visQuery =
-			 * sessionCurrDB.createQuery(" from SbiObjParview where id.sbiObjPar.objParId = " + objPar.getObjParId());
-			 * logger.debug("delete visual dependencies");
+			 * // for each biobjectparameter deletes all its visual dependencies, if any Query visQuery = sessionCurrDB.createQuery(
+			 * " from SbiObjParview where id.sbiObjPar.objParId = " + objPar.getObjParId()); logger.debug("delete visual dependencies");
 			 *
 			 * List visdependencies = visQuery.list(); if (visdependencies != null && !visdependencies.isEmpty()) { Iterator it = visdependencies.iterator();
-			 * while (it.hasNext()) { SbiObjParview aSbiObjParview = (SbiObjParview) it.next();
-			 * logger.debug("Delete parView "+aSbiObjParview.getId().getSbiObjPar().getLabel()); sessionCurrDB.delete(aSbiObjParview); } } } // delete par only
-			 * after having deleted alll parviews otherwise constraint fails Iterator objParsItAgain = objPars.iterator(); while (objParsItAgain.hasNext()){
-			 * SbiObjPar objPar = (SbiObjPar) objParsItAgain.next(); logger.debug("delete objPar with label "+objPar.getLabel()); sessionCurrDB.delete(objPar);
-			 * }
+			 * while (it.hasNext()) { SbiObjParview aSbiObjParview = (SbiObjParview) it.next(); logger.debug("Delete parView "
+			 * +aSbiObjParview.getId().getSbiObjPar().getLabel()); sessionCurrDB.delete(aSbiObjParview); } } } // delete par only after having deleted alll
+			 * parviews otherwise constraint fails Iterator objParsItAgain = objPars.iterator(); while (objParsItAgain.hasNext()){ SbiObjPar objPar =
+			 * (SbiObjPar) objParsItAgain.next(); logger.debug("delete objPar with label "+objPar.getLabel()); sessionCurrDB.delete(objPar); }
 			 */
 
 		} finally {
@@ -1513,8 +1513,8 @@ public class ImportUtilities {
 								+ " that in import db has been mapped with id " + newId);
 						hqlQuery = sessionCurrDB.createQuery("from SbiDataSource h where h.dsId = " + newId);
 					} else {
-						logger.debug("Datasource with label " + dataSourceLabel
-								+ " was not mapped into another one with differnet label; can check same label one");
+						logger.debug(
+								"Datasource with label " + dataSourceLabel + " was not mapped into another one with differnet label; can check same label one");
 						hqlQuery = sessionCurrDB.createQuery("from SbiDataSource h where h.label = '" + dataSourceLabel + "'");
 					}
 
@@ -2191,7 +2191,7 @@ public class ImportUtilities {
 	// jsonConf.put(DataSetConstants.DATA_SOURCE, ds.getLabel());
 	// dsnew.setConfiguration(jsonConf.toString());
 	// }catch (Exception e){
-	// logger.error("Error while defining dataset / dtasource configuration.  Error: " + e.getMessage());
+	// logger.error("Error while defining dataset / dtasource configuration. Error: " + e.getMessage());
 	// }
 	// }
 	// }
@@ -3225,7 +3225,8 @@ public class ImportUtilities {
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
-	public void entitiesAssociations(SbiThreshold exportedTh, SbiThreshold existingTh, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+	public void entitiesAssociations(SbiThreshold exportedTh, SbiThreshold existingTh, Session sessionCurrDB, MetadataAssociations metaAss)
+			throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
 		Map domainIdAss = metaAss.getDomainIDAssociation();
@@ -3331,7 +3332,8 @@ public class ImportUtilities {
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
-	public void entitiesAssociations(SbiKpiModel exportedMod, SbiKpiModel existingMod, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+	public void entitiesAssociations(SbiKpiModel exportedMod, SbiKpiModel existingMod, Session sessionCurrDB, MetadataAssociations metaAss)
+			throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
 		Map domainIdAss = metaAss.getDomainIDAssociation();
@@ -4273,9 +4275,8 @@ public class ImportUtilities {
 	 *
 	 * // associations entitiesAssociationsSbiKpiModelAttrVal(kpiModelAttrVal, newKpiModelAttrVal, sessionCurrDB, metaAss, importer);
 	 *
-	 * logger.debug("OUT"); } catch (Exception e) {
-	 * logger.error("Error inc reating new Model Attr Val referring to model "+newKpiModelAttrVal.getSbiKpiModel().getKpiModelNm
-	 * ()+" an to attribute "+newKpiModelAttrVal.getSbiKpiModelAttr().getKpiModelAttrNm()); } finally{
+	 * logger.debug("OUT"); } catch (Exception e) { logger.error("Error inc reating new Model Attr Val referring to model "
+	 * +newKpiModelAttrVal.getSbiKpiModel().getKpiModelNm ()+" an to attribute "+newKpiModelAttrVal.getSbiKpiModelAttr().getKpiModelAttrNm()); } finally{
 	 *
 	 * } return newKpiModelAttrVal; }
 	 */
@@ -4337,11 +4338,10 @@ public class ImportUtilities {
 	 *
 	 * // set the model attr Map modelAttrIdAss=metaAss.getSbiKpiModelAttrIDAssociation(); if(exportedKpiModelAttrVal.getSbiKpiModelAttr()!=null){ Integer
 	 * oldModelAttrId=exportedKpiModelAttrVal.getSbiKpiModelAttr().getKpiModelAttrId(); Integer newModelAttrId=(Integer)modelAttrIdAss.get(oldModelAttrId);
-	 * if(newModelAttrId==null) {
-	 * logger.error("could not find model Attr associated with model Attrwith label "+exportedKpiModelAttrVal.getSbiKpiModelAttr().getKpiModelAttrCd());
-	 * existingKpiModelAttrVal.setSbiKpiModelAttr(null); } else{ // I must get the new SbiKpiModelAttr newSbiKpiModelAttr= (SbiKpiModelAttr)
-	 * sessionCurrDB.load(SbiKpiModelAttr.class, newModelAttrId); existingKpiModelAttrVal.setSbiKpiModelAttr(newSbiKpiModelAttr); } } else{
-	 * existingKpiModelAttrVal.setSbiKpiModelAttr(null); }
+	 * if(newModelAttrId==null) { logger.error("could not find model Attr associated with model Attrwith label "
+	 * +exportedKpiModelAttrVal.getSbiKpiModelAttr().getKpiModelAttrCd()); existingKpiModelAttrVal.setSbiKpiModelAttr(null); } else{ // I must get the new
+	 * SbiKpiModelAttr newSbiKpiModelAttr= (SbiKpiModelAttr) sessionCurrDB.load(SbiKpiModelAttr.class, newModelAttrId);
+	 * existingKpiModelAttrVal.setSbiKpiModelAttr(newSbiKpiModelAttr); } } else{ existingKpiModelAttrVal.setSbiKpiModelAttr(null); }
 	 *
 	 * }
 	 */
