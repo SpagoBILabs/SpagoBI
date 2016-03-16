@@ -12,167 +12,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
+import javax.management.Query;
+import javax.management.relation.Role;
+import javax.swing.text.AbstractDocument.Content;
 
-import it.eng.qbe.runtime.dataset.QbeDataSet;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
-import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
-import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFuncId;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiSnapshots;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreports;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreportsId;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiViewpoints;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
-import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
-import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRoleId;
-import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuseId;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParview;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParviewId;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCk;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCkId;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDetId;
-import it.eng.spagobi.behaviouralmodel.check.bo.Check;
-import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
-import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
-import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.Subreport;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IBinContentDAO;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.metadata.SbiAuthorizations;
-import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
-import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
-import it.eng.spagobi.commons.metadata.SbiBinContents;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.config.metadata.SbiEngines;
-import it.eng.spagobi.kpi.alarm.bo.Alarm;
-import it.eng.spagobi.kpi.alarm.bo.AlarmContact;
-import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmDAO;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
-import it.eng.spagobi.kpi.config.bo.Kpi;
-import it.eng.spagobi.kpi.config.bo.KpiDocuments;
-import it.eng.spagobi.kpi.config.bo.KpiInstPeriod;
-import it.eng.spagobi.kpi.config.bo.KpiInstance;
-import it.eng.spagobi.kpi.config.bo.KpiRel;
-import it.eng.spagobi.kpi.config.bo.MeasureUnit;
-import it.eng.spagobi.kpi.config.bo.Periodicity;
-import it.eng.spagobi.kpi.config.dao.IKpiDAO;
-import it.eng.spagobi.kpi.config.dao.IKpiInstPeriodDAO;
-import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
-import it.eng.spagobi.kpi.config.dao.IMeasureUnitDAO;
-import it.eng.spagobi.kpi.config.dao.IPeriodicityDAO;
-import it.eng.spagobi.kpi.config.metadata.SbiKpi;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiRel;
-import it.eng.spagobi.kpi.config.metadata.SbiMeasureUnit;
-import it.eng.spagobi.kpi.model.bo.Model;
-import it.eng.spagobi.kpi.model.bo.ModelInstance;
-import it.eng.spagobi.kpi.model.bo.ModelResources;
-import it.eng.spagobi.kpi.model.bo.Resource;
-import it.eng.spagobi.kpi.model.dao.IModelDAO;
-import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
-import it.eng.spagobi.kpi.model.dao.IModelResourceDAO;
-import it.eng.spagobi.kpi.model.dao.IResourceDAO;
-import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
-import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
-import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
-import it.eng.spagobi.kpi.model.metadata.SbiResources;
-import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
-import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
-import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
-import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
-import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
-import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
-import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
-import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes;
-import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodesId;
-import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies;
-import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes;
-import it.eng.spagobi.kpi.threshold.bo.Threshold;
-import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
-import it.eng.spagobi.kpi.threshold.dao.IThresholdDAO;
-import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
-import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
-import it.eng.spagobi.mapcatalogue.bo.GeoFeature;
-import it.eng.spagobi.mapcatalogue.bo.GeoMap;
-import it.eng.spagobi.mapcatalogue.bo.GeoMapFeature;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoFeaturesDAO;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapFeaturesDAO;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapsDAO;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeatures;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeaturesId;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
-import it.eng.spagobi.tools.catalogue.bo.Artifact;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
-import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
-import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
-import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
-import it.eng.spagobi.tools.udp.bo.Udp;
-import it.eng.spagobi.tools.udp.bo.UdpValue;
-import it.eng.spagobi.tools.udp.metadata.SbiUdp;
-import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.LocatorEx.Snapshot;
+import com.sun.xml.internal.ws.api.pipe.Engine;
 
 /**
  * Implements methods to insert exported metadata into the exported database
@@ -277,7 +122,8 @@ public class ExporterMetadata {
 		logger.debug("IN");
 		try {
 			Transaction tx = session.beginTransaction();
-			Query hibQuery = session.createQuery(" from SbiObjMetadata where objMetaId = " + objMetadata.getObjMetaId());
+			Query hibQuery = session
+					.createQuery(" from SbiObjMetadata where objMetaId = " + objMetadata.getObjMetaId());
 			List hibList = hibQuery.list();
 			if (!hibList.isEmpty()) {
 				return;
@@ -318,7 +164,8 @@ public class ExporterMetadata {
 	public void insertObjMetacontent(ObjMetacontent objMetacontent, Session session) throws EMFUserError {
 		logger.debug("IN");
 		try {
-			Query hibQuery = session.createQuery(" from SbiObjMetacontents where objMetacontentId = " + objMetacontent.getObjMetacontentId());
+			Query hibQuery = session.createQuery(
+					" from SbiObjMetacontents where objMetacontentId = " + objMetacontent.getObjMetacontentId());
 			List hibList = hibQuery.list();
 			if (!hibList.isEmpty()) {
 				return;
@@ -349,13 +196,15 @@ public class ExporterMetadata {
 			}
 			// get the sub object to insert if present
 			if (objMetacontent.getSubobjId() != null) {
-				SbiSubObjects sbiSubObjects = (SbiSubObjects) session.load(SbiSubObjects.class, objMetacontent.getSubobjId());
+				SbiSubObjects sbiSubObjects = (SbiSubObjects) session.load(SbiSubObjects.class,
+						objMetacontent.getSubobjId());
 				hibObjMetacontents.setSbiSubObjects(sbiSubObjects);
 				logger.debug("inserted sbi " + objMetacontent.getSubobjId() + " SubObject metacontent");
 			}
 			// get the content
 			if (objMetacontent.getBinaryContentId() != null) {
-				SbiBinContents sbiBinContents = (SbiBinContents) session.load(SbiBinContents.class, objMetacontent.getBinaryContentId());
+				SbiBinContents sbiBinContents = (SbiBinContents) session.load(SbiBinContents.class,
+						objMetacontent.getBinaryContentId());
 				hibObjMetacontents.setSbiBinContents(sbiBinContents);
 				// insert the binary content!!
 				logger.debug("inserted sbi " + objMetacontent.getBinaryContentId() + " Binary Content metacontent");
@@ -713,7 +562,8 @@ public class ExporterMetadata {
 			// get Data SOurce
 
 			if (metaModel.getDataSourceLabel() != null) {
-				Query queryDS = session.createQuery(" from SbiDataSource a where a.label = '" + metaModel.getDataSourceLabel() + "'");
+				Query queryDS = session
+						.createQuery(" from SbiDataSource a where a.label = '" + metaModel.getDataSourceLabel() + "'");
 				Object obj = queryDS.uniqueResult();
 
 				if (obj != null) {
@@ -1102,7 +952,8 @@ public class ExporterMetadata {
 				// insert dataset if parameter insertDataSet is true (in case of
 				// KPI export)
 				if (insertDataSet) {
-					hibQuery = session.createQuery(" from SbiDataSet s where s.active=true and s.id.dsId = " + biobj.getId());
+					hibQuery = session
+							.createQuery(" from SbiDataSet s where s.active=true and s.id.dsId = " + biobj.getId());
 					SbiDataSet hibDataSet = (SbiDataSet) hibQuery.uniqueResult();
 					IDataSet guiDataSet = DataSetFactory.toDataSet(hibDataSet);
 
@@ -1126,8 +977,8 @@ public class ExporterMetadata {
 			tx.commit();
 			ObjTemplate template = biobj.getActiveTemplate();
 			if (template == null) {
-				logger.warn("Biobject with id = " + biobj.getId() + ", label = " + biobj.getLabel() + " and name = " + biobj.getName()
-						+ " has not active template!!");
+				logger.warn("Biobject with id = " + biobj.getId() + ", label = " + biobj.getLabel() + " and name = "
+						+ biobj.getName() + " has not active template!!");
 			} else {
 				insertBIObjectTemplate(hibBIObj, template, session);
 			}
@@ -1148,7 +999,8 @@ public class ExporterMetadata {
 	 * @param session
 	 * @throws EMFUserError
 	 */
-	private void insertBIObjectTemplate(SbiObjects hibBIObj, ObjTemplate biobjTempl, Session session) throws EMFUserError {
+	private void insertBIObjectTemplate(SbiObjects hibBIObj, ObjTemplate biobjTempl, Session session)
+			throws EMFUserError {
 		logger.debug("IN");
 
 		try {
@@ -1372,8 +1224,9 @@ public class ExporterMetadata {
 					// TODO controllare perché serve questo controllo: le
 					// dipendenze non dovrebbero essere riutilizzabili, per
 					// cui vengono inseriti una sola volta
-					Query hibQuery = session.createQuery(" from SbiObjParuse where id.sbiObjPar.objParId = " + objparuse.getObjParId()
-							+ " and id.sbiParuse.useId = " + objparuse.getParuseId() + " and id.sbiObjParFather.objParId = " + objparuse.getObjParFatherId()
+					Query hibQuery = session.createQuery(" from SbiObjParuse where id.sbiObjPar.objParId = "
+							+ objparuse.getObjParId() + " and id.sbiParuse.useId = " + objparuse.getParuseId()
+							+ " and id.sbiObjParFather.objParId = " + objparuse.getObjParFatherId()
 							+ " and id.filterOperation = '" + objparuse.getFilterOperation() + "'");
 					List hibList = hibQuery.list();
 					if (!hibList.isEmpty()) {
@@ -1433,8 +1286,9 @@ public class ExporterMetadata {
 					// TODO controllare perché serve questo controllo: le
 					// dipendenze non dovrebbero essere riutilizzabili, per
 					// cui vengono inseriti una sola volta
-					Query hibQuery = session.createQuery(" from SbiObjParview where id.sbiObjPar.objParId = " + objParview.getObjParId()
-							+ " and id.sbiObjParFather.objParId = " + objParview.getObjParFatherId() + " and id.compareValue = '" + objParview.getCompareValue()
+					Query hibQuery = session.createQuery(" from SbiObjParview where id.sbiObjPar.objParId = "
+							+ objParview.getObjParId() + " and id.sbiObjParFather.objParId = "
+							+ objParview.getObjParFatherId() + " and id.compareValue = '" + objParview.getCompareValue()
 							+ "'" + " and id.operation = '" + objParview.getOperation() + "'");
 					List hibList = hibQuery.list();
 					if (!hibList.isEmpty()) {
@@ -1575,7 +1429,8 @@ public class ExporterMetadata {
 			Transaction tx = session.beginTransaction();
 			Integer paruseId = parUse.getUseID();
 			Integer checkId = check.getCheckId();
-			String query = " from SbiParuseCk where id.sbiParuse.useId = " + paruseId + " and id.sbiChecks.checkId = " + checkId;
+			String query = " from SbiParuseCk where id.sbiParuse.useId = " + paruseId + " and id.sbiChecks.checkId = "
+					+ checkId;
 			Query hibQuery = session.createQuery(query);
 			List hibList = hibQuery.list();
 			if (!hibList.isEmpty()) {
@@ -1618,7 +1473,8 @@ public class ExporterMetadata {
 			Transaction tx = session.beginTransaction();
 			Integer paruseId = parUse.getUseID();
 			Integer roleId = role.getId();
-			String query = " from SbiParuseDet where id.sbiParuse.useId = " + paruseId + " and id.sbiExtRoles.extRoleId = " + roleId;
+			String query = " from SbiParuseDet where id.sbiParuse.useId = " + paruseId
+					+ " and id.sbiExtRoles.extRoleId = " + roleId;
 			Query hibQuery = session.createQuery(query);
 			List hibList = hibQuery.list();
 			if (!hibList.isEmpty()) {
@@ -1659,8 +1515,8 @@ public class ExporterMetadata {
 
 			Integer masterId = sub.getMaster_rpt_id();
 			Integer subId = sub.getSub_rpt_id();
-			String query = " from SbiSubreports as subreport where " + "subreport.id.masterReport.biobjId = " + masterId + " and "
-					+ "subreport.id.subReport.biobjId = " + subId;
+			String query = " from SbiSubreports as subreport where " + "subreport.id.masterReport.biobjId = " + masterId
+					+ " and " + "subreport.id.subReport.biobjId = " + subId;
 			Query hibQuery = session.createQuery(query);
 			List hibList = hibQuery.list();
 			if (!hibList.isEmpty()) {
@@ -1727,7 +1583,8 @@ public class ExporterMetadata {
 			session.save(hibFunct);
 			tx.commit();
 			Role[] devRoles = funct.getDevRoles();
-			Domain devDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP);
+			Domain devDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER,
+					SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP);
 			for (int i = 0; i < devRoles.length; i++) {
 				Role devRole = devRoles[i];
 				insertRole(devRole, session);
@@ -1735,7 +1592,8 @@ public class ExporterMetadata {
 				insertFunctRole(devRole, funct, devDom.getValueId(), devDom.getValueCd(), session);
 			}
 			Role[] testRoles = funct.getTestRoles();
-			Domain testDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST);
+			Domain testDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER,
+					SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST);
 			for (int i = 0; i < testRoles.length; i++) {
 				Role testRole = testRoles[i];
 				insertRole(testRole, session);
@@ -1743,7 +1601,8 @@ public class ExporterMetadata {
 				insertFunctRole(testRole, funct, testDom.getValueId(), testDom.getValueCd(), session);
 			}
 			Role[] execRoles = funct.getExecRoles();
-			Domain execDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE);
+			Domain execDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER,
+					SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE);
 			for (int i = 0; i < execRoles.length; i++) {
 				Role execRole = execRoles[i];
 				insertRole(execRole, session);
@@ -1751,7 +1610,8 @@ public class ExporterMetadata {
 				insertFunctRole(execRole, funct, execDom.getValueId(), execDom.getValueCd(), session);
 			}
 			Role[] createRoles = funct.getCreateRoles();
-			Domain createDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE);
+			Domain createDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER,
+					SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE);
 			for (int i = 0; i < createRoles.length; i++) {
 				Role createRole = createRoles[i];
 				insertRole(createRole, session);
@@ -1847,15 +1707,16 @@ public class ExporterMetadata {
 		logger.debug("IN");
 		try {
 
-			List<SbiAuthorizations> hibAuthorizations = DAOFactory.getRoleDAO().LoadAuthorizationsAssociatedToRole(role.getId());
+			List<SbiAuthorizations> hibAuthorizations = DAOFactory.getRoleDAO()
+					.LoadAuthorizationsAssociatedToRole(role.getId());
 
 			Transaction tx = session.beginTransaction();
 
 			for (Iterator iterator = hibAuthorizations.iterator(); iterator.hasNext();) {
 				SbiAuthorizations authorizations = (SbiAuthorizations) iterator.next();
 
-				Query hibQuery = session
-						.createQuery(" from SbiAuthorizationsRoles where id.roleId= " + role.getId() + " and id.authorizationId = " + authorizations.getId());
+				Query hibQuery = session.createQuery(" from SbiAuthorizationsRoles where id.roleId= " + role.getId()
+						+ " and id.authorizationId = " + authorizations.getId());
 
 				List hibAuthRole = hibQuery.list();
 				if (!hibAuthRole.isEmpty()) {
@@ -1875,11 +1736,13 @@ public class ExporterMetadata {
 				hibRF.setSbiAuthorizations(authorizations);
 
 				session.save(hibRF);
-				logger.debug("Inserted in export DB association between role " + role.getName() + " and authorization " + authorizations.getName());
+				logger.debug("Inserted in export DB association between role " + role.getName() + " and authorization "
+						+ authorizations.getName());
 			}
 			tx.commit();
 		} catch (Exception e) {
-			logger.error("Error while inserting association between role " + role.getName() + " and authorizations into export database ", e);
+			logger.error("Error while inserting association between role " + role.getName()
+					+ " and authorizations into export database ", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
@@ -1903,13 +1766,15 @@ public class ExporterMetadata {
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
-	public void insertFunctRole(Role role, LowFunctionality funct, Integer permissionId, String permissionCd, Session session) throws EMFUserError {
+	public void insertFunctRole(Role role, LowFunctionality funct, Integer permissionId, String permissionCd,
+			Session session) throws EMFUserError {
 		logger.debug("IN");
 		try {
 			Transaction tx = session.beginTransaction();
 			Integer roleid = role.getId();
 			Integer functid = funct.getId();
-			String query = " from SbiFuncRole where id.function = " + functid + " and id.role = " + roleid + " and id.state = " + permissionId;
+			String query = " from SbiFuncRole where id.function = " + functid + " and id.role = " + roleid
+					+ " and id.state = " + permissionId;
 			Query hibQuery = session.createQuery(query);
 			List hibList = hibQuery.list();
 			if (!hibList.isEmpty()) {
@@ -2037,7 +1902,8 @@ public class ExporterMetadata {
 				hibMap.setUrl(map.getUrl());
 
 				if (map.getBinId() == 0) {
-					logger.warn("Map with id = " + map.getMapId() + " and name = " + map.getName() + " has not binary content!!");
+					logger.warn("Map with id = " + map.getMapId() + " and name = " + map.getName()
+							+ " has not binary content!!");
 					hibMap.setBinContents(null);
 				} else {
 					SbiBinContents hibBinContent = new SbiBinContents();
@@ -2113,7 +1979,8 @@ public class ExporterMetadata {
 				Iterator mapFeaturesIt = mapFeatures.iterator();
 				while (mapFeaturesIt.hasNext()) {
 					GeoFeature feature = (GeoFeature) mapFeaturesIt.next();
-					GeoMapFeature mapFeature = mapFeaturesDAO.loadMapFeatures(new Integer(map.getMapId()), new Integer(feature.getFeatureId()));
+					GeoMapFeature mapFeature = mapFeaturesDAO.loadMapFeatures(new Integer(map.getMapId()),
+							new Integer(feature.getFeatureId()));
 					SbiGeoMapFeatures hibMapFeature = new SbiGeoMapFeatures();
 					SbiGeoMapFeaturesId hibMapFeatureId = new SbiGeoMapFeaturesId();
 					hibMapFeatureId.setMapId(mapFeature.getMapId());
@@ -2203,7 +2070,8 @@ public class ExporterMetadata {
 
 			// insert Parent
 			if (mi.getParentId() != null) {
-				SbiKpiModelInst hibKpiModelInstParent = (SbiKpiModelInst) session.load(SbiKpiModelInst.class, mi.getParentId());
+				SbiKpiModelInst hibKpiModelInstParent = (SbiKpiModelInst) session.load(SbiKpiModelInst.class,
+						mi.getParentId());
 				hibMi.setSbiKpiModelInst(hibKpiModelInstParent);
 			}
 
@@ -2217,7 +2085,8 @@ public class ExporterMetadata {
 			if (mi.getKpiInstance() != null) {
 				KpiInstance kpiInstance = mi.getKpiInstance();
 				insertKpiInstance(kpiInstance.getKpiInstanceId(), session);
-				SbiKpiInstance hibKpiInst = (SbiKpiInstance) session.load(SbiKpiInstance.class, kpiInstance.getKpiInstanceId());
+				SbiKpiInstance hibKpiInst = (SbiKpiInstance) session.load(SbiKpiInstance.class,
+						kpiInstance.getKpiInstanceId());
 				hibMi.setSbiKpiInstance(hibKpiInst);
 
 			}
@@ -2257,7 +2126,8 @@ public class ExporterMetadata {
 					ModelInstance childNode = (ModelInstance) iterator.next();
 					logger.debug("insert child " + childNode.getLabel());
 					insertModelInstanceTree(childNode, session);
-					SbiKpiModelInst hibKpiModelInst = (SbiKpiModelInst) session.load(SbiKpiModelInst.class, childNode.getId());
+					SbiKpiModelInst hibKpiModelInst = (SbiKpiModelInst) session.load(SbiKpiModelInst.class,
+							childNode.getId());
 					modelInstanceChildren.add(hibKpiModelInst);
 				}
 			}
@@ -2783,7 +2653,8 @@ public class ExporterMetadata {
 					ThresholdValue thValue = (ThresholdValue) iterator.next();
 					insertThresholdValue(thValue, session, hibTh);
 					Integer thValueId = thValue.getId();
-					SbiThresholdValue sbiTh = (SbiThresholdValue) session.load(SbiThresholdValue.class, thValue.getId());
+					SbiThresholdValue sbiTh = (SbiThresholdValue) session.load(SbiThresholdValue.class,
+							thValue.getId());
 					thresholdValues.add(sbiTh);
 				}
 				// hibTh.setSbiThresholdValues(thresholdValues);
@@ -2907,7 +2778,8 @@ public class ExporterMetadata {
 	public void insertKpiInstancePeriod(KpiInstPeriod kpiInstPeriod, Session session) throws EMFUserError {
 		logger.debug("IN");
 		try {
-			Query hibQuery = session.createQuery(" from SbiKpiInstPeriod where kpiInstPeriodId = " + kpiInstPeriod.getId());
+			Query hibQuery = session
+					.createQuery(" from SbiKpiInstPeriod where kpiInstPeriodId = " + kpiInstPeriod.getId());
 			List hibList = hibQuery.list();
 			if (!hibList.isEmpty()) {
 				return;
@@ -2935,7 +2807,8 @@ public class ExporterMetadata {
 				IPeriodicityDAO periodicityDAO = DAOFactory.getPeriodicityDAO();
 				Periodicity period = periodicityDAO.loadPeriodicityById(periodicityId);
 				insertPeriodicity(period, session);
-				SbiKpiPeriodicity sbiKpiPeriodicity = (SbiKpiPeriodicity) session.load(SbiKpiPeriodicity.class, period.getIdKpiPeriodicity());
+				SbiKpiPeriodicity sbiKpiPeriodicity = (SbiKpiPeriodicity) session.load(SbiKpiPeriodicity.class,
+						period.getIdKpiPeriodicity());
 				if (sbiKpiPeriodicity != null) {
 					hibKpiInstPeriod.setSbiKpiPeriodicity(sbiKpiPeriodicity);
 				}
@@ -2966,7 +2839,8 @@ public class ExporterMetadata {
 	public void insertPeriodicity(Periodicity per, Session session) throws EMFUserError {
 		logger.debug("IN");
 		try {
-			Query hibQuery = session.createQuery(" from SbiKpiPeriodicity where idKpiPeriodicity = " + per.getIdKpiPeriodicity());
+			Query hibQuery = session
+					.createQuery(" from SbiKpiPeriodicity where idKpiPeriodicity = " + per.getIdKpiPeriodicity());
 			List hibList = hibQuery.list();
 			if (!hibList.isEmpty()) {
 				return;
@@ -3007,7 +2881,8 @@ public class ExporterMetadata {
 	public void insertModelResources(ModelResources modRes, Session session) throws EMFUserError {
 		logger.debug("IN");
 		try {
-			Query hibQuery = session.createQuery(" from SbiKpiModelResources where kpiModelResourcesId = " + modRes.getModelResourcesId());
+			Query hibQuery = session.createQuery(
+					" from SbiKpiModelResources where kpiModelResourcesId = " + modRes.getModelResourcesId());
 			List hibList = hibQuery.list();
 			if (!hibList.isEmpty()) {
 				return;
@@ -3136,18 +3011,22 @@ public class ExporterMetadata {
 			hibAlarm.setName(alarm.getName());
 			hibAlarm.setText(alarm.getText());
 			hibAlarm.setUrl(alarm.getUrl());
-			hibAlarm.setAutoDisabled(alarm.isAutoDisabled());
+			hibAlarm.setMailSubj(alarm.getMailSubj());
+
+			// hibAlarm.setAutoDisabled(alarm.isAutoDisabled());
 			hibAlarm.setSingleEvent(alarm.isSingleEvent());
 
 			// kpi Instance (already inserted)
 			if (alarm.getIdKpiInstance() != null) {
-				SbiKpiInstance sbiKpiInst = (SbiKpiInstance) session.load(SbiKpiInstance.class, alarm.getIdKpiInstance());
+				SbiKpiInstance sbiKpiInst = (SbiKpiInstance) session.load(SbiKpiInstance.class,
+						alarm.getIdKpiInstance());
 				hibAlarm.setSbiKpiInstance(sbiKpiInst);
 			}
 
 			// Threshold Value (already inserted)
 			if (alarm.getIdThresholdValue() != null) {
-				SbiThresholdValue sbiThValue = (SbiThresholdValue) session.load(SbiThresholdValue.class, alarm.getIdThresholdValue());
+				SbiThresholdValue sbiThValue = (SbiThresholdValue) session.load(SbiThresholdValue.class,
+						alarm.getIdThresholdValue());
 				hibAlarm.setSbiThresholdValue(sbiThValue);
 			}
 
@@ -3164,7 +3043,8 @@ public class ExporterMetadata {
 				for (Iterator iterator = alarm.getSbiAlarmContacts().iterator(); iterator.hasNext();) {
 					AlarmContact alarmContact = (AlarmContact) iterator.next();
 					insertAlarmContact(alarmContact, session);
-					SbiAlarmContact sbiAlCon = (SbiAlarmContact) session.load(SbiAlarmContact.class, alarmContact.getId());
+					SbiAlarmContact sbiAlCon = (SbiAlarmContact) session.load(SbiAlarmContact.class,
+							alarmContact.getId());
 					listSbiContacts.add(sbiAlCon);
 				}
 			}
@@ -3497,7 +3377,8 @@ public class ExporterMetadata {
 				return;
 			}
 			SbiOrgUnit ou = (SbiOrgUnit) session.load(SbiOrgUnit.class, node.getOu().getId());
-			SbiOrgUnitHierarchies hier = (SbiOrgUnitHierarchies) session.load(SbiOrgUnitHierarchies.class, node.getHierarchy().getId());
+			SbiOrgUnitHierarchies hier = (SbiOrgUnitHierarchies) session.load(SbiOrgUnitHierarchies.class,
+					node.getHierarchy().getId());
 			SbiOrgUnitNodes parent = null;
 			if (node.getParentNodeId() != null) {
 				parent = (SbiOrgUnitNodes) session.load(SbiOrgUnitNodes.class, node.getParentNodeId());
@@ -3541,8 +3422,10 @@ public class ExporterMetadata {
 			if (!hibList.isEmpty()) {
 				return;
 			}
-			SbiOrgUnitHierarchies hier = (SbiOrgUnitHierarchies) session.load(SbiOrgUnitHierarchies.class, grant.getHierarchy().getId());
-			SbiKpiModelInst mi = (SbiKpiModelInst) session.load(SbiKpiModelInst.class, grant.getModelInstance().getId());
+			SbiOrgUnitHierarchies hier = (SbiOrgUnitHierarchies) session.load(SbiOrgUnitHierarchies.class,
+					grant.getHierarchy().getId());
+			SbiKpiModelInst mi = (SbiKpiModelInst) session.load(SbiKpiModelInst.class,
+					grant.getModelInstance().getId());
 
 			// main attributes
 			SbiOrgUnitGrant hibGrant = new SbiOrgUnitGrant();
@@ -3582,14 +3465,17 @@ public class ExporterMetadata {
 	public void insertOrgUnitGrantNodes(OrganizationalUnitGrantNode ou, Session session) throws EMFUserError {
 		logger.debug("IN");
 		try {
-			Query hibQuery = session.createQuery(" from SbiOrgUnitGrantNodes s where s.id.nodeId = " + ou.getOuNode().getNodeId()
-					+ " and s.id.kpiModelInstNodeId = " + ou.getModelInstanceNode().getModelInstanceNodeId() + " and s.id.grantId = " + ou.getGrant().getId());
+			Query hibQuery = session
+					.createQuery(" from SbiOrgUnitGrantNodes s where s.id.nodeId = " + ou.getOuNode().getNodeId()
+							+ " and s.id.kpiModelInstNodeId = " + ou.getModelInstanceNode().getModelInstanceNodeId()
+							+ " and s.id.grantId = " + ou.getGrant().getId());
 			List hibList = hibQuery.list();
 			if (!hibList.isEmpty()) {
 				return;
 			}
 
-			SbiKpiModelInst mi = (SbiKpiModelInst) session.load(SbiKpiModelInst.class, ou.getModelInstanceNode().getModelInstanceNodeId());
+			SbiKpiModelInst mi = (SbiKpiModelInst) session.load(SbiKpiModelInst.class,
+					ou.getModelInstanceNode().getModelInstanceNodeId());
 			SbiOrgUnitGrant g = (SbiOrgUnitGrant) session.load(SbiOrgUnitGrant.class, ou.getGrant().getId());
 			SbiOrgUnitNodes n = (SbiOrgUnitNodes) session.load(SbiOrgUnitNodes.class, ou.getOuNode().getNodeId());
 			// main attributes
