@@ -10,6 +10,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
+
 public class AlarmJSONSerializer implements Serializer {
 
 	public static final String ID = "id";
