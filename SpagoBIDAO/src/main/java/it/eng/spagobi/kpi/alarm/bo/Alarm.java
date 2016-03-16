@@ -6,7 +6,7 @@
 package it.eng.spagobi.kpi.alarm.bo;
 
 /**
- * Title: SpagoBI
+ * Title: SpagoBI 
  * Description: SpagoBI
  * Copyright: Copyright (c) 2008
  * Company: Xaltia S.p.A.
