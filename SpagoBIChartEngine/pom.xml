@@ -58,12 +58,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-servlets</artifactId>
-			<version>9.3.2.v20150730</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.cometd.java</groupId>
 			<artifactId>cometd-java-websocket-javax-server</artifactId>
 			<version>3.0.5</version>
