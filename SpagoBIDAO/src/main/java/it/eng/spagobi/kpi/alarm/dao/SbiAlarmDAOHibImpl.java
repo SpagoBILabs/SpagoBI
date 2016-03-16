@@ -383,12 +383,13 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 		toReturn.setLabel(sbiAlarm.getLabel());
 		toReturn.setName(sbiAlarm.getName());
 		toReturn.setText(sbiAlarm.getText());
+		toReturn.setMailSubj(sbiAlarm.getMailSubj());
 		toReturn.setUrl(sbiAlarm.getUrl());
 
-		Boolean autoDis = (sbiAlarm.isAutoDisabled() != null) ? sbiAlarm.isAutoDisabled() : null;
-		if (autoDis != null) {
-			toReturn.setAutoDisabled(autoDis.booleanValue());
-		}
+		// Boolean autoDis = (sbiAlarm.isAutoDisabled() != null) ? sbiAlarm.isAutoDisabled() : null;
+		// if (autoDis != null) {
+		// toReturn.setAutoDisabled(autoDis.booleanValue());
+		// }
 
 		Boolean single = (sbiAlarm.isSingleEvent() != null) ? sbiAlarm.isSingleEvent() : null;
 		if (single != null) {
