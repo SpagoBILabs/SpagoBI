@@ -75,7 +75,7 @@ public class KpiGUIUtil {
 				jsonToReturn.put("actual", kpiLine.getValue().getValue());
 				jsonToReturn.put("target", kpiLine.getValue().getTarget());
 
-				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 				Date bdate = kpiLine.getValue().getBeginDate();
 				Date edate = kpiLine.getValue().getEndDate();
 				if (bdate != null && edate != null) {

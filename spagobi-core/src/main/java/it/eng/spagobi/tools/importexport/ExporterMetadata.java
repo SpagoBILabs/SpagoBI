@@ -3136,7 +3136,9 @@ public class ExporterMetadata {
 			hibAlarm.setName(alarm.getName());
 			hibAlarm.setText(alarm.getText());
 			hibAlarm.setUrl(alarm.getUrl());
-			hibAlarm.setAutoDisabled(alarm.isAutoDisabled());
+			hibAlarm.setMailSubj(alarm.getMailSubj());
+
+			// hibAlarm.setAutoDisabled(alarm.isAutoDisabled());
 			hibAlarm.setSingleEvent(alarm.isSingleEvent());
 
 			// kpi Instance (already inserted)

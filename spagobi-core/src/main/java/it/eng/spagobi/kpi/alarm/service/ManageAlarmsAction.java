@@ -56,9 +56,10 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction {
 	public static final String LABEL = "label";
 	public static final String MODALITY = "modality";
 	public static final String SINGLE_EVENT = "singleEvent";
-	public static final String AUTO_DISABLED = "autoDisabled";
+	// public static final String AUTO_DISABLED = "autoDisabled";
 	public static final String TEXT = "text";
 	public static final String URL = "url";
+	public static final String MAIL_SUBJ = "mailSubj";
 	public static final String CONTACTS = "contacts";
 	public static final String DOMAIN_CD = "ALARM_MODALITY";
 	public static final String KPI = "kpi";
@@ -125,21 +126,23 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction {
 			String label = getAttributeAsString(LABEL);
 			String modality = getAttributeAsString(MODALITY);
 			Boolean singleEvent = getAttributeAsBoolean(SINGLE_EVENT);
-			Boolean autoDisabled = getAttributeAsBoolean(AUTO_DISABLED);
+			// Boolean autoDisabled = getAttributeAsBoolean(AUTO_DISABLED);
 			String text = getAttributeAsString(TEXT);
+			String mailSubj = getAttributeAsString(MAIL_SUBJ);
 			String url = getAttributeAsString(URL);
 			Integer kpiInstId = getAttributeAsInteger(KPI);
 			Integer thresholdId = getAttributeAsInteger(THRESHOLD);
 			JSONArray contactsJSON = getAttributeAsJSONArray(CONTACTS);
 
 			SbiAlarm alarm = new SbiAlarm();
-			alarm.setAutoDisabled(autoDisabled);
+			// alarm.setAutoDisabled(autoDisabled);
 			alarm.setDescr(descr);
 			alarm.setLabel(label);
 			alarm.setName(name);
 			alarm.setSingleEvent(singleEvent);
 			alarm.setText(text);
 			alarm.setUrl(url);
+			alarm.setMailSubj(mailSubj);
 
 			try {
 				if (modality != null) {

@@ -3947,6 +3947,7 @@ public class ImportUtilities {
 			newAlarm.setUrl(alarm.getUrl());
 			newAlarm.setSingleEvent(alarm.isSingleEvent());
 			newAlarm.setAutoDisabled(alarm.getAutoDisabled());
+			newAlarm.setMailSubj(alarm.getMailSubj());
 
 			// associations
 			entitiesAssociations(alarm, newAlarm, sessionCurrDB, metaAss, importer);
@@ -3987,6 +3988,7 @@ public class ImportUtilities {
 			existingAlarm.setDescr(exportedAlarm.getDescr());
 			existingAlarm.setText(exportedAlarm.getText());
 			existingAlarm.setUrl(exportedAlarm.getUrl());
+			existingAlarm.setMailSubj(exportedAlarm.getMailSubj());
 			existingAlarm.setSingleEvent(exportedAlarm.isSingleEvent());
 			existingAlarm.setAutoDisabled(exportedAlarm.getAutoDisabled());
 
