@@ -166,7 +166,7 @@
 							<aggregations>
 								<aggregation>
 									<inputDir>${minimized-dir}/js</inputDir>
-									<output>${basedir}/src/main/webapp/js/src/ext/sbi/sbi-all-${project.version}.js</output>
+									<output>${basedir}/src/main/webapp/js/src/ext/sbi-all-${project.version}.js</output>
 									<includes>
 										<include>src/ext/sbi/commons/Format-min.js</include>
 										<include>src/ext/sbi/formats/LocaleUtils-min.js</include>
@@ -247,7 +247,7 @@
 								</aggregation>
 								<aggregation>
 									<inputDir>${minimized-dir}/js</inputDir>
-									<output>${basedir}/src/main/webapp/js/src/ext/sbi/sbi-all-ext311-${project.version}.js</output>
+									<output>${basedir}/src/main/webapp/js/src/ext/sbi-all-ext311-${project.version}.js</output>
 									<includes>
 										<include>src/ext/sbi/commons/Log-min.js</include>
 										<include>src/ext/sbi/commons/Format-min.js</include>
@@ -363,7 +363,7 @@
 								</aggregation>
 								<aggregation>
 									<inputDir>${minimized-dir}/js</inputDir>
-									<output>${basedir}/src/main/webapp/js/src/ext4/sbi/sbi-all-ext410-${project.version}.js</output>
+									<output>${basedir}/src/main/webapp/js/src/ext4/sbi-all-ext410-${project.version}.js</output>
 									<includes>
 										<include>src/ext/sbi/formats/LocaleUtils-min.js</include>
 										<include>src/ext/sbi/exception/ExceptionHandler-min.js</include>
