@@ -19,6 +19,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -100,9 +101,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini
- *          (monica.franceschini@eng.it)
- * 
+ * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
+ *
  */
 @Path("/selfservicedataset")
 public class SelfServiceDataSetCRUD {
@@ -133,9 +133,9 @@ public class SelfServiceDataSetCRUD {
 			String showOnlyOwner = req.getParameter("showOnlyOwner");
 			if (!isTechDsMngr) {
 				if (showOnlyOwner != null && !showOnlyOwner.equalsIgnoreCase("true")) {
-					dataSets = dataSetDao.loadDatasetOwnedAndShared(profile.getUserUniqueIdentifier().toString());
+					dataSets = dataSetDao.loadDatasetOwnedAndShared(((UserProfile) profile).getUserId().toString());
 				} else {
-					dataSets = dataSetDao.loadUserDataSets(profile.getUserUniqueIdentifier().toString());
+					dataSets = dataSetDao.loadUserDataSets(((UserProfile) profile).getUserId().toString());
 				}
 			}
 
@@ -205,7 +205,8 @@ public class SelfServiceDataSetCRUD {
 			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
 			if (typeDocWizard == null) {
 				actions.put(detailAction);
-				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))) {
+				// if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))) {
+				if (((UserProfile) profile).getUserId().toString().equals(datasetJSON.get("owner"))) {
 					// the delete action is able only for private dataset
 					actions.put(deleteAction);
 				}
@@ -431,8 +432,7 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	/*
-	 * Change the scope of the dataset. If the dataset is private change it to
-	 * public (SHARE) If the dataset is public change it to private (UNSHARE)
+	 * Change the scope of the dataset. If the dataset is private change it to public (SHARE) If the dataset is public change it to private (UNSHARE)
 	 */
 	@POST
 	@Path("/share")
@@ -1356,10 +1356,8 @@ public class SelfServiceDataSetCRUD {
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to
-			 * the specified destination file. The directory holding the
-			 * destination file is created if it does not exist. If the
-			 * destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
