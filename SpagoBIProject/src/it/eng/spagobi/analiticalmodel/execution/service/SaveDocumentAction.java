@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
@@ -194,7 +194,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				LowFunctionality userFunc = null;
 				try {
 					ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+					// userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + ((UserProfile) profile).getUserId().toString(), false);
 				} catch (Exception e) {
 					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
 					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
@@ -794,10 +795,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	}
 
 	/**
-	 * 
-	 * @return a JSON object representing the input request to the service with
-	 *         the following structure:
-	 * 
+	 *
+	 * @return a JSON object representing the input request to the service with the following structure:
+	 *
 	 *         <code>
 	 * 		{
 	 * 			action: STRING
@@ -815,16 +815,16 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	 * 				type: STRING
 	 * 				engineId: NUMBER
 	 * 				metadata: [JSON, ..., JSON]
-	 * 			}		
+	 * 			}
 	 * 			, customData: {
 	 * 				query: [STRING]
 	 * 				workseheet: [JSON]
 	 * 				smartfilter:  [JSON]
 	 * 			}
 	 * 			, folders: [STRING, ... , STRING]
-	 * 		}	
+	 * 		}
 	 * 	</code>
-	 * 
+	 *
 	 **/
 
 	public JSONObject parseRequest() {
@@ -990,7 +990,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			LowFunctionality userFunc = null;
 			try {
 				ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+				// userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + ((UserProfile) profile).getUserId().toString(), false);
 			} catch (Exception e) {
 				logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
 				throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
