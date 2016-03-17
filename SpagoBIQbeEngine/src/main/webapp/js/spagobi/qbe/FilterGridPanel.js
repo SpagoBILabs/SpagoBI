@@ -260,7 +260,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 			},
 			scope: this
 		});
-			}
+	}
 
 	, deleteFilter: function(record) {
 		Ext.Msg.show({

@@ -48,7 +48,8 @@ Sbi.widgets.FilterLookupPopupWindow = function(config) {
 			width       : 580,
 			height      : 300,
 			closeAction :'hide',
-			plain       : true
+			plain       : true,
+			modal		: true
 	};
 
 	if (Sbi.settings && Sbi.settings.widgets  && Sbi.settings.widgets.filterLookupPopupWindow) {
