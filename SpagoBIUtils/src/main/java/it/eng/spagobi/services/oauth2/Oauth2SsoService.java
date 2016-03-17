@@ -13,7 +13,6 @@ import it.eng.spagobi.security.DefaultCipher;
 import it.eng.spagobi.services.common.AbstractSsoServiceInterface;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIDefaultCipherException;
 
 import java.io.IOException;
 
@@ -32,35 +31,11 @@ public class Oauth2SsoService extends AbstractSsoServiceInterface implements Sso
 	
 	@Override
 	public void validateTicket(String ticket, String userId) throws SecurityException {
-		/*logger.debug("Start ticket validation");
-		initCipher();
-		if (df == null){
-			logger.error("Fail ticket validation");
-			throw new SpagoBIDefaultCipherException("Fail initialization Default Cipher");
-		}
-		String encryptedUserID = df.encrypt(userId);
-		if (!encryptedUserID.equals(ticket)){
-			logger.error("Ticket is not valid");
-			throw new SecurityException("Fail ticket validation");
-		}
 		
-		logger.debug("End ticket validation");*/
 	} 
 	 
 	public String readTicket(HttpSession session) throws IOException {
-		/*logger.debug("Start reading ticket");
-		initCipher();
-		if (df == null){
-			logger.error("Fail ticket validation");
-			throw new SpagoBIDefaultCipherException("Fail initialization Default Cipher");
-		}
 		
-		String encryptedTicket = (String) session.getAttribute("access_token");
-		String ticket = df.decrypt(encryptedTicket);
-		
-		logger.debug("End reading ticket");
-		
-		return ticket;*/
 		return "NA";
 	}
 
