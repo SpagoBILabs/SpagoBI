@@ -45,7 +45,8 @@ Ext.define('Sbi.olap.control.Controller', {
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "member",
 			subPath: "drilldown",
-			pathParams: [axis, position, member, positionUniqueName, uniqueName]
+			pathParams: [axis, position, member],
+			params:{memberUniqueName:uniqueName, positionUniqueName:positionUniqueName}
 		});
 
 		service.callService(this);
@@ -56,7 +57,8 @@ Ext.define('Sbi.olap.control.Controller', {
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "member",
 			subPath: "drillup",
-			pathParams: [axis, position, member, positionUniqueName, uniqueName]
+			pathParams: [axis, position, member],
+			params:{memberUniqueName:uniqueName, positionUniqueName:positionUniqueName}
 		});
 
 		service.callService(this);

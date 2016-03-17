@@ -8,6 +8,7 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
@@ -34,15 +35,16 @@ import com.eyeq.pivot4j.transform.DrillExpandPosition;
 import com.eyeq.pivot4j.transform.DrillReplace;
 import com.eyeq.pivot4j.ui.command.DrillDownCommand;
 
+
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
 
 	@GET
-	@Path("/drilldown/{axis}/{position}/{member}/{positionUniqueName}/{memberUniqueName}")
+	@Path("/drilldown/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
 	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
-			@PathParam("member") int memberPos, @PathParam("positionUniqueName") String positionUniqueName,
-			@PathParam("memberUniqueName") String memberUniqueName) {
+			@PathParam("member") int memberPos, @QueryParam("positionUniqueName") String positionUniqueName,
+			@QueryParam("memberUniqueName") String memberUniqueName) {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
@@ -93,11 +95,11 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	}
 
 	@GET
-	@Path("/drillup/{axis}/{position}/{member}/{positionUniqueName}/{memberUniqueName}")
+	@Path("/drillup/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
 	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
-			@PathParam("member") int memberPos, @PathParam("positionUniqueName") String positionUniqueName,
-			@PathParam("memberUniqueName") String memberUniqueName) {
+			@PathParam("member") int memberPos, @QueryParam("positionUniqueName") String positionUniqueName,
+			@QueryParam("memberUniqueName") String memberUniqueName) {
 
 		List<Member> m = null;
 		Member m2 = null;

@@ -8,7 +8,6 @@
  * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  */
 package it.eng.spagobi.engines.whatif;
-
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -139,6 +138,12 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		modelConfig = new ModelConfig(pivotModel);
 		modelConfig.setScenario(template.getScenario());
 		modelConfig.setAliases(template.getAliases());
+		Map<String, String> map = template.getDefaultValues();
+
+		if (map != null) {
+			modelConfig.setSuppressEmpty(Boolean.valueOf(map.get(new String("BUTTON_HIDE_EMPTY"))));
+			modelConfig.setShowProperties(Boolean.valueOf(map.get(new String("BUTTON_SHOW_PROPERTIES"))));
+		}
 
 		// init artifact informations
 		if (!template.isStandAlone()) {
@@ -154,15 +159,17 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 			modelConfig.setLocker(locker);
 			logger.debug("Init the datatsource fro writing");
 			dataSourceForWriting = initDataSourceForWriting();
-			SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) pivotModel;
-			if (template.getCrossNavigation() != null) {
-				modelConfig.setCrossNavigation(template.getCrossNavigation());
-				sbiModel.setCrossNavigation(template.getCrossNavigation());
-			}
-			if (template.getTargetsClickable() != null) {
-				sbiModel.setTargetsClickable(template.getTargetsClickable());
-			}
 
+		}
+
+		SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) pivotModel;
+		if (template.getCrossNavigation() != null) {
+			modelConfig.setCrossNavigation(template.getCrossNavigation());
+			template.getCrossNavigation().setModelStatus(modelConfig.getStatus());
+			sbiModel.setCrossNavigation(template.getCrossNavigation());
+		}
+		if (template.getTargetsClickable() != null) {
+			sbiModel.setTargetsClickable(template.getTargetsClickable());
 		}
 
 		// init toolbar

@@ -261,6 +261,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			tooltip: LN('sbi.olap.toolbar.'+buttonLabel),
 			iconCls: buttonLabel,
 			enableToggle: true,
+			pressed: false,
 			label: buttonLabel,
 			handler: this.buttonHandlersMap[buttonLabel]
 		}, sharedConfig);
@@ -393,6 +394,12 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			firstExecution = true;
 			this.modelConfig = modelConfig;
 
+			var crossNavigationBtn = this.buttonsConfigContainer["BUTTON_CROSS_NAVIGATION"]; 			
+			if(crossNavigationBtn!= null && this.modelConfig.crossNavigation != null &&   this.modelConfig.crossNavigation.buttonClicked != null){
+				crossNavigationBtn.pressed =   this.modelConfig.crossNavigation.buttonClicked;
+			}
+
+			
 			// change configuration by marking press configurations depending on modelConfig
 			this.markPressedButtons();
 
