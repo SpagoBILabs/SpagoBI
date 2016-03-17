@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 /**
  * This class contain the specific code of CAS 
  */
-public class FakeSsoService implements SsoServiceInterface {
+public class FakeSsoService extends AbstractSsoServiceInterface implements SsoServiceInterface {
 
     static private Logger logger = Logger.getLogger(FakeSsoService.class);
     

@@ -51,7 +51,7 @@ public class SingletonConfig {
 	 *         SingletonConfig.getInstance().getConfigValue("home.banner");
 	 */
 	public synchronized String getConfigValue(String key) {
-		return cache.get(key);
+		return cache != null ? cache.get(key) : null;
 
 	}
 

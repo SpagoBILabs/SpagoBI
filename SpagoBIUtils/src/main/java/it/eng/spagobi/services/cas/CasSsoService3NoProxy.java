@@ -7,6 +7,7 @@ package it.eng.spagobi.services.cas;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.services.common.AbstractSsoServiceInterface;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
@@ -18,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.authentication.AuthenticationFilter;
 import org.jasig.cas.client.util.AbstractCasFilter;
@@ -31,7 +31,7 @@ import org.jasig.cas.client.validation.TicketValidationException;
 /**
  * This class contain the specific code of CAS 
  */
-public class CasSsoService3NoProxy implements SsoServiceInterface {
+public class CasSsoService3NoProxy extends AbstractSsoServiceInterface implements SsoServiceInterface {
 
     static private Logger logger = Logger.getLogger(CasSsoService3NoProxy.class);
     

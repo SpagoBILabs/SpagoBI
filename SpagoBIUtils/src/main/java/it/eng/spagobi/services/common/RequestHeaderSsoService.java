@@ -32,12 +32,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 
+
 import org.apache.log4j.Logger;
 
 /**
  * This class contain the specific code for ENEL(distribuzione) SSO
  */
-public class RequestHeaderSsoService implements SsoServiceInterface {
+public class RequestHeaderSsoService extends AbstractSsoServiceInterface implements SsoServiceInterface {
 
 	static private final String USER_IDENTIFIER_REQUEST_HEADER_NAME = "REMOTE_USER";
 	

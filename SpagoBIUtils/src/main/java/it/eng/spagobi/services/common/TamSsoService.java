@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 /**
  * This class contain the specific code for TAM
  */
-public class TamSsoService implements SsoServiceInterface {
+public class TamSsoService extends AbstractSsoServiceInterface implements SsoServiceInterface {
 
     static private Logger logger = Logger.getLogger(TamSsoService.class);
     

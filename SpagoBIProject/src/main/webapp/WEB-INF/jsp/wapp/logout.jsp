@@ -10,6 +10,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.spagobi.services.common.SsoServiceFactory"%>
+<%@page import="it.eng.spagobi.services.common.SsoServiceInterface"%>
+
 
 <iframe id='invalidSessionJasper'
                  name='invalidSessionJasper'
@@ -93,9 +96,8 @@ if(session.getAttribute(SpagoBIConstants.BACK_URL)!=null){
 	backUrlB=true;
 }
 
-
-session.invalidate();
-
+SsoServiceInterface userProxy = SsoServiceFactory.createProxyService();
+userProxy.invalidateSession(session);
 
 //Check if SSO is active
 
@@ -103,7 +105,7 @@ String active = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE
 String strUsePublicUser = SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.USE_PUBLIC_USER);
 Boolean usePublicUser = (strUsePublicUser == null)?false:Boolean.valueOf(strUsePublicUser);
 
-if ((active == null || active.equalsIgnoreCase("false")) && !backUrlB) {
+if ((active == null || !active.equalsIgnoreCase("true")) && !backUrlB) {
 	String context = request.getContextPath();
 	if (usePublicUser){
 		context += "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";
@@ -112,13 +114,13 @@ if ((active == null || active.equalsIgnoreCase("false")) && !backUrlB) {
 		redirectUrl = context;
 	}
 }
-else if (active != null && active.equalsIgnoreCase("true")) {
-
+else if (active != null && active.equalsIgnoreCase("true")) {	
 	String urlLogout =  SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL");
 	if(backUrlB==true){
 		redirectUrl = backUrl; 
 	}
 	redirectUrl = urlLogout;
+	
 
 } %>
  

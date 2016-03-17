@@ -62,4 +62,13 @@ public interface SsoServiceInterface {
 	 * @return
 	 */
 	String readUserIdentifier(PortletSession session);
+	
+	/**
+	 * 
+	 * @param session
+	 *            Http Session
+	 * @return
+	 * @throws IllegalStateException 
+	 */
+	void invalidateSession(HttpSession session) throws IllegalStateException;
 }

@@ -5,8 +5,15 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.services.oauth2;
 
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.security.DefaultCipher;
+import it.eng.spagobi.services.common.AbstractSsoServiceInterface;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIDefaultCipherException;
 
 import java.io.IOException;
 
@@ -14,13 +21,46 @@ import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-public class Oauth2SsoService implements SsoServiceInterface {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class Oauth2SsoService extends AbstractSsoServiceInterface implements SsoServiceInterface {
+
+	private static final Logger logger = LoggerFactory.getLogger(Oauth2SsoService.class);
+	
+	private static DefaultCipher df = null;
+	
+	@Override
 	public void validateTicket(String ticket, String userId) throws SecurityException {
-		// TODO Auto-generated method stub
-	}
-
+		/*logger.debug("Start ticket validation");
+		initCipher();
+		if (df == null){
+			logger.error("Fail ticket validation");
+			throw new SpagoBIDefaultCipherException("Fail initialization Default Cipher");
+		}
+		String encryptedUserID = df.encrypt(userId);
+		if (!encryptedUserID.equals(ticket)){
+			logger.error("Ticket is not valid");
+			throw new SecurityException("Fail ticket validation");
+		}
+		
+		logger.debug("End ticket validation");*/
+	} 
+	 
 	public String readTicket(HttpSession session) throws IOException {
+		/*logger.debug("Start reading ticket");
+		initCipher();
+		if (df == null){
+			logger.error("Fail ticket validation");
+			throw new SpagoBIDefaultCipherException("Fail initialization Default Cipher");
+		}
+		
+		String encryptedTicket = (String) session.getAttribute("access_token");
+		String ticket = df.decrypt(encryptedTicket);
+		
+		logger.debug("End reading ticket");
+		
+		return ticket;*/
 		return "NA";
 	}
 
@@ -42,4 +82,20 @@ public class Oauth2SsoService implements SsoServiceInterface {
 		return null;
 	}
 
+
+	public void initCipher() {
+		/*if (df == null){
+			String jndiBean = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_ENCRIPTION_KEY");
+			if (jndiBean != null){
+				String key = SpagoBIUtilities.readJndiResource(jndiBean);
+				if (key != null && key.length()>0){
+					df = new DefaultCipher(key);
+				}
+			}
+		}
+		if (df == null){
+			df = new DefaultCipher();
+		}*/
+	}
+	
 }
