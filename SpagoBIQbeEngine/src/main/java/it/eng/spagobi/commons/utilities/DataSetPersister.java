@@ -7,17 +7,19 @@ package it.eng.spagobi.commons.utilities;
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.tools.dataset.ckan.CKANClient;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.json.JSONArray;
 
 /**
@@ -38,8 +40,8 @@ public class DataSetPersister {
 
 		logger.debug("Call service URL " + serverUrl);
 
-		ApacheHttpClient4Executor httpExecutor = new ApacheHttpClient4Executor(CKANClient.getHttpClient());
-		ClientRequest request = new ClientRequest(serviceUrl, httpExecutor);
+		Map<String, String> requestHeaders = new HashMap<String, String>();
+		List<NameValuePair> queryParams = new ArrayList<NameValuePair>(2);
 
 		JSONArray array = new JSONArray();
 		for (int i = 0; i < labels.size(); i++) {
@@ -47,14 +49,14 @@ public class DataSetPersister {
 			array.put(lab);
 		}
 
-		request.queryParameter("labels", array);
-		request.queryParameter("user_id", userId);
+		queryParams.add(new NameValuePair("labels", array.toString()));
+		queryParams.add(new NameValuePair("user_id", userId));
 
 		logger.debug("Call persist service in post");
-		ClientResponse response = request.get();
+		Response response = RestUtilities.makeRequest(RestUtilities.HttpMethod.Get, serviceUrl, requestHeaders, null, queryParams);
 
-		if (response.getStatus() >= 400) {
-			throw new RuntimeException("Request to persist datasetss failed with HTTP error code : " + response.getStatus());
+		if (response.getStatusCode() >= 400) {
+			throw new RuntimeException("Request to persist datasetss failed with HTTP error code : " + response.getStatusCode());
 		}
 
 		logger.debug("OUT");
