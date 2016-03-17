@@ -7,8 +7,11 @@
 package it.eng.spagobi.engines.whatif.crossnavigation;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.whatif.template.WhatIfXMLTemplateParser;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 
 public class SpagoBICrossNavigationConfig {

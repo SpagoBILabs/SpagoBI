@@ -8,7 +8,6 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
@@ -21,6 +20,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
@@ -34,7 +34,6 @@ import com.eyeq.pivot4j.transform.DrillExpandMember;
 import com.eyeq.pivot4j.transform.DrillExpandPosition;
 import com.eyeq.pivot4j.transform.DrillReplace;
 import com.eyeq.pivot4j.ui.command.DrillDownCommand;
-
 
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
