@@ -86,10 +86,11 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 				} else {
 					lowFunctionality = functDAO.loadLowFunctionalityByID(folderId, false);
 				}
-				
+			
 				if ((isFromMyAnalysis == true) && (deleteOnlyFromPersonalFolder == true)){
 					//for deleting only inside user personal folder
-					lowFunctionality = functDAO.loadLowFunctionalityByPath("/"+userProfile.getUserUniqueIdentifier(),false);
+//					lowFunctionality = functDAO.loadLowFunctionalityByPath("/"+userProfile.getUserUniqueIdentifier(),false);
+					lowFunctionality = functDAO.loadLowFunctionalityByPath("/" + userProfile.getUserId().toString(), false);
 					folderId = lowFunctionality.getId();
 				}
 				

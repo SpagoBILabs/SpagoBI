@@ -990,7 +990,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			LowFunctionality userFunc = null;
 			try {
 				ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+//				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + ((UserProfile) profile).getUserId().toString(), false);
 			} catch (Exception e) {
 				logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
 				throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);

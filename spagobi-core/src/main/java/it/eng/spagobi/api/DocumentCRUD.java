@@ -352,7 +352,8 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 			LowFunctionality userFunc = null;
 			try {
 				ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+//				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + ((UserProfile) profile).getUserId().toString(), false);
 			} catch (Exception e) {
 				logger.error("Error " + oper + "  the document.. Impossible to get the id of the personal folder for document " + ids, e);
 				throw new SpagoBIRuntimeException("Error " + oper + "  the document.. Impossible to get the id of the personal folder for document " + ids, e);
