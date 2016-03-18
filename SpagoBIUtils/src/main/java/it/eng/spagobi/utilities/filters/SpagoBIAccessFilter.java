@@ -149,6 +149,7 @@ public class SpagoBIAccessFilter implements Filter {
 				if (userId != null) {
 					try {
 						// this is not correct. profile in session can come also from a concurrent execution
+						ioManager.setInSession(SsoServiceInterface.USER_ID,userId);
 						profile = (IEngUserProfile) ioManager.getFromSession(IEngUserProfile.ENG_USER_PROFILE);
 						if (profile == null || !profile.getUserUniqueIdentifier().toString().equals(userId)) {
 							SecurityServiceProxy proxy = new SecurityServiceProxy(userId, ioManager.getSession());

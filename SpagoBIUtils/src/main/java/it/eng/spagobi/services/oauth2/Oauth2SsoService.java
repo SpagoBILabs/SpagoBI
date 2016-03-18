@@ -13,8 +13,10 @@ import it.eng.spagobi.security.DefaultCipher;
 import it.eng.spagobi.services.common.AbstractSsoServiceInterface;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIDefaultCipherException;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
@@ -31,12 +33,34 @@ public class Oauth2SsoService extends AbstractSsoServiceInterface implements Sso
 	
 	@Override
 	public void validateTicket(String ticket, String userId) throws SecurityException {
+		logger.debug("Start ticket validation");
+		initCipher();
+		if (df == null){
+			logger.error("Fail ticket validation");
+			throw new SpagoBIDefaultCipherException("Fail initialization Default Cipher");
+		}
+		String decryptedUserID = df.decrypt(ticket);
+		if (!decryptedUserID.equals(userId)){
+			logger.error("Ticket is not valid");
+			throw new SecurityException("Fail ticket validation");
+		}
 		
+		logger.debug("End ticket validation");
 	} 
 	 
 	public String readTicket(HttpSession session) throws IOException {
+		logger.debug("Start reading ticket");
+		initCipher();
+		if (df == null){
+			logger.error("Fail ticket validation");
+			throw new SpagoBIDefaultCipherException("Fail initialization Default Cipher");
+		}
+		String encryptedTicket = (String) session.getAttribute(SsoServiceInterface.USER_ID);
+		String ticket = df.encrypt(encryptedTicket);
 		
-		return "NA";
+		logger.debug("End reading ticket");
+		
+		return ticket;
 	}
 
 	public String readUserIdentifier(HttpServletRequest request) {
@@ -59,7 +83,7 @@ public class Oauth2SsoService extends AbstractSsoServiceInterface implements Sso
 
 
 	public void initCipher() {
-		/*if (df == null){
+		if (df == null){
 			String jndiBean = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_ENCRIPTION_KEY");
 			if (jndiBean != null){
 				String key = SpagoBIUtilities.readJndiResource(jndiBean);
@@ -70,7 +94,7 @@ public class Oauth2SsoService extends AbstractSsoServiceInterface implements Sso
 		}
 		if (df == null){
 			df = new DefaultCipher();
-		}*/
+		}
 	}
 	
 }
