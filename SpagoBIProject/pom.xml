@@ -114,8 +114,8 @@
 								<exclude>**/extjs/**/*.js</exclude>
 								<exclude>**/js/kpi/*.js</exclude>
 								<exclude>**/prototype/**/*.js</exclude>
-								<exclude>**/lib/**/*.js</exclude>
-								<!--<exclude>**/lib/d3/*.js</exclude>
+								<!--  <exclude>**/lib/**/*.js</exclude>-->
+								<exclude>**/lib/d3/*.js</exclude>
 								<exclude>**/lib/ext-2.0.1/*.js</exclude>
 								<exclude>**/lib/ext-2.0.1/adapter/**/*.js</exclude>
 								<exclude>**/lib/ext-2.0.1/ux/ext-2.2.1-extensions/RadioGroup.js</exclude>
@@ -131,15 +131,15 @@
 								<exclude>**/lib/jquery-1.5.1/*.js</exclude>
 								<exclude>**/lib/messageResource/*.js</exclude>
 								<exclude>**/lib/overrides-ext-4/*.js</exclude>
-								<exclude>**/lib/persist-0.1.0/*.js</exclude>-->
+								<exclude>**/lib/persist-0.1.0/*.js</exclude>
 								<exclude>**/src/ext/sbi/formats/de.js</exclude>
 								<exclude>**/src/ext/sbi/formats/en.js</exclude>
 								<exclude>**/src/ext/sbi/formats/es.js</exclude>
 								<exclude>**/src/ext/sbi/formats/fr.js</exclude>
 								<exclude>**/src/ext/sbi/formats/it.js</exclude>
 								<exclude>**/src/ext4/extjs4classstub.js</exclude>
-								<!--  <exclude>**/lib/angular/**/*.js</exclude>
-								<exclude>**/lib/bootstrap/**/*.js</exclude>-->
+								<exclude>**/lib/angular/**/*.js</exclude>
+								<exclude>**/lib/bootstrap/**/*.js</exclude>
 								<!-- js with errors -->
 								<exclude>**/src/angular_1.4/**/*.js</exclude>
 							</excludes>
@@ -173,11 +173,11 @@
 										<include>src/ext/sbi/widgets/FilteringToolbar-min.js</include>
 										<include>src/ext/sbi/widgets/PagingToolbar-min.js</include>
 										<include>src/ext/sbi/widgets/LookupField-min.js</include>
-									<!-- 	<include>lib/ext-2.0.1/ux/ext-2.2.1-extensions/CheckboxGroup-min.js</include>
+										<include>lib/ext-2.0.1/ux/ext-2.2.1-extensions/CheckboxGroup-min.js</include>
 										<include>lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider-min.js</include>
 										<include>lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderField-min.js</include>
 										<include>lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderTip-min.js</include>
-										<include>lib/ext-2.0.1/ux/ext-2.0.1-extensions/SliderField2-min.js</include> -->
+										<include>lib/ext-2.0.1/ux/ext-2.0.1-extensions/SliderField2-min.js</include>
 										<include>src/ext/sbi/widgets/SliderField-min.js</include>
 										<include>src/ext/sbi/widgets/CheckboxField-min.js</include>
 										<include>src/ext/sbi/widgets/RadioField-min.js</include>
@@ -207,9 +207,9 @@
 										<include>src/ext/sbi/execution/ExecutionPanel-min.js</include>
 										<include>src/ext/sbi/browser/DocumentsBrowser-min.js</include>
 										<include>src/ext/sbi/browser/DocBrowserContainer-min.js</include>
-										<!-- <include>lib/ext-2.0.1/ux/miframe/miframe-min-min.js</include>
+										<include>lib/ext-2.0.1/ux/miframe/miframe-min-min.js</include>
 										<include>lib/ext-2.0.1/ux/grid/Ext.grid.ButtonColumn-min.js</include>
-										<include>lib/ext-2.0.1/ux/andrie/Select-min.js</include> -->
+										<include>lib/ext-2.0.1/ux/andrie/Select-min.js</include>
 										<include>src/ext/sbi/decorator/ComponentBuddy-min.js</include>
 										<include>src/ext/sbi/execution/toolbar/SendToWindow-min.js</include>
 										<include>src/ext/sbi/execution/toolbar/SaveRememberMeWindow-min.js</include>
@@ -235,7 +235,7 @@
 										<include>src/ext/sbi/exception/ExceptionHandler-min.js</include>
 										<include>src/ext/sbi/service/ServiceRegistry-min.js</include>
 										<include>src/ext/sbi/commons/Session-min.js</include>
-										<!--  <include>lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn-min.js</include>
+										 <include>lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn-min.js</include>
 										<include>lib/ext-3.1.1/ux/grid/Ext.ux.ColorField-min.js</include>
 										<include>lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor-min.js</include>
 										<include>lib/ext-3.1.1/ux/form/MultiSelect-min.js</include>
@@ -246,7 +246,7 @@
 										<include>lib/ext-3.1.1/ux/treegrid/TreeGridColumns-min.js</include>
 										<include>lib/ext-3.1.1/ux/treegrid/TreeGrid-min.js</include>
 										<include>lib/ext-3.1.1/ux/imageeditor/ImageEditor-min.js</include>
-										<include>lib/ext-3.1.1/ux/imageeditor/PanPanel-min.js</include>-->
+										<include>lib/ext-3.1.1/ux/imageeditor/PanPanel-min.js</include>
 										<include>src/ext/sbi/widgets/KpiTreeOuTreePanel-min.js</include>
 										<include>src/ext/sbi/widgets/FilteringToolbar-min.js</include>
 										<include>src/ext/sbi/widgets/PagingToolbar-min.js</include>
