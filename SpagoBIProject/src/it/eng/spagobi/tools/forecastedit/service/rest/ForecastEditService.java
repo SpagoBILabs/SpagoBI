@@ -63,6 +63,7 @@ public class ForecastEditService {
 				String hierCode = req.getParameter("par_hier_cd");
 				String accountCode = req.getParameter("par_account_cd");
 				String accountName = req.getParameter("par_account_nm");
+				String company = req.getParameter("par_company");
 
 				Enumeration paramNames = req.getParameterNames();
 				Map<String, ForecastValue> values = new HashMap<String, ForecastValue>();
@@ -118,7 +119,7 @@ public class ForecastEditService {
 
 				// 2- Scan map and insert values on database
 				for (Map.Entry<String, ForecastValue> entry : values.entrySet()) {
-					persistValues(entry, accountName, accountCode, hierCode, year, closureCode, userId);
+					persistValues(entry, accountName, accountCode, hierCode, year, closureCode, userId, company);
 				}
 
 				return "<b>Values Updated</b>";
@@ -139,7 +140,7 @@ public class ForecastEditService {
 	}
 
 	private void persistValues(Map.Entry<String, ForecastValue> entry, String accountName, String accountCode, String hierCode, String year,
-			String closureCode, String userId) {
+			String closureCode, String userId, String company) {
 
 		try {
 			ForecastValue forecastValue = entry.getValue();
@@ -151,8 +152,8 @@ public class ForecastEditService {
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel("DWH BIENG");
 			Connection connection = dataSource.getConnection();
-			String insertQuery = "INSERT INTO SUPP_REP0_TRIS (ACCOUNT_NM, ACCOUNT_CD, HIER_CD, YEAR, CLOSURE_CD, INSERT_USER, CONS_SEGMENT_SOURCE, CONS_SEGMENT_TARGET, VAR_ABS, VAR_PERC ) "
-					+ "VALUES (?,?,?,?,?,?,?,?,?,?)";
+			String insertQuery = "INSERT INTO SUPP_REP0_TRIS (ACCOUNT_NM, ACCOUNT_CD, HIER_CD, YEAR, CLOSURE_CD, INSERT_USER, CONS_SEGMENT_SOURCE, CONS_SEGMENT_TARGET, VAR_ABS, VAR_PERC, COMPANY ) "
+					+ "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
 
 			preparedStatement.setString(1, accountName);
@@ -165,6 +166,7 @@ public class ForecastEditService {
 			preparedStatement.setString(8, target);
 			preparedStatement.setDouble(9, valAbs);
 			preparedStatement.setDouble(10, valPerc);
+			preparedStatement.setString(11, company);
 
 			preparedStatement.executeUpdate();
 			preparedStatement.close();
