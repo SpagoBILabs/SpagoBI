@@ -313,10 +313,10 @@ ${enable.cas.start} END-CAS -->
 		<url-pattern>/GetChart</url-pattern>
 	</servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>MDXQueryServlet</servlet-name>
-		<url-pattern>/mdxquery</url-pattern>
-	</servlet-mapping>
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>MDXQueryServlet</servlet-name> -->
+<!-- 		<url-pattern>/mdxquery</url-pattern> -->
+<!-- 	</servlet-mapping> -->
 
 	<servlet-mapping>
 		<servlet-name>MondrianXmlaServlet</servlet-name>
