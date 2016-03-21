@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+<wb-module deploy-name="SpagoBICockpitEngine">
+        <wb-resource deploy-path="/WEB-INF/web.xml" source-path="/src/main/webapp/WEB-INF/web.xml"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <dependent-module archiveName="QbeCore-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/QbeCore/QbeCore">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="SpagoBIUtils-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="SpagoBIUtilsJSON-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtilsJSON/SpagoBIUtilsJSON">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="SpagoBIDAO-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIDAO/SpagoBIDAO">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+<property name="java-output-path"/>
+        <property name="context-root" value="SpagoBICockpitEngine"/>
+</wb-module>
+</project-modules>

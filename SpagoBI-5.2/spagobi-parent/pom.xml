@@ -1,0 +1,854 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>it.eng.spagobi</groupId>
+	<artifactId>spagobi-parent</artifactId>
+	<version>5.2.0</version>
+	<packaging>pom</packaging>
+
+	<name>${project.groupId}:${project.artifactId}</name>
+
+	<repositories>
+		<repository>
+			<id>spagobi-releases</id>
+			<url>https://raw.github.com/SpagoBILabs/SpagoBI/mvn-repo/releases</url>
+		</repository>
+	</repositories>
+
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<minimized-dir>${project.build.directory}/${project.artifactId}/minimized</minimized-dir>
+		
+		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
+		<skipTests>true</skipTests>
+
+		<!-- For eclipse plugin -->
+		<m2e.jpa.activation>false</m2e.jpa.activation>
+		<m2e.jsf.activation>false</m2e.jsf.activation>
+		<m2e.jaxrs.activation>false</m2e.jaxrs.activation>
+
+		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
+		<js.version>5.2.0</js.version>
+	</properties>
+
+	<modules>
+ 		<module>../cas</module>
+
+		<module>../QbeCore</module>
+		<module>../SpagoBIDAO</module>
+		<module>../SpagoBIUtils</module>
+		<module>../SpagoBIUtilsJSON</module>
+		<module>../spagobi-commons-core</module>
+		<module>../spagobi-metamodel-core</module>
+		<module>../spagobi-metamodel-utils</module>
+		<module>../spagobi-core</module>
+ 		<module>../spagobi.birt.oda</module>  
+
+		<module>../SpagoBIOAuth2SecurityProvider</module>
+		<module>../SpagoBILdapSecurityProvider</module>
+		<module>../SpagoBILiferaySecurityProvider</module> 
+
+		<module>../SpagoBIProject</module>
+ 		<module>../SpagoBICockpitEngine</module> 
+		<module>../SpagoBIQbeEngine</module>
+ 		<module>../SpagoBIAccessibilityEngine</module> 
+		<module>../SpagoBIBirtReportEngine</module> 
+ 		<module>../SpagoBIChartEngine</module> 
+ 		<module>../SpagoBICommonJEngine</module> 
+ 		<module>../SpagoBIConsoleEngine</module> 
+		<module>../SpagoBIDataMiningEngine</module> 
+ 		<module>../SpagoBIGeoEngine</module> 
+ 		<module>../SpagoBIGeoReportEngine</module> 
+		<module>../SpagoBIJasperReportEngine</module> 
+ 		<module>../SpagoBIJPivotEngine</module> 
+ 		<module>../SpagoBIMobileEngine</module> 
+ 		<module>../SpagoBINetworkEngine</module>
+ 		<module>../SpagoBISocialAnalysis</module>
+ 		<module>../SpagoBITalendEngine</module>
+		<module>../SpagoBIWhatIfEngine</module>
+	</modules>
+
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.6</version>
+
+					<configuration>
+
+						<archive>
+							<manifest>
+								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							</manifest>
+							<manifestEntries>
+								<Built-By>SpagoBI Labs</Built-By>
+							</manifestEntries>
+						</archive>
+					</configuration>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.6</version>
+
+					<!-- The versioon suffix from .war is removed -->
+					<configuration>
+						<warName>${project.artifactId}</warName>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.19.1</version>
+					<configuration>
+						<skipTests>${skipTests}</skipTests>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<profiles>
+		
+		<profile>
+			<id>postgresql</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+
+						<executions>
+							<!-- replace hibernate dialect -->
+							<execution>
+								<id>hibernate-dialect</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/jbpm.hibernate.cfg.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>MySQLDialect</token>
+									<value>PostgreSQLDialect</value>
+								</configuration>
+							</execution>
+							
+							<!-- replace quartz delegate class-->
+							<execution>
+								<id>quartz-driverDelegate</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/quartz.properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>StdJDBCDelegate</token>
+									<value>PostgreSQLDelegate</value>
+								</configuration>
+							</execution>
+							
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>hsqldb</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+
+						<executions>
+							<!-- replace hibernate dialect -->
+							<execution>
+								<id>hibernate-dialect</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/jbpm.hibernate.cfg.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>MySQLDialect</token>
+									<value>HSQLDialect</value>
+								</configuration>
+							</execution>
+							
+							<!-- replace quartz delegate class-->
+							<execution>
+								<id>quartz-driverDelegate</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/quartz.properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>StdJDBCDelegate</token>
+									<value>HSQLDBDelegate</value>
+								</configuration>
+							</execution>
+							
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>tomcat</id>
+			<properties>
+				<!-- To specify another folder use your settings.xml -->
+				<tomcat.home>/home/spagobi/apache-tomcat-7.0.50/</tomcat.home>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+
+						<configuration>
+							<outputDirectory>${tomcat.home}/webapps</outputDirectory>
+						</configuration>
+					</plugin>
+
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.4.1</version>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${tomcat.home}/webapps</directory>
+									<includes>
+										<include>${project.artifactId}.war</include>
+										<include>${project.artifactId}/**</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>cas-enabled</id>
+			<properties>
+				<enable.cas.start>&lt;!--</enable.cas.start>
+				<enable.cas.end>--&gt;</enable.cas.end>
+			</properties>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+
+						<configuration>
+							<webResources>
+								<resource>
+									<filtering>true</filtering>
+									<directory>src/main/webapp</directory>
+									<includes>
+										<include>**/web.xml</include>
+									</includes>
+								</resource>
+							</webResources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>create-documentation</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>attach-sources</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>create-licenses-report</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-site-plugin</artifactId>
+						<version>3.3</version>
+						<configuration>
+							<reportPlugins>
+								<plugin>
+									<groupId>org.apache.maven.plugins</groupId>
+									<artifactId>maven-project-info-reports-plugin</artifactId>
+									<version>2.4</version>
+									<reports>
+										<report>dependencies</report>
+										<report>license</report>
+									</reports>
+								</plugin>
+							</reportPlugins>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>jbossEAP7</id>
+			<properties>
+				<!-- To specify another folder use your settings.xml -->
+				<jboss.home>D:/Program Files/jboss-eap-7.0</jboss.home>
+			</properties>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.4.1</version>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${jboss.home}/standalone/deployments</directory>
+									<includes>
+										<include>${project.artifactId}.war</include>
+										<include>${project.artifactId}.war.deployed</include>
+										<include>${project.artifactId}.war.failed</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<!-- TODO: remove depedency instead of directly libs -->
+							<packagingExcludes>
+								%regex[WEB-INF/tlds/.*portlet\.tld],
+								%regex[WEB-INF/tlds/*liferay-portlet\.tld"],
+								<!--
+								%regex[WEB-INF/lib/httpclient-4.*],
+								%regex[WEB-INF/lib/httpcore-4.*],
+								-->
+								%regex[WEB-INF/lib/jaxrs-api-*],
+								%regex[WEB-INF/lib/resteasy-multipart-provider-*],
+								%regex[WEB-INF/lib/resteasy-jaxrs-*],
+								%regex[WEB-INF/lib/resteasy-jaxb-provider-*],
+								<!-- 
+								%regex[WEB-INF/lib/resteasy-servlet-initializer-3.*]
+								 -->
+							</packagingExcludes>
+							<useCache>true</useCache>
+							<outputDirectory>${jboss.home}/standalone/deployments</outputDirectory>
+						</configuration>
+
+						<!-- Necessary for string replacing in web resources -->
+						<executions>
+							<execution>
+								<id>prepare-war</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>exploded</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+
+						<executions>
+							<!-- java:/comp/env to java: for jdbc jndi -->
+							<execution>
+								<id>jdnc-jndi</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/jbpm.hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/quartz.properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>java:/comp/env</token>
+									<value>java:</value>
+								</configuration>
+							</execution>
+
+							<!-- logs base folder -->
+							<execution>
+								<id>log</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/*properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<replacements>
+										<replacement>
+											<token>catalina.home</token>
+											<value>jboss.server.log.dir</value>
+										</replacement>
+										<replacement>
+											<token>catalina.base</token>
+											<value>jboss.server.log.dir</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+
+
+							<!-- configs engine jndi and work manager -->
+							<execution>
+								<id>configs-engine</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/configs.xml</include>
+										<include>${project.build.directory}/**/engine-config.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<replacements>
+										<replacement>
+											<token>java:/comp/env/wm/SpagoWorkManager</token>
+											<value>java:global/SpagoWorkManager</value>
+										</replacement>
+										<replacement>
+											<token>java://comp/env</token>
+											<value>java:/urls</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+
+							<!-- context and web workmanager -->
+							<execution>
+								<id>context-web</id>
+
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/context.xml</include>
+										<include>${project.build.directory}/**/web.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<quiet>false</quiet>
+									<replacements>
+										<replacement>
+											<token>wm/SpagoWorkManager</token>
+											<value>SpagoWorkManager</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+
+							<!-- web workmanager jndi ref -->
+							<execution>
+								<id>web-spagowork</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/web.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<replacements>
+										<replacement>
+											<token>&lt;res-ref-name&gt;SpagoWorkManager&lt;/res-ref-name&gt;</token>
+											<value>&lt;res-ref-name&gt;SpagoWorkManager&lt;/res-ref-name&gt;
+												&lt;jndi-name&gt;java:global/SpagoWorkManager&lt;/jndi-name&gt;</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+			
+		<profile>
+			<id>wildfly</id>
+			<properties>
+				<!-- To specify another folder use your settings.xml -->
+				<wildfly.home>D:/Program Files/wildfly</wildfly.home>
+			</properties>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.4.1</version>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${wildfly.home}/standalone/deployments</directory>
+									<includes>
+										<include>${project.artifactId}.war</include>
+										<include>${project.artifactId}.war.deployed</include>
+										<include>${project.artifactId}.war.failed</include>
+									</includes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<!-- TODO: remove depedency instead of directly libs -->
+							<packagingExcludes>%regex[WEB-INF/tlds/.*portlet\.tld],
+								%regex[WEB-INF/lib/async-http-servlet.*],
+								<!--
+								%regex[WEB-INF/lib/httpclient-4.*],
+								%regex[WEB-INF/lib/httpcore-4.*],
+								-->
+								%regex[WEB-INF/lib/jaxrs-api-3.*],
+								%regex[WEB-INF/lib/resteasy-jaxrs-3.*],
+								%regex[WEB-INF/lib/resteasy-servlet-initializer-3.*]
+							</packagingExcludes>
+							<useCache>true</useCache>
+							<outputDirectory>${wildfly.home}/standalone/deployments</outputDirectory>
+						</configuration>
+
+						<!-- Necessary for string replacing in web resources -->
+						<executions>
+							<execution>
+								<id>prepare-war</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>exploded</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+
+						<executions>
+							<!-- java:/comp/env to java: for jdbc jndi -->
+							<execution>
+								<id>jdnc-jndi</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/jbpm.hibernate.cfg.xml</include>
+										<include>${project.build.directory}/**/quartz.properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<token>java:/comp/env</token>
+									<value>java:</value>
+								</configuration>
+							</execution>
+
+							<!-- logs base folder -->
+							<execution>
+								<id>log</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/*properties</include>
+									</includes>
+
+									<regex>false</regex>
+									<replacements>
+										<replacement>
+											<token>catalina.home</token>
+											<value>jboss.server.log.dir</value>
+										</replacement>
+										<replacement>
+											<token>catalina.base</token>
+											<value>jboss.server.log.dir</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+
+
+							<!-- configs engine jndi and work manager -->
+							<execution>
+								<id>configs-engine</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/configs.xml</include>
+										<include>${project.build.directory}/**/engine-config.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<replacements>
+										<replacement>
+											<token>java:/comp/env/wm/SpagoWorkManager</token>
+											<value>java:global/SpagoWorkManager</value>
+										</replacement>
+										<replacement>
+											<token>java://comp/env</token>
+											<value>java:/urls</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+
+							<!-- context and web workmanager -->
+							<execution>
+								<id>context-web</id>
+
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/context.xml</include>
+										<include>${project.build.directory}/**/web.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<quiet>false</quiet>
+									<replacements>
+										<replacement>
+											<token>wm/SpagoWorkManager</token>
+											<value>SpagoWorkManager</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+
+							<!-- web workmanager jndi ref -->
+							<execution>
+								<id>web-spagowork</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/web.xml</include>
+									</includes>
+
+									<regex>false</regex>
+									<replacements>
+										<replacement>
+											<token>&lt;res-ref-name&gt;SpagoWorkManager&lt;/res-ref-name&gt;</token>
+											<value>&lt;res-ref-name&gt;SpagoWorkManager&lt;/res-ref-name&gt;
+												&lt;jndi-name&gt;java:global/SpagoWorkManager&lt;/jndi-name&gt;</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>production</id>
+			<properties>
+		    	<minimized-dir>${project.build.directory}/${project.artifactId}/minimized</minimized-dir>
+   			</properties>
+			<build>
+
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>net.alchim31.maven</groupId>
+							<artifactId>yuicompressor-maven-plugin</artifactId>
+							<version>1.5.1</version>
+							<executions>
+								<execution>
+									<id>default-compress-exec</id>
+									<goals>
+										<goal>compress</goal>
+									</goals>
+								</execution>
+							</executions>
+							<configuration>
+								<!-- Minify only, do not obfuscate -->
+								<nomunge>true</nomunge>
+								<jswarn>false</jswarn>
+								<statistics>false</statistics>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+
+				<plugins>
+					<plugin>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<useCache>true</useCache>
+						</configuration>
+
+						<!-- Necessary for string replacing in web resources -->
+						<executions>
+							<execution>
+								<id>prepare-war</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>exploded</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+						<executions>
+							<execution>
+								<id>include-minimized-js</id>
+
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/**/*jspf</include>
+									</includes>
+									<regex>false</regex>
+									<quiet>false</quiet>
+									<replacements>
+										<replacement>
+											<token><![CDATA[<!-- START-PRODUCTION]]></token>
+											<value><![CDATA[<!-- START-PRODUCTION -->]]></value>
+										</replacement>
+										<replacement>
+											<token><![CDATA[END-PRODUCTION -->]]></token>
+											<value><![CDATA[<!-- END-PRODUCTION -->]]></value>
+										</replacement>
+										<replacement>
+											<token><![CDATA[<!-- START-DEBUG -->]]></token>
+											<value><![CDATA[<!-- START-DEBUG]]></value>
+										</replacement>
+										<replacement>
+											<token><![CDATA[<!-- END-DEBUG -->]]></token>
+											<value><![CDATA[END-DEBUG -->]]></value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+
+</project>

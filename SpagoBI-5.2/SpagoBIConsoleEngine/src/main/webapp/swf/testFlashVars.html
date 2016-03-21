@@ -1,0 +1,20 @@
+<html>
+
+<head> 
+  <title>Flash ExternalInterface Laszlo Rotation Example</title>
+</head>
+
+<body>
+  <button onclick='document.getElementById("lzapp").setValue(180);'>Say Hello to Flash</button>
+  
+  <div id="application" style="background-color: #ffffff; height: 400;">
+  
+ <embed width="400" height="300" align="center"
+         pluginspage="http://www.macromedia.com/go/getflashplayer" swliveconnect="true"
+         allowscriptaccess="sameDomain" flashvars="myargs=XXXXXEOM"
+         name="lzapp" bgcolor="#ffffff" quality="high"
+         type="application/x-shockwave-flash"
+         src="testFlashVars.swf" id="lzapp"/>
+  </div>
+</body>
+</html>

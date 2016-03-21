@@ -1,0 +1,552 @@
+<canvas debug="false" width="100%" height="100%"> 
+
+
+  <dataset type="http" name="sourceDataSet" src=""/>  
+
+
+<script>
+
+	var appHeight = typeof(global.paramHeight)!="undefined" ? parseInt(global.paramHeight) : 500;
+
+	var appWidth = typeof(global.paramWidth)!="undefined" ? parseInt(global.paramWidth) : 500;	
+
+	var xValueAttributeName = typeof(global.xColName)!="undefined" ? global.xColName : "xLabel";
+
+	var yValueAttributeName = typeof(global.valsColName)!="undefined" ? global.valsColName : "line1";
+
+      	var dataurlParam = typeof(global.dataurl)!="undefined" ? global.dataurl : "http://localhost:8080/openlaszlo/OpenLaszloEngineDash";
+
+	var minY = typeof(global.minYValue)!="undefined" ? parseInt(global.minYValue) : 0;	
+
+	var maxY = typeof(global.maxYValue)!="undefined" ? parseInt(global.maxYValue) : 200;
+ 	
+	var yGridStep = typeof(global.yStepOnGrid)!="undefined" ? parseInt(global.yStepOnGrid) : 20;
+
+	var columnColor1 = typeof(global.column1Color)!="undefined" ? parseInt(global.column1Color) : 0xf92525;
+
+	var columnColor2 = typeof(global.column2Color)!="undefined" ? parseInt(global.column2Color) : 0x17e512;
+
+	var columnColor3 = typeof(global.column3Color)!="undefined" ? parseInt(global.column3Color) : 0xbe4ce3;
+
+	var columnColor4 = typeof(global.column4Color)!="undefined" ? parseInt(global.column4Color) : 0x5420ff;
+
+	var columnColor5 = typeof(global.column5Color)!="undefined" ? parseInt(global.column5Color) : 0xf442ff;
+
+	var columnColor6 = typeof(global.column6Color)!="undefined" ? parseInt(global.column6Color) : 0xfb7819;
+
+	var columnColor7 = typeof(global.column7Color)!="undefined" ? parseInt(global.column7Color) : 0x0f5004;
+
+	var columnColor8 = typeof(global.column8Color)!="undefined" ? parseInt(global.column8Color) : 0x19fbee;
+
+	var columnColor9 = typeof(global.column9Color)!="undefined" ? parseInt(global.column9Color) : 0x9cd000;
+
+	var columnColor10 = typeof(global.column10Color)!="undefined" ? parseInt(global.column10Color) : 0xfddd09;
+
+ var isSetup = true;
+ var dataset = canvas.datasets.sourceDataSet;
+ var baseHeight=appHeight/40;
+ var baseDepth=50;
+ var backgroundDepth = 5;
+ var columnDepth = 20;
+ var columnYOffset = baseHeight+baseDepth-columnDepth;
+
+
+ planeWidth = 10;
+ planeDepth = baseDepth;
+
+ var columnXOffset = baseDepth-columnDepth;
+
+ var stepToWidthRatio = 0.25;
+
+ var fontsize = 12;
+ 
+
+
+ dataset.setQueryType("POST");
+ dataset.setSrc(dataurlParam); 
+ 
+</script>
+
+
+<view name="background">  
+
+<method event="oninit">
+
+	this.setWidth(appWidth);
+	this.setHeight(appHeight);
+
+</method>
+
+<view name="yAxisAndOrigin" height="100%"  width="50">  
+   <resizelayout axis="y"/>
+	
+   <view name="yAxis" options="releasetolayout"  width="50">  
+
+	<method name="createYAxis">
+
+	  var numDiv = (maxY-minY)/yGridStep;
+
+          var yGridStepOnDisplay = (this.getHeight()-columnYOffset-columnDepth)/numDiv;
+	  var text = minY;
+	  var labelYOffset = 0;
+
+	  for (var i=1; i &lt; numDiv+2; i++){
+	
+		 var txt = new LzText(this,{resize:true});
+
+		txt.setText(text);
+		<!--canvas.background.xAxisAndDisplay.display.addPlane(text,i);-->
+		
+		text = text+yGridStep;
+		
+		txt.setHeight(this.getHeight());
+		
+		txt.setX(5);
+		txt.setY(this.getHeight()-columnYOffset-labelYOffset);
+
+		labelYOffset = labelYOffset+yGridStepOnDisplay;
+
+
+		txt.setAttribute("align","right");
+
+		txt.setAttribute("fontsize",fontsize);
+
+		
+
+	
+	   }
+	
+	</method>
+
+   </view>  
+
+   <view name="origin" height="50"  width="50"/>  
+ </view>  <!--yAxis and Origin-->
+
+ <view name="xAxisAndDisplay" x="10" height="100%"  width="100%"> 
+
+  <resizelayout axis="y"/>
+
+  <view name="display" options="releasetolayout"  width="100%">  
+
+       <method name="addPlane" args="yPlane,planeID">
+
+		var yOnDisplay = getHeight()-baseHeight-yPlane*(getHeight()-columnYOffset-columnYOffset)/(maxY-minY);
+
+		var p = new column(canvas.background.xAxisAndDisplay.display.columnDisplay);
+		
+		p.setAttribute("depth",planeDepth);
+		p.setAttribute("opacity",0.2);
+
+
+		p.setAttribute("color",0xf00f01);
+
+		p.setAttribute("width",planeWidth);  
+
+		p.setAttribute("height",planeDepth);
+
+		p.setX(baseDepth+planeWidth);
+		p.setY(yOnDisplay);
+
+	
+        </method>
+
+
+	<method name="addBase" >
+
+		var base = new column(canvas.background.xAxisAndDisplay.display.columnDisplay);
+		
+		base.setAttribute("depth",baseDepth);
+		base.setAttribute("opacity",0.5);
+		base.setAttribute("color",0x889596);
+		base.setAttribute("width",this.getWidth()-backgroundDepth);
+		base.setAttribute("height",baseDepth+baseHeight);
+		base.setX(this.getWidth()-backgroundDepth);
+		base.setY(this.getHeight());
+
+	</method>	
+	
+	<method name="addBackground" >
+
+		var bkg = new column(canvas.background.xAxisAndDisplay.display.columnDisplay);
+		
+		bkg.setAttribute("depth",backgroundDepth);
+		bkg.setAttribute("opacity",0.3	);
+
+		bkg.setAttribute("color",0xc8cbcb);
+
+		bkg.setAttribute("width",this.getWidth()-baseDepth);
+
+		bkg.setX(this.getWidth());
+		bkg.setY(this.getHeight()-baseDepth-baseHeight);
+		bkg.setAttribute("height",this.getHeight()-backgroundDepth-baseDepth-baseHeight);
+
+	</method>	
+
+   <view name="columnDisplay" height="100%"  width="100%">  
+ 
+	<method name="addColumn" args="columnID,color,posX,width" >
+		
+		Debug.write("colonna : "  + columnID);
+
+		var c = new column(canvas.background.xAxisAndDisplay.display.columnDisplay,{name:"column"+columnID});
+		
+		c.setAttribute("depth",columnDepth);
+		c.setAttribute("height",columnDepth);
+		c.setAttribute("width",width);
+
+		c.setAttribute("color",color);
+		c.create();
+
+		c.setX(posX+width);
+		c.setY(getHeight()-columnYOffset);
+
+	 </method>
+   </view>
+  </view><!--display-->
+
+  <view name="xAxis" height="50"  width="100%" > 
+       
+	<method name="addXLabel" args="text,posX,width" >
+		
+		var thisLabel = new customLabel(canvas.background.xAxisAndDisplay.xAxis);
+		thisLabel.setX(posX);
+		thisLabel.setWidth(width);
+		thisLabel.setHeight(this.getHeight());
+
+		thisLabel.addLabel(text,fontsize);
+
+
+		
+
+
+        </method>
+
+	<method event="onclick" >
+	   if (this.getAttribute("visible"))
+		   this.setVisible(false);
+	   else this.setVisible(true);
+	 
+        </method>
+
+
+  </view>
+ </view> <!--xAxis and Display-->
+
+
+ 
+</view> <!--background-->
+
+
+<method name="refresh" >
+
+	isSetup = false;
+       	dataset.doRequest();
+       	canvas.timer();
+
+</method>
+
+
+<method name="timer">
+
+
+        this.fadeDelegate = new LzDelegate( this, "refresh" );
+   	LzTimer.addTimer( this.fadeDelegate, 30000 ); 	
+
+</method>  
+
+
+<method name="start" event="oninit">
+
+  Debug.write("startONINIT");
+	
+	  canvas.background.xAxisAndDisplay.display.addBase();
+	  canvas.background.xAxisAndDisplay.display.addBackground();
+
+	  canvas.background.yAxisAndOrigin.yAxis.createYAxis();
+	 
+
+
+         dataset.doRequest();
+
+
+         <!-- canvas.timer();-->
+
+         
+
+</method>
+
+
+
+
+
+
+
+
+<datapointer id="dpProcess" xpath="sourceDataSet:/rows/row[1]">
+	<method event="ondata" >
+
+
+	   var columnName;
+	   
+	   var attributeIfNotElse="";
+	   var yValue;
+	   var xValue;
+	    var valueOnDisplay;
+
+	   var color;
+	   var columnsNumber;
+
+	   columnID = 0;
+
+           columnsNumber = 0;
+
+   	   duplicate_Main_pointer = this.dupePointer();
+
+	   do {
+		columnsNumber = columnsNumber+1;
+		
+	   } while(duplicate_Main_pointer.selectNext());
+		
+
+
+           columnWidth = (canvas.background.xAxisAndDisplay.display.getWidth()-2*columnXOffset-backgroundDepth)/(columnsNumber+(columnsNumber+1)*stepToWidthRatio);
+
+	   columnStep = stepToWidthRatio*columnWidth;
+	   columnXOffset = columnXOffset+columnStep;
+
+
+	   var attributesMap = duplicate_Main_pointer.getNodeAttributes();
+
+	   duplicate_Main_pointer = this.dupePointer();
+
+	   do{
+
+	     columnID=columnID+1;
+	
+	     for ( var attributeName in attributesMap ) {
+
+
+
+		   <![CDATA[
+		  if ((attributeName!=yValueAttributeName)&&(xValueAttributeName=="undefined")) {
+			xValueAttributeName = attributeName;
+	          }
+
+		  if ((attributeName!=xValueAttributeName)&&(yValueAttributeName=="undefined")) {
+			yValueAttributeName = attributeName;
+			 Debug.write("Definisco come colonna valori: " +attributeName);
+		   }
+
+		  ]]>
+
+		   if (attributeName==xValueAttributeName){
+	
+			
+			columnName = duplicate_Main_pointer.getNodeAttribute(attributeName);
+
+	                 Debug.write("Colonna"+columnID + " attributeName per X: "+attributeName);
+
+		   } else if (attributeName==yValueAttributeName){
+
+			yValue = parseFloat(duplicate_Main_pointer.getNodeAttribute(attributeName));
+
+	                Debug.write("Colonna"+columnID + " attributeName per Y: "+attributeName);
+
+			valueOnDisplay = (canvas.background.xAxisAndDisplay.display.getHeight() -columnDepth- columnYOffset)*yValue/(maxY-minY);			
+
+			color = canvas.getColor("colorLine"+columnID);	
+
+			if (isSetup){
+
+	           	   columnColor = canvas.getColor("columnColor"+columnID);	
+
+		   	   canvas.background.xAxisAndDisplay.display.columnDisplay.addColumn(columnID,columnColor,columnXOffset,columnWidth);		
+
+		   	   canvas.background.xAxisAndDisplay.xAxis.addXLabel(columnName,columnXOffset,columnWidth);
+  
+		   	   canvas.background.xAxisAndDisplay.display.columnDisplay["column"+columnID].grow(valueOnDisplay);
+			
+		      	   columnXOffset = columnXOffset + columnStep+columnWidth; 
+
+		 	} else {
+
+			    canvas.background.xAxisAndDisplay.display.columnDisplay["column"+columnID].grow(valueOnDisplay);		
+
+			}
+		   }
+
+	      } 
+
+
+	    } while(duplicate_Main_pointer.selectNext());
+
+	    if (isSetup) isSetup=false;	
+		
+	   
+	</method>
+   </datapointer>
+
+
+   <method name="getColor" args="colorDefinition">
+
+	var color;
+	switch (colorDefinition){
+	case "columnColor1": color = columnColor1;
+			break;
+	case "columnColor2": color = columnColor2;
+			break;
+	case "columnColor3": color = columnColor3;
+			break;
+	case "columnColor4": color = columnColor4;
+			break;
+	case "columnColor5": color = columnColor5;
+			break;
+	case "columnColor6": color = columnColor6;
+			break;
+	case "columnColor7": color = columnColor7;
+			break;
+	case "columnColor8": color = columnColor8;
+			break;
+	case "columnColor9": color = columnColor9;
+			break;
+	case "columnColor10": color = columnColor10;
+	}
+
+		
+	if (color=="undefined") return Oxffffff;
+
+	else return color;
+
+    </method>
+
+
+
+  
+<class name="column" extends="drawview" width="50" x="100" y="300">
+	
+        <animator  name="growAnimator" attribute="height" to="100" duration="10000" start="false"/>
+
+	<attribute name="depth" value="20"/>
+	<attribute name="color" value="0xffffff"/>
+
+	<attribute name="opacity" value="1"/>
+
+ 	<method name="grow" args="value">
+
+		this.growAnimator.setTo(value+this.getAttribute("depth"));
+		this.growAnimator.doStart();
+
+ 	</method>
+
+
+ 	<method name="create" event="onheight">
+
+	var op = this.getAttribute("opacity");
+
+	var d = this.getAttribute("depth");	
+
+	var w = this.getWidth();
+	var h = this.getHeight();
+
+	var color = this.getAttribute("color");
+
+	this.setAttribute("rotation",180);
+
+	this.beginPath();
+	this.moveTo(d,0);
+	this.lineTo(w,0);
+	this.lineTo(w,h-d);
+	this.lineTo(d,h-d);
+	this.closePath();
+
+
+		this.fillStyle = color;
+	        this.globalAlpha = op; 		
+	        this.fill();
+
+		var g = this.createLinearGradient(w,h-d,d,0)
+            	this.globalAlpha = 0;
+	        g.addColorStop(0, 0x000000);
+        	this.globalAlpha = op;
+	        g.addColorStop(1, 0xcccccc);
+        	this.fillStyle = g;
+        	this.fill();
+
+
+	this.beginPath();
+	this.moveTo(d,h-d);
+	this.lineTo(0,h);
+	this.lineTo(0,d);
+	this.lineTo(d,0);
+	this.closePath();
+
+		this.fillStyle = color;
+	        this.globalAlpha = 3; 		
+	        this.fill();
+
+		var g = this.createLinearGradient(0,d,d,h-d)
+            	this.globalAlpha = 0;
+	        g.addColorStop(0, 0x000000);
+        	this.globalAlpha = op;
+	        g.addColorStop(1, 0xffffff);
+        	this.fillStyle = g;
+        	this.fill();
+
+
+	this.beginPath();
+	this.moveTo(d,h-d);
+	this.lineTo(0,h);
+	this.lineTo(w-d,h);
+	this.lineTo(w,h-d);
+	this.closePath();
+
+		this.fillStyle = color;
+	        this.globalAlpha = 3; 		
+	        this.fill();
+
+		var g = this.createLinearGradient(w-d,h,d,h-d)
+            	this.globalAlpha = 0;
+	        g.addColorStop(0, 0x000000);
+        	this.globalAlpha = op;
+	        g.addColorStop(1, 0xffffff);
+        	this.fillStyle = g;
+        	this.fill();
+
+
+	
+ 	</method>
+ 	<method event="onmouse">
+		this.tip.setVisible(true);
+ 	</method>
+	
+	<view name="tip" visible="false">
+
+		<text> ciao </text>
+
+	</view>
+ 
+
+</class>
+
+<class name="customLabel" extends="view" >
+	<method name="addLabel" args="text,fontsize">
+
+	   var txt = new LzText(this);
+
+		txt.setText(text);
+		
+		txt.setHeight(this.getHeight());
+		txt.setAttribute("resize",true);
+
+		txt.setAttribute("align","center");
+		txt.setAttribute("valign","middle");
+
+		txt.setAttribute("fontsize",fontsize);
+	
+ 	</method>
+
+</class>
+
+	
+</canvas>

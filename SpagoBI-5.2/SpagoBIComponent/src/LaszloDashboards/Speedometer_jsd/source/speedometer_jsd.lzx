@@ -1,0 +1,658 @@
+<canvas width="100%" height="100%" > 
+ 
+    <!-- 
+    <attribute name="xmldata" type="string" value=""/>
+    <attribute name="xmlconfig" type="string" value=""/>
+    -->
+
+    <script>
+       
+       var xmldata = "";
+       var xmlconfig = ""; 
+         
+       var inizialized = false;  
+       
+       delay = typeof(global.delay)!="undefined" ? global.delay : "50"; 
+       delay = parseInt(delay);
+         
+       logicalname = typeof(global.logicalname)!="undefined" ? global.logicalname : "";
+       linkbaseurl = typeof(global.linkbaseurl)!="undefined" ? global.linkbaseurl : "";
+	     uuid = typeof(global.uuid)!="undefined" ? global.uuid : "";
+       var dataPointer = new LzDatapointer();
+       var confPointer = new LzDatapointer(); 
+  
+	     var appHeight = 300;
+	     var appWidth = 300;		
+       var xLabelAttributeName = "xLabel";	
+	     var valueAttributeName = "value";	
+	     var min = 100;	
+       var low = 295;
+       var high = 340;
+       var max = 400;
+	     var arc1Color = 0x9cff00;
+	     var arc2Color = 0xfff999;
+	     var arc3Color = 0xff5454;
+	     var refreshtime = 15000;
+	     var numDiv = 10;
+	     var appMargin = 10;
+	     var withMainDiv = true;
+	     var withSecDiv = true;	
+	     var withMainText = true;
+	     var withSecText = true; 
+
+       <!--layout -->
+       var fontSize1=1/15;
+       var fontSize2=1/25;
+       var textPositionRate1 = 8/10;
+       var textPositionRate2 = 11/13; 
+       var radialGradientRate=3/4;
+       var rectangleHeightRate = 1/4;	
+       var innerArcRate=3/4;
+       var lineSize1Rate = 1/40;
+       var lineSize2Rate = 1/80;
+       var lineLenght1Rate = 1/10;
+       var lineLenght2Rate = 1/11;
+       var innerSphereRate = 1/14;
+       var agoHeightRate = 1/30;
+       var agoWidthRate = 3/4;
+       var agoColor = 0xff0000;
+       var arcInnerColor = 0xcccccc;
+       var text1Color = 0x0000ff;	
+       var text2Color = 0x0000ff;
+       var actualang = -1;  
+       var clickID = 0;
+
+     </script>  
+
+
+    <method name="refreshRotation" args="dataPointer" >
+        dataPointer.selectChild();
+        var label = dataPointer.getNodeAttribute(xLabelAttributeName);
+        var rotation = dataPointer.getNodeAttribute(valueAttributeName);
+        rotation = rotation*180/(max-min);
+        if(actualang==-1) {
+              actualang = rotation;
+              canvas.display.rotDisplay.changeang(rotation);
+        } else {
+              canvas.display.rotDisplay.changeang(rotation);
+        }
+    </method>
+
+
+
+    <method name="checkdataload" >
+      //if(canvas.getAttribute("xmldata")=="") {
+      if(xmldata=="") {
+         canvas.timercheckdataloaded();   
+      } else { 
+        //var valuexml = canvas.getAttribute("xmldata");
+        var valuexml = xmldata;  
+        var dataDom = LzDataNode.stringToLzData(valuexml, false); 
+        if(dataDom!=null) {
+          //canvas.setAttribute("xmldata", "");
+          xmldata = "";
+          dataPointer.setPointer(dataDom);
+          if(!inizialized) {
+              canvas.display.showDisplay(min,low,high,max);
+              inizialized = true;
+              this.refreshRotation(dataPointer);
+          } else {
+              this.refreshRotation(dataPointer);
+          }
+        }
+      }
+    </method>
+    
+    
+    
+    <method name="checkconfload" >
+      <![CDATA[
+      //if(canvas.getAttribute("xmlconfig")=="") {
+      if(xmlconfig=="") {
+         canvas.timercheckconfloaded();   
+      } else { 
+        //var valuexmlconf = canvas.getAttribute("xmlconfig");
+        var valuexmlconf = xmlconfig;  
+        var dataDomConf = LzDataNode.stringToLzData(valuexmlconf, false); 
+        if(dataDomConf!=null) {
+          confPointer.setPointer(dataDomConf);
+      
+          // gather parameter values
+          childs = confPointer.xpathQuery("./PARAMETERS/*");
+          for(var index=0; index < childs.length; index++) {
+              var name = childs[index].getAttr("name");
+              var value = childs[index].getAttr("value");
+              if(name=="appHeight") {
+                  appHeight = parseInt(value);
+              }
+              if(name=="appWidth") {
+                  appWidth = parseInt(value);
+              }
+              if(name=="xLabelAttributeName") {
+                  xLabelAttributeName = value;
+              }
+              if(name=="valueAttributeName") {
+                  valueAttributeName = value;
+              }
+              if(name=="min") {
+                  min = parseInt(value);
+              }
+              if(name=="low") {
+                  low = parseInt(value);
+              }
+              if(name=="high") {
+                  high = parseInt(value);
+              }
+              if(name=="max") {
+                  max = parseInt(value);
+              }
+              if(name=="arc1Color") {
+                  arc1Color = value;
+              }
+              if(name=="arc2Color") {
+                  arc2Color = value;
+              }
+              if(name=="arc3Color") {
+                  arc3Color = value;
+              }
+              if(name=="refreshtime") {
+                  refreshtime = parseInt(value);
+              }
+              if(name=="numDiv") {
+                  numDiv = parseInt(value);
+              }
+              if(name=="appMargin") {
+                  appMargin = parseInt(value);
+              }
+              if(name=="withMainDiv") {
+                  withMainDiv = value;
+              }
+              if(name=="withSecDiv") {
+                  withSecDiv = value;
+              }
+              if(name=="withMainText") {
+                  withMainText = value;
+              }
+              if(name=="withSecText") {
+                  withSecText = value;
+              }
+          }         
+          canvas.getxmldata();
+        }
+      }
+    ]]>
+    </method>
+
+
+
+
+    <method name="timercheckdataloaded">
+       this.checkDataLoad = new LzDelegate( this, "checkdataload" );
+   	   LzTimer.addTimer(this.checkDataLoad, 200);	
+    </method> 
+    
+    <method name="timercheckconfloaded">
+       this.checkConfLoad = new LzDelegate( this, "checkconfload" );
+   	   LzTimer.addTimer(this.checkConfLoad, 200);	
+    </method> 
+
+    <method name="getxmldata">
+         <![CDATA[
+         var s = "javascript:getxmldata"+uuid+"('"+logicalname+"');";
+         LzBrowser.loadURL(s);
+         //var data = '<rows><row value="45.86314" /></rows>';
+         //canvas.xmldata = data;
+         //xmldata = data;
+         canvas.timercheckdataloaded();
+         canvas.timergetxmldata();
+         ]]>
+    </method> 
+
+    <method name="getxmlconfig">
+         <![CDATA[
+         var s = "javascript:getxmlconfig"+uuid+"('"+logicalname+"');";
+         LzBrowser.loadURL(s);
+         //var config = '<CONFIGURATION><PARAMETERS><PARAMETER name="appWidth" value="200"/><PARAMETER name="appHeight" value="200"/><PARAMETER name="min" value="0"/><PARAMETER name="max" value="200" /><PARAMETER name="low" value="50" /><PARAMETER name="high" value="120" /></PARAMETERS></CONFIGURATION>';
+         //canvas.xmlconfig = config;
+         //xmlconfig = config;
+         canvas.timercheckconfloaded();
+         ]]>
+    </method> 
+
+    <method name="timergetxmldata">
+        this.getXmlDataDelegate = new LzDelegate( this, "getxmldata" );
+   	    LzTimer.addTimer( this.getXmlDataDelegate, refreshtime); 	
+    </method>   
+
+    <method name="start" event="oninit"> 
+        //canvas.getxmlconfig();
+        this.getXmlConfDel = new LzDelegate( this, "getxmlconfig" );
+   	    LzTimer.addTimer( this.getXmlConfDel, delay);  
+    </method>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <drawview name="display">
+
+      
+      <!-- ***CANVAS.DISPLAY.SHADOW*********************************************************************-->
+      	<drawview name="shadow">	        
+      		<method name="showShadow" args="centerX,centerY,radius"> 
+      
+      			this.beginPath();
+      			this.moveTo(centerX-radius,centerY);
+      			this.lineTo(centerX-radius,centerY+radius*rectangleHeightRate);
+      			this.lineTo(centerX+radius,centerY+radius*rectangleHeightRate);
+      			this.lineTo(centerX+radius,centerY);
+      			this.closePath();
+      
+      			this.fillStyle = 0x000000;
+      		        this.globalAlpha = 1; 		
+      		        this.fill();
+                     
+      			var g = this.createRadialGradient(centerX-radius,centerY, .7, centerX+radius, centerY+radius*rectangleHeightRate, 0)
+      		        this.globalAlpha = 0; 
+      		        g.addColorStop(0, 0x000000);
+      		        this.globalAlpha = 1;
+      		        g.addColorStop(1, 0xffffff);
+      		        this.fillStyle = g;
+      		        this.fill();
+      	
+              	        this.strokeStyle = 0xffffff;
+      		        this.lineWidth = 5;
+      		        this.stroke();
+      	
+      		        this.strokeStyle = 0xffffff;
+      		        this.lineWidth = 2;
+      		        this.stroke();
+      		</method>
+      
+      		<method event="onclick">
+      			this.setVisible(false);
+      		</method>
+      	</drawview>	        
+      
+      
+      
+      <!-- ***CANVAS.DISPLAY.mainDiv*********************************************************************-->
+      	        
+      
+      	<drawview name="mainDiv">	        
+      
+      		<method name="showDiv" args="centerX,centerY,radius, length, size"> 
+      
+      		   ang = 0;
+      
+      	for (var i = 0; i &lt; numDiv+1; i++) {
+      
+      			var startX = centerX-(radius-length)*Math.cos(ang);
+      			var startY = centerY-(radius-length)*Math.sin(ang);
+      			var stopX = centerX-radius*Math.cos(ang);
+      			var stopY = centerY-radius*Math.sin(ang);
+      			
+      			this.moveTo(startX,startY);
+      			this.lineTo(stopX,stopY);
+      			this.moveTo(startX,startY);
+      			
+         		    	this.strokeStyle = 0x000000;
+      		        this.lineWidth = size;
+      			this.globalAlpha = 1; 
+      		        this.stroke();
+      
+      	   	ang = ang+Math.PI/numDiv;
+      
+      	}
+      
+      
+      
+      	
+      		
+      		</method > 
+      
+      
+      	</drawview> <!-- **mainDiv*****************************************************************************-->
+      
+      <!-- **mainText*****************************************************************************-->
+      
+      	<drawview name="mainText">
+      				
+      		<method name="showText" args="centerX,centerY, text, deltaDiv, fontSize">
+      
+      		   ang = 0;
+      		   label=min;
+      
+      	for (var i = 0; i &lt; numDiv+1; i++) {
+      
+      			var textX = centerX-text*Math.cos(ang);
+      			var textY = centerY-text*Math.sin(ang);
+      
+      			var txt = new LzText(this);
+      			txt.setAttribute("fontsize",fontSize);
+      			txt.setColor(text2Color);
+      			txt.setAttribute("immediateparent",this);
+      			txt.setText(label);
+      			
+      			txt.setWidth(fontSize*3);
+      			txt.setHeight(fontSize*3);
+      
+      			txt.setX(textX-fontSize);					
+      			txt.setY(textY-fontSize);
+      
+      	   	ang = ang+Math.PI/numDiv;
+      		label=label+deltaDiv;
+      	}
+      
+      		</method > 
+      
+      
+      	</drawview> <!-- **CANVAS.DISPLAY.mainText************************************************************-->
+      
+      <!-- **CANVAS.DISPLAY.secondaryDiv******************************************************************-->
+      
+      	<drawview name="secondaryDiv">
+      
+      		<method name="showDiv" args="centerX,centerY,radius, length, size"> 
+      
+      		   ang = Math.PI/numDiv/2;
+      
+      	for (var i = 0; i &lt; numDiv; i++) {
+      
+      			var startX = centerX-(radius-length)*Math.cos(ang);
+      			var startY = centerY-(radius-length)*Math.sin(ang);
+      			var stopX = centerX-radius*Math.cos(ang);
+      			var stopY = centerY-radius*Math.sin(ang);
+      			
+      			this.moveTo(startX,startY);
+      			this.lineTo(stopX,stopY);
+      			this.moveTo(startX,startY);
+      			
+         		    	this.strokeStyle = 0x000000;
+      		        this.lineWidth = size;
+      			this.globalAlpha = 1; 
+      		        this.stroke();
+      		 
+      		ang = ang+Math.PI/numDiv;
+      
+      	}
+      		
+      		</method > 
+      	
+      
+      	</drawview> <!-- **CANVAS.DISPLAY.secondaryDiv************************************************************-->
+      
+      
+      
+      <!-- **CANVAS.DISPLAY.secondaryText**************************************************************-->
+      
+      	<drawview name="secondaryText">
+      
+      		<method name="showText" args="centerX,centerY,text,deltaDiv,fontSize">
+      
+      		   ang = Math.PI/numDiv/2;
+      		   label = min+deltaDiv/2;
+      
+      	for (var i = 0; i &lt; numDiv; i++) {
+      
+      			var textX = centerX-text*Math.cos(ang);
+      			var textY = centerY-text*Math.sin(ang);
+      
+      			var txt = new LzText(this);
+      			txt.setAttribute("fontsize",fontSize);
+      			txt.setColor(text2Color);
+      			txt.setAttribute("immediateparent",this);
+      			txt.setText(label);
+      			
+      			txt.setWidth(fontSize*3);
+      			txt.setHeight(fontSize*3);
+      
+      			txt.setX(textX-fontSize);					
+      			txt.setY(textY-fontSize);
+      	
+      		ang = ang+Math.PI/numDiv;
+      		label=label+deltaDiv;
+      	}			
+      		</method > 
+      	
+      
+      	</drawview> <!-- **CANVAS.DISPLAY.secondaryText*********************************************************-->
+      
+      
+      <!-- **CANVAS.DISPLAY.rotDisplay******************************************************************************-->	
+      
+      
+      	<view name="rotDisplay" height="100">
+          		
+      	      <animator name="rot" attribute="rotation" duration="3000" start="false" />
+        	        
+      	      <method name="changeang" args="ang" >
+      
+                        this.rot.setTo(ang);
+                        this.rot.doStart();  
+      
+                    </method>
+      
+      <!-- **CANVAS.DISPLAY.rotDisplay.AGO***********************************************************************-->	
+      		<drawview name="ago" >	
+      			<method name="setAgo" args="width,height,color"> 
+      				this.moveTo(0,0);
+      				this.beginPath();
+      				this.lineTo(0,height/4);
+      				this.lineTo(width,height/4);
+      				this.lineTo(width,-height/4);
+      				this.lineTo(0,-height/4);
+      				this.closePath();				
+      
+      
+      				this.fillStyle = 0x000000;
+      			        this.globalAlpha = 1; 		
+      			        this.fill();
+      
+      				this.strokeStyle = color;
+      			        this.lineWidth = height/8;
+      			        this.stroke();
+      				
+      				
+      			</method>
+      
+      		</drawview> <!-- **CANVAS.DISPLAY.rotDisplay.AGO*******************************************************-->
+      
+      <!-- **CANVAS.DISPLAY.rotDisplay.SPHERE***********************************************************************-->
+      
+      
+      
+      
+        	<drawview name="sphere">	
+      
+          		<method name="setSphere" args="centerX,centerY,radius">        
+              <![CDATA[
+                  var r = radius;
+                  this.x  = 0;
+                  this.y= 0;
+                  this.beginPath();
+                  this.moveTo(x+r, y);
+                  var a = Math.tan(22.5 * Math.PI/180);
+                  for(var angle = 45; angle<=360; angle += 45) {
+                      var endx = r*Math.cos(angle*Math.PI/180);
+                      var endy = r*Math.sin(angle*Math.PI/180);
+                      var cx = endx + r*a*Math.cos((angle-90)*Math.PI/180);
+                      var cy = endy + r*a*Math.sin((angle-90)*Math.PI/180);
+                      this.quadraticCurveTo(cx+x, cy+y, endx+x, endy+y);
+                  }
+                  this.fillStyle = 0xffffff;
+              		this.globalAlpha = 1; 		
+              		this.fill();
+              		this.strokeStyle = 0x000000;
+              		this.lineWidth = 5;
+              		this.stroke();
+              		var g = this.createRadialGradient(centerX-radius,centerY-radius, 0.5, centerX+radius, centerX+radius, 0)
+                  this.globalAlpha = 0; 
+                  g.addColorStop(0, 0x000000);
+                  this.globalAlpha = 1;
+                  g.addColorStop(1, 0xffffff);
+                  this.fillStyle = g;
+                  this.fill(); 
+                  this.strokeStyle = 0x000000;
+                  this.lineWidth = 2;
+                  this.stroke();
+               ]]>
+          		</method>
+  
+        	</drawview> <!-- CANVAS.DISPLAY.rotDisplay.SPHERE -->
+        
+      	</view> <!-- CANVAS.DISPLAY.rotDisplay -->
+      	
+
+
+
+
+
+
+      <method name="setArc" args="centerX,centerY,radius,angStart,angStop,color"> 
+      		var arcStartX = centerX-radius*Math.cos(angStart);
+      		var arcStartY = centerY-radius*Math.sin(angStart);
+      		angStart = (Math.PI-angStart)/Math.PI*180; 
+      		angStop = (Math.PI-angStop)/Math.PI*180;
+      		var arcIntoX = centerX-radius*Math.cos((angStop-angStart));
+      		var arcIntoY = centerY-radius*Math.sin((angStop-angStart));
+      		this.moveTo(centerX,centerY);
+      		this.beginPath();
+      		this.lineTo(arcStartX,arcStartY);
+      		this.arc(arcStartX,arcStartY,radius,angStart,angStop,false);
+      		this.lineTo(centerX,centerY);
+      		this.closePath();
+	        this.fillStyle = color;
+	        this.globalAlpha = 0.5; 		
+	        this.fill();
+	        this.strokeStyle = 0xffff00;
+	        this.lineWidth = 5;
+	        this.stroke();
+		      var g = this.createRadialGradient(centerX-radius*radialGradientRate,centerY-radius*radialGradientRate, .7, centerX+radius*radialGradientRate, centerX+radius*radialGradientRate, 0)
+	        this.globalAlpha = 0; 
+	        g.addColorStop(0, 0x000000);
+	        this.globalAlpha = 0.7;
+	        g.addColorStop(1, 0xffffff);
+	        this.fillStyle = g;
+	        this.fill();           
+	        this.strokeStyle = 0x000000;
+	        this.lineWidth = 2;
+	        this.stroke();
+      </method>
+
+
+
+
+
+
+
+    <method name="showDisplay" args="min,low,high,max"> 
+    	   	 
+           this.setWidth(appWidth);
+    	  	 this.setHeight(appHeight);
+           var radiusByWidth = (appWidth-2*appMargin)/2;
+    	     var radiusByHeight = (appHeight-2*appMargin)/(1+rectangleHeightRate);
+    			 var radius = 0;
+    	     var centerX = 0;
+    	     var centerY = 0;
+           if (radiusByWidth &lt;  radiusByHeight) {
+    			     radius = radiusByWidth;
+    	     } else {
+    			     radius = radiusByHeight;			
+     		   }
+      		centerY = (appHeight-2*appMargin)-radius/4+appMargin;
+      		centerX = (appWidth-2*appMargin)/2+appMargin;          
+          
+          this.rotDisplay.setX(centerX);
+      		this.rotDisplay.setY(centerY);
+          this.rotDisplay.ago.setAgo(-radius*agoWidthRate,radius*agoHeightRate,agoColor);
+      		var deltaDiv = (max-min)/numDiv;
+      		   ang = 0;
+      		if (withMainDiv) {
+      			canvas.display.mainDiv.showDiv(centerX,centerY,radius,radius*lineLenght1Rate,lineSize1Rate*radius);
+      		}
+      		if (withSecDiv) {	
+         			canvas.display.secondaryDiv.showDiv(centerX,centerY,radius,radius*lineLenght2Rate,lineSize2Rate*radius);
+      		}
+      		if (withMainText) {
+      		  canvas.display.mainText.showText(centerX,centerY,radius*textPositionRate1,deltaDiv,fontSize1*radius);
+      		}
+      		if (withSecText) {
+      			canvas.display.secondaryText.showText(centerX,centerY,radius*textPositionRate2,deltaDiv,fontSize2*radius);
+      		}   
+      		var angLow = (low-min)*Math.PI/(max-min);
+      		var angHigh = (high-min)*Math.PI/(max-min);
+
+      		this.setArc(centerX,centerY,radius,0,angLow,arc1Color);
+      		this.setArc(centerX,centerY,radius,angLow,angHigh,arc2Color);
+      		this.setArc(centerX,centerY,radius,angHigh,Math.PI,arc3Color);
+          this.rotDisplay.sphere.setSphere(centerX,centerY,radius*innerSphereRate);
+      		this.shadow.showShadow(centerX,centerY,radius);
+		
+       </method>
+
+
+
+
+
+
+
+
+
+        <method event="onclick">
+          	<![CDATA[ 
+          	  switch(clickID ++){
+          	        case 0:
+          			Debug.write("clickID "+clickID);
+          			canvas.display.mainDiv.setVisible(false);
+          			canvas.display.secondaryDiv.setVisible(false);
+          			canvas.display.mainText.setVisible(false);
+          			canvas.display.secondaryText.setVisible(false);
+          		break;
+          	        case 2:
+          			canvas.display.mainDiv.setVisible(true);
+          	
+          		break;
+          	        case 3:
+          			canvas.display.secondaryDiv.setVisible(true);
+          
+          		break;
+          	        case 4:
+          			canvas.display.mainText.setVisible(true);
+          		break;
+          	        case 5:
+          			canvas.display.secondaryText.setVisible(true);
+          		break;
+          	        case 6:
+          			canvas.display.mainDiv.setVisible(false);
+          			canvas.display.secondaryDiv.setVisible(false);
+          			canvas.display.mainText.setVisible(false);
+          			canvas.display.secondaryText.setVisible(false);
+          			clickID =1;
+          		}
+          	  ]]>
+         </method>
+
+     
+      </drawview> <!-- canvas.display -->
+
+
+
+
+
+</canvas>
+

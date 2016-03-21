@@ -1,0 +1,611 @@
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>SpagoBI - Rotation Dashboard</title>
+
+	<style>
+		body,td,a,p,.h{font-family:arial,sans-serif;
+				   font-size:12; }
+		p {text-align: justify}
+		.q{color:#0000cc;}
+
+	</style>
+	<meta>
+</head>
+
+<body bgcolor="#ffffff" text="#000000">
+ 
+
+<table cellpadding="0" cellspacing="10" border="0" width="100%">
+ <tr>
+  <td colspan="3">
+   <font size="+1" >SpagoBI - MultiRotation <font>
+  </td>
+ </tr>
+
+ <tr>
+ 
+  <td colspan="3" align="center">
+   <img src="multirotation.jpg">
+  </td>
+
+ </tr>
+
+ <tr valign="center">
+  <td align="center" width="10%">
+    <font size="+1" >
+    <b>Parameters</b>
+    </font>
+  </td>
+  <td align="center" width="70%">
+   <font size="+1" >
+    <b>Description</b>
+   </font>
+  </td>
+  <td align="center" width="20%">
+   <font size="+1" >
+    <b>Default</b>
+   </font>
+  </td>
+ </tr>
+
+<!--
+ <tr valign="center">
+  <td align="center">
+     <b>value</b>
+  </td>
+  <td>
+    The name of the value attribute
+   </td>
+  <td align="center" >
+    value
+  </td>
+ </tr>
+-->
+
+ <tr valign="center">
+  <td align="center">
+     <b>confdataset</b>
+  </td>
+  <td>
+    Set the dataset name that returns the configuration parameter.
+   </td>
+ </tr>
+
+
+ <tr valign="center">
+  <td align="center">
+     <b>paramWidth</b>
+  </td>
+  <td>
+    Set table width
+   </td>
+  <td align="center" >
+    300
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>paramHeight</b>
+  </td>
+  <td>
+    Set table height
+  </td>
+  <td align="center" >
+   300    
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>value1</b>
+  </td>
+  <td>
+    Name of the label that identifies the attribute of the dataset containing the first data value (ie. 'traffic')
+  </td>
+ </tr>
+  <tr valign="center">
+  <td align="center">
+     <b>value2</b>
+  </td>
+  <td>
+    Name of the label that identifies the attribute of the dataset containing the second data value (ie. 'sales')
+  </td>
+ </tr>
+  <tr valign="center">
+  <td align="center">
+     <b>value3</b>
+  </td>
+  <td>
+    Name of the label that identifies the attribute of the dataset containing the third data value (ie. 'conversion')
+  </td>
+ </tr>
+  <tr valign="center">
+  <td align="center">
+     <b>value4</b>
+  </td>
+  <td>
+    Name of the label that identifies the attribute of the dataset containing the fourth data value
+  </td>
+  
+ </tr><br> <tr valign="center">
+  <td align="center">
+     <b>value5</b>
+  </td>
+  <td>
+    Name of the label that identifies the attribute of the dataset containing the fifth data value
+  </td>
+ </tr><br>
+ 
+  </tr><br> <tr valign="center">
+  <td align="center">
+     <b>xSerieAttributeName</b>
+  </td>
+  <td>
+    Name of the label that identifies the attribute of the dataset containing the serie
+  </td>
+  <td align="center" >
+    serie
+  </td>
+ </tr><br>
+
+ <!--tr valign="center">
+  <td align="center">
+     <b>valsColName</b>
+  </td>
+  <td>
+    Name of the label that identifies the attribute of the dataset containing the data value
+  </td>
+  <td align="center" >
+    value
+  </td>
+ 
+
+ <tr valign="center">
+  <td align="center">
+     <b>refreshRate</b>
+  </td>
+  <td>
+    Set the delay between two consecutive request to server
+  </td>
+  <td align="center" >
+    15000
+  </td>
+ </tr>
+</tr-->
+
+ <tr valign="center">
+  <td align="center">
+     <b>dataurl</b>
+  </td>
+  <td>
+    Specify the URL of the servlet that returns data
+  </td>
+  <td align="center" >
+    http://localhost:8080/openlaszlo/OpenLaszloEngineDash
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>minValue</b>
+  </td>
+  <td>
+    Set the min value displayed by the dashboard
+  </td>
+  <td align="center" >
+	100
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>lowValue</b>
+  </td>
+  <td>
+      Set the value that corresponds to the upper edge of the first arc and the lower of the second one
+  </td>
+  <td align="center" >
+	295
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>highValue</b>
+  </td>
+  <td>
+      Set the value that corresponds to the upper edge of the second arc and the lower of the third one  </td>
+  <td align="center" >
+	340
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>maxValue</b>
+  </td>
+  <td>
+      Set the max value displayed by the dashboard
+  </td>
+  <td align="center" >
+	400
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>numOfDivisions</b>
+  </td>
+  <td>
+      Set the number of the main divisions 
+  </td>
+  <td align="center" >
+	10
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>showMainDiv</b>
+  </td>
+  <td>
+      Set the main divisions visible
+  </td>
+  <td align="center" >
+	true
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>showSecDiv</b>
+  </td>
+  <td>
+      Set the secondary divisions visible
+  </td>
+  <td align="center" >
+	true
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>showMainText</b>
+  </td>
+  <td>
+      Set the main division label visible
+  </td>
+  <td align="center" >
+	true
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>showSecText</b>
+  </td>
+  <td>
+      Set the secondary division label visible
+  </td>
+  <td align="center" >
+	10
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>colorArc1</b>
+  </td>
+  <td>
+      Set the color of the first arc (between minValue and lowValue)
+  </td>
+  <td align="center" >
+	0x9cff00
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>colorArc2</b>
+  </td>
+  <td>
+      Set the color of the second arc (between lowValue and highValue)
+  </td>
+  <td align="center" >
+	0xfff999
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>colorArc3</b>
+  </td>
+  <td>
+      Set the color of the third arc (between highValue and maxValue)
+  </td>
+  <td align="center" >
+	0xff5454
+  </td>
+ </tr>
+ 
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>numNeedles</b>
+  </td>
+  <td>
+      Set the number of needles (max 5)
+  </td>
+  <td align="center" >
+	1
+  </td>
+ </tr>
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>needle1Color</b>
+  </td>
+  <td>
+      Set the color of the first needle
+  </td>
+  <td align="center" >
+	red
+  </td>
+ </tr>
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>needle2Color</b>
+  </td>
+  <td>
+      Set the color of the second needle
+  </td>
+  <td align="center" >
+	green
+  </td>
+ </tr>
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>needle3Color</b>
+  </td>
+  <td>
+      Set the color of the third needle
+  </td>
+  <td align="center" >
+	blue
+  </td>
+ </tr>
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>needle4Color</b>
+  </td>
+  <td>
+       Set the color of the fourth needle
+  </td>
+  <td align="center" >
+	aqua
+  </td>
+ </tr>
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>needle5Color</b>
+  </td>
+  <td>
+      Set the color of the fifth needle
+  </td>
+  <td align="center" >
+	purple
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>title</b>
+  </td>
+  <td>
+      Set the text of the general title
+  </td>
+  <td align="center" >
+	blue
+  </td>
+ </tr>
+  
+  <tr valign="center">
+    <td align="center">
+       <b>displayTitleBar</b>
+    </td>
+    <td>
+        Set the visibility of the general title
+    </td>
+    <td align="center" >
+  	false
+    </td>
+ </tr>
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>colorTitle</b>
+  </td>
+  <td>
+      Set the color of the general title
+  </td>
+  <td align="center" >
+	purple
+  </td>
+ </tr>
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>sizeTitle</b>
+  </td>
+  <td>
+      Set the size of the general title
+  </td>
+  <td align="center" >
+	14
+  </td>
+ </tr>
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>fontTitleSerie</b>
+  </td>
+  <td>
+      Set the font of the serie title
+  </td>
+  <td align="center" >
+	Arial
+  </td>
+ </tr>
+ 
+  <tr valign="center">
+  <td align="center">
+     <b>colorTitleSerie</b>
+  </td>
+  <td>
+      Set the color of the serie title
+  </td>
+  <td align="center" >
+	blue
+  </td>
+ </tr>
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>sizeTitleSerie</b>
+  </td>
+  <td>
+      Set the size of the serie title
+  </td>
+  <td align="center" >
+	12
+  </td>
+ </tr>
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>fontTitleSerie</b>
+  </td>
+  <td>
+      Set the font of the serie title
+  </td>
+  <td align="center" >
+	Arial
+  </td>
+ </tr>
+ 
+  <tr valign="center">
+  <td align="center">
+     <b>multichart</b>
+  </td>
+  <td>
+      Set if is requested the multiple chart (true / false)
+  </td>
+  <td align="center" >
+	false
+  </td>
+ </tr>
+ 
+  <tr valign="center">
+  <td align="center">
+     <b>orientation_multichart</b>
+  </td>
+  <td>
+      Set the orientation (vertical / horizontal) of the multiple chart
+  </td>
+  <td align="center" >
+	vertical
+  </td>
+ </tr>
+ 
+  <tr valign="center">
+    <td align="center">
+       <b>legend</b>
+    </td>
+    <td>
+        Set if is requested the legend (true/false)
+    </td>
+    <td align="center" >
+  	true
+    </td>
+ </tr>
+ 
+  <tr valign="center">
+    <td align="center">
+       <b>DRILL</b>
+    </td>
+    <td>
+        Set parameters to pass for the cross navigation
+    </td>
+  </tr>
+ 
+   <tr valign="center">
+    <td align="center">
+       <b>document</b>
+    </td>
+    <td>
+        Set the name of document linked
+    </td>
+ </tr>
+ 
+  <tr valign="center">
+    <td align="center">
+       <b>PARAMS</b>
+    </td>
+    <td>
+        Set the param configuration: <b>name</b> the urlname of parameter, <b>type</b> the type of parameter(RELATIVE/ABSOLUTE), <b>value</b> the value of parameter ($P{xxx} for parameter values or $F{xxx} for field value )
+    </td>
+ </tr>
+
+</table>
+
+<table cellpadding="0" cellspacing="10" border="0" width="100%">
+
+  <th colspan="2">
+    How to feed this movie
+  </th>
+
+  <tr>
+    <td width="10%">
+      <b>Using a script</b>
+    </td>
+    <td>
+      The script must return a String like: &quot;&lt;rows&gt;&lt;row <i>{<b>value1</b> parameter}</i>='<i>{numeric value}</i>' /&gt;&lt;/rows&gt;&quot;.<br/>
+      Script example (assuming that the <b>value1</b> parameter is as default):<br/>
+      <em>
+      StringBuffer buf = new StringBuffer();<br/>
+      buf.append('&lt;rows&gt;');<br/>
+      buf.append('&lt;row value1=\'');<br/>
+      float f =</em> .... [numeric value calculation]<br/>
+      <em>
+      buf.append(f);<br/>
+      buf.append('\' /&gt;');<br/>
+      buf.append('&lt;/rows&gt;')<br/>
+      return buf;
+      </em>
+    </td>    
+  </tr>
+  
+  <tr>
+    <td>
+      <b>Using a query</b>
+    </td>
+    <td>
+      The query must return a row with an attribute with the key represented by the <b>value</b> parameter and with a numeric value:<br/>
+      select <i>{something}</i> as <i>{<b>value1</b> parameter}, <i>{something}</i> as <i>{<b>serie</b> parameter} from <i>{table}</i> .... <br/>
+      Query example (assuming that the <b>value</b> parameter is as default):<br/>
+      <em>
+      select 'Efficiency' as serie, store_efficiency as value1 from stores where store_id = 3
+      </em>
+    </td>    
+  </tr>
+  
+</table>
+
+</body>
+</html>

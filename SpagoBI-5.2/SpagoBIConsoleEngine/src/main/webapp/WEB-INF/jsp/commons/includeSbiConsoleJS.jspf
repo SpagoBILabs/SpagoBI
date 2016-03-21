@@ -1,0 +1,60 @@
+<!-- 
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
+ -->
+
+<!-- Include Console stylesheets -->
+<link rel="styleSheet" href ="../css/console.css" type="text/css" />
+
+<!-- Include localized labels  -->
+<script type="text/javascript" src='../js/spagobi/formats/<%=locale.getLanguage()%>.js'/></script>
+
+
+<!-- START-DEBUG -->
+<script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
+<script type="text/javascript" src='../js/spagobi/overrides/overrides.js'/></script>
+<script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
+<script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='../js/spagobi/service/Sync.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/JSON.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formats/LocaleUtils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/data/StorePlugin.js'/></script>
+<script type="text/javascript" src='../js/spagobi/data/PagingStore.js'/></script>
+<script type="text/javascript" src='../js/spagobi/data/MemoryStore.js'/></script>
+<script type="text/javascript" src='../js/spagobi/data/Store.js'/></script>
+<script type="text/javascript" src='../js/spagobi/data/StoreManager.js'/></script>
+<script type="text/javascript" src='../js/spagobi/chart/FusionFreeChart.js'/></script>
+<script type="text/javascript" src='../js/spagobi/chart/OpenFlashChart.js'/></script>
+<script type="text/javascript" src='../js/spagobi/chart/SpagoBIChart.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/console/widgets/Widget.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/widgets/WidgetContainer.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/widgets/WidgetPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/ChartWidget.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/SummaryPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/DownloadLogsWindow.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/MasterDetailWindow.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/WaitWindow.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/NavigationToolbar.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/ButtonColumn.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/InlineActionColumn.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/InlineToggleActionColumn.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/InlineCheckColumn.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/ActionButton.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/FilteringToolbar.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/CustomFilteringToolbar.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/LookupField.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/PromptablesWindow.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/GridPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/DetailPage.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/DetailPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/console/ConsolePanel.js'/></script>
+ <!-- END-DEBUG -->
+
+<!-- START-PRODUCTION
+<script type="text/javascript" src='../js/spagobi/console-all-5.1.0.js'></script>
+END-PRODUCTION -->
+ 
+<script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	

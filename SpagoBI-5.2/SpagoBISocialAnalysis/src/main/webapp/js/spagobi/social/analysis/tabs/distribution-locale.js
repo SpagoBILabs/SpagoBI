@@ -1,0 +1,1 @@
+localeMapping("locationtweets", "sbi.social.analysis.locationtweets");

@@ -1,0 +1,62 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+   
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <link rel="SHORTCUT ICON" href="http://www.laszlosystems.com/favicon.ico">
+      <title>OpenLaszlo Application</title>
+      <style type="text/css">
+        html, body { margin: 0; padding: 0; height: 100%; }
+        body { background-color: #eaeaea; }
+      </style>
+      <script language="JavaScript1.1" src="lps/includes/vbembed.js" type="text/javascript"></script>
+      <script src="lps/includes/embed.js" type="text/javascript"></script>
+   </head>
+   
+   <body>
+   
+
+   <script type="text/javascript">
+   
+  
+      function getxmldata123456(logicalName) {
+        var xmldata = '<rows><row Store_efficiency="78.69479" Budget_satisfation="89.053474" Emp_occupation_degree="80.178665" Incidence_of_Costs="15.079561" /></rows>';
+        document.getElementById("lzapp").SetVariable("xmldata", xmldata);
+      }
+      
+       function getxmlconfig123456(logicalName) {
+        var xmlconf = '<CONFIGURATION><PARAMETERS><PARAMETER name="stepY" value="20"/><PARAMETER name="maxY" value="210"/><PARAMETER name="minY" value="10"/><PARAMETER name="timeGridStep" value="0:01"/><PARAMETER name="stepNum" value="10"/><PARAMETER name="refreshtime" value="2000"/><PARAMETERS></CONFIGURATION>';
+        document.getElementById("lzapp").SetVariable("xmlconfig", xmlconf);
+      }
+      
+
+   
+   </script>
+   
+   <script type="text/javascript">
+          lzLPSRoot = '/openlaszlo-3.3.3';
+          lzCanvasRuntimeVersion = 7 * 1;
+          if (lzCanvasRuntimeVersion == 6) {
+            lzCanvasRuntimeVersion = 6.65;
+          }
+          
+          if (isIE && isWin || detectFlash() >= lzCanvasRuntimeVersion) {
+            lzEmbed({url: 'livelines_jds.lzx.swf?delay=50&linkbaseurl=http://spagobi.eng.it/dashService&logicalname=clusterlight&uuid=123456&lzproxied=false&__lzhistconn='+top.connuid+'&__lzhisturl=' + escape('lps/includes/h.html?h='), bgcolor: '#ffffff', width: '1000', height: '350', id: 'lzapp', accessible: 'false'}, lzCanvasRuntimeVersion);
+            lzHistEmbed(lzLPSRoot);
+          } else {
+            document.write('This application requires Flash player ' + lzCanvasRuntimeVersion + '. <a href="http://www.macromedia.com/go/getflashplayer" target="fpupgrade">Click here</a> to upgrade.');
+          }
+   </script>            
+
+
+
+    
+    <noscript>
+         Please enable JavaScript in order to use this application.
+    </noscript>
+   
+
+   </body>
+</html>

@@ -1,0 +1,54 @@
+<html>
+<head>
+<style>
+
+body {
+	/*background-image: url('../img/pixels.png');*/
+	background-repeat: repeat;
+}
+
+.layer
+{
+			height:100%;
+			width:100%;
+			position:fixed;
+			left:300;
+			top:40;
+			z-index:1 !important;
+			background-image: url('../img/Visual_Universe.png');
+			background-size: cover;
+			filter: alpha(opacity=50); /* internet explorer */
+			-khtml-opacity: 0.5;      /* khtml, old safari */
+			-moz-opacity: 0.5;       /* mozilla, netscape */
+			opacity: 0.5;           /* fx, safari, opera */
+}
+
+img {
+    position: absolute;
+    top: 100px;
+    left: -300px;
+    margin: 0px;
+    width: 45%;
+}
+
+.text {
+    position: absolute;
+    bottom: 40px;
+    left: 0px;
+    margin: 10px;
+    font-family: Sans-Serif;
+    font-weight: 600;
+}
+
+</style>  
+</head>
+<body>
+  
+
+	<div class="layer">
+		<img src="../img/logoFiwareClaim.png" class="logo">
+
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+JAVA_OPTS="$JAVA_OPTS -Xms<%= node[:spagobi][:Xms] %>m -Xmx<%= node[:spagobi][:Xmx] %>m -XX:MaxPermSize=<%= node[:spagobi][:MaxPermSize] %>m "
+JAVA_OPTS="$JAVA_OPTS -Djava.security.egd=<%= node[:spagobi][:java_security_egd] %> "
+JAVA_OPTS="$JAVA_OPTS -Djava.library.path=<%= node[:spagobi][:java_jri_path] %> "
+#R_HOME=<%= node[:spagobi][:r_home] %>

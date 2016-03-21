@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Implementation-Title: SpagoBIQbeEngine
+Implementation-Version: 5.2.0
+Implementation-Vendor-Id: it.eng.spagobi
+Built-By: SpagoBI Labs
+Build-Jdk: 1.7.0_79
+Created-By: Maven Integration for Eclipse
+

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+<wb-module deploy-name="SpagoBI">
+        <wb-resource deploy-path="/WEB-INF/web.xml" source-path="/src/main/webapp/WEB-INF/web.xml"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <dependent-module archiveName="spagobi-core-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spagobi-core/spagobi-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="QbeCore-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/QbeCore/QbeCore">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="SpagoBIDAO-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIDAO/SpagoBIDAO">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spagobi-metamodel-utils-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spagobi-metamodel-utils/spagobi-metamodel-utils">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spagobi-metamodel-core-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spagobi-metamodel-core/spagobi-metamodel-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spagobi-commons-core-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spagobi-commons-core/spagobi-commons-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="SpagoBIOAuth2SecurityProvider-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIOAuth2SecurityProvider/SpagoBIOAuth2SecurityProvider">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="SpagoBILdapSecurityProvider-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBILdapSecurityProvider/SpagoBILdapSecurityProvider">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="SpagoBIUtils-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="SpagoBIUtilsJSON-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtilsJSON/SpagoBIUtilsJSON">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="SpagoBI"/>
+        <property name="java-output-path" value="/SpagoBI/target/classes"/>
+</wb-module>
+</project-modules>
