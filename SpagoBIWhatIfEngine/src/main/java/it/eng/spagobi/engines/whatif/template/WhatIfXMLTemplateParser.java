@@ -5,6 +5,14 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.whatif.template;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -19,14 +27,6 @@ import it.eng.spagobi.writeback4j.SbiAliases;
 import it.eng.spagobi.writeback4j.SbiScenario;
 import it.eng.spagobi.writeback4j.SbiScenarioVariable;
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
@@ -104,7 +104,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public WhatIfTemplate parse(Object template) {
 		Assert.assertNotNull(template, "Input parameter [template] cannot be null");
 		Assert.assertTrue(template instanceof SourceBean, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
-		return parse(template);
+		return parse((SourceBean) template);
 	}
 
 	private WhatIfTemplate parse(SourceBean template) {
