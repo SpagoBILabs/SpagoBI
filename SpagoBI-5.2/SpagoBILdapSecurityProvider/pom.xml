@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>it.eng.spagobi</groupId>
+		<artifactId>spagobi-parent</artifactId>
+		<version>5.2.0</version>
+		<relativePath>../spagobi-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>SpagoBILdapSecurityProvider</artifactId>
+	<packaging>jar</packaging>
+	
+	<dependencies>
+
+		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>SpagoBIUtils</artifactId>
+			<version>5.2.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>batik</groupId>
+					<artifactId>batik-1.5-fop</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.novell.ldap</groupId>
+			<artifactId>jldap</artifactId>
+			<version>4.3</version>
+		</dependency>
+
+	</dependencies>
+
+</project>

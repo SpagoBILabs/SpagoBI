@@ -1,0 +1,28 @@
+
+<library>
+
+      
+    <class name="sbitextlink" extends="statictext">
+        
+        <attribute name="url" value="0"/>      
+                 
+        <handler name="onclick">
+            //canvas.gridalert.message.setText(this.url);
+            //canvas.gridalert.open();
+            LzBrowser.loadURL(url, "_self");
+        </handler>
+        
+        <handler name="onmouseover">
+            <![CDATA[
+            ]]>
+        </handler>
+        
+        <handler name="onmouseout">
+            <![CDATA[
+            ]]>
+        </handler>
+
+    </class>
+
+
+</library>

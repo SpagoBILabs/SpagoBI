@@ -1,0 +1,1 @@
+Flag icons from http://famfamfam.com/lab/icons/flags/

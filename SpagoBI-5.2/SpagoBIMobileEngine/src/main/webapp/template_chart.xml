@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<CHART_WIDGET  width='80%' height='80%'>
+  
+  <!-- chart object properties -->
+  <LEGEND position='right'/>
+  
+  <OPTIONS showValueTip='true'/>
+ 
+  <TITLE value="Bar Chart"/>
+  
+  <ANIMATE easing='bounceOut' duration='750'/>
+  
+  <SERIES_LIST>
+  	<SERIES  xField='x' yField='perc' type='column' axis='left'>
+  	      <LABEL field='perc' contrast='true' font='18px Arial' display='insideEnd' text-anchor='middle'/>   
+    </SERIES>
+  </SERIES_LIST>
+                     
+  <AXES_LIST>
+    <AXES  type='Numeric' position='left' title='perc' fields='perc'/>
+    <AXES  type='Category' position='bottom' title='x' fields='x'/>
+
+  </AXES_LIST>
+  
+         <INTERACTIONS_LIST>
+            <INTERACTIONS type='panzoom'>
+            	<AXES>
+            		<BOTTOM></BOTTOM>
+            	</AXES>
+            </INTERACTIONS>
+         </INTERACTIONS_LIST>
+
+</CHART_WIDGET>
+

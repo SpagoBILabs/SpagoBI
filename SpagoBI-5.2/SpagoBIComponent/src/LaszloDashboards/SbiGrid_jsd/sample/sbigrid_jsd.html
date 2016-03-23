@@ -1,0 +1,61 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+   
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <link rel="SHORTCUT ICON" href="http://www.laszlosystems.com/favicon.ico">
+      <title>OpenLaszlo Application</title>
+      <style type="text/css">
+        html, body { margin: 0; padding: 0; height: 100%; }
+        body { background-color: #eaeaea; }
+      </style>
+      <script language="JavaScript1.1" src="lps/includes/vbembed.js" type="text/javascript"></script>
+      <script src="lps/includes/embed.js" type="text/javascript"></script>
+   </head>
+   
+   <body>
+   
+
+   <script type="text/javascript">
+   
+  
+      function getxmldata123456(logicalName) {
+        var xmldata = '<rows><row cluster="cluster1" descr="cluster 1" valore1="101" valore2="275" /><row cluster="cluster2" descr="cluster 2" valore1="51" valore2="271" /><row cluster="cluster3" descr="cluster 3" valore1="186" valore2="504" /></rows>';
+        //lzSetCanvasAttribute("xmldata", xmldata, "false");
+        document.getElementById("lzapp").SetVariable("xmldata", xmldata);
+      }
+      
+       function getxmlconfig123456(logicalName) {
+        var xmlconf = '<CONFIGURATION><NAMECOLUMNS><COLUMN index="0" name="Nome cluster"/><COLUMN index="1" name="Descrizione"/><COLUMN index="2" name="Allarme 1"/><COLUMN index="3" name="Allarme 3"/></NAMECOLUMNS><DIMENSIONCOLUMNS><COLUMN index="0" width="200"/></DIMENSIONCOLUMNS><LINKCOLUMNS></LINKCOLUMNS><PARAMETERS><PARAMETER name="tablebackgroundcolor" value="#9cc6d0"/><PARAMETER name="heightfirstrow" value="100"/><PARAMETER name="refreshtime" value="60000"/><PARAMETER name="ray" value="15"/></PARAMETERS><LIGHTCOLUMNS><COLUMN index="2" defaultcolor="red" defaulttooltip="Default Tooltip"><CONDITIONS><CONDITION operator="between" value1="50" value2="100" conditioncolor="green" tooltip="Green" showvalueintotooltip="true"  /><CONDITION operator="between" value1="100" value2="150" conditioncolor="blue" tooltip="Blue" showvalueintotooltip="false"  /></CONDITIONS></COLUMN><COLUMN index="3" defaultcolor="yellow" defaulttooltip="Default Tooltip"><CONDITIONS><CONDITION operator="between" value1="270" value2="280" conditioncolor="gold4" tooltip="Gold" showvalueintotooltip="false"  /></CONDITIONS></COLUMN></LIGHTCOLUMNS></CONFIGURATION>';
+        document.getElementById("lzapp").SetVariable("xmlconfig", xmlconf);
+        //lzSetCanvasAttribute("xmlconfig", xmlconf, "false");
+      }
+   
+   </script>
+   
+   <script type="text/javascript">
+          lzLPSRoot = '/openlaszlo-3.3.3';
+          lzCanvasRuntimeVersion = 7 * 1;
+          if (lzCanvasRuntimeVersion == 6) {
+            lzCanvasRuntimeVersion = 6.65;
+          }
+          
+          if (isIE && isWin || detectFlash() >= lzCanvasRuntimeVersion) {
+            lzEmbed({url: 'sbigrid_jsd.lzx.swf?delay=50&linkbaseurl=http://spagobi.eng.it/dashService&logicalname=clusterlight&uuid=123456&lzproxied=false&__lzhistconn='+top.connuid+'&__lzhisturl=' + escape('lps/includes/h.html?h='), bgcolor: '#eaeaea', width: '1000', height: '250', id: 'lzapp', accessible: 'false'}, lzCanvasRuntimeVersion);
+            lzHistEmbed(lzLPSRoot);
+          } else {
+            document.write('This application requires Flash player ' + lzCanvasRuntimeVersion + '. <a href="http://www.macromedia.com/go/getflashplayer" target="fpupgrade">Click here</a> to upgrade.');
+          }
+   </script>            
+
+
+    
+    <noscript>
+         Please enable JavaScript in order to use this application.
+    </noscript>
+   
+
+   </body>
+</html>

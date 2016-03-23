@@ -1,0 +1,379 @@
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>SpagoBI - Lines Dashboard</title>
+
+	<style>
+		body,td,a,p,.h{font-family:arial,sans-serif;
+				   font-size:12; }
+		p {text-align: justify}
+		.q{color:#0000cc;}
+
+	</style>
+	<meta>
+</head>
+
+<body bgcolor="#ffffff" text="#000000">
+ 
+
+<table cellpadding="0" cellspacing="10" border="0" width="100%">
+ <tr>
+  <td colspan="3">
+   <font size="+1" >SpagoBI - Lines<font>
+  </td>
+ </tr>
+
+ <tr>
+  <td colspan="3" align="center">
+   <img src="lines.jpg" border="0">
+  </td>
+
+ </tr>
+
+ <tr valign="center">
+  <td align="center" width="10%">
+    <font size="+1" >
+    <b>Parameters</b>
+    </font>
+  </td>
+  <td align="center" width="70%">
+   <font size="+1" >
+    <b>Description</b>
+   </font>
+  </td>
+  <td align="center" width="20%">
+   <font size="+1" >
+    <b>Default</b>
+   </font>
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>paramWidth</b>
+  </td>
+  <td>
+    Set table width
+   </td>
+  <td align="center" >
+    500
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>paramHeight</b>
+  </td>
+  <td>
+    Set table height
+  </td>
+  <td align="center" >
+   300    
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>xColName</b>
+  </td>
+  <td>
+    Name of the label that identifies a special column from the dataset. This will be the first column on the left and it will be possible to assign it a different background color
+  </td>
+  <td align="center" >
+    xLabel
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>refreshRate</b>
+  </td>
+  <td>
+    Set the delay between two consecutive request to server
+  </td>
+  <td align="center" >
+    15000
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>timeStartValue</b>
+  </td>
+  <td>
+    Set the star time (hh:mm) label on the X axis. If not specified it will be set equal to the current time
+  </td>
+  <td align="center" >
+    undefined
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>timeStopValue</b>
+  </td>
+  <td>
+    Set the stop time (hh:mm) label on the X axis. If not specified it will be set equal to "startTimeValue + stepNumValue x timeGridStepValue"
+  </td>
+  <td align="center" >
+    undefined
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>stepNumValue</b>
+  </td>
+  <td>
+    Set the number of data displayed before the table refresh. This parameter set the step of each line, with respect to the x axis
+  </td>
+  <td align="center" >
+    10
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>timeGridStepValue</b>
+  </td>
+  <td>
+    Set the grid x step (hh:mm)
+  </td>
+  <td align="center" >
+    0:01
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>xLabelValue</b>
+  </td>
+  <td>
+    Set the label for the x axis
+  </td>
+  <td align="center" >
+    Time
+  </td>
+ </tr>
+ 
+
+<tr valign="center">
+  <td align="center">
+     <b>yLabelValue</b>
+  </td>
+  <td>
+    Set the label for the x axis
+  </td>
+  <td align="center" >
+	
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>minYValue</b>
+  </td>
+  <td>
+    Set the min value for the y axis
+  </td>
+  <td align="center" >
+	0
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>maxYValue</b>
+  </td>
+  <td>
+    Set the max value for the y axis
+  </td>
+  <td align="center" >
+	200
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>stepYValue</b>
+  </td>
+  <td>
+    Set the grid step on the y axis 
+  </td>
+  <td align="center" >
+    25
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>line1Color</b>
+  </td>
+  <td>
+    Set the color for the line 1
+  </td>
+  <td align="center" >
+    0xf92525
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>line2Color</b>
+  </td>
+  <td>
+    Set the color for the line 2
+  </td>
+  <td align="center" >
+    0x17e512
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>line3Color</b>
+  </td>
+  <td>
+    Set the color for the line 3
+  </td>
+  <td align="center" >
+    0xbe4ce3
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>line4Color</b>
+  </td>
+  <td>
+    Set the color for the line 4
+  </td>
+  <td align="center" >
+    0x5420ff
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>line5Color</b>
+  </td>
+  <td>
+    Set the color for the line 5
+  </td>
+  <td align="center" >
+    0xf442ff
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>line6Color</b>
+  </td>
+  <td>
+    Set the color for the line 6
+  </td>
+  <td align="center" >
+    0xfb7819
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>line7Color</b>
+  </td>
+  <td>
+    Set the color for the line 7
+  </td>
+  <td align="center" >
+    0x19fbee
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>line8Color</b>
+  </td>
+  <td>
+    Set the color for the line 8
+  </td>
+  <td align="center" >
+    0xe570ad
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>line9Color</b>
+  </td>
+  <td>
+    Set the color for the line 9
+  </td>
+  <td align="center" >
+    0xfd0c23
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>line10Color</b>
+  </td>
+  <td>
+    Set the color for the line 10
+  </td>
+  <td align="center" >
+    0x4618de
+  </td>
+ </tr>
+
+</table>
+
+<table cellpadding="0" cellspacing="10" border="0" width="100%">
+
+  <th colspan="2">
+    How to feed this movie
+  </th>
+
+  <tr>
+    <td width="10%">
+      <b>Using a script</b>
+    </td>
+    <td>
+      The script must return a String like: &quot;&lt;rows&gt;&lt;row <i>{line 1 label}</i>='<i>{numeric value}</i>' <i>{line 2 label}</i>='<i>{numeric value}</i>' ... /&gt;&lt;/rows&gt;&quot;.<br/>
+      Script example:<br/>
+      <em>
+      StringBuffer buf = new StringBuffer();<br/>
+      buf.append('&lt;rows&gt;');<br/>
+      float line1 =</em> ... [numeric value calculation] <em><br/>
+      float line2 =</em> ... [numeric value calculation] <em><br/>
+      float line3 =</em> ... [numeric value calculation] <em><br/>
+      buf.append('&lt;row Efficiency=\'');<br/>
+      buf.append(line1);<br/>
+      buf.append('\' Budget_satisfation=\'');<br/>
+      buf.append(line2);<br/>
+      buf.append('\' Emp_occupation_degree=\'');<br/>
+      buf.append(line3);<br/>
+      buf.append('\' /&gt;');<br/>
+      buf.append('&lt;/rows&gt;')<br/>
+      return buf;
+      </em>
+    </td>    
+  </tr>
+  
+  <tr>
+    <td>
+      <b>Using a query</b>
+    </td>
+    <td>
+      The query must return one row. For each row attribute, the key is considered as the line label, the value (that must be a numeric value) is considered as the current line height:<br/>
+      select <i>{something representing the line 1 value}</i>, <i>{something representing the line 2 value}</i> ... from <i>{table}</i> .... <br/>
+      Query example:<br/>
+      <em>
+      select store_efficiency as Efficiency, store_budget_satisfation as Budget_satisfation, store_emp_occupation_degree as Emp_occupation_degree from stores where store_id = 3
+      </em>
+    </td>    
+  </tr>
+  
+</table>
+
+</body>
+</html>

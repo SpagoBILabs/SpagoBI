@@ -1,0 +1,27 @@
+SpagoBIChartEngine's Change Log
+
+
+======================= Release 3.3.0 2012-01-27 =======================
+
+New features:
+
+
+
+
+
+
+Bug fixes:
+
+none
+
+
+
+
+
+
+Changes in template structure:
+
+
+
+
+

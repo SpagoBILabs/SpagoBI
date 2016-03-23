@@ -1,0 +1,40 @@
+#
+# Cookbook Name:: spagobi
+# Recipe:: default
+#
+#
+# All rights reserved - Do Not Redistribute
+#
+
+service "spagobi" do
+  action [:stop,:disable]
+end
+
+file "/etc/init.d/spagobi" do
+  owner "root"
+  group "root"
+  mode 0755
+  action :delete
+end
+
+mysql_connection_info = 
+{
+    :host     => '127.0.0.1',
+    :username => 'root',
+    :password => 'root'
+}
+
+
+mysql_database node['spagobi']['db_name'] do
+    connection mysql_connection_info
+    action     :drop
+end
+
+
+directory "#{node[:spagobi][:home_dir]}" do
+  owner node[:spagobi][:server_user]
+  group node[:spagobi][:server_group]
+  mode 0755
+  recursive true
+  action :delete
+end

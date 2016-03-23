@@ -1,0 +1,140 @@
+
+
+
+<library>
+       
+    <include href="sbicolumn.lzx"/>   
+       
+    <class name="sbitable" extends="basecomponent">
+        
+        <attribute name="columns" type="expression" value="${new Array()}"/>
+        <attribute name="drawarea" type="expression" value="${new LzDrawView()}"/>
+        <attribute name="backgroundcolor" value="0xffffff"/>
+        <attribute name="heightFirstRow" />
+        <attribute name="linkbaseurl" />
+        
+        
+        <method name="addColumn" args="column"> 
+            columns[columns.length] = column;
+        </method>   
+        
+        
+        
+        <method name="draw" args="parentview,dimensioncolumns"> 
+            
+            
+            <![CDATA[
+            drawarea.setAttribute("clip", "true");
+            drawarea.setAttribute("x", this.x);
+            drawarea.setAttribute("y", this.y);
+            drawarea.setAttribute("height", this.height);
+            drawarea.setAttribute("width", this.width);
+            // FILL THE BACKGROUND 
+            drawarea.rect(0, 0, this.width, this.height);
+            var g = drawarea.createLinearGradient(0, 0, this.width, this.height);
+            drawarea.globalAlpha = 0.3;
+            g.addColorStop(0, 0xffffff);
+            g.addColorStop(0.3, this.backgroundcolor);
+            g.addColorStop(0.6, 0xffffff);
+            g.addColorStop(1, this.backgroundcolor);
+            drawarea.fillStyle = g;
+            drawarea.fill();
+            
+            
+            // calculate the total dimension setted with configuration
+            var widthAssigned = 0;
+            var numColAssigned = 0;
+            for(var i=0; i < dimensioncolumns.length; i++) {
+                widthAssigned = widthAssigned + parseFloat(dimensioncolumns[i][1]);
+                numColAssigned = numColAssigned + 1;
+            }
+            // calculate the dimension for columns with no dimension set
+            var deltax = (this.width - widthAssigned) / (columns.length-numColAssigned);
+            var currentxposition = 0;
+            for(var i=0; i < columns.length; i++) {
+                var sbicol = columns[i];
+                sbicol.setAttribute("x", this.x + currentxposition);
+                sbicol.setAttribute("y", this.y);
+                sbicol.setAttribute("height", this.height);
+                var dimensionSet = false;
+                for(var j=0; j < dimensioncolumns.length; j++) {
+                    if(dimensioncolumns[j][0] == i) {
+                        var widthcolumn = parseFloat(dimensioncolumns[j][1]);
+                        sbicol.setAttribute("width", widthcolumn);
+                        currentxposition = currentxposition + widthcolumn;
+                        dimensionSet = true;
+                    }
+                }
+                if(!dimensionSet) {
+                    sbicol.setAttribute("width", deltax);
+                    currentxposition = currentxposition + deltax;
+                }
+                
+                
+                // SET BORDERS LINE
+                if(i==0) {
+                    sbicol.setAttribute("hasleftborder", "false");
+                } else {
+                    sbicol.setAttribute("hasleftborder", "true");
+                } 
+                sbicol.setAttribute("hasrightborder", "false");
+                
+                // DRAW COLUMN
+                sbicol.draw();
+            }
+            
+            
+  
+  
+  
+            /*
+            var deltax = this.width / columns.length;
+            if(this.widthFirstColumn!=0) {
+              deltax = (this.width - this.widthFirstColumn) / (columns.length - 1);
+            } else {
+              this.widthFirstColumn = deltax;
+            }
+            var currentxposition = 0;
+            for(var i=0; i < columns.length; i++) {
+                var sbicol = columns[i];
+                sbicol.setAttribute("x", this.x + currentxposition);
+                sbicol.setAttribute("y", this.y);
+                sbicol.setAttribute("height", this.height);
+                if(i==0) {
+                    sbicol.setAttribute("hasleftborder", "false");
+                    sbicol.setAttribute("width", this.widthFirstColumn);
+                    currentxposition = currentxposition + this.widthFirstColumn;
+                } else {
+                    sbicol.setAttribute("hasleftborder", "true");
+                    sbicol.setAttribute("width", deltax);
+                    currentxposition = currentxposition + deltax;
+                } 
+                sbicol.setAttribute("hasrightborder", "false");
+                sbicol.draw();
+            }
+            */
+            
+            
+            
+                    
+            drawarea.sendInFrontOf(parentview);   
+            ]]>
+        </method>   
+          
+        
+        <method name="clear">
+            <![CDATA[ 
+            drawarea.clear();
+            for(var i=0; i < columns.length; i++) {
+                var sbicol = columns[i];
+                sbicol.clear();
+            }
+            columns = new Array();
+            ]]>
+        </method>
+        
+          
+    </class>
+
+
+</library>

@@ -1,0 +1,237 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>it.eng.spagobi</groupId>
+		<artifactId>spagobi-parent</artifactId>
+		<version>5.2.0</version>
+		<relativePath>../spagobi-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>SpagoBIDataMiningEngine</artifactId>
+	<packaging>war</packaging>
+
+	<properties>
+		<war.deploy.dir>${project.build.directory}/${project.artifactId}</war.deploy.dir>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>SpagoBIDAO</artifactId>
+			<version>5.2.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>3.0.9.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>async-http-servlet-3.0</artifactId>
+			<version>3.0.9.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.3</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+			<version>3.0.9.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-multipart-provider</artifactId>
+			<version>3.0.9.Final</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.1</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>com.github.lucarosellini.rJava</groupId>
+		    <artifactId>JRI</artifactId>
+		    <version>0.9-7</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>com.github.lucarosellini.rJava</groupId>
+		    <artifactId>JRIEngine</artifactId>
+		    <version>0.9-7</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>com.github.lucarosellini.rJava</groupId>
+		    <artifactId>REngine</artifactId>
+		    <version>0.9-7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.5.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>development</id>
+		</profile>
+		
+		<profile>
+			<id>jbossEAP7</id>
+		</profile>
+		
+		<profile>
+			<id>production</id>
+			<activation>
+				<property>
+					<name>minimized-dir</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>compress</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<!-- <outputDirectory>${project.build.directory}/minimized</outputDirectory> -->
+							<webappDirectory>${minimized-dir}</webappDirectory>
+							<!-- Minify only, do not obfuscate -->
+							<nomunge>true</nomunge>
+							<excludes>
+								<exclude>**/*.css</exclude>
+								<exclude>**/lib/**/*.js</exclude>
+								<exclude>**/spagobi/formats/en.js</exclude>
+								<exclude>**/spagobi/formats/es.js</exclude>
+								<exclude>**/spagobi/formats/fr.js</exclude>
+								<exclude>**/spagobi/formats/it.js</exclude>
+								<exclude>**/spagobi/commons/extObjTemplate.js</exclude>
+								<exclude>**/spagobi/console/ChartWidget_bck.js</exclude>
+								<exclude>**/spagobi/widgets/FilteringToolbar.js</exclude>
+								<exclude>**/spagobi/widgets/LookupField.js</exclude>
+								<exclude>**/spagobi/widgets/PagingToolbar.js</exclude>
+								<exclude>**/spagobi/widgets/TriggerFieldMultiButton.js</exclude>
+								<exclude>**/spagobi/commons/Settings.js</exclude>
+								<exclude>**/spagobi/datamining-all-${project.version}.js</exclude>
+							</excludes>
+							<aggregations>
+								<aggregation>
+									<inputDir>${minimized-dir}/js/spagobi</inputDir>
+									<output>${basedir}/src/main/webapp/js/spagobi/datamining-all-${project.version}.js</output>
+									<includes>
+										<include>overrides/overrides-min.js</include>
+										<include>service/ServiceRegistry-min.js</include>
+										<include>service/RestService-min.js</include>
+										<include>commons/Format-min.js</include>
+										<include>commons/Utils-min.js</include>
+										<include>commons/Log-min.js</include>
+										<include>formats/LocaleUtils-min.js</include>
+										<include>widgets/Help-min.js</include>
+										<include>exception/ExceptionHandler-min.js</include>
+										<include>datamining/ResultPanel-min.js</include>
+										<include>datamining/UploadPanel-min.js</include>
+										<include>datamining/OutputPanel-min.js</include>
+										<include>datamining/OutputsTabPanel-min.js</include>
+										<include>datamining/CommandsTabPanel-min.js</include>
+										<include>datamining/DataMiningPanel-min.js</include>
+										<include>datamining/FillVariablesPanel-min.js</include>
+										<include>**/*.js</include>
+									</includes>
+									<insertNewLine>true</insertNewLine>
+								</aggregation>
+							</aggregations>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>tomcat-deploy</id>
+			<properties>
+				<war.deploy.dir>${tomcat.home}/webapps/${project.artifactId}</war.deploy.dir>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>cas-enabled</id>
+			<properties>
+				<enable.cas.start>&lt;!--</enable.cas.start>
+				<enable.cas.end>--&gt;</enable.cas.end>
+			</properties>
+		</profile>
+	</profiles>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<webResources>
+						<resource>
+							<filtering>true</filtering>
+							<directory>src/main/webapp</directory>
+							<includes>
+								<include>**/web.xml</include>
+							</includes>
+						</resource>
+					</webResources>
+					<warSourceDirectory>src/main/webapp</warSourceDirectory>
+					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+					<webappDirectory>${war.deploy.dir}</webappDirectory>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Built-By>SpagoBI Labs</Built-By>
+						</manifestEntries>
+					</archive>
+					<containerConfigXML>/src/main/webapp/META-INF</containerConfigXML>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>

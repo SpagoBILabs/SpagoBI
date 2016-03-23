@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<TABLE_WIDGET>
+	<TITLE value="Foodmart Products" style="font-weight:bold; font-family: Verdana; font-size: 16px;"/>
+	<COLUMNS>
+		<COLUMN header="Brand" value="BRAND_NAME" style="color: red;">
+		</COLUMN>		
+		<COLUMN header="Product" value="PRODUCT_NAME" style="background-color: silver; border: 1px solid grey;"/>
+		<COLUMN header="SRP" value="SRP" alarm="">
+		</COLUMN>
+	</COLUMNS>
+</TABLE_WIDGET> 

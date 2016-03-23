@@ -1,0 +1,34 @@
+
+<library>
+
+      
+    <class name="sbilink" extends="drawview">
+        
+        <attribute name="url" value="0"/>
+        <attribute name="colorLinkArrow" type="string" value="white" />
+               
+        <handler name="onclick">
+            LzBrowser.loadURL(url, "_self");
+        </handler>
+        
+        
+        
+        <method name="draw" args="celldrawview">
+            <![CDATA[
+            this.beginPath();
+            this.moveTo(0,0);
+            this.lineTo(4,4);
+            this.lineTo(0,8);
+            this.closePath();
+            this.stroke();
+            this.fillStyle = this.colorLinkArrow;
+            this.fill();
+            this.sendInFrontOf(celldrawview)
+            ]]>
+        </method>
+  
+
+    </class>
+
+
+</library>

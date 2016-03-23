@@ -1,0 +1,300 @@
+## Sentiment analysis Twitter - Script unificato
+
+# Ultima modifica Isabella Iennaco 20-10-2014
+
+# Caricamento pacchetti
+library(RMySQL)
+library(DBI)
+library(tau)
+library(tm)
+library(plyr)
+
+#library(tau,lib.loc="/home/spagobi/R/x86_64-redhat-linux-gnu-library/3.1")
+#library(tm,lib.loc="/home/spagobi/R/x86_64-redhat-linux-gnu-library/3.1")
+#library(plyr,lib.loc="/home/spagobi/R/x86_64-redhat-linux-gnu-library/3.1")
+
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+#                                                   Filter                                                     #
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+
+# Ultima modifica 02/07/2014 h: 12:09 Letizia Pernigotti
+
+# Begin script
+#* * function filterER () -> input : data . frame di tweets
+#* * -> output : data . frame di tweets filtrati
+
+#filterER <- function (arg) {
+#  arg<-apply(arg,2,applyFun )
+  #* * NOTA : dopo il filtraggio eliminiamo tutti i tweets
+  #* *che hanno meno di 3 caratterri ( poco significativi )
+  # arg<-data.frame(text=arg[nchar( as.character(arg))>2])
+#  return(arg)
+#}
+#* * La funzione applyFun esegue il filtraggio su ogni
+# singolo tweet
+applyFun<-function(x){
+  #* * eliminazione @user
+  tmp<-gsub("@.*?(\\s|$)"," ",x);
+  #** eliminazione url ( http ...)
+  tmp<-gsub("http.*?$"," " ,tmp);
+  #** eliminazione # tag
+  tmp <- gsub("#.*?\\s"," " ,tmp);
+  #** detection emoticon positive : -) , : D ...
+  tmp<-gsub("(\\(\\:|\\:\\)|\\:\\ -\\)|@\\-\\)|\\:O|\\= D|\\=\\]|\\=\\)|\\:\\-D|\\:D|\\:\\-p|\\:p|XD|xD|\\:\\]|\\;\\]|\\;\\-(\\]|\\))|\\:\\-\\]|\\;\\)|\\:\\ sD |\\:\\ s \\)| D \\:|\\: S |\\: s |\\(\\=|\\^\\^|\\= D)" ,"posmaremo",tmp)
+  #** detection emoticon negative ) -: , : -/ ...
+  tmp <- gsub ( " \\:\\ / |\\:\\ s \\ / |\\:\\ '(\\[|\\(|\\{)|\\=\\ /
+                |\\:\\(|\\)\\:|\\:\\ -\\(|\\)\\ -\\:| xo | xO |\\:(\\(|\\[|\\{|\\|)|\\;(\\(|\\[|\\{\\|)|\\;\\ s (\\(
+                |\\[|\\{\\|)|\\;\\ -(\\(|\\[|\\{\\|)|\\=\\|| D \\
+                :|\\=(\\(|\\[\\{) " ," negmaremo " , tmp )
+  #** eliminazione serie lettere uguali es . loooove
+  # tmp <-gsub ("( a | b | c | d | e | f | g | h | i | l | m | n | o | p | q | r | s | t | u | v | z
+  #| j | k | w | x | y ){3 ,30} " ," \\1\\1 " , tmp )
+  #** eliminazione di numeri e metacaratteri
+  tmp<-gsub( "\\W"," " , tmp)
+  tmp<-gsub("\\d"," " , tmp)
+  #** pulizia testo
+  tmp<-gsub (" (\\s|^)..?\\s"," ",tmp);
+  tmp<-gsub (" (\\s|^).?\\s"," ",tmp);
+  tmp<-gsub ("(\\s|^)..?\\s"," ",tmp);
+  tmp<-gsub ("(\\s|^).?\\s"," ",tmp);
+  #** eliminazione spazi eccedenti
+  # tmp<-gsub("\s{2,30}"," ",tmp)
+  tmp<-gsub("\\s+"," ",tmp)
+  #** trasformo le lettere maiuscole in minuscole
+  tmp <- tolower(tmp)
+  return (tmp)
+                }
+# End script
+
+
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+#                                              Classification                                                  #
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+
+# Ultima modifica 02/07/2014 h: 14:15 Letizia Pernigotti
+
+# Begin script
+#* * function classify () -> input : data.frame di tweets
+# output : risultati e statistiche di classificazione
+classify<-function(tweets)
+{
+  #** Tempo corrente
+  ptm<-proc.time()
+  numberT=dim(tweets)[1]
+  print("... wait for classfication in progress...")
+  matr<-apply(tweets,1,applyClass)
+  #** Costruzione output funzione ( risultati assoluti )
+  ?signif
+  retAbs<-data.frame(Positivi=signif(sum(matr[1,1:numberT]),5), Negativi=signif(sum(matr[2,1:numberT]),5), Neutrali=signif(sum(matr[3,1:numberT]),5),
+                     ElapsedTime=signif((proc.time()-ptm)[3] ,7))
+  #** Costruzione output funzione ( risultati %)
+  retPer<-data.frame(Positivi=signif((retAbs[1 ,1]*100)/numberT,5), Negativi=signif((retAbs[1,2]*100)/numberT,5) , Neutrali=signif((retAbs[1,3]*100)/numberT,5),
+                     ElapsedTime=paste(retAbs[1,4]%/%60,"m",signif(retAbs[1,4]%%60,4),"s"))
+  r<-rbind(retAbs,retPer)
+  dimnames(r)[1]<-list(c("Abs","%"))
+  resultList<-list("General"=r, "matrix"=matr)
+  print(resultList)
+  return(resultList)
+}
+#** La funzione applyClass esegue la classificazione su
+# ogni singolo tweet . Ritorna la polarit`a del
+# sentimento espresso :
+# (1 ,0 ,0, probP, probN) se il sentimento espreso dal tweet `e positivo
+# (0 ,1 ,0, probP, probN) se il sentimento espreso dal tweet `e negativo
+# (0 ,0 ,1, probP, probN) se il sentimento espreso dal tweet `e nullo
+applyClass<-function(tweet)
+{
+  #* * Tokenizzo il tweet
+  toke<-MC_tokenizer(tweet)
+  token<-data.frame(toke)
+  numberToken<-length(toke)
+  if(numberToken>=1){
+    matri<-apply(token,1,applyToken)
+    #* * Probabilit`a che il tweet sia positivo
+    probN<-prod(matri[1,1:numberToken])
+    #* * Probabilit`a che il tweet sia negativo
+    probP<-prod(matri[2,1:numberToken])
+    if(probN>probP)
+      ret<-c(0,1,0)
+    if(probP>probN)
+      ret<-c(1,0,0)
+    if(probP==probN)
+      ret<-c(0,0,1)
+    
+    ret[4:5] <- c(probP, probN)
+  }
+  else {
+    ret <-c(0,0,0,0,0)
+  }
+  
+  return(ret)
+}
+
+
+#* * La funzione applyToken ritorna il peso che ha
+# ogni singolo termine all ' interno delle matrici
+# di frequenza ( terminiPos e terminiNeg )
+applyToken<-function(tok)
+{
+  retn=1;
+  retp=1;
+  #** Prob . che il termine appartenga ad un tweet positivo
+  posP<-which(terminiPos[ ,1]==tok) # posizione in cui compare la parola "tok"
+  if(length(posP)!=0)
+    retp<-as.numeric(terminiPos[posP,2])  # numero associato alla parola "tok"
+  #** Prob . che il termine appartenga ad un tweet negativo
+  posN<-which(terminiNeg[ ,1]==tok)
+  if(length(posN)!=0)
+    retn<-as.numeric(terminiNeg[posN,2])
+  return(c(retn,retp))
+}
+# End script
+
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+#                                                      Sink reset                                              #
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+
+
+sink.reset <- function(){
+  for(i in seq_len(sink.number())){
+    sink(NULL)
+  }
+}
+
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+#                                                Main                                                          #
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+
+## Set db connection and data variables
+search_id<-$P{search_id}
+
+# Reset all the sink connection and delete log file 
+closeAllConnections()
+unlink(paste("Sentimet","_",search_id,".log",sep=""))
+sink.reset()
+
+# Create new log file named according to the search_id
+
+con_log<-file(paste("Sentimet","_",search_id,".log",sep=""))
+sink(con_log,append=TRUE,type="output")
+sink(con_log,append=TRUE,type="message")
+print(paste("Log of last execution:",Sys.time()))
+print(paste("R home:",R.home()))
+
+# Connection to database
+connection_flag<-dbListConnections( dbDriver( drv = "MySQL"))
+
+if(length(connection_flag)==0){
+  print("No database connection active")
+}else{
+  disconnected<-lapply(c(1:1:length(connection_flag)), function(x) dbDisconnect(connection_flag[[x]]))
+    print(paste("Disconnected",disconnected))
+}
+
+
+con <- dbConnect(MySQL(), user="<%= node['spagobi']['db_username'] %>", password="<%= node['spagobi']['db_password'] %>", dbname="<%= node['spagobi']['db_name'] %>", host="<%= node['spagobi']['public_ip'] %>")
+whole_dataset <- dbReadTable(con, "TWITTER_DATA")
+
+load("TerminiPos.Rda")
+load("TerminiNeg.Rda")
+
+
+
+whole_data<-whole_dataset[whole_dataset$SEARCH_ID == search_id,]
+whole_data<-whole_data[whole_data$LANGUAGE_CODE == "en",]
+# Check if the dataframe is empty and stop the execution
+if(nrow(whole_data)==0){
+  stop("The search return no data.")
+}
+
+# Elimino il "RT" dai retweet in modo che il tweet sia classificato come il tweet originale
+whole_data$TWEET_TEXT<-gsub("(RT |RT:)","",whole_data$TWEET_TEXT)
+
+# Estraggo le colonne id e testo
+data <- whole_data[,c("TWEET_ID","TWEET_TEXT")]
+data<-rename(data,c("TWEET_ID"="tweet_id","TWEET_TEXT"="tweettext"))
+
+########################################################################
+#######               PREPARAZIONE DEL DATASET                  ########
+########################################################################
+
+data$tweettext<-fixEncoding(data$tweettext,latin1=FALSE)
+
+
+########################################################################
+#######       SELEZIONE DEI CAMPI TESTUALI                      ########
+########################################################################
+
+# Ripulisco i campi dai valori nulli
+delete_index<-!is.na(data$tweettext) & data$tweettext!=""
+data<-data[delete_index,]
+remove(delete_index)
+# Check if the dataframe is empty and stop the execution
+if(nrow(data)==0){
+  stop("Not enough data.")
+}
+
+# Pulisco le frasi usando la function filterER
+
+data$tweettext<-lapply(data$tweettext,applyFun)
+data$tweettext<-unlist(data$tweettext)
+
+if(nrow(data)==0){
+  stop("Not enough data.")
+}
+
+# Costruisco un data frame con solo testo
+data_text <- data[-1]
+
+
+# Applico un' implementazione del classificatore Naive Bayes
+results<-classify(data_text)
+matrixRes<-results[[2]]
+# append results to data
+data$is_positive <- matrixRes[1,]
+data$is_negative <- matrixRes[2,]
+data$is_neutral <- matrixRes[3,]
+
+##################################################
+###        update the original table           ###
+##################################################
+data<-data[-2]
+
+data_temp<-paste("data_temp_sentiment","_",search_id, sep="")
+dbWriteTable(con, data_temp,  data )
+query_update<- paste("update TWITTER_DATA tb,", data_temp,
+                     "dt set tb.IS_POSITIVE=dt.is_positive, tb.IS_NEGATIVE=dt.is_negative,",
+                     "tb.IS_NEUTRAL=dt.is_neutral",
+                      "where tb.TWEET_ID=dt.tweet_id", sep=" ")
+dbSendQuery(con,query_update)
+query_drop<-paste("drop table",data_temp, sep=" ")
+dbSendQuery(con,query_drop)
+print("Update TWITTER_DATA performed")
+dbDisconnect(con)
+#sink()
+#sink(type="message")
+#cat(readLines("Sentimet.log"),sep="\n")

@@ -1,0 +1,582 @@
+<canvas width="100%" height="100%" bgcolor="0xeaeaea" >
+    
+    <include href="sbitable.lzx"/>
+    <include href="sbicolumn.lzx"/>
+    
+    <!--
+    <attribute name="xmldata" type="string" value=""/>
+    <attribute name="xmlconfig" type="string" value=""/>
+     --> 
+        
+    <script>
+    
+         var xmldata = "";
+         var xmlconfig = ""; 
+    
+         delay = typeof(global.delay)!="undefined" ? global.delay : "50"; 
+         delay = parseInt(delay);
+         
+         logicalname = typeof(global.logicalname)!="undefined" ? global.logicalname : "";
+         linkbaseurl = typeof(global.linkbaseurl)!="undefined" ? global.linkbaseurl : "";
+	       uuid = typeof(global.uuid)!="undefined" ? global.uuid : "";
+         var dataPointer = new LzDatapointer();
+         var confPointer = new LzDatapointer();  
+         var sbitableobj = new sbitable();
+         var lightColumnConf = new Array();
+         var linkColumnConf = new Array();
+         var nameColumnConf = new Array();
+         var dimensionColumnConf = new Array();
+         
+         var refreshtime = 30000;
+         ray = 15;
+         heightFirstRow = 0;
+         tablebackgroundcolor = "#9cc6d0";
+         bgcolorFirstRow = "#2861bf";
+         bgcolorFirstColumn = "#4286f4";
+         boldTextFirstRow = true;
+         boldTextFirstColumn = false;
+         colorTextFirstColumn = "#ffffff";
+         colorTextFirstRow = "#ffffff";
+         sizeTextFirstRow = 15;
+         sizeTextFirstColumn = 11;
+         colorLinkOver = "yellow";
+         sizeText = 10;
+         bgcolorTooltip="0xf8e496";
+
+    </script> 
+
+
+
+
+
+
+    <method name="checkdataload" >
+      if(xmldata=="") {
+         canvas.timercheckdataloaded();   
+      } else { 
+        var valuexml = xmldata;  
+        var dataDom = LzDataNode.stringToLzData(valuexml, false); 
+        if(dataDom!=null) {
+          xmldata = "";
+          dataPointer.setPointer(dataDom);
+          canvas.dashboardArea.redraw(dataPointer);
+        }
+      }
+    </method>
+
+    <method name="timergetxmldata">
+        this.getXmlDataDelegate = new LzDelegate( this, "getxmldata" );
+   	    LzTimer.addTimer( this.getXmlDataDelegate, refreshtime); 	
+    </method>  
+
+    <method name="timercheckdataloaded">
+       this.checkDataLoad = new LzDelegate( this, "checkdataload" );
+   	   LzTimer.addTimer(this.checkDataLoad, 200);	
+    </method> 
+
+    <method name="getxmldata">
+         <![CDATA[
+         var s = "javascript:getxmldata"+uuid+"('"+logicalname+"');";
+         LzBrowser.loadURL(s);
+         //var data = '<rows><row cluster="cluster1" descr="cluster 1" valore1="101" valore2="275" /><row cluster="cluster2" descr="cluster 2" valore1="51" valore2="271" /><row cluster="cluster3" descr="cluster 3" valore1="186" valore2="504" /></rows>';
+         //xmldata = data;
+         canvas.timercheckdataloaded();
+         canvas.timergetxmldata();
+         ]]>
+    </method> 
+
+    <method name="checkconfload" >
+      <![CDATA[
+     if(xmlconfig=="") {
+         canvas.timercheckconfloaded();   
+      } else {  
+        var valuexmlconf = xmlconfig;
+        var dataDomConf = LzDataNode.stringToLzData(valuexmlconf, false);       
+        if(dataDomConf!=null) {
+          confPointer.setPointer(dataDomConf);
+          // calculate the light configuration parameters
+          var curConfNode = confPointer.xpathQuery(".");
+          curConfNode = confPointer.xpathQuery("./LIGHTCOLUMNS");          
+          var childs = confPointer.xpathQuery("./LIGHTCOLUMNS/*");
+        
+             
+          if(childs!=null) {
+              var numChilds = childs.length;
+              if(numChilds==null) {      
+                  parameters = new Array();
+                  parameters[0] = childs.getAttr("index");
+                  parameters[1] = childs.getAttr("defaultcolor");
+                  parameters[2] = childs.getAttr("defaulttooltip");
+                  conditions = new Array();
+                  confconds = confPointer.xpathQuery("./LIGHTCOLUMNS/COLUMN[0]/CONDITIONS/*");
+                  if(confconds!=null) {
+                      numcond = confconds.length;
+                      if(numcond==null) {
+                          condition = new Array();
+                          condition[0] = confconds.getAttr("operator"); 
+                          condition[1] = confconds.getAttr("value1");
+                          condition[2] = confconds.getAttr("value2");
+                          condition[3] = confconds.getAttr("conditioncolor");
+                          condition[4] = confconds.getAttr("tooltip");
+                          condition[5] = confconds.getAttr("showvalueintotooltip");
+                          conditions[0] = condition;   
+                      } else {
+                          for(var indcond=0; indcond < confconds.length; indcond++) {
+                              condition = new Array();
+                              condition[0] = confconds[indcond].getAttr("operator"); 
+                              condition[1] = confconds[indcond].getAttr("value1");
+                              condition[2] = confconds[indcond].getAttr("value2");
+                              condition[3] = confconds[indcond].getAttr("conditioncolor");
+                              condition[4] = confconds[indcond].getAttr("tooltip");
+                              condition[5] = confconds[indcond].getAttr("showvalueintotooltip");
+                              conditions[indcond] = condition;
+                          }
+                      }
+                  }
+                  parameters[3] = conditions;
+                  lightColumnConf[lightColumnConf.length] = parameters;                  
+              } else {
+                  for(var indchild=0; indchild < childs.length; indchild++) {
+                      parameters = new Array();
+                      parameters[0] = childs[indchild].getAttr("index");
+                      parameters[1] = childs[indchild].getAttr("defaultcolor");
+                      parameters[2] = childs[indchild].getAttr("defaulttooltip");
+                      conditions = new Array();
+                      confconds = null;
+                      confconds = confPointer.xpathQuery("./LIGHTCOLUMNS/COLUMN[@index='"+parameters[0]+"']/CONDITIONS/*");
+                      if(confconds!=null) {
+                          numcond = confconds.length;
+                          if(numcond==null) {
+                              condition = new Array();
+                              condition[0] = confconds.getAttr("operator"); 
+                              condition[1] = confconds.getAttr("value1");
+                              condition[2] = confconds.getAttr("value2");
+                              condition[3] = confconds.getAttr("conditioncolor");
+                              condition[4] = confconds.getAttr("tooltip");
+                              condition[5] = confconds.getAttr("showvalueintotooltip");
+                              conditions[0] = condition;   
+                          } else {
+                              for(var indcond=0; indcond < confconds.length; indcond++) {
+                                  condition = new Array();
+                                  condition[0] = confconds[indcond].getAttr("operator"); 
+                                  condition[1] = confconds[indcond].getAttr("value1");
+                                  condition[2] = confconds[indcond].getAttr("value2");
+                                  condition[3] = confconds[indcond].getAttr("conditioncolor");
+                                  condition[4] = confconds[indcond].getAttr("tooltip");
+                                  condition[5] = confconds[indcond].getAttr("showvalueintotooltip");
+                                  conditions[indcond] = condition;
+                              }
+                          }
+                      }
+                      parameters[3] = conditions;
+                      lightColumnConf[lightColumnConf.length] = parameters;
+                  }
+              }
+          }
+          
+          // calculate the link configuration parameters
+          var curConfNode = confPointer.xpathQuery(".");
+          curConfNode = confPointer.xpathQuery("./LINKCOLUMNS");          
+          var childs = confPointer.xpathQuery("./LINKCOLUMNS/*");
+          if(childs!=null) {
+              var numChilds = childs.length;
+              if(numChilds==null) {    
+                  var parameters = new Array();
+                  parameters[0] = childs.getAttr("index");
+                  parameters[1] = childs.getAttr("onlyheader");
+                  parameters[2] = childs.getAttr("fixedquerystring");
+                  parameters[3] = childs.getAttr("prefixvalue");
+                  linkColumnConf[linkColumnConf.length] = parameters;                  
+              } else {
+                  for(var index=0; index < childs.length; index++) {
+                      var parameters = new Array();
+                      parameters[0] = childs[index].getAttr("index");
+                      parameters[1] = childs[index].getAttr("onlyheader");
+                      parameters[2] = childs[index].getAttr("fixedquerystring");
+                      parameters[3] = childs[index].getAttr("prefixvalue");
+                      linkColumnConf[linkColumnConf.length] = parameters;
+                  }
+              }
+          }
+          
+          
+          // calculate the column dimension 
+          var curConfNode = confPointer.xpathQuery(".");
+          curConfNode = confPointer.xpathQuery("./DIMENSIONCOLUMNS");          
+          var childs = confPointer.xpathQuery("./DIMENSIONCOLUMNS/*");
+          if(childs!=null) {
+              var numChilds = childs.length;
+              if(numChilds==null) {      
+                  var parameters = new Array();
+                  parameters[0] = childs.getAttr("index");
+                  parameters[1] = childs.getAttr("width");
+                  dimensionColumnConf[dimensionColumnConf.length] = parameters;                  
+              } else {
+                  for(var index=0; index < childs.length; index++) {
+                      var parameters = new Array();
+                      parameters[0] = childs[index].getAttr("index");
+                      parameters[1] = childs[index].getAttr("width");
+                      dimensionColumnConf[dimensionColumnConf.length] = parameters;
+                  }
+              }
+          }
+          
+          
+          // gather the column names 
+          var curConfNode = confPointer.xpathQuery(".");    
+          var childs = confPointer.xpathQuery("./NAMECOLUMNS/*");
+          if(childs!=null) {
+              var numChilds = childs.length;
+              if(numChilds==null) {      
+                  var parameters = new Array();
+                  parameters[0] = childs.getAttr("index");
+                  parameters[1] = childs.getAttr("name");
+                  nameColumnConf[nameColumnConf.length] = parameters;                  
+              } else {
+                  for(var index=0; index < childs.length; index++) {
+                      var parameters = new Array();
+                      parameters[0] = childs[index].getAttr("index");
+                      parameters[1] = childs[index].getAttr("name");
+                      nameColumnConf[nameColumnConf.length] = parameters;
+                  }
+              }
+          }
+          
+          // gather parameter values
+          childs = confPointer.xpathQuery("./PARAMETERS/*");
+          for(var index=0; index < childs.length; index++) {
+              var name = childs[index].getAttr("name");
+              var value = childs[index].getAttr("value");
+              if(name=="refreshtime") {
+                  refreshtime = parseInt(value);
+              }
+              if(name=="ray") {
+                  ray = value;
+              }
+              if(name=="heightfirstrow") {
+                  heightFirstRow = parseInt(value);
+              }
+              if(name=="tablebackgroundcolor") {
+                  tablebackgroundcolor = value;
+              }
+              if(name=="boldtextfirstrow") {
+                  boldTextFirstRow = value;
+              }
+              if(name=="boldtextfirstcolumn") {
+                  boldTextFirstColumn = value;
+              }
+              if(name=="colortextfirstcolumn") {
+                  colorTextFirstColumn = value;
+              }
+              if(name=="colortextfirstrow") {
+                  colorTextFirstRow = value;
+              }
+              if(name=="sizetextfirstrow") {
+                  sizeTextFirstRow = value;
+              }
+              if(name=="sizetextfirstcolumn") {
+                  sizeTextFirstColumn = value;
+              }
+              if(name=="colorlinkover") {
+                  colorLinkOver = value;
+              }
+              if(name=="bgcolorfirstrow") {
+                  bgcolorFirstRow = value;
+              }
+              if(name=="bgcolorfirstcolumn") {
+                  bgcolorFirstColumn = value;
+              }
+              if(name=="sizetext") {
+                  sizeText = value;
+              }
+              if(name=="bgcolortooltip") {
+                  bgcolorTooltip = value;
+              }
+          }         
+          canvas.getxmldata();
+        }
+      }
+    ]]>
+    </method>
+
+    <method name="timercheckconfloaded">
+       this.checkConfLoad = new LzDelegate( this, "checkconfload" );
+   	   LzTimer.addTimer(this.checkConfLoad, 200);	
+    </method> 
+
+    <method name="getxmlconfig">
+         <![CDATA[
+         var s = "javascript:getxmlconfig"+uuid+"('"+logicalname+"');";  
+         LzBrowser.loadURL(s);
+         //var config = '<CONFIGURATION><NAMECOLUMNS><COLUMN index="0" name="Nome cluster"/><COLUMN index="1" name="Descrizione"/><COLUMN index="2" name="Allarme 1"/><COLUMN index="3" name="Allarme 3"/></NAMECOLUMNS><DIMENSIONCOLUMNS><COLUMN index="0" width="200"/></DIMENSIONCOLUMNS><LINKCOLUMNS></LINKCOLUMNS><PARAMETERS><PARAMETER name="tablebackgroundcolor" value="#9cc6d0"/><PARAMETER name="heightfirstrow" value="100"/><PARAMETER name="refreshtime" value="60000"/><PARAMETER name="ray" value="15"/></PARAMETERS><LIGHTCOLUMNS><column index="2" condition="between" value1="50" value2="150" conditioncolor="green" defaultcolor="red" /><column index="3" condition="between" value1="300" value2="1000" conditioncolor="green" defaultcolor="red"/></LIGHTCOLUMNS></CONFIGURATION>';
+         //var config = '<CONFIGURATION><NAMECOLUMNS><COLUMN index="0" name="Nome cluster"/><COLUMN index="1" name="Descrizione"/><COLUMN index="2" name="Allarme 1"/><COLUMN index="3" name="Allarme 3"/></NAMECOLUMNS><DIMENSIONCOLUMNS><COLUMN index="0" width="200"/></DIMENSIONCOLUMNS><LINKCOLUMNS></LINKCOLUMNS><PARAMETERS><PARAMETER name="tablebackgroundcolor" value="#9cc6d0"/><PARAMETER name="heightfirstrow" value="100"/><PARAMETER name="refreshtime" value="60000"/><PARAMETER name="ray" value="15"/></PARAMETERS><LIGHTCOLUMNS><COLUMN index="2" defaultcolor="red"><CONDITIONS><CONDITION operator="between" value1="50" value2="150" conditioncolor="green"  /><CONDITION operator="between" value1="150" value2="500" conditioncolor="yellow"  /></CONDITIONS></COLUMN><COLUMN index="3" defaultcolor="red"><CONDITIONS><CONDITION operator="between" value1="300" value2="1000" conditioncolor="green" /><CONDITION operator="lessthan" value1="250" value2="" conditioncolor="blue" /></CONDITIONS></COLUMN></LIGHTCOLUMNS></CONFIGURATION>';
+         //var config = '<CONFIGURATION><NAMECOLUMNS><COLUMN index="0" name="Nome cluster"/><COLUMN index="1" name="Descrizione"/><COLUMN index="2" name="Allarme 1"/><COLUMN index="3" name="Allarme 3"/></NAMECOLUMNS><DIMENSIONCOLUMNS><COLUMN index="0" width="200"/></DIMENSIONCOLUMNS><LINKCOLUMNS></LINKCOLUMNS><PARAMETERS><PARAMETER name="tablebackgroundcolor" value="#9cc6d0"/><PARAMETER name="heightfirstrow" value="100"/><PARAMETER name="refreshtime" value="60000"/><PARAMETER name="ray" value="15"/></PARAMETERS><LIGHTCOLUMNS><COLUMN index="2" defaultcolor="red" defaulttooltip="Tooltip di default"><CONDITIONS><CONDITION operator="between" value1="50" value2="100" conditioncolor="green" tooltip="Green" showvalueintotooltip="true"  /><CONDITION operator="between" value1="100" value2="150" conditioncolor="blue" tooltip="Blue" showvalueintotooltip="false"  /></CONDITIONS></COLUMN><COLUMN index="3" defaultcolor="yellow" defaulttooltip="Tooltip di default molto molto molto nolto nolto lungo"><CONDITIONS><CONDITION operator="between" value1="270" value2="280" conditioncolor="gold4" tooltip="azz che valore" showvalueintotooltip="false"  /></CONDITIONS></COLUMN></LIGHTCOLUMNS></CONFIGURATION>';
+         //xmlconfig = config;
+         canvas.timercheckconfloaded();
+         ]]>
+    </method> 
+
+    <method name="start" event="oninit">
+         this.getXmlConfDel = new LzDelegate( this, "getxmlconfig" );
+   	     LzTimer.addTimer( this.getXmlConfDel, delay);  
+    </method>
+
+   
+    
+
+    <view clip="true" width="${parent.width}" height="${parent.height}" bgcolor="white" name="dashboardArea" id="dashboardArea">
+        
+        
+        
+        
+        
+        <method name="redraw" args="dataPointer">
+                  
+            <![CDATA[
+            // CLEAR ALL THE DRAWN ELEMENTS
+            sbitableobj.clear();
+            // CREATE THE TABLE OBJECTS
+            sbitableobj.setAttribute("x", 0);
+            sbitableobj.setAttribute("y", 0);
+            sbitableobj.setAttribute("height", this.height);
+            sbitableobj.setAttribute("width", this.width); 
+            sbitableobj.setAttribute("heightFirstRow", heightFirstRow);   
+            sbitableobj.setAttribute("backgroundcolor", tablebackgroundcolor);   
+            sbitableobj.setAttribute("linkbaseurl", linkbaseurl); 
+            // GATHER ALL THE ATTRIBUTE NAMES OF THE FIRST ROW         
+            var invAttributeNames = new Array();
+            dataPointer.selectChild();
+            var curNode = dataPointer.xpathQuery(".");   
+            var attrs = curNode.attributes;
+            for(var attr in attrs) {
+               invAttributeNames[invAttributeNames.length] = "" + attr;
+            }
+            // REVERT THE ORDER OF THE ATTRIBUTE NAMES
+            var attributeNames = new Array();
+            for(var i=invAttributeNames.length-1; i>=0; i--) {
+                attributeNames[attributeNames.length] = invAttributeNames[i];
+            } 
+            // CREATE A TABLE COLUMN FOR EACH ATTRIBUTE
+            var columns = new Array();
+            for(var i=0; i<attributeNames.length; i++) { 
+                var sbicol = new sbicolumn();
+                var sbicellhead = new sbicell();
+                sbicellhead.setAttribute("parentcolumn", sbicol);
+                sbicellhead.setAttribute("containstext", "true");
+                var celltext =  attributeNames[i];
+                for(var j=0; j<nameColumnConf.length; j++) {                      
+                    if(i==nameColumnConf[j][0]) {
+                        celltext = nameColumnConf[j][1];
+                    }
+                }
+                sbicellhead.setAttribute("celltext", celltext);
+                //sbicellhead.setAttribute("celltext", attributeNames[i]);
+                sbicellhead.setAttribute("bold", boldTextFirstRow);
+                sbicellhead.setAttribute("textsize", sizeTextFirstRow);
+                sbicellhead.setAttribute("textcolor", colorTextFirstRow);
+                sbicellhead.setAttribute("backgroundColor", bgcolorFirstRow); 
+                for(var j=0; j<linkColumnConf.length; j++) {                      
+                    if(i==linkColumnConf[j][0]) {
+                         if(linkColumnConf[j][1]=="true") {
+                             var fixquerystr = linkColumnConf[j][2];
+                             var valueparlink = celltext;
+                             var prefixvalue = linkColumnConf[j][3];
+                             if(linkbaseurl.indexOf('?')==-1){
+                                 linkbaseurl = linkbaseurl + "?";
+                             } 
+                             var link = linkbaseurl + fixquerystr + prefixvalue + valueparlink;
+                             sbicellhead.setAttribute("url", link);
+                             sbicellhead.setAttribute("colorLinkOver", colorLinkOver);
+                         }    
+                    }                       
+                }
+                sbicol.addCell(sbicellhead);
+                sbicol.parenttable = sbitableobj;
+                columns[columns.length] = sbicol;
+                
+            } 
+            // ADD CELLS TO THE COLUMNS 
+            this.addcells(dataPointer,attributeNames,columns);
+            // for each other row of the data set cells into columns
+            while(dataPointer.selectNext()) {
+                this.addcells(dataPointer,attributeNames,columns);
+            }
+           
+           // INSERTING ALL THE COLUMN INTO THE TABLE
+           for(var i=0; i < columns.length; i++) {
+                var sbicol = columns[i];
+                sbitableobj.addColumn(sbicol);  
+            } 
+           // DESIGN TABLE
+           sbitableobj.draw(this, dimensionColumnConf);
+
+
+           ]]>
+        </method>
+    
+    
+    
+        
+        <method name="addcells" args="dataPointer,attributeNames,columns">
+            <![CDATA[
+            for(var i=0; i<attributeNames.length; i++) { 
+                name = attributeNames[i];
+                col =  columns[i];
+                value = dataPointer.getNodeAttribute(name);
+                var insertTextNode = true;
+                
+                // CREATE THE CELL    
+                var sbicellobj = new sbicell();
+                sbicellobj.setAttribute("parentcolumn", col);
+                sbicellobj.setAttribute("backgroundColorTooltip", bgcolorTooltip);
+                if(i==0) {
+                   sbicellobj.setAttribute("backgroundColor", bgcolorFirstColumn);
+                }
+                 
+                // for each ligh column configured    
+                for(var j=0; j<lightColumnConf.length; j++) {
+                    // if the actual column is a light column 
+                    if(i==lightColumnConf[j][0]) {
+                        insertTextNode = false;
+                        // get the default color
+                        var color = lightColumnConf[j][1];
+                        // get the default tooltip text
+                        var tooltiptext = lightColumnConf[j][2];
+                        if(tooltiptext==null) {
+                            tooltiptext = "";
+                        }
+                        // get the array of condition 
+                        conds =  lightColumnConf[j][3];
+                        // for each condition
+                        for(var z=0; z<conds.length; z++) {
+                            var operator = conds[z][0];
+                            if(operator=="equal") {
+                                if(value==conds[z][1]) {
+                                    color = conds[z][3];
+                                    tmptooltiptext = conds[z][4];
+                                    if(tmptooltiptext!=null) {
+                                        tooltiptext = tmptooltiptext;
+                                    }
+                                    // check if the value should be set into the tooltip
+                                    showtooltipvalue = conds[z][5];
+                                    if(showtooltipvalue=="true") {
+                                      tooltiptext = value  + "   " + tooltiptext;
+                                    }
+                                }
+                            }
+                            if(operator=="contains") {
+                                if(value.indexOf(conds[z][1])!=-1) {
+                                    color = conds[z][3];
+                                    tmptooltiptext = conds[z][4];
+                                    if(tmptooltiptext!=null) {
+                                        tooltiptext = tmptooltiptext;
+                                    }
+                                    // check if the value should be set into the tooltip
+                                    showtooltipvalue = conds[z][5];
+                                    if(showtooltipvalue=="true") {
+                                      tooltiptext = value  + "   " + tooltiptext;
+                                    }
+                                }
+                            }
+                            if(operator=="greaterthan") {
+                                if(parseFloat(value) > parseFloat(conds[z][1])) {
+                                    color = conds[z][3];
+                                    tmptooltiptext = conds[z][4];
+                                    if(tmptooltiptext!=null) {
+                                        tooltiptext = tmptooltiptext;
+                                    }
+                                    // check if the value should be set into the tooltip
+                                    showtooltipvalue = conds[z][5];
+                                    if(showtooltipvalue=="true") {
+                                      tooltiptext = value  + "   " + tooltiptext;
+                                    }
+                                }
+                            }
+                            if(operator=="lessthan") {
+                                if(parseFloat(value) < parseFloat(conds[z][1])) {
+                                    color = conds[z][3];
+                                    tmptooltiptext = conds[z][4];
+                                    if(tmptooltiptext!=null) {
+                                        tooltiptext = tmptooltiptext;
+                                    }
+                                    // check if the value should be set into the tooltip
+                                    showtooltipvalue = conds[z][5];
+                                    if(showtooltipvalue=="true") {
+                                      tooltiptext = value  + "   " + tooltiptext;
+                                    }
+                                }
+                            }
+                            if(operator=="between") {
+                                if( (parseFloat(value) > parseFloat(conds[z][1])) && (parseFloat(value) < parseFloat(conds[z][2]))  ) {
+                                    color = conds[z][3];
+                                    tmptooltiptext = conds[z][4];
+                                    if(tmptooltiptext!=null) {
+                                        tooltiptext = tmptooltiptext;
+                                    }
+                                    // check if the value should be set into the tooltip
+                                    showtooltipvalue = conds[z][5];
+                                    if(showtooltipvalue=="true") {
+                                      tooltiptext = value  + "   " + tooltiptext;
+                                    }
+                                }
+                            }
+                        }
+                        if(value=="") {
+                            sbicellobj.setAttribute("containstext", "true");
+                            sbicellobj.setAttribute("containslight", "false");
+                            sbicellobj.setAttribute("celltext", value); 
+                            col.addCell(sbicellobj); 
+                        } else {
+                            sbicellobj.setAttribute("containstext", "false");
+                            sbicellobj.setAttribute("containslight", "true");
+                            sbicellobj.setAttribute("lightcolor", color);
+                            sbicellobj.setAttribute("lightray", ray);
+                            sbicellobj.setAttribute("tooltiptext", tooltiptext);
+                            col.addCell(sbicellobj); 
+                        }               
+                    }
+                }
+                if(insertTextNode) {
+                    sbicellobj.setAttribute("containstext", "true");
+                    sbicellobj.setAttribute("celltext", value); 
+                    if(i==0) {
+                        sbicellobj.setAttribute("bold", boldTextFirstColumn);
+                        sbicellobj.setAttribute("textsize", sizeTextFirstColumn);
+                        sbicellobj.setAttribute("textcolor", colorTextFirstColumn);
+                    } else {
+                        sbicellobj.setAttribute("textsize", sizeText);
+                    }
+                    for(var j=0; j<linkColumnConf.length; j++) {                     
+                        if(i==linkColumnConf[j][0]) {
+                            if(linkColumnConf[j][1]!="true") {
+                                var fixquerystr = linkColumnConf[j][2];
+                                var valueparlink = value;
+                                var prefixvalue = linkColumnConf[j][3];
+                                if(linkbaseurl.indexOf('?')==-1){
+                                      linkbaseurl = linkbaseurl + "?";
+                                } 
+                                var link = linkbaseurl + fixquerystr + prefixvalue + valueparlink;
+                                sbicellobj.setAttribute("url", link);
+                                sbicellobj.setAttribute("colorLinkOver", colorLinkOver);
+                            }    
+                        }                       
+                    }
+                    col.addCell(sbicellobj);
+               }
+            }
+            ]]>
+        </method>     
+    
+    
+    
+    </view> 
+    
+    
+    <alert name="gridalert" width="${parent.width}">
+          <statictext name="message">
+              You should not see this !!
+          </statictext>
+    </alert>
+    
+    
+</canvas>

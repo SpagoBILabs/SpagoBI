@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %plugin.name
+Bundle-SymbolicName: spagobi.birt.oda;singleton:=true
+Bundle-Version: 5.1.0
+Bundle-ClassPath: .
+Bundle-Activator: spagobi.birt.oda.Activator
+Bundle-Localization: plugin
+Export-Package: spagobi.birt.oda.impl;version="1.0.0.qualifier"; uses:
+ ="org.eclipse.datatools.connectivity.oda.util.manifest,  com.ibm.icu.
+ util,  org.eclipse.datatools.connectivity.oda.spec,  org.eclipse.data
+ tools.connectivity.oda"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.core.runtime,org.eclipse.datatools.connect
+ ivity.oda,org.eclipse.datatools.connectivity.oda.profile
