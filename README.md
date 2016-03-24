@@ -2,7 +2,7 @@
 
 #<a name="top"></a>SpagoBI 
 
-[![License badge](https://img.shields.io/badge/license-MPL-blue.svg)](www.spagobi.org/homepage/opensource/license/)
+[![License badge](https://img.shields.io/badge/license-MPL-blue.svg)](http://www.spagobi.org/homepage/opensource/license/)
 [![Documentation badge](https://readthedocs.org/projects/spagobi/badge/?version=latest)](http://spagobi.readthedocs.org/en/latest/)
 [![Docker badge](https://img.shields.io/docker/pulls/spagobilabs/spagobi.svg)](https://hub.docker.com/r/spagobilabs/spagobi/)
 [![Support badge](https://img.shields.io/badge/support-sof-yellowgreen.svg)](http://stackoverflow.com/questions/tagged/fiware-spagobi)
