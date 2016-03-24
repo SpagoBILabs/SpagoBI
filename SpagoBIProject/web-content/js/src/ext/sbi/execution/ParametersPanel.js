@@ -1043,6 +1043,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			|| field.behindParameter.selectionType === 'SLIDER'){ 
 			field.store.load();
 		}
+		
+		if(field.behindParameter.selectionType === 'COMBOBOX' && fatherField.dependants.length == 1){
+			//select this params
+		}
+		
 		if (reset) {
 			field.reset();
 		}
@@ -1630,6 +1635,14 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		});
 		
 		store.on('load', function(store, records, options) {
+			//if is present only one value in the array and the field is comboBox, select automatically the element
+			var fieldName = store.baseParams.PARAMETER_ID;
+			var field = this.fields[fieldName];
+			if (field.behindParameter.selectionType == "COMBOBOX" && records !== undefined && records.length == 1){
+				var item = records[0].data;
+				field.setValue(item.value);
+				field.setRawValue(item.description);
+			}
 			//fires after the sore is loaded: can apply 
 			this.firstLoadCounter++;
 			this.fireEvent('checkReady', this);
