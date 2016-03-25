@@ -1172,13 +1172,13 @@ background: #00D3DE; /* W3C */
 	.overlayButtonBar:hover{
 		background-color: rgba(90,90,90,0.3);
 	}
-	.menuKnowage{
+	.menuFIWARE{
 		color: black;
 		float: left;
 		opacity: .6;
 
 	}
-	.logoKnowage{
+	.logoFIWARE{
 		float:left;
 		width: 120px;
 		height: 22px;
@@ -1191,7 +1191,7 @@ background: #00D3DE; /* W3C */
 	.logoFiware img{	
 		margin-top: 5px;
 	}
-	.menuKnowage:hover, .logoKnowage:hover{
+	.menuFIWARE:hover, .logoFIWARE:hover{
 		opacity: 1;
 
 	}
