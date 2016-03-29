@@ -67,6 +67,8 @@
  		<module>../SpagoBISocialAnalysis</module>
  		<module>../SpagoBITalendEngine</module>
 		<module>../SpagoBIWhatIfEngine</module>
+
+		<module>../SpagoBISDK</module>
 	</modules>
 
 
