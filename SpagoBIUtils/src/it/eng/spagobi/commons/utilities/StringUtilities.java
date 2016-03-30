@@ -36,6 +36,8 @@ import org.apache.log4j.Logger;
  */
 public class StringUtilities {
 
+	public static final String START_PARAMETER = "$P{";
+
 	private static transient Logger logger = Logger.getLogger(StringUtilities.class);
 	
 	private static final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
