@@ -177,6 +177,7 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 			String lovProv = modVal.getLovProvider();
 		  	ILovDetail lovDet = LovDetailFactory.getLovFromXML(lovProv);
 			List profAttrToFill = getProfileAttributesToFill(lovDet);
+			Set<String> paramToFill = lovDet.getParameterNames();
 			if(profAttrToFill.size()!=0) {
 				//	create a fake user profile
 				UserProfile currentUserProfile = (UserProfile) profile;
