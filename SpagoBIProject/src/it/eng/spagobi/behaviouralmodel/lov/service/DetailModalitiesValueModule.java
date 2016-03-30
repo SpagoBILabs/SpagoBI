@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -204,6 +205,17 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 			    }
 			    userProfile.setAttributes(attributes);
 			    session.setAttribute(SpagoBIConstants.USER_PROFILE_FOR_TEST, userProfile);
+			}
+			if (paramToFill != null && !paramToFill.isEmpty()) {
+				Map<String, String> paramFilled = new HashMap<String, String>();
+				for (String parameterName : paramToFill) {
+					String parameterValue = (String) request.getAttribute(parameterName);
+					if (parameterValue != null) {
+						paramFilled.put(parameterName, parameterValue);
+
+					}
+				}
+				session.setAttribute(SpagoBIConstants.PARAMETERS_FILLED, paramFilled);
 			}
 			response.setAttribute("testLov", "true");
 			return;
@@ -447,7 +459,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 					session.setAttribute(SpagoBIConstants.MODALITY, mod);
 					session.setAttribute(SpagoBIConstants.MODALITY_VALUE_OBJECT, modVal);
 					boolean needProfAttrFill = checkProfileAttributes(response, (ILovDetail)objectToTest);
-					if(!needProfAttrFill) {
+					boolean needParamFill = checkParameters(response, (ILovDetail) objectToTest);
+					if (!needProfAttrFill && !needParamFill) {
 						response.setAttribute("testLov", "true");
 					}
 					// exits without writing into DB 
@@ -568,6 +581,20 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 
 
 		
+	}
+	
+	private boolean checkParameters(SourceBean response, ILovDetail lovDet) {
+		boolean needFill = false;
+		try {
+			Set<String> paramsToFill = lovDet.getParameterNames();
+			if (paramsToFill != null && !paramsToFill.isEmpty()) {
+				response.setAttribute(SpagoBIConstants.PARAMETERS_TO_FILL, paramsToFill);
+				needFill = true;
+			}
+		} catch (Exception e) {
+			logger.error("Error while checking for parameters required for test", e);
+		}
+		return needFill;
 	}
 	
 	

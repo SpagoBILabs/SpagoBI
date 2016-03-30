@@ -64,6 +64,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -225,18 +226,21 @@ public class ExecutionInstance implements Serializable {
 					try {
 						String lovProv = paruse.getLovProvider();
 						ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
-						LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-						String lovResult = executionCacheManager.getLovResult(this.userProfile, lovProvDet, this.getDependencies(aBIObjectParameter), this,
-								true);
+						Set<String> parameterNames = lovProvDet.getParameterNames();
+						if (parameterNames == null || parameterNames.isEmpty()) {
+							LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+							String lovResult = executionCacheManager.getLovResult(this.userProfile, lovProvDet, this.getDependencies(aBIObjectParameter), this,
+									true);
 
-						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
-						// if the lov is single value and the parameter value is not set, the parameter value
-						// is the lov result
-						if (lovResultHandler.isSingleValue() && aBIObjectParameter.getParameterValues() == null) {
-							if (!aBIObjectParameter.getParameter().getType().equals("DATE")) {
-								aBIObjectParameter.setParameterValues(lovResultHandler.getValues(lovProvDet.getValueColumnName()));
-								aBIObjectParameter.setHasValidValues(true);
-								aBIObjectParameter.setTransientParmeters(true);
+							LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
+							// if the lov is single value and the parameter value is not set, the parameter value
+							// is the lov result
+							if (lovResultHandler.isSingleValue() && aBIObjectParameter.getParameterValues() == null) {
+								if (!aBIObjectParameter.getParameter().getType().equals("DATE")) {
+									aBIObjectParameter.setParameterValues(lovResultHandler.getValues(lovProvDet.getValueColumnName()));
+									aBIObjectParameter.setHasValidValues(true);
+									aBIObjectParameter.setTransientParmeters(true);
+								}
 							}
 						}
 					} catch (Exception e) {

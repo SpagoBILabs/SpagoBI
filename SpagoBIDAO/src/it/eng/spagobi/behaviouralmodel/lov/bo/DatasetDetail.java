@@ -22,9 +22,11 @@ import it.eng.spagobi.utilities.objects.Couple;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -261,6 +263,12 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 			throws Exception {
 		// gets the dataset object informations
 		IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(new Integer(getDatasetId()));
+		Map<String, String> params = getParametersNameToValueMap(BIObjectParameters);
+		if (params == null) {
+			dataset.setParamsMap(new HashMap<String, String>());
+		} else {
+			dataset.setParamsMap(params);
+		}
 		Map parameters = new HashMap();
 		dataset.setParamsMap(parameters);
 		dataset.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
@@ -407,5 +415,10 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 	public void setTreeLevelsColumns(List<Couple<String, String>> treeLevelsColumns) {
 		this.treeLevelsColumns = treeLevelsColumns;
 	}
-
+	
+		@Override
+	public Set<String> getParameterNames() throws Exception {
+		// Empty List because Profile Attributes are managed inside the Dataset logic
+		return new HashSet<String>();
+	}
 }

@@ -23,6 +23,8 @@ import it.eng.spago.paginator.basic.PaginatorIFace;
 import it.eng.spago.paginator.basic.impl.GenericList;
 import it.eng.spago.paginator.basic.impl.GenericPaginator;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
@@ -38,6 +40,7 @@ import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONFailure;
@@ -81,6 +84,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			// recover lov object
 			RequestContainer requestContainer = getRequestContainer();
 			SessionContainer session = requestContainer.getSessionContainer();
+			Map<String, String> paramFilled = (Map<String, String>) session.getAttribute(SpagoBIConstants.PARAMETERS_FILLED);
 			ModalitiesValue modVal = (ModalitiesValue) session.getAttribute(SpagoBIConstants.MODALITY_VALUE_OBJECT);
 			// get the lov provider
 			String looProvider = modVal.getLovProvider();
@@ -99,15 +103,19 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			SourceBean rowsSourceBean = null;
 			List<String> colNames = new ArrayList<String>();
 			if (typeLov.equalsIgnoreCase("QUERY")) {
-				QueryDetail qd = QueryDetail.fromXML(looProvider);
-				// String pool = qd.getConnectionName();
-				String datasource = qd.getDataSource();
-				String statement = qd.getQueryDefinition();
+				// QueryDetail qd = QueryDetail.fromXML(looProvider);
+				//	// String pool = qd.getConnectionName();
+				// String datasource = qd.getDataSource();
+				// String statement = qd.getQueryDefinition();
 				// execute query
 				try {
-					statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
-					// rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), pool, statement, colNames);
-					rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), datasource, statement, colNames);
+					// statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+					// statement = StringUtilities.substituteParametersInString(statement, paramFilled, null, false);
+					// // rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), pool, statement, colNames);
+					// rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), datasource, statement, colNames);
+					String result = qd.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
+					rowsSourceBean = SourceBean.fromXMLString(result);
+					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
 					logger.error("Exception occurred executing query lov: ", e);
 					String stacktrace = e.toString();
@@ -125,7 +133,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			} else if (typeLov.equalsIgnoreCase("FIXED_LIST")) {
 				FixedListDetail fixlistDet = FixedListDetail.fromXML(looProvider);
 				try {
-					String result = fixlistDet.getLovResult(profile, null, null, null);
+					String result = fixlistDet.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 					if (!rowsSourceBean.getName().equalsIgnoreCase("ROWS")) {
@@ -146,7 +154,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			} else if (typeLov.equalsIgnoreCase("SCRIPT")) {
 				ScriptDetail scriptDetail = ScriptDetail.fromXML(looProvider);
 				try {
-					String result = scriptDetail.getLovResult(profile, null, null, null);
+					String result = scriptDetail.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
@@ -178,7 +186,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			} else if (typeLov.equalsIgnoreCase("DATASET")) {
 				DatasetDetail datasetClassDetail = DatasetDetail.fromXML(looProvider);
 				try {
-					String result = datasetClassDetail.getLovResult(profile, null, null, null);
+					String result = datasetClassDetail.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
@@ -262,6 +270,39 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			throw new SpagoBIServiceException("Error testing lov", e);
 		}
 
+	}
+	
+	/**
+	 * Create a list of mocked simple parameters from the input map (key: parameterName, value: parameterValue)
+	 *
+	 * @return the list of mocked BIObjectParameters
+	 */
+	public List<BIObjectParameter> toMockedBIObjectParameters(Map<String, String> parameters) {
+		List<BIObjectParameter> objParams;
+		if (parameters == null || parameters.isEmpty()) {
+			return null;
+		} else {
+			objParams = new ArrayList<BIObjectParameter>(parameters.size());
+			for (String parameterName : parameters.keySet()) {
+				String parameterValue = parameters.get(parameterName);
+				if (parameterValue == null) {
+					logger.error("There is no name-value mapping for parameter [" + parameterName + "].");
+					throw new SpagoBIRuntimeException("Error while retrieving the value for parameter [" + parameterName + "].");
+				} else {
+					BIObjectParameter objParam = new BIObjectParameter();
+					Parameter parameterDefinition = new Parameter();
+					parameterDefinition.setLabel(parameterName);
+					objParam.setParameter(parameterDefinition);
+					if (parameterValue.contains(",")) {
+						objParam.setParameterValues(Arrays.asList(parameterValue.split(",")));
+					} else {
+						objParam.setParameterValues(Arrays.asList(parameterValue));
+					}
+					objParams.add(objParam);
+				}
+			}
+			return objParams;
+		}
 	}
 
 	/**

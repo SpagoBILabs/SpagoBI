@@ -41,9 +41,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -269,8 +272,13 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
 			throws Exception {
 		logger.debug("IN");
+		Map<String, String> parameters = getParametersNameToValueMap(BIObjectParameters);
 		String statement = getWrappedStatement(dependencies, BIObjectParameters);
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+		if (parameters != null && !parameters.isEmpty()) {
+			Map<String, String> types = getParametersNameToTypeMap(BIObjectParameters);
+			statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
+		}
 		logger.info("User [" + ((UserProfile) profile).getUserId() + "] is executing sql: " + statement);
 		String result = getLovResult(profile, statement);
 		logger.debug("OUT.result=" + result);
@@ -1153,6 +1161,34 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "cannot build spago DataConnection object");
 		}
 		return dataCon;
+	}
+	
+		/**
+	 * Gets the set of names of the parameters required.
+	 *
+	 * @return set of parameter names
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Override
+	public Set<String> getParameterNames() throws Exception {
+		Set<String> names = new HashSet<String>();
+		String query = getQueryDefinition();
+		while (query.indexOf(StringUtilities.START_PARAMETER) != -1) {
+			int startind = query.indexOf(StringUtilities.START_PARAMETER);
+			int endind = query.indexOf("}", startind);
+			String parameterDef = query.substring(startind + 3, endind);
+			if (parameterDef.indexOf("(") != -1) {
+				int indroundBrack = query.indexOf("(", startind);
+				String nameParam = query.substring(startind + 3, indroundBrack);
+				names.add(nameParam);
+			} else {
+				names.add(parameterDef);
+			}
+			query = query.substring(endind);
+		}
+		return names;
 	}
 
 }
