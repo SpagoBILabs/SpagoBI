@@ -1635,13 +1635,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		});
 		
 		store.on('load', function(store, records, options) {
-			//if is present only one value in the array and the field is comboBox, select automatically the element
+			//if the field is a ComboBox start to check it	
 			var fieldName = store.baseParams.PARAMETER_ID;
 			var field = this.fields[fieldName];
-			if (field.behindParameter.selectionType == "COMBOBOX" && records !== undefined && records.length == 1){
-				var item = records[0].data;
-				field.setValue(item.value);
-				field.setRawValue(item.description);
+			if (field.behindParameter.selectionType == "COMBOBOX"){
+				this.checkFieldValue(field,store, records, options);
 			}
 			//fires after the sore is loaded: can apply 
 			this.firstLoadCounter++;
@@ -1650,6 +1648,31 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 
 		return store;
 		
+	}
+	, checkFieldValue: function(field, store, records, options){
+		//if the ComboBox has only one value, select this value automatically
+		if (records !== undefined && records.length == 1){
+			var item = records[0].data;
+			field.setValue(item.value);
+			field.setRawValue(item.description);
+		}
+		//if the ComboBox has at least one LOV parametric dependency unset, disable the comboBox until the dependency has is set
+		var noSetLovParamtricField = false;
+		var listFields = "";
+		for (i=0; i < field.dependencies.length; i++){
+			if (field.dependencies[i].isLovDependency == true){
+				var dependency = this.fields[field.dependencies[i].urlName];
+				var rawValue = dependency.getRawValue();
+				if (rawValue == undefined || rawValue.length == 0){
+					noSetLovParamtricField = true;	
+					listFields = listFields + dependency.fieldLabel + ", ";
+				}
+			}
+		}
+		if (noSetLovParamtricField){
+			field.setDisabled(true);			
+			field.markInvalid(LN('sbi.execution.parametersselection.message.unset.lov.parametric') + ". [" + listFields.substring(0,listFields.length - 2) + "]" );
+		}
 	}
 	
 	// =====================================================================================
