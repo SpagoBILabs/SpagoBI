@@ -103,7 +103,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			SourceBean rowsSourceBean = null;
 			List<String> colNames = new ArrayList<String>();
 			if (typeLov.equalsIgnoreCase("QUERY")) {
-				// QueryDetail qd = QueryDetail.fromXML(looProvider);
+				QueryDetail qd = QueryDetail.fromXML(looProvider);
 				//	// String pool = qd.getConnectionName();
 				// String datasource = qd.getDataSource();
 				// String statement = qd.getQueryDefinition();
