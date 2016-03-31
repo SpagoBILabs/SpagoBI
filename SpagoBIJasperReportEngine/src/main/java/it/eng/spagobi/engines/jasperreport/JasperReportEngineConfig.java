@@ -23,6 +23,7 @@ import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRXmlExporter;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
 
@@ -188,6 +189,8 @@ public class JasperReportEngineConfig {
 				exporter = new JRHtmlExporter();
 			else if (format.equalsIgnoreCase("xls"))
 				exporter = new JExcelApiExporter(); // exporter = new JRXlsExporter();
+			else if (format.equalsIgnoreCase("xlsx"))
+				exporter = new JRXlsxExporter();
 			else if (format.equalsIgnoreCase("rtf"))
 				exporter = new JRRtfExporter();
 			else if (format.equalsIgnoreCase("xml"))
@@ -221,6 +224,8 @@ public class JasperReportEngineConfig {
 				mimeType = "text/html";
 			else if (format.equalsIgnoreCase("xls"))
 				mimeType = "application/vnd.ms-excel";
+			else if (format.equalsIgnoreCase("xlsx"))
+				mimeType = "xlsx=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 			else if (format.equalsIgnoreCase("rtf"))
 				mimeType = "application/rtf";
 			else if (format.equalsIgnoreCase("xml"))
