@@ -1886,7 +1886,14 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		});
 		
 		store.on('loadexception', function(store, options, response, e) {
-			Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			var f = this.fields[options.params.PARAMETER_ID];
+			var ignoreError = false;
+			if (f.behindParameter.selectionType == "COMBOBOX"){
+				ignoreError = this.checkLovDependencyComboBox(f);
+			}
+			if (!ignoreError){
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			}
 		});
 		
 		store.on('load', function(store, records, options) {
@@ -1912,9 +1919,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			field.setValue(item.value);
 			field.setRawValue(item.description);
 		}
-		//if the ComboBox has at least one LOV parametric dependency unset, disable the comboBox until the dependency has is set
-		var noSetLovParamtricField = false;
+		this.checkLovDependencyComboBox(field);
+	}
+	
+	, checkLovDependencyComboBox: function(field){
+		//if the ComboBox has at least one LOV parametric dependency unset, invalid the comboBox until the dependency is set
 		var listFields = "";
+		var noSetLovParamtricField = false;
 		for (i=0; i < field.dependencies.length; i++){
 			if (field.dependencies[i].isLovDependency == true){
 				var dependency = this.fields[field.dependencies[i].urlName];
@@ -1925,10 +1936,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				}
 			}
 		}
-		if (noSetLovParamtricField){
-			field.setDisabled(true);			
+		if (noSetLovParamtricField){			
 			field.markInvalid(LN('sbi.execution.parametersselection.message.unset.lov.parametric') + ". [" + listFields.substring(0,listFields.length - 2) + "]" );
 		}
+		return noSetLovParamtricField;
 	}
 	
 	// =====================================================================================
