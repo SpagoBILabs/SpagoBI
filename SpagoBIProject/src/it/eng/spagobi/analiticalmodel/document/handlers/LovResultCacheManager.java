@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
@@ -22,17 +22,17 @@ import org.apache.log4j.Logger;
 /**
  * This class caches LOV (list of values) executions' result.
  * The key of the cache element is composed by the user's identifier and the LOV definition.
- * In case the LOV is a query and there are dependencies, the wrapped statement is used instead of the original statement. 
- * 
+ * In case the LOV is a query and there are dependencies, the wrapped statement is used instead of the original statement.
+ *
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  *
  */
 public class LovResultCacheManager {
-	
+
 	private static Logger logger = Logger.getLogger(LovResultCacheManager.class);
-	
+
 	private CacheInterface cache = null;
-	
+
 	public LovResultCacheManager() {
 		this.cache = CacheSingleton.getInstance();
 	}
@@ -41,13 +41,13 @@ public class LovResultCacheManager {
 	 * Returns the LOV result. If the LOV result is in cache, it is returned;
 	 * otherwise, if retrieveIfNotcached is true, the LOV is executed and
 	 * returned, otherwise null is returned.
-	 * 
+	 *
 	 * @param profile
 	 *            The user profile object
 	 * @param lovDefinition
 	 *            The LOV definition
 	 * @param dependencies
-	 *            The dependencies to be considered          
+	 *            The dependencies to be considered
 	 * @param executionInstance
 	 *            The execution instance
 	 * @param retrieveIfNotcached
@@ -60,9 +60,9 @@ public class LovResultCacheManager {
 	public String getLovResult(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies,
 			ExecutionInstance executionInstance, boolean retrieveIfNotcached) throws Exception {
 		logger.debug("IN");
-		
+
 		String lovResult = null;
-		
+
 		if (lovDefinition instanceof QueryDetail) {
 			// queries are cached
 			String cacheKey = getCacheKey(profile, lovDefinition, dependencies, executionInstance);
@@ -77,7 +77,7 @@ public class LovResultCacheManager {
 				lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance.getBIObject().getBiObjectParameters(),executionInstance.getLocale());
 				logger.debug(lovResult);
 				// insert the data in cache
-				if (lovResult != null) 
+				if (lovResult != null)
 					cache.put(cacheKey, lovResult);
 			}
 		} else {
@@ -86,7 +86,7 @@ public class LovResultCacheManager {
 			lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance.getBIObject().getBiObjectParameters(),executionInstance.getLocale());
 			logger.debug(lovResult);
 		}
-		
+
 		logger.debug("OUT");
 		return lovResult;
 	}
@@ -98,7 +98,7 @@ public class LovResultCacheManager {
 	 * executed statement if different from the original query (since
 	 * correlation expression is injected inside SQL query using in-line view
 	 * construct), therefore we should consider the modified query.
-	 * 
+	 *
 	 * @param profile
 	 *            The user profile
 	 * @param lovDefinition
@@ -113,7 +113,7 @@ public class LovResultCacheManager {
 	 */
 	private String getCacheKey(IEngUserProfile profile,
 			ILovDetail lovDefinition, List<ObjParuse> dependencies,
-			ExecutionInstance executionInstance) { throws Exception
+			ExecutionInstance executionInstance)  throws Exception {
 		logger.debug("IN");
 		String toReturn = null;
 		String userID = (String)((UserProfile)profile).getUserId();
