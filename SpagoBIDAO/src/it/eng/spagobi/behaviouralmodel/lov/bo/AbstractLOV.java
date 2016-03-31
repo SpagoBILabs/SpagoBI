@@ -58,7 +58,7 @@ public abstract class AbstractLOV implements ILovDetail {
 		}
 	}
 	
-	protected Map<String, String> getParametersNameToValueMap(List<BIObjectParameter> biObjectParameters) throws Exception {
+	public Map<String, String> getParametersNameToValueMap(List<BIObjectParameter> biObjectParameters) throws Exception {
 		Map<String, String> parameters = null;
 		Set<String> parameterNames = getParameterNames();
 		if (parameterNames != null && !parameterNames.isEmpty()) {
@@ -100,7 +100,7 @@ public abstract class AbstractLOV implements ILovDetail {
 		return parameters;
 	}
 
-	protected Map<String, String> getParametersNameToTypeMap(List<BIObjectParameter> biObjectParameters) throws Exception {
+	public Map<String, String> getParametersNameToTypeMap(List<BIObjectParameter> biObjectParameters) throws Exception {
 		Map<String, String> parameters = null;
 		Set<String> parameterNames = getParameterNames();
 		if (parameterNames != null && !parameterNames.isEmpty()) {
