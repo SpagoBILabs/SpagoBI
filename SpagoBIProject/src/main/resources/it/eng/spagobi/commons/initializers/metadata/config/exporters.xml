@@ -11,6 +11,7 @@
 <EXPORTER domain="RTF" engine="SpagoBIBirtReportEng" defaultValue="false"/>
 <EXPORTER domain="JPG" engine="SpagoBIBirtReportEng" defaultValue="false"/>
 <EXPORTER domain="CSV" engine="SpagoBIBirtReportEng" defaultValue="false"/>
+<EXPORTER domain="XLSX" engine="SpagoBIBirtReportEng" defaultValue="false"/>
 <EXPORTER domain="PDF" engine="SpagoBIJPivotEngine" defaultValue="false"/>
 <EXPORTER domain="XLS" engine="SpagoBIJPivotEngine" defaultValue="true"/>
 <EXPORTER domain="PDF" engine="SpagoBIJFreeChartEng" defaultValue="true"/>
