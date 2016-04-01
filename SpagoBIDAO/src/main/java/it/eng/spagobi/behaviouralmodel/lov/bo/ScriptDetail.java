@@ -5,16 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.sql.DataRow;
@@ -25,12 +15,25 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 /**
  * Defines the <code>ScriptDetail</code> objects. This object is used to store Script Wizard detail information.
@@ -242,6 +245,12 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		attributes.putAll(this.getSystemBindings(locale));
 		// Substitute profile attributes with their value
 		String cleanScript = substituteProfileAttributes(getScript(), attributes);
+
+		Map<String, String> params = getParametersNameToValueMap(BIObjectParameters);
+		if (params != null && !params.isEmpty()) {
+			Map<String, String> types = getParametersNameToTypeMap(BIObjectParameters);
+			cleanScript = StringUtilities.substituteParametersInString(cleanScript, params, types, false);
+		}
 		setScript(cleanScript);
 
 		List<Object> imports = null;
@@ -367,8 +376,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			}
 
 		} catch (Exception e) {
-			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "checkSintax",
-					"the result of the lov is not formatted " + "with the right structure so it will be wrapped inside an xml envelope");
+			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "checkSintax", "the result of the lov is not formatted "
+					+ "with the right structure so it will be wrapped inside an xml envelope");
 			toconvert = true;
 		}
 		return toconvert;
@@ -426,6 +435,34 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 				names.add(nameAttr);
 			} else {
 				names.add(attributeDef);
+			}
+			script = script.substring(endind);
+		}
+		return names;
+	}
+
+	/**
+	 * Gets the set of names of the parameters required.
+	 *
+	 * @return set of parameter names
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Override
+	public Set<String> getParameterNames() throws Exception {
+		Set<String> names = new HashSet<String>();
+		String script = getScript();
+		while (script.indexOf(StringUtilities.START_PARAMETER) != -1) {
+			int startind = script.indexOf(StringUtilities.START_PARAMETER);
+			int endind = script.indexOf("}", startind);
+			String parameterDef = script.substring(startind + 3, endind);
+			if (parameterDef.indexOf("(") != -1) {
+				int indroundBrack = script.indexOf("(", startind);
+				String nameParam = script.substring(startind + 3, indroundBrack);
+				names.add(nameParam);
+			} else {
+				names.add(parameterDef);
 			}
 			script = script.substring(endind);
 		}

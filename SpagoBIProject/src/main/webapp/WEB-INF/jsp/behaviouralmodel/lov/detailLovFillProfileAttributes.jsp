@@ -19,6 +19,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			it.eng.spago.navigation.LightNavigationManager,
 			java.util.List,
 			java.util.ArrayList,
+			java.util.Set,
 			java.util.Iterator"%>
 <%@page import="it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory"%>
 <%@page import="it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail"%>
@@ -36,6 +37,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 	SourceBean detailMR = (SourceBean) aServiceResponse.getAttribute("DetailModalitiesValueModule"); 
 	List profAttrToFill = (List)detailMR.getAttribute(SpagoBIConstants.PROFILE_ATTRIBUTES_TO_FILL);
+	Set<String> paramToFill = (Set<String>)detailMR.getAttribute(SpagoBIConstants.PARAMETERS_TO_FILL);
 
     String modality = null;
 	if (detailMR != null) modality = (String) detailMR.getAttribute("modality");
@@ -73,7 +75,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	<tr class='header-row-portlet-section'>
 		<td class='header-title-column-portlet-section'
 		    style='vertical-align:middle;padding-left:5px;'>
-			<spagobi:message key = "SBIDev.predLov.profileAttrToFill" />
+			<spagobi:message key = "SBIDev.predLov.profileAttrAndParamToFill" />
 		</td>
 		<td class='header-empty-column-portlet-section'>&nbsp;</td>
 		
@@ -113,34 +115,67 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 		
 		<div class="div_detail_area_forms" >
+		<%
+			if(profAttrToFill != null && !profAttrToFill.isEmpty()) {
+		%>		
+			  <div class='portlet-form-field-label' >
+			     <spagobi:message key = "SBIDev.lov.needProfAttr" /> 
+				 <br/>
+				 <spagobi:message key = "SBIDev.lov.profNotContProfAttr" /> 
+				 <br/>
+				 <spagobi:message key = "SBIDev.lov.assignValToProfAttr" /> 			
+			  </div> 
+			  
+			  <br/>
+			  <br/>
 		
-		  <div class='portlet-form-field-label' >
-		     <spagobi:message key = "SBIDev.lov.needProfAttr" /> 
-			 <br/>
-			 <spagobi:message key = "SBIDev.lov.profNotContProfAttr" /> 
-			 <br/>
-			 <spagobi:message key = "SBIDev.lov.assignValToProfAttr" /> 			
-		  </div> 
-		  
-		  <br/>
-		  <br/>
+			<%
+				Iterator iterProfAttr = profAttrToFill.iterator();
+			    while(iterProfAttr.hasNext()) {
+			    	String profAttrName = (String)iterProfAttr.next();
+			%>
+				<div class='div_detail_label' style="width:200px;">
+					<span class='portlet-form-field-label'>
+						<%= profAttrName %>
+					</span>
+				</div>
+				<div class='div_detail_form'>
+					<input class='portlet-form-input-field' type="text" name="<%=StringEscapeUtils.escapeHtml(profAttrName)%>" size="35" >
+		    		&nbsp;*
+				</div>
+			<%    	
+			    }
+			%>
+			<br/>
+		<%
+			}
+		%>
 		
 		<%
-			Iterator iterProfAttr = profAttrToFill.iterator();
-		    while(iterProfAttr.hasNext()) {
-		    	String profAttrName = (String)iterProfAttr.next();
-		%>
-			<div class='div_detail_label' style="width:200px;">
-				<span class='portlet-form-field-label'>
-					<%= profAttrName %>
-				</span>
-			</div>
-			<div class='div_detail_form'>
-				<input class='portlet-form-input-field' type="text" name="<%=StringEscapeUtils.escapeHtml(profAttrName)%>" size="35" >
-	    		&nbsp;*
-			</div>
+			if(paramToFill != null && !paramToFill.isEmpty()) {
+		%>		
+			  <div class='portlet-form-field-label' >
+			     <spagobi:message key = "SBIDev.lov.needParam" /> 			
+			  </div> 
+			  
+			  <br/>
+			  <br/>
+		
+			<%
+			    for(String paramName : paramToFill) {
+			%>
+				<div class='div_detail_label' style="width:200px;">
+					<span class='portlet-form-field-label'>
+						<%= paramName %>
+					</span>
+				</div>
+				<div class='div_detail_form'>
+					<input class='portlet-form-input-field' type="text" name="<%=StringEscapeUtils.escapeHtml(paramName)%>" size="35" >
+		    		&nbsp;*
+				</div>
 		<%    	
-		    }
+			    }
+			}
 		%>
 		</div>
 		
