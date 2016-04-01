@@ -1042,6 +1042,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		}
 		
+		this.checkLovDependency(f);
+		
 		Sbi.debug('[ParametersPanel.updateDependentFields] : fields that depend on [' + f.name + '] have been succesfully updated');
 		Sbi.trace('[ParametersPanel.updateDependentFields] : OUT');
 	}
@@ -1586,6 +1588,20 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			return true;
 		}, this);
 		
+		field.treeLoader.on('loadexception', function(loader, node, response) {
+			var f = this.fields[loader.baseParams.PARAMETER_ID];
+			var ignoreError = false;
+			if (f != undefined){
+				ignoreError = this.checkLovDependency(f);
+			}
+			if (!ignoreError){
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			}
+			//fires after the sore is loaded: can apply
+			this.firstLoadCounter++;
+			this.fireEvent('checkReady', this);
+		}, this);
+		
 		field.treeLoader.on('load', function(loader, node, response) {
 			//fires after the sore is loaded: can apply
 			this.firstLoadCounter++;
@@ -1900,9 +1916,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			//if the field is a ComboBox start to check it	
 			var fieldName = store.baseParams.PARAMETER_ID;
 			var field = this.fields[fieldName];
-			if (field.behindParameter.selectionType == "COMBOBOX"){
-				this.checkFieldValue(field,store, records, options);
-			}
+			if (field != undefined){
+				if (field.behindParameter.selectionType == "COMBOBOX"){
+					this.checkFieldValue(field,store, records, options);
+				}
+				this.checkLovDependency(field);
+ 			}
 			//fires after the sore is loaded: can apply 
 			this.firstLoadCounter++;
 			this.fireEvent('checkReady', this);
@@ -1919,20 +1938,21 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			field.setValue(item.value);
 			field.setRawValue(item.description);
 		}
-		this.checkLovDependencyComboBox(field);
 	}
 	
 	, checkLovDependencyComboBox: function(field){
 		//if the ComboBox has at least one LOV parametric dependency unset, invalid the comboBox until the dependency is set
 		var listFields = "";
 		var noSetLovParamtricField = false;
-		for (i=0; i < field.dependencies.length; i++){
+		for (i=0; field.dependencies != undefined && i < field.dependencies.length; i++){
 			if (field.dependencies[i].isLovDependency == true){
 				var dependency = this.fields[field.dependencies[i].urlName];
-				var rawValue = dependency.getRawValue();
-				if (rawValue == undefined || rawValue.length == 0){
-					noSetLovParamtricField = true;	
-					listFields = listFields + dependency.fieldLabel + ", ";
+				if (dependency != undefined){
+					var rawValue = dependency.getRawValue();
+					if (rawValue == undefined || rawValue.length == 0){
+						noSetLovParamtricField = true;	
+						listFields = listFields + dependency.fieldLabel + ", ";
+					}
 				}
 			}
 		}
