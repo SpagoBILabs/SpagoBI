@@ -1940,7 +1940,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}
 	}
 	
-	, checkLovDependencyComboBox: function(field){
+	, checkLovDependency: function(field){
 		//if the ComboBox has at least one LOV parametric dependency unset, invalid the comboBox until the dependency is set
 		var listFields = "";
 		var noSetLovParamtricField = false;
