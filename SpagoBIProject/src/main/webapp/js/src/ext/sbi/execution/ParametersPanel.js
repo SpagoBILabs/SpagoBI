@@ -1905,7 +1905,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var f = this.fields[options.params.PARAMETER_ID];
 			var ignoreError = false;
 			if (f.behindParameter.selectionType == "COMBOBOX"){
-				ignoreError = this.checkLovDependencyComboBox(f);
+				ignoreError = this.checkLovDependency(f);
 			}
 			if (!ignoreError){
 				Sbi.exception.ExceptionHandler.handleFailure(response, options);
