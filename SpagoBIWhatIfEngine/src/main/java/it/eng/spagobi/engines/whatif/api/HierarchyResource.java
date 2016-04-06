@@ -56,10 +56,10 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	public static transient Logger logger = Logger.getLogger(HierarchyResource.class);
 
 	@GET
-	@Path("{hierarchy}/slice/{member}/{multi}")
+	@Path("{hierarchy}/slice")
 	@Produces("text/html; charset=UTF-8")
 	public String addSlicer(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyName,
-			@PathParam("member") String memberName, @PathParam("multi") boolean multiSelection) {
+			@QueryParam("member") String memberName, @QueryParam("multiSelection") boolean multiSelection) {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();

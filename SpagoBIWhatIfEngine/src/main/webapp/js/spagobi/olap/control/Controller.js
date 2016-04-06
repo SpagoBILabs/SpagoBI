@@ -79,7 +79,8 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "hierarchy",
-			pathParams: [hierarchy, "slice", member, multiSelection]
+			pathParams: [encodeURI(hierarchy), "slice"],
+			params:{member:member, multiSelection:multiSelection}
 		});
 
 		service.callService(this);
@@ -89,8 +90,8 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
-			method: 'POST',
-			pathParams: [axis,"moveHierarchy", uniqueName, newPosition, direction]
+			pathParams: [axis,"moveHierarchy"],
+			params:{hierarchyUniqueName:uniqueName, newPosition:newPosition, direction:direction}
 		});
 
 		service.callService(this);
@@ -100,8 +101,8 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
-			method: 'POST',
-			pathParams: [fromAxis,"moveDimensionToOtherAxis", hierarchy1, toAxis]
+			pathParams: [fromAxis,"moveDimensionToOtherAxis"],
+			params:{hierarchy:hierarchy1, toAxis:toAxis}
 		});
 
 		service.callService(this);
@@ -111,8 +112,8 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
-			method: 'POST',
-			pathParams: [axis,"updateHierarchyOnDimension",newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition]
+			pathParams: [axis,"updateHierarchyOnDimension"],
+			params:{newHierarchyUniqueName:newHierarchyUniqueName, oldHierarchyUniqueName:oldHierarchyUniqueName, hierarchyPosition:hierarchyPosition}
 		});
 
 		service.callService(this);

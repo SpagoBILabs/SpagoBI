@@ -1,15 +1,15 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *  
+ *
  * @class AxisResource
- * 
+ *
  * Provides services to manage the axis resource
- * 
+ *
  */
 package it.eng.spagobi.engines.whatif.api;
 
@@ -20,10 +20,12 @@ import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.apache.log4j.Logger;
 import org.olap4j.metadata.Hierarchy;
@@ -50,7 +52,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Service to swap the axis
-	 * 
+	 *
 	 * @return the rendered pivot table
 	 */
 	@POST
@@ -76,23 +78,22 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Service to move an hierarchy from an axis to another
-	 * 
+	 *
 	 * @param req
 	 *            the HttpServletRequest
 	 * @param fromAxisPos
 	 *            the source axis(0 for rows, 1 for columns, -1 for filters)
 	 * @param toAxisPos
-	 *            the destination axis(0 for rows, 1 for columns, -1 for
-	 *            filters)
+	 *            the destination axis(0 for rows, 1 for columns, -1 for filters)
 	 * @param hierarchyName
 	 *            the unique name of the hierarchy to move
 	 * @return the rendered pivot table
 	 */
-	@POST
-	@Path("/{fromAxis}/moveDimensionToOtherAxis/{hierarchy}/{toAxis}")
+	@GET
+	@Path("/{fromAxis}/moveDimensionToOtherAxis")
 	@Produces("text/html; charset=UTF-8")
-	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos, @PathParam("toAxis") int toAxisPos,
-			@PathParam("hierarchy") String hierarchyName) {
+	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos,
+			@QueryParam("toAxis") int toAxisPos, @QueryParam("hierarchy") String hierarchyName) {
 
 		getAxisBusiness().moveDimensionToOtherAxis(fromAxisPos, toAxisPos, hierarchyName);
 
@@ -101,12 +102,11 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Service to move a hierarchy in the axis
-	 * 
+	 *
 	 * @param req
 	 *            the HttpServletRequest
 	 * @param axisPos
-	 *            the destination axis(0 for rows, 1 for columns, -1 for
-	 *            filters)
+	 *            the destination axis(0 for rows, 1 for columns, -1 for filters)
 	 * @param hierarchyUniqueName
 	 *            the unique name of the hierarchy to move
 	 * @param newPosition
@@ -115,11 +115,11 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 *            the direction of the movement (-1 up, +1 down)
 	 * @return the rendered pivot table
 	 */
-	@POST
-	@Path("/{axis}/moveHierarchy/{hierarchyUniqueName}/{newPosition}/{direction}")
+	@GET
+	@Path("/{axis}/moveHierarchy")
 	@Produces("text/html; charset=UTF-8")
-	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchyUniqueName") String hierarchyUniqueName,
-			@PathParam("newPosition") int newPosition, @PathParam("direction") int direction) {
+	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos,
+			@QueryParam("hierarchyUniqueName") String hierarchyUniqueName, @QueryParam("newPosition") int newPosition, @QueryParam("direction") int direction) {
 
 		getAxisBusiness().moveHierarchy(axisPos, hierarchyUniqueName, newPosition, direction);
 
@@ -127,9 +127,8 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	}
 
 	/**
-	 * Removes the oldHierarchy from the axis and adds the new newHierarchy in
-	 * the same position
-	 * 
+	 * Removes the oldHierarchy from the axis and adds the new newHierarchy in the same position
+	 *
 	 * @param axisPos
 	 *            the axis that contains the old hierarchy
 	 * @param newHierarchyUniqueName
@@ -139,12 +138,12 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * @param hierarchyPosition
 	 *            the position of the old hierarchy
 	 */
-	@POST
-	@Path("/{axis}/updateHierarchyOnDimension/{newHierarchyUniqueName}/{oldHierarchyUniqueName}/{hierarchyPosition}")
+	@GET
+	@Path("/{axis}/updateHierarchyOnDimension")
 	@Produces("text/html; charset=UTF-8")
 	public String updateHierarchyOnDimension(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos,
-			@PathParam("newHierarchyUniqueName") String newHierarchyUniqueName, @PathParam("oldHierarchyUniqueName") String oldHierarchyUniqueName,
-			@PathParam("hierarchyPosition") int hierarchyPosition) {
+			@QueryParam("newHierarchyUniqueName") String newHierarchyUniqueName, @QueryParam("oldHierarchyUniqueName") String oldHierarchyUniqueName,
+			@QueryParam("hierarchyPosition") int hierarchyPosition) {
 
 		Hierarchy h = getAxisBusiness().updateHierarchyOnAxis(axisPos, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition);
 
@@ -154,10 +153,9 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	}
 
 	/**
-	 * Service to change the visibility of the members of a hierarchy. It takes
-	 * a hierarchy, removes all the members and shows only the ones passed in
-	 * the body of the request
-	 * 
+	 * Service to change the visibility of the members of a hierarchy. It takes a hierarchy, removes all the members and shows only the ones passed in the body
+	 * of the request
+	 *
 	 * @param req
 	 *            the HttpServletRequest
 	 * @param axisPos
