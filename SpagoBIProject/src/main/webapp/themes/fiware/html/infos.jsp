@@ -38,7 +38,7 @@ Logged User: <%= userName %>
 </div>
 
 <div style="position: absolute; bottom:0px; text-align: center"> 
-<i>Copyright (C) 2014 Engineering Ingegneria Informatica S.p.A.</i>
+<i>Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.</i>
 </div>
 
 </body>
