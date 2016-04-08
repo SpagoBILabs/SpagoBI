@@ -414,6 +414,9 @@
 										<include>src/ext4/sbi/tools/dataset/DataSetsView-min.js</include>
 										<include>src/ext4/sbi/tools/dataset/DataSetsWizard-min.js</include>
 										<include>src/ext4/sbi/behavioural/lov/TestLovPanel-min.js</include>
+										<include>src/ext4/sbi/tools/document/SmartFilterBrowser-min.js</include>
+										<include>src/ext4/sbi/tools/document/SmartFilterModel-min.js</include>
+										<include>src/ext4/sbi/tools/document/SmartFilterView-min.js</include>
 										<include>src/ext4/sbi/tools/dataset/CkanDataSetsWizard-min.js</include>
 										<include>src/ext4/sbi/tools/dataset/QbeDataSetsWizard-min.js</include>
 										<include>src/ext4/sbi/tools/dataset/DatasetMetadataMainPage-min.js</include>

@@ -5,17 +5,19 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.cache.CacheInterface;
 import it.eng.spagobi.utilities.cache.CacheSingleton;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 /**
  * This class caches LOV (list of values) executions' result. The key of the cache element is composed by the user's identifier and the LOV definition. In case
@@ -101,15 +103,24 @@ public class LovResultCacheManager {
 	 * @param executionInstance
 	 *            The execution instance (it may be null, since a lov can be executed outside an execution instance context)
 	 * @return The key to be used in cache
+	 * @throws Exception
 	 */
-	private String getCacheKey(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, ExecutionInstance executionInstance) {
+	private String getCacheKey(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, ExecutionInstance executionInstance)
+			throws Exception {
 		logger.debug("IN");
 		String toReturn = null;
 		String userID = (String) ((UserProfile) profile).getUserId();
 		if (lovDefinition instanceof QueryDetail) {
 			QueryDetail queryDetail = (QueryDetail) lovDefinition;
 			QueryDetail clone = queryDetail.clone();
-			clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, executionInstance.getBIObject().getBiObjectParameters()));
+			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(executionInstance.getBIObject().getBiObjectParameters());
+			String statement = queryDetail.getWrappedStatement(dependencies, executionInstance.getBIObject().getBiObjectParameters());
+			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+			if (parameters != null && !parameters.isEmpty()) {
+				Map<String, String> types = queryDetail.getParametersNameToTypeMap(executionInstance.getBIObject().getBiObjectParameters());
+				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
+			}
+			clone.setQueryDefinition(statement);
 			toReturn = userID + ";" + clone.toXML();
 		} else {
 			toReturn = userID + ";" + lovDefinition.toXML();

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -506,6 +507,11 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 	@Override
 	public void setTreeLevelsColumns(List<Couple<String, String>> treeLevelsColumns) {
 		this.treeLevelsColumns = treeLevelsColumns;
+	}
+
+	@Override
+	public Set<String> getParameterNames() throws Exception {
+		return null;
 	}
 
 }
