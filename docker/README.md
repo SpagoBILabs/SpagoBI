@@ -1,6 +1,6 @@
 # What is SpagoBI?
 
-This is the official repository of SpagoBI. SpagoBI is the only entirely Open Source Business Intelligence suite. It covers all the analytical areas of Business Intelligence projects, with innovative themes and engines.
+SpagoBI is the only entirely Open Source Business Intelligence suite. It covers all the analytical areas of Business Intelligence projects, with innovative themes and engines.
 
 > [spagobi.org](https://www.spagobi.org)
  
