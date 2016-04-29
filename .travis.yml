@@ -1,0 +1,12 @@
+language: java
+
+jdk:
+  - oraclejdk7
+
+script:
+  - mvn -f spagobi-parent/pom.xml clean test
+
+cache:
+  directories:
+  - $HOME/.m2
+
