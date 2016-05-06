@@ -494,6 +494,25 @@ Ext.define('Sbi.olap.control.EventManager', {
 		}
 	},
 	
+	/** 
+	* Check the status of the lock
+	*/
+	checkLockStatusForCrossNavigation: function(){
+		var modelStatus = null;
+		//check the status of the lock
+		try {
+			modelStatus = this.olapPanel.executionPanel.olapToolbar.modelStatus;
+		}catch (e) {};
+		if(modelStatus  == 'locked_by_other' || modelStatus  == 'locked_by_user'){
+			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.crossnavigation.locked'));
+			return false;
+		}else{			
+			return true;
+		}
+
+	},
+
+	
 	//author: Maria Caterina Russo from Osmosit
 	setTarget: function(targetId,position){
 		var index = "";
@@ -557,8 +576,3 @@ Ext.define('Sbi.olap.control.EventManager', {
 	  
 	}
 });
-
-
-
-
-

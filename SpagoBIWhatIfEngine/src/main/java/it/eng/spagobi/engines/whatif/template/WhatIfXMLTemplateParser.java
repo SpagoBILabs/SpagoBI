@@ -5,6 +5,14 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.whatif.template;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -19,14 +27,6 @@ import it.eng.spagobi.writeback4j.SbiAliases;
 import it.eng.spagobi.writeback4j.SbiScenario;
 import it.eng.spagobi.writeback4j.SbiScenarioVariable;
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
@@ -80,7 +80,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static String TAG_CN_DESCRIPTION = "DESCRIPTION";
 	public static String TAG_TG_DOCUMENT_LABEL = "documentLabel";
 	public static String TAG_TG_CUSTOMIZED_VIEW = "customizedView";
-	public static String TAG_TG_TARGET = "target";
+	public static String TAG_TG_TARGET = "documentLabel";
 	public static String TAG_TG_TITLE = "title";
 	public static String TAG_TN_PARAMETERS = "PARAMETERS";
 	public static String TAG_TN_PARAMETER = "PARAMETER";
@@ -92,12 +92,15 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static String TAG_CNC_PARAMETERS = "clickParameter";
 	public static String TAG_CNC_NAME = "name";
 	public static String TAG_CNC_VALUE = "value";
+	public static final String FALSE = "false";
+	public static final String TAG_DEFAULT = "default";
 
 	public static final String STAD_ALONE_DS_LABEL = "STAD_ALONE_DS_LABEL";
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WhatIfXMLTemplateParser.class);
 
+	@Override
 	public WhatIfTemplate parse(Object template) {
 		Assert.assertNotNull(template, "Input parameter [template] cannot be null");
 		Assert.assertTrue(template instanceof SourceBean, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
@@ -274,6 +277,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		String visible;
 		String menu;
 		SourceBean value;
+		String defaultValue;
 
 		logger.debug("IN. loading the toolbar config");
 		SourceBean toolbarSB = (SourceBean) template.getAttribute(TAG_TOOLBAR);
@@ -285,6 +289,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			logger.debug(TAG_TOOLBAR + ": " + toolbarSB);
 			toolbarButtons = toolbarSB.getContainedAttributes();
 			if (toolbarButtons != null) {
+				Map<String, String> defaultMapValues = new HashMap<String, String>();
 				for (int i = 0; i < toolbarButtons.size(); i++) {
 					aToolbarButton = toolbarButtons.get(i);
 					name = aToolbarButton.getKey();
@@ -292,6 +297,12 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 						value = (SourceBean) aToolbarButton.getValue();
 						visible = (String) value.getAttribute(TAG_VISIBLE);
 						menu = (String) value.getAttribute(TAG_MENU);
+						defaultValue = (String) value.getAttribute(TAG_DEFAULT);
+						defaultMapValues.put(name, FALSE);
+						if (defaultValue != null && defaultValue.equalsIgnoreCase(TRUE)) {
+							defaultMapValues.put(name, TRUE);
+						}
+
 						if (visible != null && visible.equalsIgnoreCase(TRUE)) {
 							if (menu != null && menu.equalsIgnoreCase(TRUE)) {
 								toolbarMenuButtons.add(name);
@@ -303,6 +314,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 				}
 
 				logger.debug("Updating the toolbar in the template");
+				toReturn.setDefaultValues(defaultMapValues);
 				toReturn.setToolbarMenuButtons(toolbarMenuButtons);
 				toReturn.setToolbarVisibleButtons(toolbarVisibleButtons);
 			}

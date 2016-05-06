@@ -26,19 +26,19 @@
 	%>
  
 <body>
-<div style="float:left">&nbsp;<img src="<%=contextName %>/themes/sbi_default/img/wapp/logo_knowage_small.png"/></div>
+<div style="float:left">&nbsp;<img src="<%=contextName %>/themes/sbi_default/img/wapp/Logo_SpagoBI.gif"/></div>
 <br/>
 <br/>
 <div></div>
 <div style="margin-top: 40px">
-Version: 1.0
+Version: 5.2.0
 </div>
 <div style="margin-top: 5px">
 Logged User: <%= userName %>
 </div>
 
 <div style="position: absolute; bottom:0px; text-align: center"> 
-<i>Copyright (C) 2014 Engineering Ingegneria Informatica S.p.A.</i>
+<i>Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.</i>
 </div>
 
 </body>

@@ -5,19 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.kpi.alarm.service;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.kpi.alarm.bo.AlertSendingItem;
-import it.eng.spagobi.kpi.alarm.dao.SbiAlarmContactDAOHibImpl;
-import it.eng.spagobi.kpi.alarm.dao.SbiAlarmEventDAOHibImpl;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent;
-import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
-import it.eng.spagobi.tools.scheduler.to.DispatchContext;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,13 +34,26 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.kpi.alarm.bo.AlertSendingItem;
+import it.eng.spagobi.kpi.alarm.dao.SbiAlarmContactDAOHibImpl;
+import it.eng.spagobi.kpi.alarm.dao.SbiAlarmEventDAOHibImpl;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent;
+import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
+
 public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 
 	static private Logger logger = Logger.getLogger(AlarmInspectorJob.class);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
 	 */
 
@@ -68,7 +68,7 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
 	 */
 	@Override
@@ -158,9 +158,9 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 					alertSendingSessionMap.put(sbiAlarmContact, alertSendingSessionList);
 				}
 
-				// Se l'event è autodisabilitante
-				if (sbiAlarm.isAutoDisabled()) {
-					// if(sbiAlarm.isSingleEvent()){
+				// if the event is single event then deactivate it (before it was anothger parameter,a utodisabled but single event was not used
+				// if (sbiAlarm.isAutoDisabled()) {
+				if (sbiAlarm.isSingleEvent()) {
 					if (logger.isDebugEnabled())
 						logger.debug("Single alarm '" + sbiAlarm.getLabel() + "' disabled.");
 					sbiAlarmEvent.setActive(false);
@@ -202,6 +202,9 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 
 			StringBuffer subject = new StringBuffer();
 			StringBuffer text = new StringBuffer();
+
+			boolean customSubject = false;
+
 			for (AlertSendingItem alertSendingItem : alertSendingList) {
 				sbiAlarm = alertSendingItem.getSbiAlarm();
 				sbiAlarmEvent = alertSendingItem.getSbiAlarmEvent();
@@ -209,7 +212,15 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 				if (logger.isDebugEnabled())
 					logger.debug("Found alarm " + sbiAlarm.getName() + ".");
 
-				subject.append(sbiAlarm.getLabel());
+				if (sbiAlarm.getMailSubj() != null && !sbiAlarm.getMailSubj().equalsIgnoreCase("")) {
+					customSubject = true;
+				}
+				if (customSubject) {
+					// subject.delete( 0, subject.length());
+					subject.append(sbiAlarm.getMailSubj());
+				} else {
+					subject.append(sbiAlarm.getLabel());
+				}
 
 				text.append("<font size=\"4\">" + msgBuilder.getMessage("sbi.kpi.alarm.mail.body.alarm") + " </font><font color=\"red\" size=\"4\"><b>");
 				text.append(sbiAlarm.getName());
@@ -256,7 +267,11 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 			String email = sbiAlarmContact.getEmail();
 			if (email != null) {
 				sInfo.setMailTos(email);
-				sInfo.setMailSubj(msgBuilder.getMessage("sbi.kpi.alarm.mail.subject") + ": " + new Date() + " [" + sbiAlarmContact.getName() + "]");
+				if (customSubject) {
+					sInfo.setMailSubj(subject.toString());
+				} else {
+					sInfo.setMailSubj(msgBuilder.getMessage("sbi.kpi.alarm.mail.subject") + ": " + new Date() + " [" + sbiAlarmContact.getName() + "]");
+				}
 				sInfo.setMailTxt(text.toString());
 			}
 
@@ -370,6 +385,8 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 			}
 			// create a message
 			MimeMessage msg = new MimeMessage(session);
+			String encodingOptions = "text/html; charset=UTF-8";
+			msg.setHeader("Content-Type", encodingOptions);
 
 			// set the from and to address
 			InternetAddress addressFrom = new InternetAddress(from);
@@ -384,7 +401,7 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 			// IMessageBuilder msgBuilder =
 			// MessageBuilderFactory.getMessageBuilder();
 			String subject = mailSubj;
-			msg.setSubject(subject);
+			msg.setSubject(subject, encodingOptions);
 
 			// create and fill the first message part
 			MimeBodyPart mbp1 = new MimeBodyPart();
@@ -405,7 +422,7 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 			// mp.addBodyPart(mbp2);
 
 			// add the Multipart to the message
-			msg.setContent(mailTxt, "text/html");
+			msg.setContent(mailTxt, encodingOptions);
 
 			// send message
 			if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) && (!StringUtilities.isEmpty(pass))) {

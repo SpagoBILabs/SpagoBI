@@ -38,12 +38,16 @@
             <column name="DESCR" length="200" not-null="false" />
         </property>
         
+        <property name="mailSubj" type="string">
+            <column name="MAIL_SUBJ" length="256" not-null="false" />
+        </property>
+        
         <property name="text" type="string">
             <column name="TEXT" length="1000" not-null="false" />
         </property>
         
         <property name="url" type="string">
-            <column name="URL" length="20" not-null="false" />
+            <column name="URL" length="256" not-null="false" />
         </property>   
         
         <set name="sbiAlarmContacts" table="SBI_ALARM_DISTRIBUTION" cascade="all" inverse="false">

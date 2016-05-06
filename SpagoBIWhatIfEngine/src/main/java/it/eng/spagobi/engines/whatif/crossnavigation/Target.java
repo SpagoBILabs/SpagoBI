@@ -1,11 +1,10 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.engines.whatif.crossnavigation;
-
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.whatif.template.WhatIfXMLTemplateParser;
@@ -16,8 +15,8 @@ import java.util.List;
 /*
  * Target in cross navigation configuration
  */
-public class Target implements Serializable{
-	
+public class Target implements Serializable {
+
 	private static final long serialVersionUID = -4036176618363112988L;
 	String documentLabel;
 	String customizedView;
@@ -30,19 +29,25 @@ public class Target implements Serializable{
 	public Target() {
 	}
 
-	public Target(SourceBean sb) {		
+	public Target(SourceBean sb) {
 		documentLabel = (String) sb.getAttribute(WhatIfXMLTemplateParser.TAG_TG_DOCUMENT_LABEL);
-		customizedView = (String) sb.getAttribute(WhatIfXMLTemplateParser.TAG_TG_CUSTOMIZED_VIEW);		
-		List list= sb.getAttributeAsList(WhatIfXMLTemplateParser.TAG_TG_TITLE);
+		customizedView = (String) sb.getAttribute(WhatIfXMLTemplateParser.TAG_TG_CUSTOMIZED_VIEW);
+		List list = sb.getAttributeAsList(WhatIfXMLTemplateParser.TAG_TG_TITLE);
 		targetCross = (String) sb.getAttribute(WhatIfXMLTemplateParser.TAG_TG_TARGET);
-		titleCross = (String) list.get(0);
+		Object titleObject = list.get(0);
+		if (titleObject instanceof String) {
+			titleCross = (String) list.get(0);
+		} else {
+			titleCross = ((SourceBean) list.get(0)).getCharacters();
+		}
+
 		if (customizedView != null && customizedView.trim().equals("")) {
 			customizedView = null;
 		}
 		SourceBean descrSB = (SourceBean) sb.getAttribute(WhatIfXMLTemplateParser.TAG_CN_DESCRIPTION);
 		description = descrSB.getCharacters();
 		SourceBean titleSB = (SourceBean) list.get(1);
-		title = (String) titleSB.getCharacters();
+		title = titleSB.getCharacters();
 		List parametersSB = sb.getAttributeAsList(WhatIfXMLTemplateParser.TAG_TN_PARAMETERS);
 		List parameterSB = ((SourceBean) parametersSB.get(0)).getAttributeAsList(WhatIfXMLTemplateParser.TAG_TN_PARAMETER);
 		boolean hasParameters = parameterSB != null && !parameterSB.isEmpty();
@@ -56,7 +61,7 @@ public class Target implements Serializable{
 				}
 			}
 		}
-		
+
 	}
 
 	public String getDocumentLabel() {
@@ -114,6 +119,5 @@ public class Target implements Serializable{
 	public void setParameters(List<TargetParameter> parameters) {
 		this.parameters = parameters;
 	}
-	
 
 }

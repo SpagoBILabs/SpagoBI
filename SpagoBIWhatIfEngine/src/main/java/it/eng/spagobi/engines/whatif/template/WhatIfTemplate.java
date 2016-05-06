@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
  */
@@ -35,6 +36,7 @@ public class WhatIfTemplate {
 	private Map<String, String> xmlaServerProperties;
 	private SpagoBICrossNavigationConfig crossNavigation;
 	List<TargetClickable> targetsClickable = new ArrayList<TargetClickable>();
+	private Map<String, String> defaultValues;
 
 	public WhatIfTemplate() {
 		properties = new HashMap<String, Object>();
@@ -183,6 +185,14 @@ public class WhatIfTemplate {
 
 	public void setTargetsClickable(List<TargetClickable> targetsClickable) {
 		this.targetsClickable = targetsClickable;
+	}
+
+	public Map<String, String> getDefaultValues() {
+		return defaultValues;
+	}
+
+	public void setDefaultValues(Map<String, String> defaultValues) {
+		this.defaultValues = defaultValues;
 	}
 
 }

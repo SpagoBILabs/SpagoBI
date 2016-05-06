@@ -49,7 +49,7 @@ Sbi.settings.mydata = {
 	, showEnterpriseDataSetFilter: true
 	, showSharedDataSetFilter: true
 	, showAllDataSetFilter: true
-	, showCkanDataSetFilter: true
+	, showCkanDataSetFilter: false
 	/**
 	 * MY DATA :
 	 * put false for previous behavior (all USER public ds + owned)

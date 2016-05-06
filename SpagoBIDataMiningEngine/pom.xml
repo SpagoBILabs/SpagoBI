@@ -71,21 +71,21 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.rosuda</groupId>
-			<artifactId>JRI</artifactId>
-			<version>1.7.0</version>
+		    <groupId>com.github.lucarosellini.rJava</groupId>
+		    <artifactId>JRI</artifactId>
+		    <version>0.9-7</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.rosuda</groupId>
-			<artifactId>JRIEngine</artifactId>
-			<version>1.7.0</version>
+		    <groupId>com.github.lucarosellini.rJava</groupId>
+		    <artifactId>JRIEngine</artifactId>
+		    <version>0.9-7</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.rosuda</groupId>
-			<artifactId>REngine</artifactId>
-			<version>1.7.0</version>
+		    <groupId>com.github.lucarosellini.rJava</groupId>
+		    <artifactId>REngine</artifactId>
+		    <version>0.9-7</version>
 		</dependency>
 
 		<dependency>
@@ -107,6 +107,11 @@
 		<profile>
 			<id>development</id>
 		</profile>
+		
+		<profile>
+			<id>jbossEAP7</id>
+		</profile>
+		
 		<profile>
 			<id>production</id>
 			<activation>

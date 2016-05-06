@@ -15,6 +15,12 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>org.dspace.xmlui.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2</version>
@@ -38,16 +44,17 @@
 			<version>2.0.2</version>
 		</dependency>
 
-		<dependency>
-			<groupId>javax.portlet</groupId>
-			<artifactId>portlet-api</artifactId>
-			<version>1.0</version>
-		</dependency>
 
 		<dependency>
 			<groupId>it.eng.spago</groupId>
 			<artifactId>spago-core</artifactId>
 			<version>2.3.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>hibernate</artifactId>
+					<groupId>org.hibernate</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -58,8 +65,18 @@
 					<groupId>javax.servlet</groupId>
 					<artifactId>servlet-api</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>portlet-api</groupId>
+					<artifactId>portlet-api</artifactId>		
+				</exclusion>
 			</exclusions>
 			<version>2.3.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.portlet</groupId>
+			<artifactId>portlet-api</artifactId>
+			<version>2.0</version>
 		</dependency>
 
 		<dependency>
@@ -113,7 +130,7 @@
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
-			<version>2.3.5.Final</version>
+			<version>3.0.9.Final</version>
 		</dependency>
 
 		<dependency>
@@ -186,7 +203,7 @@
 		<dependency>
 			<groupId>opensymphony</groupId>
 			<artifactId>quartz</artifactId>
-			<version>1.6.0</version>
+			<version>1.6.1</version>
 		</dependency>
 
 		<dependency>
@@ -208,9 +225,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.bea</groupId>
-			<artifactId>commonj-twm</artifactId>
-			<version>1.1</version>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-commonj_1.1_spec</artifactId>
+			<version>1.0</version>
 		</dependency>
 
 		<dependency>
@@ -254,4 +271,5 @@
 
 	</dependencies>
 
+	
 </project>

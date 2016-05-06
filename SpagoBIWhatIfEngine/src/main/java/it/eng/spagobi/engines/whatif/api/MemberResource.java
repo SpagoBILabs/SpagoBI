@@ -20,6 +20,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
@@ -38,11 +39,11 @@ import com.eyeq.pivot4j.ui.command.DrillDownCommand;
 public class MemberResource extends AbstractWhatIfEngineService {
 
 	@GET
-	@Path("/drilldown/{axis}/{position}/{member}/{positionUniqueName}/{memberUniqueName}")
+	@Path("/drilldown/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
 	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
-			@PathParam("member") int memberPos, @PathParam("positionUniqueName") String positionUniqueName,
-			@PathParam("memberUniqueName") String memberUniqueName) {
+			@PathParam("member") int memberPos, @QueryParam("positionUniqueName") String positionUniqueName,
+			@QueryParam("memberUniqueName") String memberUniqueName) {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
@@ -93,11 +94,11 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	}
 
 	@GET
-	@Path("/drillup/{axis}/{position}/{member}/{positionUniqueName}/{memberUniqueName}")
+	@Path("/drillup/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
 	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
-			@PathParam("member") int memberPos, @PathParam("positionUniqueName") String positionUniqueName,
-			@PathParam("memberUniqueName") String memberUniqueName) {
+			@PathParam("member") int memberPos, @QueryParam("positionUniqueName") String positionUniqueName,
+			@QueryParam("memberUniqueName") String memberUniqueName) {
 
 		List<Member> m = null;
 		Member m2 = null;

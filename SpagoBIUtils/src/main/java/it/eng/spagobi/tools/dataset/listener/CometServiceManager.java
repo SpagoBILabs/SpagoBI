@@ -32,6 +32,7 @@ public class CometServiceManager {
 		// can be null
 		Map<String, CometService> services = getService(uuid, dataSetLabel);
 		if (services == null) {
+			log.debug("Service with uuid [" + uuid + "] for dataset with label [" + dataSetLabel + "] not found!");
 			return;
 		}
 

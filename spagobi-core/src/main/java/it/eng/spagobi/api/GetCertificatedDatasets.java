@@ -255,12 +255,17 @@ public class GetCertificatedDatasets {
 	private JSONArray getOnlineCkanDatasets(IEngUserProfile profile, String filter, String offset) throws JSONException {
 
 		JSONArray datasetsJsonArray = new JSONArray();
+		Connection connection = null;
 
-		Connection fiwareConnection = new Connection(CKANConfig.getInstance().getConfig().getProperty("ckan.url"),
-				profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile).getUserId().toString());
-		// Connection demoConnection = new Connection("http://demo.ckan.org", "740f922c-3929-4715-9273-72210e7982e8", "alessandroportosa");
+		boolean useIdM = CKANConfig.getInstance().getCkanIdMProperty();
+		if (useIdM) {
+			connection = new Connection(CKANConfig.getInstance().getCkanUrlProperty(), profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile)
+					.getUserId().toString());
+		} else {
+			connection = new Connection(CKANConfig.getInstance().getCkanUrlProperty(), null, null);
+		}
 
-		CKANClient client = new CKANClient(fiwareConnection);
+		CKANClient client = new CKANClient(connection);
 		try {
 			logger.debug("Getting resources...");
 			long start = System.currentTimeMillis();

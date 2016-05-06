@@ -121,7 +121,7 @@ public class ProfileFilter implements Filter {
 				chain.doFilter(request, response);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error while processing request", e);
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after
 			// request processed in each case

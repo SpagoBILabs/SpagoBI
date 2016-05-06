@@ -61,9 +61,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview"%><script type="text/javascript" src="<%=linkProto%>"></script>
 <script type="text/javascript" src="<%=linkProtoWin%>"></script>
 <script type="text/javascript" src="<%=linkProtoEff%>"></script>
-    <script type="text/javascript" src="<%=correlationsObjParuseUrl%>"></script>
-    <script type="text/javascript" src="<%=viewsObjParuseUrl%>"></script>
-    
+<script type="text/javascript" src="<%=correlationsObjParuseUrl%>"></script>
+<script type="text/javascript" src="<%=viewsObjParuseUrl%>"></script>
+
 <link href="<%=linkProtoDefThem%>" rel="stylesheet" type="text/css"/>
 <link href="<%=linkProtoAlphaThem%>" rel="stylesheet" type="text/css"/>
 
@@ -234,32 +234,41 @@ function addRightBreak(index) {
       visPostCond.innerHTML = postcond;
       correlationManager.setPostCondition(index, postcond);
   }	  	  
-  
+ 
 //enable or siable the date range filter based on param selected
-function selectedParam() {	
-	var selectBox = document.getElementById("dependSelect");
-	if (selectBox == null) {
-		return false;
-	}
-	var selectedOption = selectBox.options[selectBox.selectedIndex];
+  function selectedParam() {	
+  	var selectBox = document.getElementById("dependSelect");
+  	if (selectBox == null) {
+  		return false;
+  	}
+  	var selectedOption = selectBox.options[selectBox.selectedIndex];
 
-	var conditionSelect = document.getElementById("conditionSelect");
-	var conditionSelectOptions = conditionSelect.options;
-
-	for (var i=0;i<conditionSelectOptions.length;i++) {
-		var option =conditionSelectOptions[i];
-		var idr=option.getAttribute("data-is-date-range");
-		if (selectedOption.getAttribute("data-is-date-range") === 'true') {
-			//enable only in range filters
-			option.disabled = !(idr === 'true');
-		} else {
-			//date range false
-			option.disabled = (idr === 'true');
-		}
-	}
-	return true;
-} 
-
+  	var conditionSelect = document.getElementById("conditionSelect");
+  	var conditionSelectOptions = conditionSelect.options;
+  	var selectedDriverIsDataRange = selectedOption.getAttribute("data-is-date-range");
+  	selectedDriverIsDataRange = selectedDriverIsDataRange == null || selectedDriverIsDataRange == undefined || selectedDriverIsDataRange == "false"  ? "false" : "true";
+  	
+  	var selectedIndex = -1;
+      
+  	for (var i=0;i<conditionSelectOptions.length;i++) {
+  		var optIsDataRange = conditionSelectOptions[i].getAttribute("data-is-date-range");
+  		optIsDataRange = optIsDataRange == null || optIsDataRange == undefined || optIsDataRange == "false" ? "false" : "true"; 
+  		if (optIsDataRange  !== selectedDriverIsDataRange){
+  			conditionSelectOptions[i].hide();
+  		}else{
+  			conditionSelectOptions[i].show();
+  			if (selectedIndex == -1) {
+  				selectedIndex = i;
+  			}
+  		}
+  	}
+  	if (conditionSelectOptions[conditionSelect.selectedIndex].style.display == "none" && selectedIndex >= 0){
+  		conditionSelect.selectedIndex = selectedIndex;
+  	}
+  	return true;
+  } 
+    
+  
 //for setting the first time of visualization
 function checkSelectedParam() {
 	var done=selectedParam();
@@ -317,10 +326,10 @@ function generateCorrBlockHtml(indexCorr) {
 	
 	selLogOper = " ";
 	if(correlation!=null) {
-    if(correlation.condition=='<%=SpagoBIConstants.START_FILTER%>') {
-        selLogOper  = " selected ";
-    }
-}
+	    if(correlation.condition=='<%=SpagoBIConstants.START_FILTER%>') {
+	        selLogOper  = " selected ";
+	    }
+	}
 	blockHtml += "  <option value='<%=SpagoBIConstants.START_FILTER%>' "+selLogOper+" >";
 	blockHtml += "	   <spagobi:message key = "SBIListLookPage.startWith" />";
 	blockHtml += "  </option>";
@@ -360,6 +369,27 @@ function generateCorrBlockHtml(indexCorr) {
 	blockHtml += "  <option value='<%=SpagoBIConstants.LESS_FILTER%>' "+selLogOper+" >";
 	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isLessThan" />";
 	blockHtml += "  </option>";
+	
+	selLogOper = " ";
+	if(correlation!=null) {
+    if(correlation.condition=='<%=SpagoBIConstants.LESS_BEGIN_FILTER%>') {
+        selLogOper  = " selected ";
+    }
+}
+	blockHtml += "  <option value='<%=SpagoBIConstants.LESS_BEGIN_FILTER%>' data-is-date-range='true' "+selLogOper+" >";
+	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isLessThanBegin" />";
+	blockHtml += "  </option>";
+	
+	selLogOper = " ";
+	if(correlation!=null) {
+    if(correlation.condition=='<%=SpagoBIConstants.LESS_END_FILTER%>') {
+        selLogOper  = " selected ";
+    }
+}
+	blockHtml += "  <option value='<%=SpagoBIConstants.LESS_END_FILTER%>' data-is-date-range='true' "+selLogOper+" >";
+	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isLessThanEnd" />";
+	blockHtml += "  </option>";
+
 	selLogOper = " ";
 	if(correlation!=null) {
     if(correlation.condition=='<%=SpagoBIConstants.LESS_OR_EQUAL_FILTER%>') {
@@ -369,6 +399,27 @@ function generateCorrBlockHtml(indexCorr) {
 	blockHtml += "  <option value='<%=SpagoBIConstants.LESS_OR_EQUAL_FILTER%>' "+selLogOper+"  >";
 	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isLessOrEqualThan" />";
 	blockHtml += "  </option>";
+	
+	selLogOper = " ";
+	if(correlation!=null) {
+    if(correlation.condition=='<%=SpagoBIConstants.LESS_OR_EQUAL_BEGIN_FILTER%>') {
+        selLogOper  = " selected ";
+    }
+}
+	blockHtml += "  <option value='<%=SpagoBIConstants.LESS_OR_EQUAL_BEGIN_FILTER%>' data-is-date-range='true' "+selLogOper+" >";
+	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isLessOrEqualThanBegin" />";
+	blockHtml += "  </option>";
+	
+	selLogOper = " ";
+	if(correlation!=null) {
+    if(correlation.condition=='<%=SpagoBIConstants.LESS_OR_EQUAL_END_FILTER%>') {
+        selLogOper  = " selected ";
+    }
+}
+	blockHtml += "  <option value='<%=SpagoBIConstants.LESS_OR_EQUAL_END_FILTER%>' data-is-date-range='true' "+selLogOper+" >";
+	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isLessOrEqualThanEnd" />";
+	blockHtml += "  </option>";
+	
 	selLogOper = " ";
 	if(correlation!=null) {
     if(correlation.condition=='<%=SpagoBIConstants.GREATER_FILTER%>') {
@@ -378,6 +429,27 @@ function generateCorrBlockHtml(indexCorr) {
 	blockHtml += "  <option value='<%=SpagoBIConstants.GREATER_FILTER%>' "+selLogOper+"  >";
 	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isGreaterThan" />";
 	blockHtml += "  </option>";
+	
+	selLogOper = " ";
+	if(correlation!=null) {
+    if(correlation.condition=='<%=SpagoBIConstants.GREATER_BEGIN_FILTER%>') {
+        selLogOper  = " selected ";
+    }
+}
+	blockHtml += "  <option value='<%=SpagoBIConstants.GREATER_BEGIN_FILTER%>' data-is-date-range='true' "+selLogOper+"  >";
+	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isGreaterThanBegin" />";
+	blockHtml += "  </option>";
+
+	selLogOper = " ";
+	if(correlation!=null) {
+    if(correlation.condition=='<%=SpagoBIConstants.GREATER_END_FILTER%>') {
+        selLogOper  = " selected ";
+    }
+}
+	blockHtml += "  <option value='<%=SpagoBIConstants.GREATER_END_FILTER%>' data-is-date-range='true' "+selLogOper+"  >";
+	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isGreaterThanEnd" />";
+	blockHtml += "  </option>";
+		
 	selLogOper = " ";
 if(correlation!=null) {
     if(correlation.condition=='<%=SpagoBIConstants.GREATER_OR_EQUAL_FILTER%>') {
@@ -386,6 +458,26 @@ if(correlation!=null) {
 }
 	blockHtml += "  <option value='<%=SpagoBIConstants.GREATER_OR_EQUAL_FILTER%>' "+selLogOper+"   >";
 	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isGreaterOrEqualThan" />";
+	blockHtml += "  </option>";
+	
+	selLogOper = " ";
+	if(correlation!=null) {
+    if(correlation.condition=='<%=SpagoBIConstants.GREATER_OR_EQUAL_BEGIN_FILTER%>') {
+        selLogOper  = " selected ";
+    }
+}
+	blockHtml += "  <option value='<%=SpagoBIConstants.GREATER_OR_EQUAL_BEGIN_FILTER%>' data-is-date-range='true' "+selLogOper+"  >";
+	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isGreaterOrEqualThanBegin" />";
+	blockHtml += "  </option>";
+
+	selLogOper = " ";
+	if(correlation!=null) {
+    if(correlation.condition=='<%=SpagoBIConstants.GREATER_OR_EQUAL_END_FILTER%>') {
+        selLogOper  = " selected ";
+    }
+}
+	blockHtml += "  <option value='<%=SpagoBIConstants.GREATER_OR_EQUAL_END_FILTER%>' data-is-date-range='true' "+selLogOper+"  >";
+	blockHtml += "	   <spagobi:message key = "SBIListLookPage.isGreaterOrEqualThanEnd" />";
 	blockHtml += "  </option>";
 	
 	//Date Range filter
@@ -667,15 +759,39 @@ function getFilterOpNameFromCode(filterOpCode) {
     if(filterOpCode=='<%=SpagoBIConstants.LESS_FILTER%>') {
        return '<spagobi:message key = "SBIListLookPage.isLessThan" />';
     }
+    if(filterOpCode=='<%=SpagoBIConstants.LESS_BEGIN_FILTER%>') {
+        return '<spagobi:message key = "SBIListLookPage.isLessThanBegin" />';
+     }
+    if(filterOpCode=='<%=SpagoBIConstants.LESS_END_FILTER%>') {
+        return '<spagobi:message key = "SBIListLookPage.isLessThanEnd" />';
+     }
     if(filterOpCode=='<%=SpagoBIConstants.LESS_OR_EQUAL_FILTER%>') {
        return '<spagobi:message key = "SBIListLookPage.isLessOrEqualThan" />';
     }
+    if(filterOpCode=='<%=SpagoBIConstants.LESS_OR_EQUAL_BEGIN_FILTER%>') {
+        return '<spagobi:message key = "SBIListLookPage.isLessOrEqualThanBegin" />';
+     }
+    if(filterOpCode=='<%=SpagoBIConstants.LESS_OR_EQUAL_END_FILTER%>') {
+        return '<spagobi:message key = "SBIListLookPage.isLessOrEqualThanEnd" />';
+     }
     if(filterOpCode=='<%=SpagoBIConstants.GREATER_FILTER%>') {
        return '<spagobi:message key = "SBIListLookPage.isGreaterThan" />';
     }
+    if(filterOpCode=='<%=SpagoBIConstants.GREATER_BEGIN_FILTER%>') {
+        return '<spagobi:message key = "SBIListLookPage.isGreaterThanBegin" />';
+     }
+    if(filterOpCode=='<%=SpagoBIConstants.GREATER_END_FILTER%>') {
+        return '<spagobi:message key = "SBIListLookPage.isGreaterThanEnd" />';
+     }
     if(filterOpCode=='<%=SpagoBIConstants.GREATER_OR_EQUAL_FILTER%>') {
        return '<spagobi:message key = "SBIListLookPage.isGreaterOrEqualThan" />';
     }
+    if(filterOpCode=='<%=SpagoBIConstants.GREATER_OR_EQUAL_BEGIN_FILTER%>') {
+        return '<spagobi:message key = "SBIListLookPage.isGreaterOrEqualThanBegin" />';
+     }
+    if(filterOpCode=='<%=SpagoBIConstants.GREATER_OR_EQUAL_END_FILTER%>') {
+        return '<spagobi:message key = "SBIListLookPage.isGreaterOrEqualThanEnd" />';
+     }
     if(filterOpCode=='<%=SpagoBIConstants.NOT_CONTAIN_FILTER%>') {
         return '<spagobi:message key = "SBIListLookPage.notcontains" />';
      }

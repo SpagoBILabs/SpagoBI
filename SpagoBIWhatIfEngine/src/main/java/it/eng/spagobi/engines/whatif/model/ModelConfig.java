@@ -25,6 +25,7 @@ import com.eyeq.pivot4j.transform.NonEmpty;
 import com.eyeq.pivot4j.ui.command.DrillDownCommand;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
 public class ModelConfig implements Serializable {
 
 	private static final long serialVersionUID = 2687163910212567575L;
@@ -47,6 +48,9 @@ public class ModelConfig implements Serializable {
 	private Map<String, String> dimensionHierarchyMap;
 
 	private SpagoBICrossNavigationConfig crossNavigation;
+
+	public ModelConfig() {
+	}
 
 	public ModelConfig(PivotModel pivotModel) {
 		drillType = DrillDownCommand.MODE_POSITION;

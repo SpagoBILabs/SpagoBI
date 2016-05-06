@@ -137,6 +137,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	
 	IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	
+	String organization="";
 	String userUniqueIdentifier="";
 	String userId="";
 	String userName="";
@@ -145,6 +146,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	List userRoles = new ArrayList();;
 	
 	if (userProfile!=null){
+		organization = ((UserProfile)userProfile).getOrganization();
 		userId=(String)((UserProfile)userProfile).getUserId();
 		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
 		userName=(String)((UserProfile)userProfile).getUserName();
@@ -263,7 +265,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 
     // javascript-side user profile object
     Ext.ns("Sbi.user");
-    Sbi.user.organization = '<%= StringEscapeUtils.escapeJavaScript(((UserProfile)userProfile).getOrganization()) %>';
+    Sbi.user.organization = '<%= StringEscapeUtils.escapeJavaScript(organization) %>';
     Sbi.user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
     Sbi.user.userId = '<%= StringEscapeUtils.escapeJavaScript(userId) %>';
     Sbi.user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>';    

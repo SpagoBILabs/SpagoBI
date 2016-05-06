@@ -58,12 +58,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-servlets</artifactId>
-			<version>9.2.12.v20150709</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.cometd.java</groupId>
 			<artifactId>cometd-java-websocket-javax-server</artifactId>
 			<version>3.0.5</version>
@@ -79,6 +73,10 @@
 	</dependencies>
 
 	<profiles>
+		<profile>
+			<id>jbossEAP7</id>
+		</profile>
+	
 		<profile>
 			<id>development</id>
 		</profile>

@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -12,10 +11,6 @@
 	<artifactId>SpagoBI</artifactId>
 	<packaging>war</packaging>
 
-	<properties>
-		<war.deploy.dir>${project.build.directory}/${project.artifactId}</war.deploy.dir>
-	</properties>
-
 	<dependencies>
 
 		<dependency>
@@ -24,6 +19,18 @@
 			<version>5.2.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>SpagoBIOAuth2SecurityProvider</artifactId>
+			<version>5.2.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.spagobi</groupId>
+			<artifactId>SpagoBILdapSecurityProvider</artifactId>
+			<version>5.2.0</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -61,12 +68,13 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb-driver</artifactId>
-			<version>8.0.2</version>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.10</version>
 		</dependency>
+
 
 		<dependency>
 			<groupId>javax</groupId>
@@ -79,32 +87,22 @@
 
 	<profiles>
 		<profile>
-			<id>development</id>
+			<id>jbossEAP7</id>
 		</profile>
+		
+		<profile>
+			<id>wildfly</id>
+		</profile>
+		
 		<profile>
 			<id>production</id>
-			<activation>
-				<property>
-					<name>minimized-dir</name>
-				</property>
-			</activation>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>net.alchim31.maven</groupId>
 						<artifactId>yuicompressor-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>compress</goal>
-								</goals>
-							</execution>
-						</executions>
+						<version>1.5.1</version>
 						<configuration>
-							<!-- <outputDirectory>${project.build.directory}/minimized</outputDirectory> -->
-							<webappDirectory>${minimized-dir}</webappDirectory>
-							<!-- Minify only, do not obfuscate -->
-							<nomunge>true</nomunge>
 							<excludes>
 								<exclude>**/*.css</exclude>
 								<exclude>${basedir}/src/main/webapp/js/*.js</exclude>
@@ -116,6 +114,7 @@
 								<exclude>**/extjs/**/*.js</exclude>
 								<exclude>**/js/kpi/*.js</exclude>
 								<exclude>**/prototype/**/*.js</exclude>
+								<!--  <exclude>**/lib/**/*.js</exclude>-->
 								<exclude>**/lib/d3/*.js</exclude>
 								<exclude>**/lib/ext-2.0.1/*.js</exclude>
 								<exclude>**/lib/ext-2.0.1/adapter/**/*.js</exclude>
@@ -139,11 +138,15 @@
 								<exclude>**/src/ext/sbi/formats/fr.js</exclude>
 								<exclude>**/src/ext/sbi/formats/it.js</exclude>
 								<exclude>**/src/ext4/extjs4classstub.js</exclude>
+								<exclude>**/lib/angular/**/*.js</exclude>
+								<exclude>**/lib/bootstrap/**/*.js</exclude>
+								<!-- js with errors -->
+								<exclude>**/src/angular_1.4/**/*.js</exclude>
 							</excludes>
 							<aggregations>
 								<aggregation>
-									<inputDir>${minimized-dir}/js</inputDir>
-									<output>${basedir}/src/main/webapp/js/src/ext/sbi/sbi-all-${project.version}.js</output>
+									<output>${project.build.directory}/${project.build.finalName}/js/src/ext/sbi-all-${js.version}.js</output>
+									<inputDir>${project.build.directory}/${project.build.finalName}/js</inputDir>
 									<includes>
 										<include>src/ext/sbi/commons/Format-min.js</include>
 										<include>src/ext/sbi/formats/LocaleUtils-min.js</include>
@@ -223,8 +226,8 @@
 									<insertNewLine>true</insertNewLine>
 								</aggregation>
 								<aggregation>
-									<inputDir>${minimized-dir}/js</inputDir>
-									<output>${basedir}/src/main/webapp/js/src/ext/sbi/sbi-all-ext311-${project.version}.js</output>
+									<output>${project.build.directory}/${project.build.finalName}/js/src/ext/sbi-all-ext311-${js.version}.js</output>
+									<inputDir>${project.build.directory}/${project.build.finalName}/js</inputDir>
 									<includes>
 										<include>src/ext/sbi/commons/Log-min.js</include>
 										<include>src/ext/sbi/commons/Format-min.js</include>
@@ -232,7 +235,7 @@
 										<include>src/ext/sbi/exception/ExceptionHandler-min.js</include>
 										<include>src/ext/sbi/service/ServiceRegistry-min.js</include>
 										<include>src/ext/sbi/commons/Session-min.js</include>
-										<include>lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn-min.js</include>
+										 <include>lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn-min.js</include>
 										<include>lib/ext-3.1.1/ux/grid/Ext.ux.ColorField-min.js</include>
 										<include>lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor-min.js</include>
 										<include>lib/ext-3.1.1/ux/form/MultiSelect-min.js</include>
@@ -339,8 +342,8 @@
 									<insertNewLine>true</insertNewLine>
 								</aggregation>
 								<aggregation>
-									<inputDir>${minimized-dir}/js</inputDir>
-									<output>${basedir}/src/main/webapp/js/src/ext4/sbi/sbi-all-ext410-${project.version}.js</output>
+									<output>${project.build.directory}/${project.build.finalName}/js/src/ext4/sbi-all-ext410-${js.version}.js</output>
+									<inputDir>${project.build.directory}/${project.build.finalName}/js</inputDir>
 									<includes>
 										<include>src/ext/sbi/formats/LocaleUtils-min.js</include>
 										<include>src/ext/sbi/exception/ExceptionHandler-min.js</include>
@@ -411,6 +414,9 @@
 										<include>src/ext4/sbi/tools/dataset/DataSetsView-min.js</include>
 										<include>src/ext4/sbi/tools/dataset/DataSetsWizard-min.js</include>
 										<include>src/ext4/sbi/behavioural/lov/TestLovPanel-min.js</include>
+										<include>src/ext4/sbi/tools/document/SmartFilterBrowser-min.js</include>
+										<include>src/ext4/sbi/tools/document/SmartFilterModel-min.js</include>
+										<include>src/ext4/sbi/tools/document/SmartFilterView-min.js</include>
 										<include>src/ext4/sbi/tools/dataset/CkanDataSetsWizard-min.js</include>
 										<include>src/ext4/sbi/tools/dataset/QbeDataSetsWizard-min.js</include>
 										<include>src/ext4/sbi/tools/dataset/DatasetMetadataMainPage-min.js</include>
@@ -451,55 +457,6 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>tomcat-deploy</id>
-			<properties>
-				<war.deploy.dir>${tomcat.home}/webapps/${project.artifactId}</war.deploy.dir>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>cas-enabled</id>
-			<properties>
-				<enable.cas.start>&lt;!--</enable.cas.start>
-				<enable.cas.end>--&gt;</enable.cas.end>
-			</properties>
-		</profile>
 	</profiles>
-
-	<build>
-		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<webResources>
-						<resource>
-							<filtering>true</filtering>
-							<directory>src/main/webapp</directory>
-							<includes>
-								<include>**/web.xml</include>
-							</includes>
-						</resource>
-					</webResources>
-					<warSourceDirectory>src/main/webapp</warSourceDirectory>
-					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
-					<webappDirectory>${war.deploy.dir}</webappDirectory>
-					<archive>
-						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-						<manifestEntries>
-							<Built-By>SpagoBI Labs</Built-By>
-						</manifestEntries>
-					</archive>
-					<containerConfigXML>/src/main/webapp/META-INF</containerConfigXML>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
 
 </project>

@@ -114,9 +114,17 @@ public class SpagoBIConstants {
 	public static final String CONTAIN_FILTER = "contains";
 	public static final String NOT_CONTAIN_FILTER = "notcontains";
 	public static final String LESS_FILTER = "less";
+	public static final String LESS_BEGIN_FILTER = "lessbegin";
+	public static final String LESS_END_FILTER = "lessend";
 	public static final String LESS_OR_EQUAL_FILTER = "lessequal";
+	public static final String LESS_OR_EQUAL_BEGIN_FILTER = "lesseqbg";
+	public static final String LESS_OR_EQUAL_END_FILTER = "lesseqend";
 	public static final String GREATER_FILTER = "greater";
+	public static final String GREATER_BEGIN_FILTER = "gtr_bg";
+	public static final String GREATER_END_FILTER = "gtr_end";
 	public static final String GREATER_OR_EQUAL_FILTER = "greaterequal";
+	public static final String GREATER_OR_EQUAL_BEGIN_FILTER = "gtr_eq_bg";
+	public static final String GREATER_OR_EQUAL_END_FILTER = "gtr_eq_end";
 	public static final String IN_RANGE_FILTER = "inrange";
 	public static final String NOT_IN_RANGE_FILTER = "notinrange";
 
@@ -236,6 +244,8 @@ public class SpagoBIConstants {
 	public static final String DATASETS_LIST = "DATASETS_LIST";
 
 	public static final String PROFILE_ATTRIBUTES_TO_FILL = "PROFILE_ATTRIBUTES_TO_FILL";
+	public static final String PARAMETERS_TO_FILL = "PARAMETERS_TO_FILL";
+	public static final String PARAMETERS_FILLED = "PARAMETERS_FILLED";
 
 	public static final String MESSAGE_TEST_AFTER_ATTRIBUTES_FILLING = "MESSAGE_TEST_AFTER_ATTRIBUTES_FILLING";
 

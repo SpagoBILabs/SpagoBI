@@ -165,7 +165,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 
 			// javascript-side user profile object
 	         Ext.ns("Sbi.user");
-	        Sbi.user.userId = "<%= profile.getUserId() %>";
+	        Sbi.user.userId = "<%= profile.getUserUniqueIdentifier() %>";
 	        Sbi.user.locale = "<%= locale%>";
 
 	       var executionContext = {};

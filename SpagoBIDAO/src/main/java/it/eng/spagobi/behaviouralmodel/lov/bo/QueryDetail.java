@@ -6,24 +6,6 @@
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import javax.naming.NamingException;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.validator.GenericValidator;
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.Utils;
@@ -54,6 +36,26 @@ import it.eng.spagobi.utilities.DateRangeUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.naming.NamingException;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.validator.GenericValidator;
+import org.apache.log4j.Logger;
 
 //import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 
@@ -274,8 +276,13 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
 			throws Exception {
 		logger.debug("IN");
+		Map<String, String> parameters = getParametersNameToValueMap(BIObjectParameters);
 		String statement = getWrappedStatement(dependencies, BIObjectParameters);
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+		if (parameters != null && !parameters.isEmpty()) {
+			Map<String, String> types = getParametersNameToTypeMap(BIObjectParameters);
+			statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
+		}
 		logger.info("User [" + ((UserProfile) profile).getUserId() + "] is executing sql: " + statement);
 		String result = getLovResult(profile, statement);
 		logger.debug("OUT.result=" + result);
@@ -397,12 +404,21 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		// operators
 		String left = null;
 		String right = null;
+		String central = null;
 		if (SpagoBIConstants.NOT_IN_RANGE_FILTER.equals(typeFilter)) {
 			left = "<";
 			right = ">";
 		} else if (SpagoBIConstants.IN_RANGE_FILTER.equals(typeFilter)) {
 			left = ">=";
 			right = "<=";
+		} else if (SpagoBIConstants.LESS_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_END_FILTER.equals(typeFilter)) {
+			central = "<";
+		} else if (SpagoBIConstants.LESS_OR_EQUAL_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_OR_EQUAL_END_FILTER.equals(typeFilter)) {
+			central = "<=";
+		} else if (SpagoBIConstants.GREATER_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_END_FILTER.equals(typeFilter)) {
+			central = ">";
+		} else if (SpagoBIConstants.GREATER_OR_EQUAL_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_OR_EQUAL_END_FILTER.equals(typeFilter)) {
+			central = ">=";
 		} else {
 			Assert.assertUnreachable("filter not supported");
 		}
@@ -415,7 +431,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		DateFormat df = new SimpleDateFormat(dateFormat);
 		Date startDate = startEnd[0];
 		Date endDate = startEnd[1];
-		if (!isDateFormat) {
+		if (central == null && !isDateFormat) {
 			// add 1 day to end date because it will be transformed to timestamp
 			endDate = DateRangeUtils.addDay(endDate);
 			right = SpagoBIConstants.IN_RANGE_FILTER.equals(typeFilter) ? right = "<" : ">=";
@@ -427,9 +443,19 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		String startDateSQLValue = getSQLDateValue(startDateS, true);
 		String endDateSQLValue = getSQLDateValue(endDateS, true);
 		String columnSQLName = getColumnSQLName(dependency.getFilterColumn());
-
+		String res = null;
 		// result something line (column>=date start AND column<=date end)
-		String res = String.format(" ( %s%s%s AND %s%s%s) ", columnSQLName, left, startDateSQLValue, columnSQLName, right, endDateSQLValue);
+		if (SpagoBIConstants.NOT_IN_RANGE_FILTER.equals(typeFilter) || SpagoBIConstants.IN_RANGE_FILTER.equals(typeFilter)) {
+			res = String.format(" ( %s%s%s AND %s%s%s) ", columnSQLName, left, startDateSQLValue, columnSQLName, right, endDateSQLValue);
+		} else if (SpagoBIConstants.LESS_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_OR_EQUAL_BEGIN_FILTER.equals(typeFilter)
+				|| SpagoBIConstants.GREATER_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_OR_EQUAL_BEGIN_FILTER.equals(typeFilter)) {
+			res = String.format(" ( %s%s%s) ", columnSQLName, central, startDateSQLValue);
+		} else if (SpagoBIConstants.LESS_END_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_OR_EQUAL_END_FILTER.equals(typeFilter)
+				|| SpagoBIConstants.GREATER_END_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_OR_EQUAL_END_FILTER.equals(typeFilter)) {
+			res = String.format(" ( %s%s%s) ", columnSQLName, central, endDateSQLValue);
+		} else {
+			res = TRUE_CONDITION;
+		}
 		return res;
 	}
 
@@ -567,8 +593,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	}
 
 	private void validateNumber(String value) {
-		if (!(GenericValidator.isInt(value) || GenericValidator.isFloat(value) || GenericValidator.isDouble(value) || GenericValidator.isShort(value)
-				|| GenericValidator.isLong(value))) {
+		if (!(GenericValidator.isInt(value) || GenericValidator.isFloat(value) || GenericValidator.isDouble(value) || GenericValidator.isShort(value) || GenericValidator
+				.isLong(value))) {
 			throw new SecurityException("Input value " + value + " is not a valid number");
 		}
 	}
@@ -577,8 +603,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		String dateFormat = GeneralUtilities.getServerDateFormat();
 		String timestampFormat = GeneralUtilities.getServerTimeStampFormat();
 		if (!GenericValidator.isDate(value, dateFormat, true) && !GenericValidator.isDate(value, timestampFormat, true)) {
-			throw new SecurityException(
-					"Input value " + value + " is not a valid date according to the date format " + dateFormat + " or timestamp format " + timestampFormat);
+			throw new SecurityException("Input value " + value + " is not a valid date according to the date format " + dateFormat + " or timestamp format "
+					+ timestampFormat);
 		}
 	}
 
@@ -636,9 +662,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		if (dialect != null) {
 			if (dialect.equalsIgnoreCase(DIALECT_MYSQL)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " STR_TO_DATE(" + date + ",'%d/%m/%Y %h:%i:%s') ";
+					toReturn = " STR_TO_DATE(" + date + ",'%d/%m/%Y %H:%i:%s') ";
 				} else {
-					toReturn = " STR_TO_DATE('" + date + "','%d/%m/%Y %h:%i:%s') ";
+					toReturn = " STR_TO_DATE('" + date + "','%d/%m/%Y %H:%i:%s') ";
 				}
 			} else if (dialect.equalsIgnoreCase(DIALECT_HSQL)) {
 				try {
@@ -936,6 +962,34 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 				names.add(nameAttr);
 			} else {
 				names.add(attributeDef);
+			}
+			query = query.substring(endind);
+		}
+		return names;
+	}
+
+	/**
+	 * Gets the set of names of the parameters required.
+	 *
+	 * @return set of parameter names
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Override
+	public Set<String> getParameterNames() throws Exception {
+		Set<String> names = new HashSet<String>();
+		String query = getQueryDefinition();
+		while (query.indexOf(StringUtilities.START_PARAMETER) != -1) {
+			int startind = query.indexOf(StringUtilities.START_PARAMETER);
+			int endind = query.indexOf("}", startind);
+			String parameterDef = query.substring(startind + 3, endind);
+			if (parameterDef.indexOf("(") != -1) {
+				int indroundBrack = query.indexOf("(", startind);
+				String nameParam = query.substring(startind + 3, indroundBrack);
+				names.add(nameParam);
+			} else {
+				names.add(parameterDef);
 			}
 			query = query.substring(endind);
 		}

@@ -29,8 +29,10 @@ import org.apache.commons.fileupload.ParameterParser;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -209,7 +211,28 @@ public class RestUtilities {
 		}
 	}
 
-	private static void setHttpClientProxy(HttpClient client, String address) {
+	public static HttpMethodBase getHttpMethodBase(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
+			List<NameValuePair> queryParams) throws HttpException, IOException {
+		HttpMethodBase method = getMethod(httpMethod, address);
+		for (Entry<String, String> entry : requestHeaders.entrySet()) {
+			method.addRequestHeader(entry.getKey(), entry.getValue());
+		}
+		if (queryParams != null) {
+			// add uri query params to provided query params present in query
+			List<NameValuePair> addressPairs = getAddressPairs(address);
+			List<NameValuePair> totalPairs = new ArrayList<NameValuePair>(addressPairs);
+			totalPairs.addAll(queryParams);
+			method.setQueryString(totalPairs.toArray(new NameValuePair[queryParams.size()]));
+		}
+		if (method instanceof EntityEnclosingMethod) {
+			EntityEnclosingMethod eem = (EntityEnclosingMethod) method;
+			// charset of request currently not used
+			eem.setRequestBody(requestBody);
+		}
+		return method;
+	}
+
+	public static void setHttpClientProxy(HttpClient client, String address) {
 		if (proxyAddress != null) {
 			Assert.assertTrue(proxyPort != 0, "proxyPort!=0");
 			client.getHostConfiguration().setProxy(proxyAddress, proxyPort);
@@ -243,6 +266,15 @@ public class RestUtilities {
 		Assert.assertTrue(port != null, "port proxy != null");
 		int p = Integer.parseInt(port);
 		client.getHostConfiguration().setProxy(proxyHost, p);
+
+		String proxyUser = System.getProperty("http.proxyUsername");
+		String proxyPassword = System.getProperty("http.proxyPassword");
+		if (proxyUser != null) {
+			log.debug("Setting proxy authentication configuration ...");
+			HttpState state = new HttpState();
+			state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUser, proxyPassword));
+			client.setState(state);
+		}
 
 	}
 
