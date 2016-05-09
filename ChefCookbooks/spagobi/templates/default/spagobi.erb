@@ -1,0 +1,85 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          spagobi
+# Required-Start:    $local_fs mysql
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# X-Interactive:     false
+# Short-Description: SpagoBI init script
+# Description:       start/stop SpagoBI server
+### END INIT INFO
+
+LOCK_FILE=/run/lock/spagobi
+
+# Start the service spagobi
+start() {
+        echo "starting spagobi server"
+
+        if ps aux | grep -q [j]ava.*SpagoBI.*; then
+            echo "spagobi server is already running."
+            return 0
+        fi
+
+        <%= node['spagobi']['home_dir'] %><%= node['spagobi']['server_dir'] %>bin/startup.sh
+       
+        echo "spagobi server running."
+}
+
+# Restart the service spagobi
+stop() {
+        echo "stopping spagobi server"
+
+        if ! ps aux | grep -q [j]ava.*SpagoBI.*; then
+            echo "spagobi server is already stopped."
+            return 0
+        fi
+
+        <%= node['spagobi']['home_dir'] %><%= node['spagobi']['server_dir'] %>bin/shutdown.sh
+
+        echo -n "Stopping spagobi"
+        start=`date +%s`
+        end=`date +%s`
+        while ( ps aux | grep -q [j]ava.*SpagoBI.* ) && [ $((end-start)) -lt 300 ]; do 
+            echo -n "."
+            sleep 2
+            end=`date +%s`
+        done
+        echo
+        if ps aux | grep -q [j]ava.*SpagoBI.*; then
+          echo "spagobi didn't stop correctly"
+          exit 2
+        fi
+
+        echo "spagobi server stopped."
+}
+
+status() {
+    if ps aux | grep -q [j]ava.*SpagoBI.*; then
+        echo "spagobi server running."
+    else 
+        echo "spagobi server is not running."
+        exit 3 #not running status
+    fi
+}
+
+### main logic ###
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+        status
+        ;;
+  restart|reload|condrestart)
+        stop
+        start
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart|reload|status}"
+        exit 1
+esac
+exit 0

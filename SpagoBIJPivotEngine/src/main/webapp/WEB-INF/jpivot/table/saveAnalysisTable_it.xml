@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<xform style="manual">
+<table border="1" cellspacing="0" cellpadding="2" id="saveAnalysisTable">
+
+ <tr>
+  <th colspan="2" class="xform-title">
+   <table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <tr>
+     <th align="left" class="xform-title">
+      Salvataggio analisi
+     </th>
+     <td align="right" class="xform-close-button">
+      <imgButton src="wcf/form/cancel.png" action="revert" label="Chiudi" hide="true" handler="com.tonbeller.wcf.form.ButtonHandler"/>
+     </td>
+    </tr>
+   </table>
+  </th>
+ </tr>
+ 
+  <tr>
+  <td>Nome dell'analisi</td>
+  <td>
+   <textField type="string" modelReference="analysisName" size="43" title="inserisci un titolo per l'analisi corrente"/>
+  </td>
+ </tr>
+
+ <tr>
+  <td>Descrizione dell'analisi</td>
+  <td>
+   <textArea rows="5" cols="40" type="string" modelReference="analysisDescription" bookmark="false"/>
+  </td>
+ </tr>
+ 
+ <tr>
+  <td>Visibilità dell'analisi</td>
+  <td>
+   <listBox1 type="string" modelReference="analysisVisibility" label="Visibilità dell'analisi">
+  	<listItem value="Private" label="Privata"/>
+  	<listItem value="Public" label="Pubblica"/>
+   </listBox1>
+  </td>
+ </tr>
+ 
+ <tr>
+    <td colspan="2">
+    	<span class="xform-error" align="left">
+        	<error-message/>
+      	</span>	
+    	<div align="right">
+        	<button action="validate" label ="Salva" actionReference="saveSubObject"/>
+			<button action="revert" label="Cancella" handler="com.tonbeller.wcf.form.ButtonHandler"/>
+      	</div>	
+    </td>
+  </tr>
+
+</table>
+
+</xform>

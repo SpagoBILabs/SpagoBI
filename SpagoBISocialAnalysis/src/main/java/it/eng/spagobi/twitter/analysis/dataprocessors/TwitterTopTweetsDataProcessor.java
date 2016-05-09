@@ -90,7 +90,7 @@ public class TwitterTopTweetsDataProcessor {
 				int userFollowersCount = twitterData.getTwitterUser().getFollowersCount();
 
 				List<String> hashtags = new ArrayList<String>();
-				if (!hashtagsFromDb.isEmpty()) {
+				if (hashtagsFromDb != null && !hashtagsFromDb.equals("")) {
 					hashtagsFromDb = hashtagsFromDb.toLowerCase();
 					// hashtagsFromDb = hashtagsFromDb.replaceAll("#", "");
 					String[] hashtagsSplitted = hashtagsFromDb.split(" ");
@@ -148,7 +148,7 @@ public class TwitterTopTweetsDataProcessor {
 				int userFollowersCount = twitterData.getTwitterUser().getFollowersCount();
 
 				List<String> hashtags = new ArrayList<String>();
-				if (!hashtagsFromDb.isEmpty()) {
+				if (hashtagsFromDb != null && !hashtagsFromDb.equals("")) {
 					hashtagsFromDb = hashtagsFromDb.toLowerCase();
 					// hashtagsFromDb = hashtagsFromDb.replaceAll("#", "");
 					String[] hashtagsSplitted = hashtagsFromDb.split(" ");

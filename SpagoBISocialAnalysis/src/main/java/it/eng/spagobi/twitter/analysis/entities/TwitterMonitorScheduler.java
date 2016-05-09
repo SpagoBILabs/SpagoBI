@@ -15,10 +15,12 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -37,7 +39,8 @@ public class TwitterMonitorScheduler {
 	@Id
 	@Column(name = "id")
 	@NotNull
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "TWITTER_MONITOR_SCHEDULER_GEN")
+	@TableGenerator(name = "TWITTER_MONITOR_SCHEDULER_GEN", allocationSize = 1, initialValue = 1, table = "TWITTER_HIBERNATE_SEQUENCES", pkColumnName = "SEQUENCE_NAME", valueColumnName = "NEXT_VAL", pkColumnValue = "TWITTER_MONITOR_SCHEDULER")
 	private long id;
 
 	@OneToOne

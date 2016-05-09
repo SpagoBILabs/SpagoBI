@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<COMPOSED_WIDGET>
+	<TITLE value="Composed document over Foodmart" style="font-weight:bold; font-family: Verdana; font-size: 16px;"/>
+	<DOCUMENTS>
+		<DOCUMENT label="mobile_tbl_4_comp" width="50%" height="100%"/>
+		<DOCUMENT label="mobile_line_4_comp" width="48%" height="100%">
+			<IN_PARAMETERS>
+				<PARAMETER urlName="state" defaultValue="CA"/>
+			</IN_PARAMETERS>
+		</DOCUMENT>
+	</DOCUMENTS>
+</COMPOSED_WIDGET>

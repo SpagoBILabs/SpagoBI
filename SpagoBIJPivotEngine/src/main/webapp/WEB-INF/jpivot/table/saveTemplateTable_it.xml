@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<xform style="manual">
+<table border="1" cellspacing="0" cellpadding="2" id="saveTemplateTable">
+
+ <tr>
+  <th colspan="2" class="xform-title">
+   <table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <tr>
+     <th align="left" class="xform-title">
+      Salvataggio template
+     </th>
+     <td align="right" class="xform-close-button">
+      <imgButton src="wcf/form/cancel.png" action="revert" label="Close" hide="true" handler="com.tonbeller.wcf.form.ButtonHandler"/>
+     </td>
+    </tr>
+   </table>
+  </th>
+ </tr>
+ 
+ <tr>
+  <td>Nome del template</td>
+  <td>
+   <textField type="string" modelReference="templateName" size="43" title="enter the name of the template"/>
+  </td>
+ </tr>
+ 
+ <tr>
+    <td colspan="2">
+    	<span class="xform-error" align="left">
+        	<error-message/>
+      	</span>	
+    	<div align="right">
+        	<button action="validate" label="Salva" actionReference="saveTemplate"/>
+			<button action="revert" label="Cancella" handler="com.tonbeller.wcf.form.ButtonHandler"/>
+      	</div>	
+    </td>
+  </tr>
+
+</table>
+
+</xform>

@@ -1,0 +1,7 @@
+<root>
+  <facet id="jboss.portlet">
+    <node name="libprov">
+      <attribute name="provider-id" value="portlet-no-op-library-provider"/>
+    </node>
+  </facet>
+</root>

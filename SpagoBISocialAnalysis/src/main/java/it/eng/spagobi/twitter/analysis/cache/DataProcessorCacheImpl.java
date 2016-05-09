@@ -583,7 +583,7 @@ public class DataProcessorCacheImpl implements IDataProcessorCache {
 			this.daoService = new DaoService();
 		}
 
-		String queryHQL = "select distinct user from TwitterUser user, TwitterData tweet where tweet.twitterSearch.searchID = ? and tweet.twitterUser.userID = user.userID and user.locationCode != null and user.locationCode != '' ";
+		String queryHQL = "select distinct user from TwitterUser user, TwitterData tweet where tweet.twitterSearch.searchID = ? and tweet.twitterUser.userID = user.userID and user.locationCode is not null ";
 
 		int result = daoService.countQuery(queryHQL, searchID);
 

@@ -1,19 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>it.eng.spagobi</groupId>
+
+	<parent>
+		<groupId>it.eng.spagobi</groupId>
+		<artifactId>spagobi-parent</artifactId>
+		<version>5.2.0-SNAPSHOT</version>
+		<relativePath>../spagobi-parent/pom.xml</relativePath>
+	</parent>
+
 	<artifactId>SpagoBIQbeEngine</artifactId>
-	<version>5.2.0-SNAPSHOT</version>
 	<packaging>war</packaging>
-
-	<name>${project.groupId}:${project.artifactId}</name>
-
-	<repositories>
-		<repository>
-			<id>spagobi-releases</id>
-			<url>https://raw.github.com/SpagoBILabs/SpagoBI/mvn-repo/releases</url>
-		</repository>
-	</repositories>
 
 	<dependencies>
 
@@ -46,7 +43,7 @@
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
-			<version>1.5.6</version>
+			<version>2.1.6</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -93,56 +90,68 @@
 			<version>1.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 
-	<properties>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<skipTests>true</skipTests>
-	</properties>
+	<profiles>
+		<profile>
+			<id>development</id>
+		</profile>
+		<profile>
+			<id>production</id>
+			<activation>
+				<property>
+					<name>minimized-dir</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>compress</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<!-- <outputDirectory>${project.build.directory}/minimized</outputDirectory> -->
+							<webappDirectory>${minimized-dir}</webappDirectory>
+							<!-- Minify only, do not obfuscate -->
+							<nomunge>true</nomunge>
+							<excludes>
+								<exclude>**/*.css</exclude>
+								<exclude>**/lib/**/*.js</exclude>
+								<exclude>**/spagobi/formats/en.js</exclude>
+								<exclude>**/spagobi/formats/es.js</exclude>
+								<exclude>**/spagobi/formats/fr.js</exclude>
+								<exclude>**/spagobi/formats/it.js</exclude>
+								<exclude>**/spagobi/commons/Settings.js</exclude>
+								<exclude>**/spagobi/qbe-all-${project.version}.js</exclude>
+							</excludes>
+							<aggregations>
+								<aggregation>
+									<inputDir>${minimized-dir}/js/spagobi</inputDir>
+									<output>${basedir}/src/main/webapp/js/spagobi/qbe-all-${project.version}.js</output>
+									<includes>
+										<include>**/*.js</include>
+									</includes>
+									<insertNewLine>true</insertNewLine>
+								</aggregation>
+							</aggregations>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<!-- <archive> -->
-					<!-- <manifest> -->
-					<!-- <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile> -->
-					<!-- </manifest> -->
-					<!-- </archive> -->
-					<containerConfigXML>/src/main/webapp/META-INF</containerConfigXML>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 </project>

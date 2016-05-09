@@ -1,0 +1,79 @@
+<!--
+ * SpagoBI - The Business Intelligence Free Platform
+ *
+ * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<link rel="stylesheet" type="text/css" href="style.css">
+<title>SpagoBI Geo Engine's Template Specification</title>
+</head>
+
+<body>
+
+<h2><a name="MAP_PROVIDER">MAP_PROVIDER</a></h2>
+<h3>Description</h3>
+<p><code>MAP_PROVIDER</code></a>
+ element specifies the 
+ <a href="../api/it/eng/spagobi/engines/geo/map/provider/IMapProvider.html">IMapProvider</a>
+ implemetation to use and its configuration block. 
+The MapProvider is the SpagoBIGeoEngine's component that have the 
+responsability to provide maps used for the analysis at hand.</p>
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">class_name</td>
+    <td valign="top">
+    The implementation of the interface IMapProvider to use in order to retrive maps. If not specified the class 
+     <a href="../api/it/eng/spagobi/engines/geo/map/provider/SOMapProvider.html">SOMapProvider</a> is used as default implementation. 
+    This class retrive maps directly from the SpagoBI's map catalogues by means of a dedicated web service.
+    </td>
+    <td valign="top" align="center">No</td>
+  </tr>
+  <tr>
+    <td valign="top">map_name</td>
+    <td valign="top">
+    The name of the map to use as analisys entry point
+    </td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+</table>
+
+<h3>Nested elements</h3>
+<p>none</p>
+
+  
+  
+<h3>Examples</h3>
+
+<blockquote><pre>&lt;MAP_PROVIDER 
+    class_name="it.eng.spagobi.engines.geo.map.provider.SOMapProvider" 
+    map_name="USA_REGIONS" /&gt;
+</pre></blockquote>
+
+
+
+</body>
+</html>

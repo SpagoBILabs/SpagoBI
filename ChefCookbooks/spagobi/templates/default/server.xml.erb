@@ -46,7 +46,7 @@
               pathname="conf/tomcat-users.xml" />
 			  
     <Environment name="spagobi_resource_path" type="java.lang.String" value="${catalina.base}/resources"/>	
-    <Environment name="spagobi_sso_class" type="java.lang.String" value="it.eng.spagobi.services.common.FakeSsoService"/>
+    <Environment name="spagobi_sso_class" type="java.lang.String" value="<%= node['spagobi']['spagobi_sso_class'] %>"/>
     <Environment name="spagobi_service_url" type="java.lang.String" value="http://<%= node['spagobi']['public_ip'] %>:8080/SpagoBI"/>   
     <Environment name="spagobi_host_url" type="java.lang.String" value="http://<%= node['spagobi']['public_ip'] %>:8080"/>
     
@@ -58,7 +58,7 @@
 		name="jdbc/spagobi" 
 		password="<%= node[:spagobi][:db_password] %>" 
 		type="javax.sql.DataSource" 
-		url="jdbc:mysql://<%= node['spagobi']['public_ip'] %>:3306/<%= node[:spagobi][:db_name] %>" 
+		url="jdbc:mysql://127.0.0.1:3306/<%= node[:spagobi][:db_name] %>" 
 		username="<%= node[:spagobi][:db_username] %>" />
 
 
@@ -72,7 +72,7 @@
 
     		<Resource name="jdbc/foodmart" auth="Container"
           		type="javax.sql.DataSource" driverClassName="org.hsqldb.jdbcDriver"
-          		url="jdbc:hsqldb:hsql://localhost:9001/foodmart"
+          		url="jdbc:hsqldb:file:${catalina.base}/database/foodmart"
           		username="sa" password="" maxActive="20" maxIdle="10"
           		maxWait="-1" validationQuery="select 1 from INFORMATION_SCHEMA.SYSTEM_USERS"
       			removeAbandoned="true" removeAbandonedTimeout="3600"/> 

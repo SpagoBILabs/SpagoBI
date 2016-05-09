@@ -1,0 +1,7 @@
+SELECT brand_name,
+product_name,
+SRP,
+low_fat,
+(case when SRP >=2 then 1 else 0 end) as alarm1,
+(case when (SRP>=0 and SRP <2) then 1 when (SRP>=2 and SRP <3) then 2 else 3 end) as alarm2
+ FROM product where product_class_id = 11;

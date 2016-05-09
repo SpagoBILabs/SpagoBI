@@ -1,10 +1,11 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
@@ -14,6 +15,7 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.listener.DataSetListenerManager;
 import it.eng.spagobi.tools.dataset.listener.DataSetListenerManagerFactory;
 import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
+import it.eng.spagobi.tools.dataset.notifier.fiware.OAuth2Utils;
 import it.eng.spagobi.tools.dataset.notifier.fiware.OrionContextSubscriber;
 import it.eng.spagobi.tools.dataset.utils.ParametersResolver;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -67,7 +69,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	/**
 	 * protected for testing purpose
-	 * 
+	 *
 	 * @param resolveParams
 	 */
 	protected void initConf(boolean resolveParams) {
@@ -107,18 +109,19 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	private void notifyListeners() {
 		DataSetListenerManager manager = DataSetListenerManagerFactory.getManager();
-		String owner = getOwner();
-		if (owner == null) {
-			// not user associated, temporary
+		String uuid = getUserId();
+		if (uuid == null) {
+			// temporary dataset
 			return;
 		}
+
 		String label = getLabel();
 		if (label == null) {
 			// temporary dataset
 			return;
 		}
-		manager.addCometListenerIfInitializedAndAbsent(owner, label, "1");
-		manager.changedDataSet(owner, label, this);
+		manager.addCometListenerIfInitializedAndAbsent(uuid, label, "1");
+		manager.changedDataSet(uuid, label, this);
 	}
 
 	private void subscribeNGSI() {
@@ -148,7 +151,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	/**
 	 * for testing
-	 * 
+	 *
 	 * @param ignoreConfigurationOnLoad
 	 */
 	public void setIgnoreConfigurationOnLoad(boolean ignoreConfigurationOnLoad) {
@@ -177,7 +180,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 		}
 
 		String directlyAttributes = getProp(DataSetConstants.REST_JSON_DIRECTLY_ATTRIBUTES, jsonConf, true, false);
-		setDataReader(new JSONPathDataReader(jsonPathItems, jsonPathAttributes, Boolean.parseBoolean(directlyAttributes),this.ngsi));
+		setDataReader(new JSONPathDataReader(jsonPathItems, jsonPathAttributes, Boolean.parseBoolean(directlyAttributes), this.ngsi));
 	}
 
 	private void initDataProxy(JSONObject jsonConf, boolean resolveParams) {
@@ -204,7 +207,15 @@ public class RESTDataSet extends ConfigurableDataSet {
 		Map<String, String> requestHeaders;
 		try {
 			requestHeaders = getRequestHeadersPropMap(DataSetConstants.REST_REQUEST_HEADERS, jsonConf, resolveParams);
-		} catch (JSONException e) {
+
+			// add bearer token for OAuth Fiware
+			if (resolveParams && OAuth2Utils.isOAuth2() && !OAuth2Utils.containsOAuth2(requestHeaders)) {
+				String oAuth2Token = getOAuth2Token();
+				if (oAuth2Token != null) {
+					requestHeaders.putAll(OAuth2Utils.getOAuth2Headers(oAuth2Token));
+				}
+			}
+		} catch (Exception e) {
 			throw new ConfigurationException("Problems in configuration of data proxy", e);
 		}
 
@@ -215,7 +226,17 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 		String maxResults = getProp(DataSetConstants.REST_MAX_RESULTS, jsonConf, true, resolveParams);
 
-		setDataProxy(new RESTDataProxy(address, methodEnum, requestBody, requestHeaders, offset, fetchSize, maxResults,isNgsi()));
+		setDataProxy(new RESTDataProxy(address, methodEnum, requestBody, requestHeaders, offset, fetchSize, maxResults, isNgsi()));
+	}
+
+	public String getOAuth2Token() {
+		UserProfile up = getUserProfile();
+		if (up == null) {
+			return null;
+		}
+
+		String uuid = (String) up.getUserUniqueIdentifier();
+		return uuid;
 	}
 
 	private JSONObject getJSONConfig() {
@@ -276,7 +297,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	/**
 	 * Case: Return null if it's empty and optional
-	 * 
+	 *
 	 * @param propName
 	 * @param conf
 	 * @param optional
@@ -321,6 +342,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 		}
 	}
 
+	@Override
 	public SpagoBiDataSet toSpagoBiDataSet() {
 		SpagoBiDataSet sbd = super.toSpagoBiDataSet();
 		sbd.setType(DATASET_TYPE);
@@ -351,15 +373,25 @@ public class RESTDataSet extends ConfigurableDataSet {
 	public boolean isNgsi() {
 		return ngsi;
 	}
-	
+
 	@Override
 	public IDataSource getDataSource() {
 		return null;
 	}
-	
+
 	@Override
 	public void setDataSource(IDataSource dataSource) {
-		throw new IllegalStateException(RESTDataSet.class.getSimpleName()+" doesn't need the dataSource");
+		throw new IllegalStateException(RESTDataSet.class.getSimpleName() + " doesn't need the dataSource");
+	}
+
+	public String getUserId() {
+		UserProfile up = getUserProfile();
+		if (up == null) {
+			return null;
+		}
+
+		String uuid = (String) up.getUserId();
+		return uuid;
 	}
 
 }

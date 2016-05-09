@@ -1,0 +1,30 @@
+td.xtable-data, 
+th.xtable-title,
+th.xtable-heading,
+th.xtable-error {
+  font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+  font-size: 0.7em;
+  color : Black;
+  /*text-align: left;*/
+  vertical-align: top;
+}
+
+td.xtable-data {
+	background-color : #E2E2E2;
+}
+th.xtable-heading {
+  font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+  font-size: 0.7em;
+  background-color : #96CAFF;
+  font-weight: bold;
+}
+
+th.xtable-title,
+th.xtable-error {
+  background-color : #96CAFF;
+  font-weight: bold;
+}
+
+th.xtable-error {
+  color: red;
+}

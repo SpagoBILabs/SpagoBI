@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<project name="Sdk" default="create-debug">
+	<description>
+		js-mimification
+	</description>
+	
+	<target name="create-debug" >
+		<delete file="sbisdk-all-debug.js"/>
+		
+		<concat destfile="sbisdk-all-debug.js" append="true">
+		    <filelist  dir=".">
+		    	 <file name="commons.js"/>
+		    	 <file name="ajax.js"/>
+		    	 <file name="jsonp.js"/>
+		    	 <file name="cors.js"/>
+		    	 <file name="services.js"/>
+		    	 <file name="api_jsonp.js"/>
+		    	 <file name="api_cors.js"/>
+		    	 <file name="api.js"/>
+		    </filelist>
+
+		</concat>
+	</target>
+	
+	<target name="create-production" depends="create-debug">
+		<java jar="./../WEB-INF/lib/yuicompressor-2.4.2.jar" fork="true">
+			<arg line="-o sbisdk-all-production.js sbisdk-all-debug.js" />
+		</java>
+	</target>
+</project>

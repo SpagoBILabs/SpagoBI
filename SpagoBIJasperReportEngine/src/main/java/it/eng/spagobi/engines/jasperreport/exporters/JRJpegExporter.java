@@ -13,6 +13,15 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -23,9 +32,9 @@ import net.sf.jasperreports.export.ExporterInput;
 import net.sf.jasperreports.export.ExporterOutput;
 import net.sf.jasperreports.export.ReportExportConfiguration;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+//import com.sun.image.codec.jpeg.JPEGCodec;
+//import com.sun.image.codec.jpeg.JPEGEncodeParam;
+//import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -70,11 +79,22 @@ public class JRJpegExporter extends JRImageExporter {
 			}
 			// gets byte of the jpeg image
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(baos);
-			JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(finalImage);
-			encodeParam.setQuality(1.0f, true);
-			encoder.setJPEGEncodeParam(encodeParam);
-			encoder.encode(finalImage);
+
+			ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
+			ImageOutputStream ios = ImageIO.createImageOutputStream(baos);
+			imageWriter.setOutput(ios);
+			IIOMetadata imageMetaData = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(finalImage), null);
+			ImageWriteParam par = imageWriter.getDefaultWriteParam();
+			par.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+			par.setCompressionQuality(1.0f);
+			imageWriter.write(imageMetaData, new IIOImage(finalImage, null, null), par);
+
+			// JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(baos);
+			// JPEGEncodeParam encodeParam = encoder.getDefaultJPEGEncodeParam(finalImage);
+			// encodeParam.setQuality(1.0f, true);
+			// encoder.setJPEGEncodeParam(encodeParam);
+			// encoder.encode(finalImage);
+
 			bytes = baos.toByteArray();
 			baos.close();
 
@@ -85,31 +105,37 @@ public class JRJpegExporter extends JRImageExporter {
 		}
 	}
 
+	@Override
 	public ReportContext getReportContext() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public void setConfiguration(ReportExportConfiguration arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setConfiguration(ExporterConfiguration arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setExporterInput(ExporterInput arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setExporterOutput(ExporterOutput arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setReportContext(ReportContext arg0) {
 		// TODO Auto-generated method stub
 

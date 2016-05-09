@@ -1,0 +1,16 @@
+<!-- SpagoBI, the Open Source Business Intelligence suite
+
+ © 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ You can obtain one at http://mozilla.org/MPL/2.0/. -->
+ 
+ 
+ <!-- Include Ext and app-specific scripts:-->
+<meta charset="UTF8">
+<!-- This is NOT the minified version of d3 -->
+<!-- script type="text/javascript" src='../js/lib/D3.js' charset="utf-8"/></script--> 
+<!-- This is the minified version of d3 -->
+<script type="text/javascript" src='../js/lib/d3.min.js' charset="utf-8"/></script> 
+
+	      

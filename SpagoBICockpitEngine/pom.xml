@@ -1,13 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>it.eng.spagobi</groupId>
-  <artifactId>SpagoBICockpitEngine</artifactId>
-  <version>5.2.0-SNAPSHOT</version>
-  <packaging>war</packaging>
-  
-  <name>${project.groupId}:${project.artifactId}</name>
-  
-  <dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>it.eng.spagobi</groupId>
+		<artifactId>spagobi-parent</artifactId>
+		<version>5.2.0-SNAPSHOT</version>
+		<relativePath>../spagobi-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>SpagoBICockpitEngine</artifactId>
+	<packaging>war</packaging>
+
+	<dependencies>
 
 		<dependency>
 			<groupId>it.eng.spagobi</groupId>
@@ -21,21 +26,20 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.eng.spagobi</groupId>
 			<artifactId>SpagoBIDAO</artifactId>
 			<version>5.2.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
-			<version>1.5.6</version>
-			<scope>compile</scope>
+			<version>2.1.6</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
@@ -67,56 +71,75 @@
 			<artifactId>resteasy-servlet-initializer</artifactId>
 			<version>3.0.9.Final</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.5.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
-  
-  	<properties>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<!-- <archive> -->
-					<!-- <manifest> -->
-					<!-- <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile> -->
-					<!-- </manifest> -->
-					<!-- </archive> -->
-					<containerConfigXML>/src/main/webapp/META-INF</containerConfigXML>
-				</configuration>
-			</plugin>
+	<profiles>
+		<profile>
+			<id>development</id>
+		</profile>
+		<profile>
+			<id>production</id>
+			<activation>
+				<property>
+					<name>minimized-dir</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>compress</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<webappDirectory>${minimized-dir}</webappDirectory>
+							<!-- Minify only, do not obfuscate -->
+							<nomunge>true</nomunge>
+							<excludes>
+								<exclude>**/*.css</exclude>
+								<exclude>**/lib/**/*.js</exclude>
+								<exclude>**/src/ext4/sbi/formats/de.js</exclude>
+								<exclude>**/src/ext4/sbi/formats/en.js</exclude>
+								<exclude>**/src/ext4/sbi/formats/es.js</exclude>
+								<exclude>**/src/ext4/sbi/formats/fr.js</exclude>
+								<exclude>**/src/ext4/sbi/formats/it.js</exclude>
+								<exclude>**/src/ext4/sbi/commons/Settings.js</exclude>
+								<exclude>cockpit-all-${project.version}.js</exclude>
+							</excludes>
+							<aggregations>
+								<aggregation>
+									<inputDir>${minimized-dir}/js/src/ext4/sbi</inputDir>
+									<output>${basedir}/src/main/webapp/js/src/ext4/sbi/cockpit-all-${project.version}.js</output>
+									<includes>
+										<include>**/*.js</include>
+									</includes>
+									<insertNewLine>true</insertNewLine>
+								</aggregation>
+							</aggregations>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 </project>
