@@ -267,11 +267,30 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 			// END filtering for correlation
 
 			if (lovProvDet.getLovType() != null && lovProvDet.getLovType().contains("tree")) {
-				JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
+				boolean noValues = true;
+				// JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
 				try {
-					writeBackToClient(new JSONSuccess(valuesJSONArray));
-				} catch (IOException e) {
-					throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
+					String treeLovParentName = null;
+					for (int l = treeLovNodeLevel, ltot = lovProvDet.getTreeLevelsColumns().size(); l < ltot - 1; l++) {
+						JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, l, treeLovNodeValue, treeLovParentName);
+						if (valuesJSONArray != null && valuesJSONArray.length() > 0) {
+							try {
+								writeBackToClient(new JSONSuccess(valuesJSONArray));
+								noValues = false;
+								break;
+							} catch (IOException e) {
+								throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
+							}
+						} else {
+							// if there's an empty node (no data) save the last valorized parent
+							if (treeLovParentName == null)
+								treeLovParentName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel).getFirst();
+						}
+					}
+					if (noValues)
+						writeBackToClient(new JSONSuccess(new JSONArray())); // no children
+				} catch (Exception e) {
+					throw new SpagoBIServiceException("Impossible to recover levels value ", e);
 				}
 			} else {
 
@@ -289,7 +308,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 
 	}
 
-	private JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List rows, String mode, int treeLovNodeLevel, String treeLovNodeValue) {
+	private JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List rows, String mode, int treeLovNodeLevel, String treeLovNodeValue,
+			String treeLovParentName) {
 		boolean addNode;
 		String treeLovNodeName = "";
 		String treeLovParentNodeName = "";
@@ -306,6 +326,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 				// treeLovNodeLevel-1 because the fake root node is the level 0
 				treeLovNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1).getFirst();
 				treeLovParentNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel).getFirst();
+				if (treeLovParentName != null && !treeLovParentName.equals(""))
+					treeLovParentNodeName = treeLovParentName; // set the last valorized parent
 				selectedLevel = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1);
 			}
 
@@ -329,6 +351,7 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 							|| (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName) && (attribute.getValue().toString())
 									.equalsIgnoreCase(treeLovNodeValue))) {
 						addNode = true;
+						// treeLovParentName = treeLovParentNodeName;
 					}
 
 					if (attribute.getKey().equalsIgnoreCase(descriptionColumn)) {

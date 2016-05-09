@@ -14,6 +14,7 @@ import it.eng.spagobi.utilities.objects.Couple;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Defines methods to manage a lov
@@ -77,6 +78,16 @@ public interface ILovDetail extends Serializable {
 	 *             the exception
 	 */
 	public List getProfileAttributeNames() throws Exception;
+	
+	/**
+	 * Gets the set of names of the parameters required.
+	 *
+	 * @return set of parameter names
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	public Set<String> getParameterNames() throws Exception;
 
 	/**
 	 * Gets the visible column names.

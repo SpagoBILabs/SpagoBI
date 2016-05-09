@@ -157,12 +157,13 @@ public class DetailModalitiesValuePublisher implements PublisherDispatcherIFace 
         	afterDelete = true;
         }
         
-        // check if the request want to do the test but he must fill profile attributes
-        boolean fillProfAttr = false;
-        Object profAttToFillList = getAttributeFromModuleResponse(detailMR, SpagoBIConstants.PROFILE_ATTRIBUTES_TO_FILL);
-        if(profAttToFillList != null) {
-        	fillProfAttr = true;
-        }
+        // check if the request want to do the test but he must fill profile attributes or parameters
+		boolean fillRequiredFields = false;
+		Object profAttToFillList = getAttributeFromModuleResponse(detailMR, SpagoBIConstants.PROFILE_ATTRIBUTES_TO_FILL);
+		Object paramToFillList = getAttributeFromModuleResponse(detailMR, SpagoBIConstants.PARAMETERS_TO_FILL);
+		if (profAttToFillList != null || paramToFillList != null) {
+			fillRequiredFields = true;
+		}
 		// if there are errors and they are only validation errors return the name for the detail publisher
 		if(!errorHandler.isOK()) {
 			if(GeneralUtilities.isErrorHandlerContainingOnlyValidationError(errorHandler)) {
@@ -181,7 +182,7 @@ public class DetailModalitiesValuePublisher implements PublisherDispatcherIFace 
 			return new String("deleteModalitiesValueLoop");
 		} else if (afterTest) {
 			return new String("detailLovTestResult");
-		} else if(fillProfAttr) {
+		} else if(fillRequiredFields) {
 			return new String("detailLovFillProfileAttributes");
 		} else {
 			return new String("detailModalitiesValue");

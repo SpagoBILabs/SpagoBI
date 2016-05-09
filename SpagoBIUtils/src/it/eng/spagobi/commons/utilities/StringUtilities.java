@@ -36,6 +36,8 @@ import org.apache.log4j.Logger;
  */
 public class StringUtilities {
 
+	public static final String START_PARAMETER = "$P{";
+
 	private static transient Logger logger = Logger.getLogger(StringUtilities.class);
 	
 	private static final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -745,6 +747,46 @@ public class StringUtilities {
 			s = s.replace("\n", "<br>");
 		}
 		return s;
-	} 
+	}
+	
+	public static String getMultiValue(String value, String type) {
+		String toReturn = "";
+
+		String[] tempArrayValues = value.split(",");
+		for (int j = 0; j < tempArrayValues.length; j++) {
+			String tempValue = tempArrayValues[j];
+			if (j == 0) {
+				toReturn = getSingleValue(tempValue, type);
+			} else {
+				toReturn = toReturn + "," + getSingleValue(tempValue, type);
+			}
+		}
+
+		return toReturn;
+	}
+
+	public static String getSingleValue(String value, String type) {
+		String toReturn = "";
+		value = value.trim();
+		if (type.equalsIgnoreCase("")) {
+			// this is the case of testing lov
+			toReturn = value;
+		} else if (type.equalsIgnoreCase("STRING") || type.equalsIgnoreCase("DATE")) {
+			if (!(value.startsWith("'") && value.endsWith("'"))) {
+				toReturn = "'" + value + "'";
+			}
+		} else if (type.equalsIgnoreCase("NUMBER")) {
+
+			if ((value.startsWith("'") && value.endsWith("'"))) {
+				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
+			}
+			if (toReturn == null || toReturn.length() == 0) {
+				toReturn = "0";
+			}
+		}
+		return toReturn;
+	}
 
 }

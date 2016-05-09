@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
@@ -32,10 +32,10 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 	public static final String FROM_MY_ANALYSIS = "fromMyAnalysis";
 	public static final String DELETE_ONLY_FROM_PERSONAL_FOLDER = "deleteOnlyFromPersonalFolder";
 
-
 	// logger component
 	private static Logger logger = Logger.getLogger(DeleteObjectAction.class);
 
+	@Override
 	public void doService() {
 		logger.debug("IN");
 
@@ -52,49 +52,50 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
 			}
 			String ids = this.getAttributeAsString(OBJECT_ID);
-			
+
 			Object folder = this.getAttribute(FUNCT_ID);
-			
+
 			Boolean isFromMyAnalysis = this.getAttributeAsBoolean(FROM_MY_ANALYSIS);
-			
+
 			Boolean deleteOnlyFromPersonalFolder = this.getAttributeAsBoolean(DELETE_ONLY_FROM_PERSONAL_FOLDER);
 
-			
 			Integer folderId = null;
-			if (folder != null){
-				if (folder instanceof Integer){
+			if (folder != null) {
+				if (folder instanceof Integer) {
 					folderId = this.getAttributeAsInteger(FUNCT_ID);
 					logger.debug("Input Folder:" + folderId);
-				} else if (folder instanceof String){
-					//TODO: to fix
+				} else if (folder instanceof String) {
+					// TODO: to fix
 				}
 			}
 
 			logger.debug("Input Object:" + ids);
-			String userId = ((UserProfile)userProfile).getUserId().toString();
+			String userId = userProfile.getUserId().toString();
 			logger.debug("User id:" + userId);
-			
+
 			// ids contains the id of the object to be deleted separated by ,
 			String[] idArray = ids.split(",");
 			for (int i = 0; i < idArray.length; i++) {
 				Integer id = new Integer(idArray[i]);
-				BIObject biObject = dao.loadBIObjectById(id);;
+				BIObject biObject = dao.loadBIObjectById(id);
+				;
 				Assert.assertNotNull(biObject, "Document with id [" + id + "] not found");
 				LowFunctionality lowFunctionality = null;
-				if (folderId == null){
-					lowFunctionality = functDAO.loadRootLowFunctionality(false); //TODO: to fix
+				if (folderId == null) {
+					lowFunctionality = functDAO.loadRootLowFunctionality(false); // TODO: to fix
 				} else {
 					lowFunctionality = functDAO.loadLowFunctionalityByID(folderId, false);
 				}
-				
-				if ((isFromMyAnalysis == true) && (deleteOnlyFromPersonalFolder == true)){
-					//for deleting only inside user personal folder
-					lowFunctionality = functDAO.loadLowFunctionalityByPath("/"+userProfile.getUserUniqueIdentifier(),false);
+
+				if ((isFromMyAnalysis == true) && (deleteOnlyFromPersonalFolder == true)) {
+					// for deleting only inside user personal folder
+					// lowFunctionality = functDAO.loadLowFunctionalityByPath("/"+userProfile.getUserUniqueIdentifier(),false);
+					lowFunctionality = functDAO.loadLowFunctionalityByPath("/" + userProfile.getUserId().toString(), false);
 					folderId = lowFunctionality.getId();
 				}
-				
+
 				Assert.assertNotNull(lowFunctionality, "Folder with id [" + folderId + "] not found");
-				
+
 				if (ObjectsAccessVerifier.canDeleteBIObject(id, userProfile, lowFunctionality)) {
 					// delete document
 					try {

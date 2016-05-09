@@ -915,7 +915,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		});
 		
 		this.subobjectWin = new Ext.Window({
-			title: "Execute customized view...",
+			title: LN("sbi.execution.subobjects.title"), //"Execute customized view...",
 			layout: 'fit',
 			width: 600,
 			height: 400,
@@ -969,7 +969,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		if(this.favouritesWin === null){
 			this.hotlinksPanel = new Sbi.execution.HotlinksPanel();
 			this.favouritesWin = new Ext.Window({
-				title: "Favourites",
+				title: LN("sbi.rememberme.title"), //"Favourites",
 				layout: 'fit',
 				modal: true,
 				closeAction : 'hide',
@@ -1078,12 +1078,17 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	
 	, doRefreshLastExecution : function () {
 		Sbi.trace('[DocumentExecutionPage.doRefreshLastExecution]: IN');
-		var lastState = this.getLastParametersFormState();
-        this.parametersPanel.setFormState(lastState);
+		this.restoreLastParametersFormState();
         this.refreshDocument();
 		Sbi.trace('[DocumentExecutionPage.doRefreshLastExecution]: OUT');
 	}
 	
+	, restoreLastParametersFormState : function() {
+		Sbi.trace('[DocumentExecutionPage.restoreLastParametersFormState]: IN');
+		var lastState = this.getLastParametersFormState();
+        this.parametersPanel.setFormState(lastState);
+		Sbi.trace('[DocumentExecutionPage.restoreLastParametersFormState]: OUT');	
+	}
 	
 	, doExecuteDocumunt: function(executionInstance, formState) {
 		this.memorizeParametersInSession();

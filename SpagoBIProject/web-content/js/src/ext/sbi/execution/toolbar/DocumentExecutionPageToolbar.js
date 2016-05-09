@@ -615,14 +615,16 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
     	}
     	
     	// RANK
-    	itemConfig = Ext.apply({}, {
-			text: LN('sbi.execution.executionpage.toolbar.rating')
-			, iconCls: 'icon-rating' 
-			, handler : this.rateExecution
-        }, baseMenuItemConfig);    	
-    	menuItems.push(	
-			new Ext.menu.Item(itemConfig)
-		); 
+    	if (Sbi.settings.execution.toolbar.hideRankFunctionality == null || Sbi.settings.execution.toolbar.hideRankFunctionality == false){
+	    	itemConfig = Ext.apply({}, {
+				text: LN('sbi.execution.executionpage.toolbar.rating')
+				, iconCls: 'icon-rating' 
+				, handler : this.rateExecution
+	        }, baseMenuItemConfig);    	
+	    	menuItems.push(	
+				new Ext.menu.Item(itemConfig)
+			); 
+    	}
     	
     	// create menu    	
     	var menu = new Ext.menu.Menu({

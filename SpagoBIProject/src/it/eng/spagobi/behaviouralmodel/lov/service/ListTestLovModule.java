@@ -78,9 +78,11 @@ public class ListTestLovModule extends AbstractBasicListModule {
 		if(profile==null) {
 			SessionContainer permSess = session.getPermanentContainer();
 			profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		} else {
-			session.delAttribute(SpagoBIConstants.USER_PROFILE_FOR_TEST);
-		}
+		} 
+		// http://www.spagoworld.org/jira/browse/SPAGOBI-2141
+		// else {
+		// session.delAttribute(SpagoBIConstants.USER_PROFILE_FOR_TEST);
+		// }
 		// based on lov type fill the spago list and paginator object
 		SourceBean rowsSourceBean = null;
 		List colNames = new ArrayList();

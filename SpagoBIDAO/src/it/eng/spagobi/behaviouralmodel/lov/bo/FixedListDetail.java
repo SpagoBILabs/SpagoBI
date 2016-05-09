@@ -18,9 +18,12 @@ import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -256,6 +259,12 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		}
 		lovResult += "</ROWS>";
 		lovResult = StringUtilities.substituteProfileAttributesInString(lovResult, profile);
+		
+		Map<String, String> params = getParametersNameToValueMap(BIObjectParameters);
+		if (params != null && !params.isEmpty()) {
+			Map<String, String> types = getParametersNameToTypeMap(BIObjectParameters);
+			lovResult = StringUtilities.substituteParametersInString(lovResult, params, types, false);
+		}
 		return lovResult;
 	}
 		
@@ -280,6 +289,34 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 				names.add(nameAttr);
 			} else {
 				names.add(attributeDef);
+			}
+			lovResult = lovResult.substring(endind);
+		}
+		return names;
+	}
+	
+		/**
+	 * Gets the set of names of the parameters required.
+	 *
+	 * @return set of parameter names
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Override
+	public Set<String> getParameterNames() throws Exception {
+		Set<String> names = new HashSet<String>();
+		String lovResult = this.toXML();
+		while (lovResult.indexOf(StringUtilities.START_PARAMETER) != -1) {
+			int startind = lovResult.indexOf(StringUtilities.START_PARAMETER);
+			int endind = lovResult.indexOf("}", startind);
+			String parameterDef = lovResult.substring(startind + 3, endind);
+			if (parameterDef.indexOf("(") != -1) {
+				int indroundBrack = lovResult.indexOf("(", startind);
+				String nameParam = lovResult.substring(startind + 3, indroundBrack);
+				names.add(nameParam);
+			} else {
+				names.add(parameterDef);
 			}
 			lovResult = lovResult.substring(endind);
 		}

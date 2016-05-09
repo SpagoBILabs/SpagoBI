@@ -99,6 +99,7 @@ public class UserProfile implements IEngUserProfile {
 		}
 		// putting tenant id on user attributes (for Spago modules' queries) :
 		userAttributes.put(SpagoBIConstants.TENANT_ID, this.organization);
+				userAttributes.put("userid", this.userId);
 
 		logger.debug("OUT");
 	}

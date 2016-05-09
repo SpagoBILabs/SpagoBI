@@ -38,9 +38,8 @@
 Ext.ns("Sbi.qbe");
 
 Sbi.qbe.HavingGridPanel = function(config) {
-	
-	
 	var c = Ext.apply(Sbi.settings.qbe.havingGridPanel, config || {});
+	
 	Ext.apply(this, c);
 	this.services = new Array();
 	
@@ -256,6 +255,21 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 		this.grid.store.removeAll();
 	}
 	
+	// make another delete filters for confirm option because the previous one is called in other situations
+	, deleteFiltersConfirm : function() {
+		Ext.Msg.show({
+			title: LN('sbi.qbe.filtergridpanel.warning.deleteAll.title'),
+		   	msg: LN('sbi.qbe.filtergridpanel.warning.deleteAll.msg'),
+		   	buttons: Ext.Msg.YESNO,
+		   	fn: function(btn) {
+				if(btn === 'yes') {
+					this.deleteFilters();
+				}
+			},
+			scope: this
+		});
+	}
+	
 	, getFilterAt: function(i) {
 		var record;
 		var filter;
@@ -405,17 +419,28 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 	, initColumnModel: function(config) {
 			
 			var delButtonColumn = new Ext.grid.ButtonColumn({
-		       header: LN('sbi.qbe.filtergridpanel.headers.delete')
+		       header: LN('sbi.qbe.filtergridpanel.headers.delete.column')
 		       , tooltip: LN('sbi.qbe.filtergridpanel.headers.delete')
 		       , dataIndex: 'deleteButton'
 		       , imgSrc: '../img/actions/delete.gif'
 		       , clickHandler:function(e, t){
 		          var index = this.grid.getView().findRowIndex(t);
 		          var record = this.grid.store.getAt(index);
-		          this.grid.store.remove(record);
-		       }
+//		          this.grid.store.remove(record);
+		          Ext.Msg.show({
+			        	title: LN('sbi.qbe.filtergridpanel.warning.delete.title'),
+			  		   	msg: LN('sbi.qbe.filtergridpanel.warning.delete.msg'),
+			  		   	buttons: Ext.Msg.YESNO,
+			  		   	fn: function(btn) {
+			  				if(btn === 'yes') {
+			  					this.grid.store.remove(record);
+			  				}
+			  			},
+			  			scope: this
+			  		  });
+		       }		    	 
 			   , hideable: true
-		       , hidden: true
+		       , hidden:  (this.enableRowRemoveBtn === false) // true
 		       , width: 50
 		    });
 		    
@@ -680,7 +705,8 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 				    iconCls:'remove',
 				    listeners: {
 				    	'click': {
-			    			fn: this.deleteFilters,
+//			    			fn: this.deleteFilters,
+			    			fn: this.deleteFiltersConfirm,			    			
 			    			scope: this
 			    		}
 				    }

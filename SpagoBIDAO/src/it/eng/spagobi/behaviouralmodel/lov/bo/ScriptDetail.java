@@ -14,6 +14,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -25,9 +26,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -237,6 +240,11 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		attributes.putAll(this.getSystemBindings(locale));
 		//Substitute profile attributes with their value
 		String cleanScript=substituteProfileAttributes(getScript(), attributes);
+		Map<String, String> params = getParametersNameToValueMap(BIObjectParameters);
+		if (params != null && !params.isEmpty()) {
+			Map<String, String> types = getParametersNameToTypeMap(BIObjectParameters);
+			cleanScript = StringUtilities.substituteParametersInString(cleanScript, params, types, false);
+		}
 		setScript(cleanScript);
 		
 		List<Object> imports = null;
@@ -398,24 +406,33 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		return names;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	/**
+	 * Gets the set of names of the parameters required.
+	 *
+	 * @return set of parameter names
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Override
+	public Set<String> getParameterNames() throws Exception {
+		Set<String> names = new HashSet<String>();
+		String script = getScript();
+		while (script.indexOf(StringUtilities.START_PARAMETER) != -1) {
+			int startind = script.indexOf(StringUtilities.START_PARAMETER);
+			int endind = script.indexOf("}", startind);
+			String parameterDef = script.substring(startind + 3, endind);
+			if (parameterDef.indexOf("(") != -1) {
+				int indroundBrack = script.indexOf("(", startind);
+				String nameParam = script.substring(startind + 3, indroundBrack);
+				names.add(nameParam);
+			} else {
+				names.add(parameterDef);
+			}
+			script = script.substring(endind);
+		}
+		return names;
+	}
 
 	/**
 	 * Checks if the lov requires one or more profile attributes.

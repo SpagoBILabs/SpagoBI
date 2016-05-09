@@ -88,8 +88,13 @@ Sbi.settings.myanalysis = {
 
 		, showReportFilter: true
 		, showCockpitFilter: true
-		, showMapFilter: true
-		, showAllFilter: true		
+		, showMapFilter: false
+		, showAllFilter: true
+		// next flags show (true) or hide (false) specific buttons in create analysis popup
+		// (obviously the engines must be correctly installed in the server):
+		, createReportButton: true	
+		, createCockpitButton: true
+		, createGeoButton: true
 };
 
 /**
@@ -126,6 +131,7 @@ Sbi.settings.execution = {
 		
 		, toolbar:{
 			hideForEngineLabels:[]	//list of engines without toolbar 
+		  , hideRankFunctionality: false
 		}
 		
 		, parametersselectionpage : {

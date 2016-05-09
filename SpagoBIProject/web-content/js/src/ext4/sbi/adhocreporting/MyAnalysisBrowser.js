@@ -326,19 +326,19 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 			}, this);
 			
 			storeComm.load();
-
-			this.docCommunity = Ext.create('Ext.form.ComboBox', {
-			    fieldLabel: LN('sbi.community.title'),
-			    queryMode: 'local',
-			    store: storeComm,
-			    displayField: 'name',
-			    valueField: 'functCode',
-			    width: 300,
-			    allowBlank: true,
-			    editable: false,
-			    padding: '10 0 0 0'
-			});
-		    
+			if (storeComm.getTotalCount() > 0){
+				this.docCommunity = Ext.create('Ext.form.ComboBox', {
+				    fieldLabel: LN('sbi.community.title'),
+				    queryMode: 'local',
+				    store: storeComm,
+				    displayField: 'name',
+				    valueField: 'functCode',
+				    width: 300,
+				    allowBlank: true,
+				    editable: false,
+				    padding: '10 0 0 0'
+				});
+			}		    
 		    if(this.shareWindow != null){			
 				this.shareWindow.destroy();
 				this.shareWindow.close();
@@ -444,7 +444,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	                    }
 	                    p.isShare = "true"; //is a share operation
 	                    p.functs =  Ext.JSON.encode(this.treePanel.returnCheckedIdNodesArray());
-	                    p.communityId = this.docCommunity.getValue();
+	                    if (this.docCommunity != null) p.communityId = this.docCommunity.getValue();
 	                    
 	                	Ext.Ajax.request({
 	                         url: this.services['shareDocument'],
@@ -556,8 +556,10 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
     		'	                </div> '+
     		'	            </fieldset> '+
     		'	        </form> '+
-    		'	         <ul class="order" id="sortList">'+
-    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
+//    		'	         <ul class="order" id="sortList">'+
+    		'	        <ul class="order" id="sortList"> ' + '<span id="sortLabel">'+LN('sbi.ds.orderComboLabel')+'</span> ' +
+//    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
+    		'	            <li id="dateIn"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'dateIn\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
     		'	            <li id="name"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
     		'	            <li id="owner"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationUser\')">'+LN('sbi.ds.owner')+'</a></li> '+
     		'	        </ul> '+
@@ -573,10 +575,14 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	, addNewDocument : function() {		 
 		var config =  {};
 		config.user = this.user;
-		config.useCockpitEngine = this.useCockpitEngine;
-		config.useWSEngine = this.useWSEngine;
-		config.useQbeEngine = this.useQbeEngine;
-		config.useGeoEngine = this.useGeoEngine;
+//		config.useCockpitEngine = this.useCockpitEngine;
+//		config.useWSEngine = this.useWSEngine;
+//		config.useQbeEngine = this.useQbeEngine;
+//		config.useGeoEngine = this.useGeoEngine;
+		config.useCockpitEngine = (Sbi.settings.myanalysis.createCockpitButton == true && this.useCockpitEngine == true) ? true : false;
+		config.useWSEngine = (Sbi.settings.myanalysis.createReportButton == true && this.useWSEngine == true) ? true : false;
+		config.useQbeEngine = (Sbi.settings.myanalysis.createReportButton == true && this.useQbeEngine == true) ? true : false;
+		config.useGeoEngine = (Sbi.settings.myanalysis.createGeoButton == true && this.useGeoEngine == true) ? true : false;
 		config.isNew = true;
 	
 		this.wizardWin =  Ext.create('Sbi.adhocreporting.MyAnalysisWizard',config);	
@@ -719,16 +725,18 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		var sortEls = Ext.get('sortList').dom.childNodes;
 		//move the selected value to the first element
 		for(var i=0; i< sortEls.length; i++){
-			if (sortEls[i].id == value){					
-				sortEls[i].className = 'active';
+			if (sortEls[i].id == value){		
+				var sortObj = Ext.get('sortLabel').dom;
+				sortObj.innerHTML = sortEls[i].textContent;
+//				sortEls[i].className = 'active';
 				break;
 			} 
 		}
 		//append others elements
 		for(var i=0; i< sortEls.length; i++){
-			if (sortEls[i].id !== value){
+//			if (sortEls[i].id !== value){
 				sortEls[i].className = '';		
-			}
+//			}
 		}
 		
 

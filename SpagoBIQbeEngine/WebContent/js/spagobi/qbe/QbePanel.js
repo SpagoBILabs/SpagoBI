@@ -288,7 +288,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	, tabs: null
 	, query: null
 	, previousWorksheetDefinition: null
-
+	, previousQueryResult: null
 
 	// public methods
 
@@ -616,13 +616,19 @@ setWorksheetState : function (successFn, failureFn, scope) {
 refreshWorksheetPreview : function () {
 
 	var worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
+	var qbeQueriesCatalogue = this.getQueriesCatalogue();
 	var isEqual = false;
+	var isEqualContent = false;
 	if(this.previousWorksheetDefinition!= null){
-		isEqual = this.compareWorksheetDefinitions(this.previousWorksheetDefinition, worksheetDefinition);
+		isEqual = this.compareObjectsDefinitions(this.previousWorksheetDefinition, worksheetDefinition);
 	}		
-	if(!isEqual){
+	if (this.previousQbeQueriesCatalogue != null){
+		isEqualContent = this.compareObjectsDefinitions(this.previousQbeQueriesCatalogue, qbeQueriesCatalogue);
+	}
+	if(!isEqual || !isEqualContent){
 		this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
 		this.previousWorksheetDefinition = worksheetDefinition;
+		this.previousQbeQueriesCatalogue = qbeQueriesCatalogue;
 	}
 }
 
@@ -746,7 +752,7 @@ refreshWorksheetPreview : function () {
 ,  getWorksheetPreviewPanel: function(){
 	return this.worksheetPreviewPanel;
 }
-, compareWorksheetDefinitions: function(w1, w2){
+, compareObjectsDefinitions: function(w1, w2){
 	var result=true;
 	var cont1 = 0;
 	var cont2 = 0;
@@ -768,7 +774,7 @@ refreshWorksheetPreview : function () {
 							break;
 						}	
 						else{
-							result = this.compareWorksheetDefinitions(w1[p], w2[p]);
+							result = this.compareObjectsDefinitions(w1[p], w2[p]);
 						}
 					}
 					else {
@@ -803,7 +809,6 @@ refreshWorksheetPreview : function () {
 	}
 	return result;
 }
-
 	,
 	resultPanelActivateHandler: function() {
 		if (this.queryEditorPanel != null) {

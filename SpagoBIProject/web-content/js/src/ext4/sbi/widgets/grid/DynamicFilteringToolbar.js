@@ -185,6 +185,7 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
 	}
 	
 	, onStoreLoad: function(){
+		if(this.store.proxy.reader.jsonData != undefined){
 			if( this.store.proxy.reader.jsonData.metaData){//only if the metachanges, for the dynamicstore
 				this.columnNameStore  = Ext.create('Ext.data.Store', {
 				    fields: ['header', 'name'],
@@ -199,6 +200,7 @@ Ext.define('Sbi.widgets.grid.DynamicFilteringToolbar', {
 				
 				
 			}
+	}
 	}
 
 	, onClick: function() {
