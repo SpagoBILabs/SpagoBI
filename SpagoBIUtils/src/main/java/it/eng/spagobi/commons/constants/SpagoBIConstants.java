@@ -245,6 +245,8 @@ public class SpagoBIConstants {
 	public static final String DATASETS_LIST = "DATASETS_LIST";
 
 	public static final String PROFILE_ATTRIBUTES_TO_FILL = "PROFILE_ATTRIBUTES_TO_FILL";
+	public static final String PARAMETERS_TO_FILL = "PARAMETERS_TO_FILL";
+	public static final String PARAMETERS_FILLED = "PARAMETERS_FILLED";
 
 	public static final String MESSAGE_TEST_AFTER_ATTRIBUTES_FILLING = "MESSAGE_TEST_AFTER_ATTRIBUTES_FILLING";
 

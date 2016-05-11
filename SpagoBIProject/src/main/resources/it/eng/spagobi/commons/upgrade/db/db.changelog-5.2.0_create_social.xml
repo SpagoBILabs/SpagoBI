@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+	
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-118">
+		<createTable tableName="TWITTER_ACCOUNTS_TO_MONITOR">
+			<column name="ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEARCH_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="ACCOUNT_NAME" type="VARCHAR(45)">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="FOLLOWERS_COUNT" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueComputed="CURRENT_TIMESTAMP" name="TIMESTAMP"
+				type="TIMESTAMP">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-119">
+		<createTable tableName="TWITTER_DATA">
+			<column name="TWEET_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="USER_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEARCH_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="DATE_CREATED_AT" type="date">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueComputed="CURRENT_TIMESTAMP" name="TIME_CREATED_AT"
+				type="TIMESTAMP">
+				<constraints nullable="false" />
+			</column>
+			<column name="SOURCE_CLIENT" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TWEET_TEXT" type="VARCHAR(400)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TWEET_TEXT_TRANSLATED" type="VARCHAR(400)" />
+			<column name="GEO_LATITUDE" type="${double.type}" />
+			<column name="GEO_LONGITUDE" type="${double.type}" />
+			<column name="HASHTAGS" type="VARCHAR(200)" />
+			<column name="MENTIONS" type="VARCHAR(200)" />
+			<column defaultValueNumeric="0" name="RETWEET_COUNT" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="IS_RETWEET" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="LANGUAGE_CODE" type="VARCHAR(5)" />
+			<column name="PLACE_COUNTRY" type="VARCHAR(200)" />
+			<column name="PLACE_NAME" type="VARCHAR(200)" />
+			<column name="URL_CITED" type="VARCHAR(200)" />
+			<column defaultValueNumeric="0" name="IS_FAVORITED" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="FAVORITED_COUNT" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="REPLY_TO_SCREEN_NAME" type="VARCHAR(45)" />
+			<column name="REPLY_TO_USER_ID" type="VARCHAR(45)" />
+			<column name="REPLY_TO_TWEET_ID" type="VARCHAR(45)" />
+			<column name="ORIGINAL_RT_TWEET_ID" type="VARCHAR(45)" />
+			<column defaultValueNumeric="0" name="IS_SENSITIVE" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="MEDIA_COUNT" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="TOPICS" type="VARCHAR(1000)" />
+			<column defaultValueNumeric="0" name="IS_POSITIVE" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="IS_NEUTRAL" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="IS_NEGATIVE" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-120">
+		<createTable tableName="TWITTER_HIBERNATE_SEQUENCES">
+			<column name="SEQUENCE_NAME" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NEXT_VAL" type="INT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-121">
+		<createTable tableName="TWITTER_LINK_TO_MONITOR_CAT">
+			<column name="ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="LINK_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="TYPE" type="VARCHAR(45)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CATEGORY" type="VARCHAR(45)">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="CLICKS_COUNT" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-122">
+		<createTable tableName="TWITTER_LINKS_TO_MONITOR">
+			<column name="ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEARCH_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="LINK" type="VARCHAR(45)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LONG_URL" type="VARCHAR(400)" />
+			<column defaultValueNumeric="0" name="CLICKS_COUNT" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueComputed="CURRENT_TIMESTAMP" name="TIMESTAMP"
+				type="TIMESTAMP">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-123">
+		<createTable tableName="TWITTER_MONITOR_SCHEDULER">
+			<column name="ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEARCH_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="LAST_ACTIVATION_TIME" type="TIMESTAMP" />
+			<column defaultValueComputed="CURRENT_TIMESTAMP" name="STARTING_TIME"
+				type="TIMESTAMP">
+				<constraints nullable="false" />
+			</column>
+			<column name="ENDING_TIME" type="TIMESTAMP" />
+			<column name="REPEAT_FREQUENCY" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="REPEAT_TYPE" type="VARCHAR(45)">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="ACTIVE_SEARCH" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="UP_TO_VALUE" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="UP_TO_TYPE" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LINKS" type="VARCHAR(500)" />
+			<column name="ACCOUNTS" type="VARCHAR(500)" />
+			<column name="DOCUMENTS" type="VARCHAR(500)" />
+			<column defaultValueNumeric="1" name="ACTIVE" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-124">
+		<createTable tableName="TWITTER_SEARCH">
+			<column name="SEARCH_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="LABEL" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="KEYWORDS" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATION_DATE" type="date">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueComputed="CURRENT_TIMESTAMP" name="LAST_ACTIVATION_TIME"
+				type="TIMESTAMP">
+				<constraints nullable="false" />
+			</column>
+			<column name="TYPE" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="1" name="LOADING" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="DELETED" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="FAILED" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="FAIL_MESSAGE" type="VARCHAR(1000)" />
+			<column defaultValue="OR" name="BOOLEAN_OPERATOR" type="VARCHAR(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DAYS_AGO" type="${unsigned_int.type}" />
+			<column defaultValueNumeric="0" name="R_ANALYSIS" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-125">
+		<createTable tableName="TWITTER_SEARCH_SCHEDULER">
+			<column name="ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEARCH_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueComputed="CURRENT_TIMESTAMP" name="STARTING_TIME"
+				type="TIMESTAMP">
+				<constraints nullable="false" />
+			</column>
+			<column name="REPEAT_FREQUENCY" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="REPEAT_TYPE" type="VARCHAR(45)">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="1" name="ACTIVE" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-126">
+		<createTable tableName="TWITTER_SENTIMENT">
+			<column name="SENTIMENT_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="TWEET_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="POLARITY" type="VARCHAR(45)" />
+			<column name="RICH_SENTIMENT" type="VARCHAR(45)" />
+			<column name="TOPICS" type="VARCHAR(45)" />
+			<column name="KLOUT_SCORE" type="VARCHAR(45)" />
+		</createTable>
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-127">
+		<createTable tableName="TWITTER_USERS">
+			<column name="USER_ID" type="${unsigned_bigint.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="USERNAME" type="VARCHAR(45)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DESCRIPTION" type="VARCHAR(200)" />
+			<column defaultValueNumeric="0" name="FOLLOWERS_COUNT" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="PROFILE_IMAGE_SOURCE" type="VARCHAR(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LOCATION" type="VARCHAR(200)" />
+			<column name="LOCATION_CODE" type="VARCHAR(45)" />
+			<column name="LANGUAGE_CODE" type="VARCHAR(5)" />
+			<column name="NAME" type="VARCHAR(45)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TIME_ZONE" type="VARCHAR(200)" />
+			<column defaultValueNumeric="0" name="TWEETS_COUNT" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="VERIFIED" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="FOLLOWING_COUNT" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column name="UTC_OFFSET" type="INT" />
+			<column defaultValueNumeric="0" name="IS_GEO_ENABLED" type="${boolean.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueNumeric="0" name="LISTED_COUNT" type="${unsigned_int.type}">
+				<constraints nullable="false" />
+			</column>
+			<column defaultValueComputed="CURRENT_TIMESTAMP" name="START_DATE"
+				type="TIMESTAMP">
+				<constraints nullable="false" />
+			</column>
+			<column name="END_DATE" type="TIMESTAMP" />
+		</createTable>
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-243">
+		<addPrimaryKey columnNames="ID" constraintName="PR_twitter_accounts_to_monitor" tableName="TWITTER_ACCOUNTS_TO_MONITOR" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-244">
+		<addPrimaryKey columnNames="TWEET_ID, SEARCH_ID" constraintName="PR_twitter_data" tableName="TWITTER_DATA" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-245">
+		<addPrimaryKey columnNames="SEQUENCE_NAME" constraintName="PR_twitter_hibernate_sequences" tableName="TWITTER_HIBERNATE_SEQUENCES" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-246">
+		<addPrimaryKey columnNames="ID" constraintName="PR_twitter_link_to_monitor_cat" tableName="TWITTER_LINK_TO_MONITOR_CAT" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-247">
+		<addPrimaryKey columnNames="ID" constraintName="PR_twitter_links_to_monitor" tableName="TWITTER_LINKS_TO_MONITOR" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-248">
+		<addPrimaryKey columnNames="ID" constraintName="PR_twitter_monitor_scheduler" tableName="TWITTER_MONITOR_SCHEDULER" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-249">
+		<addPrimaryKey columnNames="SEARCH_ID" constraintName="PR_twitter_search" tableName="TWITTER_SEARCH" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-250">
+		<addPrimaryKey columnNames="ID" constraintName="PR_twitter_search_scheduler" tableName="TWITTER_SEARCH_SCHEDULER" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-251">
+		<addPrimaryKey columnNames="SENTIMENT_ID" constraintName="PR_twitter_sentiment" tableName="TWITTER_SENTIMENT" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-252">
+		<addPrimaryKey columnNames="USER_ID" constraintName="PR_twitter_users" tableName="TWITTER_USERS" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-253">
+		<addUniqueConstraint columnNames="LABEL" constraintName="LABEL" tableName="TWITTER_SEARCH" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-256">
+		<addUniqueConstraint columnNames="USERNAME" constraintName="USERNAME" tableName="TWITTER_USERS" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-601">
+		<addForeignKeyConstraint baseColumnNames="SEARCH_ID"
+			baseTableName="TWITTER_ACCOUNTS_TO_MONITOR" constraintName="FK_MONITOR_TWITTER_SEARCH"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="SEARCH_ID"
+			referencedTableName="TWITTER_SEARCH" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-602">
+		<addForeignKeyConstraint baseColumnNames="SEARCH_ID"
+			baseTableName="TWITTER_DATA" constraintName="FK_DATA_TWITTER_SEARCH"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="SEARCH_ID"
+			referencedTableName="TWITTER_SEARCH" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-603">
+		<addForeignKeyConstraint baseColumnNames="USER_ID"
+			baseTableName="TWITTER_DATA" constraintName="FK_DATA_TWITTER_USER"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="USER_ID"
+			referencedTableName="TWITTER_USERS" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-604">
+		<addForeignKeyConstraint baseColumnNames="SEARCH_ID"
+			baseTableName="TWITTER_LINKS_TO_MONITOR" constraintName="FK_TWITTER_TO_MONITOR_SEARCH"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="SEARCH_ID"
+			referencedTableName="TWITTER_SEARCH" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-605">
+		<addForeignKeyConstraint baseColumnNames="LINK_ID"
+			baseTableName="TWITTER_LINK_TO_MONITOR_CAT" constraintName="FK_LINK_TO_MONITOR_CATEGORY"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="TWITTER_LINKS_TO_MONITOR" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-606">
+		<addForeignKeyConstraint baseColumnNames="SEARCH_ID"
+			baseTableName="TWITTER_MONITOR_SCHEDULER" constraintName="FK_MONITOR_SCHEDULER"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="SEARCH_ID"
+			referencedTableName="TWITTER_SEARCH" />
+	</changeSet>
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-607">
+		<addForeignKeyConstraint baseColumnNames="SEARCH_ID"
+			baseTableName="TWITTER_SEARCH_SCHEDULER" constraintName="FK_SEARCH_SCHEDULER"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="SEARCH_ID"
+			referencedTableName="TWITTER_SEARCH" />
+	</changeSet>
+<!-- 	TODO in postgresql can't add foreign key only to one column of TWITTER_DATA primary keys, need to add SEARCH_ID to TWITTER_SENTIMENT and create foreign key on both? -->
+	<changeSet author="aconese (generated)" labels="create_tables,create_5.2.0" id="create_5.2.0-608">
+		<preConditions onError="MARK_RAN" onFail="MARK_RAN">
+			<not>
+				<dbms type="postgresql"/>
+			</not>
+		</preConditions>
+		<addForeignKeyConstraint baseColumnNames="TWEET_ID"
+			baseTableName="TWITTER_SENTIMENT" constraintName="FK_TWITTER_SENTIMENT"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="TWEET_ID"
+			referencedTableName="TWITTER_DATA" />
+	</changeSet>
+</databaseChangeLog>

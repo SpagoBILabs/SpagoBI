@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+	<!-- Define property to avoid errors due to the different types in DBs -->
+	<property name="date.type" value="datetime(6)" dbms="mysql"/>
+	<property name="date.type" value="DATE" dbms="hsqldb,postgresql,oracle,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	
+	<property name="blob.type" value="BLOB" dbms="mysql,oracle,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	<property name="blob.type" value="LONGVARBINARY" dbms="hsqldb"/>
+	<property name="blob.type" value="BYTEA" dbms="postgresql"/>
+
+	<property name="mediumblob.type" value="MEDIUMBLOB" dbms="mysql,postgresql,oracle,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	<property name="mediumblob.type" value="LONGVARBINARY" dbms="hsqldb"/>
+	<property name="mediumblob.type" value="BYTEA" dbms="postgresql"/>
+	
+	<property name="double.type" value="DOUBLE" dbms="mysql,hsqldb,oracle,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	<property name="double.type" value="NUMERIC" dbms="postgresql"/>
+	
+	<property name="char100.type" value="VARCHAR2(100)" dbms="oracle"/>
+	<property name="char100.type" value="CHAR(100)" dbms="mysql,hsqldb,postgresql,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	
+	<property name="varchar5000.type" value="VARCHAR2(4000)" dbms="oracle"/>
+	<property name="varchar5000.type" value="VARCHAR(5000)" dbms="mysql,hsqldb,postgresql,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	
+	<property name="text.type" value="TEXT" dbms="mysql,postgresql,oracle,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	<property name="text.type" value="LONGVARCHAR" dbms="hsqldb"/>
+	
+	<property name="unsigned_int.type" value="INT UNSIGNED" dbms="mysql,hsqldb,oracle,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	<property name="unsigned_int.type" value="INTEGER" dbms="postgresql"/>
+	
+	<property name="unsigned_bigint.type" value="BIGINT UNSIGNED" dbms="mysql,hsqldb,oracle,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	<property name="unsigned_bigint.type" value="BIGINT" dbms="postgresql"/>
+	
+	<property name="intAsBoolean.type" value="INT" dbms="mysql,hsqldb,oracle,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	<property name="intAsBoolean.type" value="BOOLEAN" dbms="postgresql"/>
+	
+	<property name="boolean.type" value="BIT" dbms="mssql"/>
+	<property name="boolean.type" value="BOOLEAN" dbms="mysql,postgresql,hsqldb,h2,sybase,asany,db2,derby,informix,firebird,sqlite"/>
+	<property name="boolean.type" value="SMALLINT" dbms="oracle"/>
+	
+	<property name="intAsBoolean.defaultValue" value="1" dbms="mysql,hsqldb,oracle,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	<property name="intAsBoolean.defaultValue" value="TRUE" dbms="postgresql"/>
+	
+	<property name="singleVarChar.type" value="VARCHAR(1)" dbms="mysql,hsqldb,oracle,mssql,sybase,asany,db2,derby,h2,informix,firebird,sqlite"/>
+	<property name="singleVarChar.type" value="BOOL" dbms="postgresql"/>
+	
+	<!-- Include files to run -->
+	<include file="./db.changelog-5.2.0_create_spagobi.xml"/>
+	<include file="./db.changelog-5.2.0_create_quartz.xml"/>
+	<include file="./db.changelog-5.2.0_create_social.xml"/>
+	<include file="./db.changelog-5.2.0_upgrade.xml" />
+	 
+</databaseChangeLog> 
