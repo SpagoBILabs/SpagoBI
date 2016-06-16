@@ -24,8 +24,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
-<<<<<<<
-=======
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,16 +33,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.log4j.Logger;
-
->>>>>>>
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
@@ -280,8 +268,6 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 			String value = lov.getValue();
 			String description = lov.getDescription();
 			lovResult += "<ROW" + " VALUE=\"" + value + "\"" + " DESCRIPTION=\"" + description + "\"" + "/>";
-<<<<<<<
-=======
 		}
 		lovResult += "</ROWS>";
 		lovResult = StringUtilities.substituteProfileAttributesInString(lovResult, profile);
@@ -291,13 +277,6 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 			Map<String, String> types = getParametersNameToTypeMap(BIObjectParameters);
 			lovResult = StringUtilities.substituteParametersInString(lovResult, params, types, false);
 		}
-		return lovResult;
-	}
-
->>>>>>>
-		}
-		lovResult += "</ROWS>";
-		lovResult = StringUtilities.substituteProfileAttributesInString(lovResult, profile);
 		return lovResult;
 	}
 
@@ -402,8 +381,6 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 			lovResult = lovResult.substring(endind);
 		}
 		return names;
-<<<<<<<
-=======
 	}
 
 	/**
@@ -432,13 +409,6 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 			lovResult = lovResult.substring(endind);
 		}
 		return names;
-	}
-
-	/**
-	 * Checks if the lov requires one or more profile attributes.
-	 *
-	 * @return true if the lov require one or more profile attributes, false otherwise
->>>>>>>
 	}
 
 	/**
