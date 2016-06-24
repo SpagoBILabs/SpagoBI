@@ -8,6 +8,7 @@ package it.eng.spagobi.analiticalmodel.document.metadata;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
@@ -56,7 +57,8 @@ public class SbiObjects  extends SbiHibernateModel {
 	private Integer dataSet=null;
 	private Set sbiKpiDocumentses = new HashSet(0);
 	private String parametersRegion = null;
-	
+	//private String lockedByUser = null;
+	//private Set<SbiOutputParameter> sbiOutputParameters = new HashSet<SbiOutputParameter>();
 
 	// Constructors
 
@@ -631,4 +633,19 @@ public class SbiObjects  extends SbiHibernateModel {
 	}
 
 
+//	public Set<SbiOutputParameter> getSbiOutputParameters() {
+//		return sbiOutputParameters;
+//	}
+//
+//	public void setSbiOutputParameters(Set<SbiOutputParameter> sbiOutputParameters) {
+//		this.sbiOutputParameters = sbiOutputParameters;
+//	}
+//	
+//	public String getLockedByUser() {
+//		return lockedByUser;
+//	}
+//
+//	public void setLockedByUser(String lockedByUser) {
+//		this.lockedByUser = lockedByUser;
+//	}
 }

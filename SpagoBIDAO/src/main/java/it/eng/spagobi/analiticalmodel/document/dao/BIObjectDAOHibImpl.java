@@ -19,6 +19,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
@@ -37,12 +38,14 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.CriteriaParameter;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
@@ -50,6 +53,8 @@ import it.eng.spagobi.engines.config.dao.EngineDAOHibImpl;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
+import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
+import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
@@ -74,7 +79,9 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -2328,5 +2335,238 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		}
 		logger.debug("OUT");
 		return realResult;
+	}
+
+	@Override
+	public List loadAllBIObjectsByFolderId(final Integer folderId) throws EMFUserError {
+		
+
+		List realResult = executeOnTransaction(new IExecuteOnTransaction<List>() {
+
+			@Override
+			public List execute(Session session) throws Exception {
+				List sbiObjects = session
+						.createCriteria(SbiObjects.class)
+						.createAlias("sbiObjFuncs", "_sbiObjFunc")
+						.createAlias("state", "_sbiDomain")
+						.add(Restrictions.eq("_sbiObjFunc.id.sbiFunctions.functId", folderId))
+						.setProjection(
+								Projections.projectionList().add(org.hibernate.criterion.Property.forName("biobjId").as("biobjId"))
+										.add(org.hibernate.criterion.Property.forName("name").as("name"))
+										.add(org.hibernate.criterion.Property.forName("creationUser").as("creationUser"))
+										.add(org.hibernate.criterion.Property.forName("creationDate").as("creationDate"))
+										.add(org.hibernate.criterion.Property.forName("objectTypeCode").as("objectTypeCode"))
+										.add(org.hibernate.criterion.Property.forName("descr").as("descr"))
+										.add(org.hibernate.criterion.Property.forName("stateCode").as("stateCode"))
+										.add(org.hibernate.criterion.Property.forName("sbiEngines").as("sbiEngines"))
+										.add(org.hibernate.criterion.Property.forName("label").as("label"))
+										.add(org.hibernate.criterion.Property.forName("state").as("state"))
+										.add(org.hibernate.criterion.Property.forName("previewFile").as("previewFile")))
+						.setResultTransformer(Transformers.aliasToBean(SbiObjects.class)).list();
+
+				Iterator it = sbiObjects.iterator();
+				List<BIObject> realResult = new ArrayList<BIObject>();
+				SbiFunctions functions = (SbiFunctions) session.load(SbiFunctions.class, folderId);
+				Set<SbiObjFunc> sbiObjFuns = new HashSet<SbiObjFunc>();
+				SbiObjFunc sbiObjFun = new SbiObjFunc();
+				SbiObjFuncId funcId = new SbiObjFuncId();
+				funcId.setSbiFunctions(functions);
+				sbiObjFun.setId(funcId);
+				sbiObjFuns.add(sbiObjFun);
+				while (it.hasNext()) {
+					SbiObjects sbiObj = (SbiObjects) it.next();
+					sbiObj.setSbiObjFuncs(sbiObjFuns);
+					realResult.add(toBIObject(sbiObj, session));
+				}
+				return realResult;
+
+			}
+
+		});
+
+		return realResult;
+
+	}
+	
+	
+	/**
+	 * From the Hibernate BI object at input, gives the corrispondent BI object.
+	 * 
+	 * @param hibBIObject
+	 *            The Hibernate BI object
+	 * @return the corrispondent output <code>BIObject</code>
+	 */
+	@Override
+	public BIObject toBIObject(SbiObjects hibBIObject, Session session) throws EMFUserError {
+		logger.debug("IN");
+		// create empty biobject
+		BIObject aBIObject = new BIObject();
+		// set type (type code and id)
+		aBIObject.setBiObjectTypeCode(hibBIObject.getObjectTypeCode());
+		if (hibBIObject.getObjectType() != null) {
+			aBIObject.setBiObjectTypeID(hibBIObject.getObjectType().getValueId());
+		}
+		// set description
+		String descr = hibBIObject.getDescr();
+		if (descr == null)
+			descr = "";
+		aBIObject.setDescription(descr);
+		// set encrypt flag
+		if (hibBIObject.getEncrypt() != null) {
+			aBIObject.setEncrypt(new Integer(hibBIObject.getEncrypt().intValue()));
+		} else
+			aBIObject.setEncrypt(new Integer(0));
+
+		// set visible flag
+		if (hibBIObject.getVisible() != null) {
+			aBIObject.setVisible(new Integer(hibBIObject.getVisible().intValue()));
+		} else
+			aBIObject.setVisible(new Integer(0));
+
+		// set profiled visibility information
+		aBIObject.setProfiledVisibility(hibBIObject.getProfiledVisibility());
+		// set engine
+		if (hibBIObject.getSbiEngines() != null) {
+			aBIObject.setEngine(new EngineDAOHibImpl().toEngine(hibBIObject.getSbiEngines()));
+		}
+		// set data source
+		if (hibBIObject.getDataSource() != null) {
+			aBIObject.setDataSourceId(new Integer(hibBIObject.getDataSource().getDsId()));
+		}
+		// if (hibBIObject.getDataSet() != null) {
+		// // aBIObject.setDataSetId(new Integer(hibBIObject.getDataSet().getId().getDsId()));
+		// aBIObject.setDataSetId(new Integer(hibBIObject.getDataSet()));
+		// }
+
+		// set id
+		aBIObject.setId(hibBIObject.getBiobjId());
+		aBIObject.setLabel(hibBIObject.getLabel());
+		aBIObject.setName(hibBIObject.getName());
+		if (hibBIObject.getCommonInfo() != null) {
+			aBIObject.setTenant(hibBIObject.getCommonInfo().getOrganization());
+		}
+
+		// set path
+		aBIObject.setPath(hibBIObject.getPath());
+		aBIObject.setUuid(hibBIObject.getUuid());
+		aBIObject.setRelName(hibBIObject.getRelName());
+		aBIObject.setStateCode(hibBIObject.getStateCode());
+		if (hibBIObject.getState() != null) {
+			aBIObject.setStateID(hibBIObject.getState().getValueId());
+			aBIObject.setStateCodeStr(hibBIObject.getState().getValueNm());
+		}
+
+		List functionlities = new ArrayList();
+		boolean isPublic = false;
+		if (hibBIObject.getSbiObjFuncs() != null) {
+			Set hibObjFuncs = hibBIObject.getSbiObjFuncs();
+			for (Iterator it = hibObjFuncs.iterator(); it.hasNext();) {
+				SbiObjFunc aSbiObjFunc = (SbiObjFunc) it.next();
+				Integer functionalityId = aSbiObjFunc.getId().getSbiFunctions().getFunctId();
+				functionlities.add(functionalityId);
+				if (!isPublic) { // optimization: this ensure that the following code is executed only once in the for cycle (during the second execution of the
+					// cycle we already know that the document is public)
+					String folderType = aSbiObjFunc.getId().getSbiFunctions().getFunctTypeCd();
+					// if document belongs to another folder or the folder is not a personal folder, that means it is shared
+					if (it.hasNext() || folderType.equalsIgnoreCase("LOW_FUNCT")) {
+						isPublic = true;
+					}
+				}
+			}
+		}
+
+		aBIObject.setFunctionalities(functionlities);
+		aBIObject.setPublicDoc(isPublic);
+
+		List businessObjectParameters = new ArrayList();
+		Set hibObjPars = hibBIObject.getSbiObjPars();
+		if (hibObjPars != null) {
+			for (Iterator it = hibObjPars.iterator(); it.hasNext();) {
+				SbiObjPar aSbiObjPar = (SbiObjPar) it.next();
+				BIObjectParameter par = toBIObjectParameter(aSbiObjPar);
+				businessObjectParameters.add(par);
+			}
+			aBIObject.setBiObjectParameters(businessObjectParameters);
+		}
+
+		List businessObjectOutputParameters = new ArrayList();
+		
+//		Set hibObjOutPars = hibBIObject.getSbiOutputParameters();
+//		if (hibObjOutPars != null) {
+//			for (Iterator it = hibObjOutPars.iterator(); it.hasNext();) {
+//				SbiOutputParameter aSbiOutPar = (SbiOutputParameter) it.next();
+//				OutputParameter opar = toOutputParameter(aSbiOutPar);
+//				businessObjectOutputParameters.add(opar);
+//			}
+//			aBIObject.setOutputParameters(businessObjectOutputParameters);
+//		}
+
+		aBIObject.setCreationDate(hibBIObject.getCreationDate());
+		aBIObject.setCreationUser(hibBIObject.getCreationUser());
+
+		aBIObject.setRefreshSeconds(hibBIObject.getRefreshSeconds());
+		aBIObject.setPreviewFile(hibBIObject.getPreviewFile());
+
+		String region = hibBIObject.getParametersRegion();
+		if (region == null) {
+			try {
+				IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
+				Config defaultRegionConfig = configDAO.loadConfigParametersByLabel("SPAGOBI.DOCUMENTS.PARAMETERS_REGION_DEFAULT");
+				if (defaultRegionConfig != null) {
+					region = defaultRegionConfig.getValueCheck();
+					logger.debug("default parameters region is " + region);
+					if (region == null || region.equals("")) {
+						logger.warn("default parameters region not set in configs, put default to east");
+						region = "east";
+					} else {
+						// if default region is top or north becomes north, east or right becomes right
+						region = region.equalsIgnoreCase("top") || region.equalsIgnoreCase("north") ? "north" : "east";
+					}
+
+				} else {
+					region = "east";
+					logger.warn("default parameters region not set in configs, put default to east");
+				}
+			} catch (Exception e) {
+				logger.error("Error during recovery of default parameters region setting: go on with default east value", e);
+			}
+		}
+
+		aBIObject.setParametersRegion(region);
+//		aBIObject.setLockedByUser(hibBIObject.getLockedByUser());
+		// put dataset 
+//		if (session != null) {
+//			BIObjDataSet biObjDataSet = DAOFactory.getBIObjDataSetDAO().getObjectDetailDataset(aBIObject.getId(), session);
+//			if (biObjDataSet != null) {
+//				logger.debug("Associate dataset with id " + biObjDataSet.getDataSetId());
+//				aBIObject.setDataSetId(biObjDataSet.getDataSetId());
+//			}
+//		}
+		logger.debug("OUT");
+		return aBIObject;
+	}
+	
+	
+	public OutputParameter toOutputParameter(SbiOutputParameter hiObjPar) {
+		OutputParameter outp = new OutputParameter();
+		outp.setId(hiObjPar.getId());
+		outp.setName(hiObjPar.getLabel());
+		outp.setType(from(hiObjPar.getParameterType()));
+		outp.setFormatCode(hiObjPar.getFormatCode());
+		outp.setFormatValue(hiObjPar.getFormatValue());
+		outp.setBiObjectId(hiObjPar.getBiobjId());
+
+		return outp;
+	}
+	
+	private Domain from(SbiDomains sbiType) {
+		Domain type = new Domain();
+		type.setDomainCode(sbiType.getDomainCd());
+		type.setDomainName(sbiType.getDomainNm());
+		type.setValueCd(sbiType.getValueCd());
+		type.setValueDescription(sbiType.getValueDs());
+		type.setValueName(sbiType.getValueNm());
+		type.setValueId(sbiType.getValueId());
+		return type;
 	}
 }

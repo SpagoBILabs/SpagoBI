@@ -136,6 +136,9 @@
   <property generated="never" lazy="false" name="parametersRegion" type="string">
    <column length="20" name="PARAMETERS_REGION"/>
   </property>
+<!--    <property generated="never" lazy="false"  name="lockedByUser" type="string"> -->
+<!--             <column name="LOCKED_BY_USER" length="100" /> -->
+<!--    </property>  -->
   <set inverse="true" name="sbiObjPars" sort="unsorted">
    <key>
     <column name="biobj_id" not-null="true"/>
@@ -154,6 +157,12 @@
    </key>
    <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjState"/>
   </set>
+<!--   <set name="sbiOutputParameters" lazy="true" cascade="all-delete-orphan"> -->
+<!--    <key> -->
+<!--     <column name="biobj_id" not-null="false"/> -->
+<!--    </key> -->
+<!--    <one-to-many class="it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter"/> -->
+<!--   </set> -->
   <set inverse="true" name="sbiKpiDocumentses" sort="unsorted">
    <key>
     <column name="BIOBJ_ID" not-null="true"/>

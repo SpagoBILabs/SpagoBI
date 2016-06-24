@@ -56,7 +56,12 @@ public class PublisherService {
 
 			String publisher = request.getParameter(PUBLISHER);
 			if (publisher != null) {
-				request.getRequestDispatcher(urls.get(publisher)).forward(request, response);
+				if(urls.get(publisher)!=null){
+					request.getRequestDispatcher(urls.get(publisher)).forward(request, response);					
+				}else{
+					request.getRequestDispatcher(publisher).forward(request,
+							response);
+				}
 			}
 
 		} catch (Exception e) {

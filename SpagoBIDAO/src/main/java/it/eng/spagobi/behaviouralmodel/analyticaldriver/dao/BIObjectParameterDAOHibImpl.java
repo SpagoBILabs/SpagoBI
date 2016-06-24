@@ -17,10 +17,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
 import org.hibernate.exception.ConstraintViolationException;
 
 import it.eng.spago.error.EMFErrorSeverity;
@@ -43,6 +46,43 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements IBIObjectParameterDAO {
 	static private Logger logger = Logger.getLogger(BIObjectParameterDAOHibImpl.class);
 
+	
+	
+	@Override
+	public BIObjectParameter loadBiObjParameterByObjIdAndLabel(Integer objId, String label) throws EMFUserError {
+		BIObjectParameter objPar = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Criterion idCriterrion = Expression.eq("sbiObject.biobjId", objId);
+			Criterion labelCriterrion = Expression.eq("label", label);
+			Criteria criteria = aSession.createCriteria(SbiObjPar.class);
+			criteria.add(idCriterrion);
+			criteria.add(labelCriterrion);
+
+			SbiObjPar hibObjPar = (SbiObjPar) criteria.uniqueResult();
+			if (hibObjPar != null)
+				objPar = toBIObjectParameter(hibObjPar);
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return objPar;
+	}
+	
+	
 	/**
 	 * Load by id.
 	 *

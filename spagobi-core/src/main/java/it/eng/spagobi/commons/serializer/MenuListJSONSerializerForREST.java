@@ -65,7 +65,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	public static final String HELP = "HELP";
 
 	private static final String HREF_DOC_BROWSER = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
-	private static final String HREF_BOOKMARK = "/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+	private static final String HREF_DOC_BROWSER_ANGULAR = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+    private static final String HREF_BOOKMARK = "/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_SUBSCRIPTIONS = "/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_PENCIL = "/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYANALYSIS=TRUE";
 	private static final String HREF_MYDATA = "/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true";
@@ -183,12 +184,24 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							temp.put(SCALE, "large");
 							temp.put(PATH, path);
 							temp.put(TARGET, "_self");
+							
+						
+							
 							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin")) {
-								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER + "', '" + text + "')");
+								String defaultTheme = SingletonConfig.getInstance().getConfigValue("SPAGOBI.THEMES.THEME.default");
+								String hrefDocBrowser = HREF_DOC_BROWSER;
+								if(defaultTheme.equals("fiware")) {
+									hrefDocBrowser = HREF_DOC_BROWSER_ANGULAR;
+								}
+								
+								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + hrefDocBrowser + "', '" + text + "')");
 								temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER);
 								temp.put(LINK_TYPE, "execDirectUrl");
-
+								
 							}
+						
+							
+							
 							if (menuElem.getCode() != null && menuElem.getCode().equals("my_data_admin")) {
 								// admins and devs can see ONLY models tab,
 								// while tester can see datasets and models

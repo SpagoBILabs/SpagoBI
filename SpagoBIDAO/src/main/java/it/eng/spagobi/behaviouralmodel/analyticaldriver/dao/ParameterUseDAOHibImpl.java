@@ -304,6 +304,9 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 			hibParuse.setMultivalue(aParameterUse.isMultivalue() ? new Integer(1) : new Integer(0));
 			hibParuse.setManualInput(aParameterUse.getManualInput());
 			hibParuse.setMaximizerEnabled(aParameterUse.isMaximizerEnabled());
+			hibParuse.setValueSelection(aParameterUse.getValueSelection());
+//			hibParuse.setSelectedLayer(aParameterUse.getSelectedLayer());
+//			hibParuse.setSelectedLayerProp(aParameterUse.getSelectedLayerProp());
 			hibParuse.setOptions(aParameterUse.getOptions());
 
 			SbiLov hibSbiLov = (SbiLov) aSession.load(SbiLov.class, aParameterUse.getIdLov());
@@ -444,6 +447,9 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 			hibParuse.setManualInput(aParameterUse.getManualInput());
 			hibParuse.setMaximizerEnabled(aParameterUse.isMaximizerEnabled());
 			hibParuse.setOptions(aParameterUse.getOptions());
+			hibParuse.setValueSelection(aParameterUse.getValueSelection());
+//			hibParuse.setSelectedLayer(aParameterUse.getSelectedLayer());
+//			hibParuse.setSelectedLayerProp(aParameterUse.getSelectedLayerProp());
 			updateSbiCommonInfo4Insert(hibParuse);
 			Integer useId = (Integer) aSession.save(hibParuse);
 
@@ -673,6 +679,10 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 		aParameterUse.setSelectionType(hibParUse.getSelectionType());
 		aParameterUse.setMultivalue(hibParUse.getMultivalue() != null && hibParUse.getMultivalue().intValue() > 0);
 
+		aParameterUse.setValueSelection(hibParUse.getValueSelection());
+//		aParameterUse.setSelectedLayer(hibParUse.getSelectedLayer());
+//		aParameterUse.setSelectedLayerProp(hibParUse.getSelectedLayerProp());
+		
 		// if the sbi_lov is null, then we have a man in modality
 		if (hibParUse.getSbiLov() == null) {
 			aParameterUse.setIdLov(null);

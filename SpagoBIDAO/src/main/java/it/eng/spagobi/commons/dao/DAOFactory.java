@@ -61,6 +61,7 @@ import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -872,5 +873,9 @@ public class DAOFactory {
 	 */
 	public static IGlossaryDAO getGlossaryDAO() throws EMFUserError {
 		return (IGlossaryDAO) createDAOInstance("GlossaryDAO");
+	}
+	
+	public static IBIObjDataSetDAO getBIObjDataSetDAO() throws EMFUserError {
+		return (IBIObjDataSetDAO) createDAOInstance("BIObjDataSetDAO");
 	}
 }

@@ -327,6 +327,10 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements
 			hibParameters.setMask(aParameter.getMask());
 			hibParameters.setParameterType(parameterType);
 			
+			hibParameters.setValueSelection(aParameter.getValueSelection());
+//			hibParameters.setSelectedLayer(aParameter.getSelectedLayer());
+//			hibParameters.setSelectedLayerProp(aParameter.getSelectedLayerProp());
+			
 			if (aParameter.isFunctional()) hibParameters.setFunctionalFlag(new Short((short) 1));
 			else hibParameters.setFunctionalFlag(new Short((short) 0));
 			
@@ -469,6 +473,9 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements
 		else aParameter.setIsFunctional(true);
 		if (hibParameters.getTemporalFlag().intValue() == 0) aParameter.setIsTemporal(false);
 		else aParameter.setIsTemporal(true);
+		//aParameter.setSelectedLayer(hibParameters.getSelectedLayer());
+		//aParameter.setSelectedLayerProp(hibParameters.getSelectedLayerProp());
+		aParameter.setValueSelection(hibParameters.getValueSelection());
 		return aParameter;
 	}
 }

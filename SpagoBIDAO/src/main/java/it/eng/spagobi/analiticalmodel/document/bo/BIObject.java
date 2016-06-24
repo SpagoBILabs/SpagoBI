@@ -131,6 +131,11 @@ public class BIObject implements Serializable, Cloneable {
 	private Integer docVersion = null; // defines the version of template if is different by the default (last version)
 
 	private String parametersRegion = null;
+	
+	private String stateCodeStr = null;
+	private String lockedByUser = null;
+
+	private List<OutputParameter> outputParameters = new ArrayList();
 
 	/**
 	 * Gets the id.
@@ -826,4 +831,30 @@ public class BIObject implements Serializable, Cloneable {
 		return clone;
 	}
 
+	
+	@JsonGetter
+	public String getStateCodeStr() {
+		return stateCodeStr;
+	}
+
+	@JsonIgnore
+	public void setStateCodeStr(String stateCodeStr) {
+		this.stateCodeStr = stateCodeStr;
+	}
+	
+	public String getLockedByUser() {
+		return lockedByUser;
+	}
+
+	public void setLockedByUser(String lockedByUser) {
+		this.lockedByUser = lockedByUser;
+	}
+	
+	public void setOutputParameters(List<OutputParameter> outputParameters) {
+		this.outputParameters = outputParameters;
+	}
+
+	public List<OutputParameter> getOutputParameters() {
+		return outputParameters;
+	}
 }

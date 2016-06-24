@@ -281,6 +281,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 		ObjParview toReturn = new ObjParview();
 		toReturn.setObjParId(aSbiObjParview.getId().getSbiObjPar().getObjParId());
 		toReturn.setObjParFatherId(aSbiObjParview.getId().getSbiObjParFather().getObjParId());
+		toReturn.setObjParFatherUrlName(aSbiObjParview.getId().getSbiObjParFather().getParurlNm());
 		toReturn.setOperation(aSbiObjParview.getId().getOperation());
 		toReturn.setCompareValue(aSbiObjParview.getId().getCompareValue());
 		toReturn.setProg(aSbiObjParview.getProg());

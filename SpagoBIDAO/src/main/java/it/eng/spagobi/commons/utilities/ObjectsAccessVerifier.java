@@ -1055,6 +1055,12 @@ public class ObjectsAccessVerifier {
 		return correctRoles;
 	}
 
+	public static List getCorrectRolesForExecution(String objectLabel, IEngUserProfile profile) throws EMFInternalError, EMFUserError {
+		BIObject biObj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objectLabel);
+		
+		return getCorrectRolesForExecution(biObj.getId(), profile);
+	}
+	
 	/**
 	 * Retrieves the correct permission on folder that the user must have in order to execute the document: eg: document state = REL --> permission to EXECUTION
 	 * document state = DEV --> permission to DEVELOPMENT document state = TEST --> permission to TEST

@@ -31,6 +31,9 @@ public class SbiParuse extends SbiHibernateModel {
 	private Integer manualInput;
 	private Boolean maximizerEnabled;
 	private String defaultFormula;
+	private String valueSelection;
+//	private String selectedLayer;
+//	private String selectedLayerProp;
 	private String options;
 
 	// Constructors
@@ -43,6 +46,53 @@ public class SbiParuse extends SbiHibernateModel {
 
 	}
 
+	public String getValueSelection() {
+		return valueSelection;
+	}
+
+	public void setValueSelection(String valueSelection) {
+		this.valueSelection = valueSelection;
+	}
+
+	/**
+	 * Gets the selected layer property.
+	 *
+	 * @return Returns the selectedLayerProp.
+	 */
+//	public String getSelectedLayerProp() {
+//		return selectedLayerProp;
+//	}
+
+	/**
+	 * Sets the selected layer property.
+	 *
+	 * @param selectedLayerProp
+	 *            The layer property to set.
+	 */
+//	public void setSelectedLayerProp(String selectedLayerProp) {
+//		this.selectedLayerProp = selectedLayerProp;
+//	}
+
+	/**
+	 * Gets the selected layer.
+	 *
+	 * @return Returns the selectedLayer.
+	 */
+//	public String getSelectedLayer() {
+//		return selectedLayer;
+//	}
+
+	/**
+	 * Sets the selected layer.
+	 *
+	 * @param selectedLayer
+	 *            The layer to set.
+	 */
+//	public void setSelectedLayer(String selectedLayer) {
+//		this.selectedLayer = selectedLayer;
+//	}
+
+	
 	/**
 	 * constructor with id.
 	 * 

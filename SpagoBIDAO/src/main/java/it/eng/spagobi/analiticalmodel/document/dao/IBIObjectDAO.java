@@ -15,11 +15,14 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.Collection;
 import java.util.List;
+
+import org.hibernate.Session;
 
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a BI object.
@@ -428,4 +431,10 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 */
 	public List<BIObject> loadPaginatedSearchBIObjects(Integer page, Integer item_per_page, Collection<CriteriaParameter> disjunctions,
 			Collection<CriteriaParameter> restrictions) throws EMFUserError;
+	
+	public List loadAllBIObjectsByFolderId(Integer folderId) throws EMFUserError;
+	
+	public BIObject toBIObject(SbiObjects hibBIObject, Session session) throws EMFUserError;
+	
+	
 }

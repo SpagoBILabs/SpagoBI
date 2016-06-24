@@ -2716,6 +2716,7 @@
 			<column defaultValueNumeric="0" name="TEMPORAL_FLAG" type="SMALLINT">
 				<constraints nullable="false" />
 			</column>
+			<column name="VALUE_SELECTION" type="VARCHAR(20)" />
 			<column name="USER_IN" type="VARCHAR(100)">
 				<constraints nullable="false" />
 			</column>
@@ -2757,6 +2758,7 @@
 			<column defaultValueNumeric="0" name="MAXIMIZER_ENABLED" type="${boolean.type}" />
 			<column defaultValue="LIST" name="SELECTION_TYPE" type="VARCHAR(20)" />
 			<column defaultValueNumeric="0" name="MULTIVALUE_FLAG" type="INT" />
+			<column name="VALUE_SELECTION" type="VARCHAR(20)" />
 			<column name="USER_IN" type="VARCHAR(100)">
 				<constraints nullable="false" />
 			</column>

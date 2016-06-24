@@ -582,4 +582,52 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			logger.debug("OUT");
 		}
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("/getDocumentsByFolder")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getDocumentsByFolder(@QueryParam("folderId") String folderIdStr) {
+		logger.debug("IN");
+		IBIObjectDAO documentsDao = null;
+		List<BIObject> allObjects = null;
+		List<BIObject> objects = null;
+
+		Integer functionalityId = getNumberOrNull(folderIdStr);
+
+		boolean isFolderFilterValid = functionalityId != null;
+
+		try {
+
+			documentsDao = DAOFactory.getBIObjectDAO();
+			// allObjects = documentsDao.loadAllBIObjects();
+			allObjects = documentsDao.loadAllBIObjectsByFolderId(functionalityId);
+			UserProfile profile = getUserProfile();
+			objects = new ArrayList<BIObject>();
+			// for (BIObject obj : allObjects) {
+			// try {
+			// if (ObjectsAccessVerifier.canSee(obj, profile) && (!isFolderFilterValid || obj.getFunctionalities().contains(functionalityId)))
+			// objects.add(obj);
+			// } catch (EMFInternalError e) {
+			// }
+			// }
+
+			for (BIObject obj : allObjects) {
+				try {
+					if (ObjectsAccessVerifier.canSee(obj, profile))
+						objects.add(obj);
+				} catch (EMFInternalError e) {
+				}
+			}
+			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
+			return Response.ok(toBeReturned).build();
+		} catch (Exception e) {
+			logger.error("Error while getting the list of documents", e);
+			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
+		} finally {
+			logger.debug("OUT");
+		}
+
+	}
 }

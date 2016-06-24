@@ -31,6 +31,7 @@ import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
@@ -59,6 +60,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -87,10 +89,33 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	 * @param req
 	 * @return
 	 */
+//	@POST
+//	@Path("/clone")
+//	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+//	public String cloneDocument(@Context HttpServletRequest req) {
+//
+//		logger.debug("IN");
+//		String ids = req.getParameter(OBJECT_ID);
+//		Integer id = -1;
+//		try {
+//			id = new Integer(ids);
+//		} catch (Exception e) {
+//			logger.error("Error cloning the document.. Impossible to parse the id of the document " + ids, e);
+//			throw new SpagoBIRuntimeException("Error cloning the document.. Impossible to parse the id of the document " + ids, e);
+//		}
+//		IEngUserProfile profile = this.getUserProfile();
+//
+//		AnalyticalModelDocumentManagementAPI documentManagementAPI = new AnalyticalModelDocumentManagementAPI(profile);
+//		logger.debug("Execute clone");
+//		documentManagementAPI.cloneDocument(id);
+//		logger.debug("OUT");
+//		return "{}";
+//	}
+	
 	@POST
 	@Path("/clone")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String cloneDocument(@Context HttpServletRequest req) {
+	public Response cloneDocument(@Context HttpServletRequest req) {
 
 		logger.debug("IN");
 		String ids = req.getParameter(OBJECT_ID);
@@ -105,10 +130,14 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 
 		AnalyticalModelDocumentManagementAPI documentManagementAPI = new AnalyticalModelDocumentManagementAPI(profile);
 		logger.debug("Execute clone");
-		documentManagementAPI.cloneDocument(id);
+		BIObject cloned = documentManagementAPI.cloneDocument(id);
 		logger.debug("OUT");
-		return "{}";
+		String toBeReturned = JsonConverter.objectToJson(cloned, BIObject.class);
+		return Response.ok(toBeReturned).build();
 	}
+	
+	
+	
 
 	/**
 	 * Service to send e-mail Feedback about a document

@@ -36,6 +36,10 @@ public class Parameter implements Serializable {
 	private ModalitiesValue modalityValueForDefault = null;
 
 	private String defaultFormula = "";
+	
+	private String valueSelection;
+	private String selectedLayer = "";
+	private String selectedLayerProp = "";
 
 	private List checks = null;
 
@@ -304,4 +308,27 @@ public class Parameter implements Serializable {
 		this.defaultFormula = defaultFormula;
 	}
 
+	public String getValueSelection() {
+		return valueSelection;
+	}
+
+	public void setValueSelection(String valueSelection) {
+		this.valueSelection = valueSelection;
+	}
+
+	public String getSelectedLayer() {
+		return selectedLayer;
+	}
+
+	public void setSelectedLayer(String selectedLayer) {
+		this.selectedLayer = selectedLayer;
+	}
+
+	public String getSelectedLayerProp() {
+		return selectedLayerProp;
+	}
+
+	public void setSelectedLayerProp(String selectedLayerProp) {
+		this.selectedLayerProp = selectedLayerProp;
+	}
 }

@@ -153,5 +153,23 @@ public class LovResultHandler {
 	public boolean isSingleValue() {
 		return (getRows().size() == 1);
 	}
+	
+	// TODO: WARNING!!! MUST BE CHANGED, THIS IS ONLY A TEMPORARY SOLUTION
+		public boolean containsValueForTree(String value, String valueColumnName) {
+			List values = getValues(valueColumnName);
+			for (int i = 0; i < values.size(); i++) {
+				if (value == null && values.get(i) == null) {
+					return true;
+				}
+				if (values.get(i) != null) {
+					String rightValue = values.get(i).toString();
+					rightValue = rightValue.split("__")[0]; // TODO: HARD CODED VALUE
+					if (rightValue.equalsIgnoreCase(value)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 
 }

@@ -7,9 +7,12 @@ package it.eng.spagobi.analiticalmodel.execution.service;
 
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -21,6 +24,7 @@ import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.filters.FilterIOManager;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -39,7 +43,10 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 	
 	public void doService() {
 		logger.debug("IN");
-		UserProfile profile = (UserProfile) this.getUserProfile();
+		UserProfile profile = (UserProfile) getUserProfileFromSession(getHttpRequest(),this.getUserProfile());
+		
+		
+		
 		BIObject obj = null;
 		try{
 			obj = getRequiredBIObject();
@@ -152,6 +159,16 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 	    return obj;
 	}
 
+	
+	private  IEngUserProfile getUserProfileFromSession(HttpServletRequest req, IEngUserProfile engProfile) {
+		if( engProfile == null){
+			FilterIOManager ioManager = new FilterIOManager(req, null);
+			ioManager.initConetxtManager();
+			engProfile = (IEngUserProfile) ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);			
+		}
+		return engProfile;
+	}
+	
 	protected SubObject getRequiredSubObject(BIObject obj) throws EMFUserError {
 		logger.debug("IN");
 		SubObject subObject = null;

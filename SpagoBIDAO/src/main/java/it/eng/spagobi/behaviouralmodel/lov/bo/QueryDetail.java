@@ -185,26 +185,63 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			invisColNames = Arrays.asList(invisColArr);
 		}
 		setInvisibleColumnNames(invisColNames);
-
+		// compatibility control (versions till 3.6 does not have
+		// TREE-LEVELS-COLUMN definition)
+		// SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
+		// String treeLevelsColumnsString = null;
+		// if (treeLevelsColumnsBean != null) {
+		// treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+		// }
+		// if ((treeLevelsColumnsString != null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("")) {
+		// String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+		// this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
+		// }
 		try {
 			SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
-			if (treeLevelsColumnsBean != null && treeLevelsColumnsBean.getCharacters() != null && treeLevelsColumnsBean.getCharacters().trim() != "") {
+			if (treeLevelsColumnsBean != null) {
 				// compatibility control (versions till 5.1.0 does not have
 				// VALUE-COLUMNS and DESCRIPTION-COLUMNS definition)
+
+				// SVN 27/05/2016
+				// String treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+				// if (treeLevelsColumnsString != null) {
+				// String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+				// List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+				// for (int i = 0; i < treeLevelsColumnArr.length; i++) {
+				// String aValueColumn = treeLevelsColumnArr[i];
+				// if (i == treeLevelsColumnArr.length - 1) {
+				// levelsMap.add(new Couple<String, String>(aValueColumn, descriptionColumn));
+				// } else {
+				// levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
+				// }
+				// }
+				// this.setValueColumnName(null);
+				// this.setDescriptionColumnName(null);
+				// }
+
+				// COMPATIBILITY OLD TREE LOV
 				String treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
-				String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
-				List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
-				for (int i = 0; i < treeLevelsColumnArr.length; i++) {
-					String aValueColumn = treeLevelsColumnArr[i];
-					if (i == treeLevelsColumnArr.length - 1) {
-						levelsMap.add(new Couple<String, String>(aValueColumn, descriptionColumn));
-					} else {
+				if (treeLevelsColumnsString != null && !treeLevelsColumnsString.trim().equalsIgnoreCase("")) {
+					List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+					String[] valuesColumns = treeLevelsColumnsString.split(",");
+					List<String> valuesColumnsList = Arrays.asList(valuesColumns);
+					for (int i = 0; i < valuesColumnsList.size(); i++) {
+						String aValueColumn = valuesColumnsList.get(i);
 						levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
+						// TREE LEAF
+						if (i == valuesColumnsList.size() - 1) {
+							this.setValueColumnName(aValueColumn);
+							SourceBean descriptionSourceBean = (SourceBean) source.getAttribute("DESCRIPTION-COLUMN");
+							String description = (descriptionSourceBean != null && descriptionSourceBean.getCharacters() != null) ? descriptionSourceBean
+									.getCharacters() : aValueColumn;
+							this.setDescriptionColumnName(description);
+						}
+
 					}
+					this.treeLevelsColumns = levelsMap;
+
 				}
-				this.treeLevelsColumns = levelsMap;
-				this.setValueColumnName(null);
-				this.setDescriptionColumnName(null);
+
 			} else {
 				SourceBean valuesColumnsBean = (SourceBean) source.getAttribute("VALUE-COLUMNS");
 				SourceBean descriptionColumnsBean = (SourceBean) source.getAttribute("DESCRIPTION-COLUMNS");
@@ -229,6 +266,12 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 						String aValueColumn = valuesColumnsList.get(i);
 						String aDescriptionColumn = descriptionColumnsList.get(i);
 						levelsMap.add(new Couple<String, String>(aValueColumn, aDescriptionColumn));
+						// TREE LEAF
+						if (i == valuesColumnsList.size() - 1) {
+							this.setValueColumnName(aValueColumn);
+							this.setDescriptionColumnName(aDescriptionColumn);
+						}
+
 					}
 					this.treeLevelsColumns = levelsMap;
 				}
@@ -237,7 +280,6 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			logger.error("Error while reading LOV definition from XML", e);
 			throw new SpagoBIRuntimeException("Error while reading LOV definition from XML", e);
 		}
-
 		SourceBean lovTypeBean = (SourceBean) source.getAttribute("LOVTYPE");
 		String lovType;
 		if (lovTypeBean != null) {
