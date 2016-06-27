@@ -191,10 +191,10 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 
 			SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthentication(user, password);
 			if (spagoBIUserProfile != null) {
-				profile = (UserProfile) UserUtilities.getUserProfile(user);
+				profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
 			}
-		} catch (Throwable t) {
-			// Do nothing: it will return null
+		} catch (Exception e) {
+			logger.error("Erro while authenticating user", e);
 		} finally {
 			logger.trace("OUT");
 		}
@@ -209,7 +209,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		IEngUserProfile engProfile = getUserProfileFromSession();
 
 		if (engProfile != null) {
-			// verify if the profile stored in session is still valid
+			// verify if the profile stored in session is still valid . 
 			String userId = null;
 			try {
 				userId = getUserIdentifier();
