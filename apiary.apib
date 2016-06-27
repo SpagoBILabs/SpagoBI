@@ -66,7 +66,7 @@ The other times an error appears the response code is 200 and the response body 
 
 
 ## The documents resource [/restful-services/2.0/documents]
-The documents resource represents the list of documents visible to the authenticate user.
+The documents resource represents the list of documents that are visible to the authenticated user.
 
 ### List All Documents [GET]
 
@@ -122,6 +122,9 @@ The documents resource represents the list of documents visible to the authentic
         ]
 
 ### Adds a new document [POST]
+
+Before adding a new document, you have to pay attention to the fact that the document could depend on other objects, in particular a data source and/or a dataset objects.
+In this case you have to create those objects first, using the standard web GUI. After you created those objects, you have to reference them by their label in 'dataSourceLabel' and 'dataSetLabel' request properties.
 
 + Request (application/json)
 
@@ -245,6 +248,8 @@ The template resource is optional. It is however mandatory for some type of docu
         
 ### Update the template [POST]
 
+Pay attention to the fact that, if a high-level REST client is used, some header information could vary.
+
 + Request
 
     + Headers
@@ -266,25 +271,91 @@ The template resource is optional. It is however mandatory for some type of docu
 
 ## The parameters subresource [/restful-services/2.0/documents/{document_label}/parameters]
 
-A document can have one ore more parameters.
+A document can have one ore more parameters (i.e. analytical drivers) associated; you must create the analytical driver before invoking this service. 
 
 + Parameters
     + document_label (string) - the document's label
 
 
-### Return parameters with Specified Label [GET]
+### Return parameters by document's label [GET]
 
 + Response 200 (application/json)
        
             [
-                {
-                    "label":"label1",
-                    "url":"url1"
-                },
-                {
-                    "label":"label2",
-                    "url":"url2"
-                }
+				{
+					"id": 44,
+					"biObjectID": 8,
+					"parID": 4,
+					"parameter": {
+						"id": 4,
+						"description": "",
+						"length": null,
+						"label": "",
+						"name": "",
+						"type": "",
+						"mask": "",
+						"typeId": null,
+						"modality": "",
+						"modalityValue": null,
+						"modalityValueForDefault": null,
+						"defaultFormula": "",
+						"checks": null,
+						"temporal": false,
+						"functional": false
+					},
+					"label": "Prod. department",
+					"required": true,
+					"modifiable": 0,
+					"visible": 1,
+					"multivalue": false,
+					"colSpan": null,
+					"thickPerc": null,
+					"prog": 1,
+					"priority": 2,
+					"parameterUrlName": "ParDepartment",
+					"parameterValues": null,
+					"parameterValuesDescription": null,
+					"transientParmeters": false,
+					"parameterValuesRetriever": null,
+					"iterative": false
+				},
+				{
+					"id": 45,
+					"biObjectID": 8,
+					"parID": 3,
+					"parameter": {
+						"id": 3,
+						"description": "",
+						"length": null,
+						"label": "",
+						"name": "",
+						"type": "",
+						"mask": "",
+						"typeId": null,
+						"modality": "",
+						"modalityValue": null,
+						"modalityValueForDefault": null,
+						"defaultFormula": "",
+						"checks": null,
+						"temporal": false,
+						"functional": false
+					},
+					"label": "Age range",
+					"required": true,
+					"modifiable": 0,
+					"visible": 1,
+					"multivalue": false,
+					"colSpan": null,
+					"thickPerc": null,
+					"prog": 1,
+					"priority": 3,
+					"parameterUrlName": "ParAgeGroup",
+					"parameterValues": null,
+					"parameterValuesDescription": null,
+					"transientParmeters": false,
+					"parameterValuesRetriever": null,
+					"iterative": false
+				}
             ]
 
         
@@ -292,12 +363,42 @@ A document can have one ore more parameters.
 
 + Request (application/json)
 
-            {
-                "label":"label1",
-                "parameterUrlName":"url1",
-                "parID":"100"
-            }
-   
+			{
+				"biObjectID": 8,
+				"parID": 4,
+				"parameter": {
+					"id": 4,
+					"description": "",
+					"length": null,
+					"label": "",
+					"name": "",
+					"type": "STRING",
+					"mask": "",
+					"typeId": null,
+					"modality": "",
+					"modalityValue": null,
+					"modalityValueForDefault": null,
+					"defaultFormula": "",
+					"checks": null,
+					"temporal": false,
+					"functional": false
+				},
+				"label": "Prod. department",
+				"required": true,
+				"modifiable": 0,
+				"visible": 1,
+				"multivalue": false,
+				"colSpan": 1,
+				"thickPerc": 0,
+				"prog": 1,
+				"priority": 1,
+				"parameterUrlName": "ParDepartment",
+				"parameterValues": null,
+				"parameterValuesDescription": null,
+				"transientParmeters": false,
+				"parameterValuesRetriever": null,
+				"iterative": false
+			}
             
         
 + Response 200 (application/json)
@@ -317,20 +418,86 @@ Each parameter is seen as a resource (subresource of parameters) and is uniquely
 
 + Response 200 (application/json)
        
-            {
-                "label":"label1",
-                "parameterUrlName":"url1"
-            }
+			{
+				"id": 44,
+				"biObjectID": 8,
+				"parID": 4,
+				"parameter": {
+					"id": 4,
+					"description": "",
+					"length": null,
+					"label": "",
+					"name": "",
+					"type": "STRING",
+					"mask": "",
+					"typeId": null,
+					"modality": "",
+					"modalityValue": null,
+					"modalityValueForDefault": null,
+					"defaultFormula": "",
+					"checks": null,
+					"temporal": false,
+					"functional": false
+				},
+				"label": "Prod. department",
+				"required": true,
+				"modifiable": 0,
+				"visible": 1,
+				"multivalue": false,
+				"colSpan": 1,
+				"thickPerc": 0,
+				"prog": 1,
+				"priority": 1,
+				"parameterUrlName": "ParDepartment",
+				"parameterValues": null,
+				"parameterValuesDescription": null,
+				"transientParmeters": false,
+				"parameterValuesRetriever": null,
+				"iterative": false
+			}
 
         
 ### Update the parameter [PUT]
 
 + Request (application/json)
 
-            {
-                "label":"label1",
-                "parameterUrlName":"url1"
-            }
+			{
+				"id": 44,
+				"biObjectID": 8,
+				"parID": 4,
+				"parameter": {
+					"id": 4,
+					"description": "",
+					"length": null,
+					"label": "",
+					"name": "",
+					"type": "STRING",
+					"mask": "",
+					"typeId": null,
+					"modality": "",
+					"modalityValue": null,
+					"modalityValueForDefault": null,
+					"defaultFormula": "",
+					"checks": null,
+					"temporal": false,
+					"functional": false
+				},
+				"label": "Prod. department",
+				"required": true,
+				"modifiable": 0,
+				"visible": 1,
+				"multivalue": false,
+				"colSpan": 1,
+				"thickPerc": 0,
+				"prog": 1,
+				"priority": 1,
+				"parameterUrlName": "ParDepartment",
+				"parameterValues": null,
+				"parameterValuesDescription": null,
+				"transientParmeters": false,
+				"parameterValuesRetriever": null,
+				"iterative": false
+			}
         
 + Response 200 (application/json)
 
@@ -343,7 +510,8 @@ Each parameter is seen as a resource (subresource of parameters) and is uniquely
 
 ## The content subresource: document execution [/restful-services/2.0/documents/{document_label}/content]
 
-In SpagoBI a document can be executed. For a point of view, executing a document can be seen as the act of retrieving its content. For this reason, the content of a document is represented as a subresource of it.
+This REST service applies to static reports, since they do not require user interaction. 
+Executing a document can be seen as the act of retrieving its content. For this reason, the content of a document is represented as a subresource of it.
 
 + Parameters
     + document_label (string) - the document's label
@@ -351,6 +519,7 @@ In SpagoBI a document can be executed. For a point of view, executing a document
 
 ### Return the document content [POST]
 
+Pre-requisite: you should have a static report defined (as analytical document) and running on SpagoBI Server (look at SpagoBI documentation in order to see how to define an analytical document of type report).
 In order to execute the document you must put the document's parameters inside the body payload as a JSON object. The example shows JSON for parameter "country", notice that only "urlName" and "values" attributes are mandatory, because the system automatically detects which analytical driver is referred by specified "urlName". There is also the outputType parameter represented as queryParameter.
 It accepts an output type, for example "HTML" or "PDF". The available output types depend from the kind of document. Check the available export types from the SpagoBI web application, inside the view of document. 
         
