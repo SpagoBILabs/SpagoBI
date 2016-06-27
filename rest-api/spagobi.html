@@ -521,7 +521,7 @@ The other times an error appears the response code is 200 and the response body 
         
             <section id="resource_the-documents-resource" class="resource">
                  <div class= "header" ><h3 id="h-resource_the-documents-resource">The documents resource [/restful-services/2.0/documents]</h3> </div>
-                <p>The documents resource represents the list of documents visible to the authenticate user.</p>
+                <p>The documents resource represents the list of documents that are visible to the authenticated user.</p>
                 
                 
 
@@ -632,7 +632,7 @@ The other times an error appears the response code is 200 and the response body 
 
         
                             <div id="adds-a-new-document_body" class="">
-                                
+                              <p>Before adding a new document, you have to pay attention to the fact that the document could depend on other objects, in particular a data source and/or a dataset objects. In this case you have to create those objects first, using the standard web GUI. After you created those objects, you have to reference them by their label in 'dataSourceLabel' and 'dataSetLabel' request properties.</p>
                                 
                                 
                                 
@@ -1120,7 +1120,7 @@ The other times an error appears the response code is 200 and the response body 
 
         
                             <div id="update-the-template_body" class="">
-                                
+                                <p>Pay attention to the fact that, if a high-level REST client is used, some header information could vary.</p>
                                 
                                 
                                 
@@ -1280,7 +1280,7 @@ The other times an error appears the response code is 200 and the response body 
         
             <section id="resource_the-parameters-subresource" class="resource">
                  <div class= "header" ><h3 id="h-resource_the-parameters-subresource">The parameters subresource [/restful-services/2.0/documents/{document_label}/parameters]</h3> </div>
-                <p>A document can have one ore more parameters.</p>
+                <p>A document can have one ore more parameters (i.e. analytical drivers) associated; you must create the analytical driver before invoking this service.</p>
                 
                 
 
@@ -1320,7 +1320,7 @@ The other times an error appears the response code is 200 and the response body 
 
                         
     <h4 id="h-action_return-parameters-with-specified-label">
-        Return parameters with Specified Label -
+        Return parameters by document's label -
         GET
         
             /restful-services/2.0/documents/{document_label}/parameters
@@ -1779,7 +1779,7 @@ The other times an error appears the response code is 200 and the response body 
         
             <section id="resource_the-content-subresource" class="resource">
                  <div class= "header" ><h3 id="h-resource_the-content-subresource">The content subresource: document execution [/restful-services/2.0/documents/{document_label}/content]</h3> </div>
-                <p>In SpagoBI a document can be executed. For a point of view, executing a document can be seen as the act of retrieving its content. For this reason, the content of a document is represented as a sub resource of it.</p>
+                <p>This REST service applies to static reports, since they do not require user interaction. Executing a document can be seen as the act of retrieving its content. For this reason, the content of a document is represented as a subresource of it.</p>
                 
                 
 
@@ -1828,7 +1828,7 @@ The other times an error appears the response code is 200 and the response body 
 
         
                             <div id="return-the-document-content_body" class="">
-                                <p>In order to execute the document you must put the document's parameters inside the body payload as a JSON object. There is also the outputType parameter represented as queryParameter. It accepts an output type, for example "HTML" or "PDF". The available output types depend from the kind of document. Check the available export types from the SpagoBI web application, inside the view of document.</p>
+                                <p>Pre-requisite: you should have a static report defined (as analytical document) and running on SpagoBI Server (look at SpagoBI documentation in order to see how to define an analytical document of type report). In order to execute the document you must put the document's parameters inside the body payload as a JSON object. There is also the outputType parameter represented as queryParameter. It accepts an output type, for example "HTML" or "PDF". The available output types depend from the kind of document. Check the available export types from the SpagoBI web application, inside the view of document.</p>
                                 
                                 
                                 
@@ -3738,14 +3738,80 @@ Content-Disposition: form-data; name=&#34;file&#34;; filename=&#34;my_file&#34;<
                 
                     <div class= "header"><p>Body</p></div>
                     <pre><code>    [
-        {
-            "label":"label1",
-            "url":"url1"
-        },
-        {
-            "label":"label2",
-            "url":"url2"
-        }
+					{
+					"id": 44,
+					"biObjectID": 8,
+					"parID": 4,
+					"parameter": {
+						"id": 4,
+						"description": "",
+						"length": null,
+						"label": "",
+						"name": "",
+						"type": "",
+						"mask": "",
+						"typeId": null,
+						"modality": "",
+						"modalityValue": null,
+						"modalityValueForDefault": null,
+						"defaultFormula": "",
+						"checks": null,
+						"temporal": false,
+						"functional": false
+					},
+					"label": "Prod. department",
+					"required": true,
+					"modifiable": 0,
+					"visible": 1,
+					"multivalue": false,
+					"colSpan": null,
+					"thickPerc": null,
+					"prog": 1,
+					"priority": 2,
+					"parameterUrlName": "ParDepartment",
+					"parameterValues": null,
+					"parameterValuesDescription": null,
+					"transientParmeters": false,
+					"parameterValuesRetriever": null,
+					"iterative": false
+				},
+				{
+					"id": 45,
+					"biObjectID": 8,
+					"parID": 3,
+					"parameter": {
+						"id": 3,
+						"description": "",
+						"length": null,
+						"label": "",
+						"name": "",
+						"type": "",
+						"mask": "",
+						"typeId": null,
+						"modality": "",
+						"modalityValue": null,
+						"modalityValueForDefault": null,
+						"defaultFormula": "",
+						"checks": null,
+						"temporal": false,
+						"functional": false
+					},
+					"label": "Age range",
+					"required": true,
+					"modifiable": 0,
+					"visible": 1,
+					"multivalue": false,
+					"colSpan": null,
+					"thickPerc": null,
+					"prog": 1,
+					"priority": 3,
+					"parameterUrlName": "ParAgeGroup",
+					"parameterValues": null,
+					"parameterValuesDescription": null,
+					"transientParmeters": false,
+					"parameterValuesRetriever": null,
+					"iterative": false
+				}
     ]
 </code></pre>
                 
@@ -3821,11 +3887,42 @@ Content-Disposition: form-data; name=&#34;file&#34;; filename=&#34;my_file&#34;<
 
                 
                     <div class= "header"><p>Body</p></div>
-                    <pre><code>    {
-        "label":"label1",
-        "parameterUrlName":"url1",
-        "parID":"100"
-    }
+                    <pre><code>   			{
+				"biObjectID": 8,
+				"parID": 4,
+				"parameter": {
+					"id": 4,
+					"description": "",
+					"length": null,
+					"label": "",
+					"name": "",
+					"type": "STRING",
+					"mask": "",
+					"typeId": null,
+					"modality": "",
+					"modalityValue": null,
+					"modalityValueForDefault": null,
+					"defaultFormula": "",
+					"checks": null,
+					"temporal": false,
+					"functional": false
+				},
+				"label": "Prod. department",
+				"required": true,
+				"modifiable": 0,
+				"visible": 1,
+				"multivalue": false,
+				"colSpan": 1,
+				"thickPerc": 0,
+				"prog": 1,
+				"priority": 1,
+				"parameterUrlName": "ParDepartment",
+				"parameterValues": null,
+				"parameterValuesDescription": null,
+				"transientParmeters": false,
+				"parameterValuesRetriever": null,
+				"iterative": false
+			}
 </code></pre>
                 
 
@@ -3985,10 +4082,43 @@ Content-Disposition: form-data; name=&#34;file&#34;; filename=&#34;my_file&#34;<
 
                 
                     <div class= "header"><p>Body</p></div>
-                    <pre><code>    {
-        "label":"label1",
-        "parameterUrlName":"url1"
-    }
+                    <pre><code>   			{
+				"id": 44,
+				"biObjectID": 8,
+				"parID": 4,
+				"parameter": {
+					"id": 4,
+					"description": "",
+					"length": null,
+					"label": "",
+					"name": "",
+					"type": "STRING",
+					"mask": "",
+					"typeId": null,
+					"modality": "",
+					"modalityValue": null,
+					"modalityValueForDefault": null,
+					"defaultFormula": "",
+					"checks": null,
+					"temporal": false,
+					"functional": false
+				},
+				"label": "Prod. department",
+				"required": true,
+				"modifiable": 0,
+				"visible": 1,
+				"multivalue": false,
+				"colSpan": 1,
+				"thickPerc": 0,
+				"prog": 1,
+				"priority": 1,
+				"parameterUrlName": "ParDepartment",
+				"parameterValues": null,
+				"parameterValuesDescription": null,
+				"transientParmeters": false,
+				"parameterValuesRetriever": null,
+				"iterative": false
+			}
 </code></pre>
                 
 
@@ -4063,10 +4193,43 @@ Content-Disposition: form-data; name=&#34;file&#34;; filename=&#34;my_file&#34;<
 
                 
                     <div class= "header"><p>Body</p></div>
-                    <pre><code>    {
-        "label":"label1",
-        "parameterUrlName":"url1"
-    }
+                    <pre><code>    			{
+				"id": 44,
+				"biObjectID": 8,
+				"parID": 4,
+				"parameter": {
+					"id": 4,
+					"description": "",
+					"length": null,
+					"label": "",
+					"name": "",
+					"type": "STRING",
+					"mask": "",
+					"typeId": null,
+					"modality": "",
+					"modalityValue": null,
+					"modalityValueForDefault": null,
+					"defaultFormula": "",
+					"checks": null,
+					"temporal": false,
+					"functional": false
+				},
+				"label": "Prod. department",
+				"required": true,
+				"modifiable": 0,
+				"visible": 1,
+				"multivalue": false,
+				"colSpan": 1,
+				"thickPerc": 0,
+				"prog": 1,
+				"priority": 1,
+				"parameterUrlName": "ParDepartment",
+				"parameterValues": null,
+				"parameterValuesDescription": null,
+				"transientParmeters": false,
+				"parameterValuesRetriever": null,
+				"iterative": false
+			}
 </code></pre>
                 
 
