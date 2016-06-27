@@ -54,6 +54,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 	// if the member stay in the columns this is the rowPosition of all the occurrence of the member.. Viceversa for the rows
 	private Map<Member, Integer> memberPositions;
 	private boolean showProperties = false;
+	private String styleInLabel;
 
 	public static transient Logger logger = Logger.getLogger(HtmlRenderer.class);
 
@@ -461,7 +462,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 					getWriter().startElement("img", attributes);
 					getWriter().endElement("img");
 
-					getWriter().writeContent(label);
+					setColorInCell(label, attributes);
 				} else {
 					// TODO: OSMOSIT create member clickable
 					List<TargetClickable> targetsClickable = sbiModel.getTargetsClickable();
@@ -481,11 +482,11 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 							}
 						} else {
 
-							getWriter().writeContent(label);
+							setColorInCell(label, attributes);
 						}
 					} else {
 
-						getWriter().writeContent(label);
+						setColorInCell(label, attributes);
 					}
 					// fine OSMOSIT create member clickable
 
@@ -563,6 +564,42 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 
 	public void setOddColumnStyleClass(String oddColumnStyleClass) {
 		this.oddColumnStyleClass = oddColumnStyleClass;
+	}
+
+	public String getStyleInLabel() {
+		return this.styleInLabel;
+	}
+
+	public void setStyleInLabel(String styleInLabel) {
+		this.styleInLabel = styleInLabel;
+	}
+
+	private String[] getCellContent(String label) {
+		String[] ss = label.split("style");
+		String number = ss[0].substring(1, ss[0].length() - 1);
+		String color = ss[1].substring(1);
+		ss[0] = number;
+		ss[1] = color;
+		return ss;
+	}
+
+	private void setColorInCell(String label, Map<String, String> attributes) {
+		int index = label.indexOf("style");
+		if (index != -1) {
+			String[] result = getCellContent(label);
+			label = result[0];
+			this.styleInLabel = result[1];
+			attributes.remove("src");
+			attributes.remove("onload");
+			attributes.remove("id");
+			attributes.put("class", "x-grid-cell-inner");
+			attributes.put("style", "background-color : " + this.styleInLabel);
+			getWriter().startElement("div", attributes);
+			getWriter().writeContent(label);
+			getWriter().endElement("div");
+		} else {
+			getWriter().writeContent(label);
+		}
 	}
 
 }
