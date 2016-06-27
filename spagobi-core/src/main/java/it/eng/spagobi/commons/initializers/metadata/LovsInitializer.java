@@ -47,18 +47,6 @@ public class LovsInitializer extends SpagoBIInitializer {
 			}
 			
 			
-			String q = "update  "+
-	            	"SBI_PARUSE "+
-	            	"	set VALUE_SELECTION = "+
-	            	"		(case "+
-	            	"			when MAN_IN = 1 then 'man_in' "+
-	            	"			when MAN_IN = 0 then 'lov' "+
-	            	"			else VALUE_SELECTION "+
-	            	"		end)"+
-	            	"where VALUE_SELECTION is null OR VALUE_SELECTION = ''";
-			SQLQuery sqlq = hibernateSession.createSQLQuery(q);
-			sqlq.executeUpdate();
-			
 		} finally {
 			logger.debug("OUT");
 		}

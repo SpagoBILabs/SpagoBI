@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	
+	<changeSet author="vgambino" labels="upgrade_5.3.0" id="tag_version_5.3.0_upgrade">
+        <tagDatabase tag="version_5.3.0" />
+    </changeSet>
+    <changeSet author="vgambino (generated)" labels="upgrade_5.3.0" id="upgrade_5.3.0-add_column_sbi_paruse">
+	   <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+	      <not>
+	         <columnExists tableName="SBI_PARUSE" columnName="VALUE_SELECTION" />
+	      </not>
+	   </preConditions>
+	   <addColumn tableName="SBI_PARUSE">
+	      <column name="VALUE_SELECTION" type="VARCHAR(20)"/>
+	   </addColumn>
+	</changeSet>
+	<changeSet author="vgambino (generated)" labels="upgrade_5.3.0" id="upgrade_5.3.0-add_column_sbi_parameters">
+	   <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+	      <not>
+	         <columnExists tableName="SBI_PARAMETERS" columnName="VALUE_SELECTION" />
+	      </not>
+	   </preConditions>
+	   <addColumn tableName="SBI_PARAMETERS">
+	      <column name="VALUE_SELECTION" type="VARCHAR(20)"/>
+	   </addColumn>
+	</changeSet>
+	<changeSet author="vgambino" labels="upgrade_5.3.0" id="upgrade_5.3.0-update_value_seclection_column_sbi_paruse">
+	   <sql     endDelimiter="\nGO"
+	            splitStatements="true"
+	            >
+	            update  
+	            	SBI_PARUSE 
+	            		set VALUE_SELECTION = 
+	            			(case 
+	            				when MAN_IN = 1 then 'man_in' 
+	            				when MAN_IN = 0 then 'lov' 
+	            				else VALUE_SELECTION 
+	            			end)
+	            	where VALUE_SELECTION is null OR VALUE_SELECTION = ''
+	    </sql>
+ 	</changeSet>
+</databaseChangeLog> 

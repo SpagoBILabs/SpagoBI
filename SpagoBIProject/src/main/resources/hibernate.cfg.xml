@@ -7,8 +7,8 @@
      <session-factory name="HibernateSessionFactoryMySQL"> 
 
     	<property name="hibernate.connection.datasource">java:/comp/env/jdbc/spagobi</property>
-<!-- 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property> -->
-                  <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property> 
+ 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+<!--                   <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>  -->
                <!-- 
         <property name="hibernate.dialect">org.hibernate.dialect.SQLServer2008Dialect</property>
         <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
