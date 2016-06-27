@@ -142,5 +142,13 @@ public interface IBIObjectParameterDAO extends ISpagoBIDao {
 	 * @param aSession
 	 */
 	public void eraseBIObjectParametersByObjectId(Integer biObjId, Session currSession) throws EMFUserError;
+	
+	/**
+	 * Loads all detail information for a BI Object Parameter identified by <code>objId</code> and its <code>objParLabel</code>. Return a wrapper object
+	 *
+	 * @return
+	 * @throws EMFUserError
+	 */
+	public BIObjectParameter loadBiObjParameterByObjIdAndLabel(Integer objId, String label) throws EMFUserError;
 
 }

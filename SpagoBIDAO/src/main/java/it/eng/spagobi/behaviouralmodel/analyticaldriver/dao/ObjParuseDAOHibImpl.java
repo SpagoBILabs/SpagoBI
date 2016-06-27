@@ -302,6 +302,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		toReturn.setPreCondition(aSbiObjParuse.getPreCondition());
 		toReturn.setPostCondition(aSbiObjParuse.getPostCondition());
 		toReturn.setLogicOperator(aSbiObjParuse.getLogicOperator());
+		toReturn.setObjParFatherUrlName(aSbiObjParuse.getId().getSbiObjParFather().getParurlNm());
 		return toReturn;
 	}
 

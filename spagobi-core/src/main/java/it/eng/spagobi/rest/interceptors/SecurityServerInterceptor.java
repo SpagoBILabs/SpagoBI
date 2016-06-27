@@ -209,7 +209,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		IEngUserProfile engProfile = getUserProfileFromSession();
 
 		if (engProfile != null) {
-			// verify if the profile stored in session is still valid
+			// verify if the profile stored in session is still valid . 
 			String userId = null;
 			try {
 				userId = getUserIdentifier();

@@ -6,6 +6,8 @@
 package it.eng.spagobi.analiticalmodel.document;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,12 +58,12 @@ public class AnalyticalModelDocumentManagementAPI {
 
 	private IBIObjectDAO documentDAO;
 	private IBIObjectParameterDAO documentParameterDAO;
+	private IObjParuseDAO documentParuseDAO;
+	private IObjParviewDAO documentParviewDAO;
 	private IObjMetacontentDAO documentMetadataPropertyDAO;
 	private IObjMetadataDAO metadataPropertyDAO;
 	private IObjMetacontentDAO metadataContentDAO;
 	private SubObjectDAOHibImpl subObjectDAO;
-	private IObjParuseDAO objParuseDAO;
-	private IObjParviewDAO objParviewDAO;
 
 	// default for document parameters
 	public static final Integer REQUIRED = 0;
@@ -80,6 +82,12 @@ public class AnalyticalModelDocumentManagementAPI {
 			documentParameterDAO = DAOFactory.getBIObjectParameterDAO();
 			documentParameterDAO.setUserProfile(userProfile);
 
+			documentParuseDAO = DAOFactory.getObjParuseDAO();
+			documentParuseDAO.setUserProfile(userProfile);
+
+			documentParviewDAO = DAOFactory.getObjParviewDAO();
+			documentParviewDAO.setUserProfile(userProfile);
+
 			documentMetadataPropertyDAO = DAOFactory.getObjMetacontentDAO();
 			documentMetadataPropertyDAO.setUserProfile(userProfile);
 
@@ -88,12 +96,6 @@ public class AnalyticalModelDocumentManagementAPI {
 
 			metadataContentDAO = DAOFactory.getObjMetacontentDAO();
 			metadataContentDAO.setUserProfile(userProfile);
-
-			objParuseDAO = DAOFactory.getObjParuseDAO();
-			objParuseDAO.setUserProfile(userProfile);
-
-			objParviewDAO = DAOFactory.getObjParviewDAO();
-			objParviewDAO.setUserProfile(userProfile);
 
 			subObjectDAO = new SubObjectDAOHibImpl();
 			subObjectDAO.setUserProfile(userProfile);
@@ -341,15 +343,15 @@ public class AnalyticalModelDocumentManagementAPI {
 	 * @param document
 	 *            The document id of the document to clone
 	 */
-	public void cloneDocument(Integer documentId) {
+	public BIObject cloneDocument(Integer documentId) {
 		logger.debug("IN");
 
 		Assert.assertNotNull(documentId, "Input parameter [documentId] cannot be null");
-
+		BIObject clonedDocument = null;
 		if (documentId != null) {
 			BIObject document = getDocument(documentId);
 			logger.debug("Cloning the document");
-			BIObject clonedDocument = document.clone();
+			clonedDocument = document.clone();
 
 			logger.debug("Cloning the template");
 			ObjTemplate clonedTemplate = document.getActiveTemplate();
@@ -375,15 +377,17 @@ public class AnalyticalModelDocumentManagementAPI {
 				// metadata
 				logger.debug("Coping metadata");
 				copyMetadata(document, clonedDocument);
-
+				LuceneIndexer.updateBiobjInIndex(clonedDocument, false);
 			} catch (Throwable t) {
 				logger.error("Impossible to update object [" + document.getLabel() + "]", t);
 				throw new SpagoBIRuntimeException("Impossible to update object [" + document.getLabel() + "]", t);
 			}
 
 			logger.debug("Document [" + document.getLabel() + "] succesfully cloned");
+
 		}
 
+		return clonedDocument;
 	}
 
 	private void updateClonedDocumentProperties(BIObject document) {
@@ -579,83 +583,60 @@ public class AnalyticalModelDocumentManagementAPI {
 
 			List<BIObjectParameter> parameters = sourceDocument.getBiObjectParameters();
 
+			// order parameters on priority value to mantein the same order of the original
+			Comparator<BIObjectParameter> comparator = new Comparator<BIObjectParameter>() {
+				@Override
+				public int compare(BIObjectParameter c1, BIObjectParameter c2) {
+					return c1.getPriority().compareTo(c2.getPriority());
+				}
+			};
+			Collections.sort(parameters, comparator); // use the comparator as much as u want
+
 			if (parameters != null && !parameters.isEmpty()) {
-
-				Map<String, Integer> previousUrlNametoIdObjParMap = new HashMap<String, Integer>();
-				Map<Integer, Integer> previousToNewBiObjParIdsMap = new HashMap<Integer, Integer>();
-
-				for (BIObjectParameter biObjParameter : parameters) {
-
-					Integer previousObjParId = biObjParameter.getId();
-					biObjParameter.setBiObjectID(destinationDocument.getId());
-					biObjParameter.setId(null);
+				// save the source parameter id for get its correlations and visibility roles
+				for (BIObjectParameter parameter : parameters) {
+					Integer sourceObjParId = parameter.getId();
+					parameter.setBiObjectID(destinationDocument.getId());
+					parameter.setId(null);
 					try {
-						Integer newObjParId = documentParameterDAO.insertBIObjectParameter(biObjParameter);
-						previousUrlNametoIdObjParMap.put(biObjParameter.getParameterUrlName(), previousObjParId);
-						previousToNewBiObjParIdsMap.put(previousObjParId, newObjParId);
-					} catch (Throwable t) {
-						throw new SpagoBIRuntimeException("Impossible to copy parameter [" + biObjParameter.getLabel() + "] from document ["
-								+ sourceDocumentLabel + "] to document [" + destinationDocumentLabel + "]", t);
-					}
-				}
-				logger.debug("Parameter copied, now copy dependencies");
+						documentParameterDAO.insertBIObjectParameter(parameter);
+						// insert all paruse for the parameter (correlation)
+						List<ObjParuse> paruses = documentParuseDAO.loadObjParuses(sourceObjParId);
+						for (ObjParuse paruse : paruses) {
+							// get the new objParId (just created)
+							BIObjectParameter newParUse = documentParameterDAO.loadBiObjParameterByObjIdAndLabel(destinationDocument.getId(),
+									parameter.getLabel());
+							paruse.setObjParId(newParUse.getId());
+							// get the new fatherObjParId (through the original father reference )
+							BIObjectParameter sourceFatherParUse = documentParameterDAO.loadBiObjParameterById(paruse.getObjParFatherId());
+							String sourceFatherParUseLabel = sourceFatherParUse.getLabel();
+							BIObjectParameter newParUseFather = documentParameterDAO.loadBiObjParameterByObjIdAndLabel(destinationDocument.getId(),
+									sourceFatherParUseLabel);
+							paruse.setObjParFatherId(newParUseFather.getId());
 
-				// for all obj parameters
-				for (BIObjectParameter biObjParameter : parameters) {
-					String urlName = biObjParameter.getParameterUrlName();
-					Integer previousObjParId = previousUrlNametoIdObjParMap.get(urlName);
-					// copy Paruse
-					try {
-						List objParuses = objParuseDAO.loadObjParuses(previousObjParId);
-						// for all obj paruses
-						for (Iterator iterator = objParuses.iterator(); iterator.hasNext();) {
-							ObjParuse objParuse = (ObjParuse) iterator.next();
-							Integer previousObjFatherParId = objParuse.getObjParFatherId();
-							Integer newObjParId = previousToNewBiObjParIdsMap.get(previousObjParId);
-							Integer newObjFatherParId = previousToNewBiObjParIdsMap.get(previousObjFatherParId);
-							// change from previous the ObjPar Reference and insert new
-							objParuse.setObjParId(newObjParId);
-							objParuse.setObjParFatherId(newObjFatherParId);
-							objParuseDAO.insertObjParuse(objParuse);
+							documentParuseDAO.insertObjParuse(paruse);
 						}
-
-					} catch (Throwable t) {
-						logger.error("Impossible to copy paruses [" + biObjParameter.getLabel() + "] from document [" + sourceDocumentLabel + "] to document ["
-								+ destinationDocumentLabel + "] of parameter " + biObjParameter.getLabel());
-						throw new SpagoBIRuntimeException("Impossible to copy paruses [" + biObjParameter.getLabel() + "] from document [" + sourceDocumentLabel
-								+ "] to document [" + destinationDocumentLabel + "] of parameter " + biObjParameter.getLabel(), t);
-					}
-				}
-
-				logger.debug("Parameter copied, now copy ParView");
-
-				// for all obj parameters
-				for (BIObjectParameter biObjParameter : parameters) {
-					String urlName = biObjParameter.getParameterUrlName();
-					Integer previousObjParId = previousUrlNametoIdObjParMap.get(urlName);
-					// copy Parview
-					try {
-						List objParviews = objParviewDAO.loadObjParviews(previousObjParId);
-						// for all obj parviews
-						for (Iterator iterator = objParviews.iterator(); iterator.hasNext();) {
-							ObjParview objParview = (ObjParview) iterator.next();
-							Integer previousObjFatherParId = objParview.getObjParFatherId();
-							Integer newObjParId = previousToNewBiObjParIdsMap.get(previousObjParId);
-							Integer newObjFatherParId = previousToNewBiObjParIdsMap.get(previousObjFatherParId);
-							// change from previous the ObjPar Reference and insert new
-							objParview.setObjParId(newObjParId);
-							objParview.setObjParFatherId(newObjFatherParId);
-							objParviewDAO.insertObjParview(objParview);
+						// insert all parview for the parameter (visibility)
+						List<ObjParview> parviews = documentParviewDAO.loadObjParviews(sourceObjParId);
+						for (ObjParview parview : parviews) {
+							// get the new objParId (just created)
+							BIObjectParameter newParView = documentParameterDAO.loadBiObjParameterByObjIdAndLabel(destinationDocument.getId(),
+									parameter.getLabel());
+							parview.setObjParId(newParView.getId());
+							// get the new fatherObjParId (through the original father reference )
+							BIObjectParameter sourceFatherParView = documentParameterDAO.loadBiObjParameterById(parview.getObjParFatherId());
+							String sourceFatherParViewLabel = sourceFatherParView.getLabel();
+							BIObjectParameter newParUseFather = documentParameterDAO.loadBiObjParameterByObjIdAndLabel(destinationDocument.getId(),
+									sourceFatherParViewLabel);
+							parview.setObjParFatherId(newParUseFather.getId());
+							parview.setObjParFatherUrlName(newParUseFather.getParameterUrlName());
+							documentParviewDAO.insertObjParview(parview);
 						}
-
 					} catch (Throwable t) {
-						logger.error("Impossible to copy parviews [" + biObjParameter.getLabel() + "] from document [" + sourceDocumentLabel + "] to document ["
-								+ destinationDocumentLabel + "] of parameter " + biObjParameter.getLabel());
-						throw new SpagoBIRuntimeException("Impossible to copy parviews [" + biObjParameter.getLabel() + "] from document ["
-								+ sourceDocumentLabel + "] to document [" + destinationDocumentLabel + "] of parameter " + biObjParameter.getLabel(), t);
+						throw new SpagoBIRuntimeException("Impossible to copy parameter [" + parameter.getLabel() + "] from document [" + sourceDocumentLabel
+								+ "] to document [" + destinationDocumentLabel + "]", t);
 					}
 				}
-
 			} else {
 				logger.warn("Document [" + sourceDocumentLabel + "] have no parameters");
 			}

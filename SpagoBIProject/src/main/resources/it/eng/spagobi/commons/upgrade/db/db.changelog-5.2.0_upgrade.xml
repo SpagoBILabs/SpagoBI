@@ -4,5 +4,4 @@
 	<changeSet author="aconese" labels="upgrade_5.2.0" id="tag_version_5.2.0_upgrade">
         <tagDatabase tag="version_5.2.0" />
     </changeSet>
-    
 </databaseChangeLog> 

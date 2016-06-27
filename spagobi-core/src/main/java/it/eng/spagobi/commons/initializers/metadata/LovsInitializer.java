@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -44,6 +45,8 @@ public class LovsInitializer extends SpagoBIInitializer {
 			for (SbiTenant tenant : tenants) {
 				init(config, hibernateSession, tenant);
 			}
+			
+			
 		} finally {
 			logger.debug("OUT");
 		}

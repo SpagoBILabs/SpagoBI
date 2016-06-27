@@ -90,6 +90,15 @@
         <property name="temporalFlag" type="short">
             <column name="temporal_flag" not-null="true"/>
         </property>
+        <property name="valueSelection" type="string">
+			<column name="value_selection" length="20" />
+		</property>
+<!-- 		<property name="selectedLayer" type="string"> -->
+<!-- 			<column name="selected_layer" length="100" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="selectedLayerProp" type="string"> -->
+<!-- 			<column name="selected_layer_prop" length="40" /> -->
+<!-- 		</property>  -->
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
 	<filter-def name="tenantFilter">

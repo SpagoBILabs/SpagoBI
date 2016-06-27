@@ -26,6 +26,9 @@
         <dependent-module archiveName="SpagoBIOAuth2SecurityProvider-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIOAuth2SecurityProvider/SpagoBIOAuth2SecurityProvider">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="SpagoBILdapSecurityProvider-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBILdapSecurityProvider/SpagoBILdapSecurityProvider">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="SpagoBIUtils-5.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
             <dependency-type>uses</dependency-type>
         </dependent-module>

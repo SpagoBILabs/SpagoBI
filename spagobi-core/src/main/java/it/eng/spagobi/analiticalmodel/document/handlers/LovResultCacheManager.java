@@ -6,15 +6,18 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.cache.CacheInterface;
 import it.eng.spagobi.utilities.cache.CacheSingleton;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -128,5 +131,70 @@ public class LovResultCacheManager {
 		logger.debug("OUT: returning [" + toReturn + "]");
 		return toReturn;
 	}
+	
+	/*
+	 * GET LOV RESULT FROM DOCUMENT_URL_MANAGER
+	 */
+
+	public String getLovResultDum(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject object,
+			boolean retrieveIfNotcached, Locale locale) throws Exception {
+		logger.debug("IN");
+
+		String lovResult = null;
+		
+		
+		if (lovDefinition instanceof QueryDetail) {
+			// queries are cached
+			String cacheKey = getCacheKeyDum(profile, lovDefinition, dependencies, object);
+			logger.info("Cache key : " + cacheKey);
+			if (cache.contains(cacheKey)) {
+				logger.info("Retrieving lov result from cache...");
+				// lov provider is present, so read the DATA in cache
+				lovResult = cache.get(cacheKey);
+				logger.debug(lovResult);
+			} else if (retrieveIfNotcached) {
+				logger.info("Executing lov to get result ...");
+				lovResult = lovDefinition.getLovResult(profile, dependencies, object.getBiObjectParameters(), locale);
+				logger.debug(lovResult);
+				// insert the data in cache
+				if (lovResult != null)
+					cache.put(cacheKey, lovResult);
+			}
+		} else {
+			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
+			logger.info("Executing lov (NOT QUERY TYPE) to get result ...");
+			lovResult = lovDefinition.getLovResult(profile, dependencies, object.getBiObjectParameters(), locale);
+			logger.debug(lovResult);
+		}
+
+		logger.debug("OUT");
+		return lovResult;
+	}
+
+	private String getCacheKeyDum(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject objetc) throws Exception {
+		logger.debug("IN");
+		String toReturn = null;
+		String userID = (String) ((UserProfile) profile).getUserId();
+		if (lovDefinition instanceof QueryDetail) {
+			QueryDetail queryDetail = (QueryDetail) lovDefinition;
+			QueryDetail clone = queryDetail.clone();
+			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, objetc.getBiObjectParameters()));
+			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(objetc.getBiObjectParameters());
+			String statement = queryDetail.getWrappedStatement(dependencies, objetc.getBiObjectParameters());
+			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+			if (parameters != null && !parameters.isEmpty()) {
+				Map<String, String> types = queryDetail.getParametersNameToTypeMap(objetc.getBiObjectParameters());
+				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
+			}
+			clone.setQueryDefinition(statement);
+			toReturn = userID + ";" + clone.toXML();
+
+		} else {
+			toReturn = userID + ";" + lovDefinition.toXML();
+		}
+		logger.debug("OUT: returning [" + toReturn + "]");
+		return toReturn;
+	}
+
 
 }

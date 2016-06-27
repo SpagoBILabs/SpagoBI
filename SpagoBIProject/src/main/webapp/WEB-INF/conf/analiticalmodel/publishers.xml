@@ -546,6 +546,21 @@
       		</RESOURCES>
    	 	</RENDERING>
   	</PUBLISHER>
+  	
+  	<!-- ANGULAR DOCUMENT BROWSER  -->
+  	<PUBLISHER name="detailBIObjectLoop">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+			<PARAMETER name="ACTION_NAME" type="ABSOLUTE" scope="" value="DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION" />         	     
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+			<PARAMETER name="ACTION_NAME" type="ABSOLUTE" scope="" value="DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION" /> 
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
   	<PUBLISHER name="detailBIObjectSaveLoop">
     	<RENDERING channel="PORTLET" mode="" type="LOOP">
       		<RESOURCES>
@@ -718,6 +733,22 @@
       </RENDERING>
    </PUBLISHER>
   	
+  	<!-- ANGULAR DOCUMENT BROWSER -->
+  	<PUBLISHER name="UserDocumentBrowserAngularPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES> 				
+             <ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/documentbrowser/documentBrowserManagement.jsp"/>
+        	<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>         	
+            <ITEM prog="0" resource="/WEB-INF/jsp/tools/documentbrowser/documentBrowserManagement.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	
 	<PUBLISHER name="UserDocumentBrowserDefaultPublisher">
 		<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
 			<RESOURCES>
@@ -763,14 +794,33 @@
   	<PUBLISHER name="ExecuteDocumentPublisher">
     	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
       		<RESOURCES>
-        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/analiticalmodel/execution/documentExecution.jsp"/>
+<!--         		<ITEM mode="VIEW" resource="/WEB-INF/jsp/analiticalmodel/execution/documentExecution.jsp"/> -->
         		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/documentexecution/documentExecutionMaster.jsp"/> 
       		</RESOURCES>
     	</RENDERING>
     	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
       		<RESOURCES>
-        		<ITEM prog="0" resource="/WEB-INF/jsp/analiticalmodel/execution/documentExecution.jsp"/>
+<!--         		<ITEM prog="0" resource="/WEB-INF/jsp/analiticalmodel/execution/documentExecution.jsp"/> -->
+        		<ITEM prog="0" resource="/WEB-INF/jsp/tools/documentexecution/documentExecutionMaster.jsp"/> 
       		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<!-- ANGULAR DOCUMENT DETAIL -->
+  	<PUBLISHER name="ExecuteDocumentAngularPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        	<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+<!--       		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp"/>  -->
+      		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/documentexecution/documentExecutionMaster.jsp"/> 
+      	</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+<!--             <ITEM prog="0" resource="/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp"/> -->
+            <ITEM prog="0" resource="/WEB-INF/jsp/tools/documentexecution/documentExecutionMaster.jsp"/>
+   			</RESOURCES>
     	</RENDERING>
   	</PUBLISHER>
   	

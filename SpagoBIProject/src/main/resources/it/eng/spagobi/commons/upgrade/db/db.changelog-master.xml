@@ -48,9 +48,10 @@
 	<property name="singleVarChar.type" value="BOOL" dbms="postgresql"/>
 	
 	<!-- Include files to run -->
-	<include file="./db.changelog-5.2.0_create_spagobi.xml"/>
-	<include file="./db.changelog-5.2.0_create_quartz.xml"/>
-	<include file="./db.changelog-5.2.0_create_social.xml"/>
-	<include file="./db.changelog-5.2.0_upgrade.xml" />
+	<include file="./db.changelog-5.3.0_create_spagobi.xml"/>
+	<include file="./db.changelog-5.3.0_create_quartz.xml"/>
+	<include file="./db.changelog-5.3.0_create_social.xml"/>
+ 	<include file="./db.changelog-5.2.0_upgrade.xml" /> 
+	<include file="./db.changelog-5.3.0_upgrade.xml" />
 	 
 </databaseChangeLog> 

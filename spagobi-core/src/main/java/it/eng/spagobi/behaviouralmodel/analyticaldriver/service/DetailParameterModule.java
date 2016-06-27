@@ -688,11 +688,12 @@ public class DetailParameterModule extends AbstractHttpModule {
 		String label = (String) request.getAttribute("paruseLabel");
 		String selectionType = (String) request.getAttribute("selectionType");
 		String manInFlag = (String) request.getAttribute("valueSelection");
+		String valueSelection = (String) request.getAttribute("valueSelection");
 		String maximizerEnabledFlag = (String) request.getAttribute("maximizerEnabled");
 		paruse.setName(name);
 		paruse.setDescription(description);
 		paruse.setLabel(label);
-
+		paruse.setValueSelection(valueSelection);
 		if ("man_in".equals(manInFlag)) {
 			paruse.setManualInput(Integer.valueOf("1"));
 			paruse.setSelectionType(null);
@@ -808,7 +809,10 @@ public class DetailParameterModule extends AbstractHttpModule {
 		String name = (String) request.getAttribute("name");
 		String isFunctional = (String) request.getAttribute("isFunctional");
 		String isTemporal = (String) request.getAttribute("isTemporal");
-
+		String valueSelection = (String) request.getAttribute("valueSelection");
+		String selectedLayer = (String) request.getAttribute("mapInputSelectedLayer");
+		String selectedLayerProp = (String) request.getAttribute("mapInputSelectedLayerProp");
+		
 		Parameter parameter = new Parameter();
 		parameter.setId(id);
 		parameter.setDescription(description);
@@ -825,6 +829,9 @@ public class DetailParameterModule extends AbstractHttpModule {
 		parameter.setMask(mask);
 		parameter.setModality(modality);
 		parameter.setName(name);
+		parameter.setValueSelection(valueSelection);
+		parameter.setSelectedLayer(selectedLayer);
+		parameter.setSelectedLayerProp(selectedLayerProp);
 		if (isFunctional != null)
 			parameter.setIsFunctional(true);
 		else

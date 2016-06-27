@@ -6,12 +6,14 @@
 
 package it.eng.spagobi.api;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.filters.FilterIOManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,6 +64,16 @@ public class AbstractSpagoBIResource extends AbstractRestService {
 
 	public UserProfile getUserProfile() {
 		return UserProfileManager.getProfile();
+	}
+	
+	
+	public UserProfile getUserProfileSession() {
+		
+		FilterIOManager ioManager = new FilterIOManager(request, null);
+		ioManager.initConetxtManager();
+		IEngUserProfile engProfile = (IEngUserProfile) ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);
+		
+		return (UserProfile) engProfile;
 	}
 
 }
