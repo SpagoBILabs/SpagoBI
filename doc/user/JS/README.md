@@ -1,6 +1,6 @@
 # Javascript SpagoBI API
 
-SpagoBI SDK contains a javascript API that helps users to embed parts of SpagoBI Suite inside a web page or to retrieve informations about datasets and documents.
+SpagoBI SDK contains a javascript API that helps users to embed parts of SpagoBI Suite inside a web page or to retrieve informations about datasets and analytical documents: pay attention to the fact that those datasets and documents should be already existing an running on SpagoBI Server.
 
 ## Same-origin policy
 Because of this policy web browsers don't let a script in a web page to retrieve data from a url if this url has a different origin respect of the web page. The origin is different if the URI schema, host name or port are different. For more informations about the same-origin policy please refer to https://en.wikipedia.org/wiki/Same-origin_policy.
@@ -116,7 +116,7 @@ Note that Sbi.sdk.api definition is defined in both api.js and api_jsonp.js.In 
 
 <a name="Sbi.sdk.api.getDocumentHtml"></a>
 ##### api.getDocumentHtml(config)
-It returns the HTML code of an iFrame containing document visualization. In particular config is an object that must contain at least one between documentId and documentLabel.It can also have (optional) parameters (an object containing values of document parameters), executionRole, displayToolbar and iframe, an object containing the style, height and width of the iframe where the document will be rendered (height and width can also be put outside the iframe object).
+It returns the HTML code of an iFrame containing the visualization of an existing analytical document. In particular config is an object that must contain at least one between documentId and documentLabel.It can also have (optional) parameters (an object containing values of document parameters), executionRole, displayToolbar and iframe, an object containing the style, height and width of the iframe where the document will be rendered (height and width can also be put outside the iframe object).
 
 **Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
 
@@ -165,7 +165,7 @@ execTest8 = function() {	Sbi.sdk.api.injectWorksheet({		datasetLabel: 'DS_DEMO
 ```
 <a name="Sbi.sdk.api.getWorksheetHtml"></a>
 ##### api.getWorksheetHtml(config)
-It returns the HTML code of an iFrame containing worksheet visualization.config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet and qbe will be rendered (height and width can also be put outside the iframe object).
+It returns the HTML code of an iFrame containing worksheet visualization, permitting the user to design a Worksheet document starting from an existing dataset.config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet designer will be rendered (height and width can also be put outside the iframe object).
 
 **Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
 
@@ -173,7 +173,7 @@ It returns the HTML code of an iFrame containing worksheet visualization.config
 | --- | --- | --- |
 | config | <code>Object</code> | the configuration |
 | config.target | <code>String</code> | the target |
-| config.documentLabel | <code>String</code> | the document label,  must contain at least one between documentId and documentLabel |
+| config.datasetLabel | <code>String</code> | the label of the existing dataset, to be used within worksheet designer |
 | [config.height] | <code>String</code> | the height of iframe, can be put inside iframe object |
 | [config.width] | <code>String</code> | the width of iframe, can be put inside iframe object |
 | config.iframe | <code>Object</code> | the style object of iframe |
@@ -183,7 +183,7 @@ It returns the HTML code of an iFrame containing worksheet visualization.config
 
 <a name="Sbi.sdk.api.injectWorksheet"></a>
 ##### api.injectWorksheet(config)
-It calls [getWorksheetHtml](#Sbi.sdk.api.getWorksheetHtml) and inject the generated iFrame inside a specified tag. If the target tag is not specified in config variable, it chooses the <body> tag as defaultconfig is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet and qbe will be rendered (height and width can also be put outside the iframe object).
+It calls [getWorksheetHtml](#Sbi.sdk.api.getWorksheetHtml) and inject the generated iFrame inside a specified tag. If the target tag is not specified in config variable, it chooses the <body> tag as default.config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet designer will be rendered (height and width can also be put outside the iframe object).
 
 **Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
 
@@ -191,7 +191,7 @@ It calls [getWorksheetHtml](#Sbi.sdk.api.getWorksheetHtml) and inject the genera
 | --- | --- | --- | --- |
 | config | <code>Object</code> |  | the configuration |
 | [config.target] | <code>String</code> | <code>&quot;&lt;body&gt;&quot;</code> | the target |
-| config.documentLabel | <code>String</code> |  | the document label,  must contain at least one between documentId and documentLabel |
+| config.datasetLabel | <code>String</code> |  | the label of the existing dataset, to be used within worksheet designer |
 | [config.height] | <code>String</code> |  | the height of iframe, can be put inside iframe object |
 | [config.width] | <code>String</code> |  | the width of iframe, can be put inside iframe object |
 | config.iframe | <code>Object</code> |  | the style object of iframe |
@@ -201,7 +201,7 @@ It calls [getWorksheetHtml](#Sbi.sdk.api.getWorksheetHtml) and inject the genera
 
 <a name="Sbi.sdk.api.getQbeHtml"></a>
 ##### api.getQbeHtml(config)
-It returns the HTML code of an iFrame containing qbe visualization.config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet and qbe will be rendered (height and width can also be put outside the iframe object).
+It returns the HTML code of an iFrame containing Qbe designer visualization, permitting the user to design a query on top of an existing dataset.config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the Qbe designer will be rendered (height and width can also be put outside the iframe object).
 
 **Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
 
@@ -209,7 +209,7 @@ It returns the HTML code of an iFrame containing qbe visualization.config is an
 | --- | --- | --- |
 | config | <code>Object</code> | the configuration |
 | config.target | <code>String</code> | the target |
-| config.documentLabel | <code>String</code> | the document label,  must contain at least one between documentId and documentLabel |
+| config.datasetLabel | <code>String</code> | the label of the existing dataset, the starting point for the Qbe designer |
 | [config.height] | <code>String</code> | the height of iframe, can be put inside iframe object |
 | [config.width] | <code>String</code> | the width of iframe, can be put inside iframe object |
 | config.iframe | <code>Object</code> | the style object of iframe |
@@ -219,7 +219,7 @@ It returns the HTML code of an iFrame containing qbe visualization.config is an
 
 <a name="Sbi.sdk.api.injectQbe"></a>
 ##### api.injectQbe(config)
-It calls [getQbeHtml](#Sbi.sdk.api.getQbeHtml) and inject the generated iFrame inside a specified tag. If the target tag is not specified in config variable, it chooses the <body> tag as default.config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet and qbe will be rendered (height and width can also be put outside the iframe object).
+It calls [getQbeHtml](#Sbi.sdk.api.getQbeHtml) and inject the generated iFrame inside a specified tag. If the target tag is not specified in config variable, it chooses the <body> tag as default.config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the Qbe designer will be rendered (height and width can also be put outside the iframe object).
 
 **Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
 
@@ -227,7 +227,7 @@ It calls [getQbeHtml](#Sbi.sdk.api.getQbeHtml) and inject the generated iFrame i
 | --- | --- | --- | --- |
 | config | <code>Object</code> |  | the configuration |
 | [config.target] | <code>String</code> | <code>&quot;&lt;body&gt;&quot;</code> | the target |
-| config.documentLabel | <code>String</code> |  | the document label,  must contain at least one between documentId and documentLabel |
+| config.datasetLabel | <code>String</code> |  | the label of the existing dataset, the starting point for the Qbe designer |
 | [config.height] | <code>String</code> |  | the height of iframe, can be put inside iframe object |
 | [config.width] | <code>String</code> |  | the width of iframe, can be put inside iframe object |
 | config.iframe | <code>Object</code> |  | the style object of iframe |
@@ -241,7 +241,7 @@ execTest9 = function() {		Sbi.sdk.api.injectQbe({			datasetLabel: 'DS_DEMO_51_
 ```
 <a name="Sbi.sdk.api.getDataSetList"></a>
 ##### api.getDataSetList(config)
-It returns the list of datasets
+It returns the list of existing datasets that are visible to the user.
 
 **Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
 
