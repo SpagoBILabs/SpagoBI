@@ -227,6 +227,42 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		return rb.build();
 	}
 
+	@DELETE
+	@Path("/{label}/template")
+	public Response deleteTemplate(@PathParam("label") String label, @QueryParam("id") Integer id) {
+		BIObject document = documentManager.getDocument(label);
+		if (document == null)
+			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+
+		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
+			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to delete template of document with label [" + label
+					+ "]");
+
+		ObjTemplate template = null;
+		if (id == null) {
+			template = document.getActiveTemplate();
+		} else {
+			try {
+				template = DAOFactory.getObjTemplateDAO().loadBIObjectTemplate(id);
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Error while retrieving template", e);
+			}
+		}
+
+		if (template == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+
+		id = template.getId();
+		try {
+			DAOFactory.getObjTemplateDAO().deleteBIObjectTemplate(id);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while deleting template", e);
+		}
+
+		return Response.ok().build();
+	}
+
 	// The file has to be put in a field called "file"
 	@POST
 	@Path("/{label}/template")
