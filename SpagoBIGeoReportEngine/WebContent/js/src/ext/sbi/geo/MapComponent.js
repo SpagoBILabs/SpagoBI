@@ -460,7 +460,7 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
 						if(c.CLASS_NAME == 'Sbi.geo.control.InlineToolbar') {
 							c.mainPanel = this.mainPanel;
 						}
-						if(this.mainPanel.analysisConf.staticIntervals) {
+						if(this.mainPanel.analysisConf.staticIntervals != undefined) {
 							c.disableLegendChangeStyle = true;
 						}
 						this.map.addControl( c );

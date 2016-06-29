@@ -266,7 +266,7 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
 		        
 		        var classifier = new Sbi.geo.stat.Classifier({distribution: distribution, classificationOptions: classificationOptions});
 		        
-		        if(this.staticIntervals) {
+		        if(this.staticIntervals){
 		        	this.classification = classifier.classify(
 		        			Sbi.geo.stat.Classifier.CLASSIFY_BY_STATIC_INTERVALS,
 		        			this.numClasses,

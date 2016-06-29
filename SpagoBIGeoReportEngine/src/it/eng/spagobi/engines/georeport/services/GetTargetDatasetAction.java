@@ -69,7 +69,7 @@ public class GetTargetDatasetAction extends AbstractBaseServlet {
 			// DataSet
 			dataSet = engineInstance.getDataSet();
 			dataSet.setParamsMap(engineInstance.getEnv());
-			dataSet.setUserProfileAttributes(profileAttributes);
+			dataSet.setUserProfileAttributes(profileAttributes); 
 			dataSet.loadData();
 
 			// Datastore

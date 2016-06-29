@@ -209,7 +209,7 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
         titleElement.innerHTML = " <\p> <h3>"+LN('sbi.geo.legendpanel.title')+"</h3><\p> <\p>";
         this.legendContentElement.appendChild(titleElement);
         
-        if(!this.disableLegendChangeStyle || this.disableLegendChangeStyle == false) {
+        if(!this.disableLegendChangeStyle || this.disableLegendChangeStyle == false){
         	var legendEditButton = document.createElement("label");
         	OpenLayers.Element.addClass(legendEditButton, "labelSpan olButton");
         	legendEditButton.id = "LegendEditButton";

@@ -309,8 +309,7 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
         	
 	        for (var i = 0; i < intervals.length; i++) {
 	        	var interval = intervals[i];
-	            if (dataPointsItem.getValue() >= interval.from 
-	            		&& dataPointsItem.getValue() < interval.to) {
+	            if (dataPointsItem.getValue() >= interval.from && dataPointsItem.getValue() < interval.to) {
 	
 	            	binCount[i] = binCount[i] + 1;
 	                binDataPoints[i].push(dataPointsItem);

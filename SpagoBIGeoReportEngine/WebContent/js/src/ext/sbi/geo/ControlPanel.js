@@ -1247,7 +1247,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 
 		var thematizerOptions = {};
 		
-		if(formState.staticIntervals) {
+		if(formState.staticIntervals){
 			thematizerOptions.staticIntervals = formState.staticIntervals;
 		}
 		
