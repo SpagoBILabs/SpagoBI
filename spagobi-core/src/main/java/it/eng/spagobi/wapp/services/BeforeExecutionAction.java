@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.wapp.services;
 
@@ -10,6 +10,8 @@ import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -17,18 +19,18 @@ import it.eng.spagobi.wapp.bo.Menu;
 
 import org.apache.log4j.Logger;
 
-public class BeforeExecutionAction extends AbstractHttpAction{
+public class BeforeExecutionAction extends AbstractHttpAction {
 
 	static private Logger logger = Logger.getLogger(BeforeExecutionAction.class);
-	
-	public void service(SourceBean request, SourceBean response)
-			throws Exception {
+
+	@Override
+	public void service(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		try {
 			String menuId = (String) request.getAttribute("MENU_ID");
-			if (menuId!=null) {
-			
-				Menu menu=DAOFactory.getMenuDAO().loadMenuByID(Integer.valueOf(menuId));
+			if (menuId != null) {
+
+				Menu menu = DAOFactory.getMenuDAO().loadMenuByID(Integer.valueOf(menuId));
 				String parameters = menu.getObjParameters();
 				logger.debug("using parameters " + parameters);
 				String labelSubObject = menu.getSubObjName();
@@ -37,24 +39,31 @@ public class BeforeExecutionAction extends AbstractHttpAction{
 				logger.debug("using snapshot name " + snapName);
 				Integer snapHistory = menu.getSnapshotHistory();
 				logger.debug("using snapshot history " + snapHistory);
-		        boolean displayToolbar = !menu.getHideToolbar();
-		        boolean displaySliders = !menu.getHideSliders();
-		        // set into request all information for invoking ExecuteBIObjectModule.pageCreationHandler on loop call
-				response.setAttribute(ObjectsTreeConstants.OBJECT_ID, menu.getObjId().toString());
+				boolean displayToolbar = !menu.getHideToolbar();
+				boolean displaySliders = !menu.getHideSliders();
+				// set into request all information for invoking ExecuteBIObjectModule.pageCreationHandler on loop call
+
+				if (menu.getObjId() != null) {
+					IBIObjectDAO biObjectDao = DAOFactory.getBIObjectDAO();
+					BIObject obj = biObjectDao.loadBIObjectById(menu.getObjId());
+					response.setAttribute(ObjectsTreeConstants.OBJECT_ID, obj.getId());
+					response.setAttribute(ObjectsTreeConstants.OBJECT_LABEL, obj.getLabel());
+					response.setAttribute("OBJECT_NAME", obj.getName());
+				}
 				response.setAttribute(SpagoBIConstants.TOOLBAR_VISIBLE, new Boolean(displayToolbar).toString());
 				response.setAttribute(SpagoBIConstants.SLIDERS_VISIBLE, new Boolean(displaySliders).toString());
-		        if (parameters!= null && !parameters.trim().equalsIgnoreCase("")) {
-		        	response.setAttribute(ObjectsTreeConstants.PARAMETERS, parameters);
-		        }
-		        if (labelSubObject != null && !labelSubObject.trim().equalsIgnoreCase("")) {
-		        	response.setAttribute(SpagoBIConstants.SUBOBJECT_NAME, labelSubObject);
-		        }
-		        if (snapName != null && !snapName.trim().equalsIgnoreCase("")) {
-		        	response.setAttribute(SpagoBIConstants.SNAPSHOT_NAME, snapName);
-		        }
-		        if (snapHistory != null) {
-		        	response.setAttribute(SpagoBIConstants.SNAPSHOT_HISTORY_NUMBER, snapHistory.toString());
-		        }
+				if (parameters != null && !parameters.trim().equalsIgnoreCase("")) {
+					response.setAttribute(ObjectsTreeConstants.PARAMETERS, parameters);
+				}
+				if (labelSubObject != null && !labelSubObject.trim().equalsIgnoreCase("")) {
+					response.setAttribute(SpagoBIConstants.SUBOBJECT_NAME, labelSubObject);
+				}
+				if (snapName != null && !snapName.trim().equalsIgnoreCase("")) {
+					response.setAttribute(SpagoBIConstants.SNAPSHOT_NAME, snapName);
+				}
+				if (snapHistory != null) {
+					response.setAttribute(SpagoBIConstants.SNAPSHOT_HISTORY_NUMBER, snapHistory.toString());
+				}
 			} else {
 				throw new Exception("Menu identifier not found on request");
 			}
