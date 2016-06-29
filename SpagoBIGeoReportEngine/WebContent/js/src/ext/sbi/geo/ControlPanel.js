@@ -1246,7 +1246,11 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		var formState = Ext.apply({}, analysisConf || {});
 
 		var thematizerOptions = {};
-
+		
+		if(formState.staticIntervals) {
+			thematizerOptions.staticIntervals = formState.staticIntervals;
+		}
+		
 		if(this.mapComponnet.activeThematizerName === "choropleth") {
 			formState.method = formState.method || 'CLASSIFY_BY_QUANTILS';
 
@@ -1285,12 +1289,20 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		Sbi.debug("[ControlPanel.setAnalysisConf]: IN");
 
 		var thematizerOptions = this.getThematizerOptions(analysisConf);
-		this.mapComponnet.getActiveThematizer().thematize(thematizerOptions);
+		if (thematizerOptions.staticIntervals) {
+			var tempActiveThematizerName = this.mapComponnet.activeThematizerName;
+			this.mapComponnet.activeThematizerName = 'choropleth';
+			
+			var thematizer = this.mapComponnet.getActiveThematizer();
+			this.mapComponnet.activeThematizerName = tempActiveThematizerName;
+			
+			thematizer.thematize(thematizerOptions);
+		} else {
+			this.mapComponnet.getActiveThematizer().thematize(thematizerOptions);
+		}
 
 		Sbi.debug("[ControlPanel.setAnalysisConf]: OUT");
 	}
-
-
 
 	, onStoreLoad: function(measureCatalogue, options, store, meta) {
 		Sbi.trace("[ControlPanel.onStoreLoad]: IN");

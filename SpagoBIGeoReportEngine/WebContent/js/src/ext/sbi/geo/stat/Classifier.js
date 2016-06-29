@@ -24,6 +24,7 @@ Sbi.geo.stat.Classifier = function(config) {
 Sbi.geo.stat.Classifier.CLASSIFY_WITH_BOUNDS = 0;
 Sbi.geo.stat.Classifier.CLASSIFY_BY_EQUAL_INTERVALS = 1;
 Sbi.geo.stat.Classifier.CLASSIFY_BY_QUANTILS =  2;
+Sbi.geo.stat.Classifier.CLASSIFY_BY_STATIC_INTERVALS = 3;
 
 /**
  * @class Sbi.geo.stat.Classifier
@@ -179,6 +180,9 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
         case Sbi.geo.stat.Classifier.CLASSIFY_BY_QUANTILS :
             classification = this.classifyByQuantils(nbBins);
             break;
+        case Sbi.geo.stat.Classifier.CLASSIFY_BY_STATIC_INTERVALS :
+        	classification = this.classifyByStaticIntervals(bounds);
+        	break;
         default:
            alert("Unsupported or invalid classification method [" + method + "]");
         }
@@ -273,6 +277,93 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
 //        return this.classifyWithBounds(bounds);
         return this.classifyQuantilsWithBounds(bounds);
         
+    }
+    
+    , classifyByStaticIntervals: function(intervals) {
+    	Sbi.trace("[Classifier.classifyByStaticIntervals] : IN");
+    	
+    	var values = this.distribution.getValues();
+    	values.sort(function(a,b) {a = a || 0; b = b || 0; return a-b;});
+    	
+    	var bins = [];
+        var binCount = [];
+        var binDataPoints = [];
+        var binIstancesForCoord = [];
+        var sortedDataPoints = [];
+        
+        for (var i = 0; i < this.distribution.getSize(); i++) {
+            sortedDataPoints.push(this.distribution.getDataPointAt(i));
+        }
+        
+        sortedDataPoints.sort(function(a,b) {return a.getValue() - b.getValue();});
+    	
+        for (var i = 0; i < intervals.length; i++) {
+            binCount[i] = 0;
+            binDataPoints[i] = [];
+            binIstancesForCoord[i] = [];
+        }
+        
+        for(var j = 0; j < sortedDataPoints.length; j++) {
+        	
+        	var dataPointsItem = sortedDataPoints[j];
+        	
+	        for (var i = 0; i < intervals.length; i++) {
+	        	var interval = intervals[i];
+	            if (dataPointsItem.getValue() >= interval.from 
+	            		&& dataPointsItem.getValue() < interval.to) {
+	
+	            	binCount[i] = binCount[i] + 1;
+	                binDataPoints[i].push(dataPointsItem);
+	                    
+	                //defines total number of records for coordinates and bin (weight)
+	                var added = false;         	
+	            	var elem = binIstancesForCoord[i];
+	            	if (elem.length > 0){  
+	            		for (var e = 0; e < elem.length; e++){
+	            			// if bin contains already some elements, updates the counter for the coordinate if exists otherwise adds the new one (added=false) (*)
+	            			if (elem[e].coord == dataPointsItem.coordinates[0]){
+	                		  elem[e].count = (elem[e].count+1);
+	                		  added = true;
+	            			}
+	            		}
+	            		if (!added){
+	            			//adds the new coordinate counter into the bin (*)
+	            			var newEl = {};
+	                  		newEl.coord = dataPointsItem.coordinates[0];
+	                  		newEl.count = 1;
+	                  		binIstancesForCoord[i].push(newEl);
+	            		}
+	            	 } else {
+	            		  //first element for the bin
+	            		var newEl = {};
+	              		newEl.coord = dataPointsItem.coordinates[0];
+	              		newEl.count = 1;
+	              		binIstancesForCoord[i].push(newEl);
+	            	 }
+	                
+	                break;
+	            }
+	        }
+        }
+        
+        var counterForQuantils = this.defineBinOnOccNumber(binIstancesForCoord);
+        
+        var classifiedDataPoint = 0;
+        for (var i = 0; i < intervals.length; i++) {
+        	
+        	bins[i] = new Sbi.geo.stat.Bin({
+        		nbVal: binCount[i]
+        		, dataPoints: binDataPoints[i]
+        		, counterForQuantils: counterForQuantils || []
+        		, lowerBound: intervals[i].from
+        		, upperBound: intervals[i].to
+        		, isLast: i == (intervals.length - 1)
+        	});
+        	classifiedDataPoint += binDataPoints[i].length;
+            bins[i].label = this.labelGenerator(bins[i], i, intervals.length);
+        }
+        
+        return new Sbi.geo.stat.Classification(bins);
     }
     
     , classifyWithBounds: function(bounds) {
@@ -557,4 +648,3 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
 
 
 });
-

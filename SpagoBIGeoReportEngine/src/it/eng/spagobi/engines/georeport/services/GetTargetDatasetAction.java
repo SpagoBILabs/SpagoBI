@@ -7,9 +7,11 @@
 package it.eng.spagobi.engines.georeport.services;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -23,6 +25,7 @@ import it.eng.spagobi.utilities.service.AbstractBaseServlet;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -55,16 +58,18 @@ public class GetTargetDatasetAction extends AbstractBaseServlet {
 
 		IDataSet dataSet;
 		IDataStore dataStore;
-		IMetaData dataStoreMeta;
 
 		logger.debug("IN");
 
 		try {
 			engineInstance = (GeoReportEngineInstance) servletIOManager.getHttpSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) engineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 
 			// DataSet
 			dataSet = engineInstance.getDataSet();
 			dataSet.setParamsMap(engineInstance.getEnv());
+			dataSet.setUserProfileAttributes(profileAttributes);
 			dataSet.loadData();
 
 			// Datastore

@@ -265,12 +265,22 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
 		        };
 		        
 		        var classifier = new Sbi.geo.stat.Classifier({distribution: distribution, classificationOptions: classificationOptions});
-		        this.classification = classifier.classify(
-		            this.method,
-		            this.numClasses,
-		            null
-		        );
-		        this.createColorInterpolation();
+		        
+		        if(this.staticIntervals) {
+		        	this.classification = classifier.classify(
+		        			Sbi.geo.stat.Classifier.CLASSIFY_BY_STATIC_INTERVALS,
+		        			this.numClasses,
+		        			this.staticIntervals
+		        	);
+		        	this.createColorInterpolationFromStaticConf();
+		        } else {
+		        	this.classification = classifier.classify(
+		        			this.method,
+		        			this.numClasses,
+		        			null
+		        	);
+		        	this.createColorInterpolation();
+		        }
     	} else {
     		Sbi.trace("[ChoroplethThematizer.classify] : classification not performed because the store is not ready");
     	}
@@ -354,7 +364,6 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
         Sbi.trace("[ChoroplethThematizer.updateOptions] : OUT");
     }  
 
-
     /**
      * @method
      * 
@@ -367,6 +376,26 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
         	Sbi.geo.utils.ColorRgb.getColorsArrayByRgbInterpolation(
                 initialColors[0], initialColors[1], numColors
             );
+    }
+    
+    /**
+     * @method
+     * 
+     * Generates color interpolation from template static intervals
+     */
+    , createColorInterpolationFromStaticConf: function() {
+    	var resultColors = [];
+    	var conf = this.staticIntervals;
+    	for(var i = 0; i < conf.length; i++) {
+    		var confItem = conf[i];
+    		
+    		var colorRgb = new Sbi.geo.utils.ColorRgb();
+    		colorRgb.setFromHex(confItem.color);
+    		
+    		resultColors.push(colorRgb);
+    	}
+    	
+    	this.colorInterpolation = resultColors;
     }
 
     /**
