@@ -59,10 +59,10 @@ public class CubeUtilities {
 	public static Member getMember(Cube cube, String memberUniqueName) throws OlapException {
 		Hierarchy hierarchy = null;
 		NamedList<Hierarchy> hierarchies = cube.getHierarchies();
-		String t = memberUniqueName.substring(1, memberUniqueName.indexOf("]"));
+
 		for (int i = 0; i < hierarchies.size(); i++) {
-			String hName = hierarchies.get(i).getName();
-			if (hName.equals(t)) {
+			String hName = hierarchies.get(i).getUniqueName();
+			if (memberUniqueName.startsWith(hName)) {
 				hierarchy = hierarchies.get(i);
 				break;
 			}
@@ -130,8 +130,8 @@ public class CubeUtilities {
 			Position p = positions.get(i);
 			String member = p.getMembers().toString();
 			member = member.replace(" ", "");
-			if (member.equals(positionUniqueName)){
-				logger.debug("OUT: fund a member "+member);
+			if (member.equals(positionUniqueName)) {
+				logger.debug("OUT: fund a member " + member);
 				return p;
 			}
 		}
