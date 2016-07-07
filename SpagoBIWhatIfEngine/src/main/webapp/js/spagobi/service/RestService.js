@@ -83,6 +83,7 @@ Ext.define('Sbi.service.RestService', {
 		if(params && url){
 			for(var i=0; i<params.length; i++){
 				var p = params[i];
+				p = encodeURIComponent(p);
 				if(p!=null && p!=undefined){
 					url = url+"/"+p;
 				}else{
@@ -104,11 +105,13 @@ Ext.define('Sbi.service.RestService', {
 						url = url + '&';
 					}
 					var param = requestParams[p];
+					p = encodeURIComponent(p);
+					param = encodeURIComponent(param);
 					url = url + p +'='+param;
 				}
 			}
 		}
-
+		
 		return url;
 	},
 

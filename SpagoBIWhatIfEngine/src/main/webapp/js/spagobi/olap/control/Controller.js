@@ -79,7 +79,7 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "hierarchy",
-			pathParams: [encodeURI(hierarchy), "slice"],
+			pathParams: [hierarchy, "slice"],
 			params:{member:member, multiSelection:multiSelection}
 		});
 
