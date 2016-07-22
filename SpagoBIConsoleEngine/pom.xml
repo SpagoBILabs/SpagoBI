@@ -111,7 +111,6 @@
 									<inputDir>${minimized-dir}/js/spagobi</inputDir>
 									<output>${basedir}/src/main/webapp/js/spagobi/console-all-${project.version}.js</output>
 									<includes>
-										<include>overrides/overrides-min.js</include>
 										<include>exception/ExceptionHandler-min.js</include>
 										<include>service/ServiceRegistry-min.js</include>
 										<include>service/Sync-min.js</include>
