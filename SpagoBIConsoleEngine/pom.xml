@@ -90,7 +90,6 @@
 									<inputDir>${project.build.directory}/${project.build.finalName}/js/spagobi</inputDir>
 									<output>${project.build.directory}/${project.build.finalName}/js/spagobi/console-all-${js.version}.js</output>
 									<includes>
-										<include>overrides/overrides-min.js</include>
 										<include>exception/ExceptionHandler-min.js</include>
 										<include>service/ServiceRegistry-min.js</include>
 										<include>service/Sync-min.js</include>
