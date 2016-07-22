@@ -1,5 +1,7 @@
 dist
 **/ant-build
+**/.project
+**/.classpath
 qbe.core-*.jar
 sbi.utils-*.jar
 sbi.utils.json-*.jar
