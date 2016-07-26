@@ -1628,16 +1628,61 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
   	</table>
   </div>
   
-   </div>						
-<script>
+  <script>
 toggle('dl_<%=biobj.getId()%>__<%=index%>', 'saveasdl_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isDistributionListDispatchChannelEnabled()%> );
 </script> 
-  	    <div> &nbsp;
-		</div>	
-  	    <br/>
-  	    
+  
+  
+    	    		<!-- ======================================================================================== -->
+	<!-- SAVE AS CONTEXT BROKER URL IF KPI													  		  -->
+	<!-- ======================================================================================== --> 	
+	<% 
+	if (biobj.getBiObjectTypeCode().equalsIgnoreCase("KPI")) {
+	%>
+	  	    <div> &nbsp;
+			</div>	
+	  	    <input type="checkbox" id="saveascontextbroker_<%=biobj.getId()%>__<%=index%>" name="saveascontextbroker_<%=biobj.getId()%>__<%=index%>" 
+			<%if(sInfo.isContextBrokerDispatchChannelEnabled()){out.write(" checked='checked' " );}%> 
+			/>
+			<span class='portlet-form-field-label'>
+				<spagobi:message key="scheduler.saveascontextbroker" bundle="component_scheduler_messages" />
+			</span>
+			
+			<div id="contextbroker_<%=biobj.getId()%>__<%=index%>"  style="margin-left:50px;margin-top:10px;">
+	    		<div class='div_detail_label_scheduler'>
+					<span class='portlet-form-field-label'>
+			    		<spagobi:message key="scheduler.contextbrokerurl" bundle="component_scheduler_messages" />
+					</span>
+				</div>
+				<div class='div_detail_form'>
+						<input type="text" id="contextbrokerurl" value="<%=sInfo.getContextBrokerUrl() != null ? StringEscapeUtils.escapeHtml(sInfo.getContextBrokerUrl()) : ""%>"
+		           				name="contextbrokerurl_<%=biobj.getId()%>__<%=index%>" size="35"/>
+	   			</div>
+	    		<div class='div_detail_label_scheduler'>
+					<span class='portlet-form-field-label'>
+			    		<spagobi:message key="scheduler.contextbrokertype" bundle="component_scheduler_messages" />
+					</span>
+				</div>
+				<div class='div_detail_form'>
+						<input type="text" id="contextbrokertype" value="<%=sInfo.getContextBrokerType() != null ? StringEscapeUtils.escapeHtml(sInfo.getContextBrokerType()) : ""%>"
+		           				name="contextbrokertype_<%=biobj.getId()%>__<%=index%>" size="35"/>
+	   			</div>	   			
+	   		</div>
+  	    	<script>  
+				toggle('contextbroker_<%=biobj.getId()%>__<%=index%>', 'saveascontextbroker_<%=biobj.getId()%>__<%=index%>', <%=sInfo.isContextBrokerDispatchChannelEnabled()%> );
+			</script> 
+			
+	<% }%>
+  
+   </div>						
 
 	</div>
+	
+	
+
+	
+	
+	
 	
 	<%	
 		}
