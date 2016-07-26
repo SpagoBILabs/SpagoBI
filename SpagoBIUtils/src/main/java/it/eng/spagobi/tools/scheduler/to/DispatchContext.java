@@ -26,6 +26,7 @@ public class DispatchContext implements Serializable {
 	private boolean distributionListDispatchChannelEnabled = false;
 	private boolean javaClassDispatchChannelEnabled = false;
 	private boolean fileSystemDisptachChannelEnabled = false;
+	private boolean contextBrokerDispatchChannelEnabled = false;
 
 	// -------------------------------------------------------------------------
 	// file dispatcher context properties
@@ -115,6 +116,10 @@ public class DispatchContext implements Serializable {
 	private String zipMailName;
 	private String containedFileName;
 
+	private String contextBrokerUrl;
+
+	private String contextBrokerType;
+	
 	public boolean isZipMailDocument() {
 		return zipMailDocument;
 	}
@@ -129,6 +134,14 @@ public class DispatchContext implements Serializable {
 
 	public void setDistributionListDispatchChannelEnabled(boolean enabled) {
 		this.distributionListDispatchChannelEnabled = enabled;
+	}
+
+	public boolean isContextBrokerDispatchChannelEnabled() {
+		return contextBrokerDispatchChannelEnabled;
+	}
+
+	public void setContextBrokerDispatchChannelEnabled(boolean contextBrokerDispatchChannelEnabled) {
+		this.contextBrokerDispatchChannelEnabled = contextBrokerDispatchChannelEnabled;
 	}
 
 	public boolean isFileSystemDispatchChannelEnabled() {
@@ -769,4 +782,21 @@ public class DispatchContext implements Serializable {
 	public void setDocumentLabels(String documentLabels) {
 		this.documentLabels = documentLabels;
 	}
+
+	public String getContextBrokerUrl() {
+		return contextBrokerUrl;
+	}
+
+	public void setContextBrokerUrl(String contextBrokerUrl) {
+		this.contextBrokerUrl = contextBrokerUrl;
+	}
+
+	public String getContextBrokerType() {
+		return contextBrokerType;
+	}
+
+	public void setContextBrokerType(String contextBrokerType) {
+		this.contextBrokerType = contextBrokerType;
+	}
+	
 }
