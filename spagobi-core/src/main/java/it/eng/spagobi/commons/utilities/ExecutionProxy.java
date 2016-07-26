@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -23,6 +24,8 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -49,6 +52,7 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.geo.GeoDriver;
 import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
+import it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.DateRangeUtils;
@@ -160,9 +164,24 @@ public class ExecutionProxy {
 						errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 100));
 						return response;
 					}
+					
+					ArrayList<String> a = new ArrayList<String>();
+					
 					try {
 						reqContainer.setAttribute("scheduledExecution", "true");
 						internalEngine.execute(reqContainer, biObject, resp);
+						
+						SpagoBIKpiInternalEngine kpiEngine = (SpagoBIKpiInternalEngine)internalEngine;
+						logger.debug("Kpi Executed, get response for context broker");
+						JSONArray objsToSend = kpiEngine.parseResultInJSONObjects();
+						if(objsToSend != null){
+							response = objsToSend.toString().getBytes();
+							returnedContentType = "application/json";
+						}
+						else{
+							logger.warn("Kpi response after execution was empty");
+						}
+								
 					} catch (EMFUserError e) {
 						logger.error("Error during engine execution", e);
 						errorHandler.addError(e);

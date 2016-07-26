@@ -661,6 +661,7 @@ public class SchedulerService {
 			saveOptString += serializeSaveAsDocumentOptions(dispatchContext);
 			saveOptString += serializeSaveAsMailOptions(dispatchContext);
 			saveOptString += serializeSaveAsDistributionListOptions(dispatchContext, uniqueDispatchContextName, triggerInfo, runImmediately, profile);
+			saveOptString += serializeSaveAsContextBrokerOptions(dispatchContext);
 
 			message.append("   	   <PARAMETER name=\"biobject_id_" + uniqueDispatchContextName + "\" value=\"" + saveOptString + "\" />");
 		}
@@ -930,4 +931,22 @@ public class SchedulerService {
 		return saveOptString;
 	}
 
+	
+	private String serializeSaveAsContextBrokerOptions(DispatchContext dispatchContext) {
+		String saveOptString = "";
+
+		if (dispatchContext.isContextBrokerDispatchChannelEnabled()) {
+			saveOptString += "saveascontextbroker=true%26";
+			if ((dispatchContext.getContextBrokerUrl() != null) && !dispatchContext.getContextBrokerUrl().trim().equals("")) {
+				saveOptString += "contextbrokerurl=" + dispatchContext.getContextBrokerUrl() + "%26";
+			}
+			if ((dispatchContext.getContextBrokerType() != null) && !dispatchContext.getContextBrokerType().trim().equals("")) {
+				saveOptString += "contextbrokertype=" + dispatchContext.getContextBrokerType() + "%26";
+			}
+		}
+
+		return saveOptString;
+	}
+
+	
 }

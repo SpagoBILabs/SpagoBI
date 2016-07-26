@@ -11,11 +11,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
-import it.eng.spagobi.commons.utilities.SpagoBITracer;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.services.scheduler.service.XSchedulerServiceSupplier;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 
 /**

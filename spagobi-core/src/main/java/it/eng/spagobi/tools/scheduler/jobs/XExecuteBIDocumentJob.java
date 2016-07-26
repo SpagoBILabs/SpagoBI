@@ -361,19 +361,19 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						boolean isJavaClassDispatch = dispatchContext.isJavaClassDispatchChannelEnabled();
 						boolean isMailDispatch = dispatchContext.isMailDispatchChannelEnabled();
 						boolean isFunctionalityTreeDispatch = dispatchContext.isFunctionalityTreeDispatchChannelEnabled();
-
+						boolean isContextBrokerDispatch = dispatchContext.isContextBrokerDispatchChannelEnabled();
 						logger.debug("Dispatch to a snapshot is equal to [" + dispatchContext.isSnapshootDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch to a file is equal to [" + dispatchContext.isFileSystemDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch to a distribution list is eual to [" + dispatchContext.isDistributionListDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch to a java class is equal to [" + dispatchContext.isJavaClassDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch by mail-list is equal to [" + dispatchContext.isMailDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch by folder-list is equal to [" + dispatchContext.isFunctionalityTreeDispatchChannelEnabled() + "]");
-
+						logger.debug("Dispatch by Context Broker is equal to [" + dispatchContext.isContextBrokerDispatchChannelEnabled() + "]");
 						// Check case in which dispatcher is set as mail but no recipients are left (document must be not executed,
 						// different case from where no dispatcher is set that the documnt is executed anyway).
 						boolean onlyMailDispatchCase = false;
 						if (isMailDispatch == true && isSnapshotDispatch == false && isFileSystemDispatch == false && isDistributionDispatch == false
-								&& isJavaClassDispatch == false && isFunctionalityTreeDispatch == false) {
+								&& isJavaClassDispatch == false && isFunctionalityTreeDispatch == false && isContextBrokerDispatch == false) {
 							logger.debug("Only mail dispatcher is set, if recipients are set with dataset check it returns recipients");
 							onlyMailDispatchCase = true;
 						}

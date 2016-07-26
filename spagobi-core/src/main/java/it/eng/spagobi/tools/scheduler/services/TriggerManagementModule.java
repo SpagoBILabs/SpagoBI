@@ -365,6 +365,7 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			getSaveAsDocumentOptions(request, dispatchContext, biobId, index);
 			getSaveAsMailOptions(request, dispatchContext, biobId, index);
 			getSaveAsDistributionListOptions(request, dispatchContext, biobId, index);
+			getSaveAsContextBrokerOptions(request, dispatchContext, biobId, index);
 
 			saveOptions.put(biobId+"__"+index, dispatchContext);
 		}
@@ -598,7 +599,19 @@ public class TriggerManagementModule extends AbstractHttpModule {
 	}
 	
 	
+	private void getSaveAsContextBrokerOptions(SourceBean request, DispatchContext dispatchContext, int biobId, int index) {
+		String saveascontextbroker = (String)request.getAttribute("saveascontextbroker_" + biobId + "__" + index);
+		if(saveascontextbroker != null) {
+		dispatchContext.setContextBrokerDispatchChannelEnabled(true);
 	
+			dispatchContext.setContextBrokerDispatchChannelEnabled(true);			
+			String contextBrokerUrl = (String)request.getAttribute("contextbrokerurl_" +biobId + "__" + index);	
+			dispatchContext.setContextBrokerUrl(contextBrokerUrl);
+			String contextBrokerType = (String)request.getAttribute("contextbrokertype_" +biobId + "__" + index);	
+			dispatchContext.setContextBrokerType(contextBrokerType);
+		}  
+	}	
+
 	
 	
 	// ==========================================================================================================
@@ -789,6 +802,7 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			saveOptString += serializeSaveAsDocumentOptions(dispatchContext);
 			saveOptString += serializeSaveAsMailOptions(dispatchContext);
 			saveOptString += serializeSaveAsDistributionListOptions(dispatchContext, uniqueDispatchContextName, triggerInfo, runImmediately, profile);
+			saveOptString += serializeSaveAsContextBrokerOptions(dispatchContext);
 						
 			message.append("   	   <PARAMETER name=\"biobject_id_"+uniqueDispatchContextName+"\" value=\""+saveOptString+"\" />");
 		}
@@ -1058,6 +1072,25 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			
 			}	
 		}	
+		
+		return saveOptString;
+	}
+	
+	
+	
+	private String serializeSaveAsContextBrokerOptions(DispatchContext dispatchContext) {
+		String saveOptString = "";
+		
+		if(dispatchContext.isContextBrokerDispatchChannelEnabled()) {
+			saveOptString += "saveascontextbroker=true%26";
+			if( (dispatchContext.getContextBrokerUrl()!=null) && !dispatchContext.getContextBrokerUrl().trim().equals("") ) {
+				saveOptString += "contextbrokerurl="+dispatchContext.getContextBrokerUrl()+"%26";
+			}
+			if( (dispatchContext.getContextBrokerType()!=null) && !dispatchContext.getContextBrokerType().trim().equals("") ) {
+				saveOptString += "contextbrokertype="+dispatchContext.getContextBrokerType()+"%26";
+			}
+
+		}
 		
 		return saveOptString;
 	}

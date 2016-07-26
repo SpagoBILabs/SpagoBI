@@ -5,9 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.scheduler.bo.Trigger;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -17,6 +14,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

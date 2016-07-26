@@ -67,6 +67,12 @@ public class DocumentDispatcher {
 			dispatchChannel = new FileSystemDocumentDispatcher(dispatchContext);
 			documentDispatchChannels.add(dispatchChannel);
 		}
+
+		if (dispatchContext.isContextBrokerDispatchChannelEnabled()) {
+			dispatchChannel = new ContextBrokerDocumentDispatcherChannel(dispatchContext);
+			documentDispatchChannels.add(dispatchChannel);
+		}
+		
 	}
 
 	public boolean dispatch(BIObject document, byte[] executionOutput) {

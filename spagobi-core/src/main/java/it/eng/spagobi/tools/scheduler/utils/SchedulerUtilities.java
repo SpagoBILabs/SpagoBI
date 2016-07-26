@@ -500,6 +500,17 @@ public class SchedulerUtilities {
 				dispatchContext.setZipFileName(value);
 			}
 
+			// Context Broker
+			if(name.equals("saveascontextbroker")){
+				dispatchContext.setContextBrokerDispatchChannelEnabled(true);
+			}
+			if(name.equals("contextbrokerurl")){
+				dispatchContext.setContextBrokerUrl(value);
+			}
+			if(name.equals("contextbrokertype")){
+				dispatchContext.setContextBrokerType(value);
+			}
+
 		}
 		return dispatchContext;
 	}

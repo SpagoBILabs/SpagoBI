@@ -5,6 +5,26 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.kpi;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SourceBean;
@@ -39,27 +59,13 @@ import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
+import it.eng.spagobi.kpi.utils.BasicXmlBuilder;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.scheduler.dispatcher.ContextBrokerDocumentDispatcherChannel;
 import it.eng.spagobi.tools.udp.bo.UdpValue;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * 
@@ -1157,4 +1163,98 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		logger.error("SpagoBIDashboardInternalEngine cannot build document template.");
 		throw new InvalidOperationRequest();
 	}
+
+
+	public List<KpiResourceBlock> getKpiResultsList() {
+		return kpiResultsList;
+	}
+
+	/**
+	 *  Parse results in JSON Object in context broker format
+	 * @return
+	 * @throws JSONException
+	 */
+	public JSONArray parseResultInJSONObjects() throws JSONException{
+		logger.debug("IN");
+
+		JSONArray toReturn = new JSONArray();
+
+		List<KpiResourceBlock> values = getKpiResultsList();
+		BasicXmlBuilder basicXmlBuilder = new BasicXmlBuilder("");
+		Map<String, SourceBean> kpisMap = basicXmlBuilder.getKpisMap();
+		Map<String, SourceBean> kpiValuesMap = basicXmlBuilder.getKpiValuesMap();
+		if(kpisMap != null){
+			for (Iterator iterator = kpisMap.keySet().iterator(); iterator.hasNext();) {
+				String kpiCode = (String) iterator.next();
+
+				logger.debug("Kpi code: "+kpiCode);
+
+				JSONObject jsonToSend = new JSONObject();		
+				JSONArray contextElementsJsonArray = new JSONArray();
+				JSONObject contextElementsJsonObj = new JSONObject();
+				contextElementsJsonObj.put("type", ContextBrokerDocumentDispatcherChannel.SPAGOBI_KPI_CONTEXT_BROKER_TYPE);
+				contextElementsJsonObj.put("isPattern", "false");
+				contextElementsJsonObj.put("id", kpiCode);
+
+				// Value JSON
+				JSONArray jsonAttributes = new JSONArray();
+				SourceBean valueBean = kpiValuesMap.get(kpiCode);
+				if(valueBean != null){
+					logger.debug("Value bean found");
+					List valueList = valueBean.getAttributeAsList("value");
+					String valueString  = (String)valueList.get(1);
+
+					List beginDateList = valueBean.getAttributeAsList("begindate");
+					String beginDateString  = (String)beginDateList.get(1);
+
+					List endDateList = valueBean.getAttributeAsList("enddate");
+					String endDateString  = (String)endDateList.get(1);
+
+					List targetList = valueBean.getAttributeAsList("target");
+					String targetString  = (String)targetList.get(1);
+
+
+					JSONObject valueJson = buildValueJsonObject("value", "double", valueString);
+					JSONObject beginDateJson = buildValueJsonObject("begindate", "timestamp", beginDateString);
+					JSONObject endDateJson = buildValueJsonObject("enddate", "timestamp", endDateString);
+					JSONObject targetJson = buildValueJsonObject("target", "double", targetString);
+					jsonAttributes.put(0, valueJson);
+					jsonAttributes.put(1, beginDateJson);
+					jsonAttributes.put(2, endDateJson);
+					jsonAttributes.put(3, targetJson);
+
+				}
+
+				contextElementsJsonObj.put("attributes", jsonAttributes);
+
+				contextElementsJsonArray.put(0, contextElementsJsonObj);
+
+				jsonToSend.put("contextElements", contextElementsJsonArray);
+				jsonToSend.put("updateAction", "APPEND");
+
+				toReturn.put(jsonToSend);
+			}	
+		}
+
+		logger.debug("OUT");
+
+
+		return toReturn;
+
+	}
+
+	public void setKpiResultsList(List<KpiResourceBlock> kpiResultsList) {
+		this.kpiResultsList = kpiResultsList;
+	}
+
+	private JSONObject buildValueJsonObject(String name, String type, String value) throws JSONException{
+		JSONObject valueJson = new JSONObject();
+		valueJson.put("name", name);
+		valueJson.put("type", type);
+		valueJson.put("value", value);
+		return valueJson;
+	}
+
+
+
 }
