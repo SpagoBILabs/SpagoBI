@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: http://spagobi-url/SpagoBI/
 TITLE: SpagoBI REST API 2.0
-DATE: 04 September 2015
+DATE: August 19th 2016
 VERSION: 2.0
 APIARY_PROJECT: spagobi
 
@@ -224,6 +224,26 @@ The document resource represents a specific document.
 ### Delete the document [DELETE]
 
 + Response 200 (application/json)
+
+
+## The preview subresource [/restful-services/2.0/documents/{document_label}/preview]
+
+An analytical document can optionally have a static preview file, typically a screenshot. In case the document has no preview, a response with status code 404 (Not found) is returned.
+
++ Parameters
+    + document_label (string) - the document's label
+
+
+### Return the preview file of the document specified by the document_label parameter [GET]
+
++ Response 200
+
+    + Headers
+
+            Content-Disposition: attachment; filename="preview.JPG"
+    + Body
+    
+            Preview is a file, typically an image.
 
 
 ## The template subresource [/restful-services/2.0/documents/{document_label}/template]
