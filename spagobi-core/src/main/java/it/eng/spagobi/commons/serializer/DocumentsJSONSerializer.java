@@ -53,6 +53,7 @@ public class DocumentsJSONSerializer implements Serializer {
 	public static final String CREATIONUSER = "creationUser";
 	public static final String REFRESHSECONDS = "refreshSeconds";
 	public static final String PREVIEWFILE = "previewFile";
+	public static final String PREVIEWFILE_SERVICE_URL = "previewFileServiceUrl";
 	public static final String PATH_RESOURCES = "pathResources";
 	public static final String ACTIONS = "actions";
 	public static final String EXPORTERS = "exporters";
@@ -123,6 +124,9 @@ public class DocumentsJSONSerializer implements Serializer {
 				String resourcePath = SpagoBIUtilities.readJndiResource(path);
 				result.put(PATH_RESOURCES, resourcePath);
 				result.put(PREVIEWFILE, obj.getPreviewFile());
+				
+				String previewFileServiceUrl = obj.getPreviewFileServiceUrl();
+				result.put(PREVIEWFILE_SERVICE_URL, previewFileServiceUrl);
 			}
 			result.put(IS_PUBLIC, obj.isPublicDoc());
 			if (obj.getDocVersion() != null)
