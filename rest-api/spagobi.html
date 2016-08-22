@@ -89,9 +89,16 @@
                                         
                                         </ul>
                                     </li>
-                                
-                              
-                                
+                                    
+                                    <li>
+                                        <a href="#resource_the-preview-subresource" title = "Resource The preview subresource">Resource The preview subresource</a>
+                                        <ul class="toc  ">
+
+                                                <li><a href="#action_return-preview-with-specified-label" title ="GET - Return document's preview file with specified Label">GET - Return document's preview file with specified Label</a></li>
+    
+                                        </ul>
+                                    </li>
+                                    
                                     <li>
                                         <a href="#resource_the-template-subresource" title = "Resource The template subresource">Resource The template subresource</a>
                                         <ul class="toc  ">
@@ -993,6 +1000,118 @@ The other times an error appears the response code is 200 and the response body 
                             </div>
                         </div>
                     
+            </section>
+            
+            <section id="resource_the-preview-subresource" class="resource">
+                 <div class= "header" ><h3 id="h-resource_the-preview-subresource">The preview subresource [/restful-services/2.0/documents/{document_label}/preview]</h3> </div>
+                <p>An analytical document can optionally have a static preview file, typically a screenshot. In case the document has no preview, a response with status code 404 (Not found) is returned.</p>
+                
+                
+
+		        
+                
+                
+
+
+
+
+
+
+    
+
+
+                
+
+	<span class="parameters-title">Parameters</span>
+	<dl>
+		
+			<dt>
+				document_label (Required, string
+				)
+			</dt>
+			<dd>
+				the document's label
+				
+			</dd>
+		
+	</dl>
+
+
+                    
+                        
+                            <div id="action_return-preview-with-specified-label" class="action GET">
+                        
+
+                        
+    <h4 id="h-action_return-template-with-specified-label">
+        Return a document's preview file with Specified Label -
+        GET
+        
+            /restful-services/2.0/documents/{document_label}/preview
+        
+    </h4>
+
+        
+                            <div id="return-preview-with-specified-label_body" class="">
+                                
+                                
+                                
+                                
+			
+                                
+                                
+      
+                                    
+        	                            
+    
+        	                            
+        		                            
+                                        
+                                        
+                                        
+
+<div class="rest-packet-div">
+
+            <span class="packetType">Response 200</span> 
+        
+    
+            
+            
+     
+</div>
+        	                            
+                                    
+                                    
+                                    <div class="goExample">
+                                        <a href="#action_return-preview-with-specified-label_examples">Go to example</a>
+                                    </div>
+                                    
+                                        
+    <div class="goApiary">
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a target="_blank" href="http://docs.spagobi.apiary.io/#reference/default/the-preview-subresource/return-a-document's-preview-file">View in Apiary</a>
+            
+        
+    
+    </div>
+
+                                    
+                                
+                            </div>
+                        </div>
+
             </section>
         
             <section id="resource_the-template-subresource" class="resource">
