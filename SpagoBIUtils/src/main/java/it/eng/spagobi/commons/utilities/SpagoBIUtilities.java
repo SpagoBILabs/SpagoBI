@@ -16,6 +16,10 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.IOException;
@@ -631,4 +635,31 @@ public class SpagoBIUtilities {
 		return toReturn;
 	}
 
+	
+	/**
+	 * Get the tenant resource path. This is likely the one that should be used 99% of the times
+	 *
+	 * @return the path for tenant resources
+	 */
+	public static String getResourcePath() {
+		Tenant tenant = TenantManager.getTenant();
+		if (tenant == null) {
+			throw new SpagoBIRuntimeException("Tenant is not set. Impossible to get the tenant resource path.");
+		}
+		String resourcePath = getRootResourcePath() + (getRootResourcePath().endsWith(File.separatorChar + "") ? "" : File.separatorChar) + tenant.getName();
+		return resourcePath;
+	}
+	
+	/**
+	 * Get the root resource path
+	 *
+	 * @return the path for resources
+	 */
+	public static String getRootResourcePath() {
+		SingletonConfig configSingleton = SingletonConfig.getInstance();
+		String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+		String resourcePath = SpagoBIUtilities.readJndiResource(path);
+		return resourcePath;
+	}
+	
 }
