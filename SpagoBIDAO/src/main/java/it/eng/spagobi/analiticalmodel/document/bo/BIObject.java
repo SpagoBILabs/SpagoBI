@@ -9,10 +9,13 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.services.validation.Alphanumeric;
@@ -125,6 +128,10 @@ public class BIObject implements Serializable, Cloneable {
 	private String tenant = null;
 
 	private String previewFile = null;
+	
+	private String previewFileServiceUrl = null;
+
+	private static final String PREVIEW_SERVICE_URL = "/restful-services/2.0/documents/DOCUMENT_LABEL/preview";
 
 	private boolean publicDoc = false;
 
@@ -788,6 +795,31 @@ public class BIObject implements Serializable, Cloneable {
 
 	public void setParametersRegion(String parametersRegion) {
 		this.parametersRegion = parametersRegion;
+	}
+	
+	
+
+	public String getPreviewFileServiceUrl() {
+		String toReturn = null;
+
+		if(previewFile != null && !previewFile.equals("")){
+			SingletonConfig configSingleton = SingletonConfig.getInstance();
+			String hostUrl = GeneralUtilities.getSpagoBiHost();
+			String contextUrl = configSingleton.getConfigValue("SPAGOBI.SPAGOBI_CONTEXT");
+			String serviceUrl = hostUrl+contextUrl;
+
+			if (serviceUrl != null && !serviceUrl.equals("")) {
+				String servicePath = PREVIEW_SERVICE_URL;
+				servicePath = servicePath.replaceAll("DOCUMENT_LABEL", getLabel());
+				toReturn = serviceUrl + servicePath;
+			}
+			previewFileServiceUrl = toReturn;
+		}
+		return toReturn;
+	}
+
+	public void setPreviewFileServiceUrl(String previewFileServiceUrl) {
+		this.previewFileServiceUrl = previewFileServiceUrl;
 	}
 
 	/**
