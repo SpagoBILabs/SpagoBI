@@ -60,6 +60,8 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction {
 	public static final String TEXT = "text";
 	public static final String URL = "url";
 	public static final String MAIL_SUBJ = "mailSubj";
+	public static final String CONTEXT_BROKER_URL = "contextBrokerUrl";
+	public static final String CONTEXT_BROKER_TYPE = "contextBrokerType";
 	public static final String CONTACTS = "contacts";
 	public static final String DOMAIN_CD = "ALARM_MODALITY";
 	public static final String KPI = "kpi";
@@ -129,6 +131,8 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction {
 			// Boolean autoDisabled = getAttributeAsBoolean(AUTO_DISABLED);
 			String text = getAttributeAsString(TEXT);
 			String mailSubj = getAttributeAsString(MAIL_SUBJ);
+			String contextBrokerUrl = getAttributeAsString(CONTEXT_BROKER_URL);
+			String contextBrokerType = getAttributeAsString(CONTEXT_BROKER_TYPE);
 			String url = getAttributeAsString(URL);
 			Integer kpiInstId = getAttributeAsInteger(KPI);
 			Integer thresholdId = getAttributeAsInteger(THRESHOLD);
@@ -143,6 +147,8 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction {
 			alarm.setText(text);
 			alarm.setUrl(url);
 			alarm.setMailSubj(mailSubj);
+			alarm.setContextBrokerUrl(contextBrokerUrl);
+			alarm.setContextBrokerType(contextBrokerType);
 
 			try {
 				if (modality != null) {

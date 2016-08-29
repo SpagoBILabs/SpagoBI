@@ -30,6 +30,8 @@ public class AlarmJSONSerializer implements Serializer {
 	public static final String TEXT = "text";
 	public static final String URL = "url";
 	public static final String MAIL_SUBJ = "mailSubj";
+	public static final String CONTEXT_BROKER_URL = "contextBrokerUrl";
+	public static final String CONTEXT_BROKER_TYPE = "contextBrokerType";
 	public static final String KPI = "kpi";
 	public static final String THRESHOLD = "threshold";
 
@@ -52,6 +54,8 @@ public class AlarmJSONSerializer implements Serializer {
 			result.put(DESCRIPTION, sbiAlarm.getDescr());
 			result.put(TEXT, sbiAlarm.getText());
 			result.put(MAIL_SUBJ, sbiAlarm.getMailSubj());
+			result.put(CONTEXT_BROKER_URL, sbiAlarm.getContextBrokerUrl());
+			result.put(CONTEXT_BROKER_TYPE, sbiAlarm.getContextBrokerType());
 			result.put(URL, sbiAlarm.getUrl());
 			if (sbiAlarm.getSbiKpiInstance() != null) {
 				result.put(KPI, sbiAlarm.getSbiKpiInstance().getIdKpiInstance());

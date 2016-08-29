@@ -32,6 +32,8 @@ public class Alarm implements java.io.Serializable {
 	private String descr;
 	private String mailSubj;
 	private String text;
+	private String contextBrokerUrl;
+	private String contextBrokerType;
 	private String url;
 	private Integer idKpiInstance;
 	private Integer idThresholdValue;
@@ -44,7 +46,7 @@ public class Alarm implements java.io.Serializable {
 
 	public Alarm(Boolean singleEvent,
 			// Boolean autoDisabled,
-			String label, String name, String descr, String mailSubj, String text, String url, Set<AlarmContact> sbiAlarmContacts) {
+			String label, String name, String descr, String mailSubj, String text, String contextBrokerUrl, String contextBrokerType, String url, Set<AlarmContact> sbiAlarmContacts) {
 		this.singleEvent = singleEvent;
 		// this.autoDisabled = autoDisabled;
 		this.label = label;
@@ -52,6 +54,8 @@ public class Alarm implements java.io.Serializable {
 		this.descr = descr;
 		this.mailSubj = mailSubj;
 		this.text = text;
+		this.contextBrokerUrl = contextBrokerUrl;
+		this.contextBrokerType = contextBrokerType;
 		this.url = url;
 		this.sbiAlarmContacts = sbiAlarmContacts;
 	}
@@ -159,7 +163,23 @@ public class Alarm implements java.io.Serializable {
 	public void setMailSubj(String mailSubj) {
 		this.mailSubj = mailSubj;
 	}
+	
+	public String getContextBrokerUrl() {
+		return contextBrokerUrl;
+	}
 
+	public void setContextBrokerUrl(String contextBrokerUrl) {
+		this.contextBrokerUrl = contextBrokerUrl;
+	}
+
+	public String getContextBrokerType() {
+		return contextBrokerType;
+	}
+
+	public void setContextBrokerType(String contextBrokerType) {
+		this.contextBrokerType = contextBrokerType;
+	}
+	
 	/**
 	 * Constructs a <code>String</code> with all attributes in name = value format.
 	 *

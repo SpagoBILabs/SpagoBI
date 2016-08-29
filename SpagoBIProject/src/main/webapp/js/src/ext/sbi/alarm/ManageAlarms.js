@@ -103,6 +103,8 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	                	    	          //, 'autoDisabled'
 	                	    	          , 'mailSubj'	                	    	          
 	                	    	          , 'text'
+	                	    	          , 'contextBrokerUrl'
+	                	    	          , 'contextBrokerType'
 	                	    	          , 'url'
 	                	    	          , 'contacts'
 	                	    	          , 'kpi'
@@ -119,6 +121,8 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 										//autoDisabled: false,
 										mailSubj:'',
 										text:'',
+										contextBrokerUrl:'',
+										contextBrokerType:'',
 										url: '',
 										contacts: []
 										});
@@ -315,6 +319,23 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
                 validationEvent:true,
 	            maxLength:1000
         };	
+	  	
+	  	
+	  	var detailFieldContextBrokerUrl = {
+                fieldLabel:  LN('sbi.alarms.contextBrokerUrl'),
+                name: 'contextBrokerUrl',
+                allowBlank: true,
+                validationEvent:true,
+	            maxLength:500
+        };	
+	  	
+	  	var detailFieldContextBrokerType = {
+                fieldLabel:  LN('sbi.alarms.contextBrokerType'),
+                name: 'contextBrokerType',
+                allowBlank: true,
+                validationEvent:true,
+	            maxLength:100
+        };	
 		
 		this.detailTab = new Ext.Panel({
 	        title: LN('sbi.alarms.details')
@@ -337,7 +358,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 		             },
 		             items: [detailFieldId, detailFieldName, detailFieldLabel, detailFieldDescr, 
 		                     //detailFieldModality, 
-		                     detailFieldOptions, detailFieldUrl, detailFieldMailSubj, detailFieldMailText]
+		                     detailFieldOptions, detailFieldUrl, detailFieldMailSubj, detailFieldMailText, detailFieldContextBrokerUrl, detailFieldContextBrokerType]
 	    	}
 	    });
 	}
@@ -565,8 +586,10 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	      	description : values['description'],
 	      	mailSubj : values['mailSubj'],
 	      	text : values['text'],
+	      	contextBrokerUrl: values['contextBrokerUrl'],
+	      	contextBrokerType: values['contextBrokerType'],
 	      	url : values['url'],
-	      	label : values['label'] 
+	      	label : values['label']
 	   }
 	   
 	   if(idRec){
@@ -657,7 +680,10 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	   }
 
    	   if(idRec ==0 || idRec == null || idRec === ''){
-	       newRec =new Ext.data.Record({'name': values['name'],'description': values['description'],'mailSubj':values['mailSubj'],'text':values['text']
+	       newRec =new Ext.data.Record({'name': values['name'],'description': values['description'],'mailSubj':values['mailSubj']
+	       						       , 'text':values['text']
+	       							   , 'contextBrokerUrl':values['contextBrokerUrl']
+	       							   , 'contextBrokerType':values['contextBrokerType']
 	       							   ,'url': values['url'],'label': values['label'],'modality':mod,//'autoDisabled':autoDis,
 	       							   'singleEvent':singleEv
 	       							   ,'contacts': alarmContacts,'kpi': kpiId,'threshold': thrId});	       
@@ -675,6 +701,8 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 			record.set('description',values['description']);
 			record.set('mailSubj',values['mailSubj']);
 			record.set('text',values['text']);
+			record.set('contextBrokerUrl',values['contextBrokerUrl']);
+			record.set('contextBrokerType',values['contextBrokerType']);
 			record.set('url',values['url']);
 			record.set('modality',mod);
 			//record.set('autoDisabled',autoDis);
@@ -857,6 +885,8 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 											//autoDisabled: false,
 											mailSubj:'',
 											text:'',
+											contextBrokerUrl:'',
+											contextBrokerType:'',
 											url: '',
 											contacts: []
 											});

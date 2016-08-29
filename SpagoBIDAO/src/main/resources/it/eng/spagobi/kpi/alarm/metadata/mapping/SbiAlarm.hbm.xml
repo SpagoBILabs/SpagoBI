@@ -84,6 +84,14 @@
         <property name="text" type="string">
             <column name="TEXT" length="1000" not-null="false" />
         </property>
+
+        <property name="contextBrokerUrl" type="string">
+            <column name="CONTEXT_BROKER_URL" length="500" not-null="false" />
+        </property>
+
+        <property name="contextBrokerType" type="string">
+            <column name="CONTEXT_BROKER_TYPE" length="100" not-null="false" />
+        </property>
         
         <property name="url" type="string">
             <column name="URL" length="256" not-null="false" />

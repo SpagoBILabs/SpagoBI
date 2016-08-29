@@ -42,6 +42,8 @@ public class SbiAlarm extends SbiHibernateModel {
 	private String descr;
 	private String mailSubj;
 	private String text;
+	private String contextBrokerUrl;
+	private String contextBrokerType;
 	private String url;
 	private Set<SbiAlarmContact> sbiAlarmContacts = new HashSet<SbiAlarmContact>(0);
 
@@ -49,7 +51,7 @@ public class SbiAlarm extends SbiHibernateModel {
 	}
 
 	public SbiAlarm(Boolean singleEvent, SbiObjects sbiObjects, SbiThresholdValue sbiThresholdValue, SbiKpiInstance sbiKpiInstance, SbiDomains sbiDomains,
-			Boolean autoDisabled, String label, String name, String descr, String mailSubj, String text, String url, Set<SbiAlarmContact> sbiAlarmContacts) {
+			Boolean autoDisabled, String label, String name, String descr, String mailSubj, String text, String contextBrokerUrl, String contextBrokerType, String url, Set<SbiAlarmContact> sbiAlarmContacts) {
 		this.singleEvent = singleEvent;
 		this.autoDisabled = autoDisabled;
 		this.sbiObjects = sbiObjects;
@@ -61,6 +63,8 @@ public class SbiAlarm extends SbiHibernateModel {
 		this.descr = descr;
 		this.mailSubj = mailSubj;
 		this.text = text;
+		this.contextBrokerUrl = contextBrokerUrl;
+		this.contextBrokerType = contextBrokerType;
 		this.url = url;
 		this.sbiAlarmContacts = sbiAlarmContacts;
 	}
@@ -175,6 +179,22 @@ public class SbiAlarm extends SbiHibernateModel {
 
 	public void setMailSubj(String mailSubj) {
 		this.mailSubj = mailSubj;
+	}
+	
+	public String getContextBrokerUrl() {
+		return contextBrokerUrl;
+	}
+
+	public void setContextBrokerUrl(String contextBrokerUrl) {
+		this.contextBrokerUrl = contextBrokerUrl;
+	}
+	
+	public String getContextBrokerType() {
+		return contextBrokerType;
+	}
+
+	public void setContextBrokerType(String contextBrokerType) {
+		this.contextBrokerType = contextBrokerType;
 	}
 
 	/**

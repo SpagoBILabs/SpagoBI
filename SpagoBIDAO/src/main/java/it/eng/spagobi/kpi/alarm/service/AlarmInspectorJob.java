@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Security;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +31,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -46,11 +50,16 @@ import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent;
 import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
+import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
 public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 
 	static private Logger logger = Logger.getLogger(AlarmInspectorJob.class);
 
+	public static final String ALARM_TYPE = "ALARM_TYPE";
+	
 	/*
 	 * (non-Javadoc)
 	 *
@@ -166,7 +175,14 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 					sbiAlarmEvent.setActive(false);
 					sae.update(sbiAlarmEvent);
 				}
-			}
+
+				if(sbiAlarm.getContextBrokerUrl() != null && ! sbiAlarm.getContextBrokerUrl().equals("")){
+					logger.debug("Send to context broker: "+ sbiAlarm.getContextBrokerUrl());
+					sendToContextBroker(sbiAlarm, sbiAlarmEvent);
+				}
+			} 
+			
+
 
 			startEmailSession(alertSendingSessionMap);
 
@@ -492,4 +508,133 @@ public class AlarmInspectorJob extends AbstractSpagoBIJob implements Job {
 			this.name = name;
 		}
 	}
+
+	
+	
+	
+	public JSONArray prepareJSONForContextBroker(SbiAlarm sbiAlarm, SbiAlarmEvent sbiAlarmEvent) throws JSONException{
+		logger.debug("IN");
+
+		JSONArray toReturn = new JSONArray();
+
+		String alarmLabel = sbiAlarm.getLabel();
+		String alarmText = sbiAlarm.getText();
+		String alarmDescription = sbiAlarm.getDescr();
+		String kpiName = sbiAlarmEvent.getKpiName();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+		Date kpiDateToFormat = sbiAlarmEvent.getEventTs();
+		String kpiDate = null;
+		if(kpiDateToFormat != null){
+			kpiDate = sdf.format(kpiDateToFormat);
+		}
+		String kpiValue = sbiAlarmEvent.getKpiValue();
+		String thresholdValue = sbiAlarmEvent.getThresholdValue();
+
+		String res = sbiAlarmEvent.getResources();
+
+		logger.debug("Alarm Label: "+alarmLabel);
+
+		JSONObject jsonToSend = new JSONObject();		
+		JSONArray contextElementsJsonArray = new JSONArray();
+		JSONObject contextElementsJsonObj = new JSONObject();
+		
+		String alarmType = null;
+		if(sbiAlarm.getContextBrokerType() != null || !sbiAlarm.getContextBrokerType().equals("")){
+			alarmType = sbiAlarm.getContextBrokerType();
+		}
+		else {
+			alarmType = ALARM_TYPE;
+		}
+		
+		contextElementsJsonObj.put("type", alarmType);
+		contextElementsJsonObj.put("isPattern", "false");
+		contextElementsJsonObj.put("id", alarmLabel);
+
+		// Value JSON
+		JSONArray jsonAttributes = new JSONArray();
+		
+		JSONObject labelJson = buildValueJsonObject("label", "string", alarmLabel);
+		JSONObject textJson = buildValueJsonObject("text", "string", alarmText);
+		JSONObject descriptionJson = buildValueJsonObject("description", "string", alarmDescription);
+		JSONObject kpiNameJson = buildValueJsonObject("kpiName", "string", kpiName);
+		JSONObject kpiDateJson = buildValueJsonObject("kpiDate", "timestamp", kpiDate);
+		JSONObject kpiValueJson = buildValueJsonObject("kpiValue", "double", kpiValue);
+		JSONObject thresholdValueJson = buildValueJsonObject("thresholdValue", "string", thresholdValue);
+		JSONObject resJson = null;
+		if(res != null){
+			resJson = buildValueJsonObject("resources", "string", res);
+		}
+		jsonAttributes.put(0, labelJson);
+		jsonAttributes.put(1, textJson);
+		jsonAttributes.put(2, descriptionJson);
+		jsonAttributes.put(3, kpiNameJson);
+		jsonAttributes.put(4, kpiDateJson);
+		jsonAttributes.put(5, kpiValueJson);
+		jsonAttributes.put(6, thresholdValueJson);
+		if(resJson != null){
+			jsonAttributes.put(7, resJson);
+		}
+
+		contextElementsJsonObj.put("attributes", jsonAttributes);
+
+		contextElementsJsonArray.put(0, contextElementsJsonObj);
+
+		jsonToSend.put("contextElements", contextElementsJsonArray);
+		jsonToSend.put("updateAction", "APPEND");
+
+		toReturn.put(jsonToSend);
+
+		logger.debug("OUT");
+		
+		return toReturn;
+	}
+	
+	
+	
+	public boolean sendToContextBroker(SbiAlarm sbiAlarm, SbiAlarmEvent sbiAlarmEvent) throws JSONException{
+		logger.debug("IN");
+
+		JSONArray array = prepareJSONForContextBroker(sbiAlarm, sbiAlarmEvent);		
+		try{
+			String contextBrokerUrl = sbiAlarm.getContextBrokerUrl();
+
+			if(array == null){
+				logger.warn("No response to dispatch");
+				return false;
+			}
+			if(array.length() > 0){
+				logger.debug("Response array has "+array.length()+" elements");
+			}
+
+			for (int index = 0; index < array.length(); index++ ) {
+				JSONObject kpitToSend = (JSONObject) array.get(index);
+				logger.debug("Send JSON Object "+kpitToSend);
+
+				Map<String, String> headersMap = new HashMap<String, String>();
+				headersMap.put("Content-Type", "application/json");
+				headersMap.put("Accept", "application/json");
+
+				Response response = RestUtilities.makeRequest(HttpMethod.Post, contextBrokerUrl, headersMap, kpitToSend.toString(), null);
+				int statusCode = response.getStatusCode();
+				logger.debug("Alarm advisement, status code returned "+statusCode);
+			}
+
+		} catch (Exception e) {
+			logger.error("Error while sending alarm advisement to context broker", e);
+			return false;
+		} finally{
+			logger.debug("OUT");
+		}
+		return true;		
+	}
+	
+	private JSONObject buildValueJsonObject(String name, String type, String value) throws JSONException{
+		JSONObject valueJson = new JSONObject();
+		valueJson.put("name", name);
+		valueJson.put("type", type);
+		valueJson.put("value", value);
+		return valueJson;
+	}
+
+	
 }
