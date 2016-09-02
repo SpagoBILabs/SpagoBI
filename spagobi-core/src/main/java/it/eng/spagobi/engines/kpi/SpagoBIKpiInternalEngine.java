@@ -1181,6 +1181,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 		List<KpiResourceBlock> values = getKpiResultsList();
 		BasicXmlBuilder basicXmlBuilder = new BasicXmlBuilder("");
+		String template = basicXmlBuilder.buildTemplate(values);
 		Map<String, SourceBean> kpisMap = basicXmlBuilder.getKpisMap();
 		Map<String, SourceBean> kpiValuesMap = basicXmlBuilder.getKpiValuesMap();
 		if(kpisMap != null){
