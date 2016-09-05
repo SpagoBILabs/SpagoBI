@@ -453,7 +453,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				}				
 				response.setAttribute("kpiRBlocks", kpiRBlocks);
 				if (auditId!=null) response.setAttribute(AuditManager.AUDIT_ID, auditId);
-				kpiResultsList = kpiRBlocks;
+				kpiResultsList = kpiRBlocks; 
+				if(kpiRBlocks != null ) logger.debug("Kpi Result list has "+ kpiRBlocks.size()+" elements");
 			} catch (Exception eex) {
 				logger.error("Exception", eex);
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 10107);
@@ -722,7 +723,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		}
 		String modelNodeName = modI.getName();
 		line.setModelNodeName(modelNodeName);
-		line.setModelInstanceNodeId(modI.getModelNodeId());
+		//line.setModelInstanceNodeId(modI.getModelNodeId()); BUG
+		line.setModelInstanceNodeId(modI.getModelInstanceNodeId()); // correction
 		line.setModelInstanceCode(modI.getModelCode());
 		setVisibilityInformation(line, modI);
 		
@@ -1180,10 +1182,32 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		JSONArray toReturn = new JSONArray();
 
 		List<KpiResourceBlock> values = getKpiResultsList();
+		if(values != null){
+			logger.debug("Values has "+values.size()+" elements");
+		}
 		BasicXmlBuilder basicXmlBuilder = new BasicXmlBuilder("");
 		String template = basicXmlBuilder.buildTemplate(values);
+		logger.debug("Print template build: "+template);
 		Map<String, SourceBean> kpisMap = basicXmlBuilder.getKpisMap();
 		Map<String, SourceBean> kpiValuesMap = basicXmlBuilder.getKpiValuesMap();
+		
+		if(kpisMap != null){
+			logger.debug("Kpis Map has "+kpisMap.keySet().size()+"elements");
+			for (Iterator iterator = kpisMap.keySet().iterator(); iterator.hasNext();) {
+				String kpiKey = (String) iterator.next();
+				logger.debug("Content of Kpis Map at key "+kpiKey+" is "+kpisMap.get(kpiKey));
+			}
+		}
+		
+		if(kpiValuesMap != null){
+			logger.debug("Kpi Values Map has "+kpiValuesMap.keySet().size()+"elements");
+			for (Iterator iterator = kpiValuesMap.keySet().iterator(); iterator.hasNext();) {
+				String kpiValueKey = (String) iterator.next();
+				logger.debug("Content of Kpi Values Map at key "+kpiValueKey+" is "+kpiValuesMap.get(kpiValueKey));
+			}
+		}
+
+		
 		if(kpisMap != null){
 			for (Iterator iterator = kpisMap.keySet().iterator(); iterator.hasNext();) {
 				String kpiCode = (String) iterator.next();
@@ -1236,7 +1260,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				toReturn.put(jsonToSend);
 			}	
 		}
-
+		logger.debug("Returning value parsed in JSON "+toReturn);
 		logger.debug("OUT");
 
 

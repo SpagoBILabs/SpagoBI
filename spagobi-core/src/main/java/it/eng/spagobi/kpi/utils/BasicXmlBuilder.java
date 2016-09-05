@@ -311,6 +311,8 @@ public class BasicXmlBuilder  {
 		try{
 			modelNodeL=new SourceBean(modelNodeLineS);
 
+			logger.debug("Kpi Line related to Model INstance code "+line.getModelInstanceCode()+" and Model Node Name Name "+line.getModelNodeName()+" and model instance node Id "+line.getModelInstanceNodeId() );
+			
 			modelNodeL.setAttribute("code",line.getModelInstanceCode()!=null?line.getModelInstanceCode():"");
 			modelNodeL.setAttribute("name",line.getModelNodeName()!=null?line.getModelNodeName():"");
 
@@ -318,6 +320,7 @@ public class BasicXmlBuilder  {
 			if (line.getModelInstanceNodeId()!=null){
 				Integer id = new Integer(line.getModelInstanceNodeId());
 				Date d = new Date();
+				logger.debug("Serach for model instance node id "+line.getModelInstanceNodeId());
 				IModelInstanceDAO modInstDAO=DAOFactory.getModelInstanceDAO();
 				ModelInstanceNode n = modInstDAO.loadModelInstanceById(id, d);
 				String descr = n.getDescr();
