@@ -870,8 +870,8 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		List subObjects = new ArrayList();
 		try {
 			ISubObjectDAO subobjdao = DAOFactory.getSubObjectDAO();
-			subObjects = subobjdao
-			.getAccessibleSubObjects(obj.getId(), profile);
+			//subObjects = subobjdao
+			//.getAccessibleSubObjects(obj.getId(), profile);
 		} catch (Exception e) {
 			logger.error("Error retriving the subObject list", e);
 		}

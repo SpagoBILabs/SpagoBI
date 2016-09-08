@@ -56,6 +56,8 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			query.setInteger(0, idBIObj.intValue());
 			query.setString(1, ((UserProfile)profile).getUserId().toString());
 			
+			//logger.error("query:"+hql+"/n"+"Param0:"+idBIObj.intValue()+"/n"+"Param1:"+((UserProfile)profile).getUserId().toString());
+			
 			List result = query.list();
 			Iterator it = result.iterator();
 			while (it.hasNext()){
