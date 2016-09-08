@@ -444,6 +444,9 @@
 										<include>src/ext4/sbi/tools/scheduler/TriggerInfoWindow-min.js</include>
 										<include>src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorSplittedPanel-min.js</include>
 										<include>src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorContextMenu-min.js</include>
+										<include>src/ext4/sbi/tools/document/SmartFilterBrowser.js</include>
+										<include>src/ext4/sbi/tools/document/SmartFilterView.js</include>
+										<include>src/ext4/sbi/tools/document/SmartFilterModel.js</include>										
 									</includes>
 									<insertNewLine>true</insertNewLine>
 								</aggregation>
