@@ -3,6 +3,7 @@
 	<MAP_ACTIONS>
 		<MAP_ACTION actionName="GET_METADATA_ACTION" businessProcess="SeeMetadataFunctionality" />
 		<MAP_ACTION actionName="SAVE_METADATA_ACTION" businessProcess="SaveMetadataFunctionality" />
+		<MAP_ACTION actionName="START_METADATA_GUI_ACTION" businessProcess="SeeMetadataFunctionality" />
 	</MAP_ACTIONS>
 
 	<MAP_PAGE_MODULES>

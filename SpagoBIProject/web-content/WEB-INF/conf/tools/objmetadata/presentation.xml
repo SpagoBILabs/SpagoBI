@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PRESENTATION>
 	<MAPPING business_name="ListObjMetadataPage" business_type="PAGE" publisher_name="ListObjMetadataPubJ"/>
-	<MAPPING business_name="DetailObjMetadataPage" business_type="PAGE" publisher_name="DetailObjMetadataPubJ"/>    	 
+	<MAPPING business_name="DetailObjMetadataPage" business_type="PAGE" publisher_name="DetailObjMetadataPubJ"/> 
+	<MAPPING business_name="START_METADATA_GUI_ACTION" business_type="ACTION" publisher_name="START_METADATA_GUI_PUBLISHER"/>   
 </PRESENTATION>
 

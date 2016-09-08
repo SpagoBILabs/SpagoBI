@@ -46,7 +46,8 @@ if (header != null && header.equals("Ext")) {
 
 <html lang="<%=locale.getLanguage()%>">
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=8" />
+	<!--  <meta http-equiv="X-UA-Compatible" content="IE=8" /> -->
+	<meta http-equiv="X-UA-Compatible" content="IE=9" />
 	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
 </head>
 <body>

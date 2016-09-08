@@ -9,9 +9,12 @@ import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.rest.annotations.CheckFunctionalitiesParser;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.filters.FilterIOManager;
 
@@ -101,14 +104,35 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			    logger.info("User not logged");
 			    throw new LoggableFailure( request.getUri().getRequestUri().getPath() );
 			}
+			
+			// Profile is not null
+			UserProfileManager.setProfile(profile);
 				
 			boolean authorized = false;
-			try {
-				authorized = profile.isAbleToExecuteService(serviceUrl);
-			} catch (Throwable e) {
-				logger.debug("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["+serviceUrl+"]",e);
-				throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["+serviceUrl+"]",e);
+			// If the resource class is annotated with @ManageAuthorization authorizations are specified using the @UserConstraint annotation
+			if (resourceMethod.getMethod().getDeclaringClass().isAnnotationPresent(ManageAuthorization.class)) {
+				// Functionalities annotation parser
+				CheckFunctionalitiesParser checkFunctionalitiesParser = new CheckFunctionalitiesParser();
+
+				// If the security annotation is not present on the method, this method is public
+				boolean isPublicService = checkFunctionalitiesParser.isPublicService(resourceMethod.getMethod());
+
+				if (isPublicService)
+					authorized = true;
+				else {
+					authorized = checkFunctionalitiesParser.checkFunctionalitiesByAnnotation(resourceMethod.getMethod(), profile);
+				}
+			} else { // Old method for authorization (without annotation)
+				try {
+					authorized = profile.isAbleToExecuteService(serviceUrl);
+				} catch (Throwable e) {
+					logger.debug("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service [" + serviceUrl + "]", e);
+					throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["
+							+ serviceUrl + "]", e);
+				}
 			}
+			
+		
 				
 			if(!authorized){
 				try {
@@ -273,5 +297,11 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	public boolean accept(Class declaring, Method method) {
 		return !method.isAnnotationPresent(POST.class);
 		//return true;
+	}
+	
+	public void postProcess(ServerResponse response) {
+		logger.debug("IN");
+		UserProfileManager.unset();
+		logger.debug("OUT");
 	}
 }

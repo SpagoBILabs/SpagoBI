@@ -31,6 +31,15 @@ Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {
 	Sbi.execution.toolbar.DocumentExecutionPageToolbar.superclass.constructor.call(this, c);
 	
 	
+	//Added to force IE 11 compatibility and use AngularJS into Iframe
+    var meta = document.createElement('meta');
+    meta.httpEquiv = "X-UA-Compatible"; 
+    meta.charset = "UTF-8";
+    meta.content = "IE=edge";
+    console.log('meta', meta);
+    document.getElementsByTagName('head')[0].appendChild(meta);
+	
+	
 };
 
 /**
@@ -190,7 +199,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			serviceName: 'GET_NOTES_ACTION'
 			, baseParams: params
 		});
-	
 		
 		var updateDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: 'DOC_UPDATE'};
 		this.services['updateDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
@@ -886,11 +894,55 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	
 	, metaExecution: function () {
 		var subObjectId = this.executionInstance.SBI_SUBOBJECT_ID;
+		var metadataParams={OBJECT_ID : this.executionInstance.OBJECT_ID , SUBOBJECT_ID  : this.executionInstance.SUBOBJECT_ID};
+		
+		this.services['getMetadataGuiService'] = this.services['getMetadataGuiService'] || Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName : 'START_METADATA_GUI_ACTION',
+			baseParams : metadataParams
+		});
+		
+		var iframe='<iframe src="' + this.services['getMetadataGuiService'] + '" width="100%" height="90%"> </iframe>'	
+
+		//style="min-width:1200px;"
+		
 		if(subObjectId !== undefined){
-			this.win_metadata = new Sbi.execution.toolbar.MetadataWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID, 'SUBOBJECT_ID': subObjectId});
+			//this.win_metadata = new Sbi.execution.toolbar.MetadataWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID, 'SUBOBJECT_ID': subObjectId});
+			
+			//this.win_metadata = new extPanel (iframe contenente url della mia jsp )
+
+			
+			
+			this.win_metadata = new Ext.Window({
+				title: 'Sample Window', //Title of the Window 
+				id: 'panelWindowId', //ID of the Window Panel
+				minWidth:1200, //Width of the Window
+				width:1200,	//Width
+				resizable: true, //Resize of the Window, if false - it can't be resized
+				closable: true, //Hide close button of the Window
+				modal: true, //When modal:true it make the window modal and mask everything behind it when displayed
+				contentEl: '', //ID of the respective 'div'
+				html: iframe	
+				});
+			
+			
 		}else{
-			this.win_metadata = new Sbi.execution.toolbar.MetadataWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID});
+			//this.win_metadata = new Sbi.execution.toolbar.MetadataWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID});
+			
+			//this.win_metadata = new extPanel
+			this.win_metadata = new Ext.Window({
+				title: 'Metadata Info', //Title of the Window 
+				id: 'panelWindowId', //ID of the Window Panel
+				minWidth:1200, //Width of the Window
+				width:1200, //Width
+				resizable: true, //Resize of the Window, if false - it can't be resized
+				closable: true, //Hide close button of the Window
+				modal: true, //When modal:true it make the window modal and mask everything behind it when displayed
+				contentEl: '', //ID of the respective 'div'
+				html: iframe
+				});
+
 		}	
+		this.win_metadata.setHeight(700);
 		this.win_metadata.show();
 	}
 	

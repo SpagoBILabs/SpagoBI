@@ -668,10 +668,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	// ===================================================================
 
 	public String getUserId() {
-		return getUserProfile().getUserUniqueIdentifier().toString();
+		return getDataSetResourceUserProfile().getUserUniqueIdentifier().toString();
 	}
 
-	private UserProfile getUserProfile() {
+	private UserProfile getDataSetResourceUserProfile() {
 		UserProfile profile = this.getIOManager().getUserProfile();
 		return profile;
 	}
@@ -690,7 +690,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	// }
 
 	private DatasetManagementAPI getDatasetManagementAPI() {
-		DatasetManagementAPI managementAPI = new DatasetManagementAPI(getUserProfile());
+		DatasetManagementAPI managementAPI = new DatasetManagementAPI(getDataSetResourceUserProfile());
 		return managementAPI;
 	}
 
@@ -821,7 +821,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			JSONObject datasetsJSONObject = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
 			JSONArray datasetsJSONArray = new JSONArray();
 			datasetsJSONArray.put(datasetsJSONObject);
-			JSONArray datasetsJSONReturn = putActions(getUserProfile(), datasetsJSONArray, typeDocWizard);
+			JSONArray datasetsJSONReturn = putActions(getDataSetResourceUserProfile(), datasetsJSONArray, typeDocWizard);
 			return datasetsJSONReturn.toString();
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while serializing results", t);
@@ -831,7 +831,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	private String serializeDataSets(List<IDataSet> dataSets, String typeDocWizard) {
 		try {
 			JSONArray datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
-			JSONArray datasetsJSONReturn = putActions(getUserProfile(), datasetsJSONArray, typeDocWizard);
+			JSONArray datasetsJSONReturn = putActions(getDataSetResourceUserProfile(), datasetsJSONArray, typeDocWizard);
 			JSONObject resultJSON = new JSONObject();
 			resultJSON.put("root", datasetsJSONReturn);
 			return resultJSON.toString();

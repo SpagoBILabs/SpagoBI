@@ -6,5 +6,8 @@
  <ACTION name="SAVE_METADATA_ACTION" class="it.eng.spagobi.analiticalmodel.execution.service.SaveMetadataAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
+ <ACTION name="START_METADATA_GUI_ACTION" class="it.eng.spagobi.analiticalmodel.execution.service.StartMetadataGuiAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
 </ACTIONS>
 

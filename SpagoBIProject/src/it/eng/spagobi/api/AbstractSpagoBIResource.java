@@ -9,6 +9,7 @@ package it.eng.spagobi.api;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
@@ -62,6 +63,10 @@ public class AbstractSpagoBIResource extends AbstractRestService {
 		return response;
 	}
 	
+	public UserProfile getUserProfile() {
+		return UserProfileManager.getProfile();
+	}
+
 	
 
 }

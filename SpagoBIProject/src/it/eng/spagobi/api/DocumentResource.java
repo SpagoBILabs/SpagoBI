@@ -111,13 +111,13 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	// ===================================================================
 	// UTILITY METHODS
 	// ===================================================================
-	private UserProfile getUserProfile() {
+	private UserProfile getDocumentResourceUserProfile() {
 		UserProfile profile = this.getIOManager().getUserProfile();
 		return profile;
 	}
 	
 	private AnalyticalModelDocumentManagementAPI getDocumentManagementAPI() {
-		AnalyticalModelDocumentManagementAPI managementAPI = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI managementAPI = new AnalyticalModelDocumentManagementAPI(getDocumentResourceUserProfile());
 		return managementAPI;
 	}
 }

@@ -5,6 +5,11 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.constants;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Defines all SpagoBI's constants.
  */
@@ -13,6 +18,7 @@ public class SpagoBIConstants {
 	public static final String TENANT_ID = "TENANT_ID";
 	public static final String SBI_ENTITY = "SBI_ENTITY";
 	public static final String PAGE = "PAGE";
+	public static final String ACTION_NAME = "ACTION_NAME";
 	public static final String URL = "URL";
 	public static final String OBJECT = "OBJECT";
 	public static final String OBJECT_ID = "OBJECT_ID";
@@ -39,6 +45,7 @@ public class SpagoBIConstants {
 	public static final String USE_PUBLIC_USER = "SPAGOBI.SECURITY.USE_PUBLIC_USER";
 	public static final String PUBLIC_USER_ID = "public_user";
 
+	public static final String ADMIN_ROLE_TYPE = "ADMIN";
 	public static final String ROLE_TYPE_ADMIN = "ACTOR";
 	public static final String ROLE_TYPE_DEV = "DEV_ROLE";
 	public static final String ROLE_TYPE_TEST = "TEST_ROLE";
@@ -55,6 +62,9 @@ public class SpagoBIConstants {
 	public static final String VIEW_OBJECTS_AS_TREE = "VIEW_OBJECTS_AS_TREE";
 
 	public static final String LIST_PAGE = "LIST_PAGE";
+
+	public static final String DISTRIBUTED_MAP_FOR_CACHE = "CACHE";
+	public static final String DISTRIBUTED_MAP_INSTANCE_NAME = "KNOWAGE";
 
 	public static final String MODALITY = "MODALITY";
 	public static final String MESSAGEDET = "MESSAGEDET";
@@ -120,6 +130,19 @@ public class SpagoBIConstants {
 	public static final String STRING_TYPE_FILTER = "STRING";
 	public static final String DATE_TYPE_FILTER = "DATE";
 
+	// DATE RANGE
+
+	public static final String LESS_BEGIN_FILTER = "lessbegin";
+	public static final String LESS_END_FILTER = "lessend";
+	public static final String LESS_OR_EQUAL_BEGIN_FILTER = "lesseqbg";
+	public static final String LESS_OR_EQUAL_END_FILTER = "lesseqend";
+	public static final String GREATER_BEGIN_FILTER = "gtr_bg";
+	public static final String GREATER_END_FILTER = "gtr_end";
+	public static final String GREATER_OR_EQUAL_BEGIN_FILTER = "gtr_eq_bg";
+	public static final String GREATER_OR_EQUAL_END_FILTER = "gtr_eq_end";
+	public static final String IN_RANGE_FILTER = "inrange";
+	public static final String NOT_IN_RANGE_FILTER = "notinrange";
+
 	public static final String ERASE_VERSION = "ERASE_VERSION";
 
 	public static final String VERSION = "VERSION";
@@ -127,6 +150,7 @@ public class SpagoBIConstants {
 	public static final String PARAMETERS = "PARAMETERS";
 
 	public static final String PROFILE_ATTRS = "PROFILE_ATTRS";
+	public static final String USER_ID = "user_id";
 
 	public static final String INPUT_TYPE = "INPUT_TYPE";
 	public static final String INPUT_TYPE_QUERY_CODE = "QUERY";
@@ -236,7 +260,7 @@ public class SpagoBIConstants {
 	public static final String MESSAGE_TEST_AFTER_ATTRIBUTES_FILLING = "MESSAGE_TEST_AFTER_ATTRIBUTES_FILLING";
 
 	public static final String USER_PROFILE_FOR_TEST = "USER_PROFILE_FOR_TEST";
-	
+
 	public static final String PARAMETERS_TO_FILL = "PARAMETERS_TO_FILL";
 	public static final String PARAMETERS_FILLED = "PARAMETERS_FILLED";
 
@@ -311,6 +335,8 @@ public class SpagoBIConstants {
 	public static final String TENANT_MANAGEMENT = "TenantManagement";
 	public static final String ENGINES_MANAGEMENT = "EnginesManagement";
 	public static final String READ_ENGINES_MANAGEMENT = "ReadEnginesManagement";
+	public static final String CACHE_MANAGEMENT = "CacheManagement";
+	public static final String LICENSE_MANAGEMENT = "LicenseManagement";
 	// ---end
 	public static final String DATASET_MANAGEMENT = "DatasetManagement";
 	public static final String FUNCTIONALITIES_MANAGEMENT = "FunctionalitiesManagement";
@@ -336,6 +362,7 @@ public class SpagoBIConstants {
 	public static final String SYNCRONIZE_ROLES_MANAGEMENT = "SyncronizeRolesManagement";
 	public static final String PROFILE_ATTRIBUTES_MANAGEMENT = "ProfileAttributeManagement";
 	public static final String DATASOURCE_MANAGEMENT = "DataSourceManagement";
+	public static final String DATASOURCE_READ = "DataSourceRead";
 	public static final String DISTRIBUTIONLIST_MANAGEMENT = "DistributionListManagement";
 	public static final String DISTRIBUTIONLIST_USER = "DistributionListUser";
 	public static final String DOCUMENT_DELETE_MANAGEMENT = "DocumentDeleteManagement";
@@ -376,6 +403,11 @@ public class SpagoBIConstants {
 	public static final String CREATE_SOCIAL_ANALYSIS = "CreateSocialAnalysis";
 	public static final String VIEW_SOCIAL_ANALYSIS = "ViewSocialAnalysis";
 	public static final String HIERARCHIES_MANAGEMENT = "HierarchiesManagement";
+	public static final String CKAN_FUNCTIONALITY = "CkanIntegrationFunctionality";
+	public static final String IMAGES_MANAGEMENT = "ImagesManagement";
+	public static final String GLOSSARY = "Glossary";
+	public static final String TIMESPAN = "Timespan";
+	public static final String CREATE_DATASETS_AS_FINAL_USER = "CreateDatasetsAsFinalUser";
 
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState";
 	public static final String DOCUMENT_MOVE_UP_STATE = "DocumentMoveUpState";
@@ -418,7 +450,24 @@ public class SpagoBIConstants {
 	public static final String TEMPORARY_TABLE_ROOT_NAME = "SBI_TEMPORARY_TABLE_ROOT_NAME";
 	public static final String DROP_TEMPORARY_TABLE_ON_EXIT = "SBI_DROP_TEMPORARY_TABLE_ON_EXIT";
 
+	public static final String SOCIAL_ANALYSIS = "knowagesocialanalysis";
+	
 	public static final String CHART_TYPE_CODE = "CHART";
+	public static final String COCKPIT_ENGINE_NAME = "Cockpit Engine";
+	public static final String COCKPIT_ENGINE_LABEL = "knowagecockpitengine";
+	public static final String BIRT_ENGINE_LABEL = "knowagebirtreporteng";
+	public static final String BIRT_ENGINE_LABEL_2 = "knowagebirtreportengine";
+	public static final String JASPER_ENGINE_LABEL = "knowagejasperreporte";
+	public static final String JASPER_ENGINE_LABEL_2 = "knowagejasperreportengine";
+	public static final String GIS_ENGINE_LABEL = "knowagegisengine";
+	public static final String JPIVOT_ENGINE_LABEL = "knowagejpivotengine";
+	public static final String QBE_ENGINE_LABEL = "knowageqbeengine";
+	public static final String GEO_ENGINE_LABEL = "knowagegeoengine";
+	public static final String TALEND_ENGINE_LABEL = "knowagetalendengine";
+	public static final String CHART_ENGINE_LABEL = "knowagechartengine";
+	public static final String GEOREPORT_ENGINE_LABEL = "knowagegeoreportengine";
+	public static final String KPI_ENGINE_LABEL = "knowagekpiengine";
+	public static final String META_ENGINE_LABEL = "knowagemeta";
 
 	public static final String MONDRIAN_SCHEMA = "MONDRIAN_SCHEMA";
 	public static final String MONDRIAN_CUBE = "cube";
@@ -431,9 +480,83 @@ public class SpagoBIConstants {
 	public static final String SBI_ARTIFACT_LOCKER = "SBI_ARTIFACT_LOCKER";
 	public static final String SBI_ARTIFACT_ID = "SBI_ARTIFACT_ID";
 
+	public static final String SBI_META_MODEL_VALUE_LOCKED_BY_USER = "locked_by_user";
+	public static final String SBI_META_MODEL_VALUE_LOCKED_BY_OTHER = "locked_by_other";
+	public static final String SBI_META_MODEL_VALUE_UNLOCKED = "unlocked";
+
 	public static final String DATAMART_RETRIEVER = "DATAMART_RETRIEVER";
 
 	public static final String DS_SCOPE_USER = "USER";
+	public static final String DS_SCOPE_TECHNICAL = "TECHNICAL";
+	public static final String DS_SCOPE_ENTERPRISE = "ENTERPRISE";
 
 	public static final String ENABLE_DATASET_PERSISTENCE = "EnableDatasetPersistence";
+	public static final String ENABLE_FEDERATED_DATASET = "EnableFederatedDataset";
+	public static final String FEDERATED_DATASET_MANAGEMENT = "EnableFederatedDataset";
+
+	public static final String MANAGE_GLOSSARY_BUSINESS = "ManageGlossaryBusiness";
+	public static final String MANAGE_GLOSSARY_TECHNICAL = "ManageGlossaryTechnical";
+
+	public static final String CALENDAR = "Calendar";
+
+	public static final String MANAGE_KPI_VALUE = "ManageKpiValue";
+
+	public static final String MANAGE_CALENDAR = "ManageCalendar";
+
+	public static final String MANAGE_CROSS_NAVIGATION = "ManageCrossNavigation";
+	public static final String EXECUTE_CROSS_NAVIGATION = "ExecuteCrossNavigation";
+
+	public static final String MANAGE_CROSS_OUT_PARAMS_PAGE = "ManageCrossOutParamsPage";
+	public static final String MANAGE_DOC_LINKS_PAGE = "ManageDocLinksPage";
+	public static final String CREATE_TIMESPAN = "CreateTimepan";
+
+	public static final String DOMAIN_WRITE = "DomainWrite";
+	public static final String DOMAIN_MANAGEMENT = "DomainManagement";
+	public static final String CONFIG_MANAGEMENT = "ConfigManagement";
+	public static final String USER_DATA_PROPERTIES_MANAGEMENT = "UserDefinedPropertyManagement";
+	public static final String TEMPLATE_MANAGEMENT = "TemplateManagement";
+	public static final String IMP_EXP_DOCUMENT = "ImpExpDocument";
+	public static final String IMP_EXP_RESOURCES = "ImpExpResources";
+	public static final String IMP_EXP_USERS = "ImpExpUsers";
+	public static final String IMP_EXP_KPIS = "ImpExpKpis";
+	public static final String IMP_EXP_METADATA = "ImpExpMetadata";
+	public static final String IMP_EXP_CATALOG = "ImpExpCatalog";
+	public static final String IMP_EXP_GLOSSARY = "ImpExpGlossary";
+	public static final String IMP_EXP_SCHEDULER = "ImpExpScheduler";
+
+	public static final String META_MODELS_CATALOGUE_MANAGEMENT = "MetaModelsCatalogueManagement";
+	// Cockpit
+	public static final String MANAGE_STATIC_WIDGET = "StaticWidget";
+	public static final String MANAGE_ANALYTICAL_WIDGET = "AnalyticalWidget";
+	public static final String MANAGE_CHART_WIDGET = "ChartWidget";
+	public static final String MANAGE_MULTISHEET_COCKPIT = "MultisheetCockpit";
+
+	public static final String REGISTRY_DATA_ENTRY = "RegistryDataEntry";
+	public static final String DOCUMENT_SCHEDULING = "DocumentScheduling";
+	public static final String SCHEDULING_DISTRIBUTED_OUTPUT = "SchedulingDistributedOutput";
+	public static final String META_MODEL_CWM_EXPORTING = "MetaModelCwmExporting";
+	public static final String META_MODEL_SAVING_TO_RDBMS = "MetaModelSavingToRdbms";
+	public static final String META_MODEL_LIFECYCLE_MANAGEMENT = "MetaModelLifecycleManagement";
+
+	public static final String SHARED_DEVELOPMENT = "SharedDevelopment";
+	public static final String FUNCTIONS_CATALOG = "FunctionsCatalog";
+
+	public static final String TEMPORAL_DIMENSION = "TemporalDimension";
+	public static String CONFIG_STORE_TO_HDFS = "SPAGOBI.GENERIC_CONFIGURATION.DATASET_FILE_HDFS";
+
+	public static final String IS_FOR_EXPORT = "IS_FOR_EXPORT";
+	public static final String COCKPIT_SELECTIONS = "COCKPIT_SELECTIONS";
+
+	// Date Range
+	public static final String DATE_RANGE_OPTION_QUANTITY_PREFIX = "dateRangeOptionQuantity_";
+	public static final String DATE_RANGE_OPTION_TYPE_PREFIX = "dateRangeOptionType_";
+	public static final Set<String> DATE_RANGE_VALID_TYPES = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList("years", "months", "days", "weeks")));
+	public static final String DATE_RANGE_TYPE_JSON = "type";
+	public static final String DATE_RANGE_QUANTITY_JSON = "quantity";
+	public static final String DATE_RANGE_TYPE = "DATE_RANGE";
+	public static final String DATE_RANGE_OPTIONS_KEY = "options";
+	public static final String PREDEFINED_GROOVY_SCRIPT_FILE_NAME = "predefinedGroovyScript.groovy";
+
+	public static final String LICENSE = "License";
+
 }
