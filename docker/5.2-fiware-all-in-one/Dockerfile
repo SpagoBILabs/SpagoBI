@@ -1,8 +1,8 @@
 FROM java:7
 
-ENV SPAGOBI_VERSION=All-in-One-SpagoBI-5.1-1feb2d97af
-ENV SPAGOBI_URL=https://github.com/SpagoBILabs/SpagoBI/releases/download/fiware-v5.1-1feb2d97af/${SPAGOBI_VERSION}.zip
-ENV SPAGOBI_MYSQL_SCRIPT_URL=https://github.com/SpagoBILabs/SpagoBI/releases/download/fiware-v5.1-1feb2d97af/MySQL.zip
+ENV SPAGOBI_VERSION=All-In-One-SpagoBI-5.2.1-6030e025b0
+ENV SPAGOBI_URL=https://github.com/SpagoBILabs/SpagoBI/releases/download/fiware-v5.2-6030e025b0/${SPAGOBI_VERSION}.zip
+ENV SPAGOBI_MYSQL_SCRIPT_URL=https://github.com/SpagoBILabs/SpagoBI/releases/download/fiware-v5.2-6030e025b0/MySQL.zip
 
 RUN apt-get update && apt-get install -y wget coreutils unzip mysql-client
 
