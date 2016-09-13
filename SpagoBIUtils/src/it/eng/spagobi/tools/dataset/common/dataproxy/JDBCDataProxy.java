@@ -10,6 +10,7 @@ import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -78,7 +79,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 
 			try {
 				connection = getDataSource().getConnection(getSchema());
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
 			}
 			String dialect = dataSource.getHibDialectClass();
@@ -91,12 +92,12 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				// a stmt forward only
 				if (dialect.contains("Ingres")) {
 					stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-				} else if (dialect.contains("hbase") || dialect.contains("hive") || dialect.contains("SAP")) {
+				} else if (dialect.contains("hbase") || SqlUtils.isHiveLikeDialect(dialect) || dialect.contains("SAP")) {
 					stmt = connection.createStatement();
 				} else {
 					stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				}
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 			}
 
@@ -109,45 +110,40 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				logger.debug("Executing query " + sqlQuery + " ...");
 				resultSet = stmt.executeQuery(sqlQuery);
 
-			} catch (Throwable t) {
-				logger.error("Trovata!:", t);
+			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement", t);
 			}
 
-			boolean inlineViewStrategyUsedSuccessfully = false;
 			int resultNumber = -1;
 			if (isCalculateResultNumberOnLoadEnabled()) {
 				logger.debug("Calculation of result set total number is enabled");
 				try {
-					// try to calculate the query total result number using
-					// inline view
-					if (dialect.contains("hbase") || dialect.contains("hive")) {
-						resultNumber = getResultNumber(resultSet);
+					// if its an hive like db the query can be very slow so it's better to execute it just once and not use the inline view tecnique
+					if (SqlUtils.isHiveLikeDialect(dialect)) {
+						logger.debug("It's a BigData datasource so count data iterating result set till max");
+						dataReader.setCalculateResultNumberEnabled(true);
+					} else if (getOffset() == 0 && getFetchSize() == -1) {
+						// we need to load entire resultset, therefore there is no need to use the inline view tecnique
+						logger.debug("Offset = 0, fetch size = -1: the entire resultset will be loaded, no need to use the inline view tecnique");
+						dataReader.setCalculateResultNumberEnabled(true);
 					} else {
+						// try to calculate the query total result number using inline view tecnique
 						resultNumber = getResultNumber(connection);
+						logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
+						// ok, no need to ask the datareader to calculate the query total result number
+						dataReader.setCalculateResultNumberEnabled(false);
 					}
-
-					logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
-					// ok, no need to ask the datareader to calculate the query
-					// total result number
-					dataReader.setCalculateResultNumberEnabled(false);
-					inlineViewStrategyUsedSuccessfully = true;
-				} catch (Throwable t) {
-					logger.warn("Error while try to get query total result number using inline view stategy", t);
-					// something went wrong, we need to ask the datareader to
-					// calculate the query total result number
+				} catch (Exception t) {
+					logger.debug("KO Calculation of result set total number using inlineview", t);
 					try {
-
-						logger.debug("Calculation of result set total number for Hive query language : resultNumber = " + resultNumber);
-						// ok, no need to ask the datareader to calculate the
-						// query total result number
-						dataReader.setCalculateResultNumberEnabled(true);
-						inlineViewStrategyUsedSuccessfully = false;
-
-					} catch (Throwable th) {
+						logger.debug("Loading data using scrollable resultset tecnique");
+						resultNumber = getResultNumber(resultSet);
+						logger.debug("OK data loaded using scrollable resultset tecnique : resultNumber = " + resultNumber);
+						dataReader.setCalculateResultNumberEnabled(false);
+					} catch (SQLException e) {
+						logger.debug("KO data loaded using scrollable resultset tecnique", e);
 						dataReader.setCalculateResultNumberEnabled(true);
 					}
-
 				}
 			} else {
 				logger.debug("Calculation of result set total number is NOT enabled");
@@ -158,18 +154,18 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			try {
 				// read data
 				dataStore = dataReader.read(resultSet);
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while parsing resultset", t);
 			}
 
-			if (inlineViewStrategyUsedSuccessfully) {
+			if (resultNumber > -1) { // it means that resultNumber was successfully calculated by this data proxy
 				dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
 			}
 
 		} finally {
 			try {
 				releaseResources(connection, stmt, resultSet);
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("Impossible to release allocated resources properly", t);
 			}
 		}
@@ -198,7 +194,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		return resultNumber;
 	}
 
-	protected int getResultNumber(ResultSet resultSet) throws Exception {
+	protected int getResultNumber(ResultSet resultSet) throws SQLException {
 		logger.debug("IN");
 
 		int rowcount = 0;
