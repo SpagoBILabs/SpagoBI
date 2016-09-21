@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.datasource.service.rest;
 
@@ -27,7 +27,7 @@ import com.mongodb.MongoClient;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 @Path("/datasources")
 public class TestConnection {
@@ -46,7 +46,7 @@ public class TestConnection {
 		String user = req.getParameter("USER");
 		String pwd = req.getParameter("PASSWORD");
 		String driver = req.getParameter("DRIVER");
-		String schemaAttr = req.getParameter("CONNECTION_URL");
+		String schemaAttr = req.getParameter("SCHEMA");
 
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
@@ -105,8 +105,7 @@ public class TestConnection {
 				return "{error: '" + ex.getMessage() + "'}";
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
-				throw new SpagoBIRuntimeException(
-						"Cannot fill response container", e);
+				throw new SpagoBIRuntimeException("Cannot fill response container", e);
 			}
 		}
 	}
