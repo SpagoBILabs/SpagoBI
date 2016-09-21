@@ -7,7 +7,9 @@ Introduction
 What is NGSI?
 -------------
 NGSI is a protocol developed by OMA to manage Context Information. It provides operations like:
-* Manage the Context Information about Context Entities, for example the lifetime and quality of information.* Access (query, subscribe/notify) to the available Context Information about Context Entities.
+
+* Manage the Context Information about Context Entities, for example the lifetime and quality of information.
+* Access (query, subscribe/notify) to the available Context Information about Context Entities.
 
 The FI-WARE version of the OMA NGSI interface is a RESTful API via HTTP. Its purpose is to exchange context information. The three main interaction types are
 
@@ -386,13 +388,3 @@ By defining a context broker url in Kpi Alarm detail page, when an alarm event i
 
 ![](media/AlarmDetail.png)
 
-
-
-
-
-KPI Execution will be sent in JSON format to Orion Context Broker.
-
-
-
-
-### Alarm
