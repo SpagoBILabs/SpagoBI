@@ -374,3 +374,25 @@ In addition to Console Engine it's also possible to add notifications capabiliti
 You can see the entire video of DataSet creation and Document usage (gif animated):
 
 ![](media/Screencast_DataSet_Console_Document.gif)
+
+### New Scheduled KPI dispatching option
+
+User can now choose to dispatch the result of a scheduled KPI to context broker.
+By accessing scheduling details page, user can enable Context broker dispatch option and fill context broker url and context broker type text (look at screenshot).
+![](media/ContextBrokerDispatching.png)
+
+### KPI Alarm notification to context broker
+By defining a context broker url in Kpi Alarm detail page, when an alarm event is thrown it will be sent also to context broker.
+
+![](media/AlarmDetail.png)
+
+
+
+
+
+KPI Execution will be sent in JSON format to Orion Context Broker.
+
+
+
+
+### Alarm
