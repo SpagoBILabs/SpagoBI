@@ -19,12 +19,12 @@
 		  
 ## Introduction
 
-This is the code repository for the SpagoBI project related to [Fiware](http://www.fiware.org).
+This is the source code repository for SpagoBI Server, that is the main component of the [SpagoBI suite](http://www.spagobi.org). 
 
-Check also the [FIWARE Catalogue entry for SpagoBI](http://catalogue.fiware.org/enablers/data-visualization-spagobi)
+SpagoBI is also part of the [FIWARE community](http://www.fiware.org), being the reference implementation of the Data Visualization GE. Check the [FIWARE Catalogue entry for SpagoBI](http://catalogue.fiware.org/enablers/data-visualization-spagobi).
 
 Any feedback on this documentation is highly welcome, including bugs, typos
-or things you think should be included but aren't. You can use [github issues](https://github.com/SpagoBILabs/SpagoBI/issues) to provide feedback.
+or things you think should be included but aren't. You can use the [SpagoBI tracker](https://www.spagoworld.org/jira/browse/SPAGOBI) to provide feedbacks.
 
 You can find the User & Programmer's Manual and the Administration Guide on [readthedocs.org](http://spagobi.readthedocs.org)
 
@@ -32,7 +32,7 @@ You can find the User & Programmer's Manual and the Administration Guide on [rea
 
 SpagoBI is the only entirely Open Source Business Intelligence suite. It covers all the analytical areas of Business Intelligence projects, with innovative themes and engines.
 
-If this is your first contact with SpagoBI, it is highly recommended to have a look to the brief [Demo](http://demo.spagobi.org/Demo/index.html#).
+If this is your first contact with SpagoBI, it is highly recommended to have a look at its [Demo](http://demo.spagobi.org/Demo/index.html#).
 
 ## Install
 
@@ -110,6 +110,6 @@ curl http://<spagobi-url>/SpagoBI/restful-services/2.0/datasets/RestMetersValues
 
 ## License
 
-You can find the license of SpagoBI [here](http://www.spagobi.org/homepage/opensource/license/).
+You can find details about the license of SpagoBI suite on the [SpagoBI site](http://www.spagobi.org/homepage/opensource/license/).
 
 [Top](#top)
