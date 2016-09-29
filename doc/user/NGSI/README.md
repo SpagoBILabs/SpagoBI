@@ -377,14 +377,19 @@ You can see the entire video of DataSet creation and Document usage (gif animate
 
 ![](media/Screencast_DataSet_Console_Document.gif)
 
-### New Scheduled KPI dispatching option
-
+New Scheduled KPI dispatching option
+-------------------
 User can now choose to dispatch the result of a scheduled KPI to context broker.
-By accessing scheduling details page, user can enable Context broker dispatch option and fill context broker url and context broker type text (look at screenshot).
+By accessing scheduling details page, user can enable context broker dispatch option and fill context broker url and context broker type texts (look at screenshot).
 ![](media/ContextBrokerDispatching.png)
+When scheduled KPI is executed results will be sent to context broker. 
+Each entity sent is identified by KPI label.
+Context broker type is sent as type field, in order to be able to group entities in families.
 
-### KPI Alarm notification to context broker
-By defining a context broker url in Kpi Alarm detail page, when an alarm event is thrown it will be sent also to context broker.
+KPI Alarm notification to context broker
+-------------------
+By defining a context broker url in KPI Alarm detail page, when an alarm event is thrown it will be sent also to context broker. (Look at screenshot) 
+The context broker type is sent as a type field in order to be able to group entities in families, while each entity is identified by alarm label. 
 
 ![](media/AlarmDetail.png)
 
