@@ -36,14 +36,6 @@ if [ -n "$DB_ENV_MYSQL_DATABASE" ]; then
 	DB_HOST=$DB_PORT_3306_TCP_ADDR
 	DB_PORT=$DB_PORT_3306_TCP_PORT
 
-	#insert spago bi metadata into db if it doesn't exist
-	Result=`mysql -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} -e "SHOW TABLES LIKE '%SBI_%';"`
-	if [ -z "$Result" ]; then
-		mysql -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} --execute="source $MYSQL_SCRIPT_DIRECTORY/MySQL_create.sql"
-		mysql -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} --execute="source $MYSQL_SCRIPT_DIRECTORY/MySQL_create_quartz_schema.sql"
-		mysql -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} --execute="source $MYSQL_SCRIPT_DIRECTORY/MySQL_create_social.sql"
-	fi
-
 	#replace hsql with mysql
 	#replace in server.xml
 	old_driver='org\.hsqldb\.jdbcDriver'
