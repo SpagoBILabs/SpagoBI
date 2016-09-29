@@ -2,7 +2,6 @@ FROM java:7
 
 ENV SPAGOBI_VERSION=All-In-One-SpagoBI-5.2.1-6030e025b0
 ENV SPAGOBI_URL=https://github.com/SpagoBILabs/SpagoBI/releases/download/fiware-v5.2-6030e025b0/${SPAGOBI_VERSION}.zip
-ENV SPAGOBI_MYSQL_SCRIPT_URL=https://github.com/SpagoBILabs/SpagoBI/releases/download/fiware-v5.2-6030e025b0/MySQL.zip
 
 RUN apt-get update && apt-get install -y wget coreutils unzip mysql-client
 
@@ -13,13 +12,7 @@ RUN wget "${SPAGOBI_URL}" -O SpagoBI.zip && \
 	mv ${SPAGOBI_VERSION} SpagoBI && \
 	rm SpagoBI.zip
 
-#download mysql scripts
-RUN wget "${SPAGOBI_MYSQL_SCRIPT_URL}" -O MySQL.zip && \
-	unzip MySQL.zip -d MySQL && \
-	rm MySQL.zip
-
 ENV SPAGOBI_DIRECTORY /home/SpagoBI
-ENV MYSQL_SCRIPT_DIRECTORY /home/MySQL
 WORKDIR ${SPAGOBI_DIRECTORY}/bin
 
 #make the script executable by bash (not only sh) and
