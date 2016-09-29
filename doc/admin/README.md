@@ -1,14 +1,14 @@
 Introduction
 ============
 
-This Installation and Administration Guide covers SpagoBI Server version 5.1.0-r24688 (starting from FIWARE release 4.2). Any feedback on this document is highly welcomed, including bugs, typos or things you think should be included but are not. Please send it to the “Contact Person” email that appears in the [Catalogue page for this GEri](http://catalogue.fiware.org/enablers/data-viz-spagobi).
+This Installation and Administration Guide covers SpagoBI Server version 5.2.1 (associated with FIWARE release 5). Any feedback on this document is highly welcomed, including bugs, typos or things you think should be included but are not. Please create issues on our [SpagoBI tracker](http://spagobi.eng.it/jira/secure/Dashboard.jspa) also for this purpose.
 
 Installation
 ============
 
 This page contains the basic Installation and Administration Guide for the SpagoBI Server, the reference implementation of the Data Visualization Generic Enabler, based on the [SpagoBI](http://www.spagobi.org) Open Source project. Its [online documentation](http://wiki.spagobi.org/xwiki/bin/view/Main/) is continuously updated and improved, and provides the most appropriate source to get the most up-to-date information on installation and administration. Other community tools are available, such as a [forum](http://spagobi.eng.it/jforum/forums/list.page) and a [tracker](http://spagobi.eng.it/jira/secure/Dashboard.jspa).
 
-In this page we'll provide you some basic information, but we'll focus on the integration between SpagoBI Server and other GEs, in particular with the IdM - KeyRock and Data Lab - CKAN.
+In this page we'll provide you some basic information, but we'll focus on the integration between SpagoBI Server and other GEs, in particular with the IdM - KeyRock, Data Lab - CKAN and the Orion Context Broker.
 
 Released package description
 ----------------------------
@@ -27,7 +27,7 @@ Data to be analyzed with SpagoBI can be stored both on SQL datasources and noSQL
 Installation from released package
 ----------------------------------
 
-After installation of the required softwares listed before, you have to unzip the released .zip file into a folder. We'll refer to that folder as SPAGOBI\_SERVER\_HOME. The metadata database must be initialized and configured: you can find SQL scripts from [SpagoBI download page](http://forge.ow2.org/project/showfiles.php?group_id=204) in "SpagoBI 5.1 - Script db" section, you have to execute them into a database. Then you have to configure the datasource in SPAGOBI\_SERVER\_HOME/conf/server.xml:
+After installation of the required softwares listed before, you have to unzip the released All-In-One-SpagoBI-5.2.1-xxxxxxxx.zip file into a folder. We'll refer to that folder as SPAGOBI\_SERVER\_HOME. The metadata database must be created and configured in SPAGOBI\_SERVER\_HOME/conf/server.xml:
 
 ``` xml
 <Resource name="jdbc/spagobi" auth="Container"
@@ -40,7 +40,7 @@ After installation of the required softwares listed before, you have to unzip th
           maxWait="-1"/>
 ```
 
-providing JDBC URL, username, password and driver class. Refer to the database documentation about the right JDBC driver to be used, and put it in SPAGOBI\_SERVER\_HOME/lib folder. Please notice that released package already contains JDBC drivers for MySQL 5.6, Postgres 9 and Oracle 11, but, in case you need a different JDBC driver, you have to replace them with the correct ones. Then edit the following files in order to set the proper dialect for the database:
+providing JDBC URL, username, password and driver class. Please notice that, in contrast with previous SpagoBI versions and starting from SpagoBI 5.2, you don't need to execute any SQL script to initialize the metadata repository: you just have to create it empty and SpagoBI will create all the required tables when starting-up. Refer to the database documentation about the right JDBC driver to be used, and put it in SPAGOBI\_SERVER\_HOME/lib folder. Please notice that released package already contains JDBC drivers for MySQL 5.6, Postgres 9 and Oracle 11, but, in case you need a different JDBC driver, you have to replace them with the correct ones. Then edit the following files in order to set the proper dialect for the database:
 
 -   SPAGOBI\_SERVER\_HOME/webapps/SpagoBI/WEB-INF/classes/hibernate.cfg.xml (set hibernate.dialect property according to your database)
 -   SPAGOBI\_SERVER\_HOME/webapps/SpagoBI/WEB-INF/classes/jbpm.hibernate.cfg.xml (set hibernate.dialect property according to your database)
@@ -84,7 +84,7 @@ Then you can access SpagoBI on `http://<ip of machine>:8080/SpagoBI`.
 How to start and stop SpagoBI Server
 ------------------------------------
 
-In order to start SpagoBI Server, you have to execute SPAGOBI\_SERVER\_HOME/bin/startup.bat (for Windows systems) or SPAGOBI\_SERVER\_HOME/bin/startup.sh (for Linux systems); use shutdown.bat or shutdown.sh to stop it. You can also install SpagoBI Server as a service, please refer to Tomcat documentation.
+In order to start SpagoBI Server, you have to execute SPAGOBI\_SERVER\_HOME/bin/SpagoBIStartup.bat (for Windows systems) or SPAGOBI\_SERVER\_HOME/bin/SpagoBIStartup.sh (for Linux systems); use shutdown.bat or shutdown.sh to stop it. You can also install SpagoBI Server as a service, please refer to Tomcat documentation.
 
 Users configuration
 -------------------
