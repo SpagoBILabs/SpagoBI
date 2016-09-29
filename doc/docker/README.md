@@ -6,7 +6,8 @@ This is the official repository of SpagoBI. SpagoBI is the only entirely Open So
  
 # Supported tags and respective Dockerfile links
 
-* ```latest```, ```fiware``` : [Dockerfile](https://github.com/SpagoBILabs/SpagoBI/blob/master/docker/5.1-fiware-all-in-one/Dockerfile)
+* ```latest```, ```fiware``` : [Dockerfile](https://github.com/SpagoBILabs/SpagoBI/blob/master/docker/5.2-fiware-all-in-one/Dockerfile)
+* ```5.1-fiware-all-in-one``` : [Dockerfile](https://github.com/SpagoBILabs/SpagoBI/blob/master/docker/5.1-fiware-all-in-one/Dockerfile)
 * ```5.1-all-in-one```, ```stable``` : [Dockerfile](https://github.com/SpagoBILabs/SpagoBI/blob/master/docker/5.1-all-in-one/Dockerfile)
 
 # Run SpagoBI All In One
