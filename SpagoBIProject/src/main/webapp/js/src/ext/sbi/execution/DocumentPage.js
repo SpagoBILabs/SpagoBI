@@ -659,6 +659,32 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 			if(executionInstance.PARAMETERS){
 				try {
 					var parameters =  JSON.parse(executionInstance.PARAMETERS); // Produces a SyntaxError
+					//decode parameters for multivalue case ( from {;{xx;yy}STRING} syntax to ["xx","yy"])
+					var refreshParamsContent = false;
+					for (p in parameters){
+						if (Array.isArray(parameters[p])){
+							var pp = parameters[p];
+							if (typeof pp !== "function"){
+								for (var v=0; v<pp.length; v++){
+									var arrValues = [];
+									if (typeof pp[v] !== "function"){
+										if (pp[v].indexOf("{") == 0){
+											var tmpVal = pp[v];
+											var tmpTypePar = tmpVal.substring(tmpVal.indexOf("}")+1 , tmpVal.length-1 );
+											var tmpValues = tmpVal.substring(tmpVal.indexOf("{;{")+3, tmpVal.indexOf("}"));
+											arrValues = tmpValues.split(";");
+											parameters[p] = arrValues;
+											refreshParamsContent = true;
+										}
+									}
+								}
+							}
+						} 
+					}
+					if (refreshParamsContent){
+						this.executionInstance.PARAMETERS = JSON.stringify(parameters);
+					}
+					
 					if(parameters.outputType){
 						outputType = parameters.outputType;
 						if(outputType != null){
