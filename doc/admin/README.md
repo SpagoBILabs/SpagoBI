@@ -388,8 +388,4 @@ Diagnosis Procedures
 
 Read the related manual [here](diagnosis.md).
 
-Fiware theme
------------------------
-
-Read the related manual [here](theme.md).
 
