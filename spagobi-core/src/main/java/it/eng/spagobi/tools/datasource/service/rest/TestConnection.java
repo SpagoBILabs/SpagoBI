@@ -46,7 +46,7 @@ public class TestConnection {
 		String user = req.getParameter("USER");
 		String pwd = req.getParameter("PASSWORD");
 		String driver = req.getParameter("DRIVER");
-		String schemaAttr = req.getParameter("CONNECTION_URL");
+		String schemaAttr = req.getParameter("SCHEMA");
 
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
