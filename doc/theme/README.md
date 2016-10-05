@@ -1,4 +1,4 @@
-#<a name="top"></a>Fiware Theme
+# Fiware Theme
 
 * [Configure theme](#configure-theme)
 * [Admin theme](#admin-theme)
