@@ -57,6 +57,3 @@ Document browser is then shown, with both view modalities: list mode and folder 
 At last next screenshot shows menu when selecting a single document, with options to execute it, clone, delete etc.
 
 ![](media/SpagoBI-user-doc-browser-execution.png)
- 
-
-[Top](#top)
