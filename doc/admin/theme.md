@@ -1,14 +1,14 @@
-# Fiware Theme
+# FIWARE Theme
 
 * [Configure theme](#configure-theme)
 * [Admin theme](#admin-theme)
 * [User theme](#user-theme)
 
-SpagoBI has a specific theme for Fiware. This section explains how to configure it and provides some example screenshots.
+SpagoBI has a specific theme for FIWARE. This section explains how to configure it and provides some example screenshots.
 
 ## Configure theme
 
-To use Fiware theme administrator must open "Configuration management" from admin menu:
+To use FIWARE theme administrator must open "Configuration management" from admin menu:
 
 ![](media/SpagoBI_admin_config_management.png)
 
