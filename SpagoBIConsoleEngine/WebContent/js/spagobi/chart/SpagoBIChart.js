@@ -148,15 +148,25 @@ Ext.extend(Sbi.chart.SpagoBIChart, Ext.FlashComponent, {
 
 
 	, refresh: function() {
+		var self=this;
+
+		//this task is necessary to repeat refresh until SWF is ready
+		var task = new Ext.util.DelayedTask(function(){
+		    self.refresh(); 
+		}); 
+		
 		if( !this.isSwfReady() ) {
 			if(this.bindStoreBeforeSwfInit) {
 				// some charts can queue pending data refresh and then apply 
 				// them as soon as the swf object is initialized
 				this.onPendingRefresh();
-			}
+			}else {
+				task.delay(1000); 
+			}	
 			return;
 		}
 		
+		task.cancel();
 		if(this.fireEvent('beforerefresh', this) !== false){
 			this.onRefresh();			
 			this.fireEvent('refresh', this);
