@@ -135,16 +135,16 @@ Ext.extend(Sbi.chart.SpagoBIChart, Ext.FlashComponent, {
 	}
 
 	// never invoked for the moment
-	, onSwfReady : function(isReset){
-        Ext.chart.Chart.superclass.onSwfReady.call(this, isReset);
-        alert('onSwfReady');
-        if(!isReset && !this.bindStoreBeforeSwfInit){
-        	alert('Bind store');
-            this.bindStore(this.store, true);
-        }
-        
-        this.refresh.defer(10, this);
-    }
+//	, onSwfReady : function(isReset){
+//        Ext.chart.Chart.superclass.onSwfReady.call(this, isReset);
+//        alert('onSwfReady');
+//        if(!isReset && !this.bindStoreBeforeSwfInit){
+//        	alert('Bind store');
+//            this.bindStore(this.store, true);
+//        }
+//        
+//        this.refresh.defer(10, this);
+//    }
 
 
 	, refresh: function() {
@@ -163,6 +163,15 @@ Ext.extend(Sbi.chart.SpagoBIChart, Ext.FlashComponent, {
 			} else {
 				task.delay(1000); 
 			}
+			//loop until the swf is ready (maximum 5 times)
+//			var isReady = false;
+//			var maxFails = 5;
+//			while (!isReady){
+//				console.log("waiting for swf ready...");
+//				isReady = this.isSwfReady();
+//				maxFails = maxFails-1;
+//				if (maxFails == 0) return;
+//			}	
 			return;
 		}
 		
@@ -266,7 +275,8 @@ Sbi.chart.Multileds = Ext.extend(Sbi.chart.SpagoBIChart, {
 	}
 		
 	, isSwfReady: function() {
-		return !!this.swf.loadData;
+//		return !!this.swf.loadData;
+		return this.swf.loadData;
 	}
 	
 	, onRefresh: function() {
@@ -325,7 +335,8 @@ Sbi.chart.Livelines = Ext.extend(Sbi.chart.SpagoBIChart, {
 	}
 	
 	, isSwfReady: function() {
-		return !!this.swf.loadData;
+//		return !!this.swf.loadData;
+		return this.swf.loadData;
 	}
 	
 	, onRefresh: function() {
@@ -383,7 +394,8 @@ Sbi.chart.Speedometer = Ext.extend(Sbi.chart.SpagoBIChart, {
 	}
 		
 	, isSwfReady: function() {
-		return !!this.swf.setValue;
+//		return !!this.swf.setValue;
+		return this.swf.setValue;
 	}
 
 	, onRender : function(ct, position) {
@@ -427,8 +439,8 @@ Sbi.chart.Semaphore = Ext.extend(Sbi.chart.SpagoBIChart, {
 	}
 		
 	, isSwfReady: function() {
-		//return this.swf.setValue;
-		return !!this.swf.setValue;
+		return this.swf.setValue;
+//		return !!this.swf.setValue;
 	}
 
 	, onRender : function(ct, position) {		
