@@ -281,6 +281,80 @@ function exportChartExecution(exportType, sbiLabelDocLinked) {
 	document.getElementById(nameIframe).contentWindow.exportChart(exportType);
 }
 
+
+
+function exportOLAPExecution(documentUrl, exportType, sbiLabelDocLinked) {
+
+	/*var nameIframe = "iframe_" + sbiLabelDocLinked;
+	document.getElementById(nameIframe).contentWindow.exportChart(exportType);
+	
+	var documentUrl = null;
+	if(contentUrl == null){
+		documentUrl = this.getDocumentUrl();
+	}
+	else{
+		documentUrl = contentUrl;
+	}*/
+
+	var documentBaseUrl = getBaseUrlPart(documentUrl);
+    var exportationBaseUrl = getUrlWithReplacedEndpoint(documentBaseUrl, 'Print', false);
+    
+    parameters = {cube: '01'};
+    if (exportType == "PDF") parameters.type = '1';
+    else if(exportType == "XLS") parameters.type = '0';
+    var exportationUrl = this.getUrlWithAddedParameters(exportationBaseUrl, parameters, false);
+    return exportationUrl;
+	
+}
+
+function getBaseUrlPart(url) {
+	var baseUrl = url;
+	if(baseUrl) {
+		var urlParts = baseUrl.split('?');
+		baseUrl = urlParts[0];
+	}
+    return baseUrl;
+}
+
+
+function getUrlWithAddedParameters(url, parameters, append) {
+    
+	if(!url) {
+		Sbi.warn('[ExportMenu.getUrlWithAddedParameters: original input parameter [url] cannor be null');
+		return null;
+	}
+	
+	if(append === undefined) append = true;
+	
+	var baseUrl = this.getBaseUrlPart(url);
+    
+	if(append === true) {
+		var originalParameters = this.getParameters(url) || {};
+		parameters = Ext.apply(originalParameters, parameters);
+	}
+	var queryPart = Ext.urlEncode(parameters);
+	
+    return  baseUrl + '?' + queryPart;
+}
+
+
+function getUrlWithReplacedEndpoint(url, endpoint, keepParameters) {
+	
+	if(keepParameters === undefined) {
+		keepParameters = false;
+	}
+	var baseUrl = this.getBaseUrlPart(url);
+	var lastIndexOfSlash = baseUrl.lastIndexOf('/');
+	parentOfBaseUrl = baseUrl.substring(0,lastIndexOfSlash) 
+	var newUrl = parentOfBaseUrl + "/" + endpoint;
+	if(keepParameters === true) {
+		newUrl += "?" + this.getQueryPart(url);
+	}
+	return newUrl;
+}
+	
+
+
 function  exportExecution(item) {
 	var  exportType = item.text;
 	var doclabel = item.document;
@@ -289,8 +363,12 @@ function  exportExecution(item) {
     //alert(endUrl);
     if(item.docType == 'REPORT' || (item.docType == 'MAP')){
     	window.open(endUrl, 'name', 'resizable=1,height=750,width=1000');
-    
-    }else if(item.docType == 'DASH' || item.docType == 'CHART'){
+    }
+    else if(item.docType == 'OLAP'){
+    	var exportOLAPUrl = exportOLAPExecution(endUrl, exportType, doclabel);
+    	window.open(exportOLAPUrl, 'name', 'resizable=1,height=750,width=1000');
+    } 
+    else if(item.docType == 'DASH' || item.docType == 'CHART'){
     	exportChartExecution(exportType, doclabel);
     }
 	
