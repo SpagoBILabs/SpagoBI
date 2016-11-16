@@ -17,11 +17,11 @@ For SpagoBI installation include `spagobi` in your node's `run_list`:
 ```json
 {
   "run_list": [
-    "recipe[spagobi::1.0.2_install]"
+    "recipe[spagobi::1.0.3_install]"
   ]
 }
 ```
 
 ## Authors
 
-Author:: Giorgio Federici (giorgio.federici@eng.it)
+Author:: Giorgio Federici (giorgio.federici@eng.it), Alessandro Portosa (alessandro.portosa@eng.it)
