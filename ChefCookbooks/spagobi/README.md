@@ -24,6 +24,4 @@ For SpagoBI installation include `spagobi` in your node's `run_list`:
 
 ## Authors
 
-Authors:: 
-Giorgio Federici (giorgio.federici@eng.it)
-Alessandro Portosa (alessandro.portosa@eng.it)
+Authors:: Giorgio Federici (giorgio.federici@eng.it), Alessandro Portosa (alessandro.portosa@eng.it)
