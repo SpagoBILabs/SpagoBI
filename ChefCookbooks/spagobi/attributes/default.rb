@@ -1,29 +1,20 @@
 
 ##### SPAGOBI GENERIC ATTRIBUTES #############################################
 
-default["demo"] = false
 default["spagobi"]["home_dir"] = "/opt/spagobi/"
-default["spagobi"]["server_dir"] = "All-in-One-SpagoBI-5.1-1feb2d97af/"
-default["spagobi"]["file_name"] = "All-in-One-SpagoBI-5.1-1feb2d97af.zip"
+default["spagobi"]["server_dir"] = "All-In-One-SpagoBI-5.2.1-6030e025b0/"
+default["spagobi"]["file_name"] = "All-In-One-SpagoBI-5.2.1-6030e025b0.zip"
 default["spagobi"]["db_name"] = "spagobi"
 default["spagobi"]["db_username"] = "spagobi"
 default["spagobi"]["db_password"] = "bispago"
 default["spagobi"]["public_ip"] = `dig +short myip.opendns.com @resolver1.opendns.com | tr -d '\n' `
-default["spagobi"]["remote_location"] = "https://github.com/SpagoBILabs/SpagoBI/releases/download/fiware-v5.1-1feb2d97af/All-in-One-SpagoBI-5.1-1feb2d97af.zip"
-default["spagobi"]["remote_mysql_dbscripts"] = "https://github.com/SpagoBILabs/SpagoBI/releases/download/fiware-v5.1-1feb2d97af/MySQL.zip"
+default["spagobi"]["remote_location"] = "https://github.com/SpagoBILabs/SpagoBI/releases/download/fiware-v5.2-6030e025b0/All-In-One-SpagoBI-5.2.1-6030e025b0.zip"
 default["spagobi"]["Xms"] = 512
 default["spagobi"]["Xmx"] = 1024
 default["spagobi"]["MaxPermSize"] = 512
 default["spagobi"]["java_security_egd"] = "file:/dev/./urandom"
-
-if node[:demo] == true
-	default["spagobi"]["db_dialect"] = "org.hibernate.dialect.HSQLDialect"
-	default["spagobi"]["quartz_driver"] = "org.quartz.impl.jdbcjobstore.HSQLDBDelegate"
-else
-	default["spagobi"]["db_dialect"] = "org.hibernate.dialect.MySQLDialect"
-	default["spagobi"]["quartz_driver"] = "org.quartz.impl.jdbcjobstore.StdJDBCDelegate"
-end
-
+default["spagobi"]["db_dialect"] = "org.hibernate.dialect.MySQLDialect"
+default["spagobi"]["quartz_driver"] = "org.quartz.impl.jdbcjobstore.StdJDBCDelegate"
 
 ###### OAUTH 2 #################################################
 
