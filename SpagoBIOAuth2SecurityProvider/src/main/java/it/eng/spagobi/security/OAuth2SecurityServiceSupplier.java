@@ -70,7 +70,7 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			profile.setOrganization("SPAGOBI");
 
 			/*
-			 * If the user's email is the same as the owner of the application (as configured in the oauth2.config.properties file) we consider him as the
+			 * If the user's email is the same as the owner of the application (as configured in the oauth2.config.properties file) we consider him as the 
 			 * superadmin
 			 */
 			String adminEmail = config.getProperty("ADMIN_EMAIL");
@@ -149,6 +149,11 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 	public boolean checkAuthorization(String userId, String function) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public SpagoBIUserProfile checkAuthenticationToken(String token) {
+		return createUserProfile(token);
 	}
 
 }
