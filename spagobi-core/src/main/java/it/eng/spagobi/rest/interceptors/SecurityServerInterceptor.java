@@ -40,7 +40,7 @@ import org.jboss.resteasy.spi.interception.AcceptedByMethod;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 /**
- * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a JAX-RS resource method is found to invoke on, but before the actual invocation
+ * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a JAX-RS resource method is found to invoke on, but before the actual invocation 
  * happens
  *
  * Similar to SpagoBIAccessFilter but designed for REST services
@@ -93,8 +93,9 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			// Other checks are required
 			boolean authenticated = isUserAuthenticatedInSpagoBI();
 			if (!authenticated) {
-				// try to authenticate the user on the fly using simple-authentication schema
+				// try to authenticate the user on the fly using simple-authentication 
 				profile = authenticateUser();
+				servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 			} else {
 				// get the user profile from session
 				profile = (UserProfile) getUserProfileFromSession();
@@ -178,21 +179,38 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		logger.trace("IN");
 
 		try {
-			String encodedUserPassword = servletRequest.getHeader("Authorization").replaceFirst("Basic ", "");
-			String credentials = null;
-			byte[] decodedBytes = Base64.decode(encodedUserPassword);
-			credentials = new String(decodedBytes, "UTF-8");
+			/*
+			 * author radmila.selakovic@mht.net checking if request header is
+			 * "X-Auth-Token"
+			 */
+			if (servletRequest.getHeader("X-Auth-Token") == null) {
+				String encodedUserPassword = servletRequest.getHeader("Authorization").replaceFirst("Basic ", "");
+				String credentials = null;
+				byte[] decodedBytes = Base64.decode(encodedUserPassword);
+				credentials = new String(decodedBytes, "UTF-8");
 
-			StringTokenizer tokenizer = new StringTokenizer(credentials, ":");
-			String user = tokenizer.nextToken();
-			String password = tokenizer.nextToken();
+				StringTokenizer tokenizer = new StringTokenizer(credentials, ":");
+				String user = tokenizer.nextToken();
+				String password = tokenizer.nextToken();
 
-			ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 
-			SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthentication(user, password);
-			if (spagoBIUserProfile != null) {
-				profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
+				SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthentication(user, password);
+				if (spagoBIUserProfile != null) {
+					profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
+				}
+			} else {
+				// if request header is
+				// "X-Auth-Token chencking authorization will be by access token"
+				String token = servletRequest.getHeader("X-Auth-Token");
+				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+
+				SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthenticationToken(token);
+				if (spagoBIUserProfile != null) {
+					profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
+				}
 			}
+
 		} catch (Exception e) {
 			logger.error("Erro while authenticating user", e);
 		} finally {
@@ -259,7 +277,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	}
 
 	/**
-	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
+	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId 
 	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
 	 *
 	 * @param httpRequest
