@@ -151,6 +151,12 @@ public class LiferaySecurityServiceSupplierImpl implements ISecurityServiceSuppl
 	    logger.debug("URL="+url);
 	    return new URL(url);
 	}
+
+	@Override
+	public SpagoBIUserProfile checkAuthenticationToken(String token) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 
 

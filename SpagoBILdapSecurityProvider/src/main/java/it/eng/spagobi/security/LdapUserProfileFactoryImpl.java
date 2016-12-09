@@ -170,4 +170,12 @@ public class LdapUserProfileFactoryImpl implements ISecurityServiceSupplier {
     	throw new UnsupportedOperationException("Method not implemented because it is deprecated in the parent interface");
     }
 
+
+
+	@Override
+	public SpagoBIUserProfile checkAuthenticationToken(String token) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
