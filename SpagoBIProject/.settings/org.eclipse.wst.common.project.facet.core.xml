@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faceted-project>
-  <fixed facet="wst.jsdt.web"/>
-  <installed facet="jboss.m2" version="1.0"/>
-  <installed facet="jboss.portlet" version="1.0"/>
-  <installed facet="jst.java" version="1.7"/>
-  <installed facet="wst.jsdt.web" version="1.0"/>
-  <installed facet="jst.jaxrs" version="2.0"/>
-  <installed facet="jst.web" version="3.0"/>
-  <installed facet="jst.jsf" version="2.2"/>
+  <fixed facet="jst.java"/>
+  <fixed facet="jst.web"/>
+  <installed facet="jst.web" version="2.4"/>
+  <installed facet="jst.java" version="1.4"/>
 </faceted-project>

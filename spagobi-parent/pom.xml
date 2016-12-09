@@ -65,7 +65,7 @@
  		<module>../SpagoBINetworkEngine</module>
  		<module>../SpagoBISocialAnalysis</module>
  		<module>../SpagoBITalendEngine</module>
-		<module>../SpagoBIWhatIfEngine</module>
+<!--		<module>../SpagoBIWhatIfEngine</module> -->
 	</modules>
 
 
@@ -225,7 +225,7 @@
 			<id>tomcat</id>
 			<properties>
 				<!-- To specify another folder use your settings.xml -->
-				<tomcat.home>D:\Program Files\Apache Software Foundation\Tomcat 7.0</tomcat.home>
+				<tomcat.home>C:\tomcat_novi_spago</tomcat.home>
 			</properties>
 			<build>
 				<plugins>
