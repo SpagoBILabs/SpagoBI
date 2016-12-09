@@ -300,4 +300,25 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 		return this.injectIFrame(serviceUrl, config);
 	}
 	
+	
+	, authenticateToken: function ( token ){
+		console.log(token);
+		var baseUrl = Sbi.sdk.services.baseUrl;
+		var serviceUrl = baseUrl.protocol + '://' + baseUrl.host + ":" + baseUrl.port + '/' + baseUrl.contextPath + '/restful-services/2.0/autenticateUser';
+
+		var headers = [];
+		headers[0] = {
+				name: 'X-Auth-Token',
+				value: token
+			}
+
+		Sbi.sdk.cors.asyncRequest({
+			method: 'GET',
+			url: serviceUrl,
+			headers: headers ,
+			callbackOk : function (){
+
+			}
+		});	}
+	
 });
