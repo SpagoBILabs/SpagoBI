@@ -169,5 +169,10 @@ public class InternalSecurityServiceSupplierImpl implements
 		return profile;
 
 	}
+	@Override
+	public SpagoBIUserProfile checkAuthenticationToken(String token) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
