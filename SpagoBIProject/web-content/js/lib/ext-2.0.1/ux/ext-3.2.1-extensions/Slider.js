@@ -184,7 +184,11 @@ new Ext.Slider({
 </pre>
  */
 Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
-    /**
+   
+	currValue1: null,
+	currValue2: null,
+	initialValues : null,
+	/**
      * @cfg {Number} value The value to initialize the slider with. Defaults to minValue.
      */
     /**
@@ -418,11 +422,10 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
             	tag:'div', 
             	cls: 'x-slider-info-container-current-value'
             		
-            	//,html: 'aaa'
-            		,cn : [ 
-            		        {tag:'div' , cls:'.x-slider-info-current-value-left'}
-            		        , {tag:'div' , cls:'.x-slider-info-current-value-right'}
-            	     ]
+//            		,cn : [ 
+//            		        {tag:'div' , cls:'.x-slider-info-current-value-left'}
+//            		        , {tag:'div' , cls:'.x-slider-info-current-value-right'}
+//            	     ]
             }
             ]
         };
@@ -438,72 +441,19 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         
         this.store.scope = this;
         var thisScope = this;
-          
-        this.store.on('load', function(a,b,c,d,e){
-        	
-        	// When store is loaded get a map of all values
-        	var storeSize = this.getCount();
-        	
-          	// get the scope to fill with divs
-        	var containerScope = this.scope;
-        	containerScope.allValues = {};
-        	
-        	for(var i = 0; i< storeSize; i++){
-        		var record = this.getAt(i);
-        		var val = record.get('description');
-        		if(!val){
-        			val = record.get('value');
-        		}
-        		containerScope.allValues[i]= val;
-        	}
-        	
-      
-        	var containerInfoEl = containerScope.infoEl;
-        	
-        	var colspan = containerScope.colspan;
-        	var thickPerc = containerScope.thickPerc;
-        	
-        	var container = containerInfoEl.child('.x-slider-info-container');
-        	
-        	if(container){
+        
+        // if store is already loaded add markers now, otherwise add listener on load event
+        if(this.store != undefined && this.store.getCount()>1){
+        	this.addSliderMarkers(this.store);	
+        }
+        else {
+        
+        	this.store.on('load', function(a,b,c,d,e){
 
-        		containerScope.setInitialValue();
+        		thisScope.addSliderMarkers(this);	
 
-        		// choose how many points basing on colspan and store size
-        		var points = Math.floor(storeSize/100 * thickPerc);
-
-        		if(points > 0){
-        			// if percentage is > 0 at least first and last element are put
-
-        			var pointSize = Math.floor(100 / points);
-
-        			var rootInterval = Math.ceil(storeSize / points);
-
-        			var cont = 0;
-        			var iteration = 1;
-
-
-        			while(iteration <points && cont<storeSize){
-        				if(cont == 0){
-        					// first one
-        					container.createChild("<div class='x-slider-info-left' style='width: "+pointSize+"%'>"+containerScope.allValues[0]+"</div>"); 
-        				}
-        				else{
-        					container.createChild("<div class='x-slider-info-left' style='width: "+pointSize+"%; text-align:center;'>"+containerScope.allValues[cont]+"</div>");
-        				}
-
-        				cont = cont+rootInterval;
-        				iteration++;
-        			}
-        			// last one
-        			container.createChild("<div class='x-slider-info-right' style='width: "+pointSize+"%; text-align:right;'>"+containerScope.allValues[storeSize-1]+"</div>");
-        		}
-        	}
-
-
-
-        });
-
+        	});
+        }
         
 
 
@@ -521,6 +471,83 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
         Sbi.trace("[Slider.onRender] : OUT");
     }
     
+    , addSliderMarkers: function(store){
+    	// When store is loaded get a map of all values
+    	var storeSize = store.getCount();
+    	
+      	// get the scope to fill with divs
+    	var containerScope = this.store.scope;
+    	containerScope.allValues = {};
+    	
+    	for(var i = 0; i< storeSize; i++){
+    		var record = store.getAt(i);
+    		var val = record.get('description');
+    		if(!val){
+    			val = record.get('value');
+    		}
+    		containerScope.allValues[i]= val;
+    	}
+    	
+    	// update initial values indexes
+  
+    	var containerInfoEl = containerScope.infoEl;
+    	
+    	var colspan = containerScope.colspan;
+    	var thickPerc = containerScope.thickPerc;
+    	
+    	var container = containerInfoEl.child('.x-slider-info-container');
+    	
+    	if(container){
+
+    		containerScope.setInitialValue();
+
+    		/*
+    		 * thickPerc == -1 no thick point
+    		 * thickPerc == 0 only two extremes (default value)
+    		 * thickPerc > 0 percentage on totale length
+    		 */
+    		
+
+    		if(thickPerc == undefined || thickPerc == 0){
+    			container.createChild("<div class='x-slider-info-left' style='width: "+'30'+"%'>"+containerScope.allValues[0]+"</div>"); 
+    			container.createChild("<div class='x-slider-info-right' style='width: "+'30'+"%; text-align:right;'>"+containerScope.allValues[storeSize-1]+"</div>");
+    		}
+    		else if(thickPerc > 0){
+    		
+    		// choose how many points basing on colspan and store size
+    		var points = Math.floor(storeSize/100 * thickPerc);
+
+    		if(points > 0){
+    			// if percentage is > 0 at least first and last element are put
+
+    			var pointSize = Math.floor(100 / points);
+
+    			var rootInterval = Math.ceil(storeSize / points);
+
+    			var cont = 0;
+    			var iteration = 1;
+
+    			while(iteration <points && cont<storeSize){
+    				if(cont == 0){
+    					// first one
+    					container.createChild("<div class='x-slider-info-left' style='width: "+pointSize+"%'>"+containerScope.allValues[0]+"</div>"); 
+    				}
+    				else{
+    					container.createChild("<div class='x-slider-info-left' style='width: "+pointSize+"%; text-align:center;'>"+containerScope.allValues[cont]+"</div>");
+    				}
+
+    				cont = cont+rootInterval;
+    				iteration++;
+    			}
+    			// last one
+    			container.createChild("<div class='x-slider-info-right' style='width: "+pointSize+"%; text-align:right;'>"+containerScope.allValues[storeSize-1]+"</div>");
+    		}
+
+    		}
+    	}
+
+    }
+    
     /**
      * Set initial info value of first slider, and second if exists
      */
@@ -529,27 +556,54 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
     	var currValue1 = null;
     	var currValue2 = null;
     	
-    	var currIndex1 = this.getValue(0);
-    	var currIndex2 = this.getValue(1);
-    	
-    	currValue1 = this.allValues[currIndex1];
-    	if(currIndex2){
-    		currValue2 = this.allValues[currIndex2];
+    	// check if initial values are set otherwise take them from all values
+    	if(this.initValues != undefined){
+    		currValue1 = this.initValues[0];
+    		currValue2 = this.initValues[1];
     	}
+    	
+    	// take them from all values if not from initial
+    	if(currValue1 == undefined){
+    	var currIndex1 = this.getValue(0);
+    	currValue1 = this.allValues[currIndex1];
+    	}
+    	
+    	if(currValue2 == undefined){
+    		var currIndex2 = this.getValue(1);
+    		if(currIndex2){
+    			currValue2 = this.allValues[currIndex2];
+    		}
+    	}    
+    	
+    	if(currValue1 == undefined) currValue1 = null;
+    	if(currValue2 == undefined) currValue2 = null;
     	
     	var containerCurrentValues = containerInfoEl.child('.x-slider-info-container-current-value');
 
     	if(containerCurrentValues){
-
-    		var containerCurr = containerCurrentValues.first();
-    		currValue1 = 'Current value: '+currValue1; 
-    		containerCurr.dom.innerHTML = currValue1;  
-
-    		if(currValue2){
-    			var containerCurr2 = containerCurrentValues.last();
-    			currValue2 = 'Current value second slider: '+currValue2; 
-    			containerCurr2.dom.innerHTML = currValue2;   
+    		if(currValue1){
+    			containerCurrentValues.dom.innerHTML = currValue1;  
+    			this.currValue1 = currValue1;
+    			if(currValue2){
+    				containerCurrentValues.dom.innerHTML = containerCurrentValues.dom.innerHTML + ' - ' + currValue2; 
+    				this.currValue2 = currValue2; 
+    			}
     		}
+			
+			
+			
+//    		var containerCurr = containerCurrentValues.first();
+//    		//currValue1 = 'Current value: '+currValue1; 
+//    		containerCurr.dom.innerHTML = currValue1;  
+//
+//    		if(currValue2){
+//    			var containerCurr2 = containerCurrentValues.last();
+//    			currValue2 = 'Current value second slider: '+currValue2; 
+//    			containerCurr2.dom.innerHTML = currValue2;   
+//    		}
+    		
+
+
 
     	}
     }
@@ -568,25 +622,38 @@ Ext.slider.MultiSlider = Ext.extend(Ext.BoxComponent, {
     		currValue = valText; 
     	}
 
-    	var containerCurrentValues = containerInfoEl.child('.x-slider-info-container-current-value');
+    	var containerCurr = containerInfoEl.child('.x-slider-info-container-current-value');
 
-    	if(containerCurrentValues){
-    	
-    	var containerCurr = null;
-    	
-    	// index of the thumb moved
-    	if(index==0){
-    		containerCurr = containerCurrentValues.first();
-    		currValue = 'Current value slider: '+currValue; 
-    	}
-    	else{
-       		containerCurr = containerCurrentValues.last();
-    		currValue = 'Current value second slider: '+currValue; 
-    	}       	 
-    	
-    	if(containerCurr != null){
-    		containerCurr.dom.innerHTML = currValue;    		
-    	}
+    	if(containerCurr){
+
+    		if(index == 0){
+    			var valToSet;
+    			if(this.currValue2){
+    				valToSet = currValue + ' - ' + this.currValue2; 
+    			}
+    			else{
+    				valToSet = currValue;
+    			}
+    			containerCurr.dom.innerHTML = valToSet;    		
+    			this.currValue1 = currValue;
+    		}
+    		else if(index == 1){
+    			var valToSet = this.currValue1 + ' - ' + currValue;
+    			containerCurr.dom.innerHTML = valToSet;    
+    			this.currValue2 = currValue;
+    		}
+    		
+//    		// index of the thumb moved
+//    		if(index==0){
+//    			containerCurr = containerCurrentValues.first();
+//    			currValue = 'Current value slider: '+currValue; 
+//    		}
+//    		else{
+//    			containerCurr = containerCurrentValues.last();
+//    			currValue = 'Current value second slider: '+currValue; 
+//    		}       	 
+
+
 
     	}
     },    

@@ -10,6 +10,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>  
+<%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
 
 <iframe id='invalidSessionJasper'
                  name='invalidSessionJasper'
@@ -124,6 +126,8 @@ else if (active != null && active.equalsIgnoreCase("true")) {
  
 
 <script>
+
+Sbi.execution.SessionParametersManager.resetSessionObjects();
 
 var myVar=setTimeout(function(){redirect()},1000);
 

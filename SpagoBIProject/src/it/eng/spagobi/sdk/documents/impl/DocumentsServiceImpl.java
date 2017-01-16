@@ -5,6 +5,33 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.sdk.documents.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -20,9 +47,9 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
+import it.eng.spagobi.analiticalmodel.execution.bo.analyticaldrivervalues.AnalyticalDriverValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.analyticaldrivervalues.AnalyticalDriverValueList;
+import it.eng.spagobi.analiticalmodel.execution.bo.analyticaldrivervalues.DefaultValuesRetriever;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -71,33 +98,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
 import it.eng.spagobi.utilities.mime.MimeUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 public class DocumentsServiceImpl extends AbstractSDKService implements DocumentsService {
 
@@ -217,12 +217,12 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 			DefaultValuesRetriever retriever = new DefaultValuesRetriever();
 			logger.debug("Retrieving default values ...");
-			DefaultValuesList defaultValues = retriever.getDefaultValues(biParameter, executionInstance, profile);
+			AnalyticalDriverValueList defaultValues = retriever.getDefaultValues(biParameter, executionInstance, profile);
 			logger.debug("Default values retrieved");
 
 			values = new SDKDocumentParameterValue[defaultValues.size()];
 			for (int i = 0; i < defaultValues.size(); i++) {
-				DefaultValue defaultValue = defaultValues.get(i);
+				AnalyticalDriverValue defaultValue = defaultValues.get(i);
 				String value = defaultValue.getValue() != null ? defaultValue.getValue().toString() : null;
 				String description = defaultValue.getDescription() != null ? defaultValue.getDescription().toString() : "";
 				logger.debug("Default value retrieved : value = [" + value + "], description = [" + description + "]");

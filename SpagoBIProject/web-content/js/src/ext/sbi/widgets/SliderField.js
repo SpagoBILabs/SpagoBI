@@ -26,6 +26,8 @@ Sbi.widgets.SliderField = function(config) {
 	
 	this.addEvents('change');
 	
+	this.initValues = config.initValues;
+	
 	// constructor
 	Sbi.widgets.SliderField.superclass.constructor.call(this, config);
 	
@@ -43,6 +45,7 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
 	originalIndex: null,
 	thumbRendered: false,
 	storeLoaded: false,
+	initValues: null,
 	
 	/**
      * @cfg {Boolean} reseted
@@ -80,6 +83,9 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     	if(this.thickPerc){
     		cfg.thickPerc = this.thickPerc;
     	}
+    	if(this.initValues){
+    		cfg.initValues = this.initValues;
+    	}
     	
     	this.slider = new Ext.slider.MultiSlider(cfg);
     	this.slider.store = this.store;
@@ -100,6 +106,11 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
         this.originalIndex = this.multiSelect===true? [0,this.slider.maxValue]: [0];
         Sbi.trace("[Sbi.SliderField.afterRender] : [" + this.name + "] : originalIndex set equal to " + this.originalIndex);
         
+        // when rendered put second thumb, if present, on top
+        var secondThumb = this.slider.thumbs[1];
+        if(secondThumb != undefined){
+        	this.slider.promoteThumb(secondThumb);
+        }
         this.thumbRendered = true;
         Sbi.trace("[Sbi.SliderField.afterRender] : [" + this.name + "] : OUT");
     },
@@ -344,6 +355,7 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     getRawValue : function() {
     	var values = this.getValues();
 		return values? values.join() : values;
-	}
+	},
+
 
 });

@@ -11,6 +11,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjNote;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
+import it.eng.spagobi.analiticalmodel.document.handlers.ParameterForExecution;
 import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.Config;
@@ -123,7 +124,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put( ModelResourcesExtended.class, new ModelResourcesExtendedJSONSerializer());
 		mappings.put( ModelExtended.class, new ModelExtendedJSONSerializer());
 		
-		mappings.put( GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer() );
+		mappings.put( ParameterForExecution.class, new ParameterForExecutionJSONSerializer() );
 		mappings.put( SbiUdp.class, new UdpJSONSerializer());
 		mappings.put( SbiUdpValue.class, new UdpValueJSONSerializer());
 		

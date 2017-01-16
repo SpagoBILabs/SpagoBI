@@ -169,8 +169,10 @@ public class UserUtilities {
 																								// behavioural
 																								// model
 																								// administrators
+				logger.debug("Is technical user");
 				return true;
 			} else {
+				logger.debug("Is not technical user");
 				return false;
 			}
 		} catch (Exception e) {

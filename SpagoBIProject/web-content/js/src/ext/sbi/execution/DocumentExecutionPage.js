@@ -622,13 +622,13 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 				if (readyForExecution) {
 					this.isParameterPanelReadyForExecution = true;
 				}
-				// try to find from session the value used for execution
+				// try to find from session the value used for execution, now done in action 
 				if (!this.isFromCross){
-					Sbi.execution.SessionParametersManager.restoreStateObject(panel);
+					//Sbi.execution.SessionParametersManager.restoreStateObject(panel); 
 				}
 				// restore memento (= the list of last N value inputed for each parameters)
 				Sbi.execution.SessionParametersManager.restoreMementoObject(panel);
-				if(this.automaticStartChecked === false) {
+				if(this.automaticStartChecked === false){ 
 					this.automaticStartChecked = true;
 //					this.isParameterPanelReady = true;
 ////					this.isParameterPanelReadyForExecution = true;

@@ -5,18 +5,18 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
-import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spagobi.analiticalmodel.document.handlers.ParameterForExecution;
+import it.eng.spagobi.analiticalmodel.execution.bo.analyticaldrivervalues.AnalyticalDriverValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.analyticaldrivervalues.AnalyticalDriverValueList;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -26,12 +26,12 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
-		if (!(o instanceof GetParametersForExecutionAction.ParameterForExecution)) {
+		if (!(o instanceof ParameterForExecution)) {
 			throw new SerializationException("ParameterForExecutionJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
-			GetParametersForExecutionAction.ParameterForExecution parameter = (GetParametersForExecutionAction.ParameterForExecution) o;
+			ParameterForExecution parameter = (ParameterForExecution) o;
 			result = new JSONObject();
 			result.put("id", parameter.getId());
 			MessageBuilder msgBuild = new MessageBuilder();
@@ -53,9 +53,39 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 			result.put("multivalue", parameter.isMultivalue());
 			result.put("visible", parameter.isVisible());
 			result.put("valuesCount", parameter.getValuesCount());
-			if (parameter.getValuesCount() == 1) {
-				result.put("value", parameter.getValue());
+						
+			JSONArray valuesJSON = new JSONArray();
+			AnalyticalDriverValueList values = parameter.getValues();
+			Iterator<AnalyticalDriverValue> valuesIt = values.iterator();
+			while (valuesIt.hasNext()) {
+				AnalyticalDriverValue aValue = valuesIt.next();
+				JSONObject aValueJSON = new JSONObject();
+				aValueJSON.put("value", aValue.getValue());
+				aValueJSON.put("description", aValue.getDescription());
+				valuesJSON.put(aValueJSON);
 			}
+			
+				
+			if(valuesJSON.length()==0){
+				//result.put("values", null);	
+			}
+			else{
+				result.put("values", valuesJSON);	
+			}
+		
+			if (parameter.getValues() != null && parameter.getValues().size() == 1 && parameter.getValues().get(0) != null) {
+				result.put("value", parameter.getValues().get(0).getValue().toString());
+			}
+			else{
+				if(parameter.getValues().size()!=0){
+					result.put("value", parameter.getValue());
+				}
+			}
+			
+			
+			
+			// put admissible value 
+			
 
 			if (parameter.getObjParameterIds() != null) {
 				JSONArray objParameterIds = new JSONArray();
@@ -78,15 +108,15 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 				JSONArray visualDependencyConditions = new JSONArray();
 				dependency.put("visualDependencyConditions", visualDependencyConditions);
 
-				List<GetParametersForExecutionAction.ParameterForExecution.ParameterDependency> parameterDependencies;
+				List<ParameterForExecution.ParameterDependency> parameterDependencies;
 				parameterDependencies = parameter.getDependencies().get(paramUrlName);
 
 				for (int i = 0; i < parameterDependencies.size(); i++) {
 					Object pd = parameterDependencies.get(i);
-					if (pd instanceof GetParametersForExecutionAction.ParameterForExecution.DataDependency) {
+					if (pd instanceof ParameterForExecution.DataDependency) {
 						dependency.put("hasDataDependency", true);
-					} else if (pd instanceof GetParametersForExecutionAction.ParameterForExecution.VisualDependency) {
-						ObjParview visualCondition = ((GetParametersForExecutionAction.ParameterForExecution.VisualDependency) pd).condition;
+					} else if (pd instanceof ParameterForExecution.VisualDependency) {
+						ObjParview visualCondition = ((ParameterForExecution.VisualDependency) pd).condition;
 						dependency.put("hasVisualDependency", true);
 						JSONObject visualDependencyCondition = new JSONObject();
 						visualDependencyCondition.put("operation", visualCondition.getOperation());
@@ -95,7 +125,7 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 						viewLabel = msgBuild.getI18nMessage(locale, viewLabel);
 						visualDependencyCondition.put("label", viewLabel);
 						visualDependencyConditions.put(visualDependencyCondition);
-					} else if (pd instanceof GetParametersForExecutionAction.ParameterForExecution.LovDependency) {
+					} else if (pd instanceof ParameterForExecution.LovDependency) {
 						dependency.put("isLovDependency", true);
 					}
 				}
@@ -106,16 +136,34 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 			result.put("parameterUseId", parameter.getParameterUseId());
 
 			JSONArray defaultValues = new JSONArray();
-			DefaultValuesList defaults = parameter.getDefaultValues();
-			Iterator<DefaultValue> defaultsIt = defaults.iterator();
+			AnalyticalDriverValueList defaults = parameter.getDefaultValues();
+			Iterator<AnalyticalDriverValue> defaultsIt = defaults.iterator();
 			while (defaultsIt.hasNext()) {
-				DefaultValue aDefault = defaultsIt.next();
+				AnalyticalDriverValue aDefault = defaultsIt.next();
 				JSONObject aDefaultJSON = new JSONObject();
 				aDefaultJSON.put("value", aDefault.getValue());
 				aDefaultJSON.put("description", aDefault.getDescription());
 				defaultValues.put(aDefaultJSON);
 			}
-			result.put("defaultValues", defaultValues);
+			if(defaultValues.length()>0){
+				result.put("defaultValues", defaultValues);
+			}
+
+			JSONArray admissibleValues = new JSONArray();
+			AnalyticalDriverValueList admissibles = parameter.getAdmissibleValuesList();
+			Iterator<AnalyticalDriverValue> admissiblesIt = admissibles.iterator();
+			while (admissiblesIt.hasNext()) {
+				AnalyticalDriverValue aAdmissible = admissiblesIt.next();
+				JSONObject aAdmissibleJSON = new JSONObject();
+				aAdmissibleJSON.put("value", aAdmissible.getValue());
+				aAdmissibleJSON.put("label", aAdmissible.getDescription());
+				aAdmissibleJSON.put("description", aAdmissible.getDescription());
+				admissibleValues.put(aAdmissibleJSON);
+			}
+			if(admissibleValues.length()>0){
+				result.put("admissibleValues", admissibleValues);
+			}
+			
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

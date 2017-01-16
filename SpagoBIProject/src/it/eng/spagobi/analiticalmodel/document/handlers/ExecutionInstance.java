@@ -5,6 +5,30 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -16,9 +40,9 @@ import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
+import it.eng.spagobi.analiticalmodel.execution.bo.analyticaldrivervalues.AnalyticalDriverValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.analyticaldrivervalues.AnalyticalDriverValueList;
+import it.eng.spagobi.analiticalmodel.execution.bo.analyticaldrivervalues.DefaultValuesRetriever;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -51,30 +75,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.objects.Couple;
-
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * This class represents a document execution instance. This contains the following attributes: 1. execution flow id: it is the id of an execution flow
@@ -790,9 +790,9 @@ public class ExecutionInstance implements Serializable {
 		// validation
 
 		DefaultValuesRetriever retriever = new DefaultValuesRetriever();
-		DefaultValuesList allDefaultValues = retriever.getDefaultValues(biparam, this, this.userProfile);
+		AnalyticalDriverValueList allDefaultValues = retriever.getDefaultValues(biparam, this, this.userProfile);
 		// from the complete list of values, get the values that are default values
-		DefaultValuesList selectedDefaultValue = this.getSelectedDefaultValues(biparam, allDefaultValues);
+		AnalyticalDriverValueList selectedDefaultValue = this.getSelectedDefaultValues(biparam, allDefaultValues);
 
 		// validation must proceed only with non-default values
 		// from the complete list of values, get the values that are not default values
@@ -822,7 +822,7 @@ public class ExecutionInstance implements Serializable {
 		return toReturn;
 	}
 
-	private void mergeDescriptions(BIObjectParameter biparam, DefaultValuesList selectedDefaultValue, BIObjectParameter cloned) {
+	private void mergeDescriptions(BIObjectParameter biparam, AnalyticalDriverValueList selectedDefaultValue, BIObjectParameter cloned) {
 		int valuePosition;
 		List nonDefaultValues = cloned.getParameterValues();
 		List nonDefaultDescriptions = cloned.getParameterValuesDescription();
@@ -837,7 +837,7 @@ public class ExecutionInstance implements Serializable {
 					parameterDescriptions.add(nonDefaultDescriptions.get(valuePosition));
 				} else {
 					// this means that the value IS a default value
-					DefaultValue defaultValue = selectedDefaultValue.getDefaultValue(aValue);
+					AnalyticalDriverValue defaultValue = selectedDefaultValue.getAnalyticalDriverValue(aValue);
 					parameterDescriptions.add(defaultValue.getDescription());
 				}
 			}
@@ -845,7 +845,7 @@ public class ExecutionInstance implements Serializable {
 		biparam.setParameterValuesDescription(parameterDescriptions);
 	}
 
-	private List getNonDefaultValues(BIObjectParameter analyticalDocumentParameter, DefaultValuesList defaultValues) {
+	private List getNonDefaultValues(BIObjectParameter analyticalDocumentParameter, AnalyticalDriverValueList defaultValues) {
 		logger.debug("IN");
 		List toReturn = new ArrayList<String>();
 		List values = analyticalDocumentParameter.getParameterValues();
@@ -862,9 +862,9 @@ public class ExecutionInstance implements Serializable {
 		return toReturn;
 	}
 
-	private DefaultValuesList getSelectedDefaultValues(BIObjectParameter analyticalDocumentParameter, DefaultValuesList defaultValues) {
+	private AnalyticalDriverValueList getSelectedDefaultValues(BIObjectParameter analyticalDocumentParameter, AnalyticalDriverValueList defaultValues) {
 		logger.debug("IN");
-		DefaultValuesList toReturn = new DefaultValuesList();
+		AnalyticalDriverValueList toReturn = new AnalyticalDriverValueList();
 		if (defaultValues == null || defaultValues.isEmpty()) {
 			logger.debug("No default values in input");
 			return toReturn;
@@ -873,7 +873,7 @@ public class ExecutionInstance implements Serializable {
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
 				String value = values.get(i).toString();
-				DefaultValue defaultValue = defaultValues.getDefaultValue(value);
+				AnalyticalDriverValue defaultValue = defaultValues.getAnalyticalDriverValue(value);
 				if (defaultValue != null) {
 					logger.debug("Value [" + defaultValue + "] is a selected value.");
 					toReturn.add(defaultValue);

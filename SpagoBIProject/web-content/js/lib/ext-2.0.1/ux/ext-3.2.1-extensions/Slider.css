@@ -36,6 +36,7 @@
     clear: both;
     font-size: 8px;
     font-weight: bold;
+    text-align: center;
     }
 
 .x-slider-info-current-value-left {
@@ -69,13 +70,15 @@
 /* Horizontal styles */
 .x-slider-horz {
     padding-left:7px;
-    background:transparent no-repeat 0 -22px;
+    /*background:transparent no-repeat 0 -22px;*/
+    background:transparent no-repeat -10px;
 }
 
 .x-slider-horz .x-slider-end {
     padding-right:7px;
     zoom:1;
-    background:transparent no-repeat right -44px;
+    /*background:transparent no-repeat right -44px;*/
+      background:transparent no-repeat right 0;
 }
 
 .x-slider-horz .x-slider-inner {

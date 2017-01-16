@@ -97,6 +97,9 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 		try {
 
 			biparameterId = getAttributeAsString(PARAMETER_ID);
+			if(biparameterId == null){
+				return;
+			}
 			selectedParameterValuesJSON = getAttributeAsJSONObject(SELECTED_PARAMETER_VALUES);
 			if (this.requestContainsAttribute(FILTERS)) {
 				filtersJSON = getAttributeAsJSONObject(FILTERS);

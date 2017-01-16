@@ -6,12 +6,22 @@
 
 package it.eng.spagobi.tools.massiveExport.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.analiticalmodel.document.handlers.ParameterForExecution;
+import it.eng.spagobi.analiticalmodel.document.handlers.ParameterForExecution.ParameterDependency;
 import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
-import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction.ParameterForExecution.ParameterDependency;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -21,15 +31,6 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
 
 public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersForExecutionAction {
 
@@ -201,14 +202,14 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 					logger.debug("to object parameter with id "+found.getId()+" is associated also object parameter with id "+par.getId());	
 					found.getObjParameterIds().add(par.getId());
 					// if new parameter found is amndatory also the general becomes mandatory
-					ParameterForExecution checkmandatoryPar = new ParameterForExecution(par);
+					ParameterForExecution checkmandatoryPar = new ParameterForExecution(par, getUserProfile(), getContext());
 					if(checkmandatoryPar.isMandatory()){
 						found.setMandatory(true);
 					}
 				}
 				else{
 					// not found, add a new one
-					ParameterForExecution toAdd = new ParameterForExecution(par);
+					ParameterForExecution toAdd = new ParameterForExecution(par, getUserProfile(), getContext());
 					toAdd.getObjParameterIds().add(par.getId());
 					parsToReturn.add(toAdd);
 				}
