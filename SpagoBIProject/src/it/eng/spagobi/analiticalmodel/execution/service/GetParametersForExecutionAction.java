@@ -439,7 +439,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			throw new SpagoBIRuntimeException(e);
 		}
 		//toReturn = parameterForExecution.getId() + "_" + parameterUse.getId();
-		toReturn = parameterForExecution.getLabel() + "_" + parameterUse.getId();
+		toReturn = parameterForExecution.getLabel() + "_" + parameterUse.getUseID();
 		return toReturn;
 	}
 	
