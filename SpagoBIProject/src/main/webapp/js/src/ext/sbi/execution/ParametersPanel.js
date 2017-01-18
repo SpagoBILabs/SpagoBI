@@ -100,10 +100,12 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	
 	this.baseConfig = c;
 	
+	// parametersPreference is passed by cross or by menu and then to action
 	this.parametersPreference = undefined;
 	if (c.parameters) {
 		this.parametersPreference = c.parameters;
 	}
+	// used to understand if is coming from menu (do not draw parameters panel)
 	if (this.parametersPreference) {
 		this.preferenceState = Ext.urlDecode(this.parametersPreference);
 	}
@@ -176,6 +178,8 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	
     this.tableContainer = this.items.get(2);
 	
+    this.isParameterPanelReadyForExecution = false;  
+    
 	this.addEvents(
 			'beforesynchronize'
 			, 'synchronize'
@@ -202,8 +206,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	/* ATTENTION: patch for bug 1594 --> firstLoadCounter counter over firstLoadTotParams: every time a store calling the getParametersValuesForExecution has loaded
 	 * the counter is updated (for all the parameters that need the load = firstLoadTotParams) . When the counter matches the total then the 'ready' event is thrown.
 	 * DocumentExecutionPanel is listening on ParametersPnel on 'synchronize' AND on 'ready'. */
-    , firstLoadCounter: 0
-    , firstLoadTotParams: 0
+    //, firstLoadCounter: 0
+    //, firstLoadTotParams: 0
     
 
     , columnNo: 0 
@@ -232,6 +236,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
      *  - dependants: an array of all fields on which the field depends on
      */
     , fields: null
+    , getParametersResponse: null
     
     /**
      * The columns (Ext.FormPanel) that compose the main column layout
@@ -242,7 +247,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     , drawHelpMessage : false
     , mandatoryFieldAdditionalString: null
     
-    , manageDataDependencies: true // not used so far but reserved for future use
     , manageVisualDependencies: true
     , manageVisualDependenciesOnVisibility: true
     , manageVisualDependenciesOnLabel: true
@@ -255,8 +259,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     	Sbi.debug('[ParametersPanel.handleInitialDependencies] : IN');
     	for (p in this.fields) {
     		var aField = this.fields[p];
-    		this.updateDependentFields(aField, false);
-		}
+    		if(aField != undefined){
+    			this.updateDependentFields(aField, false);
+    		}
+    	}
     	Sbi.debug('[ParametersPanel.handleInitialDependencies] : OUT');
     }
     
@@ -304,10 +310,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	, clearParametersForm: function() {
 		//this.reset();
 		this.resetTreeDrivers();
-		var defaultValuesFormState = this.getDefaultValuesFormState();
-		Sbi.debug('[ParametersPanel.clearParametersForm] : default values form state is [' + defaultValuesFormState + ']');
-		var state = Ext.apply(defaultValuesFormState, this.preferenceState);
-		Sbi.debug('[ParametersPanel.clearParametersForm] : preference state applied to default values [' + Sbi.toSource(state) + ']');
+		var chosenValuesFormState = this.getChosenValuesFormState(); // these are parameters values returned by action
+		Sbi.debug('[ParametersPanel.clearParametersForm] : default values form state is [' + chosenValuesFormState + ']');
+		var state = Ext.apply(chosenValuesFormState, {});
+		//var state = Ext.apply(defaultValuesFormState, this.preferenceState);
+		Sbi.debug('[ParametersPanel.clearParametersForm] : preference state applied to chosen values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
 	}
 	
@@ -594,31 +601,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		return this.getParentPageNumber() === 3;
 	}
 	
-	, isReadyForExecution: function() {
-		if(this.parameters.length == 0) {
-			return true;
-		} else 	{
-			for (p in this.fields) {
-				var field = this.fields[p];
-				if(!field.allowBlank){
-					var behindParameter = field.behindParameter;
-					var value = field.getValue();
-					value = value || this.concatenateDefaultValues(behindParameter.defaultValues);
-					if(field.isTransient == false && (value==undefined || value==null || value.length==0)){
-						return false;
-					}
-					
-					if (field.isDateRange) {
-						value = field.getValue();
-						if (field.getValue()==null || field.getValue()=='') {
-							return false;
-						}
-					}
-				}
-			}
-			return true;
-		}
-	}
 	
 	// ----------------------------------------------------------------------------------------
 	// private methods
@@ -674,6 +656,19 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			alert("Impossible to load parameters because executionInstance is not properly initialized");
 		}
 		
+		if(Sbi.config.isParametersStatePersistenceEnabled == true){
+			var sessionStore = Sbi.execution.SessionParametersManager.store;
+			if(sessionStore.store != undefined && sessionStore.store.PSSbi__execution__SessionParametersManagerPSparameterState != undefined){
+				var sessionPars = sessionStore.store.PSSbi__execution__SessionParametersManagerPSparameterState;
+				this.executionInstance.SESSION_PARAMETERS = sessionPars;
+			}
+		}
+		this.executionInstance.isParametersStatePersistenceEnabled = Sbi.config.isParametersStatePersistenceEnabled;
+		
+		if(this.parametersPreference != undefined && this.parametersPreference != ''){
+			this.executionInstance.PARAMETERS_PREFERENCE = this.parametersPreference;	
+		}
+		
 		Ext.Ajax.request({
 	          url: this.services['getParametersForExecutionService'],
 	          
@@ -684,7 +679,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		      		if(response.responseText !== undefined) {
 		      			var content = Ext.util.JSON.decode( response.responseText );
 		      			if(content !== undefined) {
-		      				this.initializeParametersPanel(content, true);
+		      				this.getParametersResponse = content; 
+		      				this.initializeParametersPanel(this.getParametersResponse, true);
 		      			} 
 		      		} else {
 		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
@@ -700,17 +696,20 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		return this.parametersRegion == 'north';
 	}
 
-	, initializeParametersPanel: function( parameters, reset ) {
+	, initializeParametersPanel: function( content, reset ) {
 			
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : IN');
 				
-		this.on('checkReady', function () {
-			if((this.firstLoadCounter == this.firstLoadTotParams )
-					|| (this.firstLoadTotParams == 0)){	
-				this.fireEvent('ready', this);	
-			}
-				
-		}, this);
+		var parameters = content.parameters[0];
+		this.isParameterPanelReadyForExecution = content.isReadyForExecution[0]; 
+		
+//		this.on('checkReady', function () {
+//			if((this.firstLoadCounter == this.firstLoadTotParams )
+//					|| (this.firstLoadTotParams == 0)){	
+//				this.fireEvent('ready', this);	
+//			}
+//				
+//		}, this);
 		
 		this.setParameters(parameters);
 		
@@ -753,7 +752,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				}
 			} else {				
 				if ( this.parameterValueIsPassedFromMenu(parameters[i]) ) {
-					field.setValue(this.preferenceState[parameters[i].id]);
+					field.setValue(parameters[i].value);
+					//field.setValue(this.preferenceState[parameters[i].id]);
 					Sbi.debug("[ParametersPanel.initializeParametersPanel]: set value of [" + parameters[i].id + "] " +
 							"to [" + field.getValue() + "] " +
 							"but dont add it to panel");
@@ -784,6 +784,17 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			 
 		}
 
+		// laod parameters that are pre-loaded 
+		for(var i = 0; i < parameters.length; i++) {
+			var field = this.fields[parameters[i].id]; 
+			if(field.store != undefined && field.store.isPreLoaded == true && field.isTransient != true){
+				var store = field.store;
+				var admissibleValues = parameters[i].admissibleValues;
+				store.loadData(admissibleValues);		
+			
+			}
+		}
+		
 		if(this.thereAreParametersToBeFilled() !== true) {
 			if (this.rendered) {
 				Ext.DomHelper.append(this.body, '<div class="x-grid-empty">' + LN('sbi.execution.parametersselection.noParametersToBeFilled') + '</div>');
@@ -811,27 +822,28 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		this.initializeFieldDependencies();
 		
-		var defaultValuesFormState = this.getDefaultValuesFormState();
-		Sbi.debug('[ParametersPanel.initializeParametersPanel] : default values form state is [' +  Sbi.toSource(defaultValuesFormState) + ']');
-		var state = Ext.apply({}, defaultValuesFormState);
-		for(p in this.preferenceState) {
-			state[p] = this.preferenceState[p];
-			delete state[p + '_field_visible_description'];			
-		}
-		//var state = Ext.apply(defaultValuesFormState, this.preferenceState);
-		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + Sbi.toSource(state) + ']');
+		var chosenValuesFormState = this.getChosenValuesFormState();
+		Sbi.debug('[ParametersPanel.initializeParametersPanel] : chosen values form state is [' +  Sbi.toSource(chosenValuesFormState) + ']');
+		var state = Ext.apply({}, chosenValuesFormState);
+		
+//		for(p in this.preferenceState) {   //handled by action
+//			state[p] = this.preferenceState[p];
+//			delete state[p + '_field_visible_description'];			
+//		}
+		
+		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to chosen values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
 			
-		if (this.firstLoadTotParams == 0 && reset) {
-			this.fireEvent('ready', this, this.isReadyForExecution(), state);	
-			this.fireEvent('synchronize', this);	
+		if (reset) {
+			this.fireEvent('ready', this, this.isParameterPanelReadyForExecution, state);
 		}
 		
 		
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : OUT');
 	}
 	
-	, getDefaultValuesFormState: function () {
+	
+	, getChosenValuesFormState: function () {
 		var state;
 		
 		state = {};
@@ -841,29 +853,28 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			if(field.title == 'empty') continue;
 			
 			var behindParameter = field.behindParameter;
-			var value = this.concatenateDefaultValues(behindParameter.defaultValues);
-			Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : default values for field [' + field.name + '] is [' + value + ']');
-			var description = this.concatenateDefaultValuesDescription(behindParameter.defaultValues);
-			Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : default description for field [' + field.name + '] is [' + description + ']');
+			var value = this.concatenateDefaultValues(behindParameter.values);
+			Sbi.debug('[ParametersPanel.getChosenValuesFormState] : Chosen values for field [' + field.name + '] is [' + value + ']');
+			var description = this.concatenateDefaultValuesDescription(behindParameter.values);
+			Sbi.debug('[ParametersPanel.getChosenValuesFormState] : Chosen description for field [' + field.name + '] is [' + description + ']');
 			if (!field.isTransient) {
 				// in case the parameters is transient (i.e. it is single-value and therefore hidden), it is not considered
-				Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : field [' + field.name + '] is not transient');
+				Sbi.debug('[ParametersPanel.getChosenValuesFormState] : field [' + field.name + '] is not transient');
 				state[field.name] = value;
 				state[field.name + '_field_visible_description'] = description;
 			} else {
-				Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : field [' + field.name + '] is transient and therefore skipped');
+				Sbi.debug('[ParametersPanel.getChosenValuesFormState] : field [' + field.name + '] is transient and therefore skipped');
 			}
 		}
 		
-		Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : returning [' + Sbi.toSource(state) + ']');
+		Sbi.debug('[ParametersPanel.getChosenValuesFormState] : returning [' + Sbi.toSource(state) + ']');
 		return state;
 	}
 
 
-
 	
 	, concatenateDefaultValues: function (defaultValues) {
-		if (defaultValues.length == 0) {
+		if (defaultValues == undefined || defaultValues.length == 0) {
 			return null;
 		}
 		if (defaultValues.length == 1) {
@@ -878,7 +889,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	}
 	
 	, concatenateDefaultValuesDescription: function (defaultValues) {
-		if (defaultValues.length == 0) {
+		if (defaultValues == undefined || defaultValues.length == 0) {
 			return '';
 		}
 		if (defaultValues.length == 1) {
@@ -1061,7 +1072,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.removeAllFields();
 		
 
-		this.initializeParametersPanel(this.parameters, false);	
+		this.initializeParametersPanel(this.getParametersResponse, false);	
 		//Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : restore state [' + state.toSource() + ']');
 		//this.firstInitialization = true;
 		this.setFormState(state);
@@ -1598,14 +1609,14 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				Sbi.exception.ExceptionHandler.handleFailure(response, options);
 			}
 			//fires after the sore is loaded: can apply
-			this.firstLoadCounter++;
-			this.fireEvent('checkReady', this);
+			//this.firstLoadCounter++;
+			//this.fireEvent('checkReady', this);
 		}, this);
 		
 		field.treeLoader.on('load', function(loader, node, response) {
 			//fires after the sore is loaded: can apply
-			this.firstLoadCounter++;
-			this.fireEvent('checkReady', this);
+			//this.firstLoadCounter++;
+			//this.fireEvent('checkReady', this);
 		}, this);
 		
 		return field;
@@ -1633,11 +1644,38 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var sliderWidth = 200 * p.colspan;
 		baseConfig.width  = sliderWidth;
 		
+		//add values to slider config (first and last)
+		var valsToSet = new Array();
+		if(p.values != undefined && p.values.length>0){
+			var inVal = p.values[0];
+			var lastVal;
+			if(p.multivalue){
+				lastVal = p.values[p.values.length-1];
+				valsToSet[1] = lastVal.description;
+			}
+			valsToSet[0] = inVal.description;
+			
+//			// if is multivalue fix also end of interval
+//			if(p.values.length>1){
+//				// if p.values length > 1 means also the end of interval is specified
+//				lastVal = p.values[p.values.length-1];
+//				valsToSet[1] = lastVal.description;
+//			}
+//			else{
+//				// if only one value is specified take it as beginning and last of admissible values as end
+//				lastVal = p.admissibleValues[p.admissibleValues.length-1];
+//				valsToSet[1] = lastVal.description;
+//			}
+			
+			baseConfig.initValues = valsToSet;
+		}
+		
 		var field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
 			multiSelect: p.multivalue,
 			store :  store,
 			displayField:'label',
 			valueField:'value',
+			autoLoad: false, 
             tipText: function(slider, thumb){
             	var record = slider.store.getAt(thumb.value);
             	var value = record? record.get('label'): null;
@@ -1688,6 +1726,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}, this);
 		}
 		
+		var mode = 'remote';                             
+		if(store.isPreLoaded == true){
+			mode = 'local';
+		}
 		
 		var field = new Ext.ux.Andrie.Select(Ext.apply(baseConfig, {
 			multiSelect: p.multivalue
@@ -1704,6 +1746,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			, selectOnFocus:true
 			, autoLoad: false
 			, xtype : 'combo'
+			, mode : mode
 			, listeners: {
 			    'select': {
 			       	fn: function(){	}
@@ -1720,7 +1763,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var p = baseConfig.parameter;
 		/*ATTENTION:: keep this variable updated in all the create parameter depending by type ,
 		 * that need to be loaded at first document execution (those loading a store)*/
-		this.firstLoadTotParams ++;
+//		this.firstLoadTotParams ++;
 		/*--------------------------------------------------------------------------------------*/
 		
 		var store = this.createCompleteStore(p, executionInstance, 'simple');
@@ -1796,8 +1839,17 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				, OBJ_PARAMETER_IDS: p.objParameterIds  // ONly in massive export case
 			});
 			delete baseParams.PARAMETERS;
-			var store = this.createStore();
-			store.baseParams  = baseParams;
+
+			var store;
+			if(p.admissibleValues != undefined && p.admissibleValues.length > 0 ){  
+//				store = this.createStore();
+				store = this.createFakeStore();
+				store.isPreLoaded = true;			//Data is loaded after cycle
+			}
+			else{
+				store = this.createStore();
+				store.baseParams  = baseParams;
+			}
 			
 			store.on('beforeload', function(store, o) {
 				Sbi.trace('[ParametersPanel.onBeforeStoreLoad] : IN');
@@ -1860,7 +1912,18 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	}
 	
 	, createCompleteStore: function(p, executionInstance, mode) {
-		var store = this.createStore();
+
+		var store;
+		if(p.admissibleValues != undefined && p.admissibleValues.length > 0){ 
+//			store = this.createStore();
+			store = this.createFakeStore();
+			store.isPreLoaded = true; // data is loaded after cycle
+
+		}
+		else{
+			store = this.createStore(); 
+		}
+		
 		Sbi.trace('[ParametersPanel.createCompleteStore] : executionInstance [' + executionInstance + ']');
 		store.baseParams  = this.getBaseParams(p, executionInstance, mode);
 		store.on('beforeload', function(store, o) {
@@ -1877,6 +1940,46 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		return store;
 		// this.createCompleteStore(p, this.executionInstance, 'simple');
 	}
+	
+	, createFakeStore: function() {
+		var store;
+		
+		store = this.attributesStore = new Ext.data.JsonStore({
+			   fields: ['value', 'label', 'description']
+				, url: this.services['getParameterValueForExecutionService']
+	    });
+		
+		store.on('loadexception', function(store, options, response, e) {
+			var f = this.fields[options.params.PARAMETER_ID];
+			var ignoreError = false;
+			if (f != undefined){
+				ignoreError = this.checkLovDependency(f);
+			}
+			if (!ignoreError){
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			}
+		}, this);
+		
+		store.on('load', function(store, records, options) {
+			//if the field is a ComboBox start to check it	
+			var fieldName = store.baseParams.PARAMETER_ID;
+			var field = this.fields[fieldName];
+			if (field != undefined){
+				if (field.behindParameter.selectionType == "COMBOBOX"){
+					this.checkFieldValue(field,store, records, options);
+				}
+				this.checkLovDependency(field);
+			}
+			//fires after the sore is loaded: can apply 
+			//this.firstLoadCounter++;
+			//this.fireEvent('checkReady', this);
+		}, this);
+
+
+		return store;
+		
+	}
+
 	
 	, getBaseParams: function(p, executionInstance, mode) {
 		var baseParams = {};
@@ -1923,8 +2026,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				this.checkLovDependency(field);
  			}
 			//fires after the sore is loaded: can apply 
-			this.firstLoadCounter++;
-			this.fireEvent('checkReady', this);
+			//this.firstLoadCounter++;
+			//this.fireEvent('checkReady', this);
 		}, this);
 
 		return store;

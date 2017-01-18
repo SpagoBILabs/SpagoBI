@@ -5,13 +5,21 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+
+import org.json.JSONArray;
+
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjNote;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
-import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
+import it.eng.spagobi.analiticalmodel.document.handlers.ParameterForExecution;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -68,14 +76,6 @@ import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-
-import org.json.JSONArray;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
@@ -131,7 +131,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put(ModelResourcesExtended.class, new ModelResourcesExtendedJSONSerializer());
 		mappings.put(ModelExtended.class, new ModelExtendedJSONSerializer());
 
-		mappings.put(GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
+		mappings.put(ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
 		mappings.put(SbiUdp.class, new UdpJSONSerializer());
 		mappings.put(SbiUdpValue.class, new UdpValueJSONSerializer());
 

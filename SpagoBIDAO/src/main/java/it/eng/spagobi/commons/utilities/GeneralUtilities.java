@@ -24,6 +24,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
@@ -55,7 +56,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 
 	private static final String PREVIEW_FILE_STORAGE_DIRECTORY = "preview" + File.separatorChar + "images";
 	
-	public static final int MAX_DEFAULT_TEMPLATE_SIZE = 5242880;
+	public static final int MAX_DEFAULT_TEMPLATE_SIZE = 10485760;
 	public static final int MAX_DEFAULT_FILE_DATASET_SIZE = 10485760; // 10 mega byte
 	private static String SPAGOBI_HOST = null; 
 //	private static String SPAGOBI_DOMAIN = null;
@@ -782,24 +783,11 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		return buffer.toString();
 	}
 
-	/** getParametersFromURL: 
-	 *  takes an url and return a Map containing URL parameters
-	 * @param urlString
-	 * @return map containing url parameters
-	 */
-
-	public static Map getParametersFromURL(String urlString) {
-		logger.debug("IN");
+	
+	
+	public static Map getParametersFromQueryURL(String parameters) {
 		Map toReturn=new HashMap<String, String>();
-		URL url;
-		try {
-			url = new URL(urlString);
-		} catch (MalformedURLException e) {
-			logger.error("Malformed URL Exception "+urlString,e);
-			return null;
-		}
-		//get parameters string
-		String parameters=url.getQuery();
+		
 		StringTokenizer st = new StringTokenizer(parameters, "&", false);
 
 		String parameterToken = null;
@@ -851,6 +839,29 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		return toReturn;
 	}
 	
+	/** getParametersFromURL: 
+	 *  takes an url and return a Map containing URL parameters
+	 * @param urlString
+	 * @return map containing url parameters
+	 */
+
+	public static Map getParametersFromURL(String urlString) {
+		logger.debug("IN");
+		Map toReturn=new HashMap<String, String>();
+		URL url;
+		try {
+			url = new URL(urlString);
+		} catch (MalformedURLException e) {
+			logger.error("Malformed URL Exception "+urlString,e);
+			return null;
+		}
+		//get parameters string
+		String parameters=url.getQuery();
+		toReturn = getParametersFromQueryURL(parameters);
+		logger.debug("OUT");
+		return toReturn;
+	}
+	
 	public static int getDatasetMaxResults() {
 		int maxResults = Integer.MAX_VALUE;
 		String maxResultsStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATASET.maxResult");
@@ -873,6 +884,51 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		}
 		File file = FileUtils.checkAndCreateDir(resourcePath);
 		return file;
+	}
+	
+	public static List<String> parseParameterValueString(String valueToParseToCut, boolean isMultivalue){
+		logger.debug("IN");
+		List<String> valuesList = new ArrayList<String>();
+		if(valueToParseToCut == null)valueToParseToCut = "";
+		
+		logger.debug("Parameter value to parse is "+valueToParseToCut);
+		
+		// if parameter is multivalue and value is not in list form close it among ;{val1, val2, val3}
+		// if parameter is multivalue and value is not in list form close it among [] val1, val2, val3
+		// if parameter is multivalue convert proposed value to list
+		
+		if(isMultivalue){
+			if(valueToParseToCut.length()>0){			
+
+				// if is in the form ;{val1;val2}NUM
+				if(valueToParseToCut.charAt(0)== '{'){
+					logger.debug("Value is in the form {;{val1,val2}");
+					ParametersDecoder dec = new ParametersDecoder();
+					valuesList = dec.decode(valueToParseToCut);
+				}
+				else {
+					// if is 
+					if(valueToParseToCut.charAt(0)!='['){
+						logger.debug("Value is in the form val1,val2");
+						logger.debug("put [] in list value");
+						valueToParseToCut = "["+valueToParseToCut+"]";
+					}
+					logger.debug("Value is in the form [val1,val2]");
+
+					String valuetoParse = valueToParseToCut.substring(1, valueToParseToCut.length()-1);
+					StringTokenizer st = new StringTokenizer(valuetoParse, ",");
+					while (st.hasMoreElements()) {
+						valuesList.add(st.nextElement().toString());
+					}
+				}
+
+			}
+		}
+		else{
+			valuesList.add(valueToParseToCut.toString());
+		}
+		logger.debug("OUT");
+		return valuesList;
 	}
 	
 }

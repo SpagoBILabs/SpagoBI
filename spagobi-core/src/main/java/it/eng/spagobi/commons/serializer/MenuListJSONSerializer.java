@@ -74,6 +74,7 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_HIERARCHIES_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp";
 	private static final String HREF_USERS = "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 
+	
 	public String contextName = "";
 	public String defaultThemePath = "/themes/sbi_default";
 
@@ -210,6 +211,7 @@ public class MenuListJSONSerializer implements Serializer {
 
 	private JSONArray createEndUserMenu(Locale locale, int level, JSONArray tempMenuList) throws JSONException, EMFUserError, EMFInternalError {
 
+		
 		MessageBuilder messageBuilder = new MessageBuilder();
 
 		List funcs = (List) userProfile.getFunctionalities();

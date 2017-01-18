@@ -333,10 +333,10 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 
     // javascript-side user profile object
     Ext.ns("Sbi.user");
-    Sbi.user.organization = '<%= StringEscapeUtils.escapeJavaScript(((UserProfile)userProfile).getOrganization()) %>';
-    Sbi.user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
-    Sbi.user.userId = '<%= StringEscapeUtils.escapeJavaScript(userId) %>';
-    Sbi.user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>';    
+    Sbi.user.organization = '<%= userProfile != null ? StringEscapeUtils.escapeJavaScript(((UserProfile)userProfile).getOrganization()) : ""%>';
+    Sbi.user.userUniqueIdentifier = '<%= userUniqueIdentifier != null ? StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) : "" %>';
+    Sbi.user.userId = '<%= userId != null ? StringEscapeUtils.escapeJavaScript(userId) : ""%>';
+    Sbi.user.userName = '<%= userName != null ? StringEscapeUtils.escapeJavaScript(userName) : ""%>';    
     Sbi.user.ismodeweb = <%= sbiMode.equals("WEB")? "true" : "false"%>;
     Sbi.user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
 	Sbi.user.roles = new Array();

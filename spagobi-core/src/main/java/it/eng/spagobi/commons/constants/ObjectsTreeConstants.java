@@ -67,4 +67,7 @@ public class ObjectsTreeConstants {
 	public static final String INPUT_TYPE_METHOD_CODE = "METHOD";
 	public static final String REPORT_CALL_URL = "REPORT_CALL_URL";
 	public static final String CALL_URL = "CALL_URL";
+
+	public static final String PARAMETERS_PREFERENCE = "PARAMETERS_PREFERENCE";
+	public static final String SESSION_PARAMETERS = "SESSION_PARAMETERS";
 }
