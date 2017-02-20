@@ -1,5 +1,6 @@
 dist
 **/ant-build
+**/target
 **/.project
 **/.classpath
 qbe.core-*.jar
