@@ -1021,7 +1021,8 @@ public class SQLDBCache implements ICache {
 						deleteJoined(joinedSignature);
 					}
 				}
-				result = dropTableAndRemoveCacheItem(signature, false);
+				//result = dropTableAndRemoveCacheItem(signature, false);
+				result = dropTableAndRemoveCacheItem(signature, true);
 			} else {
 				logger.warn("Input parameter [" + signature + "] is null");
 			}
