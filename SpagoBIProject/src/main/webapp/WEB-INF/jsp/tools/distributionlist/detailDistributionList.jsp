@@ -250,7 +250,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 						
 						String schedStart = (String)sbOrig.getAttribute("startDate");
 						String temp1 = (String)sbOrig.getAttribute("startTime");
-						String schedStartTime = temp1.substring(0,temp1.indexOf("+"));
+						//String schedStartTime = temp1.substring(0,temp1.indexOf("+"));
+						String schedStartTime = temp1.split("[+-]")[0];
 						String schedBegin = schedStart + " " + schedStartTime ;
 						
 						String schedE = "";					
@@ -258,7 +259,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 						if ( sbOrig.getAttribute("endDate") != null) schedE = (String)sbOrig.getAttribute("endDate");					
 						if ( sbOrig.getAttribute("endTime") != null) {
 							String temp = (String)sbOrig.getAttribute("endTime");
-							schedEndTime = temp.substring(0,temp.indexOf("+"));	
+							//schedEndTime = temp.substring(0,temp.indexOf("+"));	
+							schedEndTime = temp.split("[+-]")[0];
 						}
 						String schedEnd = schedE + " " + schedEndTime ;
 						
