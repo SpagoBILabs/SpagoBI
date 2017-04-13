@@ -56,14 +56,17 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 
 	public static String CALLBACK = "callback";
 	// logger component
-	private static Logger logger = Logger.getLogger(GetParameterValuesForExecutionAction.class);
+	private static Logger logger = Logger.getLogger(GetParametersForExecutionAction.class);
 
 	// needed List to preserve order
 	List<ParameterForExecution> parametersForExecutionList;
 	// needed map to retrieve already processed values
 	Map<String, AnalyticalDriverValueList> parametersProcessedMap;
+	// This is a list of LOOKUP and TREE pars whose admissible values have been already retrieved
+	List<String> lookupOrTreeAlreadyRetrieved;
 	
 	String role = null;
+	Boolean isSessionEnabled = false;
 	
 	
 	public void doService() {
@@ -71,6 +74,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		parametersForExecutionList = new ArrayList<ParameterForExecution>();
 		parametersProcessedMap = new HashMap<String, AnalyticalDriverValueList>();
+		lookupOrTreeAlreadyRetrieved = new ArrayList<String>();
 		
 		role = getAttributeAsString("role");
 				
@@ -134,7 +138,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			for (Iterator iterator2 = dependencies.keySet().iterator(); iterator2.hasNext();) {
 				String parentId = (String) iterator2.next();
 				if(!parametersProcessedMap.keySet().contains(parentId)){
-					logger.error("Parent parametr in dependecy was not processed yet, means there is an errore in parameter ordering");
+					logger.debug("Parent parametr in dependecy was not processed yet, means there is an errore in parameter ordering");
 					throw new SpagoBIServiceException(SERVICE_NAME, "Parameters dependencies are not set in right order, check them");
 				}
 				AnalyticalDriverValueList advl = parametersProcessedMap.get(parentId);
@@ -167,8 +171,11 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		for (Iterator iterator = parametersForExecutionList.iterator(); iterator.hasNext();) {
 			ParameterForExecution parameterForExecution = (ParameterForExecution)iterator.next();
 			
+			logger.debug("DEaling with parameter "+parameterForExecution.getLabel());
+			
 			boolean isDependenciesOk = checkIfDependenciesHaveValues(parameterForExecution);
 			if(!isDependenciesOk){
+				logger.debug("dependency not ok do not calculate value");
 				// put empty
 				parameterForExecution.setValues(new AnalyticalDriverValueList());
 				parameterForExecution.setDefaultValues(new AnalyticalDriverValueList());
@@ -176,9 +183,19 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 				continue;  // go to process next parameter for execution, this will not be pre-loaded 
 			}
 			
-			// take admissible Values
-			parameterForExecution.loadAdmissibleValues(parametersProcessedMap);  
-
+			// take admissible Values, exclude manual input, lookup and tree case, leave them only if necessary	
+			if ("COMBOBOX".equalsIgnoreCase(parameterForExecution.getSelectionType()) 
+					|| "LIST".equalsIgnoreCase(parameterForExecution.getSelectionType()) 
+					|| "SLIDER".equalsIgnoreCase(parameterForExecution.getSelectionType())){ 
+				
+				logger.debug("Calculate admissible value because type is "+parameterForExecution.getSelectionType());
+				parameterForExecution.loadAdmissibleValues(parametersProcessedMap);
+				logger.debug("End calculate admissible values");
+			}
+			else{
+				logger.debug("DO NOT calculate admissible value because type is "+parameterForExecution.getSelectionType());
+			}
+			
 			logger.debug("fill default values and check for their validity");
 			fillAndCheckDefaultValues(parameterForExecution);
 			
@@ -186,8 +203,11 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			AnalyticalDriverValueList proposedValuesList = completeAndCheckProposedValues(parameterForExecution, proposedValuesMapToComplete);
 
 			logger.debug("session values check and find right formats");
-			AnalyticalDriverValueList sessionValuesList = convertAndCompleteCheckSessionValuesMap(parameterForExecution, sessionValuesMap);
-
+			AnalyticalDriverValueList sessionValuesList = null;
+			if(isSessionEnabled){
+				sessionValuesList = convertAndCompleteCheckSessionValuesMap(parameterForExecution, sessionValuesMap);
+			}
+			
 			logger.debug("set parameter value");
 			setParametersValues(parameterForExecution, proposedValuesList, sessionValuesList);
 
@@ -226,13 +246,13 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		String urlName = parameterForExecution.getId();
 		logger.debug("Set values for parameter ="+urlName);
 		
-		if(parameterForExecution.getAdmissibleValuesList() != null){
-			AnalyticalDriverValueList advl = parameterForExecution.getAdmissibleValuesList();
-			for (Iterator iterator = advl.iterator(); iterator.hasNext();) {
-				AnalyticalDriverValue analyticalDriverValue = (AnalyticalDriverValue) iterator.next();
-				logger.debug("Admissible value = "+analyticalDriverValue.getValue()+" and description = "+analyticalDriverValue.getDescription());
-			}
-		}
+//		if(parameterForExecution.getAdmissibleValuesList() != null){
+//			AnalyticalDriverValueList advl = parameterForExecution.getAdmissibleValuesList();
+			//for (Iterator iterator = advl.iterator(); iterator.hasNext();) {
+				//AnalyticalDriverValue analyticalDriverValue = (AnalyticalDriverValue) iterator.next();
+				//logger.debug("Admissible value = "+analyticalDriverValue.getValue()+" and description = "+analyticalDriverValue.getDescription());
+			//}
+//		}
 		
 		if(proposedValuesList != null && !proposedValuesList.isEmpty()){
 			logger.debug("Set proposed values");
@@ -263,6 +283,27 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 	
 	
 	
+//	private void validateValues(ParameterForExecution parameterForExecution) throws Exception{
+//		logger.debug("IN");
+//		
+//		QueryDetail qd = new QueryDetail();
+//		BIObjectParameter biObjPar = parameterForExecution.getAnalyticalDocumentParameter();
+//		try{
+//		List errors = qd.validateValues(getUserProfile(), biObjPar);
+//		if(!errors.isEmpty()){
+//			logger.error("Some erro in validating parameter "+biObjPar.getLabel()+" values discarded" );
+//		}
+//		}
+//		catch(Exception e){
+//			logger.error("Error in validating values for parameter "+biObjPar.getLabel(),e);
+//			throw e;
+//		}
+//		
+//		logger.debug("OUT");
+//
+//	}
+	
+	
 	
 	
 	/** returns a list containing only admissible values
@@ -272,28 +313,59 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 	 * @return
 	 */
 	
-	private AnalyticalDriverValueList filterValueListWithAdmissible(AnalyticalDriverValueList listToCheck, ParameterForExecution parameterForExecution){
-		logger.debug("IN");
-		AnalyticalDriverValueList toReturn = new AnalyticalDriverValueList();
-		// if is manual imput case no filter is done 
-		if( parameterForExecution.getSelectionType() != null && !parameterForExecution.getSelectionType().equals(""))  { 
-			AnalyticalDriverValueList admissibleValue = parameterForExecution.getAdmissibleValuesList();
-			
-			for (Iterator iterator = listToCheck.iterator(); iterator.hasNext();) {
-				AnalyticalDriverValue valueToCheck = (AnalyticalDriverValue) iterator.next();
-				if(admissibleValue.contains(valueToCheck.getValue())){
-					toReturn.add(valueToCheck);
-				}
-			}
-			
-		}
-		else{
-			toReturn = listToCheck;
-		}
-		
-		logger.debug("OUT");
-		return toReturn;
-	}
+//	private AnalyticalDriverValueList filterValueListWithAdmissible(AnalyticalDriverValueList listToCheck, ParameterForExecution parameterForExecution) throws Exception{
+//		logger.debug("IN");
+//		AnalyticalDriverValueList toReturn = new AnalyticalDriverValueList();
+//		// if is manual imput case no filter is done 
+//		if( parameterForExecution.getSelectionType() != null && !parameterForExecution.getSelectionType().equals(""))  { 
+//
+//			
+//			QueryDetail qd = new QueryDetail();
+//			BIObjectParameter biObjPar = parameterForExecution.getAnalyticalDocumentParameter();
+//			try{
+//			List errors = qd.validateValues(getUserProfile(), biObjPar);
+//			if(!errors.isEmpty()){
+//				logger.error("Some erro in validating parameter "+biObjPar.getLabel()+" values discarded" );
+//				return new AnalyticalDriverValueList();
+//			}
+//			}
+//			catch(Exception e){
+//				logger.error("Error in validating values for parameter "+biObjPar.getLabel(),e);
+//				throw e;
+//			}
+//			
+//			// if it is TREE or lookup case admissible value could not have been initialized, check and do it (only if necessary)
+////			if( parameterForExecution.getSelectionType().equalsIgnoreCase("LOOKUP") ||
+////					parameterForExecution.getSelectionType().equalsIgnoreCase("TREE")){
+////				logger.debug("Being a "+parameterForExecution.getSelectionType()+ " do calculate admissible if already nopt done");
+////
+////				// if has not been already retrieved
+////				if(!lookupOrTreeAlreadyRetrieved.contains(parameterForExecution.getId())){
+////					logger.debug("Do retrieve admissible values");
+////					parameterForExecution.loadAdmissibleValues(parametersProcessedMap);			
+////					logger.debug("Parameter "+parameterForExecution.getId()+" admissibile values retrieved in special case");
+////					lookupOrTreeAlreadyRetrieved.add(parameterForExecution.getId());
+////				}
+////			}
+//			
+////			AnalyticalDriverValueList admissibleValue = parameterForExecution.getAdmissibleValuesList();
+////			logger.debug("Check values are in admissible");
+////			for (Iterator iterator = listToCheck.iterator(); iterator.hasNext();) {
+////				AnalyticalDriverValue valueToCheck = (AnalyticalDriverValue) iterator.next();
+////				if(admissibleValue.contains(valueToCheck.getValue())){
+////					toReturn.add(valueToCheck);
+////				}
+////			}
+//			logger.debug("End of check values are in admissible");
+//			
+//		}
+//		else{
+//			toReturn = listToCheck;
+//		}
+//		
+//		logger.debug("OUT");
+//		return toReturn;
+//	}
 	
 	
 	
@@ -306,14 +378,17 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		parameterForExecution.loadDefaultValues();
 		
-		AnalyticalDriverValueList valuesToFilter = parameterForExecution.getDefaultValues();
+		logger.debug("Default values loaded");
+		
+		//AnalyticalDriverValueList valuesToFilter = parameterForExecution.getDefaultValues();
+		AnalyticalDriverValueList defaultValues = parameterForExecution.getDefaultValues();
 		
 		// if is SLIDER and has only one value parse if is in form val1, val2, val3, // done for back compatibility
 
 		boolean particularSliderCase = false;
-		if(parameterForExecution.getSelectionType().equals("SLIDER") && valuesToFilter != null && valuesToFilter.size()==1){
+		if(parameterForExecution.getSelectionType().equals("SLIDER") && defaultValues != null && defaultValues.size()==1){
 			logger.debug("Slider case, parse default value in the case in the form val1, val2");
-			AnalyticalDriverValue adv = valuesToFilter.get(0);
+			AnalyticalDriverValue adv = defaultValues.get(0);
 			String toParse = adv.getValue().toString();
 			AnalyticalDriverValueList toSubst = new AnalyticalDriverValueList();
 			StringTokenizer st = new StringTokenizer(toParse, ",", false);
@@ -321,19 +396,21 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			while (st.hasMoreTokens()) {
 				String valS = st.nextToken();
 				AnalyticalDriverValue val = new AnalyticalDriverValue();
-				val.setValue(valS); 				val.setDescription(valS);
+				val.setValue(valS); 				
+				val.setDescription(valS);
 				toSubst.add(i, val);
 				i++;
 			}
-			valuesToFilter = toSubst;
+			defaultValues = toSubst;
 			particularSliderCase = true;
 		}
 		
-		if(valuesToFilter != null){
-			valuesToFilter.printList("Default value yet to filter");
-		}
-
-		AnalyticalDriverValueList defaultValues = filterValueListWithAdmissible(valuesToFilter, parameterForExecution);
+//		if(valuesToFilter != null){
+//			valuesToFilter.printList("Default value yet to filter");
+//		}
+//		logger.debug("FIlter default values with admissible");
+//		AnalyticalDriverValueList defaultValues = filterValueListWithAdmissible(valuesToFilter, parameterForExecution);
+//		logger.debug("End of FIlter default values with admissible");
 		
 		if(particularSliderCase){
 			logger.debug("Slider default case val1,val2,val3, fill description ");
@@ -346,9 +423,9 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		
 		parameterForExecution.setDefaultValues(defaultValues);
 		
-		if(defaultValues != null){
-			defaultValues.printList("Default value filtered");
-		}
+//		if(defaultValues != null){
+//			defaultValues.printList("Default value filtered");
+//		}
 		
 		logger.debug("OUT");
 	}
@@ -387,16 +464,17 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 				
 			}
 			
-			if(toCheck != null){
-				toCheck.printList("Proposed value yet to filter");
-			}
+//			if(toCheck != null){
+//				toCheck.printList("Proposed value yet to filter");
+//			}
 			
-			toReturn = filterValueListWithAdmissible(toCheck, parameterForExecution);
+			toReturn = toCheck;
+			//toReturn = filterValueListWithAdmissible(toCheck, parameterForExecution);
 		}
 
-		if(toReturn != null){
-			toReturn.printList("Proposed value already filtered");
-		}
+//		if(toReturn != null){
+//			toReturn.printList("Proposed value already filtered");
+//		}
 
 		
 		logger.debug("OUT");
@@ -509,7 +587,8 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 				listToCheck.add(valueDef);
 			}
 
-			toReturn = filterValueListWithAdmissible(listToCheck, parameterForExecution);
+			toReturn = listToCheck;
+			//toReturn = filterValueListWithAdmissible(listToCheck, parameterForExecution);
 
 		}
 		logger.debug("OUT");
@@ -555,6 +634,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		Map parsPrefMap = new HashMap();
 		if(getAttribute(PARAMETERS_PREFERENCE) != null){ 
 			String parametersPreference = getAttributeAsString(PARAMETERS_PREFERENCE);	
+			logger.debug("Parameter Preference "+parametersPreference);
 			
 //			try {
 //				byte[] utf8 = parametersPreference.getBytes("ISO-8859-1");
@@ -588,26 +668,26 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 	public Map getSessionParameters() {
 		logger.debug("IN");
 		Map<String, JSONObject> sessionParametersMap = new HashMap<String, JSONObject>();
-		
-		Boolean isSessionEnabled = getAttributeAsBoolean("isParametersStatePersistenceEnabled");
-if(isSessionEnabled){		
-		if(getAttribute(SESSION_PARAMETERS) != null){ 
-			String sessionParametersString = getAttributeAsString(SESSION_PARAMETERS);			
-					try {
-				JSONObject sessionParametersJSON = new JSONObject(sessionParametersString);
 
-				Iterator<String> it = sessionParametersJSON.keys();
-				while (it.hasNext()) {
-					String key = it.next();
-					JSONObject parJson = sessionParametersJSON.getJSONObject(key);
-					sessionParametersMap.put(key, parJson);
+		isSessionEnabled = getAttributeAsBoolean("isParametersStatePersistenceEnabled");
+		if(isSessionEnabled){		
+			if(getAttribute(SESSION_PARAMETERS) != null){ 
+				String sessionParametersString = getAttributeAsString(SESSION_PARAMETERS);			
+				try {
+					JSONObject sessionParametersJSON = new JSONObject(sessionParametersString);
+
+					Iterator<String> it = sessionParametersJSON.keys();
+					while (it.hasNext()) {
+						String key = it.next();
+						JSONObject parJson = sessionParametersJSON.getJSONObject(key);
+						sessionParametersMap.put(key, parJson);
+					}
+				} catch (Exception e) {
+					logger.error("Error converting session parameters to JSON: ", e);
 				}
-			} catch (Exception e) {
-				logger.error("Error converting session parameters to JSON: ", e);
+
 			}
-		
 		}
-}
 		logger.debug("OUT");
 		return sessionParametersMap;
 	}
@@ -627,6 +707,7 @@ if(isSessionEnabled){
 		//executionInstance.getBIObject().getBiObjectParameters()
 
 		BIObject document = executionInstance.getBIObject();
+		logger.debug("Document analysed is "+document.getLabel()+" - "+document.getName());
 
 		List parameters = document.getBiObjectParameters();
 		if (parameters != null && parameters.size() > 0) {

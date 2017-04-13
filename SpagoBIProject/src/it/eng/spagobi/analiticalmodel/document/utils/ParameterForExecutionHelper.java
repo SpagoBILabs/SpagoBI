@@ -23,27 +23,42 @@ public class ParameterForExecutionHelper {
 		private static Logger logger = Logger.getLogger(ParameterForExecutionHelper.class);
 		
 		BIObjectParameter analyticalDocumentParameter = null;
-CoreContextManager context = null;
+		CoreContextManager context = null;
+		Parameter par = null;
+		ModalitiesValue lov = null;
+		String lovProv = null;
+		ILovDetail lovProvDet = null;
+
 		
 		public ParameterForExecutionHelper(BIObjectParameter _analyticalDocumentParameter, CoreContextManager _context) {
 			analyticalDocumentParameter = _analyticalDocumentParameter;
 			context = _context;
+			par = analyticalDocumentParameter.getParameter();
+			lov = par.getModalityValue();
+			lovProv 	=lov.getLovProvider();
+			try{
+				lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+			}
+			catch(Exception e){
+				logger.error("Error in initaliing helper ",e);
+			}
 		}
 		
 		
 		public String getValueFromLov(SourceBean lovSB) {
 			String value = null;
-			ILovDetail lovProvDet = null;
 			logger.debug("IN");
 			try {
-				Parameter par = analyticalDocumentParameter.getParameter();
-				ModalitiesValue lov = par.getModalityValue();
-				// build the ILovDetail object associated to the lov
-				String lovProv = lov.getLovProvider();
-				lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+				if(par == null){
+					par = analyticalDocumentParameter.getParameter();
+					lov = par.getModalityValue();
+					lovProv 	=lov.getLovProvider();
+					lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+				}
 
 				value = (String) lovSB.getAttribute( lovProvDet.getValueColumnName() );
 			} catch (Exception e) {
+				logger.error("Error in getting value");
 				throw new SpagoBIServiceException(ParameterForExecution.SERVICE_NAME, "Impossible to get parameter's value", e);
 			} 
 			logger.debug("OUT");
@@ -52,17 +67,17 @@ CoreContextManager context = null;
 		
 		public String getDescriptionFromLov(SourceBean lovSB) {
 			String description = null;
-			ILovDetail lovProvDet = null;
 			logger.debug("IN");
 			try {
-				Parameter par = analyticalDocumentParameter.getParameter();
-				ModalitiesValue lov = par.getModalityValue();
-				// build the ILovDetail object associated to the lov
-				String lovProv = lov.getLovProvider();
-				lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
-
+				if(par == null){
+					par = analyticalDocumentParameter.getParameter();
+					lov = par.getModalityValue();
+					lovProv 	=lov.getLovProvider();
+					lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+				}
 				description = (String) lovSB.getAttribute( lovProvDet.getDescriptionColumnName() );
 			} catch (Exception e) {
+				logger.error("Error in getting description");
 				throw new SpagoBIServiceException(ParameterForExecution.SERVICE_NAME, "Impossible to get parameter's value", e);
 			} 
 			logger.debug("OUT");

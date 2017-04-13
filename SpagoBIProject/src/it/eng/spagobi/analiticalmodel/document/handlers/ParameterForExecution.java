@@ -111,6 +111,7 @@ public class ParameterForExecution {
 		}
 
 		public ParameterForExecution(BIObjectParameter biParam, IEngUserProfile _profile, CoreContextManager _context) {
+			logger.debug("IN - "+biParam.getLabel());
 
 			analyticalDocumentParameter = biParam;
 			profile = _profile;
@@ -124,6 +125,7 @@ public class ParameterForExecution {
 			//loadDefaultValues();                  // get default values
 			
 			objParameterIds = new ArrayList<Integer>();
+			logger.debug("OUT");
 
 		}
 
@@ -132,6 +134,7 @@ public class ParameterForExecution {
 
 		
 		void initAttributes() {
+			logger.debug("IN");
 
 			ExecutionInstance executionInstance = helper.getExecutionInstance();
 			if (executionInstance == null) {
@@ -170,7 +173,9 @@ public class ParameterForExecution {
 			thickPerc = analyticalDocumentParameter.getThickPerc() != null ? analyticalDocumentParameter.getThickPerc() : 0;
 
 			try {
+				logger.debug("Load parameter and roles");
 				analyticalDriverExecModality = ANALYTICAL_DRIVER_USE_MODALITY_DAO.loadByParameterIdandRole(analyticalDocumentParameter.getParID(), executionInstance.getExecutionRole());
+				logger.debug("End Load parameter and roles");
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find any valid execution modality for parameter [" + id + "] and role [" + executionInstance.getExecutionRole() + "]", e);
 			}
@@ -180,17 +185,20 @@ public class ParameterForExecution {
 			parameterUseId = analyticalDriverExecModality.getUseID();
 			
 			enableMaximizer = analyticalDriverExecModality.isMaximizerEnabled();
+			logger.debug("OUT");
 		}
 
 		private void initDependencies() {
+			logger.debug("IN");
 			initDataDependencies();
 			initVisualDependencies();
-			initLovDependencies();			
+			initLovDependencies();
+			logger.debug("OUT");
 		}
 
 		private void initVisualDependencies() {
 
-
+			logger.debug("IN");
 			if(dependencies == null) {
 				dependencies = new HashMap<String, List<ParameterDependency>>();
 			}
@@ -219,10 +227,11 @@ public class ParameterForExecution {
 					throw new SpagoBIServiceException("An error occurred while loading parameter [" + objParFatherId + "]", e);
 				}
 			}
+			logger.debug("OUT");
 		}
 
 		private void initDataDependencies() {
-
+			logger.debug("IN");
 			if(dependencies == null) {
 				dependencies = new HashMap<String, List<ParameterDependency>>();
 			}
@@ -251,11 +260,12 @@ public class ParameterForExecution {
 					throw new SpagoBIServiceException("An error occurred while loading parameter [" + objParFatherId + "]", e);
 				}
 			}
+			logger.debug("OUT");
 		}
 		
 		
 		private void initLovDependencies() {
-
+			logger.debug("IN");
 			if (dependencies == null) {
 				dependencies = new HashMap<String, List<ParameterDependency>>();
 			}
@@ -308,6 +318,7 @@ public class ParameterForExecution {
 			} catch (Exception e) {
 				throw new SpagoBIServiceException("An error occurred while loading parameter lov dependecies for parameter [" + id + "]", e);
 			}
+			logger.debug("OUT");
 		}
 
 
@@ -316,7 +327,7 @@ public class ParameterForExecution {
 		
 		public void loadAdmissibleValues(Map<String, AnalyticalDriverValueList> processedParameters) {	
 			logger.debug("IN");
-			logger.debug("load admissible values for parameter "+id);
+			logger.debug("load admissible values for parameter "+id + " of type "+selectionType);
 
 			// exclude manual input case
 			if ("COMBOBOX".equalsIgnoreCase(selectionType) 
@@ -325,23 +336,29 @@ public class ParameterForExecution {
 					|| "TREE".equalsIgnoreCase(selectionType) 
 					|| "LOOKUP".equalsIgnoreCase(selectionType)) { 
 				List lovResultsSB = getLOV(processedParameters);
+				logger.debug("Retrieved values "+lovResultsSB != null ? lovResultsSB.size() : " Null");
 				setValuesCount( lovResultsSB == null? 0: lovResultsSB.size() );
-
+				logger.debug("Set values size");
 				for (int i = 0; i < getValuesCount(); i++) {
+					//logger.debug("Counter in result "+i);
 					SourceBean lovSB = (SourceBean)lovResultsSB.get(i);
 					String value = helper.getValueFromLov(lovSB);
+					//logger.debug("value is "+value);
 					String description = helper.getDescriptionFromLov(lovSB);
-					// create list of admissible values
+					//logger.debug("description is "+description);
+									// create list of admissible values
 					AnalyticalDriverValue adv = new AnalyticalDriverValue(value, description);
 					admissibleValuesList.add(adv);
 				}					
+				logger.debug("Admissible value list built");
+
 			} else {
 				setValuesCount( -1 ); // it means that we don't know the lov size
 			}
-			for (Iterator iterator = admissibleValuesList.iterator(); iterator.hasNext();) {
-				AnalyticalDriverValue analyticalDriverValue = (AnalyticalDriverValue) iterator.next();
-				logger.debug("Admissible vlue found with value "+analyticalDriverValue.getValue()+ " and description "+analyticalDriverValue.getDescription());
-			}
+//			for (Iterator iterator = admissibleValuesList.iterator(); iterator.hasNext();) {
+//				AnalyticalDriverValue analyticalDriverValue = (AnalyticalDriverValue) iterator.next();
+//				logger.debug("Admissible vlue found with value "+analyticalDriverValue.getValue()+ " and description "+analyticalDriverValue.getDescription());
+//			}
 			logger.debug("OUT");
 		}
 		
@@ -379,24 +396,27 @@ public class ParameterForExecution {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find in context execution instance for execution of document with id "+" [" + analyticalDocumentParameter.getBiObjectID() + "]: was it searched as a map? "+isAMap);		
 			}
 			
-			
+
 			// modify execution Instance with alredy chosen parameters for dependencies
+			logger.debug("modify execution Instance with alredy chosen parameters for dependencies");
 			List biObjectParameters = executionInstance.getBIObject().getBiObjectParameters();
 			if(biObjectParameters != null){
-			for (Iterator iterator = processedParameters.keySet().iterator(); iterator.hasNext();) {
-				String id = (String)iterator.next();
-				
-				// convert analyticalDrvierValue
-				AnalyticalDriverValueList values = processedParameters.get(id);
-				
-				List<String> valuesList = values.getValuesList();
-				for (Iterator iterator2 = biObjectParameters.iterator(); iterator2.hasNext();) {
-					BIObjectParameter par = (BIObjectParameter) iterator2.next();
-					if(par.getParameterUrlName().equals(id)){
-						par.setParameterValues(valuesList);
+				for (Iterator iterator = processedParameters.keySet().iterator(); iterator.hasNext();) {
+					String id = (String)iterator.next();
+
+					// convert analyticalDrvierValue
+					AnalyticalDriverValueList values = processedParameters.get(id);
+
+					List<String> valuesList = values.getValuesList();
+					for (Iterator iterator2 = biObjectParameters.iterator(); iterator2.hasNext();) {
+						BIObjectParameter par = (BIObjectParameter) iterator2.next();
+						if(par.getParameterUrlName().equals(id)){
+							par.setParameterValues(valuesList);
+						}
 					}
 				}
-			}
+				logger.debug("end of modify execution Instance with alredy chosen parameters for dependencies");
+
 			}
 			
 			List rows = null;
@@ -404,7 +424,8 @@ public class ParameterForExecution {
 			try {
 				// get the result of the lov
 				//IEngUserProfile profile = getUserProfile();
-
+				logger.debug("execute Lov");
+				
 				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
 				lovResult = executionCacheManager.getLovResult(profile,
 						executionInstance
@@ -416,6 +437,7 @@ public class ParameterForExecution {
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);		
 				rows = lovResultHandler.getRows();
+				logger.debug("end of lov execution number of results "+rows != null ? rows.size() : "null");
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's values", e);
 			} 
@@ -427,6 +449,7 @@ public class ParameterForExecution {
 		
 		
 		private void initDAO() {
+			logger.debug("IN");
 			try {
 				ANALYTICAL_DRIVER_USE_MODALITY_DAO = DAOFactory.getParameterUseDAO();
 			} catch (EMFUserError e) {
@@ -456,6 +479,7 @@ public class ParameterForExecution {
 			} catch (EMFUserError e) {
 				throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DRIVER_DAO.getClass().getName() + "]", e);
 			}
+			logger.debug("OUT");
 		}
 
 		// ========================================================================================
@@ -637,6 +661,16 @@ public class ParameterForExecution {
 		public void setValues(AnalyticalDriverValueList values) {
 			this.values = values;
 		}
+
+		public BIObjectParameter getAnalyticalDocumentParameter() {
+			return analyticalDocumentParameter;
+		}
+
+		public void setAnalyticalDocumentParameter(BIObjectParameter analyticalDocumentParameter) {
+			this.analyticalDocumentParameter = analyticalDocumentParameter;
+		}
+		
+		
 
 
 		

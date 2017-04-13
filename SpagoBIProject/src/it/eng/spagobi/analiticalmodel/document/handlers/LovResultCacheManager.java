@@ -76,6 +76,7 @@ public class LovResultCacheManager {
 				logger.info("Executing lov to get result ...");
 				lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance.getBIObject().getBiObjectParameters(),executionInstance.getLocale());
 				logger.debug(lovResult);
+				logger.debug("printing lov");
 				// insert the data in cache
 				if (lovResult != null)
 					cache.put(cacheKey, lovResult);
