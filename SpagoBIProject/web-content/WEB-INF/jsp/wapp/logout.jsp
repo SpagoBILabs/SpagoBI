@@ -127,7 +127,9 @@ else if (active != null && active.equalsIgnoreCase("true")) {
 
 <script>
 
-Sbi.execution.SessionParametersManager.resetSessionObjects();
+if(Sbi.execution && Sbi.execution.SessionParametersManager){
+	Sbi.execution.SessionParametersManager.resetSessionObjects();
+}
 
 var myVar=setTimeout(function(){redirect()},1000);
 
