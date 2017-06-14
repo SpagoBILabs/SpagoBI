@@ -173,7 +173,7 @@ public class LDAPConnector {
     	}
     }
     
-    private boolean isAccessGroupDefined() {
+    public boolean isAccessGroupDefined() {
     	return !StringUtilities.isEmpty(accessGroupName);
 	}
 
