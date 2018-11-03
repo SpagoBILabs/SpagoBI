@@ -19,7 +19,14 @@ import com.novell.ldap.LDAPAttribute;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPEntry;
 import com.novell.ldap.LDAPException;
+import com.novell.ldap.LDAPJSSESecureSocketFactory;
+import com.novell.ldap.LDAPJSSEStartTLSFactory;
 import com.novell.ldap.LDAPSearchResults;
+import com.novell.ldap.LDAPSocketFactory;
+import java.io.FileInputStream;
+import java.security.KeyStore;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 public class LDAPConnector {
     
@@ -31,6 +38,10 @@ public class LDAPConnector {
     final public static String ADMIN_USER = "ADMIN_USER"; // administration user-id
     final public static String ADMIN_PSW = "ADMIN_PSW"; // password
     final public static String BASE_DN = "BASE_DN";
+    
+    //TLS/startTLS
+    final public static String STARTTLS = "STARTTLS";
+    final public static String TRUSTSTORE_PATH = "TRUSTSTORE_PATH";
     
     // user
     final public static String USER_SEARCH_PATH = "USER_SEARCH_PATH"; // base search path
@@ -55,6 +66,9 @@ public class LDAPConnector {
     private String adminUsername;
     private String adminPassword;
     private String baseDN;
+
+    private boolean startTLS;
+    private String trustStore;
     
     private String userSearchPath;
     private String userObjectClass;
@@ -78,7 +92,11 @@ public class LDAPConnector {
 		this.adminPassword = (String) configuration.get(ADMIN_PSW);
 		this.baseDN = (String) configuration.get(BASE_DN);
 		
-		// user
+                // tls properties
+                this.startTLS = Boolean.parseBoolean((String) configuration.get(STARTTLS));
+                this.trustStore = (String) configuration.get(TRUSTSTORE_PATH);
+
+                // user
 		this.userSearchPath = (String) configuration.get(USER_SEARCH_PATH);
 		this.userObjectClass = (String) configuration.get(USER_OBJECT_CLASS);
 		this.userMemberOfAttributeName = (String) configuration.get(USER_MEMBEROF_ATTRIBUTE_NAME);
@@ -103,7 +121,24 @@ public class LDAPConnector {
     	connection = null;
     	try {
     		logger.debug("Connecting to LDAP at url [" + host + ": " + port + "] ...");
-    		connection = new LDAPConnection();
+                    if (this.trustStore != null) {
+                        FileInputStream truststoreFile = new FileInputStream(this.trustStore);
+                        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                        keyStore.load(truststoreFile,null);
+                        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                        trustManagerFactory.init(keyStore);
+                        SSLContext sslContext = SSLContext.getInstance("TLS");
+                        sslContext.init(null, trustManagerFactory.getTrustManagers(), new java.security.SecureRandom());
+                        LDAPSocketFactory socketFactory = null;
+                        if (this.startTLS) {
+                            socketFactory = new LDAPJSSEStartTLSFactory(sslContext.getSocketFactory());
+                        } else {
+                            socketFactory = new LDAPJSSESecureSocketFactory(sslContext.getSocketFactory());
+                        }
+                        connection = new LDAPConnection(socketFactory);
+                    } else {
+                        connection = new LDAPConnection();
+                    }
 		    connection.connect(host, port);
 		    if(connection.isConnected() == false) {
 		    	throw new RuntimeException("Impossible to open the connection to LDAP at url [" + host + ": " + port + "]");

@@ -8,7 +8,14 @@
 		<ADMIN_USER>uid=admin,ou=system</ADMIN_USER>
 		<ADMIN_PSW>secret</ADMIN_PSW> <!-- password in clear text -->
 		<BASE_DN></BASE_DN> <!-- base domain, if any -->
-	
+               
+                 
+                <!-- TLS/startTLS -->
+                <!--
+                <STARTTLS>false</STARTTLS>
+                <TRUSTSTORE_PATH>truststore</TRUSTSTORE_PATH>
+                -->
+                
 		<!-- USERS -->
 		<USER_SEARCH_PATH>ou=users,ou=system</USER_SEARCH_PATH> <!-- SpagoBI will look for users under this node -->
 		<USER_OBJECT_CLASS>person</USER_OBJECT_CLASS> <!-- class for users' objects -->

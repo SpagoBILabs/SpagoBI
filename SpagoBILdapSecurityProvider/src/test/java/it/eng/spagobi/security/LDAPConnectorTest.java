@@ -10,8 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.novell.ldap.LDAPConnection;
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.URL;
 
 import it.eng.spagobi.security.LDAPConnector;
+import java.net.URL;
+import java.nio.file.Paths;
 import junit.framework.TestCase;
 
 public class LDAPConnectorTest extends TestCase {
@@ -55,6 +58,55 @@ public class LDAPConnectorTest extends TestCase {
 		ldapConnector=new LDAPConnector(configurationProperties);	
 	}
 
+    /*
+         This test will require the ldap server to be listening for TLS connections
+        on port 10686. The file 'trustore' is the tuststore which must contain
+        the signing ca public key of the ldap servers cert or the ldap servers
+        cert for a self signed key
+     */
+        public void testTLSConnectToLDAP() {
+            try {
+                URL truststoreUrl = this.getClass().getClassLoader().getResource("truststore");
+                String path = Paths.get(truststoreUrl.toURI()).toFile().getAbsolutePath();
+                configurationProperties.put(LDAPConnector.TRUSTSTORE_PATH, path);
+                configurationProperties.put(LDAPConnector.PORT, "10636");
+                ldapConnector = new LDAPConnector(configurationProperties);
+                LDAPConnection ldapConnection = ldapConnector.connectToLDAP();
+                assertNotNull("Connection cannot be null", ldapConnection);
+                assertTrue("Connection mus be opened", ldapConnection.isConnected());
+                assertTrue("Connection must be alive", ldapConnection.isConnectionAlive());
+                assertFalse("Connection must be unbound", ldapConnection.isBound());
+            } catch (Throwable t) {
+                fail("An unexpected exception occured: " + t.getMessage());
+            } finally {
+                configurationProperties.put(LDAPConnector.TRUSTSTORE_PATH, null);
+            }
+        }
+
+        /*
+           This test requires startTLS to be enabled on port 10389 of the LDAP server.
+           The file 'trustore' is the tuststore which must contain
+           the signing ca public key of the ldap servers cert or the ldap servers
+            cert for a self signed key
+        */
+        public void testStartTLSConnectToLDAP() {
+            try {
+                URL truststoreUrl = this.getClass().getClassLoader().getResource("truststore");
+                String path = Paths.get(truststoreUrl.toURI()).toFile().getAbsolutePath();
+                configurationProperties.put(LDAPConnector.TRUSTSTORE_PATH, path);
+                configurationProperties.put(LDAPConnector.PORT, "10389");
+                configurationProperties.put(LDAPConnector.STARTTLS, "true");
+                ldapConnector = new LDAPConnector(configurationProperties);
+                LDAPConnection ldapConnection = ldapConnector.connectToLDAP();
+                assertNotNull("Connection cannot be null", ldapConnection);
+                assertTrue("Connection mus be opened", ldapConnection.isConnected());
+                assertTrue("Connection must be alive", ldapConnection.isConnectionAlive());
+                assertFalse("Connection must be unbound", ldapConnection.isBound());
+                assertTrue("Connection must be secure", ldapConnection.isTLS());
+            } catch (Throwable t) {
+                fail("An unexpected exception occured: " + t.getMessage());
+            }
+        }
 	
 	public void testConnectToLDAP() {
 		try {
