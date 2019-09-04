@@ -66,6 +66,8 @@ public class LdapUserProfileFactoryImpl implements ISecurityServiceSupplier {
     	logger.debug("IN");
   
     	logger.debug("Creating user profile for user [" + username + "] ...");
+
+
 		
     	SpagoBIUserProfile userProfile = new SpagoBIUserProfile();
 		userProfile.setUniqueIdentifier(username);
@@ -74,6 +76,15 @@ public class LdapUserProfileFactoryImpl implements ISecurityServiceSupplier {
 		userProfile.setIsSuperadmin(false);
 	
 		LDAPConnector ldapConnector = LdapConnectorFactory.createLDAPConnector();
+
+		// we have to check that user belongs to access group
+		if (ldapConnector.isAccessGroupDefined()) {
+			logger.debug("Access group is defined: checking if user belongs to access group");
+			if(!ldapConnector.checkUserIsInAccessGroup(username)){
+				return null;
+			}
+		}
+
 		List ldapRoles = null;
 		Map attributes = null;
 		try {

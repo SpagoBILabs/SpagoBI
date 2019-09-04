@@ -48,7 +48,9 @@ public class LDAPConnector {
     final public static String GROUP_ATTRIBUTE = "GROUP_ATTRIBUTE";
     final public static String GROUP_MEMBERS_ATTRIBUTE_NAME = "GROUP_MEMBERS_ATTRIBUTE_NAME";
     final public static String ACCESS_GROUP_NAME = "ACCESS_GROUP_NAME";
-   
+
+	final public static String GROUPS_FETCH_BY_MEMBER_OF = "GROUPS_FETCH_BY_MEMBER_OF";
+
 
     private String host;
     private int port;
@@ -70,7 +72,9 @@ public class LDAPConnector {
     private String[] groupAttributeNames;
     private String groupMembersAttributeName;
     private String accessGroupName;
-    
+
+	private boolean groupsFetchByMemberOf;
+
     public LDAPConnector(Map<String, Object> configuration) {
 		this.host = (String) configuration.get(HOST);
 		this.port = Integer.parseInt((String) configuration.get(PORT));
@@ -94,6 +98,7 @@ public class LDAPConnector {
 		this.groupAttributeNames = (String[]) configuration.get(GROUP_ATTRIBUTE);
 		this.groupMembersAttributeName = (String) configuration.get(GROUP_MEMBERS_ATTRIBUTE_NAME);
 		this.accessGroupName = (String) configuration.get(ACCESS_GROUP_NAME);
+		this.groupsFetchByMemberOf = Boolean.valueOf((String) configuration.get(GROUPS_FETCH_BY_MEMBER_OF));
     }
 
     protected LDAPConnection connectToLDAP() {
@@ -168,7 +173,7 @@ public class LDAPConnector {
     	}
     }
     
-    private boolean isAccessGroupDefined() {
+    public boolean isAccessGroupDefined() {
     	return !StringUtilities.isEmpty(accessGroupName);
 	}
 
@@ -376,8 +381,17 @@ public class LDAPConnector {
     	}
 
     }
+
+	public List<String> getUserGroup(String userName) throws  LDAPException {
+		if(groupsFetchByMemberOf){
+			return getUserGroupByUserMemberOf(userName);
+		}
+		else{
+			return getUserGroupByGroupMember(userName);
+		}
+	}
     
-    public List<String> getUserGroup(String username) throws LDAPException  {
+    public List<String> getUserGroupByUserMemberOf(String username) throws LDAPException  {
     	
     	logger.debug("IN");
 		
@@ -385,6 +399,7 @@ public class LDAPConnector {
 
 		try {
 			LDAPEntry entry = getUserById(username);
+
 			
 			LDAPAttribute groupAttribute =  entry.getAttribute(userMemberOfAttributeName);
 			if(groupAttribute == null) {
@@ -408,6 +423,59 @@ public class LDAPConnector {
 		
 		return userGroups;
     }
+
+	public List<String> getUserGroupByGroupMember(String username) throws LDAPException  {
+
+		logger.debug("IN");
+
+		LDAPConnection connection = null;
+		List<String> userGroups = new ArrayList<String>();
+		LDAPEntry user = getUserById(username);
+		String userDN = user.getDN();
+		try {
+			connection = this.connectToLDAPAsAdmin();
+
+			String searchPath = groupSearchPath;
+
+			if (StringUtilities.isEmpty(searchPath)) {
+				searchPath = baseDN;
+			} else {
+				if(StringUtilities.isNotEmpty(baseDN)) {
+					searchPath +=  "," + baseDN;
+				}
+			}
+
+
+			String searchQuery = "(&(objectclass=" + groupObjectClass + ")(" + groupMembersAttributeName + "=" + userDN + "))";
+			LDAPSearchResults searchResults = connection.search(searchPath, LDAPConnection.SCOPE_SUB,
+					searchQuery, groupAttributeNames, false);
+
+			while (searchResults.hasMore()) {
+				LDAPEntry entry = searchResults.next();
+				System.out.println(entry.getDN());
+				if (entry != null) {
+
+					String groupDistingushedName = entry.getDN();
+
+					if (isValidGroup(groupDistingushedName)) {
+						String groupName = getGroupName(groupDistingushedName);
+						if (!isAccessGroupDefined() || !isAccessGroup(groupName)) {
+							userGroups.add(groupName);
+						}
+					}
+				}
+			}
+
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while serching users of Access group", t);
+		} finally {
+			closeConnection(connection);
+			logger.debug("OUT");
+		}
+
+		return userGroups;
+	}
+
 
     private boolean isAccessGroup(String groupName) {
 	    return accessGroupName.equals(groupName);
